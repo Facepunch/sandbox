@@ -1,6 +1,6 @@
 ﻿namespace Sandbox.Tools
 {
-	[Library( "tool_wheel", Title = "Wheel", Description = "A wheel that you can turn on and off (but actually can't yet)", Group = "construction" )]
+	[Library( "tool_wheel", Title = "Wheel", Description = "A wheel that you can turn on and off by using it", Group = "construction" )]
 	public partial class WheelTool : BaseTool
 	{
 		PreviewEntity previewModel;
