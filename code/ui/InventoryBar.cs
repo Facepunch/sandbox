@@ -89,7 +89,7 @@ public class InventoryBar : Panel, IClientInput
 		if ( count == 0 ) return;
 
 		var slot = inventory.GetActiveSlot();
-		var nextSlot = slot + idelta;
+		var nextSlot = slot - idelta;
 
 		while ( nextSlot < 0 ) nextSlot += count;
 		while ( nextSlot >= count ) nextSlot -= count;
