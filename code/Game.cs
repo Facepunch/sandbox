@@ -7,7 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 
 [Library( "sandbox", Title = "Sandbox" )]
-partial class SandboxGame : Game
+public partial class SandboxGame : Game
 {
 	public SandboxGame()
 	{
