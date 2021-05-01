@@ -79,7 +79,7 @@ partial class Tool : Carriable, IPlayerControllable
 	}
 
 	[Event("frame")]
-	public virtual void OnFrame()
+	public void OnFrame()
 	{
 		if ( !IsActiveChild() ) return;
 

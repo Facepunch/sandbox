@@ -22,7 +22,7 @@ public partial class ThrusterEntity
 	}
 
 	[Event("frame")]
-	protected virtual void UpdateEffects()
+	protected void UpdateEffects()
 	{
 		if ( Enabled )
 		{

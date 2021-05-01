@@ -33,7 +33,7 @@ public partial class PhysGun
 	}
 
 	[Event("frame")]
-	protected virtual void UpdateEffects()
+	protected void UpdateEffects()
 	{
 		var owner = Owner;
 
