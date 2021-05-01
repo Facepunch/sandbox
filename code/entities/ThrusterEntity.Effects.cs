@@ -4,11 +4,6 @@ public partial class ThrusterEntity
 {
 	private Particles effects;
 
-	public virtual void OnFrame()
-	{
-		UpdateEffects();
-	}
-
 	protected void CreateEffects()
 	{
 		if ( effects != null )
@@ -26,6 +21,7 @@ public partial class ThrusterEntity
 		effects = null;
 	}
 
+	[Event("frame")]
 	protected virtual void UpdateEffects()
 	{
 		if ( Enabled )

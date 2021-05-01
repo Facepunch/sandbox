@@ -1,18 +1,13 @@
 ﻿using Sandbox;
 using System.Linq;
 
-public partial class PhysGun : IFrameUpdate
+public partial class PhysGun
 {
 	Particles Beam;
 	Particles EndNoHit;
 
 	Vector3 lastBeamPos;
 	ModelEntity lastGrabbedEntity;
-
-	public virtual void OnFrame()
-	{
-		UpdateEffects();
-	}
 
 	protected virtual void KillEffects()
 	{
@@ -37,6 +32,7 @@ public partial class PhysGun : IFrameUpdate
 		}
 	}
 
+	[Event("frame")]
 	protected virtual void UpdateEffects()
 	{
 		var owner = Owner;

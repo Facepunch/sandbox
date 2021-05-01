@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 
 [Library( "noise_test", Title = "Noise Test", Spawnable = true )]
-public partial class NoiseTest : Prop, IFrameUpdate
+public partial class NoiseTest : Prop
 {
 	public override void Spawn()
 	{
@@ -11,6 +11,7 @@ public partial class NoiseTest : Prop, IFrameUpdate
 		SetupPhysicsFromModel( PhysicsMotionType.Dynamic, false );
 	}
 
+	[Event("frame")]
 	public void OnFrame()
 	{
 		var pos = WorldPos;

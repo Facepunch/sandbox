@@ -2,7 +2,7 @@
 using System;
 
 [Library( "ent_drone" , Title = "Drone", Spawnable = true )]
-public partial class DroneEntity : Prop, IPhysicsUpdate, IPlayerControllable, IFrameUpdate
+public partial class DroneEntity : Prop, IPhysicsUpdate, IPlayerControllable
 {
 	public virtual float altitudeAcceleration => 2000;
 	public virtual float movementAcceleration => 5000;
@@ -131,6 +131,7 @@ public partial class DroneEntity : Prop, IPhysicsUpdate, IPlayerControllable, IF
 
 	private float spinAngle;
 
+	[Event("frame")]
 	public void OnFrame()
 	{
 		spinAngle += 10000.0f * Time.Delta;
