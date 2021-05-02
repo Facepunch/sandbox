@@ -56,7 +56,7 @@ partial class Gun : Weapon
 		// ShootBullet is coded in a way where we can have bullets pass through shit
 		// or bounce off shit, in which case it'll return multiple results
 		//
-		foreach ( var tr in TraceBullet( pos, pos + dir * 4000 ) )
+		foreach ( var tr in TraceBullet( pos, pos + forward ) )
 		{
 			tr.Surface.DoBulletImpact( tr );
 
@@ -64,7 +64,8 @@ partial class Gun : Weapon
 			if ( !tr.Entity.IsValid() ) continue;
 
 			//
-			// We turn predictiuon off for this, so aany exploding effects
+			// We turn prediction off for this, so any exploding effects only
+			// happen once
 			//
 			using ( Prediction.Off() )
 			{
