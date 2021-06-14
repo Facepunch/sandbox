@@ -108,6 +108,8 @@
 					.WithMaxRestLength( 100 )
 					.WithCollisionsEnabled()
 					.Create();
+
+				SandboxGame.Undos.Insert( 0, new Undo( Owner, ent ) );
 			}
 		}
 	}

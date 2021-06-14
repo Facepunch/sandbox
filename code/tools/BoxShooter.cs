@@ -32,6 +32,8 @@
 
 			ent.SetModel( "models/citizen_props/crate01.vmdl" );
 			ent.Velocity = Owner.EyeRot.Forward * 1000;
+
+			SandboxGame.Undos.Insert( 0, new Undo( Owner, ent ) );
 		}
 	}
 
