@@ -95,7 +95,7 @@ partial class SandboxGame : Game
 		}
 	}
 
-	[ServerCmd( "player_show" )]
+	[ServerCmd( "player_show", Help = "Hides the player")]
 	public static void DrawPlayer()
 	{
 		var owner = ConsoleSystem.Caller?.Pawn;
@@ -103,7 +103,7 @@ partial class SandboxGame : Game
 		setPlayerAlpha( 100, owner );
 	}
 
-	[ServerCmd( "player_hide" )]
+	[ServerCmd( "player_hide", Help = "Shows the player" )]
 	public static void HidePlayer()
 	{
 		var owner = ConsoleSystem.Caller?.Pawn;
