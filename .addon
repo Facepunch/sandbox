@@ -1,5 +1,4 @@
 {
 	"sharedassets": "*.*",
-	"type": "game",
-	"ident": "facepunch.sandbox"
+	"type": "game"
 }
