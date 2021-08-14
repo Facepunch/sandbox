@@ -9,6 +9,8 @@ public partial class PhysGun
 	Vector3 lastBeamPos;
 	ModelEntity lastGrabbedEntity;
 
+	private static bool drawEfx { get; set; } = true;
+
 	[Event.Frame]
 	public void OnFrame()
 	{
@@ -43,6 +45,11 @@ public partial class PhysGun
 
 	protected virtual void UpdateEffects()
 	{
+		if ( !drawEfx )
+		{
+			return;
+		}
+
 		var owner = Owner;
 
 		if ( owner == null || !BeamActive || !IsActiveChild() )
@@ -120,5 +127,11 @@ public partial class PhysGun
 
 			EndNoHit.SetPosition( 0, lastBeamPos );
 		}
+	}
+
+	[ClientCmd("physgun_toggleefx", Help = "Toggle the Physgun grabbing effects")]
+	public static void DrawEfx()
+	{
+		drawEfx = !drawEfx;
 	}
 }

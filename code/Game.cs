@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 
-[Library( "sandbox", Title = "Sandbox" )]
+[Library( "deltabox", Title = "Deltabox" )]
 partial class SandboxGame : Game
 {
 	public SandboxGame()
@@ -93,5 +93,37 @@ partial class SandboxGame : Game
 				basePlayer.DevController = new NoclipController();
 			}
 		}
+	}
+
+	[ServerCmd( "player_show" )]
+	public static void DrawPlayer()
+	{
+		var owner = ConsoleSystem.Caller?.Pawn;
+
+		setPlayerAlpha( 100, owner );
+	}
+
+	[ServerCmd( "player_hide" )]
+	public static void HidePlayer()
+	{
+		var owner = ConsoleSystem.Caller?.Pawn;
+
+		setPlayerAlpha( 0, owner );
+	}
+
+	private static void setPlayerAlpha( int alpha, Entity player )
+	{
+		ModelEntity playerModel = player as ModelEntity;
+
+		for ( int i = 0; i < playerModel.Children.Count; i++ )
+		{
+			if ( playerModel.Children[i] is ModelEntity )
+			{
+				ModelEntity model = playerModel.Children[i] as ModelEntity;
+				model.RenderAlpha = alpha;
+			}
+		}
+
+		playerModel.RenderAlpha = alpha;
 	}
 }
