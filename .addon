@@ -1,5 +1,5 @@
 {
 	"sharedassets": "*.*",
-	"type": "game",
-	"ident": "facepunch.sandbox"
+	"type": "game"
+	"ident": "deltafive.deltabox"
 }
