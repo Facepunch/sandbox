@@ -1,7 +1,7 @@
 ﻿namespace Sandbox.Tools
 {
 	[Library( "tool_hotdogballoon", Title = "Hotdog Balloon", Description = "Create Hotdog Balloons!", Group = "fun" )]
-	public partial class HotdogBallon : BaseTool
+	public partial class HotdogBalloon : BaseTool
 	{
 		PreviewEntity previewModel;
 		private static string ballonModel = "models/citizen_props/hotdog01.vmdl";
