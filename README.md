@@ -16,3 +16,6 @@ physgun_toggleefx - Toggle the Physgun grabbing effects on props/ragdolls.
   * Usage: cam_setfov <number>
   * Example: cam_setfov 90
 * player_hide and player_show - Hides or shows the player.
+ 
+ You can bind keys to those commands in the console like this:  
+ bind F8 physgun_toggleefx
