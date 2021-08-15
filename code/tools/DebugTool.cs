@@ -1,4 +1,4 @@
-﻿namespace Sandbox.Tools
+﻿/*namespace Sandbox.Tools
 {
 	[Library( "tool_debug", Title = "Debug Tool", Description = "", Group = "construction" )]
 	public partial class DebugTool : BaseTool
@@ -53,4 +53,4 @@
 			base.Deactivate();
 		}
 	}
-}
+}*/
