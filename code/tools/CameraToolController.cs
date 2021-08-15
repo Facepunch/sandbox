@@ -16,7 +16,7 @@ namespace Sandbox.Tools
 
 				if ( !FoundCamEnt() )
 				{
-					DebugOverlay.ScreenText( new Vector2( Screen.Width / 2, Screen.Height / 2 ), 0, Color.Yellow, "Use Camera Spawner first!", 1 );
+					DebugOverlay.ScreenText( new Vector2( Screen.Width / 2 + 10, Screen.Height / 2 + 20 ), 0, Color.Yellow, "Use Camera Spawner first!", 1 );
 					return;
 				}
 

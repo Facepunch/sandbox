@@ -33,7 +33,7 @@ namespace Sandbox.Tools
 			for ( int i = 0; i < Entity.All.Count; i++ )
 			{
 				//Don't delete other peoples cameras
-				if ( Entity.All[i] is ToolCameraEntity tc && Entity.All[i].Owner == this.Owner)
+				if ( Entity.All[i] is ToolCameraEntity tc && tc.Owner == this.Owner)
 				{
 					tc.Delete();
 				}
