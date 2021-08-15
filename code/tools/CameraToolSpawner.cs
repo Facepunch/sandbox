@@ -32,7 +32,8 @@ namespace Sandbox.Tools
 			//we can only support one camera at a time
 			for ( int i = 0; i < Entity.All.Count; i++ )
 			{
-				if ( Entity.All[i] is ToolCameraEntity tc )
+				//Don't delete other peoples cameras
+				if ( Entity.All[i] is ToolCameraEntity tc && Entity.All[i].Owner == this.Owner)
 				{
 					tc.Delete();
 				}
@@ -46,6 +47,8 @@ namespace Sandbox.Tools
 			};
 
 			ent.SetPhys( enablePhys );
+
+			CreateHitEffects( ent.Position );
 		}
 	}
 }
