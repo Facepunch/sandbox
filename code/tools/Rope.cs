@@ -71,7 +71,7 @@
 				}
 				else
 				{
-					rope.SetEntityBone( 1, tr.Entity, tr.Bone, new Transform( localOrigin2 * (1.0f / tr.Entity.Scale) ) );
+					rope.SetEntityBone( 1, tr.Body.Entity, tr.Bone, new Transform( localOrigin2 * (1.0f / tr.Entity.Scale) ) );
 				}
 
 				var spring = PhysicsJoint.Spring
