@@ -22,9 +22,8 @@
 		{
 			if ( TryCreatePreview( ref previewModel, Model ) )
 			{
-				previewModel.RelativeToNormal = false;
-				previewModel.OffsetBounds = true;
-				previewModel.PositionOffset = -previewModel.CollisionBounds.Center;
+				previewModel.PositionOffset = new Vector3( 0f, 0f, 5f );
+				previewModel.RotationOffset = Rotation.From( new Angles( -90, 180, 0 ) );
 			}
 		}
 
@@ -68,6 +67,7 @@
 					QuadraticAttenuation = 1.0f,
 					Brightness = 1,
 					Color = Color.Random,
+					Rotation = Rotation.LookAt( tr.Normal, dir ) * Rotation.From( new Angles( -90, 180, 0 ) ),
 					LightCookie = Texture.Load( "materials/effects/lightcookie.vtex" )
 				};
 

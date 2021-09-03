@@ -22,9 +22,8 @@
 		{
 			if ( TryCreatePreview( ref previewModel, Model ) )
 			{
-				previewModel.RelativeToNormal = false;
-				previewModel.OffsetBounds = true;
-				previewModel.PositionOffset = -previewModel.CollisionBounds.Center;
+				previewModel.PositionOffset = new Vector3( 0f, 0f, 5f);
+				previewModel.RotationOffset = Rotation.From( new Angles( -90, 180, 0 ) );
 			}
 		}
 
@@ -71,13 +70,14 @@
 					OuterConeAngle = 45,
 					Brightness = 10,
 					Color = Color.Random,
-					Rotation = Rotation.Identity,
+					//Rotation = Rotation.Identity,
+					Rotation = Rotation.LookAt( tr.Normal, dir ) * Rotation.From( new Angles( -90, 180, 0 ) ),
 					LightCookie = Texture.Load( "materials/effects/lightcookie.vtex" )
 				};
 
 				lamp.SetModel( Model );
 				lamp.SetupPhysicsFromModel( PhysicsMotionType.Dynamic, false );
-				lamp.Position = tr.EndPos + -lamp.CollisionBounds.Center + tr.Normal * lamp.CollisionBounds.Size * 0.5f;
+				lamp.Position = tr.EndPos + tr.Normal * lamp.CollisionBounds.Size * 0.5f;
 			}
 		}
 	}
