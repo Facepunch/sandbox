@@ -78,6 +78,17 @@ partial class SandboxGame : Game
 		//Log.Info( $"ent: {ent}" );
 	}
 
+	[ServerCmd( "undo" )]
+	public static void DoUndo()
+	{
+		var client = ConsoleSystem.Caller;
+
+		if ( client == null )
+			return;
+
+		Undo.DoUndo( client );
+	}
+
 	public override void DoPlayerNoclip( Client player )
 	{
 		if ( player.Pawn is Player basePlayer )
