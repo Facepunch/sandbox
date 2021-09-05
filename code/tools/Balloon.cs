@@ -83,7 +83,10 @@
 				Tint = Color.Random.ToColor32();
 
 				if ( !useRope )
+				{
+					Undo.AddEntity( Owner, ent, "Balloon" );
 					return;
+				}
 
 				var rope = Particles.Create( "particles/rope.vpcf" );
 				rope.SetEntity( 0, ent );
