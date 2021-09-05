@@ -120,6 +120,14 @@
 					rope?.Destroy( true );
 					spring.Remove();
 				} );
+
+				/*
+				 * Demonstration of the implementation of the undo block in several ways.
+				 */
+				var undo = new UndoEntry( Owner, ent, "Balloon" );
+				undo.AddItem( new ParticlesUndo( rope ) );
+				undo.OnFinishUndo += ( Client owner, string name ) => spring.Remove();
+				undo.Save();
 			}
 		}
 	}
