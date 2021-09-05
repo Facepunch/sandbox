@@ -10,20 +10,6 @@ public class Undo
 	public static List<UndoEntry> Items = new List<UndoEntry>();
 
 	/// <summary>
-	/// Called before the action is undo. The event can be used to cancel a call.
-	/// 1. UndoEntry - The class that stores the items to be undo.
-	/// 2. string - The name of the block to be undo.
-	/// </summary>
-	public static Func<UndoEntry, bool> OnUndo { get; set; }
-
-	/// <summary>
-	/// Event called after deleting entities from a undo block.
-	/// 1. Client - Owner of undo items.
-	/// 2. string - The name of the block to be undo.
-	/// </summary>
-	public static Action<Client, string> OnFinishUndo { get; set; }
-
-	/// <summary>
 	/// Adds an item to the undo list.
 	/// </summary>
 	/// <param name="item">Item undo object</param>
@@ -77,12 +63,8 @@ public class Undo
 		string Nick = owner.Name;
 		string Name = item.GetUndoName();
 
-		bool Result = ( OnUndo != null ) ? OnUndo( item ) : true;
-
-		if ( !Result || !item.DoUndo() )
+		if ( !item.DoUndo() )
 			return;
-
-		OnFinishUndo?.Invoke( owner, Name );
 
 		Log.Info( $"Player { Nick } undo the { Name }" );
 
