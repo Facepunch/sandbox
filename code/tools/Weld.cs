@@ -45,6 +45,9 @@
 					else
 					{
 						target.Weld( rootProp );
+
+						Undo.AddItem( new UndoEntry( Owner, new WeldUndo( target, rootProp ), "Weld" ) );
+
 						target = null;
 					}
 				}
