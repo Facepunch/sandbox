@@ -92,6 +92,11 @@
 					spring.Remove();
 				} );
 
+				var undo = new UndoEntry( Owner, "Rope" );
+				undo.AddItem( new ParticlesUndo( rope ) );
+				undo.AddItem( new PhysicsJointUndo( spring ) );
+				undo.Save();
+
 				CreateHitEffects( tr.EndPos );
 
 				Reset();
