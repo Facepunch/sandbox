@@ -29,7 +29,12 @@ namespace Sandbox.Tools
 				if ( tr.Entity is not ModelEntity modelEnt )
 					return;
 
+
+				Color32 pastColor = modelEnt.RenderColor;
 				modelEnt.RenderColor = Color.Random.ToColor32();
+
+				if ( tr.Entity is not WorldEntity )
+					Undo.AddItem( new UndoEntry( Owner, new ModelColorUndo( modelEnt, pastColor ), "Color" ) );
 
 				CreateHitEffects( tr.EndPos );
 			}
