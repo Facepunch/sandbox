@@ -6,7 +6,7 @@ public class ParticlesUndo : ICanUndo
 
 	public ParticlesUndo( Particles particles ) => this.particles = particles;
 
-	public void DoUndo() => particles?.Destroy();
+	public void DoUndo() => particles?.Destroy( true );
 
 	public bool IsValidUndo() => particles != null;
 }
