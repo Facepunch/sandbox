@@ -35,6 +35,7 @@ namespace Sandbox.Tools
 				if ( tr.Entity is LightEntity || tr.Entity is LampEntity )
 					return;
 
+				float postScale = tr.Entity.Scale;
 				var scale = reset ? 1.0f : Math.Clamp( tr.Entity.Scale + ((0.5f * Time.Delta) * resizeDir), 0.4f, 4.0f );
 
 				if ( tr.Entity.Scale != scale )
@@ -55,6 +56,7 @@ namespace Sandbox.Tools
 
 				if ( Input.Pressed( InputButton.Attack1 ) || Input.Pressed( InputButton.Attack2 ) || reset )
 				{
+					Undo.AddItem( new UndoEntry( Owner, new EntityScaleUndo( tr.Entity, postScale ), "Resizer" ) );
 					CreateHitEffects( tr.EndPos );
 				}
 			}
