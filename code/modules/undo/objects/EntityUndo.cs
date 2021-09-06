@@ -8,5 +8,5 @@ public class EntityUndo : ICanUndo
 
 	public void DoUndo() => entity.Delete();
 
-	public bool IsValidUndo() => ( entity != null && entity.IsValid() );
+	public bool IsValidUndo() => entity != null && entity.IsValid();
 }
