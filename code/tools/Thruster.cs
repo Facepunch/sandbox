@@ -83,6 +83,8 @@
 				}
 
 				ent.SetModel( "models/thruster/thrusterprojector.vmdl" );
+
+				Undo.AddEntity( Owner, ent, "Thruster" );
 			}
 		}
 	}
