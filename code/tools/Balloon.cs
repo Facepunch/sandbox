@@ -82,11 +82,10 @@
 
 				Tint = Color.Random.ToColor32();
 
+				Undo.AddEntity( Owner, ent, "Balloon" );
+
 				if ( !useRope )
-				{
-					Undo.AddEntity( Owner, ent, "Balloon" );
 					return;
-				}
 
 				var rope = Particles.Create( "particles/rope.vpcf" );
 				rope.SetEntity( 0, ent );
@@ -120,14 +119,6 @@
 					rope?.Destroy( true );
 					spring.Remove();
 				} );
-
-				/*
-				 * Demonstration of the implementation of the undo block in several ways.
-				 */
-				var undo = new UndoEntry( Owner, ent, "Balloon" );
-				undo.AddItem( new ParticlesUndo( rope ) );
-				undo.OnFinishUndo += ( Client owner, string name ) => spring.Remove();
-				undo.Save();
 			}
 		}
 	}
