@@ -77,6 +77,8 @@
 					.WithPivot( tr.EndPos )
 					.WithBasis( Rotation.LookAt( tr.Normal ) * Rotation.From( new Angles( 90, 0, 0 ) ) )
 					.Create();
+
+				Undo.AddEntity( Owner, ent, "Wheel" );
 			}
 		}
 	}
