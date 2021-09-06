@@ -33,10 +33,8 @@ public class UndoEntry
 
 	/// <summary>
 	/// Event called after deleting entities from a undo block.
-	/// 1. Client - Owner of undo items.
-	/// 2. string - The name of the block to be undo.
 	/// </summary>
-	public Action<Client, string> OnFinishUndo { get; set; }
+	public Action OnFinishUndo { get; set; }
 
 	/// <summary>
 	/// Undo block constructor.
@@ -120,7 +118,7 @@ public class UndoEntry
 			if ( item != null && item.IsValidUndo() )
 				item.DoUndo();
 
-		OnFinishUndo?.Invoke( undoOwner, undoName );
+		OnFinishUndo?.Invoke();
 		return true;
 	}
 
