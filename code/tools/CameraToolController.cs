@@ -30,7 +30,7 @@ namespace Sandbox.Tools
 						}
 
 						player.MainCamera = new TestCamera();
-						CreateHitEffects( ((this.Owner as SandboxPlayer).MainCamera as TestCamera).Pos );
+						//CreateHitEffects( ((this.Owner as SandboxPlayer).MainCamera as TestCamera).Pos );
 					}
 				}
 
@@ -43,7 +43,7 @@ namespace Sandbox.Tools
 							return;
 						}
 						player.MainCamera = new FirstPersonCamera();
-						CreateHitEffects( this.Owner.Position );
+						//CreateHitEffects( this.Owner.Position );
 					}
 				}
 			}
