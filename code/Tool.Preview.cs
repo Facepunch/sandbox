@@ -80,11 +80,11 @@ namespace Sandbox.Tools
 
 				if ( IsPreviewTraceValid( tr ) && preview.UpdateFromTrace( tr ) )
 				{
-					preview.RenderAlpha = 0.5f;
+					preview.RenderColor = preview.RenderColor.WithAlpha( 0.5f );
 				}
 				else
 				{
-					preview.RenderAlpha = 0.0f;
+					preview.RenderColor = preview.RenderColor.WithAlpha( 0.0f );
 				}
 			}
 		}

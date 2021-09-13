@@ -4,7 +4,7 @@
 	public partial class BalloonTool : BaseTool
 	{
 		[Net]
-		public Color32 Tint { get; set; }
+		public Color Tint { get; set; }
 
 		PreviewEntity previewModel;
 
@@ -14,7 +14,7 @@
 
 			if ( Host.IsServer )
 			{
-				Tint = Color.Random.ToColor32();
+				Tint = Color.Random;
 			}
 		}
 
@@ -80,7 +80,7 @@
 				ent.PhysicsBody.GravityScale = -0.2f;
 				ent.RenderColor = Tint;
 
-				Tint = Color.Random.ToColor32();
+				Tint = Color.Random;
 
 				if ( !useRope )
 					return;
