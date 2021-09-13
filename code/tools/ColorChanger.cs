@@ -66,7 +66,7 @@ namespace Sandbox.Tools
 
 				try
 				{
-					modelEnt.RenderColor = getColor(colorIndex);
+					modelEnt.RenderColor = colors[colorIndex];
 				}
 				catch ( IndexOutOfRangeException ex )
 				{
@@ -76,11 +76,6 @@ namespace Sandbox.Tools
 
 				CreateHitEffects( tr.EndPos ); 
 			}
-		}
-
-		private Color getColor(int index)
-		{
-			return colors[index];
 		}
 	}
 }
