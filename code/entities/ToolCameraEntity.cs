@@ -17,7 +17,7 @@ public partial class ToolCameraEntity: Prop
 	[Event.Frame]
 	public void OnFrame()
 	{
-		if ( this.Owner?.Camera is TestCamera tc)
+		if ( this.Owner?.Camera is ToolCamera tc)
 		{
 			//Yes, we do need to set this every frame
 			//cameras really don't like having their properties set from the outside
