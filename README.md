@@ -1,8 +1,7 @@
 Sandbox for S&Box but with a bad camera tool, plus a few others.
 
 Short overview:
-* Camera Spawner: Spawn a camera.
-* Camera Controller: Set your viewpoint to the spawned camera.
+* Camera Tool: Spawn and control a Camera.
 * Color Changer: Change the color of props in a predicable way (also allows for transparent props).
 * Disable Collision: Disable Collision on props.
 * Hotdog Balloon: Balloons, but Hotdogs.
