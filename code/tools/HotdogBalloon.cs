@@ -76,7 +76,7 @@
 
 				ent.SetModel( ballonModel );
 				ent.PhysicsBody.GravityScale = -0.1f;
-				ent.RenderColor = Color32.White;
+				ent.RenderColor = Color.White;
 
 				if ( !useRope )
 					return;

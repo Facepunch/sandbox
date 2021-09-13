@@ -70,7 +70,8 @@ namespace Sandbox.Tools
 
 				try
 				{
-					modelEnt.RenderColorAndAlpha = getColor( colorIndex );
+					//modelEnt.RenderColorAndAlpha = getColor( colorIndex );
+					modelEnt.RenderColor = getColor(colorIndex);
 					
 					if (colorIndex == 8)
 					{
