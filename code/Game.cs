@@ -15,9 +15,10 @@ partial class SandboxGame : Game
 	{
 		base.ClientJoined( cl );
 		var player = new SandboxPlayer( cl );
-		player.Respawn();
 
 		cl.Pawn = player;
+		
+		player.Respawn();
 	}
 
 	protected override void OnDestroy()
