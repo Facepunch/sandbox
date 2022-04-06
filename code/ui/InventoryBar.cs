@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandbox.UI;
+using System;
 using System.Collections.Generic;
 
 public class InventoryBar : Panel
@@ -20,8 +21,8 @@ public class InventoryBar : Panel
 		base.Tick();
 
 		var player = Local.Pawn as Player;
-		if ( player == null ) return;
-		if ( player.Inventory == null ) return;
+		if ( player is null ) return;
+		if ( player.Inventory is null ) return;
 
 		for ( int i = 0; i < slots.Count; i++ )
 		{
@@ -33,7 +34,7 @@ public class InventoryBar : Panel
 	{
 		var player = Local.Pawn as Player;
 
-		if ( ent == null )
+		if ( ent is null )
 		{
 			inventoryIcon.Clear();
 			return;
@@ -48,11 +49,11 @@ public class InventoryBar : Panel
 	public void ProcessClientInput( InputBuilder input )
 	{
 		var player = Local.Pawn as Player;
-		if ( player == null )
+		if ( player is null )
 			return;
 
 		var inventory = player.Inventory;
-		if ( inventory == null )
+		if ( inventory is null )
 			return;
 
 		if ( player.ActiveChild is PhysGun physgun && physgun.BeamActive )
@@ -60,15 +61,17 @@ public class InventoryBar : Panel
 			return;
 		}
 
-		if ( input.Pressed( InputButton.Slot1 ) ) SetActiveSlot( input, inventory, 0 );
-		if ( input.Pressed( InputButton.Slot2 ) ) SetActiveSlot( input, inventory, 1 );
-		if ( input.Pressed( InputButton.Slot3 ) ) SetActiveSlot( input, inventory, 2 );
-		if ( input.Pressed( InputButton.Slot4 ) ) SetActiveSlot( input, inventory, 3 );
-		if ( input.Pressed( InputButton.Slot5 ) ) SetActiveSlot( input, inventory, 4 );
-		if ( input.Pressed( InputButton.Slot6 ) ) SetActiveSlot( input, inventory, 5 );
-		if ( input.Pressed( InputButton.Slot7 ) ) SetActiveSlot( input, inventory, 6 );
-		if ( input.Pressed( InputButton.Slot8 ) ) SetActiveSlot( input, inventory, 7 );
-		if ( input.Pressed( InputButton.Slot9 ) ) SetActiveSlot( input, inventory, 8 );
+		// copy-paste removal
+		for ( int i = 0; i < 9; i++ )
+		{
+			if ( Enum.TryParse<InputButton>( $"Slot{i + 1}", out var button ) )
+			{
+				if ( input.Pressed( button ) )
+				{
+					SetActiveSlot( input, inventory, i );
+				}
+			}
+		}
 
 		if ( input.MouseWheel != 0 ) SwitchActiveSlot( input, inventory, -input.MouseWheel );
 	}
@@ -77,14 +80,14 @@ public class InventoryBar : Panel
 	{
 		var player = Local.Pawn as Player;
 
-		if ( player == null )
+		if ( player is null )
 			return;
 
 		var ent = inventory.GetSlot( i );
 		if ( player.ActiveChild == ent )
 			return;
 
-		if ( ent == null )
+		if ( ent is null )
 			return;
 
 		input.ActiveChild = ent;

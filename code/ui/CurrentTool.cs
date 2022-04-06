@@ -17,9 +17,9 @@ public class CurrentTool : Panel
 	public override void Tick()
 	{
 		var tool = GetCurrentTool();
-		SetClass( "active", tool != null );
+		SetClass( "active", tool is not null );
 
-		if ( tool != null )
+		if ( tool is not null )
 		{
 			Title.SetText( tool.ClassInfo.Title );
 			Description.SetText( tool.ClassInfo.Description );
@@ -29,10 +29,10 @@ public class CurrentTool : Panel
 	BaseTool GetCurrentTool()
 	{
 		var player = Local.Pawn as Player;
-		if ( player == null ) return null;
+		if ( player is null ) return null;
 
 		var inventory = player.Inventory;
-		if ( inventory == null ) return null;
+		if ( inventory is null ) return null;
 
 		if ( inventory.Active is not Tool tool ) return null;
 

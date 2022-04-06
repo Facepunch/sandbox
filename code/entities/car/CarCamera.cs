@@ -119,7 +119,7 @@ public class CarCamera : CameraMode
 		base.BuildInput( input );
 
 		var pawn = Local.Pawn;
-		if ( pawn == null ) return;
+		if ( pawn is null ) return;
 
 		if ( (Math.Abs( input.AnalogLook.pitch ) + Math.Abs( input.AnalogLook.yaw )) > 0.0f )
 		{

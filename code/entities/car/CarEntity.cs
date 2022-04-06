@@ -527,7 +527,7 @@ public partial class CarEntity : Prop, IUse
 
 	public bool IsUsable( Entity user )
 	{
-		return Driver == null;
+		return Driver is null;
 	}
 
 	public override void StartTouch( Entity other )
@@ -591,7 +591,7 @@ public partial class CarEntity : Prop, IUse
 				eventData.Entity.TakeDamage( DamageInfo.Generic( damage )
 					.WithFlag( DamageFlags.PhysicsImpact )
 					.WithFlag( DamageFlags.Vehicle )
-					.WithAttacker( Driver != null ? Driver : this, Driver != null ? this : null )
+					.WithAttacker( Driver is not null ? Driver : this, Driver is not null ? this : null )
 					.WithPosition( eventData.Position )
 					.WithForce( eventData.PreVelocity ) );
 

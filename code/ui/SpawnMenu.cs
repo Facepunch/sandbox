@@ -14,7 +14,7 @@ public partial class SpawnMenu : Panel
 	{
 		Instance = this;
 
-		StyleSheet.Load( "/ui/SpawnMenu.scss" );
+		StyleSheet.Load( "/UI/SpawnMenu.scss" );
 
 		var left = Add.Panel( "left" );
 		{
@@ -95,7 +95,7 @@ public partial class SpawnMenu : Panel
 		{
 			if ( child is Button button )
 			{
-				child.SetClass( "active", tool != null && button.Text == tool.Title );
+				child.SetClass( "active", tool is not null && button.Text == tool.Title );
 			}
 		}
 	}
