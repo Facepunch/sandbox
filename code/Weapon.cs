@@ -245,6 +245,7 @@ public partial class Weapon : BaseWeapon, IUse
 
 		for ( int i = 0; i < numBullets; i++ )
 		{
+			Game.SetRandomSeed( Time.Tick + i );
 			ShootBullet( ray.Position, ray.Forward, spread, force / numBullets, damage, bulletSize );
 		}
 	}
