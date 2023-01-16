@@ -293,10 +293,10 @@ partial class SandboxPlayer : Player
 	public override void FrameSimulate( IClient cl )
 	{
 		Camera.Rotation = ViewAngles.ToRotation();
+		Camera.FieldOfView = Screen.CreateVerticalFieldOfView( Game.Preferences.FieldOfView );
 
 		if ( ThirdPersonCamera )
 		{
-			Camera.FieldOfView = Screen.CreateVerticalFieldOfView( Game.Preferences.FieldOfView );
 			Camera.FirstPersonViewer = null;
 
 			Vector3 targetPos;
@@ -317,10 +317,25 @@ partial class SandboxPlayer : Player
 
 			Camera.Position = tr.EndPosition;
 		}
+		else if ( LifeState != LifeState.Alive && Corpse.IsValid() )
+		{
+			Corpse.EnableDrawing = true;
+
+			var pos = Corpse.GetBoneTransform( 0 ).Position + Vector3.Up * 10;
+			var targetPos = pos + Camera.Rotation.Backward * 100;
+
+			var tr = Trace.Ray( pos, targetPos )
+				.WithAnyTags( "solid" )
+				.Ignore( this )
+				.Radius( 8 )
+				.Run();
+
+			Camera.Position = tr.EndPosition;
+			Camera.FirstPersonViewer = null;
+		}
 		else
 		{
 			Camera.Position = EyePosition;
-			Camera.FieldOfView = Screen.CreateVerticalFieldOfView( Game.Preferences.FieldOfView );
 			Camera.FirstPersonViewer = this;
 			Camera.Main.SetViewModelCamera( 90f );
 		}

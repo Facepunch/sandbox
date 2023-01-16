@@ -65,6 +65,9 @@ partial class SandboxPlayer
 
 		Corpse = ent;
 
+		if ( IsLocalPawn )
+			Corpse.EnableDrawing = false;
+
 		ent.DeleteAsync( 10.0f );
 	}
 }
