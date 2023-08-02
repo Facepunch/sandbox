@@ -2,8 +2,6 @@ iconpanel {
     font-family: "Material Icons";
 }
 
-$rounding: 4px;
-
 Chat {
     position: absolute;
     bottom: -16px;
@@ -24,7 +22,7 @@ Chat {
         min-height: 44px;
         opacity: 0;
         background-color: rgba( #090d10, 0.9 );
-        border-radius: $rounding;
+        border-radius: $panel-rounding;
         margin-bottom: 28px;
     }
 
@@ -39,7 +37,7 @@ Chat {
     .placeholder, .content-label {
         color: darken( #c0cee7, 20% );
         font-size: 14px;
-        font-family: Poppins;
+        font-family: $font-family;
         font-weight: 400;
         text-shadow: 2px 2px 1px rgba( black, 0.1 );
         margin-top: 11px;
@@ -57,7 +55,7 @@ Chat {
             flex-shrink: 0;
             background-color: rgba( #090d10, 0.9 );
             padding: 4px 10px;
-            border-radius: $rounding;
+            border-radius: $panel-rounding;
             transition: opacity 0.15s ease;
             margin-bottom: 6px;
 
@@ -68,7 +66,7 @@ Chat {
                 margin-top: 3px;
                 font-weight: 700;
                 font-size: 16px;
-                color: $blue;
+                color: $primary-color;
                 padding-right: 8px;
                 text-shadow: 2px 2px 1px rgba( black, 0.3 );
             }
@@ -117,7 +115,7 @@ Chat {
         backdrop-filter-blur: 20px;
         background-image: linear-gradient( to top, rgba( #1b1b35, 0.9 ), rgba( #1c1c38, 0.85 ), rgba( #1c1c38, 0.8 ) 80%, rgba( #1c1c38, 0.5 ) );
         bottom: 0;
-        border-radius: $rounding $rounding 0 0;
+        border-radius: $panel-rounding $panel-rounding 0 0;
 
         textentry {
             opacity: 1;

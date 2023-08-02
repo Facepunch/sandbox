@@ -3,7 +3,6 @@
 .package-list
 {
     flex-wrap: wrap;
-    justify-content: space-around;
     overflow: scroll;
 }
 
@@ -28,8 +27,8 @@
 
 .columned .nav .button
 {
-    background-color: rgba( white, 0.01 );
-    color: rgba( white, 0.9 );
+    background-color: rgba( $panel-text-color, 0.01 );
+    color: rgba( $panel-text-color, 0.9 );
     padding: 10px;
     border-radius: 4px;
     font-weight: normal;
@@ -37,21 +36,21 @@
 
     &:hover
     {
-        background-color: $blue;
-        color: white;
+        background-color: $primary-color;
+        color: $panel-text-color;
     }
 
     &:active
     {
-        background-color: $blue;
-        color: white;
+        background-color: $primary-color;
+        color: $panel-text-color;
         transform: scale( 0.97 );
     }
 
     &.active
     {
-        background-color: $blue;
-        color: white;
+        background-color: $primary-color;
+        color: $panel-text-color;
     }
 }
 
@@ -67,13 +66,13 @@
 
         &:first-child
         {
-            border-radius: 5px 0 0 5px;
+            border-radius: $panel-rounding 0 0 $panel-rounding;
             margin-left: 0;
         }
 
         &:last-child
         {
-            border-radius: 0 5px 5px 0;
+            border-radius: 0 $panel-rounding $panel-rounding 0;
         }
     }
 }

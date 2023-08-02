@@ -1,6 +1,4 @@
-﻿
-$blue: #3273eb;
-
+﻿@import "/Styles/variables.scss";
 @import "/Styles/spawnmenu/spawnmenu.scss";
 @import "/Styles/toolbar/toolbar.scss";
 @import "/Styles/hud/chatbox.scss";
@@ -12,20 +10,20 @@ Health
     bottom: 48px;
     font-size: 30px;
     font-weight: bold;
-    color: white;
+    color: $panel-text-color;
     height: 80px;
     padding: 0 30px;
     align-items: center;
-    font-family: Poppins;
-    background-color: rgba( #111, 0.2 );
+    font-family: $font-family;
+    background-color: rgba( $panel-background, 0.2 );
 }
 
 CurrentTool
 {
-    border-left: 10px solid $blue;
+    border-left: 10px solid $primary-color;
     
     position: absolute;
-    background-color: rgba( #111, 0.5 );
+    background-color: rgba( $panel-background, 0.5 );
     top: 100px;
     left: 100px;
     padding: 20px 50px;
@@ -38,26 +36,25 @@ CurrentTool
         opacity: 1.0;
     }
 
+    .title, .description {
+        color: $panel-text-color;
+        font-family: $font-family;
+        mix-blend-mode: lighten;
+        text-transform: uppercase;
+    }
+
     .title
     {
         font-size: 30px;
-        color: white;
-        font-family: Poppins;
         font-weight: 800;
-        mix-blend-mode: lighten;
-        text-transform: uppercase;
     }
 
     .description
     {
         font-size: 12px;
         font-weight: normal;
-        color: white;
         opacity: 0.5;
-        font-family: Poppins;
         font-weight: 500;
-        mix-blend-mode: lighten;
-        text-transform: uppercase;
     }
 }
 
@@ -90,10 +87,10 @@ i
 
 .tooltip
 {
-    font-family: Roboto;
-    background-color: rgba( #fea, 0.95 );
-    border: 1px solid rgba( #555, 0.1 );
+    font-family: $font-family;
+    background-color: $tooltip-background;
+    border: 1px solid $tooltip-border;
     padding: 2px 5px;
-    border-radius: 3px;
-    color: #222;
+    border-radius: $panel-rounding;
+    color: $tooltip-text-color;
 }

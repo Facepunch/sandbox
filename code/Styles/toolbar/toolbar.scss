@@ -22,13 +22,13 @@ InventoryIcon {
     position: relative;
     transition: all 0.6s ease-in-out;
     margin-top: 10px;
-    font-family: poppins;
-    background-color: rgba( #111, 0.2 );
-    border-bottom: 0px solid $blue;
+    font-family: $font-family;
+    background-color: rgba( $panel-background, 0.2 );
+    border-bottom: 0px solid $primary-color;
 
     .item-name {
         padding: 5px;
-        color: white;
+        color: $panel-text-color;
         text-align: center;
         left: 0;
         right: 0;
@@ -52,8 +52,8 @@ InventoryIcon {
     }
 
     &.active {
-        background-color: rgba( #111, 0.3 );
-        border-bottom: 5px solid #3273eb;
+        background-color: rgba( $panel-background, 0.3 );
+        border-bottom: 5px solid $primary-color;
         height: 95px;
         width: 95px;
         transition: all 0.1s ease-out;

@@ -13,10 +13,9 @@ spawnmenu .tabs
 		font-size: 23px;
 		align-items: center;
 		font-weight: 600;
-		opacity: 0.2;
-		color: #fff;
+		color: rgba($panel-text-color, 0.5);
 		cursor: pointer;
-		font-family: Poppins;
+		font-family: $font-family;
 		border-bottom: 5px solid transparent;
 		text-transform: lowercase;
         
@@ -26,20 +25,18 @@ spawnmenu .tabs
 			text-shadow: 1px 1px 4px rgba( black, 0.2 );
 		}
 
-		&:hover
-		{
-			opacity: 1;
+		&:hover {
+			color: $panel-text-color;
 		}
 
 		&.active
 		{
 			transform: scale( 1 );
-			opacity: 1;
-			color: #fff;
+			color: $panel-text-color;
 			//	background-color: #fff;//( #3273eb, 0.2 );
 			//color: #3273eb;
 
-			border-bottom: 5px solid $blue;
+			border-bottom: 5px solid $primary-color;
 		}
 	}
 }

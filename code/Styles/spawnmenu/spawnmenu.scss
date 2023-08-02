@@ -14,7 +14,7 @@ spawnmenu
 	pointer-events: none;
 	transition: all 0.1s ease-out;
 	position: absolute;
-	font-family: poppins;
+	font-family: $font-family;
 	opacity: 0;
 	z-index: 10;
 	backdrop-filter: blur( 10px ) contrast( 50% ) saturate( 50% ) brightness( 10% );
@@ -52,7 +52,7 @@ spawnmenu
 			{
 				flex-direction: column;
 				width: 150px;
-				color: #aaa;
+				color: rgba( $panel-text-color, 0.5 );
 
 				button
 				{
@@ -64,13 +64,13 @@ spawnmenu
 					&:hover
 					{
 						//border-left: 3px solid #3273eb;
-						color: white;
+						color: $panel-text-color;
 					}
 
 					&.active
 					{
 						//border-left: 5px solid #3273eb;
-						color: white;
+						color: $primary-color;
 					}
 				}
 			}
@@ -128,8 +128,8 @@ spawnmenu
 
 		.icon
 		{
-			border-radius: 8px;
-			color: rgba( #fff, 0.5 );
+			border-radius: $panel-rounding * 2;
+			color: rgba( $panel-text-color, 0.5 );
 			font-size: 12px;
 			text-align: center;
 			cursor: pointer;
@@ -137,7 +137,7 @@ spawnmenu
 			height: 100%;
 			background-position: center;
 			background-size: cover;
-			background-color: rgba(black, 0.0);
+			background-color: rgba( $panel-background, 0.0 );
 			background-image: url( /entity/spawnicon.png );
 
 			label
@@ -152,12 +152,8 @@ spawnmenu
 
 			&:hover
 			{
-				color: #fff;
-				background-color: rgba(black, 0.1);
-			}
-
-			&:active
-			{
+				color: $panel-text-color;
+				background-color: rgba( $panel-background, 0.1 );
 			}
 		}
 	}
@@ -178,8 +174,8 @@ spawnmenu .sidebar
 	button
 	{
 		cursor: pointer;
-		border-radius: 5px;
-		color: white;
+		border-radius: $panel-rounding;
+		color: $panel-text-color;
 	}
 }
 
