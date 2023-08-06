@@ -11,6 +11,10 @@ partial class SandboxGame : GameManager
 			// Create the HUD
 			_ = new SandboxHud();
 		}
+		else
+		{
+			Cloud.Model( "https://asset.party/rust/fuel_barrel" );
+		}
 	}
 
 	public override void ClientJoined( IClient cl )
