@@ -43,7 +43,7 @@
 				if ( !tr.Hit || !tr.Entity.IsValid() )
 					return;
 
-				CreateHitEffects( tr.EndPosition );
+				CreateHitEffects( tr.EndPosition, tr.Normal );
 
 				if ( tr.Entity is LampEntity lamp )
 				{
@@ -73,6 +73,8 @@
 				lamp.SetModel( Model );
 				lamp.SetupPhysicsFromModel( PhysicsMotionType.Dynamic, false );
 				lamp.Position = tr.EndPosition + -lamp.CollisionBounds.Center + tr.Normal * lamp.CollisionBounds.Size * 0.5f;
+
+				Event.Run( "entity.spawned", lamp, Owner );
 			}
 		}
 	}

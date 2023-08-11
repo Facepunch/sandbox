@@ -3,7 +3,6 @@ using System.Numerics;
 
 public partial class SandboxPlayer : Player
 {
-
 	private TimeSince timeSinceDropped;
 	private TimeSince timeSinceJumpReleased;
 
@@ -17,14 +16,14 @@ public partial class SandboxPlayer : Player
 	/// </summary>
 	public ClothingContainer Clothing = new();
 
-	/// <summary>
-	/// Deafault init
-	/// </summary>
+	public delegate void OnSimulateHandler( SandboxPlayer player );
+	public event OnSimulateHandler OnSimulate;
+
+	public bool SuppressScrollWheelInventory { get; set; } = false;
+
 	public SandboxPlayer()
 	{
 		Inventory = new Inventory( this );
-
-
 	}
 
 	/// <summary>
@@ -40,7 +39,7 @@ public partial class SandboxPlayer : Player
 	{
 		SetModel( "models/citizen/citizen.vmdl" );
 
-		Controller = new WalkController
+		Controller = new PlayerWalkController
 		{
 			WalkSpeed = 60f,
 			DefaultSpeed = 180.0f
@@ -62,10 +61,9 @@ public partial class SandboxPlayer : Player
 		Inventory.Add( new PhysGun(), true );
 		Inventory.Add( new GravGun() );
 		Inventory.Add( new Tool() );
+		Inventory.Add( new Pistol() );
 		Inventory.Add( new Flashlight() );
 		Inventory.Add( new Fists() );
-
-        Sandbox.Services.Stats.Increment( Client, "respawn", 1 );
 
 		base.Respawn();
 	}
@@ -115,8 +113,6 @@ public partial class SandboxPlayer : Player
 		base.TakeDamage( info );
 	}
 
-
-	
 	public override PawnController GetActiveController()
 	{
 		if ( DevController != null ) return DevController;
@@ -141,6 +137,8 @@ public partial class SandboxPlayer : Player
 
 		TickPlayerUse();
 		SimulateActiveChild( cl, ActiveChild );
+		OnSimulate?.Invoke( this );
+		Event.Run( "player.simulate", this );
 
 		if ( Input.Pressed( "view" ) )
 		{
@@ -150,17 +148,12 @@ public partial class SandboxPlayer : Player
 		if ( Input.Pressed( "drop" ) )
 		{
 			var dropped = Inventory.DropActive();
-			if ( dropped.IsValid() )
+			if ( dropped != null )
 			{
-				timeSinceDropped = 0;
+				dropped.PhysicsGroup.ApplyImpulse( Velocity + EyeRotation.Forward * 500.0f + Vector3.Up * 100.0f, true );
+				dropped.PhysicsGroup.ApplyAngularImpulse( Vector3.Random * 100.0f, true );
 
-				if ( dropped.PhysicsGroup.IsValid() )
-				{
-					dropped.PhysicsGroup.Velocity = 0;
-					dropped.PhysicsGroup.AngularVelocity = 0;
-					dropped.PhysicsGroup.ApplyImpulse( Velocity + EyeRotation.Forward * 500.0f + Vector3.Up * 100.0f, true );
-					dropped.PhysicsGroup.ApplyAngularImpulse( Vector3.Random * 100.0f, true );
-				}
+				timeSinceDropped = 0;
 			}
 		}
 

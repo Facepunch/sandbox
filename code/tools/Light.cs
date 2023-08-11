@@ -46,7 +46,7 @@ public partial class LightTool : BaseTool
 			if ( !tr.Hit || !tr.Entity.IsValid() )
 				return;
 
-			CreateHitEffects( tr.EndPosition );
+			CreateHitEffects( tr.EndPosition, tr.Normal );
 
 			if ( tr.Entity is LightEntity )
 			{
@@ -100,6 +100,8 @@ public partial class LightTool : BaseTool
 				rope?.Destroy( true );
 				spring.Remove();
 			};
+
+			Event.Run( "entity.spawned", light, Owner );
 		}
 	}
 }

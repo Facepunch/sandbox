@@ -1,0 +1,18 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+{
+	data = 
+	{
+		UI = false
+		Volume = 0.2
+		VolumeRandom = 0
+		Pitch = 1.0
+		PitchRandom = 0
+		Decibels = 60
+		Sounds = 
+		[
+			resource:"sounds/kenney/ui/drop_001.vsnd",
+		]
+		MaximumDistance = 1000.0
+		MinimumDistance = 0.0
+	}
+}

@@ -1,5 +1,5 @@
 {
-    "spawnmenu.props" : "Local Models",
+    "spawnmenu.props" : "models",
     "spawnmenu.entities" : "entities",
     "spawnmenu.modellist": "Models",
     "spawnmenu.tools": "tools",

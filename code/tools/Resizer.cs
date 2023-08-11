@@ -55,10 +55,7 @@ namespace Sandbox.Tools
 					}
 				}
 
-				if ( Input.Pressed( "attack1" ) || Input.Pressed( "attack2" ) || reset )
-				{
-					CreateHitEffects( tr.EndPosition );
-				}
+				CreateHitEffects( tr.EndPosition, tr.Normal, true );
 			}
 		}
 	}

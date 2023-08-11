@@ -41,6 +41,7 @@ public partial class ThrusterEntity
 		if ( effects == null )
 			return;
 
-		effects.SetPosition( 0, Position + Rotation.Up * 20 );
+
+		effects.SetPosition( 0, Position + Rotation.Up * CollisionBounds.Size.z );
 	}
 }

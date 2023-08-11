@@ -1,39 +1,20 @@
 ﻿using Sandbox;
 
 [Spawnable]
-[Library( "weapon_mp5", Title = "MP5" )]
+[Library( "weapon_MP5", Title = "MP5" )]
 partial class MP5 : Weapon
 {
+	public override string ViewModelPath => "weapons/rust_smg/v_rust_smg.vmdl";
+
 	public override float PrimaryRate => 15.0f;
 	public override float SecondaryRate => 1.0f;
-	public override float ReloadTime => 2.5f;
-	private ParticleSystem EjectBrass;
+	public override float ReloadTime => 5.0f;
 
 	public override void Spawn()
 	{
 		base.Spawn();
 
-		Model = Cloud.Model( "https://asset.party/facepunch/w_mp5" );
-		LocalScale = 1.5f;
-	}
-
-	public override void ActiveStart( Entity ent )
-	{
-		base.ActiveStart( ent );
-		EjectBrass = Cloud.ParticleSystem( "https://asset.party/facepunch/9mm_ejectbrass" );
-	}
-
-	public override void CreateViewModel()
-	{
-		ViewModelEntity = new ViewModel();
-		ViewModelEntity.Position = Position;
-		ViewModelEntity.Owner = Owner;
-		ViewModelEntity.EnableViewmodelRendering = true;
-		ViewModelEntity.Model = Cloud.Model( "https://asset.party/facepunch/v_mp5" );
-
-		var arms = new AnimatedEntity( "models/first_person/first_person_arms.vmdl" );
-		arms.SetParent( ViewModelEntity, true );
-		arms.EnableViewmodelRendering = true;
+		SetModel( "weapons/rust_smg/rust_smg.vmdl" );
 	}
 
 	public override void AttackPrimary()
@@ -42,7 +23,6 @@ partial class MP5 : Weapon
 		TimeSinceSecondaryAttack = 0;
 
 		(Owner as AnimatedEntity)?.SetAnimParameter( "b_attack", true );
-		ViewModelEntity?.SetAnimParameter( "b_attack", true );
 
 		//
 		// Tell the clients to play the shoot effects
@@ -56,13 +36,9 @@ partial class MP5 : Weapon
 		ShootBullet( 0.1f, 1.5f, 5.0f, 3.0f );
 	}
 
-	public override void Simulate( IClient player )
+	public override void AttackSecondary()
 	{
-		base.Simulate( player );
-
-		var attack_hold = !IsReloading && Input.Down( "attack1" ) ? 1.0f : 0.0f;
-		(Owner as AnimatedEntity)?.SetAnimParameter( "attack_hold", attack_hold );
-		ViewModelEntity?.SetAnimParameter( "attack_hold", attack_hold );
+		// Grenade lob
 	}
 
 	[ClientRpc]
@@ -71,7 +47,9 @@ partial class MP5 : Weapon
 		Game.AssertClient();
 
 		Particles.Create( "particles/pistol_muzzleflash.vpcf", EffectEntity, "muzzle" );
-		Particles.Create( EjectBrass.ResourcePath, EffectEntity, "eject" );
+		Particles.Create( "particles/pistol_ejectbrass.vpcf", EffectEntity, "ejection_point" );
+
+		ViewModelEntity?.SetAnimParameter( "fire", true );
 	}
 
 	public override void SimulateAnimator( CitizenAnimationHelper anim )

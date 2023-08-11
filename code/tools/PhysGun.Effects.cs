@@ -67,7 +67,8 @@ public partial class PhysGun
 		var tr = Trace.Ray( startPos, startPos + dir * MaxTargetDistance )
 			.UseHitboxes()
 			.Ignore( owner, false )
-			.WithAllTags( "solid" )
+			.WithAnyTags( "solid", PhysgunBlockTag )
+			.OnTraceEvent( Owner ) // SandboxPlus addition for Stargate support
 			.Run();
 
 		Beam ??= Particles.Create( "particles/physgun_beam.vpcf", tr.EndPosition );

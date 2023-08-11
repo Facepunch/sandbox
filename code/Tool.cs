@@ -9,25 +9,25 @@ partial class Tool : Carriable
 
 	public AnimatedEntity ViewModelArms { get; set; }
 
-	[Net]
+	[Net, Change]
 	public BaseTool CurrentTool { get; set; }
 
 	public override void Spawn()
 	{
 		base.Spawn();
 
-		SetModel( "weapons/rust_pistol/rust_pistol.vmdl" );
+		SetModel( "models/weapons/toolgun.vmdl" );
 	}
 
 	public override void CreateViewModel()
 	{
 		base.CreateViewModel();
-		
+
 		ViewModelEntity = new ViewModel();
 		ViewModelEntity.Position = Position;
 		ViewModelEntity.Owner = Owner;
 		ViewModelEntity.EnableViewmodelRendering = true;
-		ViewModelEntity.Model = Cloud.Model( "https://asset.party/facepunch/v_toolgun" );
+		ViewModelEntity.Model = Model.Load( "models/weapons/v_toolgun.vmdl" );
 
 		ViewModelArms = new AnimatedEntity( "models/first_person/first_person_arms.vmdl" );
 		ViewModelArms.SetParent( ViewModelEntity, true );
@@ -75,10 +75,17 @@ partial class Tool : Carriable
 		}
 	}
 
+	// Note: called clientside only
+	private void OnCurrentToolChanged( BaseTool oldTool, BaseTool newTool )
+	{
+		oldTool?.Deactivate();
+		newTool?.Activate();
+	}
+
 	public override void ActiveStart( Entity ent )
 	{
 		base.ActiveStart( ent );
-		
+
 		CurrentTool?.Activate();
 	}
 
@@ -130,17 +137,27 @@ namespace Sandbox.Tools
 
 		protected virtual float MaxTraceDistance => 10000.0f;
 
+		// Set this to override the [Library]'s class default
+		public string Description { get; set; } = null;
+
 		public virtual void Activate()
 		{
 			if ( Game.IsServer )
 			{
 				CreatePreviews();
+				
 			}
+		}
+
+		public virtual void CreateToolPanel()
+		{
+
 		}
 
 		public virtual void Deactivate()
 		{
 			DeletePreviews();
+			SpawnMenu.Instance?.ToolPanel?.DeleteChildren( true );
 		}
 
 		public virtual void Simulate()
@@ -153,9 +170,9 @@ namespace Sandbox.Tools
 			UpdatePreviews();
 		}
 
-		public virtual void CreateHitEffects( Vector3 pos )
+		public virtual void CreateHitEffects( Vector3 pos, Vector3 normal = new Vector3(), bool continuous = false )
 		{
-			Parent?.CreateHitEffects( pos );
+			Parent?.CreateHitEffects( pos, normal, continuous );
 		}
 
 		public virtual TraceResult DoTrace()
@@ -163,10 +180,17 @@ namespace Sandbox.Tools
 			var startPos = Owner.EyePosition;
 			var dir = Owner.EyeRotation.Forward;
 
-			return Trace.Ray( startPos, startPos + ( dir * MaxTraceDistance ) )
-				.WithAnyTags( "solid", "nocollide" )
+			return Trace.Ray( startPos, startPos + (dir * MaxTraceDistance) )
+				.WithAllTags( "solid" )
 				.Ignore( Owner )
 				.Run();
+		}
+
+		protected string GetConvarValue( string name, string defaultValue = null )
+		{
+			return Game.IsServer
+				? Owner.Client.GetClientData<string>( name, defaultValue )
+				: ConsoleSystem.GetValue( name, default );
 		}
 	}
 }

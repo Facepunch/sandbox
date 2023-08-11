@@ -3,43 +3,39 @@
 @import "_tabs.scss";
 @import "_packagelist.scss";
 
-spawnmenu {
+spawnmenu
+{
 	left: 0px;
 	right: 0px;
 	top: 0px;
 	bottom: 0px;
 	padding: 80px 100px;
 	padding-bottom: 200px;
+	border-radius: 5px;
 	pointer-events: none;
 	transition: all 0.1s ease-out;
 	position: absolute;
 	font-family: poppins;
 	opacity: 0;
 	z-index: 10;
-	backdrop-filter: blur( 10px ) contrast( 50% ) saturate( 50% ) brightness( 10% );
+	backdrop-filter: blur( 50px ) contrast( 25% ) saturate( 50% ) brightness( 9% );
 
-	.left {
+	.left
+	{
 		flex-grow: 1;
 		flex-direction: column;
 		position: relative;
 		left: -500px;
 		transition: all 0.3s ease-in;
 
-		.body {
+		.body
+		{
 			flex-grow: 1;
-		}
-
-		textentry {
-			transition: opacity 0.1s ease;
-			min-height: 44px;
-			opacity: 1;
-			font-size: 16px;
-			background-color: rgba( #090d10, 0.9 );
-			border-radius: 5px;
 		}
 	}
 
-	.right {
+	.right
+	{
 		margin-left: 50px;
 		flex-direction: column;
 		min-width: 400px;
@@ -47,35 +43,41 @@ spawnmenu {
 		left: 500px;
 		transition: all 0.3s ease-in;
 
-		.body {
+		.body
+		{
 			//	background-color: rgba( #333, 0.95 );
 			flex-grow: 1;
 			padding: 10px;
 
-			.toollist {
+			.toollist
+			{
 				flex-direction: column;
 				width: 150px;
 				color: #aaa;
 
-				button {
+				button
+				{
 					padding: 3px 10px;
 					font-size: 11px;
 					transition: all 0.2s ease-out;
 					cursor: pointer;
 
-					&:hover {
+					&:hover
+					{
 						//border-left: 3px solid #3273eb;
 						color: white;
 					}
 
-					&.active {
+					&.active
+					{
 						//border-left: 5px solid #3273eb;
 						color: white;
 					}
 				}
 			}
 
-			.inspector {
+			.inspector
+			{
 				//background-color: rgba( #111, 0.7 );
 				flex-grow: 1;
 				margin-left: 5px;
@@ -100,6 +102,7 @@ spawnmenu {
 }
 
 
+.modelselector,
 .spawnpage
 {
 	display: none;
@@ -162,6 +165,16 @@ spawnmenu {
 	}
 }
 
+.modelselector {
+    max-width: 275px;
+    .canvas {
+        margin: 4px;
+        .cell {
+            padding: 2px;
+        }
+    }
+}
+
 
 spawnmenu .sidebar
 {
@@ -182,3 +195,118 @@ spawnmenu .sidebar
 	}
 }
 
+
+.dynplates {
+    display: none;
+
+    &.active {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        margin-right: 15px;
+        opacity: 1;
+    }
+
+    .canvas {
+        overflow: scroll;
+        width: 100%;
+        flex-grow: 1;
+        flex-wrap: wrap;
+        flex-direction: column;
+        justify-content: space-between;
+        margin: 10px;
+        border-radius: 5px;
+
+        .icon {
+            border-radius: 16px;
+            color: rgba( #fff, 0.5 );
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            background-position: center;
+            background-size: cover;
+            background-color: rgba(black, 0.1);
+            background-image: url( /entity/spawnicon.png );
+
+        }
+
+        .cell {
+            padding: 5px;
+            margin-bottom: 4px;
+            border-radius: 16px;
+            color: rgba( #fff, 0.5 );
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            background-position: center;
+            background-size: cover;
+            background-color: rgba(black, 0.1);
+            background-image: none;
+
+            label {
+                font-size: 14px;
+                position: absolute;
+                top: 18px;
+                left: 0;
+                right: 0;
+                pointer-events: none;
+            }
+
+            &:hover {
+                color: #fff;
+                background-color: rgba(black, 0.4);
+            }
+        }
+    }
+    .input-container {
+        padding: 10px;
+        flex-direction: column;
+        flex-grow: 1;
+        label {
+            color: rgba(#fff, 0.5);
+            font-size: 14px;
+            &.header {
+                align-items: center;
+                margin-top: 20px;
+                margin-right: 10px;
+            }
+            &.input-label {
+                margin-left: 8px;
+            }
+        }
+        menutextentry {
+            pointer-events: all;
+            color: white;
+            padding: 10px;
+            margin: 4px;
+            background-color: rgba( black, 0.7 );
+            &:hover {
+                background-color: rgba( black, 0.9 );
+                cursor: text;
+            }
+            font-size: 14px;
+            flex-shrink: 0;
+            flex-grow: 0;
+            width: 100px;
+        }
+        button {
+            pointer-events: all;
+            background-color: rgba( black, 0.7 );
+            border-radius: 8px;
+            margin: 24px 8px 8px 8px;
+            padding: 10px;
+            &:hover {
+                background-color: rgba(black, 0.9);
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.flex-column {
+    flex-direction: column;
+}

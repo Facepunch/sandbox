@@ -1,17 +1,19 @@
 {
-  "Title": "Mark\u0027s DarkRP",
+  "Title": "SandboxPlus",
   "Type": "game",
-  "Org": "markindustries",
-  "Ident": "marksdrp",
-  "Tags": "",
+  "Org": "wiremod",
+  "Ident": "sandboxplus",
+  "Tags": "sandbox spawnmenu tools constraints wirebox",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
-  "Resources": "*.vmdl_c.png\nentity/*.png",
+  "Resources": "*.vmdl_c.png\nentity/*.png\n*.spawnlist\n",
   "MenuResources": "/menu/*",
   "HasCode": true,
   "CodePath": "code",
-  "PackageReferences": [],
+  "PackageReferences": [
+    "wiremod.wirelib"
+  ],
   "EditorReferences": null,
   "Metadata": {
     "MapList": [
@@ -32,9 +34,7 @@
         "water": "Trigger",
         "debris": "Unset",
         "player": "Unset",
-        "glass": "Unset",
-        "weapon": "Collide",
-        "nocollide": "Ignore"
+        "glass": "Unset"
       },
       "Pairs": [
         {
@@ -104,21 +104,6 @@
         {
           "a": "water",
           "b": "glass"
-        },
-        {
-          "a": "player",
-          "b": "weapon",
-          "r": "Trigger"
-        },
-        {
-          "a": "solid",
-          "b": "nocollide",
-          "r": "Collide"
-        },
-        {
-          "a": "player",
-          "b": "nocollide",
-          "r": "Collide"
         }
       ]
     },
@@ -137,7 +122,7 @@
     },
     "DefaultLeaderboards": null,
     "Summary": "Create and play in your own sandbox mode.",
-    "Description": "This game lets you spawn props and ragdolls and create entities to play with. It\u0027s like Garry\u0027s Mod.\r\n\r\nThis is a bit of a sandbox itself. This is not the final sandbox gamemode. All of this code will likely be thrown away and re-written when we come to do the sandbox gamemode proper.",
+    "Description": "This game lets you spawn props, and constrain them into cars and forts. It\u0027s like Garry\u0027s Mod.",
     "Public": true,
     "ReplaceTags": "sandbox game dynamic spawnmenu physgun",
     "CsProjName": "",

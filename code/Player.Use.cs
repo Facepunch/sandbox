@@ -55,4 +55,13 @@ partial class SandboxPlayer
 
 		base.UseFail();
 	}
+
+	protected override void StopUsing()
+	{
+		if ( Using is IStopUsing use )
+		{
+			use.OnStopUsing( this );
+		}
+		base.StopUsing();
+	}
 }

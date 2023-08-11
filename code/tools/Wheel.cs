@@ -49,7 +49,7 @@ public partial class WheelTool : BaseTool
 			if ( attached && tr.Entity is not Prop )
 				return;
 
-			CreateHitEffects( tr.EndPosition );
+			CreateHitEffects( tr.EndPosition, tr.Normal );
 
 			if ( tr.Entity is WheelEntity )
 			{
@@ -68,6 +68,8 @@ public partial class WheelTool : BaseTool
 
 			ent.PhysicsBody.Mass = tr.Body.Mass;
 			ent.Joint = PhysicsJoint.CreateHinge( ent.PhysicsBody, tr.Body, tr.EndPosition, tr.Normal );
+
+			Event.Run( "entity.spawned", ent, Owner );
 		}
 	}
 }

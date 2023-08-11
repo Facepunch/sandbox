@@ -1,6 +1,6 @@
 ﻿namespace Sandbox.Tools
 {
-	[Library( "tool_weld", Title = "Weld", Description = "Weld stuff together", Group = "construction" )]
+	[Library( "tool_weld", Title = "Parent", Description = "Parent stuff together", Group = "construction" )]
 	public partial class WeldTool : BaseTool
 	{
 		private Prop target;
@@ -39,7 +39,7 @@
 					}
 					else
 					{
-						target.Weld( rootProp );
+						rootProp.Weld( target );
 						target = null;
 					}
 				}
@@ -65,7 +65,7 @@
 					return;
 				}
 
-				CreateHitEffects( tr.EndPosition );
+				CreateHitEffects( tr.EndPosition, tr.Normal );
 			}
 		}
 

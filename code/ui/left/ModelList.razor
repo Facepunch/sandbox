@@ -1,59 +1,52 @@
 ﻿@using System.Threading.Tasks;
-@using System;
 @using System.Collections.Generic;
 @using Sandbox;
 @using Sandbox.UI;
-
 @inherits Panel;
 
 <root class="spawnpage columned">
 
 	<div class="nav">
+
 		<div class="section">
-			<TextEntry @ref="SearchInput" onsubmit="@Search" Placeholder="Search..." />
+			<PackageSortButtonGroup Value:bind=@SortOrder></PackageSortButtonGroup>
 		</div>
 
 		<div class="section grow">
 		</div>
-	<div class="section">
-			<PackageSortButtonGroup Value:bind=@SortOrder></PackageSortButtonGroup>
+
+		<div class="section">
+			<button active=@LocalOnly @onclick=@(() =>{ LocalOnly = !LocalOnly; } )>Local Only</button>
 		</div>
 
 	</div>
 
 	<div class="contents">
+
 		<PackageList Query=@GetQueryString() OnIconPressed=@SpawnPackage></PackageList>
+
 	</div>
 
 </root>
 
-@code {
-	string SortOrder { get; set; } = "popular";
-	string SearchTerm { get; set; } = "";
-	public TextEntry SearchInput;
+
+@code
+{
+	string SortOrder { get; set; } = "updated";
+	bool LocalOnly = false;
 
 	public string GetQueryString()
 	{
-		
 		var sort = $"sort:{SortOrder}";
-		
-		var search = !string.IsNullOrEmpty(SearchTerm) ? $"{SearchTerm}" : "";
-		var str = $"{sort} {search} type:model";
-		return str;
-	}
+		var local = LocalOnly ? "local:true" : "";
 
-	void Search()
-	{
-		SearchTerm = SearchInput.Text.Trim();
+		var str = $"{sort} {local} type:model";
+
+		return str;
 	}
 
 	void SpawnPackage(Package package)
 	{
 		ConsoleSystem.Run("spawn", package.FullIdent);
-	}
-
-	protected override int BuildHash()
-	{
-		return HashCode.Combine(SearchTerm);
 	}
 }

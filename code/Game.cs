@@ -1,26 +1,52 @@
-﻿using Sandbox;
-using System.Linq;
 using System.Threading.Tasks;
+using Sandbox;
+using System;
+using System.Linq;
 
 partial class SandboxGame : GameManager
 {
-	public SandboxGame()
+	private SandboxHud _sandboxHud;
+
+	[Event.Hotload]
+	public async void hotload()
 	{
 		if ( Game.IsServer )
 		{
-			// Create the HUD
-			_ = new SandboxHud();
+			_sandboxHud?.Delete();
+			await Task.Delay( 500 ); // gotta wait for clients to hotreload too
+			Log.Info( "SandboxPlus: hotloading SandboxHud" );
+			_sandboxHud = new SandboxHud();
 		}
+
+		ReloadManager.ReloadAutoload();
 	}
 
+	public SandboxGame()
+	{
+		Log.Info( "Init SandboxPlus" );
+		if ( Game.IsServer )
+		{
+			Log.Info( "[Server] initting HUD" );
+			// Create the HUD
+			_sandboxHud = new SandboxHud();
+		}
+
+		ReloadManager.ReloadAutoload();
+		Event.Run( "game.init" );
+	}
+	~SandboxGame()
+	{
+		_sandboxHud?.Delete();
+	}
+
+	[Event( "client.join" )]
 	public override void ClientJoined( IClient cl )
 	{
 		base.ClientJoined( cl );
 		var player = new SandboxPlayer( cl );
+		player.Respawn();
 
 		cl.Pawn = player;
-
-		player.Respawn();
 	}
 
 	protected override void OnDestroy()
@@ -84,8 +110,7 @@ partial class SandboxGame : GameManager
 		{
 			ent.SetupPhysicsFromOBB( PhysicsMotionType.Dynamic, ent.CollisionBounds.Mins, ent.CollisionBounds.Maxs );
 		}
-
-		Sandbox.Services.Stats.Increment( owner.Client, "spawn.model", 1, modelname );
+		Event.Run( "entity.spawned", ent, owner );
 	}
 
 	static async Task<string> SpawnPackageModel( string packageName, Vector3 pos, Rotation rotation, Entity source )
@@ -124,7 +149,7 @@ partial class SandboxGame : GameManager
 		if ( !TypeLibrary.HasAttribute<SpawnableAttribute>( entityType ) )
 			return;
 
-		var tr = Trace.Ray( owner.EyePosition, owner.EyePosition + owner.EyeRotation.Forward * 200 )
+		var tr = Trace.Ray( owner.EyePosition, owner.EyePosition + owner.EyeRotation.Forward * 4096 )
 			.UseHitboxes()
 			.Ignore( owner )
 			.Size( 2 )
@@ -138,10 +163,11 @@ partial class SandboxGame : GameManager
 		}
 
 		ent.Position = tr.EndPosition;
-		ent.Rotation = Rotation.From( new Angles( 0, owner.EyeRotation.Angles().yaw, 0 ) );
+		ent.Rotation = Rotation.From( new Angles( 0, owner.EyeRotation.Angles().yaw + 180, 0 ) );
 
-		//Log.Info( $"ent: {ent}" );
+		Event.Run( "entity.spawned", ent, owner );
 	}
+
 
 	[ClientRpc]
 	public override void OnKilledMessage( long leftid, string left, long rightid, string right, string method )

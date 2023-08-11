@@ -1,17 +1,29 @@
-"Layer0"
+// THIS FILE IS AUTO-GENERATED
+
+Layer0
 {
-	"shader"		"shaders/generic.shader_c"
-	"F_SPECULAR"		"1"
-	"g_vColorTint"		"[1.000000 1.000000 1.000000 0.000000]"
-	"TextureColor"		"materials/default/default_color.tga"
-	"g_bFogEnabled"		"1"
-	"g_flDirectionalLightmapMinZ"		"0.050000"
-	"g_flDirectionalLightmapStrength"		"1.000000"
-	"g_vGlossinessRange"		"[0.500 1.000]"
-	"g_vMetalnessRange"		"[0.500 1.000]"
-	"TextureGlossiness"		"materials/default/default_gloss.tga"
-	"TextureMetalness"		"materials/default/default_metal.tga"
-	"TextureReflectance"		"[1.000000 1.000000 1.000000 0.000000]"
-	"TextureNormal"		"materials/default/default_normal.tga"
-	"g_flBumpStrength"		"1.000000"
+	shader "shaders/generic.shader"
+
+	//---- Specular ----
+	F_SPECULAR 1
+
+	//---- Color ----
+	g_vColorTint "[1.000000 1.000000 1.000000 0.000000]"
+	TextureColor "materials/default/default_color.tga"
+
+	//---- Fog ----
+	g_bFogEnabled "1"
+
+	//---- Lighting ----
+	g_vGlossinessRange "[0.500 1.000]"
+	g_vMetalnessRange "[0.500 1.000]"
+	TextureGlossiness "materials/default/default_gloss.tga"
+	TextureMetalness "materials/default/default_metal.tga"
+	TextureReflectance "[1.000000 1.000000 1.000000 0.000000]"
+
+	//---- Normal ----
+	TextureNormal "materials/default/default_normal.tga"
+
+	//---- Normal Map ----
+	g_flBumpStrength "1.000"
 }

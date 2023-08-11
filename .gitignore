@@ -13,3 +13,4 @@ maps/editor/_bakeresourcecache/toolscene_default_baked/*
 .vs/*
 *.generated.*
 *_c
+addons/

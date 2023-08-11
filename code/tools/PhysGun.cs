@@ -25,6 +25,7 @@ public partial class PhysGun : Carriable
 	protected virtual float RotateSnapAt => 45.0f;
 
 	public const string GrabbedTag = "grabbed";
+	public const string PhysgunBlockTag = "physgun-block"; // will be hit by a Physgun ray, and then stopped
 
 	[Net] public bool BeamActive { get; set; }
 	[Net] public Entity GrabbedEntity { get; set; }
@@ -108,10 +109,13 @@ public partial class PhysGun : Carriable
 	{
 		var tr = Trace.Ray( eyePos, eyePos + eyeDir * MaxTargetDistance )
 			.UseHitboxes()
+			.WithAnyTags( "solid", "player", "debris", PhysgunBlockTag )
 			.Ignore( this )
+			.OnTraceEvent( Owner ) // SandboxPlus addition for Stargate support
 			.Run();
 
 		if ( !tr.Hit || !tr.Entity.IsValid() || tr.Entity.IsWorld ) return;
+		if ( tr.Entity.Tags.Has( PhysgunBlockTag ) ) return;
 
 		var rootEnt = tr.Entity.Root;
 		if ( !rootEnt.IsValid() ) return;
@@ -144,11 +148,13 @@ public partial class PhysGun : Carriable
 	{
 		var tr = Trace.Ray( eyePos, eyePos + eyeDir * MaxTargetDistance )
 			.UseHitboxes()
-			.WithAnyTags( "solid", "player", "debris", "nocollide" )
+			.WithAnyTags( "solid", "player", "debris", PhysgunBlockTag )
 			.Ignore( this )
+			.OnTraceEvent( Owner ) // SandboxPlus addition for Stargate support
 			.Run();
 
 		if ( !tr.Hit || !tr.Entity.IsValid() || tr.Entity.IsWorld || tr.StartedSolid ) return;
+		if ( tr.Entity.Tags.Has( PhysgunBlockTag ) ) return;
 
 		var rootEnt = tr.Entity.Root;
 		var body = tr.Body;
