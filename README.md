@@ -14,3 +14,13 @@ https://simplemechanism.net/
 @ugh1849 - Discord
 
 @mathmark824 - Discord
+
+# Physgun Hosting
+![alt text](https://imgur.com/WjuqA5r.png)
+The best game hosting at an affordable price! Use code MATHMARK824 for 30% off!
+
+# In heavy development
+
+This is unfinished!!!! Feel free to leave any feedback though! And join my discord I'm the owner of Method Networks DarkRP on GMOD
+
+https://discord.gg/4taZs3c9Tz
