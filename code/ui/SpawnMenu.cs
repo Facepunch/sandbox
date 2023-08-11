@@ -9,12 +9,6 @@ public partial class SpawnMenu : Panel
 {
 	public static SpawnMenu Instance;
 	readonly Panel toollist;
-	public Panel ToolPanel { get; private set; }
-	public ButtonGroup SpawnMenuLeftTabs;
-	public Panel SpawnMenuLeftBody;
-
-	public bool IgnoreMenuButton = false;
-	private bool IsOpen = false;
 
 	public SpawnMenu()
 	{
@@ -29,12 +23,9 @@ public partial class SpawnMenu : Panel
 			var body = left.Add.Panel( "body" );
 			SpawnMenuLeftBody = body;
 			{
-				var props = body.AddChild<SpawnList>();
-				tabs.SelectedButton = tabs.AddButtonActive( "#spawnmenu.props", ( b ) => props.SetClass( "active", b ) );
-
 				var models = body.AddChild<ModelList>();
-				tabs.AddButtonActive( "#spawnmenu.modellist", ( b ) => models.SetClass( "active", b ) );
-
+				tabs.SelectedButton = tabs.AddButtonActive( "#spawnmenu.modellist", ( b ) => models.SetClass( "active", b ) );			
+				
 				var ents = body.AddChild<EntityList>();
 				tabs.AddButtonActive( "#spawnmenu.entities", ( b ) => ents.SetClass( "active", b ) );
 
@@ -113,22 +104,9 @@ public partial class SpawnMenu : Panel
 	public override void Tick()
 	{
 		base.Tick();
-		if ( !IgnoreMenuButton )
-		{
-			if ( Input.Pressed( "menu" ) )
-			{
-				IsOpen = true;
-			}
-			if ( menuWasPressed && !Input.Down( "menu" ) )
-			{
-				IsOpen = false;
-			}
-		}
-		menuWasPressed = Input.Down( "menu" );
 
-		Parent.SetClass( "spawnmenuopen", IsOpen );
+		Parent.SetClass( "spawnmenuopen", Input.Down( "menu" ) );
 
-		UpdateActiveTool();
 	}
 
 	void UpdateActiveTool()

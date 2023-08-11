@@ -144,7 +144,7 @@ public partial class PhysGun : Carriable
 	{
 		var tr = Trace.Ray( eyePos, eyePos + eyeDir * MaxTargetDistance )
 			.UseHitboxes()
-			.WithAnyTags( "solid", "player", "debris" )
+			.WithAnyTags( "solid", "player", "debris", "nocollide" )
 			.Ignore( this )
 			.Run();
 

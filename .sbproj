@@ -33,7 +33,8 @@
         "debris": "Unset",
         "player": "Unset",
         "glass": "Unset",
-        "weapon": "Collide"
+        "weapon": "Collide",
+        "nocollide": "Ignore"
       },
       "Pairs": [
         {
@@ -108,6 +109,16 @@
           "a": "player",
           "b": "weapon",
           "r": "Trigger"
+        },
+        {
+          "a": "solid",
+          "b": "nocollide",
+          "r": "Collide"
+        },
+        {
+          "a": "player",
+          "b": "nocollide",
+          "r": "Collide"
         }
       ]
     },

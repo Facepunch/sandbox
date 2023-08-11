@@ -164,7 +164,7 @@ namespace Sandbox.Tools
 			var dir = Owner.EyeRotation.Forward;
 
 			return Trace.Ray( startPos, startPos + ( dir * MaxTraceDistance ) )
-				.WithAllTags( "solid" )
+				.WithAnyTags( "solid", "nocollide" )
 				.Ignore( Owner )
 				.Run();
 		}
