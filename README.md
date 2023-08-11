@@ -8,7 +8,7 @@ https://github.com/FPtje
 https://steamcommunity.com/id/FPtje
 
 # Sponsored By Simple Mechanism
-![alt text[]("https://imgur.com/VfhjKvV.png")
+![alt text]("https://imgur.com/VfhjKvV.png")
 https://simplemechanism.net/
 @ugh1849 - Discord
 @mathmark824 - Discord
