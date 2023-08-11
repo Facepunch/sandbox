@@ -1,0 +1,89 @@
+﻿@using System.Threading.Tasks;
+@using System.Collections.Generic;
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel;
+
+<root class="spawnpage columned">
+
+	<div class="nav">
+
+		<div class="section">
+
+		</div>
+
+		<div class="section grow">
+		</div>
+
+		<div class="section">
+			<button @onclick="@onebyone">1x1</button>
+			<button @onclick="@twobytwo">2x2</button>
+			<button @onclick="@threebythre">3x3</button>
+			<button @onclick="@fourbyfour">4x4</button>
+			<button @onclick="@fivebyfive">5x5</button>
+			<button @onclick="@sixbysix">6x6</button>
+			<button @onclick="@sevenbyseven">7x7</button>
+			<button @onclick="@eightbyeight">8x8</button>
+			<button @onclick="@ninebynine">9x9</button>
+			<button @onclick="@tenbyten">10x10</button>
+			<button @onclick="@onebytwo">1x2</button>
+		</div>
+
+	</div>
+
+	<div class="contents">
+
+
+
+	</div>
+
+</root>
+
+
+@code
+{
+	void onebyone()
+	{
+		ConsoleSystem.Run( "spawn", "models/block_1x1");
+	}
+	void twobytwo()
+	{
+		ConsoleSystem.Run( "spawn", "models/block_2x2");
+	}
+	void threebythre()
+	{
+		ConsoleSystem.Run( "spawn", "models/block_3x3");
+	}
+	void fourbyfour()
+	{
+		ConsoleSystem.Run( "spawn", "models/block_4x4");
+	}
+	void fivebyfive()
+	{
+		ConsoleSystem.Run( "spawn", "models/block_5x5");
+	}
+	void sixbysix()
+	{
+		ConsoleSystem.Run( "spawn", "models/block_6x6");
+	}
+	void sevenbyseven()
+	{
+		ConsoleSystem.Run( "spawn", "models/block_7x7");
+	}
+	void eightbyeight()
+	{
+		ConsoleSystem.Run( "spawn", "models/block_8x8");
+	}
+	void ninebynine()
+	{
+		ConsoleSystem.Run( "spawn", "models/block_9x9");
+	}
+	void tenbyten()
+	{
+		ConsoleSystem.Run( "spawn", "models/block_10x10");
+	}
+	void onebytwo()
+	{
+		ConsoleSystem.Run( "spawn", "models/block_1x2");
+	}
+}

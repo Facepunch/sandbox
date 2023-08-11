@@ -1,8 +1,9 @@
 ﻿using Sandbox;
 using System.Numerics;
 
-partial class SandboxPlayer : Player
+public partial class SandboxPlayer : Player
 {
+
 	private TimeSince timeSinceDropped;
 	private TimeSince timeSinceJumpReleased;
 
@@ -17,11 +18,13 @@ partial class SandboxPlayer : Player
 	public ClothingContainer Clothing = new();
 
 	/// <summary>
-	/// Default init
+	/// Deafault init
 	/// </summary>
 	public SandboxPlayer()
 	{
 		Inventory = new Inventory( this );
+
+
 	}
 
 	/// <summary>
@@ -59,8 +62,6 @@ partial class SandboxPlayer : Player
 		Inventory.Add( new PhysGun(), true );
 		Inventory.Add( new GravGun() );
 		Inventory.Add( new Tool() );
-		Inventory.Add( new Pistol() );
-		Inventory.Add( new MP5() );
 		Inventory.Add( new Flashlight() );
 		Inventory.Add( new Fists() );
 
@@ -114,6 +115,8 @@ partial class SandboxPlayer : Player
 		base.TakeDamage( info );
 	}
 
+
+	
 	public override PawnController GetActiveController()
 	{
 		if ( DevController != null ) return DevController;

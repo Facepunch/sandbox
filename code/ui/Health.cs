@@ -2,11 +2,11 @@
 using Sandbox.UI;
 using Sandbox.UI.Construct;
 
-public class Health : Panel
+public class health : Panel
 {
 	public Label Label;
 
-	public Health()
+	public health()
 	{
 		Label = Add.Label( "100", "value" );
 	}

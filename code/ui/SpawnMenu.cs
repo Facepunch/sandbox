@@ -2,12 +2,19 @@
 using Sandbox.Tools;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
+using System.Linq;
 
 [Library]
 public partial class SpawnMenu : Panel
 {
 	public static SpawnMenu Instance;
 	readonly Panel toollist;
+	public Panel ToolPanel { get; private set; }
+	public ButtonGroup SpawnMenuLeftTabs;
+	public Panel SpawnMenuLeftBody;
+
+	public bool IgnoreMenuButton = false;
+	private bool IsOpen = false;
 
 	public SpawnMenu()
 	{
@@ -17,21 +24,26 @@ public partial class SpawnMenu : Panel
 		{
 			var tabs = left.AddChild<ButtonGroup>();
 			tabs.AddClass( "tabs" );
+			SpawnMenuLeftTabs = tabs;
 
 			var body = left.Add.Panel( "body" );
-
+			SpawnMenuLeftBody = body;
 			{
+				var props = body.AddChild<SpawnList>();
+				tabs.SelectedButton = tabs.AddButtonActive( "#spawnmenu.props", ( b ) => props.SetClass( "active", b ) );
+
 				var models = body.AddChild<ModelList>();
-				tabs.SelectedButton = tabs.AddButtonActive( "#spawnmenu.modellist", ( b ) => models.SetClass( "active", b ) );			
-				
+				tabs.AddButtonActive( "#spawnmenu.modellist", ( b ) => models.SetClass( "active", b ) );
+
 				var ents = body.AddChild<EntityList>();
 				tabs.AddButtonActive( "#spawnmenu.entities", ( b ) => ents.SetClass( "active", b ) );
 
 				var npclist = body.AddChild<NpcList>();
 				tabs.AddButtonActive( "#spawnmenu.npclist", ( b ) => npclist.SetClass( "active", b ) );
-				
-				var props = body.AddChild<SpawnList>();
-				tabs.AddButtonActive( "#spawnmenu.props", ( b ) => props.SetClass( "active", b ) );
+				var joblist = body.AddChild<JobList>();
+				tabs.AddButtonActive( "Jobs", ( b ) => joblist.SetClass( "active", b ) );
+				var DRPEntsList = body.AddChild<DRPEntsList>();
+				tabs.AddButtonActive( "DarkRP Entities", ( b ) => DRPEntsList.SetClass( "active", b ) );
 			}
 		}
 
@@ -48,7 +60,7 @@ public partial class SpawnMenu : Panel
 				{
 					RebuildToolList();
 				}
-				body.Add.Panel( "inspector" );
+				ToolPanel = body.Add.Panel( "inspector" );
 			}
 		}
 
@@ -58,24 +70,24 @@ public partial class SpawnMenu : Panel
 	{
 		toollist.DeleteChildren( true );
 
-		foreach ( var entry in TypeLibrary.GetTypes<BaseTool>() )
+		foreach ( var entry in TypeLibrary.GetTypes<BaseTool>().OrderBy( ( x ) => x.Title ) )
 		{
-			if ( entry.Name == "BaseTool" )
+			if ( entry.Name.StartsWith( "Base" ) )
 				continue;
 
 			var button = toollist.Add.Button( entry.Title );
 			button.SetClass( "active", entry.ClassName == ConsoleSystem.GetValue( "tool_current" ) );
 
-			button.AddEventListener( "onclick", () => 
+			button.AddEventListener( "onclick", () =>
 			{
 				SetActiveTool( entry.ClassName );
 
 				foreach ( var child in toollist.Children )
 					child.SetClass( "active", child == button );
+				ToolPanel.DeleteChildren( true );
 			} );
 		}
 	}
-
 	void SetActiveTool( string className )
 	{
 		// setting a cvar
@@ -96,11 +108,25 @@ public partial class SpawnMenu : Panel
 		}
 	}
 
+	private bool menuWasPressed = false;
+
 	public override void Tick()
 	{
 		base.Tick();
+		if ( !IgnoreMenuButton )
+		{
+			if ( Input.Pressed( "menu" ) )
+			{
+				IsOpen = true;
+			}
+			if ( menuWasPressed && !Input.Down( "menu" ) )
+			{
+				IsOpen = false;
+			}
+		}
+		menuWasPressed = Input.Down( "menu" );
 
-		Parent.SetClass( "spawnmenuopen", Input.Down( "menu" ) );
+		Parent.SetClass( "spawnmenuopen", IsOpen );
 
 		UpdateActiveTool();
 	}
@@ -117,6 +143,7 @@ public partial class SpawnMenu : Panel
 				child.SetClass( "active", tool != null && button.Text == tool.Title );
 			}
 		}
+		Parent.SetClass( "spawnmenuopen", Input.Down( "menu" ) );
 	}
 
 	public override void OnHotloaded()

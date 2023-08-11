@@ -1,0 +1,17 @@
+{
+  "Title": "Sandbox",
+  "Type": "gamemode",
+  "Org": "facepunch",
+  "Ident": "sandbox",
+  "Tags": null,
+  "Schema": 1,
+  "HasAssets": true,
+  "AssetsPath": "",
+  "Resources": null,
+  "MenuResources": null,
+  "HasCode": true,
+  "CodePath": "/code/",
+  "PackageReferences": null,
+  "EditorReferences": null,
+  "Metadata": {}
+}

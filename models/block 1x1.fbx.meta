@@ -1,0 +1,25 @@
+{
+  "publish": {
+    "Allowed": false,
+    "Enabled": true,
+    "ProjectConfig": {
+      "Title": "block 1x1",
+      "Type": "asset_type_not_allowed",
+      "Org": "local",
+      "Ident": "block1x1",
+      "Tags": null,
+      "Schema": 0,
+      "HasAssets": false,
+      "AssetsPath": null,
+      "Resources": null,
+      "MenuResources": null,
+      "HasCode": false,
+      "CodePath": null,
+      "PackageReferences": null,
+      "EditorReferences": null,
+      "Metadata": {
+        "SingleAssetSource": "block 1x1.fbx"
+      }
+    }
+  }
+}
