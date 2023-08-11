@@ -1,0 +1,68 @@
+@using System
+@using System.Threading.Tasks;
+@using Sandbox;
+@using Sandbox.MenuSystem;
+@using Sandbox.UI;
+@inherits Panel
+@namespace SandboxPlus.UI.GameMenu
+
+<root>
+
+    @if ( MapPackage == null )
+    {
+        // todo show a button to select a map
+    }
+    else
+    {
+        <PackageCard Package="@MapPackage" HoverIcon="folder" OnLaunch="@OnMapClicked"></PackageCard>
+    }
+
+</root>
+
+@code
+{
+    public string MapIdent { get; set; }
+    public string HRef { get; set; } = "/lobby/map";
+
+    public Package MapPackage { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        MapPackage = await Package.FetchAsync( MapIdent, true );
+    }
+
+    protected override int BuildHash()
+    {
+        return HashCode.Combine( MapPackage, MapIdent );
+    }
+
+    string MapTitle => MapPackage?.Title ?? MapIdent;
+
+    string FindBackgroundImage()
+    {
+        if (MapPackage == null)
+            return "";
+
+        return MapPackage.Thumb;
+    }
+
+    void OnMapClicked()
+    {
+        this.Navigate(HRef);
+    }
+}
+
+<style>
+MapButton
+{
+	flex-direction: column;
+	flex-shrink: 0;
+	flex-grow: 1;
+
+	.card-package
+	{
+		max-width: 450px;
+		min-width: 350px;
+	}
+}
+</style>

@@ -1,0 +1,32 @@
+@using System
+@using Sandbox;
+@using Sandbox.MenuSystem;
+@using Sandbox.UI;
+@inherits Panel;
+@namespace SandboxPlus.UI.GameMenu
+
+<root class="@SpecialClasses()" tooltip="@Member.Name" style="background-image: url( avatar:@Member.Id )">
+</root>
+
+@code
+{
+    public Friend Member { get; set; }
+
+    string SpecialClasses()
+    {
+        if (Member.IsMe) return "is-me";
+        if (Member.IsFriend) return "is-friend";
+
+        return "";
+    }
+}
+
+<style>   
+LobbyMember
+{
+	width: 64px;
+	height: 64px;
+	background-size: cover;
+	border-radius: 10%;
+}
+</style>

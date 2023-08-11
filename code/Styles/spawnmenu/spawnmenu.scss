@@ -3,39 +3,43 @@
 @import "_tabs.scss";
 @import "_packagelist.scss";
 
-spawnmenu
-{
+spawnmenu {
 	left: 0px;
 	right: 0px;
 	top: 0px;
 	bottom: 0px;
 	padding: 80px 100px;
 	padding-bottom: 200px;
-	border-radius: 5px;
 	pointer-events: none;
 	transition: all 0.1s ease-out;
 	position: absolute;
 	font-family: poppins;
 	opacity: 0;
 	z-index: 10;
-	backdrop-filter: blur( 50px ) contrast( 25% ) saturate( 50% ) brightness( 9% );
+	backdrop-filter: blur( 10px ) contrast( 50% ) saturate( 50% ) brightness( 10% );
 
-	.left
-	{
+	.left {
 		flex-grow: 1;
 		flex-direction: column;
 		position: relative;
 		left: -500px;
 		transition: all 0.3s ease-in;
 
-		.body
-		{
+		.body {
 			flex-grow: 1;
+		}
+
+		textentry {
+			transition: opacity 0.1s ease;
+			min-height: 44px;
+			opacity: 1;
+			font-size: 16px;
+			background-color: rgba( #090d10, 0.9 );
+			border-radius: 5px;
 		}
 	}
 
-	.right
-	{
+	.right {
 		margin-left: 50px;
 		flex-direction: column;
 		min-width: 400px;
@@ -43,41 +47,35 @@ spawnmenu
 		left: 500px;
 		transition: all 0.3s ease-in;
 
-		.body
-		{
+		.body {
 			//	background-color: rgba( #333, 0.95 );
 			flex-grow: 1;
 			padding: 10px;
 
-			.toollist
-			{
+			.toollist {
 				flex-direction: column;
 				width: 150px;
 				color: #aaa;
 
-				button
-				{
+				button {
 					padding: 3px 10px;
 					font-size: 11px;
 					transition: all 0.2s ease-out;
 					cursor: pointer;
 
-					&:hover
-					{
+					&:hover {
 						//border-left: 3px solid #3273eb;
 						color: white;
 					}
 
-					&.active
-					{
+					&.active {
 						//border-left: 5px solid #3273eb;
 						color: white;
 					}
 				}
 			}
 
-			.inspector
-			{
+			.inspector {
 				//background-color: rgba( #111, 0.7 );
 				flex-grow: 1;
 				margin-left: 5px;

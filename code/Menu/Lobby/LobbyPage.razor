@@ -1,0 +1,200 @@
+@using System
+@using System.Linq;
+@using Sandbox;
+@using Sandbox.MenuSystem;
+@using Sandbox.UI;
+@namespace SandboxPlus.UI.GameMenu
+
+@if (Game.Menu.Lobby == null)
+{
+    <div>No lobby. Error. We shouldn't be here.</div>
+    return;
+}
+
+<root class="layout">
+
+    <div class="navbar">
+
+        <div class="left">
+            <a class="button" href="/"> Home </a>
+            <span class="block">&gt;</span>
+            <span class="block">Create A Game</span>
+        </div>
+
+        <div class="right">
+        </div>
+    </div>
+
+    <div class="body columned">
+
+        <div class="form scroll">
+
+            <FormGroup>
+                <Label>Name</Label>
+                <Control>
+                    <TextEntry Value:bind=@Game.Menu.Lobby.Title Tooltip="Server Title"> </TextEntry>
+                </Control>
+            </FormGroup>
+
+            @if (!string.IsNullOrEmpty(Game.Menu.Lobby.SavedGame))
+            {
+                <FormGroup>
+                    <Label>Saved Game</Label>
+                    <Control>
+                        <TextEntry Disabled Value=@Game.Menu.Lobby.SavedGame Tooltip="Server Title"> </TextEntry>
+                    </Control>
+                </FormGroup>
+            }
+
+            <FormGroup>
+                <Label>Description</Label>
+                <Control>
+                    <TextEntry Value:bind=@Game.Menu.Lobby.Description Tooltip="Server Description"> </TextEntry>
+                </Control>
+            </FormGroup>
+
+            @if (MaxPlayersSupported > 1)
+            {
+                <FormGroup class="form-group">
+                    <Label>Max Players</Label>
+                    <Control>
+                        <SliderControl ShowTextEntry="@true" ShowRange="@true" Min=@(1.0f) Max=@(MaxPlayersSupported) Value:bind=@Game.Menu.Lobby.MaxMembers> </SliderControl>
+                    </Control>
+                </FormGroup>
+            }
+
+            <FormGroup>
+                <Label>Addons</Label>
+                <Control>
+
+                    @foreach (var addon in Game.Menu.Lobby.Addons)
+                    {
+                        <div>
+                            @addon
+                            <div class="button" style="font-size: 20px; height: 40px; margin-left: 4px;" onclick="@( () => Game.Menu.Lobby.Addons = Game.Menu.Lobby.Addons.Remove( addon ) )">X</div>
+                        </div>
+                    }
+                    <a class="button" style="margin-left: 16px;" href="/lobby/addons">+ Add</a>
+                </Control>
+            </FormGroup>
+
+            <div style="height: 40px; flex-shrink: 0;"></div>
+
+            @foreach (var group in Game.Menu.Package.PackageSettings.GroupBy(x => x.Group))
+	        {
+                var title = group.Key;
+                if (string.IsNullOrWhiteSpace(title)) title = "Game Settings";
+
+                <h2>@title</h2>
+
+		        @foreach (var setting in group)
+		        {
+                    Game.Menu.Lobby.ConVars.TryGetValue(setting.ConVarName, out var value);
+
+			        if (string.IsNullOrEmpty(value)) value = setting.DefaultValue;
+
+                    <FormGroup>
+
+                        <Label>@setting.DisplayName</Label>
+
+                        <Control>
+                            <LobbyGameSetting Value=@value Setting=@setting OnChange="@OnLobbySettingChanged"></LobbyGameSetting>
+                        </Control>
+
+			        </FormGroup>
+		        }
+
+                <div style="height: 40px; flex-shrink: 0;"></div>
+	        }
+
+        </div>
+
+        @if (ShowMapOption)
+        {
+            <div class="right">
+                <h2>Map</h2>
+                <MapButton MapIdent=@Game.Menu.Lobby.Map></MapButton>
+            </div>
+        }
+
+    </div>
+
+    <section class="nogrow box">
+
+        <div class="member-list">
+    
+            @foreach (var member in Game.Menu.Lobby.Members)
+            {
+                // todo right click to view profile, mute, kick, whatever we can do
+
+                <LobbyMember Member=@member></LobbyMember>
+            }
+
+        </div>  
+            
+    </section>
+    
+    <div class="navbar">
+    
+        <div class="left">
+            <a class="button" href="/" title="Go To Main Menu"> &lt; </a>
+
+            <span class="button" onclick=@( () => Game.Menu.Lobby?.Leave() )>Exit Lobby</span>
+        </div>
+
+        <div class="right">
+
+            @if (Game.Menu.Lobby.Owner.IsMe)
+            {
+                <span class="button" onclick=@StartGame>Start Game</span>
+            }
+        </div>
+
+    </div>
+
+</root>
+
+@code
+{
+    bool ShowMapOption = true;
+    int MaxPlayersSupported = 1;
+
+    protected override void OnParametersSet()
+    {
+        MaxPlayersSupported = Game.Menu.Package.GetMeta<int>("MaxPlayers", 1);
+
+        ShowMapOption = Game.Menu.Package.MapSelectionMode != Sandbox.DataModel.Game.MapSelect.Hidden;
+        ShowMapOption = ShowMapOption && Game.Menu.Package.MapSelectionMode != Sandbox.DataModel.Game.MapSelect.Empty;
+    }
+
+    public void StartGame()
+    {
+        _ = Game.Menu.EnterServerAsync();
+        this.Navigate("/active");
+    }
+
+    protected override int BuildHash()
+    {
+        var lobby = Game.Menu.Lobby;
+
+        return HashCode.Combine(lobby?.Title, lobby?.Owner.Id, lobby?.MemberCount, lobby?.MaxMembers, Game.Menu.Package?.PackageSettings?.Count());
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if (!IsVisible)
+            return;
+
+        if (Game.Menu.Lobby == null)
+        {
+            this.Navigate("/");
+        }
+    }
+
+    void OnLobbySettingChanged( string key, string value )
+    {
+        Game.Menu.Lobby.ConVars = Game.Menu.Lobby.ConVars.SetItem(key, value);
+    }
+}

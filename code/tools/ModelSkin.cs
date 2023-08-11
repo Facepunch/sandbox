@@ -42,7 +42,7 @@ namespace Sandbox.Tools
 					modelEnt.SetMaterialGroup( nextGroup );
 				}
 
-				CreateHitEffects( tr.EndPosition );
+				CreateHitEffects( tr.EndPosition, tr.Normal );
 			}
 		}
 	}

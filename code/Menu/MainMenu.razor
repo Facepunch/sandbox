@@ -2,6 +2,7 @@
 @using Sandbox;
 @using Sandbox.MenuSystem;
 @using Sandbox.UI;
+@using SandboxPlus.UI.GameMenu
 @attribute [StyleSheet]
 @inherits Sandbox.UI.GameMenu.DefaultGameMenu
 
@@ -10,3 +11,36 @@
     <div class="navigator-canvas" slot="navigator-canvas"></div>
 
 </root>
+
+@code
+{
+    public static ScenePanel Scene { get; set; }
+
+    SceneModel Model { get; set; }
+    SceneLight Light { get; set; }
+
+    public MainMenu() : base()
+    { 
+        AddDestination("/", typeof(SandboxPlus.UI.GameMenu.FrontPage));
+        AddDestination("/lobby", typeof(SandboxPlus.UI.GameMenu.LobbyPage));
+        AddDestination("/lobby/map", typeof(SandboxPlus.UI.GameMenu.LobbyMapPage));
+        AddDestination("/lobby/addons", typeof(SandboxPlus.UI.GameMenu.LobbyAddonPage));
+    }
+
+    protected override void OnEvent( PanelEvent e )
+    {
+        if ( e.Name == "package.changed" )
+        {
+            StateHasChanged();
+            return;
+        }
+
+        base.OnEvent( e );
+    }
+
+    [GameEvent.Menu.LobbyJoined]
+    public void OnLobbyJoined() => Navigate("/lobby");
+
+    [GameEvent.Menu.LobbyLeave]
+    public void OnLobbyLeave() => Navigate("/");
+}

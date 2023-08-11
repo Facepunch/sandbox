@@ -7,6 +7,9 @@ Layer0
 	//---- PBR ----
 	F_SELF_ILLUM 1
 
+	//---- Rendering ----
+	F_RENDER_BACKFACES 1
+
 	//---- Ambient Occlusion ----
 	g_flAmbientOcclusionDirectDiffuse "0.000"
 	g_flAmbientOcclusionDirectSpecular "0.000"

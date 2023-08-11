@@ -1,0 +1,87 @@
+@using System;
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel;
+@namespace SandboxPlus.UI.GameMenu
+
+@if (Setting == null)
+	return;
+
+<root class="control">
+
+	@switch (Setting.DisplayType)
+	{
+		case GameSetting.GameSettingType.Choice:
+						
+			<DropDown value=@Value @ref=Combobox ValueChanged=@Set></DropDown>
+			break;
+
+		case GameSetting.GameSettingType.Boolean:
+						
+			<SwitchControl value=@Value OnValueChanged=@( ( bool b ) => Set( b ? "true" : "false"  ) )></SwitchControl>
+			break;
+
+		case GameSetting.GameSettingType.Integer:
+
+			<SliderControl ShowTextEntry="@true" ShowRange="@true" Step=@(1.0f) Min=@Setting.Minimum Max=@Setting.Maximum value=@Value OnValueChanged=@( ( float f ) => Set( f.ToString() ))></SliderControl>
+			break;
+
+		case GameSetting.GameSettingType.Float:
+
+			<SliderControl ShowTextEntry="@true" ShowRange="@true" Step=@Setting.Step Min=@Setting.Minimum Max=@Setting.Maximum value=@Value OnValueChanged=@( ( float f ) => Set( f.ToString() ))></SliderControl>
+			break;
+
+		case GameSetting.GameSettingType.String:
+						
+			<TextEntry value=@Value OnTextEdited=@Set></TextEntry>
+			break;
+
+		default:
+
+			<div>Unhandled LobbyGameSetting @Setting.DisplayType</div>
+			break;	
+	}
+
+</root>
+
+
+@code
+{
+	public Action<string, string> OnChange { get; set; }
+
+	public string Value { get; set; }
+	public GameSetting Setting { get; set; }
+
+	DropDown Combobox;
+
+	void Set( string newvalue)
+	{
+		OnChange?.Invoke( Setting.ConVarName, newvalue );
+		//Log.Info($"{Setting.ConVarName} -> {newvalue}");
+	}
+
+	protected override void OnAfterTreeRender(bool firstTime)
+	{
+		base.OnAfterTreeRender(firstTime);
+
+		if ( Combobox != null )
+		{
+			Combobox.Options.Clear(); 
+
+			foreach (var choice in Setting.Choices )
+			{
+				Combobox.Options.Add(new Option(choice.Name, choice.Value));
+			}
+
+			Combobox.Value = Value;
+		}
+	}
+}
+
+<style>
+LobbyGameSetting
+{
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+</style>

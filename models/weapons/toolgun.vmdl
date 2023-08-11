@@ -73,8 +73,8 @@
 					{
 						_class = "Bone"
 						name = "hold_r"
-						origin = [ 2.090646, 0.3, -0.436852 ]
-						angles = [ 0.0, 0.0, 0.0 ]
+						origin = [ 0.0, -2.0, 0.0 ]
+						angles = [ 0.0, -90.0, 0.0 ]
 						do_not_discard = true
 					},
 				]
@@ -134,10 +134,13 @@
 						name = "w_357_0_mesh"
 						parent_bone = ""
 						surface_prop = "default"
-						collision_prop = "default"
+						collision_tags = "solid"
 						recenter_on_parent_bone = true
 						offset_origin = [ 0.0, 0.0, 0.0 ]
 						offset_angles = [ 0.0, 0.0, 0.0 ]
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
 						filename = "models/weapons/toolgun_refs/phys/w_toolgun_phy.dmx"
 						import_scale = 1.0
 						faceMergeAngle = 10.0
@@ -184,7 +187,7 @@
 								parent_bone = "valvebiped"
 								surface_property = "weapon"
 								translation_only = false
-								group_id = 0
+								tags = ""
 								hitbox_mins = [ -1.041, -1.864, -1.515 ]
 								hitbox_maxs = [ 0.0, 0.0, 0.0 ]
 							},
@@ -193,7 +196,7 @@
 								parent_bone = "bip01_r_hand"
 								surface_property = "weapon"
 								translation_only = false
-								group_id = 0
+								tags = ""
 								hitbox_mins = [ 0.0, -2.988, -2.57 ]
 								hitbox_maxs = [ 2.361, 0.0, 0.0 ]
 							},
@@ -202,7 +205,7 @@
 								parent_bone = "bone"
 								surface_property = "weapon"
 								translation_only = false
-								group_id = 0
+								tags = ""
 								hitbox_mins = [ -3.121, -3.968, -0.64 ]
 								hitbox_maxs = [ 0.0, 3.826, 13.397 ]
 							},
@@ -251,10 +254,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/toolgun_refs/anim/_idle_0.dmx"
 						start_frame = -1
 						end_frame = -1
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -280,10 +285,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/toolgun_refs/anim/_attack1_1.dmx"
 						start_frame = -1
 						end_frame = -1
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -300,10 +307,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/toolgun_refs/anim/_idle_0.dmx"
 						start_frame = 0
 						end_frame = 1
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -320,18 +329,36 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/toolgun_refs/anim/_attack1_1.dmx"
 						start_frame = 0
 						end_frame = 1
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 				]
 				default_root_bone_name = ""
 			},
+			{
+				_class = "ModelModifierList"
+				children = 
+				[
+					{
+						_class = "ModelModifier_ScaleAndMirror"
+						scale = 1.4
+						mirror_x = false
+						mirror_y = false
+						mirror_z = false
+						flip_bone_forward = false
+						swap_left_and_right_bones = false
+					},
+				]
+			},
 		]
 		model_archetype = ""
 		primary_associated_entity = ""
 		anim_graph_name = ""
+		base_model_name = ""
 	}
 }

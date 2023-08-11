@@ -1,0 +1,97 @@
+@using System
+@using System.Linq;
+@using System.Threading.Tasks;
+@using Sandbox;
+@using Sandbox.MenuSystem;
+@using Sandbox.UI;
+@namespace SandboxPlus.UI.GameMenu
+
+<root style="flex-direction: column;">
+
+    <div class="game-title">
+        @Game.Menu.Package.Title
+    </div>
+
+    <div class="controls">
+
+        @if ( Game.InGame )
+        {
+            <a class="button" href="/active">Current Game</a>
+            <a class="button" onclick=@LeaveGame>Leave Game</a>
+            <span style="height: 20px;"></span>
+        }
+        else
+        {
+            <a class="button" onclick=@CreateNewLobby>Create Game</a>
+
+            if (Game.Menu.Package.SupportsSavedGames && Game.Menu.SavedGames.Any() )
+            {
+                <a class="button" onclick=@LoadSavedGame>Load Game</a>
+            }
+        }
+
+        <a class="button" onclick="@OpenServerList">Find a Game</a>
+        <a class="button" href="/settings">Settings</a>
+
+        <span style="height: 20px;"></span>
+
+        <a class="button" @onclick=@Game.Menu.Close>Quit</a>
+
+    </div>
+
+</root>
+
+@code
+{
+    void LoadSavedGame()
+    {
+        this.Navigate( "/load" );
+    }
+
+    void LeaveGame()
+    {
+        Game.Menu.LeaveServer("Leaving");
+    }
+    
+    async Task CreateNewLobby()
+    {
+        var lobby = await Game.Menu.CreateLobbyAsync(64, "game", true);
+        lobby.Title = $"{Game.Menu.Package.Title} Server";
+        lobby.Description = ":)";
+        lobby.Map = "facepunch.construct";
+    }
+
+    void OpenServerList()
+    {
+        var options = new Sandbox.Modals.ServerListModalOptions();
+        options.TargetGame = Game.Menu.Package.FullIdent;
+        options.OnSelected = (server) =>
+        {
+            Game.Menu.ConnectToServer(server.SteamId);
+        };
+
+        Game.Overlay.ShowServerList(options);
+    }
+}
+
+<style>
+.gamemainmenu frontpage
+{
+	margin: 100px 100px;
+	gap: 100px;
+
+	.game-title
+	{
+		font-family: Poppins;
+		font-weight: 700;
+		font-size: 70px;
+	}
+
+	.controls
+	{
+		flex-direction: column;
+		gap: 8px;
+		align-items: flex-start;
+	}
+}
+</style>

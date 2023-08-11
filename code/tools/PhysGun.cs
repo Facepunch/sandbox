@@ -148,7 +148,7 @@ public partial class PhysGun : Carriable
 	{
 		var tr = Trace.Ray( eyePos, eyePos + eyeDir * MaxTargetDistance )
 			.UseHitboxes()
-			.WithAnyTags( "solid", "player", "debris", PhysgunBlockTag )
+			.WithAnyTags( "solid", "player", "debris", "nocollide", PhysgunBlockTag )
 			.Ignore( this )
 			.OnTraceEvent( Owner ) // SandboxPlus addition for Stargate support
 			.Run();

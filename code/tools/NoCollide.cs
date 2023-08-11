@@ -2,7 +2,7 @@
 
 namespace Sandbox.Tools
 {
-	[Library( "no_collide", Title = "No Collide", Description = "Removes Collison for props tag with the tool", Group = "construction" )]
+	[Library( "no_collide", Title = "No Collide All", Description = "Removes Collison for props tag with the tool", Group = "construction" )]
 	public partial class NoCollide : BaseTool
 	{
 		public override void Simulate()
@@ -31,7 +31,7 @@ namespace Sandbox.Tools
 					modelEnt.Tags.Add( "nocollide" );
 					modelEnt.Tags.Remove( "solid" );
 
-					CreateHitEffects( tr.EndPosition );
+					CreateHitEffects( tr.EndPosition, tr.Normal );
 				}
 				else if ( Input.Pressed( "attack2" ) )
 				{
@@ -49,7 +49,7 @@ namespace Sandbox.Tools
 					modelEnt.Tags.Add( "solid" );
 					modelEnt.Tags.Remove( "nocollide" );
 
-					CreateHitEffects( tr.EndPosition );
+					CreateHitEffects( tr.EndPosition, tr.Normal );
 				}
 			}
 		}

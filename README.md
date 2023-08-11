@@ -21,10 +21,17 @@ It closely follows [Facepunch's Sandbox gamemode](https://github.com/Facepunch/s
 ## Addons for SandboxPlus
 
 - [Wirebox](https://github.com/wiremod/wirebox), playable as [Sandbox With Wirebox](https://asset.party/wiremod/sandboxpluswire)
+- [Stargate](https://github.com/Gmod4phun/sbox-stargate/tree/addon-version)
 - ~~[Undo Manager](https://github.com/Nebual/undo-manager) (outdated, will probably just add to the base gamemode)~~ now part of SandboxPlus
 - [Napkins-Chat](https://github.com/Nebual/napkins-chat) (outdated)
 
+
 ## Contributing
 
-PR's are appreciated!
+PR's are appreciated!  
 Message @Nebual on Discord with any questions :)
+
+### Contributors
+
+- [Nebual](https://github.com/Nebual)
+- [Gmod4phun](https://github.com/gmod4phun)

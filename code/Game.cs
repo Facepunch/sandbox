@@ -8,16 +8,8 @@ partial class SandboxGame : GameManager
 	private SandboxHud _sandboxHud;
 
 	[Event.Hotload]
-	public async void hotload()
+	public void OnReloaded()
 	{
-		if ( Game.IsServer )
-		{
-			_sandboxHud?.Delete();
-			await Task.Delay( 500 ); // gotta wait for clients to hotreload too
-			Log.Info( "SandboxPlus: hotloading SandboxHud" );
-			_sandboxHud = new SandboxHud();
-		}
-
 		ReloadManager.ReloadAutoload();
 	}
 
@@ -44,9 +36,10 @@ partial class SandboxGame : GameManager
 	{
 		base.ClientJoined( cl );
 		var player = new SandboxPlayer( cl );
-		player.Respawn();
 
 		cl.Pawn = player;
+
+		player.Respawn();
 	}
 
 	protected override void OnDestroy()

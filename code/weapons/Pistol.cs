@@ -35,17 +35,12 @@ partial class Pistol : Weapon
 		ViewModelArms.SetParent( ViewModelEntity, true );
 		ViewModelArms.EnableViewmodelRendering = true;
 	}
+
 	public override void ActiveStart( Entity ent )
 	{
 		base.ActiveStart( ent );
 
 		ViewModelEntity?.SetAnimParameter( "b_deploy", true );
-	}
-	public override void Reload()
-	{
-		base.Reload();
-
-		ViewModelEntity?.SetAnimParameter( "b_reload", true );
 	}
 
 	public override bool CanPrimaryAttack()
@@ -83,7 +78,7 @@ partial class Pistol : Weapon
 
 		ApplyAbsoluteImpulse( rot.Backward * 200.0f );
 	}
-	
+
 	protected override void OnPhysicsCollision( CollisionEventData eventData )
 	{
 		if ( eventData.Speed > 500.0f )

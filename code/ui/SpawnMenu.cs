@@ -16,6 +16,9 @@ public partial class SpawnMenu : Panel
 	public bool IgnoreMenuButton = false;
 	private bool IsOpen = false;
 
+	private static ModelList modelList;
+	private bool isSearching;
+
 	public SpawnMenu()
 	{
 		Instance = this;
@@ -32,8 +35,8 @@ public partial class SpawnMenu : Panel
 				var props = body.AddChild<SpawnList>();
 				tabs.SelectedButton = tabs.AddButtonActive( "#spawnmenu.props", ( b ) => props.SetClass( "active", b ) );
 
-				var models = body.AddChild<ModelList>();
-				tabs.AddButtonActive( "#spawnmenu.modellist", ( b ) => models.SetClass( "active", b ) );
+				modelList = body.AddChild<ModelList>();
+				tabs.AddButtonActive( "#spawnmenu.modellist", ( b ) => modelList.SetClass( "active", b ) );
 
 				var ents = body.AddChild<EntityList>();
 				tabs.AddButtonActive( "#spawnmenu.entities", ( b ) => ents.SetClass( "active", b ) );
@@ -42,8 +45,8 @@ public partial class SpawnMenu : Panel
 				tabs.AddButtonActive( "#spawnmenu.npclist", ( b ) => npclist.SetClass( "active", b ) );
 				var joblist = body.AddChild<JobList>();
 				tabs.AddButtonActive( "Jobs", ( b ) => joblist.SetClass( "active", b ) );
-				var DRPEntsList = body.AddChild<DRPEntsList>();
-				tabs.AddButtonActive( "DarkRP Entities", ( b ) => DRPEntsList.SetClass( "active", b ) );
+				var shipmentlist = body.AddChild<ShipmentsList>();
+				tabs.AddButtonActive( "Shipments", ( b ) => shipmentlist.SetClass( "active", b ) );
 			}
 		}
 
@@ -126,9 +129,22 @@ public partial class SpawnMenu : Panel
 		}
 		menuWasPressed = Input.Down( "menu" );
 
-		Parent.SetClass( "spawnmenuopen", IsOpen );
+		if ( modelList.SearchInput.HasFocus )
+		{
+			isSearching = true;
+		}
+		else if ( isSearching && Input.Pressed( "menu" ) )
+		{
+			isSearching = false;
+		}
 
 		UpdateActiveTool();
+
+		if ( isSearching )
+			return;
+
+		Parent.SetClass( "spawnmenuopen", IsOpen );
+
 	}
 
 	void UpdateActiveTool()

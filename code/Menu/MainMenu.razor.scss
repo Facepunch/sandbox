@@ -1,257 +1,220 @@
+.gamemainmenu {
+  background-image: url("menu/boxes.webm");
+  background-position: center;
+  background-size: cover;
+  opacity: 1;
+  flex-direction: column;
+  font-size: 25px;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transition: all 0.3s ease-out;
+  color: white;
 
-.gamemainmenu
-{
-	background-image: url( "menu/boxes.webm" );
-	background-position: center;
-	background-size: cover;
-	opacity: 1;
-	flex-direction: column;
-	font-size: 25px;
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	transition: all 0.3s ease-out;
-	color: white;
+  &:intro {
+    opacity: 0;
+    transform: scaleX(1.1);
+  }
 
-	&:intro
-	{
-		opacity: 0;
-		transform: scaleX( 1.1 );
-	}
-
-	&.ingame
-	{
-		background-color: #151313ee;
-		background-image: none;
-	}
-
+  &.ingame {
+    background-color: #151313ee;
+    background-image: none;
+  }
 }
 
-.button, .block
-{
-	padding: 4px 16px;
+.button,
+.block {
+  padding: 4px 16px;
 
-	opacity: 0.8;
+  opacity: 0.8;
 
-	font-size: 28px;
-	font-family: Poppins;
-	font-weight: 700;
-	flex-shrink: 0;
+  font-size: 28px;
+  font-family: Poppins;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
-.button
-{
-	background-color: #000a;
-	cursor: pointer;
+.button {
+  background-color: #000a;
+  cursor: pointer;
 
-	&:hover
-	{
-		opacity: 1;
-	}
+  &:hover {
+    opacity: 1;
+  }
 
-	&:active
-	{
-		left: 2px;
-		top: 3px;
-	}
+  &:active {
+    left: 2px;
+    top: 3px;
+  }
 }
 
+.gamemainmenu .navigator-canvas {
+  height: 100%;
+  flex-grow: 1;
+  flex-shrink: 0;
+  backdrop-filter: blur(20px);
+  padding: 0px 100px;
 
-.gamemainmenu .navigator-canvas
-{
-	height: 100%;
-	flex-grow: 1;
-	flex-shrink: 0;
-	backdrop-filter: blur( 20px );
-	padding: 0px 100px;
-
-	.navigator-body
-	{
-		width: 100%;
-		height: 100%;
-		flex-direction: column;
-		padding: 100px 0px;
-	}
+  .navigator-body {
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    padding: 100px 0px;
+  }
 }
 
-section
-{
-	flex-direction: column;
-	flex-grow: 1;
-	flex-shrink: 0;
+section {
+  flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 0;
 
-	&.nogrow
-	{
-		flex-grow: 0;
-	}
+  &.nogrow {
+    flex-grow: 0;
+  }
 
-	&.box
-	{
-		background-color: rgba( black, 0.5 );
-		
-	}
+  &.box {
+    background-color: rgba(black, 0.5);
+  }
 }
 
-.scroll
-{
-	overflow-y: scroll;
-	flex-shrink: 1;
-	flex-grow: 0;
+.scroll {
+  overflow-y: scroll;
+  flex-shrink: 1;
+  flex-grow: 0;
 }
 
-h2
-{
-	font-family: poppins;
-	font-weight: 400;
-	opacity: 0.2;
-	margin-bottom: 16px;
-	flex-shrink: 0;
+h2 {
+  font-family: poppins;
+  font-weight: 400;
+  opacity: 0.2;
+  margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
-.member-list
-{
-	overflow-x: scroll;
-	padding: 20px;
-	gap: 8px;
+.member-list {
+  overflow-x: scroll;
+  padding: 20px;
+  gap: 8px;
 }
 
-
-
-.hidden
-{
-	display: none;
+.hidden {
+  display: none;
 }
 
-.inset
-{
-	overflow: hidden;
+.inset {
+  overflow: hidden;
 }
 
-.layout
-{
-	flex-direction: column;
+.layout {
+  flex-direction: column;
 
-	> *
-	{
-		flex-shrink: 0;
-	}
+  > * {
+    flex-shrink: 0;
+  }
 
-	> .body
-	{
-		flex-grow: 1;
-		flex-shrink: 0;
-		flex-direction: column;
+  > .body {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-direction: column;
 
-		&.columned
-		{
-			flex-direction: row;
-			flex-grow: 1;
-			flex-shrink: 1;
-			justify-content: space-around;
-			align-items: center;
+    &.columned {
+      flex-direction: row;
+      flex-grow: 1;
+      flex-shrink: 1;
+      justify-content: space-around;
+      align-items: center;
 
-			> .left
-			{
-				flex-grow: 0;
-				flex-shrink: 0;
-				overflow-y: scroll;
-				flex-direction: column;
-			}
+      > .left {
+        flex-grow: 0;
+        flex-shrink: 0;
+        overflow-y: scroll;
+        flex-direction: column;
+      }
 
-			> .right
-			{
-				flex-grow: 0;
-				flex-shrink: 0;
-				flex-direction: column;
-			}
-		}
-	}
+      > .right {
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-direction: column;
+      }
+    }
+  }
 }
 
-.navbar
-{
-	padding: 32px 0;
-	flex-shrink: 0;
+.navbar {
+  padding: 32px 0;
+  flex-shrink: 0;
 
-	.right, .left
-	{
-		flex-grow: 0;
-		flex-shrink: 0;
-		gap: 10px;
-	}
+  .right,
+  .left {
+    flex-grow: 0;
+    flex-shrink: 0;
+    gap: 10px;
+  }
 
-	.left
-	{
-		flex-grow: 1;
-	}
+  .left {
+    flex-grow: 1;
+  }
 }
 
 $form-row-height: 48px;
 
-.form
-{
-	flex-direction: column;
-	flex-shrink: 0;
-	flex-grow: 0;
-	gap: 2px;
-	margin-bottom: 50px;
+.form {
+  flex-direction: column;
+  flex-shrink: 0;
+  flex-grow: 0;
+  gap: 2px;
+  margin-bottom: 50px;
 
-	> .form-group
-	{
-		flex-direction: column;
-		flex-shrink: 0;
-		margin-bottom: 20px;
+  > .form-group {
+    flex-direction: column;
+    flex-shrink: 0;
+    margin-bottom: 20px;
 
-		> .form-label
-		{
-			opacity: 0.5;
-			height: $form-row-height;
-			font-size: 20px;
-			white-space: nowrap;
-		}
-	}
+    > .form-label {
+      opacity: 0.5;
+      height: $form-row-height;
+      font-size: 20px;
+      white-space: nowrap;
+    }
+  }
 }
 
-.form .form-control
-{
-	flex-grow: 1;
+.form .form-control {
+  flex-grow: 1;
 
-	SliderControl, > DropDown, > textentry, SliderControl textentry
-	{
-		flex-grow: 1;
-		font-size: 20px;
-		height: $form-row-height;
-	}
+  SliderControl,
+  > DropDown,
+  > textentry,
+  SliderControl textentry {
+    flex-grow: 1;
+    font-size: 20px;
+    height: $form-row-height;
+  }
 
-	> textentry, SliderControl textentry
-	{
-		flex-grow: 1;
-		background-color: #ffffff05;
-		height: $form-row-height;
-		color: #aaa;
-		width: 600px;
-		border-radius: 0;
-		padding: 5px;
+  > textentry,
+  SliderControl textentry {
+    flex-grow: 1;
+    background-color: #ffffff05;
+    height: $form-row-height;
+    color: #aaa;
+    width: 600px;
+    border-radius: 0;
+    padding: 5px;
 
-		&:hover
-		{
-			background-color: #ffffff11;
-		}
+    &:hover {
+      background-color: #ffffff11;
+    }
 
-		&:focus
-		{
-			background-color: #ffffff22;
-			color: #fff;
-		}
-	}
+    &:focus {
+      background-color: #ffffff22;
+      color: #fff;
+    }
+  }
 
-	SliderControl
-	{
-		
-	}
+  SliderControl {
+  }
 }
 
-choosemappage.navigator-body
-{
-	padding: 0;
+choosemappage.navigator-body {
+  padding: 0;
 }

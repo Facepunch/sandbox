@@ -1,0 +1,38 @@
+@using System
+@using Sandbox;
+@using Sandbox.MenuSystem;
+@using Sandbox.UI;
+@inherits Panel;
+@namespace SandboxPlus.UI.GameMenu
+
+@if (Game.Menu.Lobby == null)
+    return;
+
+<root style="flex-direction: column; flex-shrink: 1; flex-grow: 1;">
+
+    <div class="navbar">
+
+        <div class="left">
+            <a class="button" href="/"> Home </a>
+            <span class="block">&gt;</span>
+            <a class="button" href="/lobby"> Create A Game </a>
+            <span class="block">&gt;</span>
+            <span class="block">Map Select</span>
+        </div>
+
+        <div class="right">
+        </div>
+    </div>
+
+    <PackageList ShowFilters="@true" style="padding-bottom: 50px;" Query="type:map sort:trending" OnSelected="@OnPackageSelected" Take=@(50)></PackageList>
+
+</root>
+
+@code
+{
+    void OnPackageSelected( Package package )
+    {
+        Game.Menu.Lobby.Map = package.FullIdent;
+        this.Navigate( "/lobby" );
+    }
+}

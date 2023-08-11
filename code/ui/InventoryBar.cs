@@ -49,7 +49,7 @@ public class InventoryBar : Panel
 	[Event.Client.BuildInput]
 	public void ProcessClientInput()
 	{
-		var player = Game.LocalPawn as Player;
+		var player = Game.LocalPawn as SandboxPlayer;
 		if ( player == null )
 			return;
 
@@ -72,7 +72,10 @@ public class InventoryBar : Panel
 		if ( Input.Pressed( "slot8" ) ) SetActiveSlot( inventory, 7 );
 		if ( Input.Pressed( "slot9" ) ) SetActiveSlot( inventory, 8 );
 
-		if ( Input.MouseWheel != 0 ) SwitchActiveSlot( inventory, -Input.MouseWheel );
+		if ( !player.SuppressScrollWheelInventory && Input.MouseWheel != 0 )
+		{
+			SwitchActiveSlot( inventory, -Input.MouseWheel );
+		}
 	}
 
 	private static void SetActiveSlot( IBaseInventory inventory, int i )

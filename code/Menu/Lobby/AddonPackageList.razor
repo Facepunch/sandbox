@@ -1,0 +1,106 @@
+@using System;
+@using System.Collections.Generic;
+@using System.Linq;
+@using Sandbox;
+@using Sandbox.UI;
+@using System.Threading
+@using System.Threading.Tasks;
+@namespace SandboxPlus.UI.GameMenu
+
+<root class="package-list">
+
+    @if ( ShowFilters )
+    {
+        <PackageFilters Result=@Result Query=@Query OnChange=@OnQueryUpdated></PackageFilters>
+    }
+
+    @if ( FoundPackages == null )
+    {
+        <LoaderFullScreen></LoaderFullScreen>
+    }
+    else if (FoundPackages.Length == 0 )
+    {
+        <div class="loading-status">Nothing Found</div>
+    }
+    else
+    {
+        @foreach ( var package in FoundPackages )
+        {
+            if ( package == null ) continue;
+            <PackageCard OnLaunch=@(() => OnSelected?.Invoke( package ) ) Package=@package></PackageCard>
+        }
+    }
+    
+</root>
+
+@code
+{
+    public string Query { get; set; } = "";
+    public int Take { get; set; } = 100;
+    public int Skip { get; set; }
+    public bool ShowFilters { get; set; } = false;
+
+    public System.Action<Package> OnSelected { get; set; }
+    public System.Action<Package.FindResult> OnResult { get; set; }
+
+    public Package[] FoundPackages{ get; set; }
+
+    protected Package.FindResult Result;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        FoundPackages = null;
+
+        Query ??= "";
+
+        await RunQuery();
+    }
+    public List<Package> CollectionFoundPackages{ get; set; }
+
+    protected async Task RunQuery()
+    {
+        if ( CollectionFoundPackages == null) {
+            CollectionFoundPackages = new();
+            var Result1 = await Package.FetchAsync("wiremod.sandboxplusaddons", false, true);
+            foreach (var packageId in Result1.PackageReferences) {
+                CollectionFoundPackages.Add(await Package.FetchAsync(packageId, true, true));
+            }
+        }
+        var query = Query ?? "type:addon game:any|game:@Game.Menu.Package.FullIdent";
+
+        Result = await Package.FindAsync(Query, Take, Skip);
+
+        if (Result != null)
+        {
+            OnResult?.Invoke(Result);
+
+            if (Query == "") {
+                // they haven't filtered yet, so default to showing SandboxPlus Addons collection first
+                FoundPackages = CollectionFoundPackages.Concat(Result.Packages.ToList()).ToArray();
+            } else {
+                FoundPackages = Result.Packages;
+            }
+        }
+ 
+        StateHasChanged();
+    }
+
+    protected void OnQueryUpdated( string newQuery )
+    {
+        Query = newQuery;
+
+        RunQuery();
+    }
+}
+
+<style>
+.package-list
+{
+    overflow-y: scroll;
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    gap: 10px;
+    justify-content: space-around;
+}
+</style>

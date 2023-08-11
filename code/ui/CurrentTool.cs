@@ -3,7 +3,7 @@ using Sandbox.Tools;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
 
-public class CurrentTool : Panel
+public partial class CurrentTool : Panel
 {
 	public Label Title;
 	public Label Description;
@@ -24,11 +24,11 @@ public class CurrentTool : Panel
 			var display = DisplayInfo.For( tool );
 
 			Title.SetText( display.Name );
-			Description.SetText( display.Description );
+			Description.SetText( tool.Description ?? display.Description );
 		}
 	}
 
-	BaseTool GetCurrentTool()
+	public static BaseTool GetCurrentTool()
 	{
 		var player = Game.LocalPawn as Player;
 		if ( player == null ) return null;
@@ -39,5 +39,11 @@ public class CurrentTool : Panel
 		if ( inventory.Active is not Tool tool ) return null;
 
 		return tool?.CurrentTool;
+	}
+
+	[ClientRpc]
+	public static void CreateToolPanel()
+	{
+		GetCurrentTool()?.CreateToolPanel();
 	}
 }

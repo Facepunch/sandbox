@@ -8,9 +8,15 @@ public partial class SandboxHud : HudEntity<RootPanel>
 	public static SandboxHud Instance;
 	public SandboxHud()
 	{
+		Instance = this;
 		if ( !Game.IsClient )
 			return;
-		Instance = this;
+
+		PopulateHud();
+	}
+
+	private void PopulateHud()
+	{
 
 		RootPanel.StyleSheet.Load( "/Styles/sandbox.scss" );
 
@@ -25,12 +31,22 @@ public partial class SandboxHud : HudEntity<RootPanel>
 		RootPanel.AddChild<SpawnMenu>();
 		RootPanel.AddChild<Crosshair>();
 		Event.Run( "sandbox.hud.loaded" );
-		HotReloadTool();
 	}
 
 	[ClientRpc]
 	public static void HotReloadTool()
 	{
-	
+		CurrentTool.GetCurrentTool()?.Activate();
+	}
+
+	[Event.Hotload]
+	private void OnReloaded()
+	{
+		if ( !Game.IsClient )
+			return;
+
+		RootPanel.DeleteChildren();
+		PopulateHud();
+		HotReloadTool();
 	}
 }

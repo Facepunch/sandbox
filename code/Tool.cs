@@ -145,7 +145,7 @@ namespace Sandbox.Tools
 			if ( Game.IsServer )
 			{
 				CreatePreviews();
-				
+				CurrentTool.CreateToolPanel();
 			}
 		}
 
@@ -181,7 +181,7 @@ namespace Sandbox.Tools
 			var dir = Owner.EyeRotation.Forward;
 
 			return Trace.Ray( startPos, startPos + (dir * MaxTraceDistance) )
-				.WithAllTags( "solid" )
+				.WithAnyTags( "solid", "nocollide" )
 				.Ignore( Owner )
 				.Run();
 		}

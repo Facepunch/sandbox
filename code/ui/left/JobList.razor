@@ -91,10 +91,11 @@
 	{
 		
 		Health.Job = "Thief";
-		
+		ConsoleSystem.Run( "ServerSetJob 1  " + Game.LocalClient);
 	}
 	void Citizen()
 	{
+		ConsoleSystem.Run( "ServerSetJob 0  " + Game.LocalClient);
 		removecontra();
 		Health.Job = "Citizen";
 		citizen();
@@ -102,21 +103,22 @@
 	void GunDealer()
 	{
 		Health.Job = "Gun Dealer";
+		ConsoleSystem.Run( "ServerSetJob 2  " + Game.LocalClient);
 	}
 	void Hobo()
 	{
 		Health.Job = "Hobo";
-		
+		ConsoleSystem.Run( "ServerSetJob 3  " + Game.LocalClient);
 	}
 	void Hitman()
 	{
 		Health.Job = "Hitman";
-		
+		ConsoleSystem.Run( "ServerSetJob 4  " + Game.LocalClient);
 	}
 	void GangLeader()
 	{
 		
-		
+		ConsoleSystem.Run( "ServerSetJob 5  " + Game.LocalClient);
 		Health.Job = "Gang Leader";
 		citizen();
 		gang();
@@ -127,6 +129,8 @@
 		
 		
 		Health.Job = "Police Officer";
+		ConsoleSystem.Run( "ServerSetJob 6  " + Game.LocalClient);
+
 		citizen();
 		police();
 		

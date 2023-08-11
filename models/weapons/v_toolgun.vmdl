@@ -317,7 +317,7 @@
 								parent_bone = "base"
 								surface_property = "default"
 								translation_only = false
-								group_id = 0
+								tags = ""
 								hitbox_mins = [ -7.018476, -0.53884, -1.366092 ]
 								hitbox_maxs = [ 7.723854, 3.143246, 8.058478 ]
 							},
@@ -326,7 +326,7 @@
 								parent_bone = "bip01_l_forearm"
 								surface_property = "default"
 								translation_only = false
-								group_id = 0
+								tags = ""
 								hitbox_mins = [ 0.0, -2.879676, -3.013667 ]
 								hitbox_maxs = [ 11.481654, 2.540202, 2.542149 ]
 							},
@@ -335,7 +335,7 @@
 								parent_bone = "bip01_l_hand"
 								surface_property = "default"
 								translation_only = false
-								group_id = 0
+								tags = ""
 								hitbox_mins = [ 0.0, -2.092462, -2.102731 ]
 								hitbox_maxs = [ 4.591833, 0.708106, 1.750648 ]
 							},
@@ -344,7 +344,7 @@
 								parent_bone = "bip01_l_finger0"
 								surface_property = "default"
 								translation_only = false
-								group_id = 0
+								tags = ""
 								hitbox_mins = [ 0.0, -0.443996, -1.279013 ]
 								hitbox_maxs = [ 2.236231, 0.915957, 1.134525 ]
 							},
@@ -353,7 +353,7 @@
 								parent_bone = "arm"
 								surface_property = "default"
 								translation_only = false
-								group_id = 0
+								tags = ""
 								hitbox_mins = [ -2.748271, -2.963402, -2.07877 ]
 								hitbox_maxs = [ 2.976203, 7.090493, 13.080228 ]
 							},
@@ -362,7 +362,7 @@
 								parent_bone = "hand"
 								surface_property = "default"
 								translation_only = false
-								group_id = 0
+								tags = ""
 								hitbox_mins = [ -1.793824, -1.823066, -2.345191 ]
 								hitbox_maxs = [ 1.426476, 3.177673, 4.325953 ]
 							},
@@ -371,7 +371,7 @@
 								parent_bone = "smdimport02"
 								surface_property = "default"
 								translation_only = false
-								group_id = 0
+								tags = ""
 								hitbox_mins = [ -6.921784, -1.48798, -0.026147 ]
 								hitbox_maxs = [ 6.412016, 2.50722, 8.840254 ]
 							},
@@ -420,10 +420,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_idle01_0.dmx"
 						start_frame = -1
 						end_frame = -1
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -453,10 +455,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_fire_1.dmx"
 						start_frame = -1
 						end_frame = -1
 						framerate = 60.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -473,10 +477,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_draw_2.dmx"
 						start_frame = -1
 						end_frame = -1
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -550,10 +556,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_reload_3.dmx"
 						start_frame = -1
 						end_frame = -1
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -570,10 +578,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_holster_4.dmx"
 						start_frame = -1
 						end_frame = -1
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -590,10 +600,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_idletolow_5.dmx"
 						start_frame = -1
 						end_frame = -1
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -610,10 +622,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_lowtoidle_6.dmx"
 						start_frame = -1
 						end_frame = -1
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -630,10 +644,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_lowidle_7.dmx"
 						start_frame = -1
 						end_frame = -1
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -650,10 +666,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_idle01_0.dmx"
 						start_frame = 0
 						end_frame = 120
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -670,10 +688,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_fire_1.dmx"
 						start_frame = 0
 						end_frame = 29
 						framerate = 60.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -690,10 +710,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_draw_2.dmx"
 						start_frame = 0
 						end_frame = 30
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -710,10 +732,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_reload_3.dmx"
 						start_frame = 0
 						end_frame = 110
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -730,10 +754,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_holster_4.dmx"
 						start_frame = 0
 						end_frame = 10
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -750,10 +776,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_idletolow_5.dmx"
 						start_frame = 0
 						end_frame = 15
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -770,10 +798,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_lowtoidle_6.dmx"
 						start_frame = 0
 						end_frame = 15
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 					{
@@ -790,10 +820,12 @@
 						hidden = false
 						anim_markup_ordered = false
 						disable_compression = false
+						enable_scale = false
 						source_filename = "models/weapons/v_toolgun_refs/anim/_lowidle_7.dmx"
 						start_frame = 0
 						end_frame = 100
 						framerate = 30.0
+						take = 0
 						reverse = false
 					},
 				]
@@ -803,5 +835,6 @@
 		model_archetype = ""
 		primary_associated_entity = ""
 		anim_graph_name = "models/weapons/v_toolgun.vanmgrph"
+		base_model_name = ""
 	}
 }

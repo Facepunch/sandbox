@@ -2,8 +2,8 @@
 
 namespace Sandbox.Tools
 {
-	[Library( "tool_color", Title = "Color", Description = "Change render color and alpha of entities", Group = "construction" )]
-	public partial class ColorTool : BaseTool
+	[Library( "fading_tool", Title = "Fading Tool : Unfinished", Description = "Unfinished", Group = "construction" )]
+	public partial class FadingTool : BaseTool
 	{
 		public override void Simulate()
 		{
@@ -15,8 +15,6 @@ namespace Sandbox.Tools
 				var startPos = Owner.EyePosition;
 				var dir = Owner.EyeRotation.Forward;
 
-				var color = Color.Random;
-
 				if ( Input.Pressed( "attack1" ) )
 				{
 					var tr = DoTrace();
@@ -24,27 +22,34 @@ namespace Sandbox.Tools
 					if ( !tr.Hit || !tr.Entity.IsValid() )
 						return;
 
+					if ( tr.Entity is Player )
+						return;
+
 					if ( tr.Entity is not ModelEntity modelEnt )
 						return;
 
-					modelEnt.RenderColor = Color.Random;
+					modelEnt.Tags.Add( "nocollide" );
+					modelEnt.Tags.Remove( "solid" );
 
-					CreateHitEffects( tr.EndPosition, tr.Normal );
+					CreateHitEffects( tr.EndPosition );
 				}
-				//prob awful way of doing it.
-				if ( Input.Pressed( "attack2" ) )
+				else if ( Input.Pressed( "attack2" ) )
 				{
 					var tr = DoTrace();
 
 					if ( !tr.Hit || !tr.Entity.IsValid() )
 						return;
 
+					if ( tr.Entity is Player )
+						return;
+
 					if ( tr.Entity is not ModelEntity modelEnt )
 						return;
 
-					modelEnt.RenderColor = Color.White;
+					modelEnt.Tags.Add( "solid" );
+					modelEnt.Tags.Remove( "nocollide" );
 
-					CreateHitEffects( tr.EndPosition, tr.Normal );
+					CreateHitEffects( tr.EndPosition );
 				}
 			}
 		}

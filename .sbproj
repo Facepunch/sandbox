@@ -1,9 +1,9 @@
 {
-  "Title": "SandboxPlus",
+  "Title": "Mark\u0027s DarkRP",
   "Type": "game",
-  "Org": "wiremod",
-  "Ident": "sandboxplus",
-  "Tags": "sandbox spawnmenu tools constraints wirebox",
+  "Org": "markindustries",
+  "Ident": "marksdrp",
+  "Tags": "sandbox spawnmenu darkrp roleplay",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
@@ -34,7 +34,9 @@
         "water": "Trigger",
         "debris": "Unset",
         "player": "Unset",
-        "glass": "Unset"
+        "glass": "Unset",
+        "weapon": "Collide",
+        "nocollide": "Ignore"
       },
       "Pairs": [
         {
@@ -104,6 +106,21 @@
         {
           "a": "water",
           "b": "glass"
+        },
+        {
+          "a": "player",
+          "b": "weapon",
+          "r": "Trigger"
+        },
+        {
+          "a": "solid",
+          "b": "nocollide",
+          "r": "Collide"
+        },
+        {
+          "a": "player",
+          "b": "nocollide",
+          "r": "Collide"
         }
       ]
     },
@@ -303,6 +320,18 @@
       ]
     },
     "HttpAllowList": null,
-    "TickRate": 50
+    "TickRate": 50,
+    "LaunchConfigs": [
+      {
+        "Name": "Mark\u0027s DarkRP",
+        "GameIdent": "markindustries.marksdrp#local",
+        "MapName": "markindustries.testrp",
+        "MaxPlayers": 64,
+        "GameSettings": {},
+        "Addons": "katka.stargateaddon#local; wiremod.wireboxaddon;",
+        "PreLaunchCommand": "",
+        "PostLaunchCommand": ""
+      }
+    ]
   }
 }

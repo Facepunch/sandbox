@@ -12,6 +12,8 @@
   - Takes no parameters; you're expected to call `ModelSelector.AddToSpawnlist( "screen", string[] models)`
 - "player.simulate"
   - `Event.Run( "player.simulate", SandboxPlayer player )`
+- "player.killed"
+  - `void OnKilled( SandboxPlayer player )`
 - "trace.prepare": used to modify Player movement traces
   - ```
     [Event( "trace.prepare" )]

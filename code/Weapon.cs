@@ -20,6 +20,8 @@ public partial class Weapon : BaseWeapon, IUse
 	{
 		base.Spawn();
 
+		Tags.Add( "weapon" );
+
 		PickupTrigger = new PickupTrigger
 		{
 			Parent = this,
@@ -36,6 +38,12 @@ public partial class Weapon : BaseWeapon, IUse
 		base.ActiveStart( ent );
 
 		TimeSinceDeployed = 0;
+
+		if ( PhysicsGroup.IsValid() )
+		{
+			PhysicsGroup.Velocity = 0;
+			PhysicsGroup.AngularVelocity = 0;
+		}
 	}
 
 	public override void Reload()
@@ -75,7 +83,7 @@ public partial class Weapon : BaseWeapon, IUse
 	[ClientRpc]
 	public virtual void StartReloadEffects()
 	{
-		ViewModelEntity?.SetAnimParameter( "reload", true );
+		ViewModelEntity?.SetAnimParameter( "b_reload", true );
 
 		// TODO - player third person model reload
 	}
