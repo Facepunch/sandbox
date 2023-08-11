@@ -1,8 +1,6 @@
 # About Marks Darkrp
 The first true sBox DarkRP!
 
-All credits to the original DarkRP Gmod creator: 
-
 # Sponsored By Simple Mechanism
 ![alt text](https://imgur.com/VfhjKvV.png)
 https://simplemechanism.net/
