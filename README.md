@@ -1,11 +1,7 @@
 # About Marks Darkrp
 The first true sBox DarkRP!
 
-All credits to the original DarkRP Gmod creator: FPtje
-Check out their stuff!!
-https://gmod.fandom.com/wiki/DarkRP
-https://github.com/FPtje
-https://steamcommunity.com/id/FPtje
+All credits to the original DarkRP Gmod creator: 
 
 # Sponsored By Simple Mechanism
 ![alt text](https://imgur.com/VfhjKvV.png)
@@ -24,3 +20,12 @@ The best game hosting at an affordable price! Use code MATHMARK824 for 30% off!
 This is unfinished!!!! Feel free to leave any feedback though! And join my discord I'm the owner of Method Networks DarkRP on GMOD
 
 https://discord.gg/4taZs3c9Tz
+
+# Credits
+
+Using SandboxPlus by Wirebox - https://asset.party/wiremod/sandboxplus
+
+And most importantly Falco the original creator of DarkRP!
+https://gmod.fandom.com/wiki/DarkRP
+https://github.com/FPtje
+https://steamcommunity.com/id/FPtje
