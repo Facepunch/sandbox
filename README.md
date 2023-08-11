@@ -1,37 +1,31 @@
-# SandboxPlus, a base gamemode for S&box
+# About Marks Darkrp
+The first true sBox DarkRP!
 
-It closely follows [Facepunch's Sandbox gamemode](https://github.com/Facepunch/sandbox), with additions to make it more extendable by other modules (adding events, publicizing UI globals, etc), while staying unopinionated/light. This module is primarily aiming to become a "Gmod 2", replicating the functionality found in Gmod's Sandbox gamemode (with improvements).
+# Sponsored By Simple Mechanism
+![alt text](https://imgur.com/VfhjKvV.png)
+https://simplemechanism.net/
 
-## Improvements over Facepunch/sandbox:
+@ugh1849 - Discord
 
-### Gameplay
+@mathmark824 - Discord
 
-- Constraint tool: an omni-tool with all your classic Gmod constraints (weld/axis/rope/elastic/slider/ballsocket)
-- Material tool
-- Toolgun model (wip)
-- Undo/Redo System
-- DynPlates spawnmenu: like PHX, but dynamic, fully customizable sizes using procedural meshes
-- UI tool panels, including ModelSelector with extendable `.spawnlist`'s
+# Physgun Hosting
+![alt text](https://imgur.com/WjuqA5r.png)
 
-### Extensiblility
+The best game hosting at an affordable price! Use code MATHMARK824 for 30% off!
 
-- `IStopUsing` entity interface
-- [Many new events](EVENTS.md) (aiming to reproduce many of Gmod 1's), including "entity.spawned" event, "undo.add" event
+# In heavy development
 
-## Addons for SandboxPlus
-
-- [Wirebox](https://github.com/wiremod/wirebox), playable as [Sandbox With Wirebox](https://asset.party/wiremod/sandboxpluswire)
-- [Stargate](https://github.com/Gmod4phun/sbox-stargate/tree/addon-version)
-- ~~[Undo Manager](https://github.com/Nebual/undo-manager) (outdated, will probably just add to the base gamemode)~~ now part of SandboxPlus
-- [Napkins-Chat](https://github.com/Nebual/napkins-chat) (outdated)
+This is unfinished!!!! Feel free to leave any feedback though! And join my discord I'm the owner of Method Networks DarkRP on GMOD
 
 
-## Contributing
+https://discord.gg/4taZs3c9Tz
 
-PR's are appreciated!  
-Message @Nebual on Discord with any questions :)
+# Credits
 
-### Contributors
+Using SandboxPlus by Wirebox - https://asset.party/wiremod/sandboxplus
 
-- [Nebual](https://github.com/Nebual)
-- [Gmod4phun](https://github.com/gmod4phun)
+And most importantly Falco the original creator of DarkRP!
+https://gmod.fandom.com/wiki/DarkRP
+https://github.com/FPtje
+https://steamcommunity.com/id/FPtje
