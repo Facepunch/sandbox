@@ -1,4 +1,5 @@
-﻿using Sandbox;
+﻿using System.ComponentModel;
+using Sandbox;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
 using System.Timers;
@@ -39,7 +40,7 @@ public partial class Health : Panel
 		Log.Info( $"Hello I am {Job}" );
 	}
 	[ClientRpc]
-	public static void whatever(jobType recieveJob, long steamId)
+	public static void SendJob(jobType recieveJob, long steamId)
 	{
 		if (Game.LocalClient.SteamId  == steamId) 
 		{
@@ -51,8 +52,9 @@ public partial class Health : Panel
 	[ConCmd.Server( "ServerSetJob" )]
 	public static void ServerSetJob(jobType serverJob, long steamId)
 	{
-		whatever(serverJob, steamId);
+		SendJob(serverJob, steamId);
 		Log.Error($"{ConsoleSystem.Caller} has switched job to " + serverJob.ToString());
+
 	}
 }
 
