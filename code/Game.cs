@@ -6,6 +6,7 @@ using System.Linq;
 partial class SandboxGame : GameManager
 {
 	private SandboxHud _sandboxHud;
+	public static Jobs serverJobs = new Jobs();
 
 	[Event.Hotload]
 	public void OnReloaded()
@@ -21,6 +22,32 @@ partial class SandboxGame : GameManager
 			Log.Info( "[Server] initting HUD" );
 			// Create the HUD
 			_sandboxHud = new SandboxHud();
+
+			serverJobs.jobs.Add("citizen", new Job()
+			{
+				id = "citizen",
+				model = "models/citizen/citizen.vmdl",
+				giveWeaponsToPlayer = (player) =>
+				{
+					player.Inventory.Add(new Pistol());
+				}	
+			});
+
+			serverJobs.jobs.Add( "policeofficer", new Job()
+			{
+				id = "policeofficer",
+				model = "models/citizen/citizen.vmdl",
+				giveWeaponsToPlayer = ( player ) =>
+				{
+					player.Inventory.Add( new PhysGun(), true );
+					player.Inventory.Add( new GravGun() );
+					player.Inventory.Add( new Tool() );
+					player.Inventory.Add( new Flashlight() );
+					player.Inventory.Add( new Fists() );
+					player.Inventory.Add( new Pistol() );
+					player.Inventory.Add( new MP5() );
+				}
+			} );
 		}
 
 		ReloadManager.ReloadAutoload();
@@ -35,7 +62,7 @@ partial class SandboxGame : GameManager
 	public override void ClientJoined( IClient cl )
 	{
 		base.ClientJoined( cl );
-		var player = new SandboxPlayer( cl );
+		var player = new SandboxPlayer( cl, serverJobs );
 
 		cl.Pawn = player;
 

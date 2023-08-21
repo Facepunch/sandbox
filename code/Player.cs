@@ -1,5 +1,6 @@
 ﻿using Sandbox;
-using System.Numerics;
+using System;
+using System.Linq;
 
 public partial class SandboxPlayer : Player
 {
@@ -10,6 +11,9 @@ public partial class SandboxPlayer : Player
 
 	[Net, Predicted]
 	public bool ThirdPersonCamera { get; set; }
+
+	[Net, Predicted]
+	public string jobId { get; set; }
 
 	/// <summary>
 	/// The clothing container is what dresses the citizen
@@ -35,9 +39,19 @@ public partial class SandboxPlayer : Player
 		Clothing.LoadFromClient( cl );
 	}
 
+	public SandboxPlayer( IClient cl, Jobs serverJobs) : this( cl )
+	{
+		if(String.IsNullOrEmpty(this.jobId))
+		{
+			jobId = serverJobs.jobs.FirstOrDefault().Key;
+		}
+	}
+
 	public override void Respawn()
 	{
-		SetModel( "models/citizen/citizen.vmdl" );
+		Job job = SandboxGame.serverJobs.jobs.GetValueOrDefault(jobId);
+
+		SetModel( job.model );
 
 		Controller = new PlayerWalkController
 		{
@@ -50,23 +64,27 @@ public partial class SandboxPlayer : Player
 			DevController = null;
 		}
 
+
 		this.ClearWaterLevel();
 		EnableAllCollisions = true;
 		EnableDrawing = true;
 		EnableHideInFirstPerson = true;
 		EnableShadowInFirstPerson = true;
 
+		job.giveWeaponsToPlayer( this );
+
 		Clothing.DressEntity( this );
 
-		Inventory.Add( new PhysGun(), true );
-		Inventory.Add( new GravGun() );
-		Inventory.Add( new Tool() );
-		Inventory.Add( new Pistol() );
-		Inventory.Add( new MP5() );
-		Inventory.Add( new Flashlight() );
-		Inventory.Add( new Fists() );
-
 		base.Respawn();
+	}
+
+	public void setJob( string jobId )
+	{
+		if ( !SandboxGame.serverJobs.jobs.ContainsKey( jobId ) ) return;
+
+		this.jobId = jobId;
+
+		Respawn();
 	}
 
 	public override void OnKilled()
