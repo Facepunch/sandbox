@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sandbox
 {
-	public class Jobs
+	public class JobSystem
 	{
 		public Dictionary<string, Job> jobs = new Dictionary<string, Job>();
 	}

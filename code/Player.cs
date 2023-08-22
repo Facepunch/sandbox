@@ -39,7 +39,7 @@ public partial class SandboxPlayer : Player
 		Clothing.LoadFromClient( cl );
 	}
 
-	public SandboxPlayer( IClient cl, Jobs serverJobs) : this( cl )
+	public SandboxPlayer( IClient cl, JobSystem serverJobs) : this( cl )
 	{
 		if(String.IsNullOrEmpty(this.jobId))
 		{
@@ -49,7 +49,7 @@ public partial class SandboxPlayer : Player
 
 	public override void Respawn()
 	{
-		Job job = SandboxGame.serverJobs.jobs.GetValueOrDefault(jobId);
+		Job job = RPGame.jobSystem.jobs.GetValueOrDefault(jobId);
 
 		SetModel( job.model );
 
@@ -80,7 +80,7 @@ public partial class SandboxPlayer : Player
 
 	public void setJob( string jobId )
 	{
-		if ( !SandboxGame.serverJobs.jobs.ContainsKey( jobId ) ) return;
+		if ( !RPGame.jobSystem.jobs.ContainsKey( jobId ) ) return;
 
 		this.jobId = jobId;
 

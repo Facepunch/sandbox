@@ -3,10 +3,10 @@ using Sandbox;
 using System;
 using System.Linq;
 
-partial class SandboxGame : GameManager
+partial class RPGame : GameManager
 {
 	private SandboxHud _sandboxHud;
-	public static Jobs serverJobs = new Jobs();
+	public static JobSystem jobSystem = new JobSystem();
 
 	[Event.Hotload]
 	public void OnReloaded()
@@ -14,7 +14,7 @@ partial class SandboxGame : GameManager
 		ReloadManager.ReloadAutoload();
 	}
 
-	public SandboxGame()
+	public RPGame()
 	{
 		Log.Info( "Init SandboxPlus" );
 		if ( Game.IsServer )
@@ -23,7 +23,7 @@ partial class SandboxGame : GameManager
 			// Create the HUD
 			_sandboxHud = new SandboxHud();
 
-			serverJobs.jobs.Add("citizen", new Job()
+			jobSystem.jobs.Add("citizen", new Job()
 			{
 				id = "citizen",
 				model = "models/citizen/citizen.vmdl",
@@ -33,7 +33,7 @@ partial class SandboxGame : GameManager
 				}	
 			});
 
-			serverJobs.jobs.Add( "policeofficer", new Job()
+			jobSystem.jobs.Add( "policeofficer", new Job()
 			{
 				id = "policeofficer",
 				model = "models/citizen/citizen.vmdl",
@@ -53,7 +53,7 @@ partial class SandboxGame : GameManager
 		ReloadManager.ReloadAutoload();
 		Event.Run( "game.init" );
 	}
-	~SandboxGame()
+	~RPGame()
 	{
 		_sandboxHud?.Delete();
 	}
@@ -62,7 +62,7 @@ partial class SandboxGame : GameManager
 	public override void ClientJoined( IClient cl )
 	{
 		base.ClientJoined( cl );
-		var player = new SandboxPlayer( cl, serverJobs );
+		var player = new SandboxPlayer( cl, jobSystem );
 
 		cl.Pawn = player;
 
