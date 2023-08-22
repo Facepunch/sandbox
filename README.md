@@ -29,3 +29,4 @@ And most importantly Falco the original creator of DarkRP!
 https://gmod.fandom.com/wiki/DarkRP
 https://github.com/FPtje
 https://steamcommunity.com/id/FPtje
+And thank you to wildwestcs for rewriting my job scripts :)
