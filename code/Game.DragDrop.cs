@@ -1,7 +1,7 @@
 using Sandbox;
 using System.Linq;
 
-partial class RPGame
+partial class SandboxGame
 {
 	SceneObject dragSceneObject;
 

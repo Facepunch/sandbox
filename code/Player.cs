@@ -1,6 +1,5 @@
 ﻿using Sandbox;
-using System;
-using System.Linq;
+using System.Numerics;
 
 public partial class SandboxPlayer : Player
 {
@@ -11,9 +10,6 @@ public partial class SandboxPlayer : Player
 
 	[Net, Predicted]
 	public bool ThirdPersonCamera { get; set; }
-
-	[Net, Predicted]
-	public string jobId { get; set; }
 
 	/// <summary>
 	/// The clothing container is what dresses the citizen
@@ -39,19 +35,9 @@ public partial class SandboxPlayer : Player
 		Clothing.LoadFromClient( cl );
 	}
 
-	public SandboxPlayer( IClient cl, JobSystem serverJobs) : this( cl )
-	{
-		if(String.IsNullOrEmpty(this.jobId))
-		{
-			jobId = serverJobs.jobs.FirstOrDefault().Key;
-		}
-	}
-
 	public override void Respawn()
 	{
-		Job job = RPGame.jobSystem.jobs.GetValueOrDefault(jobId);
-
-		SetModel( job.model );
+		SetModel( "models/citizen/citizen.vmdl" );
 
 		Controller = new PlayerWalkController
 		{
@@ -64,27 +50,23 @@ public partial class SandboxPlayer : Player
 			DevController = null;
 		}
 
-
 		this.ClearWaterLevel();
 		EnableAllCollisions = true;
 		EnableDrawing = true;
 		EnableHideInFirstPerson = true;
 		EnableShadowInFirstPerson = true;
 
-		job.giveWeaponsToPlayer( this );
-
 		Clothing.DressEntity( this );
 
+		Inventory.Add( new PhysGun(), true );
+		Inventory.Add( new GravGun() );
+		Inventory.Add( new Tool() );
+		Inventory.Add( new Pistol() );
+		Inventory.Add( new MP5() );
+		Inventory.Add( new Flashlight() );
+		Inventory.Add( new Fists() );
+
 		base.Respawn();
-	}
-
-	public void setJob( string jobId )
-	{
-		if ( !RPGame.jobSystem.jobs.ContainsKey( jobId ) ) return;
-
-		this.jobId = jobId;
-
-		Respawn();
 	}
 
 	public override void OnKilled()
