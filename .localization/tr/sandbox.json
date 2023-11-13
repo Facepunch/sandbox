@@ -1,0 +1,8 @@
+{
+    "spawnmenu.props" : "Yerel Modeller",
+    "spawnmenu.entities" : "varlıklar",
+    "spawnmenu.modellist": "Modeller",
+    "spawnmenu.tools": "aletler",
+    "spawnmenu.utility": "seçenekler",
+    "spawnmenu.npclist": "NPC"
+}
