@@ -1,0 +1,35 @@
+@namespace Facepunch.UI
+@inherits PanelComponent
+
+<root class="">
+    @foreach (var voice in VoiceList.Where( x => CanDisplay( x ) ) )
+    {
+        <div class="item-row" style="transform: scale( @GetAmplitudeScale( voice ) )">
+            <img class="avatar" src="avatar:@voice.Network.Owner.SteamId" />
+            <label class="name">@voice.Network.Owner.DisplayName</label>
+        </div>
+    }
+
+</root>
+
+@code
+{
+    public IEnumerable<Voice> VoiceList => Scene.GetAllComponents<Voice>();
+
+    private bool CanDisplay( Voice voice )
+    {
+        if ( voice.Network.Owner is null ) return false;
+        return voice.LastPlayed < 0.25f;
+    }
+
+    private string GetAmplitudeScale( Voice voice )
+    {
+        var scale = 0.5f + ( voice.Amplitude * 2.365f );
+        return ( 1f + scale ).ToString( "0.#" );
+    }
+
+    protected override int BuildHash()
+    {
+        return HashCode.Combine( Time.Now );
+    }
+}

@@ -1,0 +1,98 @@
+InventoryWeapon
+{
+    padding: 0px 16px;
+    font-size: 14px;
+    white-space: nowrap;
+    color: transparent;
+    flex-direction: column;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    background-color: #f701;
+    transition: all 0.1s ease-in;
+    box-shadow: 0px 0px 150px #f800;
+    font-weight: bold;
+    font-family: poppins;
+    border-radius: 4px;
+    padding: 4px;
+    font-weight: 300;
+
+    label
+    {
+        transition: opacity 0.1s ease-in;
+        opacity: 1;
+    }
+}
+
+.active InventoryWeapon
+{
+    background-color: #ff770005;
+    color: #f806;
+    width: 100%;
+    height: 96px;
+}
+
+.active InventoryWeapon.active
+{
+    color: #fc5;
+    box-shadow: 0px 0px 50px #f802;
+    background-color: #f704;
+    text-shadow: 0px 0px 10px #f50;
+}
+
+InventoryWeapon .icon
+{
+    font-family: Material Icons;
+    font-size: 32px;
+    opacity: 1;
+    transform: scale( 1 );
+    transition: all 0.1s ease-in;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+    background-tint: #f704;
+    
+}
+
+InventoryWeapon.selected
+{
+    color: #fc5;
+    box-shadow: 0px 0px 50px #f802;
+    background-color: #f704;
+    text-shadow: 0px 0px 10px #f50;
+    transform: scale( 2 );
+    transition: all 0.2s ease-in;
+
+    label
+    {
+        opacity: 0;
+    }
+}
+
+.active InventoryWeapon.active .icon, InventoryWeapon.selected .icon
+{
+    opacity: 1;
+    background-tint: #fc5;
+
+}
+
+InventoryWeapon
+{
+    &:not( .switchable )
+    {
+        opacity: 0.25;
+        background-color: #bababa;
+
+        .icon
+        {
+            background-tint: #bababa;
+        }
+
+        label
+        {
+            color: #bababa;
+        }
+    }
+}

@@ -1,0 +1,48 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+
+@if (Player.IsValid() && !Player.IsLocalPlayer )
+{
+	<root>
+
+		<div class="card">
+
+			<div class="avatar" style="background-image: url( avatar:@Player.SteamId )"></div>
+
+			<label class="name">@Player.DisplayName</label>
+			@if ( IsVoicePlaying )
+			{
+				<div class="voice">volume_up</div>
+			}
+		</div>
+
+	</root>
+}
+
+@code
+{
+	[Property] public Player Player;
+
+    Sandbox.Voice voiceComponent;
+
+    protected override void OnEnabled()
+    {
+        base.OnEnabled();
+        voiceComponent = GameObject.Root.Components.GetInDescendantsOrSelf<Voice>();
+    }
+
+    public bool IsVoicePlaying
+    {
+        get
+        {
+            if (voiceComponent is null) return false;
+            return voiceComponent.LastPlayed < 0.5f;
+        }
+    }
+
+    /// <summary>
+    /// Rebuild if the owner connection changes
+    /// </summary>
+    protected override int BuildHash() => System.HashCode.Combine(Network.Owner, IsVoicePlaying);
+}

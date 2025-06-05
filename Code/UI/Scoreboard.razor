@@ -1,0 +1,140 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+
+<root>
+    <div class="table">
+        <div class="title">
+            <label>Deathmatch</label>
+            <label class="small">@(Connection.All.Count) / 64</label>
+        </div>
+
+        <div class="header row">
+            <div class="name"></div>
+            <div class="stat">Kills</div>
+            <div class="stat">Deaths</div>
+            <div class="stat">Ping</div>
+        </div>
+
+        @foreach ( var entry in Scene.GetAll<PlayerData>().OrderByDescending( x => x.Kills ).ThenBy( x => x.DisplayName ) )
+        {
+            string specialClass = "";
+            if (entry.IsMe) specialClass = "me";
+
+            <div class="row @specialClass" onclick=@(() => OnPlayerClick(entry))>
+                <img class="avatar" src="avatar:@entry.Connection.SteamId" />
+                <div class="name">@entry.DisplayName</div>
+                <div class="stat">@entry.Kills</div>
+                <div class="stat">@entry.Deaths</div>
+                <div class="stat">@(entry.Ping.CeilToInt())</div>
+            </div>
+        }
+    </div>
+
+</root>
+
+@code
+{
+    bool IsVisible => HasClass( "visible" );
+	bool IsInteractable => HasClass( "interact" );
+
+	string GetTime( Connection c )
+	{
+		TimeSpan time = DateTime.UtcNow - c.ConnectionTime;
+
+		if ( time.TotalMinutes < 60 )
+			return time.ToString( "mm\\m\\ s\\s" );
+
+		return time.ToString( "hh\\h\\ \\m\\m" );
+	}
+
+	protected override void OnUpdate()
+	{
+		if ( IsInteractable )
+		{
+			if ( Input.Pressed( "score" ) )
+			{
+				SetClass( "visible", false );
+				SetClass( "interact", false );
+			}
+		}
+		else
+		{
+			SetClass( "visible", Input.Down( "score" ) );
+				
+			if ( IsVisible && Input.Pressed( "Attack2" ) )
+			{
+				SetClass( "interact", true );
+				Input.ReleaseAction( "Attack2" );
+				Input.SetAction( "Attack2", false );
+			}
+		}
+	}
+
+	Popup popupPanel;
+
+	void OnPlayerClick( PlayerData player )
+	{
+		Assert.True( player.IsValid(), "Player invalid!" );
+
+		var friend = new Friend( player.SteamId );
+		if ( friend.IsMe )
+			return;
+
+		if ( !popupPanel.IsValid() )
+		{
+			popupPanel = new Popup( Panel, Popup.PositionMode.UnderMouse, 0.0f);
+			popupPanel.StyleSheet.Load( "ui/Scoreboard.razor.scss" ); // hate this
+			popupPanel.CloseWhenParentIsHidden = true;
+		}
+
+		popupPanel.DeleteChildren();
+
+		popupPanel.Title = player.DisplayName;
+		popupPanel.AddChild( new Button( "View Profile", "person", () =>
+		{
+			friend.OpenInOverlay();
+			popupPanel.Delete();
+		} ));
+
+		if ( !friend.IsFriend )
+		{
+			popupPanel.AddChild( new Button( "Add Friend", "group_add", () =>
+			{
+				friend.OpenAddFriendOverlay();
+				popupPanel.Delete();
+			} ) );
+		}
+
+		if ( MuteableVoice.IsMuted( player.SteamId ) )
+		{
+			popupPanel.AddChild( new Button( "Unmute", "volume_up", () =>
+			{
+				MuteableVoice.Unmute( player.SteamId );
+				popupPanel.Delete();
+			} ) );
+		}
+		else
+		{
+			popupPanel.AddChild( new Button( "Mute", "volume_off", () =>
+			{
+				MuteableVoice.Mute( player.SteamId );
+				popupPanel.Delete();
+			} ) );
+		}
+
+		if ( Networking.IsHost && player.Connection is not null )
+		{
+			popupPanel.AddChild( new Button( "Kick", "do_not_step", () =>
+			{
+				player.Connection.Kick( $"Kicked by {Connection.Local.DisplayName}" );
+				popupPanel.Delete();
+			} ) );
+		}
+	}
+
+    /// <summary>
+    /// update every second
+    /// </summary>
+    protected override int BuildHash() => System.HashCode.Combine( RealTime.Now.CeilToInt() );
+}

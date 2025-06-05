@@ -1,0 +1,33 @@
+InventorySlot
+{
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0.4;
+    width: 64px;
+    transition: all 0.1s ease;
+    
+}
+
+InventorySlot .index
+{
+    background-color: #f701;
+    aspect-ratio: 1;
+    height: 48px;
+    width: 48px;
+    justify-content: center;
+    align-items: center;
+    font-weight: bolder;
+    border-radius: 4px;
+}
+
+InventorySlot.active
+{
+    opacity: 1;
+    width: 180px;
+}
+
+InventorySlot > .list
+{
+    flex-direction: column;
+    gap: 4px;
+}

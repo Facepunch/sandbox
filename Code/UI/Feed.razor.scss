@@ -1,0 +1,88 @@
+Feed
+{
+	position: absolute;
+	top: 10%;
+	right: 10%;
+	border-radius: 20px;
+	flex-direction: column;
+	align-items: flex-end;
+	font-size: 22px;
+	font-family: Poppins;
+	font-weight: bold;
+	color: #fc5;
+	text-shadow: 0px 0px 5px #f50a;
+	gap: 4px;
+	margin: auto;
+}
+
+
+Feed > *
+{
+	padding: 0px 16px;
+	top: 0px;
+	left: -16px;
+	height: 50px;
+	transition: all 0.1s ease-out;
+	opacity: 1;
+	transform: scale( 1 );
+	position: relative;
+	gap: 16px;
+	align-items: center;
+	
+	.icons
+	{
+		gap: 0px;
+	}
+
+	.icon
+	{
+		transition: all 0.1s ease-in;
+		background-position: center;
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-tint: #f744;
+		height: 80%;
+		transform: rotateY(180deg);
+	}
+
+	&:intro
+	{
+		transform: scale( 0.7 );
+		left: 200px;
+		height: 0px;
+		opacity: 0;
+	}
+
+	&:outro
+	{
+		left: 300px;
+		height: 0px;
+		opacity: 0;
+		transition: all 0.2s ease-in;
+	}
+	
+	&.is-me
+	{
+		border-radius: 8px;
+		background-color: #ffcc550a;
+	}
+
+	&.important
+	{
+		position: relative;
+		animation: bounce-scale 0.25s infinite alternate;
+	}
+}
+
+@keyframes bounce-scale
+{
+	0%
+	{
+		transform: scale(1);
+	}
+
+	100%
+	{
+		transform: scale(1.1);
+	}
+}

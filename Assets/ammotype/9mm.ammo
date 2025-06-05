@@ -1,0 +1,8 @@
+{
+  "AmmoType": "9mm",
+  "MaxAmount": 250,
+  "Icon": "apple",
+  "SvgIcon": "",
+  "__references": [],
+  "__version": 0
+}

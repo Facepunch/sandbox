@@ -1,0 +1,316 @@
+public sealed class PlayerInventory : Component, IPlayerEvent
+{
+	[RequireComponent] public Player Player { get; set; }
+
+	public List<BaseCarryable> Weapons => GetComponentsInChildren<BaseCarryable>( true ).OrderBy( x => x.InventorySlot ).ThenBy( x => x.InventoryOrder ).ToList();
+
+	[Sync] public BaseCarryable ActiveWeapon { get; private set; }
+
+	public void GiveDefaultWeapons()
+	{
+		// Don't run any pickup notices when spawning in
+		using var _ = Player.NoNoticeScope();
+
+		//Pickup( "weapons/crowbar/crowbar.prefab" );
+		//	Pickup( "weapons/hands/hands.prefab" );
+		Pickup( "weapons/camera/camera.prefab" );
+		Pickup( "weapons/glock/glock.prefab" );
+
+		Player.GiveAmmo( ResourceLibrary.Get<AmmoResource>( "weapons/ammo/9mm.ammo" ), 100, false );
+
+		if ( GameSettings.CheatMode )
+		{
+			GiveAll();
+		}
+	}
+
+	public void GiveAll()
+	{
+		Pickup( "weapons/mp5/mp5.prefab" );
+		Pickup( "weapons/gaussgun/gauss.prefab" );
+		Pickup( "weapons/python/python.prefab" );
+		Pickup( "weapons/handgrenade/hand_grenade.prefab" );
+		Pickup( "weapons/tripmine/tripmine.prefab" );
+		Pickup( "weapons/satchelcharge/satchelcharge.prefab" );
+		Pickup( "weapons/rpg/rpg.prefab" );
+		Pickup( "weapons/crossbow/crossbow.prefab" );
+		Pickup( "weapons/shotgun/shotgun.prefab" );
+		Pickup( "weapons/ratgun/rat_gun.prefab" );
+		Pickup( "weapons/gluongun/gluon_gun.prefab" );
+		Pickup( "weapons/hornetgun/hornetgun.prefab" );
+
+		var ammo = ResourceLibrary.GetAll<AmmoResource>();
+		foreach ( var a in ammo )
+		{
+			Player.GiveAmmo( a, 100, false );
+		}
+	}
+
+	public bool Pickup( string prefabName, bool notice = true )
+	{
+		if ( !Networking.IsHost )
+			return false;
+
+		var prefab = GameObject.GetPrefab( prefabName );
+		return Pickup( prefab, notice );
+	}
+
+	public bool HasWeapon( GameObject prefab )
+	{
+		var baseCarry = prefab.Components.Get<BaseCarryable>( true );
+		if ( baseCarry is null )
+			return false;
+
+		return Weapons.Where( x => x.GetType() == baseCarry.GetType() ).FirstOrDefault().IsValid();
+	}
+
+	public bool HasWeapon<T>() where T : BaseCarryable
+	{
+		return GetWeapon<T>().IsValid();
+	}
+
+	public T GetWeapon<T>() where T : BaseCarryable
+	{
+		return Weapons.OfType<T>().FirstOrDefault();
+	}
+
+	public bool Pickup( GameObject prefab, bool notice = true )
+	{
+		if ( !Networking.IsHost )
+			return false;
+
+		var baseCarry = prefab.Components.Get<BaseCarryable>( true );
+		if ( baseCarry is null )
+			return false;
+
+		var existing = Weapons.Where( x => x.GetType() == baseCarry.GetType() ).FirstOrDefault();
+		if ( existing.IsValid() )
+		{
+			// We already have this weapon type
+
+			if ( baseCarry is BaseWeapon baseWeapon && baseWeapon.UsesAmmo )
+			{
+				var ammo = baseWeapon.AmmoResource;
+				if ( ammo is null )
+					return false;
+
+				if ( Player.GetAmmoCount( ammo ) >= ammo.MaxAmount )
+					return false;
+
+				Player.GiveAmmo( ammo, baseWeapon.UsesClips ? baseWeapon.ClipContents : baseWeapon.StartingAmmo, notice );
+				OnClientPickup( existing, true );
+				return true;
+			}
+
+			return false;
+		}
+
+		var clone = prefab.Clone( new CloneConfig { Parent = GameObject, StartEnabled = false } );
+		clone.NetworkSpawn( false, Network.Owner );
+
+		var weapon = clone.Components.Get<BaseCarryable>( true );
+		Assert.NotNull( weapon );
+
+		weapon.OnAdded( Player );
+
+		IPlayerEvent.PostToGameObject( Player.GameObject, e => e.OnPickup( weapon ) );
+		OnClientPickup( weapon );
+		return true;
+	}
+
+	public void Take( BaseCarryable item, bool includeNotices )
+	{
+		var existing = Weapons.Where( x => x.GetType() == item.GetType() ).FirstOrDefault();
+		if ( existing.IsValid() )
+		{
+			// We already have this weapon type
+			if ( item is BaseWeapon baseWeapon && baseWeapon.UsesAmmo )
+			{
+				var ammo = baseWeapon.AmmoResource;
+				if ( ammo is null )
+					return;
+
+				if ( Player.GetAmmoCount( ammo ) >= ammo.MaxAmount )
+					return;
+
+				Player.GiveAmmo( baseWeapon.AmmoResource, baseWeapon.ClipContents, includeNotices );
+				OnClientPickup( existing, true );
+			}
+
+			item.DestroyGameObject();
+			return;
+		}
+
+		item.GameObject.Parent = GameObject;
+		item.Network.Refresh();
+
+		if ( Network.Owner is not null )
+		{
+			item.Network.AssignOwnership( Network.Owner );
+		}
+		else
+		{
+			item.Network.DropOwnership();
+		}
+
+		IPlayerEvent.PostToGameObject( GameObject, e => e.OnPickup( item ) );
+		OnClientPickup( item );
+	}
+
+	[Rpc.Owner]
+	private void OnClientPickup( BaseCarryable weapon, bool justAmmo = false )
+	{
+		if ( !weapon.IsValid() ) return;
+
+		if ( ShouldAutoswitchTo( weapon ) )
+		{
+			SwitchWeapon( weapon );
+		}
+
+		if ( Player.IsLocalPlayer )
+			ILocalPlayerEvent.Post( e => e.OnPickup( weapon ) );
+	}
+
+	private bool ShouldAutoswitchTo( BaseCarryable item )
+	{
+		Assert.True( item.IsValid(), "item invalid" );
+
+		if ( !ActiveWeapon.IsValid() )
+			return true;
+
+		if ( !GamePreferences.AutoSwitch )
+			return false;
+
+		if ( ActiveWeapon.IsInUse() )
+			return false;
+
+		if ( item is BaseWeapon weapon && weapon.UsesAmmo )
+		{
+			var ammo = weapon.AmmoResource;
+			if ( ammo is not null && Player.GetAmmoCount( ammo ) < 1 )
+			{
+				// don't autoswitch to a weapon we've got no ammo for
+				return false;
+			}
+		}
+
+		return item.Value > ActiveWeapon.Value;
+	}
+
+	public BaseCarryable GetBestWeapon()
+	{
+		return Weapons.OrderByDescending( x => x.Value ).FirstOrDefault();
+	}
+
+	public BaseCarryable GetBestWeaponHolstered()
+	{
+		return Weapons.Where( x => !x.ShouldAvoid ).OrderByDescending( x => x.Value ).Where( x => x != ActiveWeapon ).FirstOrDefault();
+	}
+
+	public void SwitchWeapon( BaseCarryable weapon )
+	{
+		if ( weapon == ActiveWeapon ) return;
+
+		if ( ActiveWeapon.IsValid() )
+		{
+			ActiveWeapon.OnHolstered( Player );
+			ActiveWeapon.GameObject.Enabled = false;
+		}
+
+		ActiveWeapon = weapon;
+
+		if ( ActiveWeapon.IsValid() )
+		{
+			ActiveWeapon.OnEquipped( Player );
+			ActiveWeapon.GameObject.Enabled = true;
+		}
+	}
+
+	protected override void OnUpdate()
+	{
+		if ( ActiveWeapon.IsValid() )
+		{
+			ActiveWeapon.OnPlayerUpdate( Player );
+		}
+	}
+
+	void IPlayerEvent.OnSpawned()
+	{
+		GiveDefaultWeapons();
+	}
+
+	void IPlayerEvent.OnDied( IPlayerEvent.DiedParams args )
+	{
+		if ( ActiveWeapon.IsValid() )
+		{
+			ActiveWeapon.OnPlayerDeath( args );
+		}
+	}
+
+	void IPlayerEvent.OnPickup( BaseCarryable item )
+	{
+		if ( item is BaseWeapon weapon && weapon.IsSelfAmmo )
+		{
+			Player.ShowNotice( $"{weapon.AmmoResource.AmmoType} x {weapon.StartingAmmo}" );
+		}
+		else
+		{
+			Player.ShowNotice( item.DisplayName );
+		}
+	}
+
+	void IPlayerEvent.OnCameraMove( ref Angles angles )
+	{
+		if ( ActiveWeapon.IsValid() )
+		{
+			ActiveWeapon.OnCameraMove( Player, ref angles );
+		}
+	}
+
+	void IPlayerEvent.OnCameraPostSetup( Sandbox.CameraComponent camera )
+	{
+		if ( ActiveWeapon.IsValid() )
+		{
+			ActiveWeapon.OnCameraSetup( Player, camera );
+		}
+	}
+
+	public void DropCoffin()
+	{
+		if ( !Networking.IsHost )
+			return;
+
+		// Create a coffin
+		var go = GameObject.Clone( "items/coffin/coffin.prefab" );
+		go.Name = $"Coffin for {GameObject.Name}";
+		go.WorldPosition = Player.EyeTransform.Position;
+		go.WorldRotation = Rotation.LookAt( Player.EyeTransform.Forward.WithZ( 0 ), Vector3.Up );
+
+		// Collect ammo and set all this stuff before we spawn it
+		var coffin = go.GetComponent<Coffin>();
+		Assert.True( coffin.IsValid(), "Coffin not on coffin prefab" );
+
+		coffin.AmmoCounts = new( Player.AmmoCounts );
+
+		if ( go.GetComponent<Rigidbody>() is { } rb )
+		{
+			rb.Velocity = Player.Controller.Velocity + (Player.EyeTransform.Backward * 128);
+		}
+
+		go.NetworkSpawn( true, null );
+
+		foreach ( var weapon in GetComponentsInChildren<BaseCarryable>( true ).ToArray() )
+		{
+			// Conna: drop ownership first - this gives it to us (the host).
+			weapon.Network.DropOwnership();
+
+			// Now change our parent and enabled state. Enabled state is not networked automatically
+			// so we'll need to do a network refresh.
+			weapon.GameObject.Parent = go;
+			weapon.GameObject.Enabled = false;
+
+			// Do a network refresh so other clients get the changed enabled state.
+			weapon.Network.Refresh();
+		}
+	}
+}

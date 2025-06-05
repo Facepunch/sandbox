@@ -1,0 +1,101 @@
+{
+  "RootObject": {
+    "__guid": "b039b186-1a9e-4166-8c29-e87c9bf90261",
+    "Flags": 0,
+    "Name": "item_mp5",
+    "Enabled": true,
+    "NetworkMode": 1,
+    "NetworkOrphaned": 1,
+    "Components": [
+      {
+        "__type": "Sandbox.BoxCollider",
+        "__guid": "c91d9757-b4fa-4f39-b388-ec6129287749",
+        "Center": "2.142889,4.165474,16",
+        "Friction": null,
+        "IsTrigger": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnObjectTriggerEnter": null,
+        "OnObjectTriggerExit": null,
+        "OnTriggerEnter": null,
+        "OnTriggerExit": null,
+        "Scale": "50.9895,40.33095,32",
+        "Static": false,
+        "Surface": null,
+        "SurfaceVelocity": "0,0,0"
+      },
+      {
+        "__type": "InventoryPickup",
+        "__guid": "68f31dea-403a-4788-8c4b-7416c88f28ed",
+        "Items": [
+          {
+            "_type": "gameobject",
+            "prefab": "weapons/mp5/mp5.prefab"
+          }
+        ],
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "PickupSound": "sounds/weapons/gun_pickup.sound",
+        "RespawnTimer": 5,
+        "ShouldRespawn": true
+      }
+    ],
+    "Children": [
+      {
+        "__guid": "16c7ba4f-1743-433b-904f-8f0aed4e72bc",
+        "Flags": 0,
+        "Name": "Trigger",
+        "Enabled": true
+      },
+      {
+        "__guid": "cd9c3647-96c1-47f2-b7c2-babdec3c149e",
+        "Flags": 0,
+        "Name": "mp5_wm (1)",
+        "Rotation": "0.7071068,0,0,0.7071068",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "__Prefab": "weapons/mp5/mp5_wm.prefab",
+        "__PrefabVariables": {}
+      }
+    ],
+    "__variables": [],
+    "__properties": {
+      "FixedUpdateFrequency": 50,
+      "MaxFixedUpdates": 5,
+      "NetworkFrequency": 30,
+      "NetworkInterpolation": true,
+      "PhysicsSubSteps": 1,
+      "ThreadedAnimation": true,
+      "TimeScale": 1,
+      "UseFixedUpdate": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": true,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": ""
+      }
+    }
+  },
+  "ShowInMenu": true,
+  "MenuPath": "Deathmatch/Items/MP5",
+  "MenuIcon": null,
+  "DontBreakAsTemplate": true,
+  "ResourceVersion": 1,
+  "__references": [],
+  "__version": 1
+}

@@ -1,0 +1,42 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+
+
+<root>
+    <div class="index">@(Index+1)</div>
+
+    <div class="list">
+    @foreach ( var weapon in GetWeapons() )
+    {
+        <InventoryWeapon Weapon="@weapon" CanSwitch=@weapon.CanSwitch() IsHovered="@(weapon == Hovered)" IsActive="@(weapon == Active)"></InventoryWeapon>
+    }
+    </div>
+
+</root>
+
+@code
+{
+    public PlayerInventory Inventory { get; set; }
+    public BaseCarryable Active { get; set; }
+    public BaseCarryable Hovered { get; set; }
+
+    public int Index { get; set; }
+
+    IEnumerable<BaseCarryable> GetWeapons()
+    {
+        if (!Inventory.IsValid()) return Enumerable.Empty<BaseCarryable>();
+
+        return Inventory.Weapons.Where(x => x.InventorySlot == Index).OrderBy(x => x.InventoryOrder);
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        SetClass("active", Hovered?.InventorySlot == Index || Active?.InventorySlot == Index);
+    }
+
+	protected override int BuildHash() => HashCode.Combine( GetWeapons().Count() );
+
+}

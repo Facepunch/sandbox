@@ -1,0 +1,54 @@
+Nameplate
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    white-space: nowrap;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+
+    .card
+    {
+        flex-direction: row;
+        background-color: #0004;
+        border-radius: 5px;
+        padding: 10px 20px;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        font-size: 32px;
+
+        .avatar
+        {
+            width: 64px;
+            height: 64px;
+            flex-shrink: 0;
+            background-position: center;
+            background-size: cover;
+            border-radius: 50%;
+        }
+
+        .name
+        {
+            font-family: Poppins;
+            color: #fff;
+			text-overflow: ellipsis;
+        }
+
+        .voice
+        {
+            background-color: #111a;
+            border-radius: 20px;
+            padding: 4px;
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            font-family: "Material Icons";
+            font-size: 24px;
+            color: #aaa;
+        }
+    }
+}

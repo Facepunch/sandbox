@@ -1,0 +1,124 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@implements Component.INetworkListener
+
+<root>
+
+    <div class="output">
+        @foreach (var entry in Entries)
+        {
+            <div class="chat_entry">
+                @if (entry.steamid > 0)
+                {
+                    <div class="avatar" style="background-image: url( avatar:@entry.steamid )"></div>
+                }
+                <div class="author">@entry.author</div>
+                <div class="message">@entry.message</div>
+            </div>
+        }
+    </div>
+
+    <div class="input">
+        <TextEntry @ref="InputBox" onsubmit="@ChatFinished"></TextEntry>
+    </div>
+
+</root>
+
+@code
+{
+    TextEntry InputBox;
+
+    public record Entry( ulong steamid, string author, string message, RealTimeSince timeSinceAdded );
+    List<Entry> Entries = new();
+
+    protected override void OnUpdate()
+    {
+        if (InputBox is null)
+            return;
+
+        Panel.AcceptsFocus = false;
+
+        if ( Input.Pressed( "chat" ) )
+        {
+            InputBox.Focus();
+        }
+
+        if ( Entries.RemoveAll( x => x.timeSinceAdded > 20.0f ) > 0 )
+        {
+            StateHasChanged();
+        }
+
+        SetClass( "open", InputBox.HasFocus );
+    }
+
+    void ChatFinished()
+    {
+        var text = InputBox.Text;
+        InputBox.Text = "";
+
+        if (string.IsNullOrWhiteSpace(text))
+            return;
+
+        AddText( text );
+    }
+
+    [ConCmd( "say" )]
+    private static void Say( string msg )
+    {
+       var chat = Game.ActiveScene.GetAll<Chat>()
+                                .FirstOrDefault();
+
+       if ( Application.IsDedicatedServer )
+       {
+           chat.AddSystemText( msg );
+       }
+       else
+       {
+           chat.AddText( msg );
+       }
+    }
+
+	[Rpc.Broadcast]
+    public void AddText( string message )
+    {
+        message = message.Truncate( 300 );
+
+        if (string.IsNullOrWhiteSpace(message))
+            return;
+
+        var author = Rpc.Caller.DisplayName;
+        var steamid = Rpc.Caller.SteamId;
+
+		Log.Info($"{author}: {message}");
+
+        Entries.Add(new Entry(steamid, author, message, 0.0f));
+		StateHasChanged();
+	}
+
+	[Rpc.Broadcast] // todo: only from host/owner
+    public void AddSystemText(string message)
+    {
+        message = message.Truncate(300);
+
+        if (string.IsNullOrWhiteSpace(message))
+            return;
+
+        Entries.Add(new Entry(0, "ℹ️", message, 0.0f));
+        StateHasChanged();
+    }
+
+	void Component.INetworkListener.OnConnected( Connection channel )
+	{
+		if ( IsProxy ) return;
+
+		AddSystemText( $"{channel.DisplayName} has joined the game" );
+	}
+
+	void Component.INetworkListener.OnDisconnected( Connection channel )
+	{
+		if ( IsProxy ) return;
+
+		AddSystemText( $"{channel.DisplayName} has left the game" );
+	}
+}

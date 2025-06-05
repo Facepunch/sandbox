@@ -1,0 +1,148 @@
+{
+  "RootObject": {
+    "__guid": "b94045b4-632f-4a27-ad58-0ee4d3a598d9",
+    "Flags": 0,
+    "Name": "ammo_40mm",
+    "Enabled": true,
+    "NetworkMode": 1,
+    "NetworkOrphaned": 3,
+    "Components": [
+      {
+        "__type": "Sandbox.BoxCollider",
+        "__guid": "7dca582d-154d-4aa4-8412-9d86d43dc3b7",
+        "Center": "0,0,16",
+        "Friction": null,
+        "IsTrigger": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnObjectTriggerEnter": null,
+        "OnObjectTriggerExit": null,
+        "OnTriggerEnter": null,
+        "OnTriggerExit": null,
+        "Scale": "32,32,32",
+        "Static": false,
+        "Surface": null,
+        "SurfaceVelocity": "0,0,0"
+      },
+      {
+        "__type": "AmmoPickup",
+        "__guid": "68f31dea-403a-4788-8c4b-7416c88f28ed",
+        "AmmoAmount": 2,
+        "AmmoResource": "weapons/ammo/mp5grenade.ammo",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "PickupSound": "sounds/weapons/ammo_pickup.sound",
+        "RespawnTimer": 30,
+        "ShouldRespawn": true
+      }
+    ],
+    "Children": [
+      {
+        "__guid": "dad98fd9-4fd8-4588-b07d-e1568896ece2",
+        "Flags": 0,
+        "Name": "40mm_grenade",
+        "Position": "0.0000002384186,-2.158794,3.705892",
+        "Rotation": "0,-0.7071067,0,0.7071068",
+        "Scale": "2,2,2",
+        "Enabled": true,
+        "Components": [
+          {
+            "__type": "Sandbox.ModelRenderer",
+            "__guid": "576eb8e3-c75d-481f-ae78-453cc4d6ce48",
+            "BodyGroups": 18446744073709551615,
+            "CreateAttachments": false,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Model": "models/weapons/sbox_ammo/40mm_grenade/40mm_grenade.vmdl",
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Tint": "1,1,1,1"
+          }
+        ],
+        "Children": []
+      },
+      {
+        "__guid": "f3ff60fc-8fb3-4f1d-9557-8d78ef5b1704",
+        "Flags": 0,
+        "Name": "40mm_grenade (1)",
+        "Position": "-1.202608,1.610837,1.846243",
+        "Rotation": "0.1205903,0.04995005,-0.3794096,-0.9159756",
+        "Scale": "2,2,2",
+        "Enabled": true,
+        "Components": [
+          {
+            "__type": "Sandbox.ModelRenderer",
+            "__guid": "8057616f-ea75-4deb-aaaa-6526cb33c5f2",
+            "BodyGroups": 18446744073709551615,
+            "CreateAttachments": false,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Model": "models/weapons/sbox_ammo/40mm_grenade/40mm_grenade.vmdl",
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Tint": "1,1,1,1"
+          }
+        ],
+        "Children": []
+      }
+    ],
+    "__variables": [],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": true,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": ""
+      }
+    }
+  },
+  "ShowInMenu": true,
+  "MenuPath": "Deathmatch/Ammo/40mm",
+  "MenuIcon": null,
+  "DontBreakAsTemplate": true,
+  "ResourceVersion": 1,
+  "__references": [
+    "facepunch.40mmgrenade#96530"
+  ],
+  "__version": 1
+}

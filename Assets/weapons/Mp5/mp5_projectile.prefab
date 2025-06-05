@@ -1,0 +1,295 @@
+{
+  "RootObject": {
+    "__guid": "b7b48f7b-e8fa-4e77-b6c8-42358702119b",
+    "Flags": 0,
+    "Name": "mp5_projectile",
+    "Enabled": true,
+    "NetworkMode": 1,
+    "NetworkOrphaned": 1,
+    "Components": [
+      {
+        "__type": "ExplosiveProjectile",
+        "__guid": "1bc34c8c-3a00-4d0c-b764-32b3e4d228c0",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
+        "__type": "Sandbox.Rigidbody",
+        "__guid": "499b7d33-8eef-4e5c-adc4-db6c04921237",
+        "AngularDamping": 0,
+        "Gravity": true,
+        "LinearDamping": 2,
+        "Locking": {
+          "X": false,
+          "Y": false,
+          "Z": false,
+          "Pitch": false,
+          "Yaw": false,
+          "Roll": false
+        },
+        "MassCenterOverride": "0,0,0",
+        "MassOverride": 0,
+        "MotionEnabled": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideMassCenter": false,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
+      },
+      {
+        "__type": "Sandbox.CapsuleCollider",
+        "__guid": "1414bb04-e32e-4378-a688-2dbecb749fda",
+        "End": "-5,0,0",
+        "Friction": null,
+        "IsTrigger": false,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnObjectTriggerEnter": null,
+        "OnObjectTriggerExit": null,
+        "OnTriggerEnter": null,
+        "OnTriggerExit": null,
+        "Radius": 4,
+        "Start": "5,0,0",
+        "Static": false,
+        "Surface": null,
+        "SurfaceVelocity": "0,0,0"
+      },
+      {
+        "__type": "Explosive",
+        "__guid": "ad05ffa5-061e-4136-93d1-7fb36ecaf7fb",
+        "DamageFalloff": [
+          {
+            "x": 0,
+            "y": 1,
+            "in": 0,
+            "out": 0,
+            "mode": "Mirrored"
+          },
+          {
+            "x": 1,
+            "y": 0,
+            "in": 0,
+            "out": 0,
+            "mode": "Mirrored"
+          }
+        ],
+        "IKillIcon.DisplayIcon": {
+          "$compiler": "texture",
+          "$source": "svgsource",
+          "data": {
+            "Size": "256,256",
+            "Source": "<svg viewBox=\"0 -0.5 17 17\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" class=\"si-glyph si-glyph-bomb-1\" fill=\"#000000\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"> <title>710</title> <defs> </defs> <g stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"> <g transform=\"translate(1.000000, 3.000000)\" fill=\"#000000\"> <g transform=\"translate(1.000000, 0.000000)\"> <path d=\"M5.004,2.016 C4.19,2.016 3.042,3.136 3.042,4.933 C3.042,6.729 4.113,7.962 5.018,7.962 C5.923,7.962 11.579,7.627 12.35,7.627 C13.122,7.627 15.022,7.189 15.022,4.933 C15.021,2.677 13.31,2.278 12.35,2.278 C11.39,2.278 5.818,2.016 5.004,2.016 Z\" class=\"si-glyph-fill\"> </path> <path d=\"M1.973,2.384 C1.973,2.711 1.796,2.977 1.578,2.977 L0.394,2.977 C0.176,2.977 0,2.711 0,2.384 L0,0.606 C0,0.278 0.177,0.013 0.394,0.013 L1.972,1.791 L1.972,2.384 L1.973,2.384 Z\" class=\"si-glyph-fill\"> </path> <path d=\"M1.988,8.188 L0.41,9.957 C0.193,9.957 0.015,9.693 0.015,9.367 L0.015,7.598 C0.015,7.272 0.193,7.008 0.41,7.008 L1.594,7.008 C1.812,7.008 1.988,7.272 1.988,7.598 L1.988,8.188 L1.988,8.188 Z\" class=\"si-glyph-fill\"> </path> </g> <path d=\"M0.438,4.003 C0.111,4.003 0.032,4.446 0.032,4.992 C0.032,5.539 0.111,5.98 0.438,5.98 L2.969,5.98 L2.969,4.002 L0.438,4.002 L0.438,4.003 Z\" class=\"si-glyph-fill\"> </path> </g> </g> </g></svg>",
+            "Colorize": true,
+            "TargetColor": "1,1,1,1",
+            "Scale": 1,
+            "Offset": "0,0",
+            "Rotate": 0,
+            "FlipVertical": false,
+            "FlipHorizontal": true
+          },
+          "compiled": null
+        },
+        "Lifetime": 10,
+        "MaxDamage": 125,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "Radius": 512,
+        "ShouldExplode": true
+      },
+      {
+        "__type": "Sandbox.SoundPointComponent",
+        "__guid": "65ba7605-00a5-4027-9962-3a7f7b257361",
+        "Distance": 512,
+        "DistanceAttenuation": false,
+        "DistanceAttenuationOverride": false,
+        "Falloff": [
+          {
+            "x": 0,
+            "y": 1,
+            "in": 3.1415927,
+            "out": -3.1415927,
+            "mode": "Mirrored"
+          },
+          {
+            "x": 1,
+            "y": 0,
+            "in": 0,
+            "out": 0,
+            "mode": "Mirrored"
+          }
+        ],
+        "Force2d": false,
+        "MaxRepeatTime": 1,
+        "MinRepeatTime": 1,
+        "Occlusion": false,
+        "OcclusionOverride": false,
+        "OcclusionRadius": 32,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "Pitch": 1,
+        "PlayOnStart": true,
+        "ReflectionOverride": false,
+        "Reflections": false,
+        "Repeat": false,
+        "SoundEvent": "weapons/mp5/sounds/mp5_grenade_launcher_shoot.sound",
+        "SoundOverride": false,
+        "StopOnNew": false,
+        "TargetMixer": {
+          "Name": "game",
+          "Id": "32c2b0a7-6385-4f84-9879-61e456fc6288"
+        },
+        "Volume": 1
+      }
+    ],
+    "Children": [
+      {
+        "__guid": "7770b397-1ee4-4456-a8e5-ebba0f22862a",
+        "Flags": 0,
+        "Name": "Cube",
+        "Position": "-4,0,0",
+        "Scale": "0.4,0.4,0.4",
+        "Enabled": true,
+        "Components": [
+          {
+            "__type": "Sandbox.ModelRenderer",
+            "__guid": "dea31359-c32b-49f1-9cff-000d62a5d8b8",
+            "BodyGroups": 18446744073709551615,
+            "CreateAttachments": false,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Model": "models/3dmodelscc0/gunsexplosives/nuclear_bomb/nuclear_bomb.vmdl",
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Tint": "0.18605,0.18605,0.18605,1"
+          }
+        ]
+      },
+      {
+        "__guid": "019e4869-4ef1-49b6-af87-f761f46da2a5",
+        "Flags": 0,
+        "Name": "Shake",
+        "Enabled": true,
+        "Components": [
+          {
+            "__type": "EnvShake",
+            "__guid": "0df95323-c5c4-4a1a-80c8-9e7184d6d9fd",
+            "DistanceCurve": [
+              {
+                "x": 0,
+                "y": 1,
+                "in": 0.78787863,
+                "out": -0.78787863,
+                "mode": "Mirrored"
+              },
+              {
+                "x": 0.29141104,
+                "y": 0.15041846,
+                "in": 0.4924444,
+                "out": -0.4924444,
+                "mode": "Mirrored"
+              },
+              {
+                "x": 1,
+                "y": 0,
+                "in": 0,
+                "out": 0,
+                "mode": "Mirrored"
+              }
+            ],
+            "MaxDistance": 1024,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Rate": 600,
+            "Scale": "1,1,0.2",
+            "TimeCurve": [
+              {
+                "x": 0,
+                "y": 1,
+                "in": 0,
+                "out": 0,
+                "mode": "Mirrored"
+              },
+              {
+                "x": 1,
+                "y": 0,
+                "in": 0,
+                "out": 0,
+                "mode": "Mirrored"
+              }
+            ],
+            "TimeLength": 5,
+            "TimeLimited": false
+          }
+        ]
+      }
+    ],
+    "__variables": [],
+    "__properties": {
+      "FixedUpdateFrequency": 50,
+      "MaxFixedUpdates": 5,
+      "NetworkFrequency": 30,
+      "NetworkInterpolation": true,
+      "PhysicsSubSteps": 1,
+      "ThreadedAnimation": true,
+      "TimeScale": 1,
+      "UseFixedUpdate": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": true,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": ""
+      }
+    }
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "ResourceVersion": 1,
+  "__references": [
+    "titanovsky.nuclear_bomb#54062"
+  ],
+  "__version": 1
+}

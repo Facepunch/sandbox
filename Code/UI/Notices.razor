@@ -1,0 +1,21 @@
+@using Sandbox
+@using Sandbox.UI
+@using Sandbox.Utility
+
+@inherits PanelComponent
+@namespace Sandbox
+
+<root>
+
+</root>
+
+@code
+{
+    public void Display( string message )
+    {
+		var panel = new Label() { Text = message };
+        Panel.AddChild( panel );
+
+		Invoke( 1, () => panel.Delete() );
+    }
+}
