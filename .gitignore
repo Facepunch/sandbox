@@ -26,3 +26,4 @@ code/Properties/*
 
 # Exported / standalone games
 Exports/
+*.user
