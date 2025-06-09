@@ -1,0 +1,25 @@
+SpawnButton
+{
+	width: 100px;
+	height: 100px;
+	flex-shrink: 0;
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	transition: all 0.1s ease;
+	border-radius: 4px;
+}
+
+
+SpawnButton:hover
+{
+	transform: scale( 1.1 );
+}
+
+SpawnButton:active
+{
+	transform: scale( 1 );
+	transition: all 0.0s ease;
+	filter: brightness( 2 );
+}

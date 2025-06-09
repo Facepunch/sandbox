@@ -1,0 +1,14 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+
+
+<root style="background-image: url( @Icon )" onclick="@Action">
+
+</root>
+
+@code
+{
+    public string Icon { get; set; } = "https://cdn.sbox.game/asset/facepunch.oildrumexplosive/thumb.png.fff8e3787c17283";
+    public Action Action { get; set; }
+}

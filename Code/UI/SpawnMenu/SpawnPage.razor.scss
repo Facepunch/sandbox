@@ -1,0 +1,21 @@
+SpawnPage
+{
+	
+}
+
+
+SpawnPage > .left
+{
+	border-right: 1px solid #ffffff05;
+	flex-grow: 0;
+	flex-shrink: 0;
+	width: 200px;
+	padding: 1rem;
+}
+
+SpawnPage > .body
+{
+	padding: 1rem;
+	flex-wrap: wrap;
+	gap: 5px;
+}

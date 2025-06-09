@@ -674,6 +674,36 @@
             }
           ],
           "Children": []
+        },
+        {
+          "__guid": "bfb8b723-12b9-41d5-8658-0d330d19d071",
+          "__version": 1,
+          "Flags": 0,
+          "Name": "SpawnMenu",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkInterpolation": true,
+          "NetworkOrphaned": 0,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Sandbox.SpawnMenuHost",
+              "__guid": "784cd1bb-315b-4a9b-a9f3-17fc4a94e4af",
+              "__enabled": true,
+              "MyStringValue": "Hello World!",
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          ],
+          "Children": []
         }
       ]
     },

@@ -1,0 +1,56 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+<root>
+	
+    <div class="container">
+
+        <div class="left">
+
+            <div class="tabs">
+                <div class="active">Props</div>
+                <div>Weapons</div>
+                <div>Npcs</div>
+                <div>Vehicles</div>
+                <div>Other</div>
+            </div>
+
+            <div class="body">
+                <SpawnPage></SpawnPage>
+            </div>
+
+        </div>
+
+        <div class="right">
+
+            <div class="tabs">
+
+                <div>Tools</div>
+                <div class="active">Options</div>
+
+            </div>
+
+            <div class="body">
+
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</root>
+
+@code
+{
+    protected override void OnUpdate()
+    {
+        SetClass( "open", Input.Down( "score" )  );
+
+        base.OnUpdate();
+    }
+}

@@ -204,4 +204,64 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		Scene.RunEvent<KillTracker>( x => x.OnPlayerKilled( attackerData, player.PlayerData, dmg ) );
 	}
+
+	[Rpc.Host]
+	public static async void Spawn( string ident )
+	{
+		var player = Player.FindForConnection( Rpc.Caller );
+		if ( player is null ) return;
+
+		// store off their eye transform
+		var eyes = player.EyeTransform;
+
+		var trace = Game.SceneTrace.Ray( eyes.Position, eyes.Position + eyes.Forward * 200 )
+			.IgnoreGameObject( player.GameObject )
+			.WithoutTags( "player" )
+			.Run();
+
+
+		var up = trace.Normal;
+		var backward = -eyes.Forward;
+
+		var right = Vector3.Cross( up, backward ).Normal;
+		var forward = Vector3.Cross( right, up ).Normal;
+
+		var facingAngle = Rotation.LookAt( forward, up );
+
+		var spawnTransform = new Transform( trace.EndPosition, facingAngle );
+
+		// get their player
+
+
+		// TODO - can this user spawn this package?
+
+		var package = await Package.FetchAsync( ident, false );
+		if ( package is null ) return;
+
+		if ( package.TypeName == "model" )
+		{
+			await package.MountAsync();
+
+			var modelName = package.GetMeta<string>( "PrimaryAsset" );
+			var model = await Model.LoadAsync( modelName );
+
+			SpawnModel( model, spawnTransform, player );
+			return;
+		}
+	}
+
+	private static void SpawnModel( Model model, Transform spawnTransform, Player player )
+	{
+		Log.Info( $"[{player}] Spawning Model {model.Name}" );
+
+		var go = new GameObject( false, "prop" );
+		go.WorldTransform = spawnTransform;
+
+		var prop = go.AddComponent<Prop>();
+		prop.Model = model;
+
+
+		go.Enabled = true;
+
+	}
 }
