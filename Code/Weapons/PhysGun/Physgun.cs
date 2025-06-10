@@ -1,6 +1,6 @@
-﻿public class Physgun : BaseCarryable
+﻿public partial class Physgun : BaseCarryable
 {
-	float MovementSmoothness => 7;
+	float MovementSmoothness => 3;
 
 	public struct GrabState
 	{
@@ -21,6 +21,7 @@
 	}
 
 	GrabState _state = default;
+	GrabState _stateHovered = default;
 
 	bool _preventReselect = false;
 
@@ -58,16 +59,16 @@
 		}
 
 
-		bool validGrab = FindGrabbedBody( out var grabState, player.EyeTransform );
+		bool validGrab = FindGrabbedBody( out _stateHovered, player.EyeTransform );
 
 		if ( Input.Down( "attack1" ) )
 		{
 			var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? player.EyeTransform;
 
-			DebugOverlay.Line( muzzle.Position, grabState.EndPoint, Color.Cyan );
+			DebugOverlay.Line( muzzle.Position, _stateHovered.EndPoint, Color.Cyan );
 
 
-			_state = grabState;
+			_state = _stateHovered;
 
 			if ( _state.IsValid() )
 			{
