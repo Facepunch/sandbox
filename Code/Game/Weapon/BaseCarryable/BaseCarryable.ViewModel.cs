@@ -18,6 +18,7 @@ public partial class BaseCarryable : Component
 		ViewModel = ViewModelPrefab.Clone( new CloneConfig { Parent = GameObject, StartEnabled = false, Transform = global::Transform.Zero } );
 		ViewModel.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked | GameObjectFlags.Absolute;
 		ViewModel.Enabled = true;
+		ViewModel.Tags.Add( "firstperson", "viewmodel" );
 
 		var vm = ViewModel.GetComponent<ViewModel>();
 

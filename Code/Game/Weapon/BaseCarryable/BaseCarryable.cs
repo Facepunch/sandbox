@@ -54,6 +54,9 @@ public partial class BaseCarryable : Component, IKillIcon
 		get
 		{
 			var go = ViewModel;
+
+			if ( Scene.Camera.RenderExcludeTags.Contains( "firstperson" ) ) go = default;
+
 			if ( !go.IsValid() ) go = WorldModel;
 			if ( !go.IsValid() ) return null;
 

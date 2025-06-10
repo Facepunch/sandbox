@@ -7,6 +7,7 @@
 		public GameObject GameObject { get; set; }
 		public PhysicsBody Body { get; set; }
 		public Vector3 LocalOffset { get; set; }
+		public Vector3 LocalNormal { get; set; }
 		public Transform GrabOffset { get; set; }
 		public Vector3 EndPoint
 		{
@@ -14,6 +15,15 @@
 			{
 				if ( !GameObject.IsValid() ) return LocalOffset;
 				return GameObject.WorldTransform.PointToWorld( LocalOffset );
+			}
+		}
+
+		public Vector3 EndNormal
+		{
+			get
+			{
+				if ( !GameObject.IsValid() ) return LocalNormal;
+				return GameObject.WorldTransform.NormalToWorld( LocalNormal );
 			}
 		}
 
@@ -65,8 +75,7 @@
 		{
 			var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? player.EyeTransform;
 
-			DebugOverlay.Line( muzzle.Position, _stateHovered.EndPoint, Color.Cyan );
-
+			//DebugOverlay.Line( muzzle.Position, _stateHovered.EndPoint, Color.Cyan );
 
 			_state = _stateHovered;
 
@@ -74,17 +83,22 @@
 			{
 				_state.Body.MotionEnabled = true;
 			}
+
+			UpdateBeam( muzzle, _stateHovered.EndPoint, _stateHovered.EndNormal );
 		}
 		else
 		{
 			_preventReselect = false;
+			CloseBeam();
 		}
 	}
 
 	void OnControllingBody( Player player )
 	{
 		var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? player.EyeTransform;
-		DebugOverlay.Line( muzzle.Position, _state.EndPoint, Color.Cyan );
+		//DebugOverlay.Line( muzzle.Position, _state.EndPoint, Color.Cyan );
+
+		UpdateBeam( muzzle, _state.EndPoint, _stateHovered.EndNormal );
 
 		if ( FreeCamGameObjectSystem.Current.IsActive )
 			return;
@@ -144,6 +158,7 @@
 				.Run();
 
 		state.LocalOffset = tr.EndPosition;
+		state.LocalNormal = tr.Normal;
 
 		if ( !tr.Hit || tr.Body is null ) return false;
 		if ( tr.Body.BodyType == PhysicsBodyType.Static ) return false;
@@ -152,6 +167,7 @@
 		state.Body = tr.Body;
 		state.GameObject = tr.Body.GameObject;
 		state.LocalOffset = state.GameObject.WorldTransform.PointToLocal( tr.HitPosition );
+		state.LocalNormal = state.GameObject.WorldTransform.NormalToLocal( tr.Normal );
 		state.GrabOffset = aim.ToLocal( tr.Body.Transform );
 		return true;
 	}

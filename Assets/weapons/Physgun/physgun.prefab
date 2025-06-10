@@ -18,6 +18,12 @@
         "__type": "Physgun",
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
+        "BeamRenderer": {
+          "_type": "component",
+          "component_id": "f3f80109-6fa0-4a11-a63e-0664044ed0b6",
+          "go": "38c1b57f-3b24-4d7b-b222-982dd9ed9ebf",
+          "component_type": "LineRenderer"
+        },
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "svgsource",
@@ -32,7 +38,7 @@
             "FlipVertical": false,
             "FlipHorizontal": false
           },
-          "compiled": null
+          "compiled": "textures/generated/svgsource/407f8bb88236ea44.vtex"
         },
         "DisplayName": "Physics Gun",
         "HoldType": "Pistol",
@@ -56,7 +62,130 @@
         }
       }
     ],
-    "Children": [],
+    "Children": [
+      {
+        "__guid": "38c1b57f-3b24-4d7b-b222-982dd9ed9ebf",
+        "__version": 1,
+        "Flags": 0,
+        "Name": "Beam",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkInterpolation": true,
+        "NetworkOrphaned": 0,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.LineRenderer",
+            "__guid": "f3f80109-6fa0-4a11-a63e-0664044ed0b6",
+            "__enabled": true,
+            "Additive": true,
+            "CastShadows": false,
+            "Color": {
+              "blend": "Linear",
+              "color": [
+                {
+                  "t": 0.51890755,
+                  "c": "22.32559,170.3875,200,1"
+                }
+              ],
+              "alpha": []
+            },
+            "DepthFeather": 4,
+            "EndCap": "None",
+            "Face": "Camera",
+            "FogStrength": 1,
+            "Lighting": false,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Opaque": false,
+            "Points": [],
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": true,
+              "AfterUILayer": false
+            },
+            "SplineBias": 0,
+            "SplineContinuity": 0,
+            "SplineInterpolation": 8,
+            "SplineTension": 0,
+            "StartCap": "None",
+            "Texturing": {
+              "Texture": {
+                "$compiler": "texture",
+                "$source": "random",
+                "data": {
+                  "Seed": 0,
+                  "Size": "8,8",
+                  "Gradient": {
+                    "blend": "Linear",
+                    "color": [
+                      {
+                        "t": 0,
+                        "c": "0,0,0,1"
+                      },
+                      {
+                        "t": 1,
+                        "c": "1,1,1,1"
+                      }
+                    ],
+                    "alpha": null
+                  },
+                  "ConvertHeightToNormals": false,
+                  "NormalScale": 1,
+                  "CacheToDisk": true
+                },
+                "compiled": null
+              },
+              "WorldSpace": true,
+              "UnitsPerTexture": 128,
+              "Scale": 1,
+              "Offset": 0,
+              "Scroll": -6
+            },
+            "UseVectorPoints": true,
+            "VectorPoints": [
+              "0,0,0",
+              "163.4002,0,0",
+              "307.8,126.6,0"
+            ],
+            "Width": [
+              {
+                "x": 0,
+                "y": 0.25,
+                "in": -0.9629625,
+                "out": 0.9629625,
+                "mode": "Mirrored"
+              },
+              {
+                "x": 0.47085893,
+                "y": 0.625,
+                "in": 0,
+                "out": 0,
+                "mode": "Mirrored"
+              },
+              {
+                "x": 1,
+                "y": 0.27925533,
+                "in": 1.0736842,
+                "out": -1.0736842,
+                "mode": "Mirrored"
+              }
+            ],
+            "Wireframe": false
+          }
+        ],
+        "Children": []
+      }
+    ],
     "__properties": {
       "NetworkInterpolation": true,
       "TimeScale": 1,

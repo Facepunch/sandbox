@@ -25,6 +25,7 @@ public sealed class FreeCamGameObjectSystem : GameObjectSystem<FreeCamGameObject
 			return;
 
 		Input.Suppressed = true;
+
 	}
 
 	void ISceneStage.End()
@@ -45,10 +46,13 @@ public sealed class FreeCamGameObjectSystem : GameObjectSystem<FreeCamGameObject
 				angles = smoothAngles = Scene.Camera.WorldRotation;
 				smoothFov = fov = Scene.Camera.FieldOfView;
 				Scene.TimeScale = 0;
+
+				Scene.Camera.RenderExcludeTags.Add( "firstperson" );
 			}
 			else
 			{
 				Scene.TimeScale = 1;
+				Scene.Camera.RenderExcludeTags.Remove( "firstperson" );
 			}
 		}
 
