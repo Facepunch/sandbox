@@ -1,7 +1,7 @@
 using Sandbox.Utility;
 using static Sandbox.Component;
 
-public sealed class FreeCamGameObjectSystem : GameObjectSystem, ISceneStage
+public sealed class FreeCamGameObjectSystem : GameObjectSystem<FreeCamGameObjectSystem>, ISceneStage
 {
 	public bool IsActive { get; set; }
 

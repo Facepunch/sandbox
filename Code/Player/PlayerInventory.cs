@@ -15,6 +15,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		//	Pickup( "weapons/hands/hands.prefab" );
 		Pickup( "weapons/camera/camera.prefab" );
 		Pickup( "weapons/glock/glock.prefab" );
+		Pickup( "weapons/physgun/physgun.prefab" );
 
 		Player.GiveAmmo( ResourceLibrary.Get<AmmoResource>( "weapons/ammo/9mm.ammo" ), 100, false );
 
