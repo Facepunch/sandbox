@@ -24,9 +24,24 @@
 
 	bool _preventReselect = false;
 
+	bool _isSpinning;
+
+	public override void OnCameraMove( Player player, ref Angles angles )
+	{
+
+		base.OnCameraMove( player, ref angles );
+
+		if ( _state.IsValid() && _isSpinning )
+		{
+			angles = default;
+		}
+	}
+
 	public override void OnControl( Player player )
 	{
 		base.OnControl( player );
+
+		_isSpinning = Input.Down( "use" );
 
 		if ( _state.IsValid() )
 		{
@@ -75,6 +90,8 @@
 
 		if ( Input.Down( "attack2" ) )
 		{
+			_state.GrabOffset = player.EyeTransform.ToLocal( _state.Body.Transform );
+
 			// TODO - this should add or update a Component 
 			// on the GameObject so we can undo it etc
 			_state.Body.MotionEnabled = false;
@@ -85,6 +102,14 @@
 
 			_preventReselect = true;
 			return;
+		}
+
+
+		if ( _isSpinning )
+		{
+			var go = _state.GrabOffset;
+			go.Rotation = (Input.AnalogLook * -1) * go.Rotation;
+			_state.GrabOffset = go;
 		}
 
 		if ( !Input.Down( "attack1" ) )
