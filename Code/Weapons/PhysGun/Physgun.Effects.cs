@@ -20,7 +20,7 @@ public partial class Physgun : BaseCarryable
 		BeamRenderer.VectorPoints[0] = source.Position;
 
 
-		var targetMiddle = source.Position + source.Forward * distance * 0.33f + source.Up * 1.0f;
+		var targetMiddle = source.Position + source.Forward * distance * 0.33f;
 		targetMiddle = targetMiddle + Noise.FbmVector( 2, Time.Now * 400.0f, Time.Now * 100.0f ) * 1.0f;
 
 		BeamRenderer.VectorPoints[1] = middleSpring.Current;
@@ -41,6 +41,8 @@ public partial class Physgun : BaseCarryable
 
 	void CloseBeam()
 	{
+		if ( !BeamRenderer.IsValid() ) return;
+
 		BeamRenderer.Enabled = false;
 	}
 

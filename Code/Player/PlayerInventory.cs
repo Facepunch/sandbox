@@ -11,13 +11,12 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		// Don't run any pickup notices when spawning in
 		using var _ = Player.NoNoticeScope();
 
-		//Pickup( "weapons/crowbar/crowbar.prefab" );
-		//	Pickup( "weapons/hands/hands.prefab" );
 		Pickup( "weapons/camera/camera.prefab" );
-		Pickup( "weapons/glock/glock.prefab" );
 		Pickup( "weapons/physgun/physgun.prefab" );
+		Pickup( "weapons/toolgun/toolgun.prefab" );
+		Pickup( "weapons/glock/glock.prefab" );
 
-		Player.GiveAmmo( ResourceLibrary.Get<AmmoResource>( "weapons/ammo/9mm.ammo" ), 100, false );
+		Player.GiveAmmo( ResourceLibrary.Get<AmmoResource>( "ammotype/9mm.ammo" ), 200, false );
 
 		if ( GameSettings.CheatMode )
 		{
@@ -53,6 +52,12 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			return false;
 
 		var prefab = GameObject.GetPrefab( prefabName );
+		if ( prefab is null )
+		{
+			Log.Warning( $"Prefab not found: {prefabName}" );
+			return false;
+		}
+
 		return Pickup( prefab, notice );
 	}
 
@@ -84,7 +89,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		if ( baseCarry is null )
 			return false;
 
-		var existing = Weapons.Where( x => x.GetType() == baseCarry.GetType() ).FirstOrDefault();
+		var existing = Weapons.Where( x => x.GameObject.Name == prefab.Name ).FirstOrDefault();
 		if ( existing.IsValid() )
 		{
 			// We already have this weapon type
@@ -282,23 +287,25 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			return;
 
 		// Create a coffin
-		var go = GameObject.Clone( "items/coffin/coffin.prefab" );
-		go.Name = $"Coffin for {GameObject.Name}";
-		go.WorldPosition = Player.EyeTransform.Position;
-		go.WorldRotation = Rotation.LookAt( Player.EyeTransform.Forward.WithZ( 0 ), Vector3.Up );
+		var coffinPrefab = GameObject.Clone( "items/coffin/coffin.prefab" );
+		if ( coffinPrefab is null ) return;
+
+		coffinPrefab.Name = $"Coffin for {GameObject.Name}";
+		coffinPrefab.WorldPosition = Player.EyeTransform.Position;
+		coffinPrefab.WorldRotation = Rotation.LookAt( Player.EyeTransform.Forward.WithZ( 0 ), Vector3.Up );
 
 		// Collect ammo and set all this stuff before we spawn it
-		var coffin = go.GetComponent<Coffin>();
+		var coffin = coffinPrefab.GetComponent<Coffin>();
 		Assert.True( coffin.IsValid(), "Coffin not on coffin prefab" );
 
 		coffin.AmmoCounts = new( Player.AmmoCounts );
 
-		if ( go.GetComponent<Rigidbody>() is { } rb )
+		if ( coffinPrefab.GetComponent<Rigidbody>() is { } rb )
 		{
 			rb.Velocity = Player.Controller.Velocity + (Player.EyeTransform.Backward * 128);
 		}
 
-		go.NetworkSpawn( true, null );
+		coffinPrefab.NetworkSpawn( true, null );
 
 		foreach ( var weapon in GetComponentsInChildren<BaseCarryable>( true ).ToArray() )
 		{
@@ -307,7 +314,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 			// Now change our parent and enabled state. Enabled state is not networked automatically
 			// so we'll need to do a network refresh.
-			weapon.GameObject.Parent = go;
+			weapon.GameObject.Parent = coffinPrefab;
 			weapon.GameObject.Enabled = false;
 
 			// Do a network refresh so other clients get the changed enabled state.

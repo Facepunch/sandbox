@@ -176,7 +176,14 @@ public partial class BaseCarryable : Component, IKillIcon
 		if ( IsProxy )
 			return;
 
-		OnControl( player );
+		try
+		{
+			OnControl( player );
+		}
+		catch ( System.Exception e )
+		{
+			Log.Error( e, $"{GetType().Name}.OnControl {e.Message}" );
+		}
 	}
 
 	/// <summary>

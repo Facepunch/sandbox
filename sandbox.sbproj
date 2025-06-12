@@ -8,7 +8,9 @@
   "Resources": null,
   "PackageReferences": [],
   "EditorReferences": null,
-  "Mounts": null,
+  "Mounts": [
+    "quake"
+  ],
   "IsStandaloneOnly": false,
   "Metadata": {
     "MaxPlayers": 64,
@@ -23,6 +25,11 @@
     "PerMapRanking": false,
     "LeaderboardType": "None",
     "CsProjName": "",
-    "StartupScene": "scenes/minimal.scene"
+    "StartupScene": "scenes/minimal.scene",
+    "ControlModes": {
+      "Keyboard": false,
+      "VR": false,
+      "Gamepad": false
+    }
   }
 }
