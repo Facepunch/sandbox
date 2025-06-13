@@ -10,6 +10,17 @@ public partial class Physgun : BaseCarryable
 	{
 		if ( !BeamRenderer.IsValid() ) return;
 
+		// obj
+		if ( _state.GameObject.IsValid() )
+		{
+			BeamHighlight.Enabled = true;
+			BeamHighlight.OverrideTargets = true;
+			BeamHighlight.Targets.Clear();
+			BeamHighlight.Targets.AddRange( _state.GameObject.GetComponents<Renderer>() );
+			BeamHighlight.Width = 0.1f + Noise.Fbm( 3, Time.Now * 100.0f ) * 0.1f;
+			BeamHighlight.Color = Color.Lerp( Color.Cyan, Color.White, Noise.Fbm( 3, Time.Now * 40.0f ) * 0.5f ) * 200.0f;
+		}
+
 		bool justEnabled = !BeamRenderer.Enabled;
 
 		if ( BeamRenderer.VectorPoints.Count != 4 )
@@ -41,6 +52,20 @@ public partial class Physgun : BaseCarryable
 
 	void CloseBeam()
 	{
+		if ( _stateHovered.GameObject.IsValid() )
+		{
+			BeamHighlight.Enabled = true;
+			BeamHighlight.OverrideTargets = true;
+			BeamHighlight.Targets.Clear();
+			BeamHighlight.Targets.AddRange( _stateHovered.GameObject.GetComponents<Renderer>() );
+			BeamHighlight.Width = 0.2f;
+			BeamHighlight.Color = new Color( 0.5f, 1, 1, 0.3f );
+		}
+		else
+		{
+			BeamHighlight.Enabled = false;
+		}
+
 		if ( !BeamRenderer.IsValid() ) return;
 
 		BeamRenderer.Enabled = false;

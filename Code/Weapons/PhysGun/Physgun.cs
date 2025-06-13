@@ -2,6 +2,8 @@
 {
 	float MovementSmoothness => 3;
 
+	[Property, RequireComponent] public HighlightOutline BeamHighlight { get; set; }
+
 	public struct GrabState
 	{
 		public GameObject GameObject { get; set; }

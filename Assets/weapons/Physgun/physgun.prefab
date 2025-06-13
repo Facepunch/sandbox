@@ -18,6 +18,12 @@
         "__type": "Physgun",
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
+        "BeamHighlight": {
+          "_type": "component",
+          "component_id": "1baf5c79-b37e-48ce-a328-e89114e8659e",
+          "go": "3c948bf4-5353-443a-bb65-8f28584fed1b",
+          "component_type": "HighlightOutline"
+        },
         "BeamRenderer": {
           "_type": "component",
           "component_id": "f3f80109-6fa0-4a11-a63e-0664044ed0b6",
@@ -60,6 +66,26 @@
           "_type": "gameobject",
           "prefab": "weapons/glock/glock_wm.prefab"
         }
+      },
+      {
+        "__type": "Sandbox.HighlightOutline",
+        "__guid": "1baf5c79-b37e-48ce-a328-e89114e8659e",
+        "__enabled": true,
+        "Color": "1,1,1,1",
+        "InsideColor": "0,0,0,0",
+        "InsideObscuredColor": "0,0,0,0",
+        "Material": null,
+        "ObscuredColor": "0,0,0,0",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideTargets": true,
+        "Targets": [],
+        "Width": 0.25,
+        "WidthIsInPixels": true
       }
     ],
     "Children": [
@@ -143,7 +169,7 @@
                   "NormalScale": 1,
                   "CacheToDisk": true
                 },
-                "compiled": null
+                "compiled": "textures/generated/random/de57f30dc50aa163.vtex"
               },
               "WorldSpace": true,
               "UnitsPerTexture": 128,

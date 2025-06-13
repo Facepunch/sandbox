@@ -494,6 +494,17 @@
           "Quality": "High",
           "Radius": 128,
           "ThinCompensation": 0
+        },
+        {
+          "__type": "Sandbox.Highlight",
+          "__guid": "78a9864e-989d-44b8-8c4e-72b2f56c306f",
+          "__enabled": true,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null
         }
       ],
       "Children": []
