@@ -201,8 +201,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 			SendMessage( $"{attackerName} killed {(isSuicide ? "self" : player.DisplayName)} with {weapon.Name} (tags: {dmg.Tags})" );
 		else
 			SendMessage( $"{attackerName} killed {(isSuicide ? "self" : player.DisplayName)} (tags: {dmg.Tags})" );
-
-		Scene.RunEvent<KillTracker>( x => x.OnPlayerKilled( attackerData, player.PlayerData, dmg ) );
 	}
 
 	[Rpc.Host]
@@ -255,6 +253,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		Log.Info( $"[{player}] Spawning Model {model.Name}" );
 
 		var go = new GameObject( false, "prop" );
+		go.Tags.Add( "removable" );
 		go.WorldTransform = spawnTransform;
 
 		var prop = go.AddComponent<Prop>();

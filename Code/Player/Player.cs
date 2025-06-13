@@ -210,6 +210,9 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 			KillSelf();
 		}
 
+		if ( Scene.Camera.RenderExcludeTags.Contains( "ui" ) )
+			return;
+
 		if ( UI.IsEnabled )
 		{
 			var hud = Scene.Camera.Hud;
@@ -406,5 +409,10 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		{
 			hud.DrawHudElement( $"{Armour.CeilToInt()}", bottomleft - new Vector2( 0, 64f * Hud.Scale ), armourIcon, 30f );
 		}
+	}
+
+	public T GetWeapon<T>() where T : BaseCarryable
+	{
+		return GetComponent<PlayerInventory>().GetWeapon<T>();
 	}
 }

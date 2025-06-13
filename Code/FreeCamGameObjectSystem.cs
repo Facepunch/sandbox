@@ -48,11 +48,13 @@ public sealed class FreeCamGameObjectSystem : GameObjectSystem<FreeCamGameObject
 				Scene.TimeScale = 0;
 
 				Scene.Camera.RenderExcludeTags.Add( "firstperson" );
+				Scene.Camera.RenderExcludeTags.Add( "ui" );
 			}
 			else
 			{
 				Scene.TimeScale = 1;
 				Scene.Camera.RenderExcludeTags.Remove( "firstperson" );
+				Scene.Camera.RenderExcludeTags.Remove( "ui" );
 			}
 		}
 
