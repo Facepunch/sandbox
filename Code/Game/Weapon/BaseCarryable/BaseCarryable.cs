@@ -121,7 +121,7 @@ public partial class BaseCarryable : Component, IKillIcon
 				aimPos = Scene.Camera.PointToScreenPixels( tr.EndPosition );
 			}
 
-			if ( UI.IsEnabled )
+			if ( UI.IsEnabled && !Scene.Camera.RenderExcludeTags.Has( "ui" ) )
 			{
 				DrawHud( hud, aimPos );
 			}

@@ -31,6 +31,9 @@ public partial class Toolgun : BaseCarryable
 
 	void UpdateViewScreenCommandList( SkinnedModelRenderer renderer )
 	{
+		if ( CurrentMode is null )
+			return;
+
 		var rt = RenderTarget.From( screenTexture );
 
 		var cl = new CommandList();
@@ -39,16 +42,7 @@ public partial class Toolgun : BaseCarryable
 		cl.SetRenderTarget( rt );
 		cl.Clear( Color.Black );
 
-		{
-			var text = new TextRendering.Scope( "weld ⚠️", Color.White, 100 );
-			text.LineHeight = 0.75f;
-			text.FontName = "Poppins";
-			text.TextColor = Color.Lerp( Color.Yellow, Color.Orange, 0.5f + Random.Shared.Float( -0.4f, 0.4f ) );
-			text.TextColor = Color.Lerp( text.TextColor, Color.White, 0.1f );
-			text.FontWeight = 700;
-
-			cl.Paint.DrawText( text, new Rect( 0, screenTexture.Size ), TextFlag.CenterBottom );
-		}
+		CurrentMode.DrawScreen( new Rect( 0, screenTexture.Size ), cl.Paint );
 
 		cl.ClearRenderTarget();
 		cl.GenerateMipMaps( rt );

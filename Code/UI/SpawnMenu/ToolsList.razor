@@ -1,0 +1,50 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+
+
+<root>
+
+    <div class="left">
+        <div class="list">
+            @foreach (var type in Game.TypeLibrary.GetTypes<ToolMode>())
+            {
+                if (type.IsAbstract) continue;
+
+                string activeClass = IsActiveMode(type) ? "active" : string.Empty;
+
+                <div class="button @activeClass" @onclick="@(() => SwitchMode( type ) )">
+                    <i>@type.Icon</i>
+                    <span>@type.Title</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="body">
+
+
+    </div>
+
+</root>
+
+@code
+{
+    bool IsActiveMode( TypeDescription t )
+    {
+        var localPlayer = Player.FindLocalPlayer();
+        var toolgun = localPlayer?.GetWeapon<Toolgun>();
+        if (!toolgun.IsValid()) return false;
+
+        return toolgun.Mode == t.ClassName;
+    }
+
+    void SwitchMode(TypeDescription t)
+    {
+        var localPlayer = Player.FindLocalPlayer();
+        var toolgun = localPlayer?.GetWeapon<Toolgun>();
+        if (!toolgun.IsValid()) return;
+
+        toolgun.SwitchMode(t.ClassName);
+    }
+}

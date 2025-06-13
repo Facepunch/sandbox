@@ -1,0 +1,52 @@
+ToolsList > .left
+{
+	flex-grow: 0;
+	flex-shrink: 0;
+	flex-direction: column;
+	width: 200px;
+	padding: 0.5rem;
+
+	.list
+	{
+		flex-direction: column;
+		border: 1px solid #ffffff05;
+		background-color: #2225;
+		padding: 0.5rem;
+		border-radius: 10px;
+		height: 100%;
+	}
+
+	.list .button
+	{
+		cursor: pointer;
+		font-size: 0.8rem;
+		padding: 2px 8px;
+		gap: 0.5rem;
+		font-weight: 550;
+		font-family: poppins;
+		opacity: 0.5;
+		align-items: center;
+
+		&:hover
+		{
+			color: white;
+			opacity: 1;
+		}
+
+		&.active
+		{
+			opacity: 1;
+			background-color: #08f;
+			border-radius: 4px;
+			color: white;
+			font-weight: bold;
+		}
+	}
+}
+
+SpawnPage > .body
+{
+	padding: 1rem;
+	flex-wrap: wrap;
+	gap: 5px;
+}
