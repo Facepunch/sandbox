@@ -260,7 +260,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		prop.Model = model;
 
 
-		go.Enabled = true;
+		go.NetworkSpawn( true, null );
 
 	}
 }
