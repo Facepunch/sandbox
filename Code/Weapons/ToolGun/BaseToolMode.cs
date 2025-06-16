@@ -1,18 +1,9 @@
 ﻿using Sandbox.Rendering;
 
-public abstract class ToolMode
+public abstract class ToolMode : Component
 {
-	public Toolgun Toolgun { get; private set; }
-	public Scene Scene => Toolgun.Scene;
-	public Player Player => Toolgun.GetComponentInParent<Player>();
-
-	internal void InitializeInternal( Toolgun source )
-	{
-		Toolgun = source;
-	}
-
-	public virtual void Activate() { }
-	public virtual void Deactivate() { }
+	public Toolgun Toolgun => GetComponent<Toolgun>();
+	public Player Player => GetComponentInParent<Player>();
 
 	public virtual void OnControl() { }
 

@@ -36,7 +36,7 @@
         var toolgun = localPlayer?.GetWeapon<Toolgun>();
         if (!toolgun.IsValid()) return false;
 
-        return toolgun.Mode == t.ClassName;
+        return toolgun.GetCurrentMode()?.GetType() == t.TargetType;
     }
 
     void SwitchMode(TypeDescription t)
@@ -45,6 +45,6 @@
         var toolgun = localPlayer?.GetWeapon<Toolgun>();
         if (!toolgun.IsValid()) return;
 
-        toolgun.SwitchMode(t.ClassName);
+        toolgun.SetToolMode(t.ClassName);
     }
 }

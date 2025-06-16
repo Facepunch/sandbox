@@ -2,11 +2,6 @@
 
 public partial class Toolgun : BaseCarryable
 {
-	[Sync]
-	public string Mode { get; set; } = "easyweld";
-
-	ToolMode CurrentMode;
-
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
 		base.OnCameraMove( player, ref angles );
@@ -14,15 +9,11 @@ public partial class Toolgun : BaseCarryable
 
 	public override void OnControl( Player player )
 	{
-		if ( CurrentMode == null )
-		{
-			CurrentMode = CreateToolMode( Mode );
-		}
-
-		if ( CurrentMode == null )
+		var currentMode = GetCurrentMode();
+		if ( currentMode == null )
 			return;
 
-		CurrentMode.OnControl();
+		currentMode.OnControl();
 
 		UpdateViewmodelScreen();
 
@@ -31,26 +22,30 @@ public partial class Toolgun : BaseCarryable
 
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )
 	{
-		CurrentMode?.DrawHud( painter, crosshair );
+		var currentMode = GetCurrentMode();
+		currentMode?.DrawHud( painter, crosshair );
 	}
 
-	public void SwitchMode( string mode )
-	{
-		CurrentMode = default;
-		Mode = mode;
-	}
+	public ToolMode GetCurrentMode() => GetComponent<ToolMode>();
 
-	ToolMode CreateToolMode( string name )
+	[Rpc.Host]
+	public void SetToolMode( string name )
 	{
-		var mode = Game.TypeLibrary.GetType<ToolMode>( name );
-		if ( mode is null )
+		var currentMode = GetCurrentMode();
+		if ( currentMode.IsValid() )
 		{
-			Log.Warning( $"Couldn't create tool mode {name}" );
-			return default;
+			// Destroy the current mode before creating a new one
+			currentMode.Destroy();
 		}
 
-		var created = mode.Create<ToolMode>( null );
-		created.InitializeInternal( this );
-		return created;
+		var td = Game.TypeLibrary.GetType<ToolMode>( name );
+		if ( td != null )
+		{
+			var newMode = Components.Create( td, true );
+
+			// newMode on enabled
+		}
+
+		Network.Refresh();
 	}
 }

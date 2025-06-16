@@ -31,7 +31,9 @@ public partial class Toolgun : BaseCarryable
 
 	void UpdateViewScreenCommandList( SkinnedModelRenderer renderer )
 	{
-		if ( CurrentMode is null )
+		var currentMode = GetCurrentMode();
+
+		if ( currentMode is null )
 			return;
 
 		var rt = RenderTarget.From( screenTexture );
@@ -42,7 +44,7 @@ public partial class Toolgun : BaseCarryable
 		cl.SetRenderTarget( rt );
 		cl.Clear( Color.Black );
 
-		CurrentMode.DrawScreen( new Rect( 0, screenTexture.Size ), cl.Paint );
+		currentMode.DrawScreen( new Rect( 0, screenTexture.Size ), cl.Paint );
 
 		cl.ClearRenderTarget();
 		cl.GenerateMipMaps( rt );
