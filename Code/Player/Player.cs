@@ -415,4 +415,12 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 	{
 		return GetComponent<PlayerInventory>().GetWeapon<T>();
 	}
+
+	public void SwitchWeapon<T>() where T : BaseCarryable
+	{
+		var weapon = GetWeapon<T>();
+		if ( weapon == null ) return;
+
+		GetComponent<PlayerInventory>().SwitchWeapon( weapon );
+	}
 }

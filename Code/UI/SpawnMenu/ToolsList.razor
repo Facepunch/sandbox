@@ -45,6 +45,7 @@
         var toolgun = localPlayer?.GetWeapon<Toolgun>();
         if (!toolgun.IsValid()) return;
 
+        localPlayer.SwitchWeapon<Toolgun>();
         toolgun.SetToolMode(t.ClassName);
     }
 }

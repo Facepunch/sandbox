@@ -31,11 +31,9 @@ public partial class Toolgun : BaseCarryable
 	[Rpc.Host]
 	public void SetToolMode( string name )
 	{
-		var currentMode = GetCurrentMode();
-		if ( currentMode.IsValid() )
+		foreach ( var c in GetComponents<ToolMode>( true ) )
 		{
-			// Destroy the current mode before creating a new one
-			currentMode.Destroy();
+			c.Destroy();
 		}
 
 		var td = Game.TypeLibrary.GetType<ToolMode>( name );
