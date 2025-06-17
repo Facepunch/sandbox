@@ -47,9 +47,15 @@
 
 @code
 {
+    bool stickOpen = false;
+
     protected override void OnUpdate()
     {
-        SetClass( "open", Input.Down( "score" )  );
+        stickOpen = stickOpen || (Sandbox.UI.InputFocus.Current?.Ancestors.Contains(Panel) ?? false);
+
+        if ( stickOpen && Input.Pressed("score") ) stickOpen = false;
+
+        SetClass("open", stickOpen || Input.Down("score"));
 
         base.OnUpdate();
     }

@@ -609,7 +609,7 @@
           "Components": [
             {
               "__type": "Sandbox.SpawnMenuHost",
-              "__guid": "784cd1bb-315b-4a9b-a9f3-17fc4a94e4af",
+              "__guid": "937c1fdf-fe12-46fc-b6fc-5ebc7fc31e31",
               "__enabled": true,
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
@@ -842,7 +842,6 @@
   "Title": null,
   "Description": null,
   "__references": [
-    "facepunch.floor_grass_a#18648",
     "facepunch.floor_rough_asphalt#85404",
     "facepunch.rubbertilesa#90427",
     "facepunch.soil_a#85425",

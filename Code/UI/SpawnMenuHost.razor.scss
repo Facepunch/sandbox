@@ -15,6 +15,7 @@ SpawnMenuHost
 	opacity: 0;
 	background-color: #0004;
 	transition: opacity 0.3s linear, background-color 0.5s linear;
+	pointer-events: none;
 
 	.container .left
 	{
