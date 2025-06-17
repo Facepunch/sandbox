@@ -1,3 +1,8 @@
+ToolsList
+{
+	flex-grow: 1;
+}
+
 ToolsList > .left
 {
 	flex-grow: 0;
@@ -44,9 +49,8 @@ ToolsList > .left
 	}
 }
 
-SpawnPage > .body
+ToolsList > .body
 {
-	padding: 1rem;
-	flex-wrap: wrap;
-	gap: 5px;
+	flex-direction: column;
+	flex-grow: 1;
 }

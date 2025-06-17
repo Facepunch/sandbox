@@ -22,8 +22,7 @@
     </div>
 
     <div class="body">
-
-
+        <ControlSheet PropertyFilter="@FilterProperties" Target="@GetCurrentMode()"></ControlSheet>
     </div>
 
 </root>
@@ -47,5 +46,23 @@
 
         localPlayer.SwitchWeapon<Toolgun>();
         toolgun.SetToolMode(t.ClassName);
+    }
+
+    ToolMode GetCurrentMode()
+    {
+        var localPlayer = Player.FindLocalPlayer();
+        var toolgun = localPlayer?.GetWeapon<Toolgun>();
+        return toolgun.GetCurrentMode();
+    }
+
+    static bool FilterProperties(SerializedProperty o)
+    {
+        if (o.PropertyType is null) return false;
+        if (o.PropertyType.IsAssignableTo(typeof(Delegate))) return false;
+
+        if (o.IsMethod) return true;
+        if (!o.HasAttribute<PropertyAttribute>()) return false;
+
+        return true;
     }
 }

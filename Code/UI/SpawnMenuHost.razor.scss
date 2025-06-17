@@ -94,6 +94,7 @@ SpawnMenuHost.open
 	margin-left: 32px;
 	margin-bottom: -2px;
 	z-index: 10;
+	flex-shrink: 0;
 }
 
 .tabs > *

@@ -45,6 +45,32 @@ public class Rope : ToolMode
 [ClassName( "remover" )]
 public class Remover : ToolMode
 {
+	[Property]
+	public float ToolOption { get; set; } = 45;
+
+	[Range( -1, 1, 0.001f )]
+	[Property]
+	public float Amount { get; set; } = 0.23f;
+
+	[Property]
+	public string YourDadsName { get; set; } = "Frank";
+
+	[Group( "Damage Mode" )]
+	[Property]
+	public bool RemoveHair { get; set; } = true;
+
+	[Group( "Damage Mode" )]
+	[Property]
+	public Vector3 Velocity { get; set; } = new Vector3( 0, 100, 0 );
+
+	[Group( "Damage Mode" )]
+	[Property]
+	public Vector2 ScreenPos { get; set; } = new Vector2( 1080, 480 );
+
+	[Group( "Damage Mode" )]
+	[Property]
+	public Vector4 ScreenRect { get; set; } = new Vector4( 10, 10, 90, 90 );
+
 	bool CanDestroy( GameObject go )
 	{
 		if ( !go.IsValid() ) return false;
