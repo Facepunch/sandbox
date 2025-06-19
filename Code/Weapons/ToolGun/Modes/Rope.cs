@@ -52,8 +52,6 @@ public class Rope : ToolMode
 				};
 
 				CreateRope( _point1, _point2 );
-
-				DebugOverlay.Line( _point1.WorldPosition(), _point2.WorldPosition(), duration: 10 );
 			}
 
 			stage = 0;
@@ -98,7 +96,7 @@ public class Rope : ToolMode
 		lineRenderer.Lighting = true;
 		lineRenderer.CastShadows = true;
 
-		go1.NetworkSpawn();
 		go2.NetworkSpawn();
+		go1.NetworkSpawn();
 	}
 }
