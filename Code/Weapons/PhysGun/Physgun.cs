@@ -7,7 +7,6 @@
 	public struct GrabState
 	{
 		public GameObject GameObject { get; set; }
-		public PhysicsBody Body { get; set; }
 		public Vector3 LocalOffset { get; set; }
 		public Vector3 LocalNormal { get; set; }
 		public Transform GrabOffset { get; set; }
@@ -29,11 +28,15 @@
 			}
 		}
 
-		public bool IsValid() => Body.IsValid();
+		public bool IsValid() => GameObject.IsValid();
+
+		public Rigidbody Body => GameObject?.GetComponent<Rigidbody>();
 	}
 
-	GrabState _state = default;
-	GrabState _stateHovered = default;
+	[Sync]
+	public GrabState _state { get; set; } = default;
+
+	public GrabState _stateHovered { get; set; } = default;
 
 	bool _preventReselect = false;
 
@@ -41,12 +44,29 @@
 
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
-
 		base.OnCameraMove( player, ref angles );
 
 		if ( _state.IsValid() && _isSpinning )
 		{
 			angles = default;
+		}
+	}
+
+	protected override void OnPreRender()
+	{
+		base.OnPreRender();
+
+		var player = GetComponentInParent<Player>();
+
+
+		if ( _state.IsValid() )
+		{
+			var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? WorldTransform;
+			UpdateBeam( muzzle, _state.EndPoint, _stateHovered.EndNormal );
+		}
+		else
+		{
+			CloseBeam();
 		}
 	}
 
@@ -58,7 +78,20 @@
 
 		if ( _state.IsValid() )
 		{
-			OnControllingBody( player );
+			if ( !Input.Down( "attack1" ) )
+			{
+				_state = default;
+				_preventReselect = true;
+				return;
+			}
+
+			if ( _isSpinning )
+			{
+				var go = _state.GrabOffset;
+				go.Rotation = (Input.AnalogLook * -1) * go.Rotation;
+				_state = _state with { GrabOffset = go };
+			}
+
 			return;
 		}
 
@@ -71,7 +104,9 @@
 		}
 
 
-		bool validGrab = FindGrabbedBody( out _stateHovered, player.EyeTransform );
+		var sh = _stateHovered;
+		bool validGrab = FindGrabbedBody( out sh, player.EyeTransform );
+		_stateHovered = sh;
 
 		if ( Input.Down( "attack1" ) )
 		{
@@ -85,54 +120,10 @@
 			{
 				_state.Body.MotionEnabled = true;
 			}
-
-			UpdateBeam( muzzle, _stateHovered.EndPoint, _stateHovered.EndNormal );
 		}
 		else
 		{
 			_preventReselect = false;
-			CloseBeam();
-		}
-	}
-
-	void OnControllingBody( Player player )
-	{
-		var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? player.EyeTransform;
-		//DebugOverlay.Line( muzzle.Position, _state.EndPoint, Color.Cyan );
-
-		UpdateBeam( muzzle, _state.EndPoint, _stateHovered.EndNormal );
-
-		if ( FreeCamGameObjectSystem.Current.IsActive )
-			return;
-
-		if ( Input.Down( "attack2" ) )
-		{
-			_state.GrabOffset = player.EyeTransform.ToLocal( _state.Body.Transform );
-
-			// TODO - this should add or update a Component 
-			// on the GameObject so we can undo it etc
-			_state.Body.MotionEnabled = false;
-			_state.Body.Velocity = 0;
-			_state.Body.AngularVelocity = 0;
-
-			_state = default;
-
-			_preventReselect = true;
-			return;
-		}
-
-
-		if ( _isSpinning )
-		{
-			var go = _state.GrabOffset;
-			go.Rotation = (Input.AnalogLook * -1) * go.Rotation;
-			_state.GrabOffset = go;
-		}
-
-		if ( !Input.Down( "attack1" ) )
-		{
-			_state = default;
-			return;
 		}
 	}
 
@@ -140,8 +131,11 @@
 	{
 		base.OnFixedUpdate();
 
+		if ( !Networking.IsHost )
+			return;
+
 		var player = Owner;
-		if ( !player.IsLocalPlayer ) return;
+		if ( player is null ) return;
 
 		if ( _state.IsValid() )
 		{
@@ -166,7 +160,6 @@
 		if ( tr.Body.BodyType == PhysicsBodyType.Static ) return false;
 		if ( tr.Body.BodyType == PhysicsBodyType.Keyframed ) return false;
 
-		state.Body = tr.Body;
 		state.GameObject = tr.Body.GameObject;
 		state.LocalOffset = state.GameObject.WorldTransform.PointToLocal( tr.HitPosition );
 		state.LocalNormal = state.GameObject.WorldTransform.NormalToLocal( tr.Normal );
