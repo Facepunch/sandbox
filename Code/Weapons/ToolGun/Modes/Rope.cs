@@ -85,10 +85,18 @@ public class Rope : ToolMode
 		fixedJoint.MaxLength = len + 10;
 		fixedJoint.EnableCollision = true;
 
+		var vertletRope = go1.AddComponent<VerletRope>();
+		vertletRope.Attachment = go2;
+		vertletRope.SegmentCount = MathX.CeilToInt( len / 8.0f );
+		vertletRope.SegmentLength = (len / vertletRope.SegmentCount) * 0.5f;
+		vertletRope.ConstraintIterations = 5;
+
 		var lineRenderer = go1.AddComponent<LineRenderer>();
 		lineRenderer.Points = [go1, go2];
-		lineRenderer.Width = 0.2f;
-		lineRenderer.Color = Color.Black;
+		lineRenderer.Width = 0.5f;
+		lineRenderer.Color = Color.White;
+		lineRenderer.Lighting = true;
+		lineRenderer.CastShadows = true;
 
 		go1.NetworkSpawn();
 		go2.NetworkSpawn();
