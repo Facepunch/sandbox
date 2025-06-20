@@ -85,6 +85,14 @@
 				return;
 			}
 
+			if ( Input.Down( "attack2" ) )
+			{
+				Freeze();
+				_state = default;
+				_preventReselect = true;
+				return;
+			}
+
 			if ( _isSpinning )
 			{
 				var go = _state.GrabOffset;
@@ -103,7 +111,6 @@
 			return;
 		}
 
-
 		var sh = _stateHovered;
 		bool validGrab = FindGrabbedBody( out sh, player.EyeTransform );
 		_stateHovered = sh;
@@ -111,8 +118,6 @@
 		if ( Input.Down( "attack1" ) )
 		{
 			var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? player.EyeTransform;
-
-			//DebugOverlay.Line( muzzle.Position, _stateHovered.EndPoint, Color.Cyan );
 
 			_state = _stateHovered;
 
@@ -167,5 +172,13 @@
 		return true;
 	}
 
+	[Rpc.Host]
+	void Freeze()
+	{
+		if ( !_state.IsValid() ) return;
+
+		// TODO - add component
+		_state.Body.MotionEnabled = false;
+	}
 
 }
