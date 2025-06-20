@@ -3,14 +3,36 @@
 	[Rpc.Broadcast]
 	public virtual void ShootEffects( SelectionPoint target )
 	{
-		var prefab = Toolgun.SuccessImpactEffect;
-		if ( prefab is null ) return;
+		var player = Toolgun.Owner;
+		if ( player is null ) return;
 
-		var wt = target.WorldTransform();
-		wt.Rotation = wt.Rotation * new Angles( 90, 0, 0 );
+		var muzzle = Toolgun.MuzzleTransform;
 
-		var impact = prefab.Clone( wt, null, false );
-		impact.Enabled = true;
+
+		if ( Toolgun.SuccessImpactEffect is GameObject impactPrefab )
+		{
+			var wt = target.WorldTransform();
+			wt.Rotation = wt.Rotation * new Angles( 90, 0, 0 );
+
+			var impact = impactPrefab.Clone( wt, null, false );
+			impact.Enabled = true;
+		}
+
+		if ( Toolgun.SuccessBeamEffect is GameObject beamEffect )
+		{
+			var wt = target.WorldTransform();
+			wt.Rotation = wt.Rotation * new Angles( 90, 0, 0 );
+
+			var go = beamEffect.Clone( wt, null, false );
+			go.Enabled = true;
+
+			foreach ( var beam in go.GetComponentsInChildren<BeamRenderer>() )
+			{
+				beam.EndPoint = muzzle.WorldTransform.Position;
+			}
+		}
+
+		Toolgun.ViewModel?.GetComponentInChildren<SkinnedModelRenderer>().Set( "b_attack", true );
 	}
 
 	public virtual void ShootFailEffects( SelectionPoint target )

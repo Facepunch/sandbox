@@ -15,32 +15,244 @@
     "OwnerTransfer": 1,
     "Components": [
       {
-        "__type": "Sandbox.ModelRenderer",
-        "__guid": "c63fb23c-017b-4307-a669-938772bfcc9a",
+        "__type": "TemporaryEffect",
+        "__guid": "559ffcd4-fe15-49ec-994b-3125a1a07391",
         "__enabled": true,
-        "BodyGroups": 18446744073709551615,
-        "CreateAttachments": false,
-        "MaterialGroup": null,
-        "MaterialOverride": null,
-        "Materials": null,
-        "Model": "models/dev/box.vmdl",
+        "DestroyAfterSeconds": 0.01,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "RenderOptions": {
-          "GameLayer": true,
-          "OverlayLayer": false,
-          "BloomLayer": false,
-          "AfterUILayer": false
-        },
-        "RenderType": "On",
-        "Tint": "1,1,1,1"
+        "WaitForChildEffects": true
       }
     ],
-    "Children": []
+    "Children": [
+      {
+        "__guid": "58a29b25-2316-4407-9995-275f85ed030d",
+        "__version": 1,
+        "Flags": 0,
+        "Name": "Object",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkInterpolation": true,
+        "NetworkOrphaned": 0,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "BeamRenderer",
+            "__guid": "88b248cd-8928-41f4-8fda-9f04f869b56e",
+            "__enabled": true,
+            "CastShadows": false,
+            "EndCap": "None",
+            "EndPoint": {
+              "Origin": "0,0,100",
+              "Parent": null
+            },
+            "LifeLength": 0.1,
+            "LineColor": {
+              "blend": "Linear",
+              "color": [
+                {
+                  "t": 0.50840336,
+                  "c": "13.02326,187.535,200,1"
+                }
+              ],
+              "alpha": null
+            },
+            "LineScale": 0.2,
+            "LineWidth": [
+              {
+                "x": 0.5,
+                "y": 0.5,
+                "in": 0,
+                "out": 0,
+                "mode": "Mirrored"
+              }
+            ],
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Opaque": false,
+            "RandomAmount": 469.99994,
+            "RandomScale": 1,
+            "RandomSpeed": 500,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": true,
+              "AfterUILayer": false
+            },
+            "SectionLength": 5,
+            "StartCap": "None"
+          }
+        ],
+        "Children": []
+      },
+      {
+        "__guid": "a08363e1-dd7e-4418-9bf3-bbb1ac6daca8",
+        "__version": 1,
+        "Flags": 0,
+        "Name": "Object (1)",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkInterpolation": true,
+        "NetworkOrphaned": 0,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "BeamRenderer",
+            "__guid": "35d39653-0b86-425a-b994-cea4542b0273",
+            "__enabled": true,
+            "CastShadows": false,
+            "EndCap": "None",
+            "EndPoint": {
+              "Origin": "0,0,100",
+              "Parent": null
+            },
+            "LifeLength": 0.1,
+            "LineColor": {
+              "blend": "Linear",
+              "color": [
+                {
+                  "t": 0.50840336,
+                  "c": "13.02326,187.535,200,1"
+                }
+              ],
+              "alpha": null
+            },
+            "LineScale": 0.1,
+            "LineWidth": [
+              {
+                "x": 0.5,
+                "y": 0.5,
+                "in": 0,
+                "out": 0,
+                "mode": "Mirrored"
+              }
+            ],
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Opaque": false,
+            "RandomAmount": 270,
+            "RandomScale": 2,
+            "RandomSpeed": -100,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": true,
+              "AfterUILayer": false
+            },
+            "SectionLength": 5,
+            "StartCap": "None"
+          }
+        ],
+        "Children": []
+      },
+      {
+        "__guid": "7099f882-0089-4427-aad2-4994d2f9856d",
+        "__version": 1,
+        "Flags": 0,
+        "Name": "Object (2)",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkInterpolation": true,
+        "NetworkOrphaned": 0,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "BeamRenderer",
+            "__guid": "8c59f7f6-ec75-442b-9e91-d8da4537fcbd",
+            "__enabled": true,
+            "CastShadows": false,
+            "EndCap": "None",
+            "EndPoint": {
+              "Origin": "0,0,100",
+              "Parent": null
+            },
+            "LifeLength": 0.1,
+            "LineColor": {
+              "blend": "Linear",
+              "color": [
+                {
+                  "t": 0.50840336,
+                  "c": "13.02326,187.535,200,1"
+                }
+              ],
+              "alpha": null
+            },
+            "LineScale": 0.01,
+            "LineWidth": [
+              {
+                "x": 0.5,
+                "y": 0.5,
+                "in": 0,
+                "out": 0,
+                "mode": "Mirrored"
+              }
+            ],
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Opaque": false,
+            "RandomAmount": 970,
+            "RandomScale": 4,
+            "RandomSpeed": -100,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": true,
+              "AfterUILayer": false
+            },
+            "SectionLength": 5,
+            "StartCap": "None"
+          }
+        ],
+        "Children": []
+      }
+    ],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": true,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": ""
+      }
+    },
+    "__variables": []
   },
   "ResourceVersion": 2,
   "ShowInMenu": false,

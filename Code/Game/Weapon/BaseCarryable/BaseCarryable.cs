@@ -76,6 +76,18 @@ public partial class BaseCarryable : Component, IKillIcon
 	}
 
 	/// <summary>
+	/// Where shoot effects come from. Either the point on the world model or the viewmodel, whichever is currently being used.
+	/// </summary>
+	public GameObject MuzzleTransform
+	{
+		get
+		{
+			return WeaponModel?.MuzzleTransform ?? GameObject;
+		}
+	}
+
+
+	/// <summary>
 	/// Can we switch to this?
 	/// </summary>
 	/// <returns></returns>
