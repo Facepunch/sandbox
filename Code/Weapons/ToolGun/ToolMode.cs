@@ -1,6 +1,6 @@
 ﻿using Sandbox.Rendering;
 
-public abstract class ToolMode : Component
+public abstract partial class ToolMode : Component
 {
 	public Toolgun Toolgun => GetComponent<Toolgun>();
 	public Player Player => GetComponentInParent<Player>();
@@ -25,11 +25,4 @@ public abstract class ToolMode : Component
 	{
 		painter.DrawCircle( crosshair, 5, Color.White );
 	}
-}
-
-[Icon( "🥽" )]
-[ClassName( "easyweld" )]
-public class EasyWeld : ToolMode
-{
-
 }

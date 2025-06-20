@@ -3,17 +3,6 @@
 [ClassName( "rope" )]
 public class Rope : ToolMode
 {
-	public struct SelectionPoint
-	{
-		public GameObject GameObject { get; set; }
-		public Transform LocalTransform { get; set; }
-
-		public Vector3 WorldPosition()
-		{
-			return GameObject.WorldTransform.PointToWorld( LocalTransform.Position );
-		}
-	}
-
 	SelectionPoint _point1;
 	SelectionPoint _point2;
 	int stage = 0;
@@ -24,32 +13,21 @@ public class Rope : ToolMode
 
 		if ( Input.Pressed( "attack1" ) )
 		{
-			var tr = Scene.Trace.Ray( Player.EyeTransform.ForwardRay, 4096 )
-				.IgnoreGameObjectHierarchy( Player.GameObject )
-				.Run();
+			var select = TraceSelect();
 
-			if ( !tr.Hit )
+			if ( !select.IsValid() )
 				return;
 
 			if ( stage == 0 )
 			{
-				_point1 = new SelectionPoint
-				{
-					GameObject = tr.GameObject,
-					LocalTransform = tr.GameObject.WorldTransform.ToLocal( new Transform( tr.EndPosition, Rotation.LookAt( tr.Normal ) ) )
-				};
-
+				_point1 = select;
 				stage++;
 				return;
 			}
 
 			if ( stage == 1 )
 			{
-				_point2 = new SelectionPoint
-				{
-					GameObject = tr.GameObject,
-					LocalTransform = tr.GameObject.WorldTransform.ToLocal( new Transform( tr.EndPosition, Rotation.LookAt( tr.Normal ) ) )
-				};
+				_point2 = select;
 
 				CreateRope( _point1, _point2 );
 			}
@@ -85,9 +63,9 @@ public class Rope : ToolMode
 
 		var vertletRope = go1.AddComponent<VerletRope>();
 		vertletRope.Attachment = go2;
-		vertletRope.SegmentCount = MathX.CeilToInt( len / 8.0f );
-		vertletRope.SegmentLength = (len / vertletRope.SegmentCount) * 0.5f;
-		vertletRope.ConstraintIterations = 5;
+		vertletRope.SegmentCount = MathX.CeilToInt( len / 16.0f );
+		vertletRope.SegmentLength = (len / vertletRope.SegmentCount);
+		vertletRope.ConstraintIterations = 2;
 
 		var lineRenderer = go1.AddComponent<LineRenderer>();
 		lineRenderer.Points = [go1, go2];
