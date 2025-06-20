@@ -45,6 +45,14 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "ParentBone": "hold_r",
+        "SuccessBeamEffect": {
+          "_type": "gameobject",
+          "prefab": "weapons/toolgun/effects/beam-success.prefab"
+        },
+        "SuccessImpactEffect": {
+          "_type": "gameobject",
+          "prefab": "weapons/toolgun/effects/impact-success.prefab"
+        },
         "Value": 2,
         "ViewModelPrefab": {
           "_type": "gameobject",

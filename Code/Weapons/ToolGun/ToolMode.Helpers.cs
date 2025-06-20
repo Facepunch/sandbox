@@ -26,6 +26,15 @@
 		{
 			return GameObject.WorldTransform.PointToWorld( LocalTransform.Position );
 		}
+
+		/// <summary>
+		/// Returns the transform of the hit
+		/// </summary>
+		/// <returns></returns>
+		public Transform WorldTransform()
+		{
+			return GameObject.WorldTransform.ToWorld( LocalTransform );
+		}
 	}
 
 	/// <summary>

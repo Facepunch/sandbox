@@ -22,6 +22,7 @@ public class Weld : ToolMode
 			if ( stage == 0 )
 			{
 				_point1 = select;
+				ShootEffects( select );
 				stage++;
 				return;
 			}
@@ -30,6 +31,7 @@ public class Weld : ToolMode
 			{
 				_point2 = select;
 				CreateJoint( _point1, _point2 );
+				ShootEffects( select );
 			}
 
 			stage = 0;

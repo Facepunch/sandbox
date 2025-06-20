@@ -22,6 +22,7 @@ public class Rope : ToolMode
 			{
 				_point1 = select;
 				stage++;
+				ShootEffects( select );
 				return;
 			}
 
@@ -30,6 +31,7 @@ public class Rope : ToolMode
 				_point2 = select;
 
 				CreateRope( _point1, _point2 );
+				ShootEffects( select );
 			}
 
 			stage = 0;
