@@ -21,15 +21,15 @@
 		if ( Toolgun.SuccessBeamEffect is GameObject beamEffect )
 		{
 			var wt = target.WorldTransform();
-			wt.Rotation = wt.Rotation * new Angles( 90, 0, 0 );
 
-			var go = beamEffect.Clone( wt, null, false );
-			go.Enabled = true;
+			var go = beamEffect.Clone( new Transform( muzzle.WorldTransform.Position ), null, false );
 
-			foreach ( var beam in go.GetComponentsInChildren<BeamRenderer>() )
+			foreach ( var beam in go.GetComponentsInChildren<BeamSystem>( true ) )
 			{
-				beam.EndPoint = muzzle.WorldTransform.Position;
+				beam.TargetPosition = wt.Position;
 			}
+
+			go.Enabled = true;
 		}
 
 		Toolgun.ViewModel?.GetComponentInChildren<SkinnedModelRenderer>().Set( "b_attack", true );

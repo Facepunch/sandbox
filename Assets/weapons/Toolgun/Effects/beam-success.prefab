@@ -18,7 +18,7 @@
         "__type": "TemporaryEffect",
         "__guid": "559ffcd4-fe15-49ec-994b-3125a1a07391",
         "__enabled": true,
-        "DestroyAfterSeconds": 0.01,
+        "DestroyAfterSeconds": 0.5,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -30,51 +30,116 @@
     ],
     "Children": [
       {
-        "__guid": "58a29b25-2316-4407-9995-275f85ed030d",
+        "__guid": "92cfa480-9bea-4187-9f4c-39188a2e4594",
         "__version": 1,
         "Flags": 0,
-        "Name": "Object",
+        "Name": "Fast",
         "Position": "0,0,0",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
-        "Tags": "",
-        "Enabled": true,
+        "Tags": "particles",
+        "Enabled": false,
         "NetworkMode": 2,
         "NetworkInterpolation": true,
         "NetworkOrphaned": 0,
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "BeamRenderer",
-            "__guid": "88b248cd-8928-41f4-8fda-9f04f869b56e",
+            "__type": "Sandbox.BeamSystem",
+            "__guid": "4297b04a-8ab7-46f2-a957-619613a57fdf",
             "__enabled": true,
-            "CastShadows": false,
-            "EndCap": "None",
-            "EndPoint": {
-              "Origin": "0,0,100",
-              "Parent": null
-            },
-            "LifeLength": 0.1,
-            "LineColor": {
-              "blend": "Linear",
-              "color": [
+            "Additive": true,
+            "Alpha": {
+              "Type": "Curve",
+              "Evaluation": "Life",
+              "CurveA": {
+                "rangex": "0.0046875,1",
+                "rangey": "0,0.2944444",
+                "frames": [
+                  {
+                    "x": 0,
+                    "y": 1,
+                    "in": 0.21276596,
+                    "out": -0.21276596,
+                    "mode": "Mirrored"
+                  },
+                  {
+                    "x": 1,
+                    "y": 0,
+                    "in": 0.28019342,
+                    "out": -0.28019342,
+                    "mode": "Mirrored"
+                  }
+                ]
+              },
+              "CurveB": [
                 {
-                  "t": 0.50840336,
-                  "c": "13.02326,187.535,200,1"
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
                 }
               ],
-              "alpha": null
+              "Constants": "1,0,0,0"
             },
-            "LineScale": 0.2,
-            "LineWidth": [
-              {
-                "x": 0.5,
-                "y": 0.5,
-                "in": 0,
-                "out": 0,
-                "mode": "Mirrored"
-              }
-            ],
+            "BeamColor": {
+              "Type": "Constant",
+              "Evaluation": "Life",
+              "GradientA": {
+                "blend": "Linear",
+                "color": [
+                  {
+                    "t": 0.5,
+                    "c": "1,1,1,1"
+                  }
+                ],
+                "alpha": []
+              },
+              "GradientB": {
+                "blend": "Linear",
+                "color": [
+                  {
+                    "t": 0.5,
+                    "c": "1,1,1,1"
+                  }
+                ],
+                "alpha": []
+              },
+              "ConstantA": "0.8372,5.87675,10,1",
+              "ConstantB": "1,1,1,1"
+            },
+            "BeamLength": 0,
+            "BeamLifetime": {
+              "Type": "Range",
+              "Evaluation": "Particle",
+              "CurveA": [
+                {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
+                }
+              ],
+              "CurveB": [
+                {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
+                }
+              ],
+              "Constants": "0.1,0.1,0,0"
+            },
+            "BeamsPerSecond": 0,
+            "Brightness": 1,
+            "DepthFeather": 2.7,
+            "FollowPoints": false,
+            "InitialBurst": 1,
+            "Lighting": false,
+            "MaxBeams": 1,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -82,30 +147,111 @@
             "OnComponentStart": null,
             "OnComponentUpdate": null,
             "Opaque": false,
-            "RandomAmount": 469.99994,
-            "RandomScale": 1,
-            "RandomSpeed": 500,
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": true,
-              "AfterUILayer": false
+            "Scale": {
+              "Type": "Curve",
+              "Evaluation": "Life",
+              "CurveA": {
+                "rangey": "0,10",
+                "frames": [
+                  {
+                    "x": 0,
+                    "y": 0,
+                    "in": -1,
+                    "out": 1,
+                    "mode": "Mirrored"
+                  },
+                  {
+                    "x": 1,
+                    "y": 1,
+                    "in": -1,
+                    "out": 1,
+                    "mode": "Mirrored"
+                  }
+                ]
+              },
+              "CurveB": [
+                {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
+                }
+              ],
+              "Constants": "1,5,0,0"
             },
-            "SectionLength": 5,
-            "StartCap": "None"
+            "Shadows": false,
+            "TargetGameObject": null,
+            "TargetPosition": "0,0,100",
+            "TargetRandom": "1,1,1",
+            "Texture": {
+              "$compiler": "texture",
+              "$source": "imagefile",
+              "data": {
+                "FilePath": "textures/beams/lightning-thin-chunk.png",
+                "MaxSize": 4096,
+                "ConvertHeightToNormals": false,
+                "NormalScale": 1,
+                "Rotate": 0,
+                "FlipVertical": false,
+                "FlipHorizontal": false,
+                "Padding": {
+                  "Size": "0,0",
+                  "EdgeSize": "0,0"
+                },
+                "Sharpen": 0,
+                "InvertColor": false,
+                "Blur": 0,
+                "Brightness": 1,
+                "Contrast": 1,
+                "Saturation": 1,
+                "Hue": 0,
+                "Colorize": false,
+                "TargetColor": "0,1,0,1",
+                "CacheToDisk": true
+              },
+              "compiled": "textures/generated/imagefile/6d613dba06d3e517.vtex"
+            },
+            "TextureOffset": 17.099995,
+            "TextureScale": 320,
+            "TextureScrollSpeed": {
+              "Type": "Range",
+              "Evaluation": "Particle",
+              "CurveA": [
+                {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
+                }
+              ],
+              "CurveB": [
+                {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
+                }
+              ],
+              "Constants": "0,0,0,0"
+            },
+            "TravelBetweenPoints": false,
+            "TravelLerp": 0
           }
         ],
         "Children": []
       },
       {
-        "__guid": "a08363e1-dd7e-4418-9bf3-bbb1ac6daca8",
+        "__guid": "8fcd12dd-e14c-4dfb-bf0b-fd3549bf9334",
         "__version": 1,
         "Flags": 0,
-        "Name": "Object (1)",
+        "Name": "Tracer",
         "Position": "0,0,0",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
-        "Tags": "",
+        "Tags": "particles",
         "Enabled": true,
         "NetworkMode": 2,
         "NetworkInterpolation": true,
@@ -113,36 +259,95 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "BeamRenderer",
-            "__guid": "35d39653-0b86-425a-b994-cea4542b0273",
+            "__type": "Sandbox.BeamSystem",
+            "__guid": "2e9a3238-e1ed-417b-bdb9-224e68d59d10",
             "__enabled": true,
-            "CastShadows": false,
-            "EndCap": "None",
-            "EndPoint": {
-              "Origin": "0,0,100",
-              "Parent": null
+            "Additive": true,
+            "Alpha": 1,
+            "BeamColor": {
+              "Type": "Constant",
+              "Evaluation": "Life",
+              "GradientA": {
+                "blend": "Linear",
+                "color": [
+                  {
+                    "t": 0.5,
+                    "c": "1,1,1,1"
+                  }
+                ],
+                "alpha": []
+              },
+              "GradientB": {
+                "blend": "Linear",
+                "color": [
+                  {
+                    "t": 0.5,
+                    "c": "1,1,1,1"
+                  }
+                ],
+                "alpha": []
+              },
+              "ConstantA": "0.09767,0.54884,1,1",
+              "ConstantB": "1,1,1,1"
             },
-            "LifeLength": 0.1,
-            "LineColor": {
-              "blend": "Linear",
-              "color": [
+            "BeamLength": 200,
+            "BeamLifetime": {
+              "Type": "Range",
+              "Evaluation": "Particle",
+              "CurveA": [
                 {
-                  "t": 0.50840336,
-                  "c": "13.02326,187.535,200,1"
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
                 }
               ],
-              "alpha": null
+              "CurveB": [
+                {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
+                }
+              ],
+              "Constants": "0.1,0.2,0,0"
             },
-            "LineScale": 0.1,
-            "LineWidth": [
-              {
-                "x": 0.5,
-                "y": 0.5,
-                "in": 0,
-                "out": 0,
-                "mode": "Mirrored"
-              }
-            ],
+            "BeamsPerSecond": 0,
+            "Brightness": {
+              "Type": "Curve",
+              "Evaluation": "Life",
+              "CurveA": {
+                "rangey": "0,50",
+                "frames": [
+                  {
+                    "x": 0,
+                    "y": 0,
+                    "in": -3.272729,
+                    "out": 3.272729,
+                    "mode": "Mirrored"
+                  },
+                  {
+                    "x": 1,
+                    "y": 1,
+                    "in": -0.36363623,
+                    "out": 0.36363623,
+                    "mode": "Mirrored"
+                  }
+                ]
+              },
+              "CurveB": {
+                "rangex": "0,0",
+                "rangey": "0,0"
+              },
+              "Constants": "221.5,0,0,0"
+            },
+            "DepthFeather": 5,
+            "FollowPoints": false,
+            "InitialBurst": 4,
+            "Lighting": false,
+            "MaxBeams": 0,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -150,85 +355,105 @@
             "OnComponentStart": null,
             "OnComponentUpdate": null,
             "Opaque": false,
-            "RandomAmount": 270,
-            "RandomScale": 2,
-            "RandomSpeed": -100,
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": true,
-              "AfterUILayer": false
-            },
-            "SectionLength": 5,
-            "StartCap": "None"
-          }
-        ],
-        "Children": []
-      },
-      {
-        "__guid": "7099f882-0089-4427-aad2-4994d2f9856d",
-        "__version": 1,
-        "Flags": 0,
-        "Name": "Object (2)",
-        "Position": "0,0,0",
-        "Rotation": "0,0,0,1",
-        "Scale": "1,1,1",
-        "Tags": "",
-        "Enabled": true,
-        "NetworkMode": 2,
-        "NetworkInterpolation": true,
-        "NetworkOrphaned": 0,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "BeamRenderer",
-            "__guid": "8c59f7f6-ec75-442b-9e91-d8da4537fcbd",
-            "__enabled": true,
-            "CastShadows": false,
-            "EndCap": "None",
-            "EndPoint": {
-              "Origin": "0,0,100",
-              "Parent": null
-            },
-            "LifeLength": 0.1,
-            "LineColor": {
-              "blend": "Linear",
-              "color": [
+            "Scale": {
+              "Type": "Range",
+              "Evaluation": "Particle",
+              "CurveA": {
+                "rangey": "0,10",
+                "frames": [
+                  {
+                    "x": 0,
+                    "y": 0,
+                    "in": -2.357143,
+                    "out": 2.357143,
+                    "mode": "Mirrored"
+                  },
+                  {
+                    "x": 1,
+                    "y": 1,
+                    "in": -0.95652187,
+                    "out": 0.95652187,
+                    "mode": "Mirrored"
+                  }
+                ]
+              },
+              "CurveB": [
                 {
-                  "t": 0.50840336,
-                  "c": "13.02326,187.535,200,1"
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
                 }
               ],
-              "alpha": null
+              "Constants": "3,6,0,0"
             },
-            "LineScale": 0.01,
-            "LineWidth": [
-              {
-                "x": 0.5,
-                "y": 0.5,
-                "in": 0,
-                "out": 0,
-                "mode": "Mirrored"
-              }
-            ],
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "Opaque": false,
-            "RandomAmount": 970,
-            "RandomScale": 4,
-            "RandomSpeed": -100,
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": true,
-              "AfterUILayer": false
+            "Shadows": false,
+            "TargetGameObject": null,
+            "TargetPosition": "0,0,100",
+            "TargetRandom": "1,1,1",
+            "Texture": {
+              "$compiler": "texture",
+              "$source": "imagefile",
+              "data": {
+                "FilePath": "textures/beams/lightning-thin-chunk.png",
+                "MaxSize": 4096,
+                "ConvertHeightToNormals": false,
+                "NormalScale": 1,
+                "Rotate": 0,
+                "FlipVertical": false,
+                "FlipHorizontal": false,
+                "Padding": {
+                  "Size": "0,0",
+                  "EdgeSize": "0,0"
+                },
+                "Sharpen": 0,
+                "InvertColor": false,
+                "Blur": 0,
+                "Brightness": 1,
+                "Contrast": 1,
+                "Saturation": 1,
+                "Hue": 0,
+                "Colorize": false,
+                "TargetColor": "0,1,0,1",
+                "CacheToDisk": true
+              },
+              "compiled": "textures/generated/imagefile/6d613dba06d3e517.vtex"
             },
-            "SectionLength": 5,
-            "StartCap": "None"
+            "TextureOffset": 0,
+            "TextureScale": 256,
+            "TextureScrollSpeed": 0,
+            "TravelBetweenPoints": true,
+            "TravelLerp": {
+              "Type": "Curve",
+              "Evaluation": "Life",
+              "CurveA": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "in": -1.5744678,
+                  "out": 1.5744678,
+                  "mode": "Mirrored"
+                },
+                {
+                  "x": 1,
+                  "y": 1,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
+                }
+              ],
+              "CurveB": [
+                {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
+                }
+              ],
+              "Constants": "0,1,0,0"
+            }
           }
         ],
         "Children": []

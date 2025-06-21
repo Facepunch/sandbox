@@ -58,10 +58,8 @@
 			p.Previous = p.Position;
 			p.Position += velocity + Gravity * dt * dt;
 
-			// --- Simple collision check ---
 			var tr = Scene.Trace
 				.Ray( p.Previous, p.Position )
-				.WithoutTags( "trigger" )
 				.Radius( 1.0f )
 				.Run();
 
