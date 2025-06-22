@@ -143,7 +143,7 @@ public class BeamSystem : Component, Component.ExecuteInEditor, Component.ITempo
 
 		beam.TimeDie = Time.Now + BeamLifetime.Evaluate( 0.5f, beam.Rand( 33 ) );
 
-		beam.Renderer.Flags |= ComponentFlags.NotSaved | ComponentFlags.NotEditable | ComponentFlags.Hidden;
+		beam.Renderer.Flags |= ComponentFlags.NotSaved | ComponentFlags.NotEditable | ComponentFlags.Hidden | ComponentFlags.NotCloned;
 		_beams.Add( beam );
 		return beam;
 	}
