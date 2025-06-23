@@ -24,7 +24,7 @@
 
 			var go = beamEffect.Clone( new Transform( muzzle.WorldTransform.Position ), null, false );
 
-			foreach ( var beam in go.GetComponentsInChildren<BeamSystem>( true ) )
+			foreach ( var beam in go.GetComponentsInChildren<BeamEffect>( true ) )
 			{
 				beam.TargetPosition = wt.Position;
 			}

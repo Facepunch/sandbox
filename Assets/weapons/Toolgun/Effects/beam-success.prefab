@@ -259,8 +259,8 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "Sandbox.BeamSystem",
-            "__guid": "2e9a3238-e1ed-417b-bdb9-224e68d59d10",
+            "__type": "Sandbox.BeamEffect",
+            "__guid": "a3e4f97f-68a1-455a-9305-69724d2ab058",
             "__enabled": true,
             "Additive": true,
             "Alpha": 1,
@@ -287,67 +287,30 @@
                 ],
                 "alpha": []
               },
-              "ConstantA": "0.09767,0.54884,1,1",
+              "ConstantA": "0.14419,0.3724,1,1",
               "ConstantB": "1,1,1,1"
             },
-            "BeamLength": 200,
             "BeamLifetime": {
               "Type": "Range",
               "Evaluation": "Particle",
-              "CurveA": [
-                {
-                  "x": 0.5,
-                  "y": 0.5,
-                  "in": 0,
-                  "out": 0,
-                  "mode": "Mirrored"
-                }
-              ],
-              "CurveB": [
-                {
-                  "x": 0.5,
-                  "y": 0.5,
-                  "in": 0,
-                  "out": 0,
-                  "mode": "Mirrored"
-                }
-              ],
-              "Constants": "0.1,0.2,0,0"
-            },
-            "BeamsPerSecond": 0,
-            "Brightness": {
-              "Type": "Curve",
-              "Evaluation": "Life",
               "CurveA": {
-                "rangey": "0,50",
-                "frames": [
-                  {
-                    "x": 0,
-                    "y": 0,
-                    "in": -3.272729,
-                    "out": 3.272729,
-                    "mode": "Mirrored"
-                  },
-                  {
-                    "x": 1,
-                    "y": 1,
-                    "in": -0.36363623,
-                    "out": 0.36363623,
-                    "mode": "Mirrored"
-                  }
-                ]
+                "rangex": "0,0",
+                "rangey": "0,0"
               },
               "CurveB": {
                 "rangex": "0,0",
                 "rangey": "0,0"
               },
-              "Constants": "221.5,0,0,0"
+              "Constants": "0.2,0.15,0,0"
             },
-            "DepthFeather": 5,
-            "FollowPoints": false,
-            "InitialBurst": 4,
+            "BeamsPerSecond": 0,
+            "Brightness": 100,
+            "DepthFeather": 7.33,
+            "FollowPoints": true,
+            "InitialBurst": 3,
             "Lighting": false,
-            "MaxBeams": 0,
+            "Looped": false,
+            "MaxBeams": 3,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -359,39 +322,19 @@
               "Type": "Range",
               "Evaluation": "Particle",
               "CurveA": {
-                "rangey": "0,10",
-                "frames": [
-                  {
-                    "x": 0,
-                    "y": 0,
-                    "in": -2.357143,
-                    "out": 2.357143,
-                    "mode": "Mirrored"
-                  },
-                  {
-                    "x": 1,
-                    "y": 1,
-                    "in": -0.95652187,
-                    "out": 0.95652187,
-                    "mode": "Mirrored"
-                  }
-                ]
+                "rangex": "0,0",
+                "rangey": "0,0"
               },
-              "CurveB": [
-                {
-                  "x": 0.5,
-                  "y": 0.5,
-                  "in": 0,
-                  "out": 0,
-                  "mode": "Mirrored"
-                }
-              ],
-              "Constants": "3,6,0,0"
+              "CurveB": {
+                "rangex": "0,0",
+                "rangey": "0,0"
+              },
+              "Constants": "4,8,0,0"
             },
             "Shadows": false,
             "TargetGameObject": null,
             "TargetPosition": "0,0,100",
-            "TargetRandom": "1,1,1",
+            "TargetRandom": "0,0,0",
             "Texture": {
               "$compiler": "texture",
               "$source": "imagefile",
@@ -418,10 +361,22 @@
                 "TargetColor": "0,1,0,1",
                 "CacheToDisk": true
               },
-              "compiled": "textures/generated/imagefile/6d613dba06d3e517.vtex"
+              "compiled": null
             },
-            "TextureOffset": 0,
-            "TextureScale": 256,
+            "TextureOffset": 1,
+            "TextureScale": {
+              "Type": "Range",
+              "Evaluation": "Particle",
+              "CurveA": {
+                "rangex": "0,0",
+                "rangey": "0,0"
+              },
+              "CurveB": {
+                "rangex": "0,0",
+                "rangey": "0,0"
+              },
+              "Constants": "32,128,0,0"
+            },
             "TextureScrollSpeed": 0,
             "TravelBetweenPoints": true,
             "TravelLerp": {
@@ -431,8 +386,8 @@
                 {
                   "x": 0,
                   "y": 0,
-                  "in": -1.5744678,
-                  "out": 1.5744678,
+                  "in": -3.1415927,
+                  "out": 3.1415927,
                   "mode": "Mirrored"
                 },
                 {
@@ -443,15 +398,10 @@
                   "mode": "Mirrored"
                 }
               ],
-              "CurveB": [
-                {
-                  "x": 0.5,
-                  "y": 0.5,
-                  "in": 0,
-                  "out": 0,
-                  "mode": "Mirrored"
-                }
-              ],
+              "CurveB": {
+                "rangex": "0,0",
+                "rangey": "0,0"
+              },
               "Constants": "0,1,0,0"
             }
           }
