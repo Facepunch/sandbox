@@ -79,25 +79,7 @@ public class CrowbarWeapon : BaseCarryable
 
 		if ( hit )
 		{
-			var impactObjects = SurfaceImpacts.FindForResourceOrDefault( hitSurface );
 
-			if ( impactObjects.BulletImpact is not null )
-			{
-				var impact = impactObjects.BulletImpact.Clone();
-				impact.WorldPosition = hitpoint + normal;
-				impact.WorldRotation = Rotation.LookAt( normal );
-				impact.SetParent( hitObject, true );
-			}
-
-			if ( impactObjects.BulletDecal is not null )
-			{
-				var decal = impactObjects.BulletDecal.Clone();
-				decal.WorldPosition = hitpoint + normal;
-				decal.WorldRotation = Rotation.LookAt( -normal );
-				decal.WorldScale = 1;
-				decal.Parent = Scene;
-				decal.SetParent( hitObject, true );
-			}
 		}
 	}
 
