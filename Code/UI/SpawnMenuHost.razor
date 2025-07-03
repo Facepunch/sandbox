@@ -10,15 +10,20 @@
         <div class="left">
 
             <div class="tabs">
-                <div class="active">Props</div>
-                <div>Weapons</div>
-                <div>Npcs</div>
-                <div>Vehicles</div>
-                <div>Other</div>
+
+                @foreach (var t in tabs)
+                {
+                    var type = Game.TypeLibrary.GetType(t.GetType());
+
+                    var c = activeTab == t ? "active" : "";
+
+                    <div class="@c" @onclick=@(() => SwitchTab(t))>@type.Title</div>
+                }
+
             </div>
 
-            <div class="body">
-                <SpawnPage></SpawnPage>
+            <div class="body" @ref="TabContainer">
+                
             </div>
 
         </div>
@@ -49,6 +54,37 @@
 {
     bool stickOpen = false;
 
+    Panel activeTab;
+
+    Panel TabContainer;
+
+    List<Panel> tabs = new List<Panel>();
+
+    public void BuildTabs()
+    {
+        foreach ( var p in Game.TypeLibrary.GetTypes<ISpawnMenuTab>().OrderBy(x => x.Order).ThenBy(x => x.Title) ) 
+        {  
+            if (p.IsAbstract) continue;
+
+            var panel = p.Create<Panel>();
+            TabContainer.AddChild(panel);
+
+            tabs.Add(panel);
+        }
+
+        SwitchTab(tabs.FirstOrDefault());
+    }
+
+    protected override void OnTreeFirstBuilt()
+    {
+        base.OnTreeFirstBuilt();
+
+        if ( TabContainer.IsValid() )
+        {
+            BuildTabs();
+        }
+    }
+
     protected override void OnUpdate()
     {
         stickOpen = stickOpen || (Sandbox.UI.InputFocus.Current?.Ancestors.Contains(Panel) ?? false);
@@ -59,4 +95,19 @@
 
         base.OnUpdate();
     }
+
+    void SwitchTab( Panel tab )
+    {
+        activeTab = tab;
+        StateHasChanged();
+
+        foreach( var t in tabs )
+        {
+            t.SetClass("active", t == tab);
+            t.SetClass("hidden", t != tab);
+        }
+    }
+
+
+
 }

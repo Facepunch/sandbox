@@ -1,6 +1,8 @@
 ﻿@using Sandbox;
 @using Sandbox.UI;
 @inherits Panel
+@implements ISpawnMenuTab
+@attribute [Title( "Props" )]
 
 
 <root>
@@ -22,8 +24,6 @@
         <SpawnButton Icon="https://cdn.sbox.game/asset/fpopium.crackhead_02/thumb.png.195fcd31c282be9f" Action="@(() => Spawn("fpopium.crackhead_02"))"></SpawnButton>
         <SpawnButton Icon="https://cdn.sbox.game/asset/fish.moose/thumb.png.56b890737161bf47" Action="@(() => Spawn("fish.moose"))"></SpawnButton>
     </div>
-
-    
 
 </root>
 

@@ -1,0 +1,55 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@implements ISpawnMenuTab
+@attribute [Title( "Mounts" )]
+@attribute [Order( 1000 )]
+
+
+
+<root>
+
+    <div class="left">
+
+        @foreach ( var group in Sandbox.Mounting.Directory.GetAll().GroupBy( x => x.Available ? "Installed" : "Not Installed" ) )
+        {
+            <h2>@group.Key</h2>
+
+            @foreach (var entry in group)
+            {
+                var active = selected == entry.Ident ? "active" : "";
+
+                <div class="entry @active" @onclick=@( () => Switch( entry.Ident ) )>
+                    <label>@entry.Title</label>
+                </div>
+            }
+        }
+
+    </div>
+
+    <div class="body">
+
+        @if ( !string.IsNullOrEmpty( selected ) )
+        {
+            <MountContent Ident="@selected"></MountContent>
+        }
+        else
+        {
+            
+        }
+
+    </div>
+
+</root>
+
+@code
+{
+    string selected = "";
+
+    void Switch( string ident )
+    {
+        selected = ident;
+    }
+
+
+}
