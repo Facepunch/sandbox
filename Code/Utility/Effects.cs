@@ -33,13 +33,6 @@ public class Effects : GameObjectSystem<Effects>
 		gameObject.WorldPosition = tr.HitPosition + tr.Normal;
 		gameObject.WorldRotation = Rotation.LookAt( -tr.Normal );
 		gameObject.WorldRotation *= Rotation.FromAxis( Vector3.Forward, Game.Random.Float( 0, 360 ) );
-
-		var decalRenderer = gameObject.AddComponent<DecalRenderer>();
-		decalRenderer.Material = material;
-		float size = damage.Remap( 20f, 200.0f, 64.0f, 256.0f );
-		decalRenderer.Size = new( size, size, 2.0f );
-
-		gameObject.AddComponent<TemporaryDecal>();
 	}
 
 	public static void SpawnExplosion( Vector3 worldPosition )
