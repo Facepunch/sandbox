@@ -204,7 +204,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	}
 
 	[Rpc.Host]
-	public static async void Spawn( string ident )
+	public static async void Spawn( string path_or_ident )
 	{
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null ) return;
@@ -233,24 +233,39 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		// TODO - can this user spawn this package?
 
-		var package = await Package.FetchAsync( ident, false );
-		if ( package is null ) return;
-
-		if ( package.TypeName == "model" )
+		var modelPath = await FindModelPath( path_or_ident );
+		if ( string.IsNullOrWhiteSpace( modelPath ) )
 		{
-			await package.MountAsync();
-
-			var modelName = package.GetMeta<string>( "PrimaryAsset" );
-			var model = await Model.LoadAsync( modelName );
-
-			SpawnModel( model, spawnTransform, player );
+			Log.Warning( $"Couldn't find {path_or_ident}" );
 			return;
 		}
+
+		var model = await Model.LoadAsync( modelPath );
+		SpawnModel( model, spawnTransform, player );
+	}
+
+	static async Task<string> FindModelPath( string ident_or_path )
+	{
+		if ( ident_or_path.EndsWith( ".vmdl", StringComparison.OrdinalIgnoreCase ) )
+			return ident_or_path;
+
+		var package = await Package.FetchAsync( ident_or_path, false );
+		if ( package is null ) return null;
+		if ( package.TypeName != "model" ) return null;
+
+		await package.MountAsync();
+
+		var modelName = package.GetMeta<string>( "PrimaryAsset" );
+		return modelName;
 	}
 
 	private static void SpawnModel( Model model, Transform spawnTransform, Player player )
 	{
 		Log.Info( $"[{player}] Spawning Model {model.Name}" );
+
+		var depth = -model.Bounds.Mins.z;
+
+		spawnTransform.Position += spawnTransform.Up * depth;
 
 		var go = new GameObject( false, "prop" );
 		go.Tags.Add( "removable" );
@@ -259,6 +274,17 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		var prop = go.AddComponent<Prop>();
 		prop.Model = model;
 
+		if ( (model.Physics?.Parts?.Count ?? 0) == 0 )
+		{
+			Log.Info( "No physics - adding a cube" );
+
+			var collider = go.AddComponent<BoxCollider>();
+			collider.Scale = model.Bounds.Size;
+			collider.Center = model.Bounds.Center;
+
+
+			go.AddComponent<Rigidbody>();
+		}
 
 		go.NetworkSpawn( true, null );
 

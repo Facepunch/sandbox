@@ -8,9 +8,7 @@
   "Resources": null,
   "PackageReferences": [],
   "EditorReferences": null,
-  "Mounts": [
-    "quake"
-  ],
+  "Mounts": [],
   "IsStandaloneOnly": false,
   "Metadata": {
     "MaxPlayers": 64,
