@@ -68,14 +68,13 @@ public partial class BaseBulletWeapon : BaseWeapon
 			var prefab = hitSurface.PrefabCollection.BulletImpact;
 			if ( prefab is null ) prefab = hitSurface.GetBaseSurface()?.PrefabCollection.BulletImpact;
 
-
 			if ( prefab is not null )
 			{
-				var fwd = Rotation.LookAt( normal, Vector3.Random );
+				var fwd = Rotation.LookAt( normal * -1.0f, Vector3.Random );
 
 				var impact = prefab.Clone();
 				impact.WorldPosition = hitpoint;
-				impact.WorldRotation = fwd * new Angles( 90, 0, 0 );
+				impact.WorldRotation = fwd;
 				impact.SetParent( hitObject, true );
 			}
 		}
