@@ -65,7 +65,7 @@ public sealed partial class Player
 	public static void God( Connection source )
 	{
 		if ( !Application.CheatsEnabled ) return;
-		
+
 		var player = PlayerData.For( source );
 		if ( !player.IsValid() )
 			return;
@@ -83,5 +83,18 @@ public sealed partial class Player
 		LaunchArguments.Map = mapName;
 
 		Game.Load( Game.Ident, true );
+	}
+
+	/// <summary>
+	/// Switch to another map
+	/// </summary>
+	[ConCmd( "undo", ConVarFlags.Server )]
+	public static void RunUndo( Connection source )
+	{
+		var player = Player.FindForConnection( source );
+		if ( !player.IsValid() )
+			return;
+
+		player.Undo.Undo();
 	}
 }

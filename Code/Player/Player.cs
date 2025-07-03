@@ -42,6 +42,8 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 
 	protected override void OnStart()
 	{
+		Undo = new UndoSystem( this );
+
 		var targets = Scene.GetAllComponents<DeathCameraTarget>()
 			.Where( x => x.Connection == Network.Owner );
 
@@ -208,6 +210,11 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		if ( Input.Pressed( "die" ) )
 		{
 			KillSelf();
+		}
+
+		if ( Input.Pressed( "undo" ) )
+		{
+			ConsoleSystem.Run( "undo" );
 		}
 
 		if ( Scene.Camera.RenderExcludeTags.Contains( "ui" ) )

@@ -78,5 +78,9 @@ public class Rope : ToolMode
 
 		go2.NetworkSpawn();
 		go1.NetworkSpawn();
+
+		var undo = Player.Undo.Create();
+		undo.Add( go1 );
+		undo.Add( go2 );
 	}
 }
