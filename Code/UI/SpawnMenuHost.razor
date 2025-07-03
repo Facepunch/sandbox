@@ -53,9 +53,9 @@
     {
         stickOpen = stickOpen || (Sandbox.UI.InputFocus.Current?.Ancestors.Contains(Panel) ?? false);
 
-        if ( stickOpen && Input.Pressed("score") ) stickOpen = false;
+        if ( stickOpen && Input.Pressed("spawnmenu") ) stickOpen = false;
 
-        SetClass("open", stickOpen || Input.Down("score"));
+        SetClass("open", stickOpen || Input.Down("spawnmenu"));
 
         base.OnUpdate();
     }
