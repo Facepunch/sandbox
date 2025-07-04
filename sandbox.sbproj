@@ -25,9 +25,9 @@
     "CsProjName": "",
     "StartupScene": "scenes/minimal.scene",
     "ControlModes": {
-      "Keyboard": false,
+      "Keyboard": true,
       "VR": false,
-      "Gamepad": false
+      "Gamepad": true
     }
   }
 }

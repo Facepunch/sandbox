@@ -87,6 +87,8 @@
 
     protected override void OnUpdate()
     {
+        Sandbox.Utility.AssetPreview.RunJobs();
+
         stickOpen = stickOpen || (Sandbox.UI.InputFocus.Current?.Ancestors.Contains(Panel) ?? false);
 
         if ( stickOpen && Input.Pressed("spawnmenu") ) stickOpen = false;

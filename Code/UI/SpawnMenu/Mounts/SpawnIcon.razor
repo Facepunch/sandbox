@@ -1,0 +1,26 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+
+<root class="spawnicon">
+
+</root>
+
+@code
+{
+    // the path of the asset
+    public string Path { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        var texture = Sandbox.Utility.AssetPreview.GetIcon(Path);
+        Log.Info(texture);
+        Style.SetBackgroundImage(texture);
+    }
+
+    protected override void OnMouseDown(MousePanelEvent e)
+    {
+        OnParametersSet();
+    }
+
+}

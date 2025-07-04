@@ -23,7 +23,7 @@
         {
             if ( r.Type != ResourceType.Model ) continue;
 
-            <div class="spawnicon" @onclick=@( () => Spawn( r.Path ) )>@r.Path</div>
+            <SpawnIcon Path="@r.Path" @onclick=@( () => Spawn( r.Path ) )></SpawnIcon>
         }
 
     </div>

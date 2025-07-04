@@ -46,7 +46,7 @@
 
 		MoveSlot(-(int)Input.MouseWheel.y);
 
-		if ( Input.Pressed( "Menu" ) && prev.IsValid() )
+		if ( Input.Pressed( "invprev" ) && prev.IsValid() )
 		{
 			var weapon = prev;
 			prev = inventory.ActiveWeapon;

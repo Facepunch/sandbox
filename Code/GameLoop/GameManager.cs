@@ -288,5 +288,8 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		go.NetworkSpawn( true, null );
 
+		var undo = player.Undo.Create();
+		undo.Add( go );
+
 	}
 }

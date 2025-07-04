@@ -220,7 +220,6 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		if ( Scene.Camera.RenderExcludeTags.Contains( "ui" ) )
 			return;
 
-		if ( UI.IsEnabled )
 		{
 			var hud = Scene.Camera.Hud;
 			DrawVitals( hud, Screen.Size * new Vector2( 0.1f, 0.9f ) );
