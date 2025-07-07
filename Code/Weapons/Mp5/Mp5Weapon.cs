@@ -116,7 +116,7 @@ public class Mp5Weapon : BaseBulletWeapon
 		hud.DrawLine( center - Vector2.Up * (len + gap), center - Vector2.Up * gap, w, color );
 	}
 
-	Texture ammoIcon = Texture.Load( FileSystem.Mounted, $"ui/bullet_icon.png" );
+	Texture ammoIcon = Texture.Load( $"ui/bullet_icon.png" );
 
 	public override void DrawAmmo( HudPainter hud, Vector2 bottomright )
 	{

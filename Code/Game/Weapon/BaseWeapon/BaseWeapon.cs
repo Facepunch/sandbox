@@ -149,7 +149,7 @@ public partial class BaseWeapon : BaseCarryable
 		hud.DrawLine( center - Vector2.Up * 32, center - Vector2.Up * 15, 3, color );
 	}
 
-	Texture ammoIcon = Texture.Load( FileSystem.Mounted, $"ui/ammo_icon.png" );
+	Texture ammoIcon = Texture.Load( $"ui/ammo_icon.png" );
 
 	public virtual void DrawAmmo( HudPainter hud, Vector2 bottomright )
 	{

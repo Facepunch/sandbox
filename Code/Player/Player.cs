@@ -404,8 +404,8 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		new Punch( new Vector3( -20, 0, 0 ), 0.5f, 2.0f, 1.0f );
 	}
 
-	Texture healthIcon = Texture.Load( FileSystem.Mounted, $"ui/health.png" );
-	Texture armourIcon = Texture.Load( FileSystem.Mounted, $"ui/shield.png" );
+	Texture healthIcon = Texture.Load( "ui/health.png" );
+	Texture armourIcon = Texture.Load( "ui/shield.png" );
 
 	public void DrawVitals( HudPainter hud, Vector2 bottomleft )
 	{

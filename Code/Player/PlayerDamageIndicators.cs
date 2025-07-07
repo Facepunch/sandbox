@@ -48,7 +48,7 @@ public sealed class PlayerDamageIndicators : Component, IPlayerEvent
 		}
 	}
 
-	Texture texture = Texture.Load( FileSystem.Mounted, "ui/damage_radial.png" );
+	Texture texture = Texture.Load( "ui/damage_radial.png" );
 
 	void UpdateRadialIndicators()
 	{
