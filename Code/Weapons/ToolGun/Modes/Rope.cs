@@ -3,6 +3,13 @@
 [ClassName( "rope" )]
 public class Rope : ToolMode
 {
+	[Range( -500, 500 )]
+	[Property]
+	public float Slack { get; set; } = 0.0f;
+
+	[Property]
+	public bool Rigid { get; set; } = false;
+
 	SelectionPoint _point1;
 	SelectionPoint _point2;
 	int stage = 0;
@@ -53,13 +60,11 @@ public class Rope : ToolMode
 		go2.LocalRotation = Rotation.Identity;
 
 		var len = point1.WorldPosition().Distance( point2.WorldPosition() );
+		len = MathF.Max( 1.0f, len + Slack );
 
 		var fixedJoint = go1.AddComponent<SpringJoint>();
-		fixedJoint.Attachment = Joint.AttachmentMode.LocalFrames;
-		fixedJoint.LocalFrame1 = point1.LocalTransform;
-		fixedJoint.LocalFrame2 = point2.LocalTransform;
 		fixedJoint.Body = go2;
-		fixedJoint.MinLength = 0;
+		fixedJoint.MinLength = Rigid ? len : 0;
 		fixedJoint.MaxLength = len;
 		fixedJoint.RestLength = len;
 		fixedJoint.Frequency = 0;
@@ -68,7 +73,7 @@ public class Rope : ToolMode
 
 		var vertletRope = go1.AddComponent<VerletRope>();
 		vertletRope.Attachment = go2;
-		vertletRope.SegmentCount = MathX.CeilToInt( len / 16.0f );
+		vertletRope.SegmentCount = Math.Max( 2, MathX.CeilToInt( len / 16.0f ) );
 		vertletRope.SegmentLength = (len / vertletRope.SegmentCount);
 		vertletRope.ConstraintIterations = 2;
 
