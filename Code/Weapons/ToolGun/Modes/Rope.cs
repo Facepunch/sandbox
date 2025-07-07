@@ -56,11 +56,14 @@ public class Rope : ToolMode
 
 		var fixedJoint = go1.AddComponent<SpringJoint>();
 		fixedJoint.Attachment = Joint.AttachmentMode.LocalFrames;
-		fixedJoint.LocalFrame1 = go1.LocalTransform;
-		fixedJoint.LocalFrame2 = go2.LocalTransform;
+		fixedJoint.LocalFrame1 = point1.LocalTransform;
+		fixedJoint.LocalFrame2 = point2.LocalTransform;
 		fixedJoint.Body = go2;
-		fixedJoint.MinLength = 1;
-		fixedJoint.MaxLength = len + 10;
+		fixedJoint.MinLength = 0;
+		fixedJoint.MaxLength = len;
+		fixedJoint.RestLength = len;
+		fixedJoint.Frequency = 0;
+		fixedJoint.Damping = 0;
 		fixedJoint.EnableCollision = true;
 
 		var vertletRope = go1.AddComponent<VerletRope>();
