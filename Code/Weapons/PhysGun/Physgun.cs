@@ -162,8 +162,7 @@
 		state.LocalNormal = tr.Normal;
 
 		if ( !tr.Hit || tr.Body is null ) return false;
-		if ( tr.Body.BodyType == PhysicsBodyType.Static ) return false;
-		if ( tr.Body.BodyType == PhysicsBodyType.Keyframed ) return false;
+		if ( tr.Component is not Rigidbody ) return false;
 
 		state.GameObject = tr.Body.GameObject;
 		state.LocalOffset = state.GameObject.WorldTransform.PointToLocal( tr.HitPosition );
