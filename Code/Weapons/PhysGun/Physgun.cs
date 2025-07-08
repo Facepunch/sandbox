@@ -145,6 +145,9 @@
 		// Only move the body if we own it.
 		if ( _state.Body.IsProxy ) return;
 
+		// Only move the body if it's dynamic.
+		if ( !_state.Body.MotionEnabled ) return;
+
 		var targetTx = player.EyeTransform.ToWorld( _state.GrabOffset );
 		_state.Body.SmoothMove( targetTx, 0.02f * MovementSmoothness, Time.Delta );
 	}
