@@ -136,18 +136,17 @@
 	{
 		base.OnFixedUpdate();
 
-		if ( !Networking.IsHost )
-			return;
-
 		var player = Owner;
 		if ( player is null ) return;
 
-		if ( _state.IsValid() )
-		{
-			var targetTx = player.EyeTransform.ToWorld( _state.GrabOffset );
-			_state.Body.SmoothMove( targetTx, 0.02f * MovementSmoothness, Time.Delta );
-			return;
-		}
+		if ( !_state.IsValid() ) return;
+		if ( !_state.Body.IsValid() ) return;
+
+		// Only move the body if we own it.
+		if ( _state.Body.IsProxy ) return;
+
+		var targetTx = player.EyeTransform.ToWorld( _state.GrabOffset );
+		_state.Body.SmoothMove( targetTx, 0.02f * MovementSmoothness, Time.Delta );
 	}
 
 	bool FindGrabbedBody( out GrabState state, Transform aim )
