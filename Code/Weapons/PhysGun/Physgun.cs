@@ -87,7 +87,7 @@
 
 			if ( Input.Down( "attack2" ) )
 			{
-				Freeze();
+				Freeze( _state.Body );
 				_state = default;
 				_preventReselect = true;
 				return;
@@ -123,7 +123,7 @@
 
 			if ( _state.IsValid() )
 			{
-				_state.Body.MotionEnabled = true;
+				Unfreeze( _state.Body );
 			}
 		}
 		else
@@ -171,12 +171,20 @@
 	}
 
 	[Rpc.Host]
-	void Freeze()
+	void Freeze( Rigidbody body )
 	{
-		if ( !_state.IsValid() ) return;
+		if ( !body.IsValid() ) return;
+		if ( body.IsProxy ) return;
 
-		// TODO - add component
-		_state.Body.MotionEnabled = false;
+		body.MotionEnabled = false;
 	}
 
+	[Rpc.Host]
+	void Unfreeze( Rigidbody body )
+	{
+		if ( !body.IsValid() ) return;
+		if ( body.IsProxy ) return;
+
+		body.MotionEnabled = true;
+	}
 }
