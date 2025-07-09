@@ -95,9 +95,14 @@
 
 			if ( _isSpinning )
 			{
-				var go = _state.GrabOffset;
+				var state = _state;
+				var go = state.GrabOffset;
 				go.Rotation = (Input.AnalogLook * -1) * go.Rotation;
-				_state = _state with { GrabOffset = go };
+				state.GrabOffset = go;
+
+				// State needs to reset for sync to detect a change, bug or how it's meant to work?
+				_state = default;
+				_state = state;
 			}
 
 			return;
