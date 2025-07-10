@@ -1,0 +1,42 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+
+
+@if ( LastResult is null )
+{
+    // loading
+    return;
+}
+
+@foreach ( var entry in LastResult.Packages )
+{
+    <SpawnButton Icon="@entry.Thumb" Action="@(() => Spawn( entry ))"></SpawnButton>
+}
+
+@code
+{
+    public string Category { get; set; } = "";
+
+    void Spawn( Package package )
+    {
+        GameManager.Spawn( package.FullIdent );
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        _ = Rebuild();
+    }
+
+
+    Package.FindResult LastResult;
+
+    async Task Rebuild()
+    {
+        LastResult = await Package.FindAsync($"sort:newest type:model category:{Category}");
+        StateHasChanged();
+    }
+    
+}

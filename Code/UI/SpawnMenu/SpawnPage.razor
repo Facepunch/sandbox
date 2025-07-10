@@ -9,30 +9,97 @@
 
     <div class="left">
 
+        @foreach (var p in options)
+        {
+            var c = activeOption == p ? "active" : "";
+
+            <div class="@c" @onclick="@( () => SwitchOption( p ) )">@p.Name</div>
+        }
+
     </div>
 
-    <div class="body">
-        <SpawnButton Icon="https://cdn.sbox.game/asset/facepunch.oildrumexplosive/thumb.png.fff8e3787c17283" Action="@(() => Spawn( "facepunch.oildrumexplosive" ))"></SpawnButton>
-        <SpawnButton Icon="https://cdn.sbox.game/asset/facepunch.watermelon/thumb.png.683db0caeab55816" Action="@(() => Spawn("facepunch.watermelon"))"></SpawnButton>
-        <SpawnButton Icon="https://cdn.sbox.game/asset/facepunch.toolchest/thumb.png.e22d621990091e0d" Action="@(() => Spawn("facepunch.toolchest"))"></SpawnButton>
-        <SpawnButton Icon="https://cdn.sbox.game/asset/facepunch.cabinet_a3/thumb.png.1bf467b6816cecf8" Action="@(() => Spawn("facepunch.cabinet_a3"))"></SpawnButton>
-        <SpawnButton Icon="https://cdn.sbox.game/asset/facepunch.wooden_chair_a/thumb.png.e37e2f0a1d36a772" Action="@(() => Spawn("facepunch.wooden_chair_a"))"></SpawnButton>
-        <SpawnButton Icon="https://cdn.sbox.game/asset/facepunch.water_drum_01/thumb.png.34b58345ab151a28" Action="@(() => Spawn("facepunch.water_drum_01"))"></SpawnButton>
-        <SpawnButton Icon="https://cdn.sbox.game/asset/facepunch.metalwheelbarrow/thumb.png.25663142bc944891" Action="@(() => Spawn("facepunch.metalwheelbarrow"))"></SpawnButton>
-        <SpawnButton Icon="https://cdn.sbox.game/asset/facepunch.hoovera/thumb.png.740d47f682e9ebb9" Action="@(() => Spawn("facepunch.hoovera"))"></SpawnButton>
-        <SpawnButton Icon="https://cdn.sbox.game/asset/facepunch.washingmachine/thumb.png.7aca1114cc535187" Action="@(() => Spawn("facepunch.washingmachine"))"></SpawnButton>
-        <SpawnButton Icon="https://cdn.sbox.game/asset/fpopium.crackhead_02/thumb.png.195fcd31c282be9f" Action="@(() => Spawn("fpopium.crackhead_02"))"></SpawnButton>
-        <SpawnButton Icon="https://cdn.sbox.game/asset/fish.moose/thumb.png.56b890737161bf47" Action="@(() => Spawn("fish.moose"))"></SpawnButton>
+    <div class="body" @ref="Body">
+
     </div>
 
 </root>
 
 @code
 {
+    SpawnMenuOption activeOption;
+
+    Panel Body{ get; set; }
+
     void Spawn( string ident )
     {
         Log.Info( $"Spawning {ident}" );
 
         GameManager.Spawn( ident );
     }
+
+    protected override void OnAfterTreeRender(bool firstTime)
+    {
+        base.OnAfterTreeRender(firstTime);
+
+        if ( firstTime && Body is not null )
+        {
+            Rebuild();
+        }
+    }
+
+    void Rebuild()
+    {
+        options.Clear();
+
+        AddOption("Favourites", () => new SpawnPageFavourites());
+        AddOption("Humans", () => new SpawnPageCloud() { Category = "human" });
+        AddOption("Nature", () => new SpawnPageCloud() { Category = "nature" });
+        AddOption("Furniture", () => new SpawnPageCloud() { Category = "furniture" });
+        AddOption("Animal", () => new SpawnPageCloud() { Category = "animal" });
+        AddOption("Prop", () => new SpawnPageCloud() { Category = "prop" });
+        AddOption("Toy", () => new SpawnPageCloud() { Category = "toy" });
+        AddOption("Food", () => new SpawnPageCloud() { Category = "food" });
+
+        SwitchOption(options.First());
+    }
+
+    void AddOption(string name, Func<Panel> createPanelFunction)
+    {
+        var o = new SpawnMenuOption
+            {
+                Name = name,
+                PanelCreator = createPanelFunction
+            };
+
+        options.Add(o);
+    }
+
+    void SwitchOption( SpawnMenuOption o )
+    {
+        if (o == activeOption) return;
+
+        activeOption?.Panel?.SetClass("hidden", true);
+
+        activeOption = o;
+
+        if (activeOption.Panel == null )
+        {
+            activeOption.Panel= activeOption.PanelCreator.Invoke();
+            Body.AddChild(activeOption.Panel);
+        }
+
+        activeOption.Panel.SetClass("hidden", false);
+    }
+
+
+    class SpawnMenuOption
+    {
+        public string Name { get; set; }
+        public string Icon { get; set; }
+        public Func<Panel> PanelCreator { get; set; }
+        public Panel Panel { get; set; }
+    }
+
+    List<SpawnMenuOption> options = new();
+
 }
