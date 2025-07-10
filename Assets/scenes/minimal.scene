@@ -1790,7 +1790,7 @@
       "Scale": "1,1,1",
       "Tags": "",
       "Enabled": true,
-      "NetworkMode": 2,
+      "NetworkMode": 1,
       "NetworkInterpolation": true,
       "NetworkOrphaned": 0,
       "OwnerTransfer": 1,
@@ -1866,9 +1866,6 @@
             "component_type": "SkinnedModelRenderer"
           },
           "RigidbodyFlags": 0,
-          "ShowColliders": true,
-          "ShowJoints": true,
-          "ShowRigidbodies": true,
           "StartAsleep": false
         }
       ],

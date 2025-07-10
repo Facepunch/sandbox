@@ -30,220 +30,6 @@
     ],
     "Children": [
       {
-        "__guid": "92cfa480-9bea-4187-9f4c-39188a2e4594",
-        "__version": 1,
-        "Flags": 0,
-        "Name": "Fast",
-        "Position": "0,0,0",
-        "Rotation": "0,0,0,1",
-        "Scale": "1,1,1",
-        "Tags": "particles",
-        "Enabled": false,
-        "NetworkMode": 2,
-        "NetworkInterpolation": true,
-        "NetworkOrphaned": 0,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "Sandbox.BeamSystem",
-            "__guid": "4297b04a-8ab7-46f2-a957-619613a57fdf",
-            "__enabled": true,
-            "Additive": true,
-            "Alpha": {
-              "Type": "Curve",
-              "Evaluation": "Life",
-              "CurveA": {
-                "rangex": "0.0046875,1",
-                "rangey": "0,0.2944444",
-                "frames": [
-                  {
-                    "x": 0,
-                    "y": 1,
-                    "in": 0.21276596,
-                    "out": -0.21276596,
-                    "mode": "Mirrored"
-                  },
-                  {
-                    "x": 1,
-                    "y": 0,
-                    "in": 0.28019342,
-                    "out": -0.28019342,
-                    "mode": "Mirrored"
-                  }
-                ]
-              },
-              "CurveB": [
-                {
-                  "x": 0.5,
-                  "y": 0.5,
-                  "in": 0,
-                  "out": 0,
-                  "mode": "Mirrored"
-                }
-              ],
-              "Constants": "1,0,0,0"
-            },
-            "BeamColor": {
-              "Type": "Constant",
-              "Evaluation": "Life",
-              "GradientA": {
-                "blend": "Linear",
-                "color": [
-                  {
-                    "t": 0.5,
-                    "c": "1,1,1,1"
-                  }
-                ],
-                "alpha": []
-              },
-              "GradientB": {
-                "blend": "Linear",
-                "color": [
-                  {
-                    "t": 0.5,
-                    "c": "1,1,1,1"
-                  }
-                ],
-                "alpha": []
-              },
-              "ConstantA": "0.8372,5.87675,10,1",
-              "ConstantB": "1,1,1,1"
-            },
-            "BeamLength": 0,
-            "BeamLifetime": {
-              "Type": "Range",
-              "Evaluation": "Particle",
-              "CurveA": [
-                {
-                  "x": 0.5,
-                  "y": 0.5,
-                  "in": 0,
-                  "out": 0,
-                  "mode": "Mirrored"
-                }
-              ],
-              "CurveB": [
-                {
-                  "x": 0.5,
-                  "y": 0.5,
-                  "in": 0,
-                  "out": 0,
-                  "mode": "Mirrored"
-                }
-              ],
-              "Constants": "0.1,0.1,0,0"
-            },
-            "BeamsPerSecond": 0,
-            "Brightness": 1,
-            "DepthFeather": 2.7,
-            "FollowPoints": false,
-            "InitialBurst": 1,
-            "Lighting": false,
-            "MaxBeams": 1,
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "Opaque": false,
-            "Scale": {
-              "Type": "Curve",
-              "Evaluation": "Life",
-              "CurveA": {
-                "rangey": "0,10",
-                "frames": [
-                  {
-                    "x": 0,
-                    "y": 0,
-                    "in": -1,
-                    "out": 1,
-                    "mode": "Mirrored"
-                  },
-                  {
-                    "x": 1,
-                    "y": 1,
-                    "in": -1,
-                    "out": 1,
-                    "mode": "Mirrored"
-                  }
-                ]
-              },
-              "CurveB": [
-                {
-                  "x": 0.5,
-                  "y": 0.5,
-                  "in": 0,
-                  "out": 0,
-                  "mode": "Mirrored"
-                }
-              ],
-              "Constants": "1,5,0,0"
-            },
-            "Shadows": false,
-            "TargetGameObject": null,
-            "TargetPosition": "0,0,100",
-            "TargetRandom": "1,1,1",
-            "Texture": {
-              "$compiler": "texture",
-              "$source": "imagefile",
-              "data": {
-                "FilePath": "textures/beams/lightning-thin-chunk.png",
-                "MaxSize": 4096,
-                "ConvertHeightToNormals": false,
-                "NormalScale": 1,
-                "Rotate": 0,
-                "FlipVertical": false,
-                "FlipHorizontal": false,
-                "Padding": {
-                  "Size": "0,0",
-                  "EdgeSize": "0,0"
-                },
-                "Sharpen": 0,
-                "InvertColor": false,
-                "Blur": 0,
-                "Brightness": 1,
-                "Contrast": 1,
-                "Saturation": 1,
-                "Hue": 0,
-                "Colorize": false,
-                "TargetColor": "0,1,0,1",
-                "CacheToDisk": true
-              },
-              "compiled": "textures/generated/imagefile/6d613dba06d3e517.vtex"
-            },
-            "TextureOffset": 17.099995,
-            "TextureScale": 320,
-            "TextureScrollSpeed": {
-              "Type": "Range",
-              "Evaluation": "Particle",
-              "CurveA": [
-                {
-                  "x": 0.5,
-                  "y": 0.5,
-                  "in": 0,
-                  "out": 0,
-                  "mode": "Mirrored"
-                }
-              ],
-              "CurveB": [
-                {
-                  "x": 0.5,
-                  "y": 0.5,
-                  "in": 0,
-                  "out": 0,
-                  "mode": "Mirrored"
-                }
-              ],
-              "Constants": "0,0,0,0"
-            },
-            "TravelBetweenPoints": false,
-            "TravelLerp": 0
-          }
-        ],
-        "Children": []
-      },
-      {
         "__guid": "8fcd12dd-e14c-4dfb-bf0b-fd3549bf9334",
         "__version": 1,
         "Flags": 0,
@@ -292,15 +78,7 @@
             },
             "BeamLifetime": {
               "Type": "Range",
-              "Evaluation": "Particle",
-              "CurveA": {
-                "rangex": "0,0",
-                "rangey": "0,0"
-              },
-              "CurveB": {
-                "rangex": "0,0",
-                "rangey": "0,0"
-              },
+              "Evaluation": "Seed",
               "Constants": "0.2,0.15,0,0"
             },
             "BeamsPerSecond": 0,
@@ -320,15 +98,7 @@
             "Opaque": false,
             "Scale": {
               "Type": "Range",
-              "Evaluation": "Particle",
-              "CurveA": {
-                "rangex": "0,0",
-                "rangey": "0,0"
-              },
-              "CurveB": {
-                "rangex": "0,0",
-                "rangey": "0,0"
-              },
+              "Evaluation": "Seed",
               "Constants": "4,8,0,0"
             },
             "Shadows": false,
@@ -361,22 +131,15 @@
                 "TargetColor": "0,1,0,1",
                 "CacheToDisk": true
               },
-              "compiled": null
+              "compiled": "textures/generated/imagefile/6d613dba06d3e517.vtex"
             },
             "TextureOffset": 1,
             "TextureScale": {
               "Type": "Range",
-              "Evaluation": "Particle",
-              "CurveA": {
-                "rangex": "0,0",
-                "rangey": "0,0"
-              },
-              "CurveB": {
-                "rangex": "0,0",
-                "rangey": "0,0"
-              },
+              "Evaluation": "Seed",
               "Constants": "32,128,0,0"
             },
+            "TextureScroll": 0,
             "TextureScrollSpeed": 0,
             "TravelBetweenPoints": true,
             "TravelLerp": {
@@ -398,11 +161,15 @@
                   "mode": "Mirrored"
                 }
               ],
-              "CurveB": {
-                "rangex": "0,0",
-                "rangey": "0,0"
-              },
-              "Constants": "0,1,0,0"
+              "CurveB": [
+                {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
+                }
+              ]
             }
           }
         ],
