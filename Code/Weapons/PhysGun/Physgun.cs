@@ -119,7 +119,11 @@
 			{
 				var state = _state;
 				var go = state.GrabOffset;
+
+				go.Position += state.LocalOffset * go.Rotation;
 				go.Rotation = (Input.AnalogLook * -1) * go.Rotation;
+				go.Position -= state.LocalOffset * go.Rotation;
+
 				state.GrabOffset = go;
 
 				// State needs to reset for sync to detect a change, bug or how it's meant to work?
