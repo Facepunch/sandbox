@@ -32,6 +32,7 @@ public class Remover : ToolMode
 	{
 		if ( !go.IsValid() ) return false;
 		if ( !go.Tags.Contains( "removable" ) ) return false;
+		if ( go.IsProxy ) return false;
 
 		return true;
 	}
@@ -49,14 +50,15 @@ public class Remover : ToolMode
 			if ( !tr.Hit )
 				return;
 
-			if ( !CanDestroy( tr.GameObject ) )
+			var target = tr.GameObject?.Network?.RootGameObject;
+
+			if ( !CanDestroy( target ) )
 			{
 				// fail effect
 				return;
 			}
 
-
-			tr.GameObject.Destroy();
+			target.Destroy();
 		}
 
 	}
