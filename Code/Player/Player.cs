@@ -205,11 +205,26 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 			OnControl();
 	}
 
+	RealTimeSince timeSinceJumpPressed;
+
 	void OnControl()
 	{
 		if ( Input.Pressed( "die" ) )
 		{
 			KillSelf();
+		}
+
+		if ( Input.Pressed( "jump" ) )
+		{
+			if ( timeSinceJumpPressed < 0.3f )
+			{
+				if ( GetComponent<NoclipMoveMode>( true ) is { } noclip )
+				{
+					noclip.Enabled = !noclip.Enabled;
+				}
+			}
+
+			timeSinceJumpPressed = 0;
 		}
 
 		if ( Input.Pressed( "undo" ) )
