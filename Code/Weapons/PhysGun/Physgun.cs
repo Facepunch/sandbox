@@ -197,10 +197,16 @@
 		if ( !tr.Hit || tr.Body is null ) return false;
 		if ( tr.Component is not Rigidbody ) return false;
 
-		state.GameObject = tr.Body.GameObject;
-		state.LocalOffset = state.GameObject.WorldTransform.PointToLocal( tr.HitPosition );
-		state.LocalNormal = state.GameObject.WorldTransform.NormalToLocal( tr.Normal );
-		state.GrabOffset = aim.ToLocal( tr.Body.Transform );
+		var go = tr.Body.GameObject;
+		if ( !go.IsValid() ) return false;
+
+		// Trace hits physics, convert to local using scaled physics transform.
+		var bodyTransform = tr.Body.Transform.WithScale( go.WorldScale );
+
+		state.GameObject = go;
+		state.LocalOffset = bodyTransform.PointToLocal( tr.HitPosition );
+		state.LocalNormal = bodyTransform.NormalToLocal( tr.Normal );
+		state.GrabOffset = aim.ToLocal( bodyTransform );
 		return true;
 	}
 
