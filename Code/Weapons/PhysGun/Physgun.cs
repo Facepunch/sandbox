@@ -93,6 +93,28 @@
 				return;
 			}
 
+			if ( !Input.MouseWheel.IsNearZeroLength )
+			{
+				var state = _state;
+				var go = state.GrabOffset;
+
+				var targetDistance = go.Position.Length + Input.MouseWheel.y * 20.0f;
+
+				if ( targetDistance > 40 )
+				{
+					go.Position = targetDistance * go.Position.Normal;
+					state.GrabOffset = go;
+
+					// State needs to reset for sync to detect a change, bug or how it's meant to work?
+					_state = default;
+					_state = state;
+				}
+
+				// stop processing this so inventory doesn't change
+				Input.MouseWheel = default;
+			}
+
+
 			if ( _isSpinning )
 			{
 				var state = _state;

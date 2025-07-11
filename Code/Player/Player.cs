@@ -232,6 +232,8 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 			ConsoleSystem.Run( "undo" );
 		}
 
+		Scene.Get<Inventory>()?.HandleInput();
+
 		if ( Scene.Camera.RenderExcludeTags.Contains( "ui" ) )
 			return;
 
