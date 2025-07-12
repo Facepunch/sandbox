@@ -71,11 +71,14 @@ public class Rope : ToolMode
 		fixedJoint.Damping = 0;
 		fixedJoint.EnableCollision = true;
 
-		var vertletRope = go1.AddComponent<VerletRope>();
-		vertletRope.Attachment = go2;
-		vertletRope.SegmentCount = Math.Max( 2, MathX.CeilToInt( len / 16.0f ) );
-		vertletRope.SegmentLength = (len / vertletRope.SegmentCount);
-		vertletRope.ConstraintIterations = 2;
+		if ( !Rigid )
+		{
+			var vertletRope = go1.AddComponent<VerletRope>();
+			vertletRope.Attachment = go2;
+			vertletRope.SegmentCount = Math.Max( 2, MathX.CeilToInt( len / 16.0f ) );
+			vertletRope.SegmentLength = (len / vertletRope.SegmentCount);
+			vertletRope.ConstraintIterations = 2;
+		}
 
 		var lineRenderer = go1.AddComponent<LineRenderer>();
 		lineRenderer.Points = [go1, go2];
