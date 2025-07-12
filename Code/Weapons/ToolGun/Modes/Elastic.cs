@@ -1,7 +1,7 @@
 ﻿
 [Icon( "🌀" )]
 [ClassName( "elastic" )]
-public class Elastic : ToolMode
+public class Elastic : Constraint
 {
 	[Range( 0, 15 )]
 	[Property]
@@ -11,43 +11,7 @@ public class Elastic : ToolMode
 	[Property]
 	public float Damping { get; set; } = 0.1f;
 
-	SelectionPoint _point1;
-	SelectionPoint _point2;
-	int stage = 0;
-
-	public override void OnControl()
-	{
-		base.OnControl();
-
-		if ( Input.Pressed( "attack1" ) )
-		{
-			var select = TraceSelect();
-
-			if ( !select.IsValid() )
-				return;
-
-			if ( stage == 0 )
-			{
-				_point1 = select;
-				stage++;
-				ShootEffects( select );
-				return;
-			}
-
-			if ( stage == 1 )
-			{
-				_point2 = select;
-
-				CreateElastic( _point1, _point2 );
-				ShootEffects( select );
-			}
-
-			stage = 0;
-		}
-	}
-
-	[Rpc.Host]
-	private void CreateElastic( SelectionPoint point1, SelectionPoint point2 )
+	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
 		var go1 = new GameObject( false, "elastic" );
 		go1.Parent = point1.GameObject;
@@ -61,14 +25,14 @@ public class Elastic : ToolMode
 
 		var len = point1.WorldPosition().Distance( point2.WorldPosition() );
 
-		var fixedJoint = go1.AddComponent<SpringJoint>();
-		fixedJoint.Body = go2;
-		fixedJoint.MinLength = 0;
-		fixedJoint.MaxLength = float.MaxValue;
-		fixedJoint.RestLength = len;
-		fixedJoint.Frequency = Frequency;
-		fixedJoint.Damping = Damping;
-		fixedJoint.EnableCollision = true;
+		var joint = go1.AddComponent<SpringJoint>();
+		joint.Body = go2;
+		joint.MinLength = 0;
+		joint.MaxLength = float.MaxValue;
+		joint.RestLength = len;
+		joint.Frequency = Frequency;
+		joint.Damping = Damping;
+		joint.EnableCollision = true;
 
 		var vertletRope = go1.AddComponent<VerletRope>();
 		vertletRope.Attachment = go2;

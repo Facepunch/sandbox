@@ -1,7 +1,7 @@
 ﻿
 [Icon( "🐍" )]
 [ClassName( "rope" )]
-public class Rope : ToolMode
+public class Rope : Constraint
 {
 	[Range( -500, 500 )]
 	[Property]
@@ -10,44 +10,7 @@ public class Rope : ToolMode
 	[Property]
 	public bool Rigid { get; set; } = false;
 
-	SelectionPoint _point1;
-	SelectionPoint _point2;
-	int stage = 0;
-
-	public override void OnControl()
-	{
-		base.OnControl();
-
-		if ( Input.Pressed( "attack1" ) )
-		{
-			var select = TraceSelect();
-
-			if ( !select.IsValid() )
-				return;
-
-			if ( stage == 0 )
-			{
-				_point1 = select;
-				stage++;
-				ShootEffects( select );
-				return;
-			}
-
-			if ( stage == 1 )
-			{
-				_point2 = select;
-
-				CreateRope( _point1, _point2 );
-				ShootEffects( select );
-			}
-
-			stage = 0;
-
-		}
-	}
-
-	[Rpc.Host]
-	private void CreateRope( SelectionPoint point1, SelectionPoint point2 )
+	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
 		var go1 = new GameObject( false, "rope" );
 		go1.Parent = point1.GameObject;
@@ -62,14 +25,14 @@ public class Rope : ToolMode
 		var len = point1.WorldPosition().Distance( point2.WorldPosition() );
 		len = MathF.Max( 1.0f, len + Slack );
 
-		var fixedJoint = go1.AddComponent<SpringJoint>();
-		fixedJoint.Body = go2;
-		fixedJoint.MinLength = Rigid ? len : 0;
-		fixedJoint.MaxLength = len;
-		fixedJoint.RestLength = len;
-		fixedJoint.Frequency = 0;
-		fixedJoint.Damping = 0;
-		fixedJoint.EnableCollision = true;
+		var joint = go1.AddComponent<SpringJoint>();
+		joint.Body = go2;
+		joint.MinLength = Rigid ? len : 0;
+		joint.MaxLength = len;
+		joint.RestLength = len;
+		joint.Frequency = 0;
+		joint.Damping = 0;
+		joint.EnableCollision = true;
 
 		if ( !Rigid )
 		{

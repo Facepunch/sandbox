@@ -1,45 +1,9 @@
 ﻿
 [Icon( "➖" )]
 [ClassName( "slider" )]
-public class Slider : ToolMode
+public class Slider : Constraint
 {
-	SelectionPoint _point1;
-	SelectionPoint _point2;
-	int stage = 0;
-
-	public override void OnControl()
-	{
-		base.OnControl();
-
-		if ( Input.Pressed( "attack1" ) )
-		{
-			var select = TraceSelect();
-
-			if ( !select.IsValid() )
-				return;
-
-			if ( stage == 0 )
-			{
-				_point1 = select;
-				stage++;
-				ShootEffects( select );
-				return;
-			}
-
-			if ( stage == 1 )
-			{
-				_point2 = select;
-
-				CreateSlider( _point1, _point2 );
-				ShootEffects( select );
-			}
-
-			stage = 0;
-		}
-	}
-
-	[Rpc.Host]
-	private void CreateSlider( SelectionPoint point1, SelectionPoint point2 )
+	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
 		var axis = Rotation.LookAt( Vector3.Direction( point1.WorldPosition(), point2.WorldPosition() ) );
 
@@ -55,11 +19,11 @@ public class Slider : ToolMode
 
 		var len = point1.WorldPosition().Distance( point2.WorldPosition() );
 
-		var fixedJoint = go1.AddComponent<SliderJoint>();
-		fixedJoint.Body = go2;
-		fixedJoint.MinLength = 0;
-		fixedJoint.MaxLength = len;
-		fixedJoint.EnableCollision = false;
+		var joint = go1.AddComponent<SliderJoint>();
+		joint.Body = go2;
+		joint.MinLength = 0;
+		joint.MaxLength = len;
+		joint.EnableCollision = true;
 
 		var lineRenderer = go1.AddComponent<LineRenderer>();
 		lineRenderer.Points = [go1, go2];
