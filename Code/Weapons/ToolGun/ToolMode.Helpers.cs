@@ -55,5 +55,19 @@
 		};
 	}
 
+	/// <summary>
+	/// Given a clicked point on a, and a clicked point on b, return a transform that places the objects so the points are touching
+	/// </summary>
+	public Transform GetEasyModePlacement( SelectionPoint a, SelectionPoint b )
+	{
+		var go = a.GameObject.Network.RootGameObject ?? a.GameObject;
+
+		var tx = b.WorldTransform();
+		tx.Rotation = tx.Rotation * a.LocalTransform.Rotation.Inverse * new Angles( 180, 0, 0 );
+		tx.Position += tx.Rotation * -a.LocalTransform.Position * go.WorldScale;
+		tx.Scale = go.WorldScale;
+		return tx;
+	}
+
 }
 

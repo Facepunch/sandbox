@@ -1,9 +1,9 @@
 ﻿
 public abstract class Constraint : ToolMode
 {
-	SelectionPoint _point1;
-	SelectionPoint _point2;
-	int stage = 0;
+	protected SelectionPoint Point1;
+	protected SelectionPoint Point2;
+	protected int Stage = 0;
 
 	public override void OnControl()
 	{
@@ -16,23 +16,28 @@ public abstract class Constraint : ToolMode
 			if ( !select.IsValid() )
 				return;
 
-			if ( stage == 0 )
+			if ( Stage == 0 )
 			{
-				_point1 = select;
-				stage++;
+				Point1 = select;
+				Stage++;
 				ShootEffects( select );
 				return;
 			}
 
-			if ( stage == 1 )
+			if ( Stage == 1 )
 			{
-				_point2 = select;
+				Point2 = select;
 
-				Create( _point1, _point2 );
+				Create( Point1, Point2 );
 				ShootEffects( select );
 			}
 
-			stage = 0;
+			Stage = 0;
+		}
+
+		if ( Input.Pressed( "attack2" ) )
+		{
+			Stage = 0;
 		}
 	}
 
