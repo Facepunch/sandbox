@@ -38,14 +38,17 @@ public class Wheel : ToolMode
 		var wheelProp = wheelGo.AddComponent<Prop>();
 		wheelProp.Model = model;
 
-		var jointGo = new GameObject( false, "wheel-joint" );
+		var wheelAnchor = new GameObject( false, "anchor2" );
+		wheelAnchor.Parent = wheelGo;
+		wheelAnchor.LocalRotation = Rotation.FromRoll( 90 );
+
+		var jointGo = new GameObject( false, "anchor1" );
 		jointGo.Parent = point.GameObject;
-		jointGo.LocalTransform = point.LocalTransform;
+		jointGo.WorldTransform = wheelAnchor.WorldTransform;
 
 		var joint = jointGo.AddComponent<HingeJoint>();
 		joint.Attachment = Joint.AttachmentMode.Auto;
-		joint.Body = wheelGo;
-		joint.Frequency = 0;
+		joint.Body = wheelAnchor;
 		joint.EnableCollision = false;
 
 		wheelGo.NetworkSpawn( true, null );
