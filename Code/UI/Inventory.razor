@@ -12,30 +12,57 @@
 
 @code
 {
-	[Property] public SoundEvent SwitchSound { get; set; }
-	[Property] public SoundEvent SelectSound { get; set; }
-	[Property] public SoundEvent CancelSound { get; set; }
+    [Property] public SoundEvent SwitchSound { get; set; }
+    [Property] public SoundEvent SelectSound { get; set; }
+    [Property] public SoundEvent CancelSound { get; set; }
 
-	PlayerInventory inventory;
-	BaseCarryable hovered;
-	BaseCarryable active;
-	BaseCarryable prev;
+    PlayerInventory inventory;
+    BaseCarryable hovered;
+    BaseCarryable active;
+    BaseCarryable prev;
 
-	protected override int BuildHash() => HashCode.Combine(inventory, hovered, active);
+    protected override int BuildHash() => HashCode.Combine(inventory, hovered, active);
 
-	void ILocalPlayerEvent.OnPickup(BaseCarryable weapon)
-	{
-		StateHasChanged();
-	}
+    void ILocalPlayerEvent.OnPickup(BaseCarryable weapon)
+    {
+        StateHasChanged();
+    }
 
-	protected override void OnUpdate()
-	{
-		inventory = Game.ActiveScene.GetAllComponents<PlayerInventory>().Where(x => x.Network.IsOwner).FirstOrDefault();
+    protected override void OnUpdate()
+    {
+        inventory = Game.ActiveScene.GetAllComponents<PlayerInventory>().Where(x => x.Network.IsOwner).FirstOrDefault();
 
-		Panel.SetClass("hidden", hovered is null);
-	}
+        Panel.SetClass("hidden", hovered is null);
+    }
 
-	RealTimeSince timeSinceInteraction;
+    RealTimeSince timeSinceInteraction;
+
+    public void HandleInputOpen()
+    {
+        if (hovered is null)
+            return;
+
+        if (Input.Pressed("Attack1"))
+        {
+            Input.ReleaseAction("Attack1");
+            Input.SetAction("Attack1", false);
+
+            prev = inventory.ActiveWeapon;
+            inventory.SwitchWeapon(hovered);
+            active = hovered;
+            hovered = null;
+            Sound.Play(SelectSound);
+        }
+
+        if (Input.Pressed("Attack2") || timeSinceInteraction > 2f)
+        {
+            Input.ReleaseAction("Attack2");
+            Input.SetAction("Attack2", false);
+            active = null;
+            hovered = null;
+            Sound.Play(CancelSound);
+        }
+    }
 
 	public void HandleInput()
 	{
@@ -60,29 +87,7 @@
 		if (Input.Pressed("Slot4")) IterateSlot(3);
 		if (Input.Pressed("Slot5")) IterateSlot(4);
 
-		if (hovered is null)
-			return;
 
-		if (Input.Pressed("Attack1"))
-		{
-			Input.ReleaseAction("Attack1");
-			Input.SetAction("Attack1", false);
-
-			prev = inventory.ActiveWeapon;
-			inventory.SwitchWeapon(hovered);
-			active = hovered;
-			hovered = null;
-			Sound.Play(SelectSound);
-		}
-
-		if (Input.Pressed("Attack2") || timeSinceInteraction > 2f)
-		{
-			Input.ReleaseAction("Attack2");
-			Input.SetAction("Attack2", false);
-			active = null;
-			hovered = null;
-			Sound.Play(CancelSound);
-		}
 	}
 
 	public void MoveSlot( int delta )

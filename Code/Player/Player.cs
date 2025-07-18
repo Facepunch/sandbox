@@ -209,9 +209,12 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 
 	void OnControl()
 	{
+		Scene.Get<Inventory>()?.HandleInputOpen();
+
 		if ( Input.Pressed( "die" ) )
 		{
 			KillSelf();
+			return;
 		}
 
 		if ( Input.Pressed( "jump" ) )
@@ -233,6 +236,8 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		}
 
 		Scene.Get<Inventory>()?.HandleInput();
+
+		GetComponent<PlayerInventory>()?.OnControl();
 
 		if ( Scene.Camera.RenderExcludeTags.Contains( "ui" ) )
 			return;

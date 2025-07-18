@@ -170,7 +170,10 @@ public partial class BaseCarryable : Component, IKillIcon
 
 	}
 
-	public virtual void OnPlayerUpdate( Player player )
+	/// <summary>
+	/// Called every frame, when active
+	/// </summary>
+	public virtual void OnFrameUpdate( Player player )
 	{
 		if ( player is null ) return;
 
@@ -184,9 +187,14 @@ public partial class BaseCarryable : Component, IKillIcon
 		}
 
 		GameObject.NetworkInterpolation = false;
+	}
 
-		if ( IsProxy )
-			return;
+	/// <summary>
+	/// Called every frame, on the owning player's client.
+	/// </summary>
+	public virtual void OnPlayerUpdate( Player player )
+	{
+		Assert.True( !IsProxy );
 
 		try
 		{

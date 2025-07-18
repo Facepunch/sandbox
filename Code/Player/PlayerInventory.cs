@@ -236,6 +236,14 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 	{
 		if ( ActiveWeapon.IsValid() )
 		{
+			ActiveWeapon.OnFrameUpdate( Player );
+		}
+	}
+
+	public void OnControl()
+	{
+		if ( ActiveWeapon.IsValid() )
+		{
 			ActiveWeapon.OnPlayerUpdate( Player );
 		}
 	}
