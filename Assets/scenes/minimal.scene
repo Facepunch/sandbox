@@ -781,6 +781,35 @@
             }
           ],
           "Children": []
+        },
+        {
+          "__guid": "e15a6ba7-25ee-4085-aeb2-72de34b87493",
+          "__version": 1,
+          "Flags": 0,
+          "Name": "Scores",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkInterpolation": true,
+          "NetworkOrphaned": 0,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Scoreboard",
+              "__guid": "e77240be-8988-4e23-bd6b-494bea66aec1",
+              "__enabled": true,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          ],
+          "Children": []
         }
       ]
     },
