@@ -752,6 +752,35 @@
             }
           ],
           "Children": []
+        },
+        {
+          "__guid": "f2455790-a437-4c1d-ba1c-da2010c944c0",
+          "__version": 1,
+          "Flags": 0,
+          "Name": "Chat",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkInterpolation": true,
+          "NetworkOrphaned": 0,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Chat",
+              "__guid": "f5f106ea-c867-4308-95d1-37908f237220",
+              "__enabled": true,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          ],
+          "Children": []
         }
       ]
     },

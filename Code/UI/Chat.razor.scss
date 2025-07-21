@@ -10,7 +10,8 @@ Chat
 	flex-direction: column;
 	align-items: stretch;
 	font-size: 20px;
-	font-family: Roboto;
+	font-family: Poppins;
+	font-weight: 600;
 	gap: 10px;
 
 	.output
@@ -20,15 +21,18 @@ Chat
 		justify-content: flex-end;
 		align-items: stretch;
 		gap: 5px;
+		background-color: #333a;
+		border-radius: 5px;
+		backdrop-filter: blur( 10px );
 
 		.chat_entry
 		{
 			padding: 6px;
 			gap: 8px;
 			border-radius: 2px;
-			text-shadow: 2px 2px 2px #000a;
+			text-shadow: 2px 2px 0px #000d, 1px 1px 0px #000d;
 			align-items: center;
-			background-image: linear-gradient( to right, rgba( #f704, 0.15 ), rgba( #f704, 0.05 ) );
+
 
 			.avatar
 			{
