@@ -1,7 +1,7 @@
 {
   "Title": "Sandbox",
   "Type": "game",
-  "Org": "local",
+  "Org": "facepunch",
   "Ident": "sandbox",
   "Schema": 1,
   "IncludeSourceFiles": false,
@@ -11,7 +11,7 @@
   "Mounts": [],
   "IsStandaloneOnly": false,
   "Metadata": {
-    "MaxPlayers": 64,
+    "MaxPlayers": 32,
     "MinPlayers": 1,
     "TickRate": 50,
     "GameNetworkType": "Multiplayer",
@@ -28,6 +28,7 @@
       "Keyboard": true,
       "VR": false,
       "Gamepad": true
-    }
+    },
+    "LaunchMode": "Launcher"
   }
 }
