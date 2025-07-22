@@ -45,11 +45,12 @@ public class Rope : Constraint
 
 		var lineRenderer = go1.AddComponent<LineRenderer>();
 		lineRenderer.Points = [go1, go2];
-		lineRenderer.Width = 0.5f;
+		lineRenderer.Width = 1f;
 		lineRenderer.Color = Color.White;
 		lineRenderer.Lighting = true;
 		lineRenderer.CastShadows = true;
 		lineRenderer.SplineInterpolation = 4;
+		lineRenderer.Texturing = lineRenderer.Texturing with { Material = Material.Load( "materials/default/rope01.vmat" ), WorldSpace = true, UnitsPerTexture = 32 };
 
 		go2.NetworkSpawn( true, null );
 		go1.NetworkSpawn( true, null );
