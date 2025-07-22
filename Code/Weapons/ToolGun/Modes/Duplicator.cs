@@ -11,6 +11,7 @@ public class Duplicator : ToolMode
 		base.OnControl();
 
 		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
 
 		if ( Input.Pressed( "attack2" ) )
 		{
