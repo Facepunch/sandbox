@@ -29,6 +29,7 @@
       "VR": false,
       "Gamepad": true
     },
-    "LaunchMode": "Launcher"
+    "LaunchMode": "Launcher",
+    "MapStartupScene": "scenes/minimal.scene"
   }
 }
