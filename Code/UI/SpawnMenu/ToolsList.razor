@@ -5,64 +5,69 @@
 
 <root>
 
-    <div class="left">
-        <div class="list">
-            @foreach (var type in Game.TypeLibrary.GetTypes<ToolMode>())
-            {
-                if (type.IsAbstract) continue;
+	<div class="left">
+		<div class="list">
+            @foreach (var group in Game.TypeLibrary.GetTypes<ToolMode>().GroupBy(x => x.Group))
+			{
+                <h2>@group.Key</h2>
 
-                string activeClass = IsActiveMode(type) ? "active" : string.Empty;
+                @foreach (var type in group.OrderBy(x => x.Title))
+				{
+					if (type.IsAbstract) continue;
 
-                <div class="button @activeClass" @onclick="@(() => SwitchMode( type ) )">
-                    <i>@type.Icon</i>
-                    <span>@type.Title</span>
-                </div>
-            }
-        </div>
-    </div>
+					string activeClass = IsActiveMode(type) ? "active" : string.Empty;
 
-    <div class="body">
-        <ControlSheet PropertyFilter="@FilterProperties" Target="@GetCurrentMode()"></ControlSheet>
-    </div>
+					<div class="button @activeClass" @onclick="@(() => SwitchMode( type ) )">
+						<i>@type.Icon</i>
+						<span>@type.Title</span>
+					</div>
+				}
+			}
+		</div>
+	</div>
+
+	<div class="body">
+		<ControlSheet PropertyFilter="@FilterProperties" Target="@GetCurrentMode()"></ControlSheet>
+	</div>
 
 </root>
 
 @code
 {
-    bool IsActiveMode( TypeDescription t )
-    {
-        var localPlayer = Player.FindLocalPlayer();
-        var toolgun = localPlayer?.GetWeapon<Toolgun>();
-        if (!toolgun.IsValid()) return false;
+	bool IsActiveMode( TypeDescription t )
+	{
+		var localPlayer = Player.FindLocalPlayer();
+		var toolgun = localPlayer?.GetWeapon<Toolgun>();
+		if (!toolgun.IsValid()) return false;
 
-        return toolgun.GetCurrentMode()?.GetType() == t.TargetType;
-    }
+		return toolgun.GetCurrentMode()?.GetType() == t.TargetType;
+	}
 
-    void SwitchMode(TypeDescription t)
-    {
-        var localPlayer = Player.FindLocalPlayer();
-        var toolgun = localPlayer?.GetWeapon<Toolgun>();
-        if (!toolgun.IsValid()) return;
+	void SwitchMode(TypeDescription t)
+	{
+		var localPlayer = Player.FindLocalPlayer();
+		var toolgun = localPlayer?.GetWeapon<Toolgun>();
+		if (!toolgun.IsValid()) return;
 
-        localPlayer.SwitchWeapon<Toolgun>();
-        toolgun.SetToolMode(t.ClassName);
-    }
+		localPlayer.SwitchWeapon<Toolgun>();
+		toolgun.SetToolMode(t.ClassName);
+	}
 
-    ToolMode GetCurrentMode()
-    {
-        var localPlayer = Player.FindLocalPlayer();
-        var toolgun = localPlayer?.GetWeapon<Toolgun>();
-        return toolgun.GetCurrentMode();
-    }
+	ToolMode GetCurrentMode()
+	{
+		var localPlayer = Player.FindLocalPlayer();
+		var toolgun = localPlayer?.GetWeapon<Toolgun>();
+		return toolgun?.GetCurrentMode();
+	}
 
-    static bool FilterProperties(SerializedProperty o)
-    {
-        if (o.PropertyType is null) return false;
-        if (o.PropertyType.IsAssignableTo(typeof(Delegate))) return false;
+	static bool FilterProperties(SerializedProperty o)
+	{
+		if (o.PropertyType is null) return false;
+		if (o.PropertyType.IsAssignableTo(typeof(Delegate))) return false;
 
-        if (o.IsMethod) return true;
-        if (!o.HasAttribute<PropertyAttribute>()) return false;
+		if (o.IsMethod) return true;
+		if (!o.HasAttribute<PropertyAttribute>()) return false;
 
-        return true;
-    }
+		return true;
+	}
 }

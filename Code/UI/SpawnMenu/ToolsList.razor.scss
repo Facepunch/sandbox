@@ -31,6 +31,7 @@ ToolsList > .left
 		font-family: poppins;
 		opacity: 0.5;
 		align-items: center;
+		border-radius: 4px;
 
 		&:hover
 		{
@@ -38,13 +39,18 @@ ToolsList > .left
 			opacity: 1;
 		}
 
+		&:active
+		{
+			opacity: 1;
+			background-color: #08f3;
+			color: white;
+		}
+
 		&.active
 		{
 			opacity: 1;
 			background-color: #08f;
-			border-radius: 4px;
 			color: white;
-			font-weight: bold;
 		}
 	}
 }
