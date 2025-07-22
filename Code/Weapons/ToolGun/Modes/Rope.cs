@@ -49,9 +49,10 @@ public class Rope : Constraint
 		lineRenderer.Color = Color.White;
 		lineRenderer.Lighting = true;
 		lineRenderer.CastShadows = true;
+		lineRenderer.SplineInterpolation = 4;
 
-		go2.NetworkSpawn();
-		go1.NetworkSpawn();
+		go2.NetworkSpawn( true, null );
+		go1.NetworkSpawn( true, null );
 
 		var undo = Player.Undo.Create();
 		undo.Add( go1 );
