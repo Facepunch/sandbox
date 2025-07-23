@@ -1,4 +1,5 @@
 ﻿
+using Sandbox.Rendering;
 using Sandbox.Utility;
 
 public class CameraWeapon : BaseWeapon
@@ -111,5 +112,10 @@ public class CameraWeapon : BaseWeapon
 		var target = Scene.Camera.WorldPosition.Distance( focusPoint ) + 32;
 
 		dof.FocalDistance = dof.FocalDistance.LerpTo( target, Time.Delta * 10.0f );
+	}
+
+	public override void DrawHud( HudPainter painter, Vector2 crosshair )
+	{
+		// nothing!
 	}
 }
