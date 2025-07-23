@@ -74,6 +74,9 @@
 	{
 		base.OnControl( player );
 
+		if ( Scene.TimeScale == 0 )
+			return;
+
 		_isSpinning = Input.Down( "use" );
 
 		if ( _state.IsValid() )
