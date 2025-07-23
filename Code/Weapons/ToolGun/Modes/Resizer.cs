@@ -12,10 +12,11 @@ public class Resizer : ToolMode
 		else if ( Input.Pressed( "attack2" ) ) Resize( go, -0.1f );
 	}
 
-	[Rpc.Host]
-	public void Resize( GameObject go, float size )
+	[Rpc.Broadcast]
+	private void Resize( GameObject go, float size )
 	{
 		if ( !go.IsValid() ) return;
+		if ( go.IsProxy ) return;
 
 		var scale = Vector3.Max( go.WorldScale + size, 0.01f );
 		go.WorldScale = scale;
