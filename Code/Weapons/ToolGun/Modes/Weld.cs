@@ -6,6 +6,9 @@ public class Weld : Constraint
 	[Property]
 	public bool EasyMode { get; set; } = true;
 
+	[Property]
+	public bool Rigid { get; set; } = false;
+
 
 	public override void OnControl()
 	{
@@ -48,8 +51,8 @@ public class Weld : Constraint
 		joint.Attachment = Joint.AttachmentMode.Auto;
 		joint.Body = go2;
 		joint.EnableCollision = true;
-		joint.AngularFrequency = 10;
-		joint.LinearFrequency = 10;
+		joint.AngularFrequency = Rigid ? 0 : 10;
+		joint.LinearFrequency = Rigid ? 0 :10;
 
 		go2.NetworkSpawn();
 		go1.NetworkSpawn();
