@@ -44,6 +44,7 @@ public partial class Toolgun : BaseCarryable
 			// newMode on enabled
 		}
 
+		GameObject.Enabled = true;
 		Network.Refresh();
 	}
 }
