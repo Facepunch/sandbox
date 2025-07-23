@@ -10,6 +10,7 @@ public class Wheel : ToolMode
 		base.OnControl();
 
 		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
 
 		var pos = select.WorldTransform();
 		var modelBounds = wheelModel.Bounds;
@@ -20,8 +21,6 @@ public class Wheel : ToolMode
 
 		if ( Input.Pressed( "attack1" ) )
 		{
-			if ( !select.IsValid() ) return;
-
 			SpawnWheel( select, wheelModel, placementTrans );
 		}
 
