@@ -95,9 +95,9 @@
           "__version": 3,
           "AutoExposureEnabled": true,
           "ExposureCompensation": 0,
-          "ExposureMethod": "RGB",
-          "MaximumExposure": 5,
-          "MinimumExposure": 0,
+          "ExposureMethod": "Luminance",
+          "MaximumExposure": 2,
+          "MinimumExposure": 1,
           "Mode": "Linear",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
@@ -105,7 +105,7 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "Rate": 2
+          "Rate": 1
         },
         {
           "__type": "Sandbox.Bloom",
@@ -121,7 +121,7 @@
           "OnComponentStart": null,
           "OnComponentUpdate": null,
           "Strength": 1,
-          "Threshold": 1.5,
+          "Threshold": 1.8,
           "Tint": "1,1,1,1"
         },
         {
@@ -130,7 +130,7 @@
           "__enabled": true,
           "Center": "0.5,0.5",
           "Color": "0,0,0,1",
-          "Intensity": 0.78,
+          "Intensity": 0.7782486,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -138,7 +138,7 @@
           "OnComponentStart": null,
           "OnComponentUpdate": null,
           "Roundness": 0,
-          "Smoothness": 0.79
+          "Smoothness": 1
         },
         {
           "__type": "Sandbox.AmbientOcclusion",
@@ -168,6 +168,19 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null
+        },
+        {
+          "__type": "Sandbox.ScreenSpaceReflections",
+          "__guid": "902826ec-2074-4249-9bfc-95175143791d",
+          "__enabled": true,
+          "Denoise": true,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "RoughnessCutoff": 100
         }
       ],
       "Children": []
