@@ -14,6 +14,7 @@ public class Weld : Constraint
 		if ( EasyMode && Stage == 1 )
 		{
 			var select = TraceSelect();
+			if ( !select.IsValid() ) return;
 
 			var go = Point1.GameObject.Network.RootGameObject ?? Point1.GameObject;
 
