@@ -123,9 +123,10 @@
 				var state = _state;
 				var go = state.GrabOffset;
 
-				go.Position += state.LocalOffset * go.Rotation;
-				go.Rotation = (Input.AnalogLook * -1) * go.Rotation;
-				go.Position -= state.LocalOffset * go.Rotation;
+				var pivot = go.PointToWorld( state.LocalOffset );
+				var delta = Rotation.From( Input.AnalogLook * -1 );
+				go.Position = pivot + delta * (go.Position - pivot);
+				go.Rotation = delta * go.Rotation;
 
 				state.GrabOffset = go;
 
