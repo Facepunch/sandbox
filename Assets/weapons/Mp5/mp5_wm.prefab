@@ -1,59 +1,84 @@
 {
   "RootObject": {
     "__guid": "628ec5b7-a64d-490e-a218-1cdfc17b67df",
+    "__version": 1,
     "Flags": 0,
     "Name": "mp5_wm",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
+    "Tags": "",
     "Enabled": true,
     "NetworkMode": 0,
+    "NetworkInterpolation": true,
+    "NetworkOrphaned": 0,
+    "OwnerTransfer": 1,
     "Components": [
       {
         "__type": "WorldModel",
         "__guid": "765ebd37-c91f-4058-8815-f4b7df6f24b0",
-        "EjectBrass": {
-          "_type": "gameobject",
-          "prefab": "weapons/common/effects/eject_9mm.prefab"
-        },
+        "__enabled": true,
+        "EjectBrass": null,
         "EjectTransform": {
           "_type": "gameobject",
           "go": "8e571825-7366-47b8-a226-d8c9ae8b083f"
         },
-        "MuzzleEffect": {
-          "_type": "gameobject",
-          "prefab": "weapons/common/effects/muzzle.prefab"
-        },
+        "MuzzleEffect": null,
         "MuzzleTransform": {
           "_type": "gameobject",
           "go": "ed6466c4-e28c-4e9b-8446-ffa3f096176d"
         },
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
         "Renderer": {
           "_type": "component",
           "component_id": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
           "go": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
           "component_type": "SkinnedModelRenderer"
         },
-        "TracerEffect": {
-          "_type": "gameobject",
-          "prefab": "weapons/common/effects/tracer_9mm.prefab"
-        }
+        "TracerEffect": null
       }
     ],
     "Children": [
       {
         "__guid": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
+        "__version": 1,
         "Flags": 0,
         "Name": "model",
         "Position": "-0.5918133,0.6022096,-14.1255",
+        "Rotation": "0,0,0,1",
         "Scale": "2,2,2",
+        "Tags": "",
         "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkInterpolation": true,
+        "NetworkOrphaned": 0,
+        "OwnerTransfer": 1,
         "Components": [
           {
             "__type": "Sandbox.SkinnedModelRenderer",
             "__guid": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
+            "__enabled": true,
+            "AnimationGraph": null,
             "BodyGroups": 3,
+            "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": true,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
             "Model": "models/weapons/sbox_smg_mp5/w_mp5.vmdl",
             "Morphs": {},
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
             "Parameters": {
               "bools": {},
               "ints": {},
@@ -61,6 +86,7 @@
               "vectors": {},
               "rotations": {}
             },
+            "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
               "OverlayLayer": false,
@@ -68,6 +94,11 @@
               "AfterUILayer": false
             },
             "RenderType": "On",
+            "Sequence": {
+              "Name": null,
+              "Looping": true,
+              "Blending": false
+            },
             "Tint": "1,1,1,1",
             "UseAnimGraph": true
           }
@@ -75,40 +106,80 @@
         "Children": [
           {
             "__guid": "4f949ccb-cd38-4eff-a75f-e06754d3ddc1",
+            "__version": 1,
             "Flags": 4,
             "Name": "hold_R",
             "Position": "-1.45742,0,5.464317",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
             "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkInterpolation": true,
+            "NetworkOrphaned": 0,
+            "OwnerTransfer": 1,
+            "Components": [],
             "Children": [
               {
                 "__guid": "8e571825-7366-47b8-a226-d8c9ae8b083f",
-                "Flags": 8,
+                "__version": 1,
+                "Flags": 0,
                 "Name": "eject",
                 "Position": "3.912841,-0.647761,3.410283",
-                "Enabled": true
+                "Rotation": "0,0,0,1",
+                "Scale": "1,1,1",
+                "Tags": "",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "NetworkInterpolation": true,
+                "NetworkOrphaned": 0,
+                "OwnerTransfer": 1,
+                "Components": [],
+                "Children": []
               }
             ]
           },
           {
             "__guid": "ed6466c4-e28c-4e9b-8446-ffa3f096176d",
+            "__version": 1,
             "Flags": 8,
             "Name": "muzzle",
             "Position": "13.2196,0,8.088171",
-            "Enabled": true
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkInterpolation": true,
+            "NetworkOrphaned": 0,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
+          },
+          {
+            "__guid": "88302757-22b9-44b5-9561-6acad55a74a7",
+            "__version": 1,
+            "Flags": 8,
+            "Name": "eject",
+            "Position": "2.455421,-0.647761,8.8746",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkInterpolation": true,
+            "NetworkOrphaned": 0,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
           }
         ]
       }
     ],
-    "__variables": [],
     "__properties": {
-      "FixedUpdateFrequency": 50,
-      "MaxFixedUpdates": 5,
-      "NetworkFrequency": 30,
       "NetworkInterpolation": true,
-      "PhysicsSubSteps": 1,
-      "ThreadedAnimation": true,
       "TimeScale": 1,
-      "UseFixedUpdate": true,
+      "WantsSystemScene": true,
       "Metadata": {},
       "NavMesh": {
         "Enabled": false,
@@ -122,15 +193,16 @@
         "ExcludedBodies": "",
         "IncludedBodies": ""
       }
-    }
+    },
+    "__variables": []
   },
+  "ResourceVersion": 2,
   "ShowInMenu": false,
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "ResourceVersion": 1,
   "__references": [
     "facepunch.w_mp5#33703"
   ],
-  "__version": 1
+  "__version": 2
 }
