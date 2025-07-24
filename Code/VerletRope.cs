@@ -24,10 +24,14 @@
 		}
 	}
 
-	protected override void OnUpdate()
+	protected override void OnFixedUpdate()
 	{
 		Simulate( Time.Delta );
 		SatisfyConstraints();
+	}
+
+	protected override void OnUpdate()
+	{
 		Draw();
 	}
 
