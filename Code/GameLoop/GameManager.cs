@@ -6,15 +6,10 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 	void ISceneStartup.OnHostInitialize()
 	{
-		Scene.NavMesh.AgentRadius = 20;
-		Scene.NavMesh.AgentHeight = 72;
-		Scene.NavMesh.IsEnabled = true;
-
-		var lobbyPrivacy = Sandbox.Network.LobbyPrivacy.Public;
-
-		// If we're not hosting a lobby, start hosting one
-		// so that people can join this game.
-		Networking.CreateLobby( new Sandbox.Network.LobbyConfig() { Privacy = lobbyPrivacy, MaxPlayers = 32, Name = "Sandbox Deathmatch", DestroyWhenHostLeaves = true } );
+		if ( !Networking.IsActive )
+		{
+			Networking.CreateLobby( new Sandbox.Network.LobbyConfig() { Privacy = Sandbox.Network.LobbyPrivacy.Public, MaxPlayers = 32, Name = "Sandbox", DestroyWhenHostLeaves = true } );
+		}
 	}
 
 	void Component.INetworkListener.OnActive( Connection channel )
