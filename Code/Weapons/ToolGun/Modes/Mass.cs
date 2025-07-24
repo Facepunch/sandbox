@@ -1,6 +1,6 @@
 ﻿
 [Icon( "🍔" )]
-[ClassName( "resizer" )]
+[ClassName( "mass" )]
 public class Mass : ToolMode
 {
 	[Sync, Property, Title( "Mass (kg)" ), Range( 1, 1000 )]
