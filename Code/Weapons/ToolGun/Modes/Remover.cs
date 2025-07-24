@@ -5,7 +5,7 @@ public class Remover : ToolMode
 	[Property]
 	public float ToolOption { get; set; } = 45;
 
-	[Range( -1, 1, 0.001f )]
+	[Range( -1, 1 ), Step( 0.001f )]
 	[Property]
 	public float Amount { get; set; } = 0.23f;
 
