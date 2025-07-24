@@ -73,10 +73,13 @@ public class Mp5Weapon : BaseBulletWeapon
 
 		var tr = Scene.Trace.Ray( player.EyeTransform.ForwardRay with { Forward = forward }, 4096 )
 							.IgnoreGameObjectHierarchy( player.GameObject )
-							.WithCollisionRules( "bullet" )
+							.WithoutTags( "playercontroller" ) // don't hit playercontroller colliders
 							.Radius( bulletRadius )
 							.UseHitboxes()
 							.Run();
+
+		Log.Info( $"{tr.Surface}" );
+		Log.Info( $"{tr.Hitbox}" );
 
 		ShootEffects( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface );
 		TraceAttack( TraceAttackInfo.From( tr, Damage ) );

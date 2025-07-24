@@ -40,7 +40,7 @@ public class GlockWeapon : BaseBulletWeapon
 
 		var tr = Scene.Trace.Ray( player.EyeTransform.ForwardRay with { Forward = forward }, 4096 )
 							.IgnoreGameObjectHierarchy( player.GameObject )
-							.WithCollisionRules( "bullet" )
+							.WithoutTags( "playercontroller" ) // don't hit playercontroller colliders
 							.Radius( bulletRadius )
 							.UseHitboxes()
 							.Run();
