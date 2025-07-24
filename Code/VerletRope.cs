@@ -111,25 +111,31 @@
 
 	void ApplyConstraints()
 	{
-		for ( int iter = 0; iter < ConstraintIterations; iter++ )
+		// Apply stiffness constraints
+		for ( var iteration = 0; iteration < ConstraintIterations; iteration++ )
 		{
-			for ( int i = 0; i < points.Count - 1; i++ )
+			for ( var i = 0; i < points.Count - 1; i++ )
 			{
 				var p1 = points[i];
 				var p2 = points[i + 1];
 
-				var delta = p2.Position - p1.Position;
-				var dist = delta.Length;
-				if ( dist <= 0.001f ) continue;
+				var segment = p2.Position - p1.Position;
+				var stretch = segment.Length - SegmentLength;
+				var direction = segment.Normal;
 
-				var diff = (dist - SegmentLength) / dist;
-				var offset = delta * 0.5f * diff;
-
-				if ( i != 0 )
-					p1.Position += offset;
-
-				if ( i + 1 != points.Count - 1 )
-					p2.Position -= offset;
+				if ( p1.IsAttached )
+				{
+					p2.Position -= direction * stretch * Stiffness;
+				}
+				else if ( p2.IsAttached )
+				{
+					p1.Position += direction * stretch * Stiffness;
+				}
+				else
+				{
+					p1.Position += direction * stretch * 0.5f * Stiffness;
+					p2.Position -= direction * stretch * 0.5f * Stiffness;
+				}
 
 				points[i] = p1;
 				points[i + 1] = p2;
@@ -149,10 +155,10 @@
 				var diff = (dist - targetDist) / dist;
 				var offset = delta * 0.5f * diff * 0.5f; // 0.5 = soft bend
 
-				if ( i != 0 )
+				if ( !p1.IsAttached )
 					p1.Position += offset;
 
-				if ( i + 2 != points.Count - 1 )
+				if ( !p3.IsAttached )
 					p3.Position -= offset;
 
 				points[i] = p1;
@@ -168,8 +174,14 @@
 			if ( points[i].IsAttached ) continue;
 
 			var p = points[i];
+			var pointMove = p.Position - p.Previous;
+
+			if ( pointMove.Length < 0.001f ) continue;
+
+			var to = pointMove + pointMove.Normal * CollisionCheckLength;
+
 			var tr = Scene.Trace
-				.Ray( p.Previous, p.Position )
+				.Ray( p.Previous, p.Previous + to )
 				.Radius( 1.0f )
 				.Run();
 
@@ -177,11 +189,10 @@
 			{
 				p.Position = tr.EndPosition + tr.Normal * 0.1f;
 
-				// Kill velocity into the surface
-				Vector3 vel = p.Position - p.Previous;
-				Vector3 intoNormal = Vector3.Dot( vel, tr.Normal ) * tr.Normal;
-
-				p.Previous = p.Position - (vel - intoNormal); // remove bounce component
+				// Handle sliding on surfaces - project velocity along the surface
+				var velocity = p.Position - p.Previous;
+				var slideVelocity = velocity - Vector3.Dot( velocity, tr.Normal ) * tr.Normal;
+				p.Previous = p.Position - slideVelocity;
 			}
 
 			points[i] = p;
