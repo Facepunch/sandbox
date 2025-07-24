@@ -82,11 +82,6 @@ public class Mp5Weapon : BaseBulletWeapon
 		TraceAttack( TraceAttackInfo.From( tr, Damage ) );
 		TimeSinceShoot = 0;
 
-		if ( player.IsLocalPlayer )
-		{
-			HitMarker.CreateFromTrace( tr );
-		}
-
 		player.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.1f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
 
 		if ( !player.Controller.ThirdPerson && player.IsLocalPlayer )

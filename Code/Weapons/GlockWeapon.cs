@@ -49,11 +49,6 @@ public class GlockWeapon : BaseBulletWeapon
 		TraceAttack( TraceAttackInfo.From( tr, Damage ) );
 		TimeSinceShoot = 0;
 
-		if ( player.IsLocalPlayer )
-		{
-			HitMarker.CreateFromTrace( tr );
-		}
-
 		player.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.5f ), Random.Shared.Float( -1, 1 ) * 0.4f, 0 );
 
 		if ( !player.Controller.ThirdPerson && player.IsLocalPlayer )

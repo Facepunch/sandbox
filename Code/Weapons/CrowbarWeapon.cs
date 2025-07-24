@@ -44,11 +44,6 @@ public class CrowbarWeapon : BaseCarryable
 		SwingEffects( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface );
 		TraceAttack( TraceAttackInfo.From( tr, dmg, localise: false ) );
 
-		if ( player.IsLocalPlayer )
-		{
-			HitMarker.CreateFromTrace( tr );
-		}
-
 		player.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
 
 		if ( !player.Controller.ThirdPerson && player.IsLocalPlayer )

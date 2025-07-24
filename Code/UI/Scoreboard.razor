@@ -106,23 +106,6 @@
 			} ) );
 		}
 
-		if ( MuteableVoice.IsMuted( player.SteamId ) )
-		{
-			popupPanel.AddChild( new Button( "Unmute", "volume_up", () =>
-			{
-				MuteableVoice.Unmute( player.SteamId );
-				popupPanel.Delete();
-			} ) );
-		}
-		else
-		{
-			popupPanel.AddChild( new Button( "Mute", "volume_off", () =>
-			{
-				MuteableVoice.Mute( player.SteamId );
-				popupPanel.Delete();
-			} ) );
-		}
-
 		if ( Networking.IsHost && player.Connection is not null )
 		{
 			popupPanel.AddChild( new Button( "Kick", "do_not_step", () =>
