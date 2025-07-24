@@ -43,14 +43,10 @@ public class Remover : ToolMode
 
 		if ( Input.Pressed( "attack1" ) )
 		{
-			var tr = Scene.Trace.Ray( Player.EyeTransform.ForwardRay, 4096 )
-				.IgnoreGameObjectHierarchy( Player.GameObject )
-				.Run();
+			var select = TraceSelect();
+			if ( !select.IsValid() ) return;
 
-			if ( !tr.Hit )
-				return;
-
-			var target = tr.GameObject?.Network?.RootGameObject;
+			var target = select.GameObject?.Network?.RootGameObject;
 
 			if ( !CanDestroy( target ) )
 			{
@@ -59,6 +55,8 @@ public class Remover : ToolMode
 			}
 
 			target.Destroy();
+
+			ShootEffects( select );
 		}
 
 	}
