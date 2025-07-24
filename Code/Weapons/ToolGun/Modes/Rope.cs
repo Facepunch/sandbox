@@ -25,14 +25,20 @@ public class Rope : Constraint
 		var len = point1.WorldPosition().Distance( point2.WorldPosition() );
 		len = MathF.Max( 1.0f, len + Slack );
 
-		var joint = go1.AddComponent<SpringJoint>();
-		joint.Body = go2;
-		joint.MinLength = Rigid ? len : 0;
-		joint.MaxLength = len;
-		joint.RestLength = len;
-		joint.Frequency = 0;
-		joint.Damping = 0;
-		joint.EnableCollision = true;
+		//
+		// If it's ourself - we want to create the rope, but no joint between
+		//
+		if ( point1.GameObject != point2.GameObject )
+		{
+			var joint = go1.AddComponent<SpringJoint>();
+			joint.Body = go2;
+			joint.MinLength = Rigid ? len : 0;
+			joint.MaxLength = len;
+			joint.RestLength = len;
+			joint.Frequency = 0;
+			joint.Damping = 0;
+			joint.EnableCollision = true;
+		}
 
 		if ( !Rigid )
 		{
