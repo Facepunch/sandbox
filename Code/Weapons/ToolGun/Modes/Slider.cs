@@ -5,6 +5,9 @@ public class Slider : Constraint
 {
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
+		if ( point1.GameObject == point2.GameObject )
+			return;
+
 		var axis = Rotation.LookAt( Vector3.Direction( point1.WorldPosition(), point2.WorldPosition() ) );
 
 		var go1 = new GameObject( false, "slider" );

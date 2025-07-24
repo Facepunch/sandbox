@@ -25,14 +25,17 @@ public class Elastic : Constraint
 
 		var len = point1.WorldPosition().Distance( point2.WorldPosition() );
 
-		var joint = go1.AddComponent<SpringJoint>();
-		joint.Body = go2;
-		joint.MinLength = 0;
-		joint.MaxLength = float.MaxValue;
-		joint.RestLength = len;
-		joint.Frequency = Frequency;
-		joint.Damping = Damping;
-		joint.EnableCollision = true;
+		if ( point1.GameObject != point2.GameObject )
+		{
+			var joint = go1.AddComponent<SpringJoint>();
+			joint.Body = go2;
+			joint.MinLength = 0;
+			joint.MaxLength = float.MaxValue;
+			joint.RestLength = len;
+			joint.Frequency = Frequency;
+			joint.Damping = Damping;
+			joint.EnableCollision = true;
+		}
 
 		var vertletRope = go1.AddComponent<VerletRope>();
 		vertletRope.Attachment = go2;

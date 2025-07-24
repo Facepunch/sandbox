@@ -8,6 +8,9 @@ public class BallSocket : Constraint
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
+		if ( point1.GameObject == point2.GameObject )
+			return;
+
 		var go2 = new GameObject( point2.GameObject, false, "ballsocket" );
 		go2.LocalTransform = point2.LocalTransform;
 
