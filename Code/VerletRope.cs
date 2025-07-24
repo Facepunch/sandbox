@@ -7,9 +7,19 @@
 	[Property] public Vector3 Gravity { get; set; } = new( 0, 0, -800 );
 	[Property] public float Stiffness { get; set; } = 0.9f;
 	[Property] public float DampingFactor { get; set; } = 0.05f;
-	[Property] public float CollisionCheckLength { get; set; } = 1.0f;
-	// Ignore collisions when segment is stretched beyond this factor
-	[Property] public float StretchThreshold { get; set; } = 1.25f;
+	[Property] public float Width { get; set; } = 1f;
+
+	/// <summary>
+	/// Factor after which we consider a rope to be stretched.
+	/// </summary>
+	private float collisionMaxRopeStretchFactor { get; set; } = 2f;
+	/// <summary>
+	/// Ignore collisions when segment is stretched beyond this factor
+	/// </summary>
+	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.5f;
+
+	private float currentRopeLength;
+	private float averageSegmentLength;
 
 	private struct RopePoint
 	{
@@ -61,6 +71,9 @@
 		ApplyForces();
 		VerletIntegration( dt );
 		ApplyConstraints();
+
+		UpdateRopeLengths();
+
 		HandleCollisions();
 	}
 
@@ -169,45 +182,87 @@
 		}
 	}
 
+
+	private void UpdateRopeLengths()
+	{
+		float totalLength = 0f;
+		int segments = 0;
+
+		for ( int i = 0; i < points.Count - 1; i++ )
+		{
+			float segmentLength = (points[i + 1].Position - points[i].Position).Length;
+			totalLength += segmentLength;
+			segments++;
+		}
+
+		currentRopeLength = totalLength;
+		averageSegmentLength = segments > 0 ? totalLength / segments : SegmentLength;
+	}
+
+	/// <summary>
+	/// This method checks each segment of the rope for collisions and adjusts their positions accordingly.
+	/// It skips collision checks for segments that are excessively stretched to prevent the rope from becoming unstable.
+	/// If the rope is extremely stretched, all collision checks are bypassed to allow the rope to recover.
+	/// </summary>
 	void HandleCollisions()
 	{
+		var segmentSlideIgnoreLength = averageSegmentLength * collisionMaxRopeSegmentStretchFactor;
+		var isRopeStretched = currentRopeLength > SegmentLength * SegmentCount * collisionMaxRopeStretchFactor;
+
+		// Last resort disable all collisions briefly in an attempt to recover the rope
+		var isExtremelyStretched = currentRopeLength > SegmentLength * SegmentCount * 4;
+		if ( isExtremelyStretched )
+		{
+			return; 
+		}
+
 		for ( int i = 1; i < points.Count; i++ )
 		{
 			if ( points[i].IsAttached ) continue;
 
 			var p = points[i];
 
-			// Check if the segment is stretched beyond threshold
-			bool skipCollision = false;
-			if ( i > 0 )
+			// Skip collision check for stretched segments
+			// This is our attempt to unfuck the rope if it got dragged across the map
+			if ( isRopeStretched )
 			{
 				var prevPoint = points[i - 1];
-				var segmentLength = (prevPoint.Position - p.Position).Length;
-				skipCollision = segmentLength > SegmentLength * StretchThreshold;
+				var currentSegmentLength = (prevPoint.Position - p.Position).Length;
+
+				if ( currentSegmentLength > segmentSlideIgnoreLength )
+				{
+					points[i] = p;
+					continue;
+				}
 			}
 
-			if ( skipCollision )
-				continue;
-
-			var pointMove = p.Position - p.Previous;
-
-			if ( pointMove.Length < 0.001f ) continue;
-
-			var to = pointMove + pointMove.Normal * CollisionCheckLength;
-
-			var tr = Scene.Trace
-				.Ray( p.Previous, p.Previous + to )
-				.Radius( 1.0f )
+			// First check for movement-based collisions (from previous to current position)
+			var moveTrace = Scene.Trace.Sphere( Width, p.Previous, p.Position )
+				.UseHitPosition( true )
 				.Run();
 
-			if ( tr.Hit )
+			if ( moveTrace.Hit )
 			{
-				p.Position = tr.EndPosition + tr.Normal * 0.1f;
+				// Prevent the rope from clipping through the ground
+				// Would be nice if we could check for backface collision
+				// but that only seems to be available for UseRenderMesh traces.
+				if (moveTrace.Normal.z < -0.5f )
+				{
+					p.Position = moveTrace.HitPosition + Vector3.Up * (2f + 0.5f);
+				}
+				else
+				{
+					// Hit something during movement
+					p.Position = moveTrace.EndPosition + moveTrace.Normal * 0.4f;
+				}
 
-				// Handle sliding on surfaces - project velocity along the surface
-				var velocity = p.Position - p.Previous;
-				var slideVelocity = velocity - Vector3.Dot( velocity, tr.Normal ) * tr.Normal;
-				p.Previous = p.Position - slideVelocity;
+				// Project velocity along surface for sliding
+				if (isRopeStretched)
+				{
+					var velocity = p.Position - p.Previous;
+					var slideVelocity = velocity - Vector3.Dot( velocity, moveTrace.Normal ) * moveTrace.Normal;
+					p.Previous = p.Position - slideVelocity * (1.0f - DampingFactor);
+				}
 			}
 
 			points[i] = p;
