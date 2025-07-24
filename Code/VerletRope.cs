@@ -8,6 +8,8 @@
 	[Property] public float Stiffness { get; set; } = 0.9f;
 	[Property] public float DampingFactor { get; set; } = 0.05f;
 	[Property] public float CollisionCheckLength { get; set; } = 1.0f;
+	// Ignore collisions when segment is stretched beyond this factor
+	[Property] public float StretchThreshold { get; set; } = 1.25f;
 
 	private struct RopePoint
 	{
@@ -174,6 +176,19 @@
 			if ( points[i].IsAttached ) continue;
 
 			var p = points[i];
+
+			// Check if the segment is stretched beyond threshold
+			bool skipCollision = false;
+			if ( i > 0 )
+			{
+				var prevPoint = points[i - 1];
+				var segmentLength = (prevPoint.Position - p.Position).Length;
+				skipCollision = segmentLength > SegmentLength * StretchThreshold;
+			}
+
+			if ( skipCollision )
+				continue;
+
 			var pointMove = p.Position - p.Previous;
 
 			if ( pointMove.Length < 0.001f ) continue;
