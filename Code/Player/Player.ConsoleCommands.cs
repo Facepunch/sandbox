@@ -58,7 +58,7 @@ public sealed partial class Player
 		if ( !inventory.IsValid() )
 			return;
 
-		inventory.GiveAll();
+		//inventory.GiveAll();
 	}
 
 	[ConCmd( "god", ConVarFlags.Server, Help = "Toggle invulnerability" )]

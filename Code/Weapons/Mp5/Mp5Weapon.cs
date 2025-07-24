@@ -69,7 +69,7 @@ public class Mp5Weapon : BaseBulletWeapon
 
 		var aimConeAmount = GetAimConeAmount();
 		var forward = player.EyeTransform.Rotation.Forward.WithAimCone( 0.5f + aimConeAmount * 4f, 0.25f + aimConeAmount * 4f );
-		var bulletRadius = GameSettings.Mp5BulletRadius * GameSettings.BulletRadius;
+		var bulletRadius = 1;
 
 		var tr = Scene.Trace.Ray( player.EyeTransform.ForwardRay with { Forward = forward }, 4096 )
 							.IgnoreGameObjectHierarchy( player.GameObject )

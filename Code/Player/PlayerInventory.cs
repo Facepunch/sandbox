@@ -17,33 +17,6 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		Pickup( "weapons/glock/glock.prefab" );
 
 		Player.GiveAmmo( ResourceLibrary.Get<AmmoResource>( "ammotype/9mm.ammo" ), 200, false );
-
-		if ( GameSettings.CheatMode )
-		{
-			GiveAll();
-		}
-	}
-
-	public void GiveAll()
-	{
-		Pickup( "weapons/mp5/mp5.prefab" );
-		Pickup( "weapons/gaussgun/gauss.prefab" );
-		Pickup( "weapons/python/python.prefab" );
-		Pickup( "weapons/handgrenade/hand_grenade.prefab" );
-		Pickup( "weapons/tripmine/tripmine.prefab" );
-		Pickup( "weapons/satchelcharge/satchelcharge.prefab" );
-		Pickup( "weapons/rpg/rpg.prefab" );
-		Pickup( "weapons/crossbow/crossbow.prefab" );
-		Pickup( "weapons/shotgun/shotgun.prefab" );
-		Pickup( "weapons/ratgun/rat_gun.prefab" );
-		Pickup( "weapons/gluongun/gluon_gun.prefab" );
-		Pickup( "weapons/hornetgun/hornetgun.prefab" );
-
-		var ammo = ResourceLibrary.GetAll<AmmoResource>();
-		foreach ( var a in ammo )
-		{
-			Player.GiveAmmo( a, 100, false );
-		}
 	}
 
 	public bool Pickup( string prefabName, bool notice = true )

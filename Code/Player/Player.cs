@@ -288,11 +288,11 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 
 		var damage = dmg.Damage;
 		if ( dmg.Tags.Contains( DamageTags.Headshot ) )
-			damage *= GameSettings.HeadshotDamageScale;
+			damage *= 2;
 
 		if ( dmg.InstigatorId.Equals( PlayerId ) && !dmg.Tags.Contains( DamageTags.FullSelfDamage ) )
 		{
-			damage *= GameSettings.SelfDamageScale;
+			damage *= 1.5f;
 		}
 
 		if ( Armour > 0 )

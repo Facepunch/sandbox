@@ -61,8 +61,6 @@ public sealed partial class PlayerData : Component
 	public void AddStat( string identifier, int amount = 1 )
 	{
 		if ( Application.CheatsEnabled ) return;
-		if ( GameSettings.InfiniteAmmo ) return;
-		if ( GameSettings.CheatMode ) return;
 
 		Assert.True( Networking.IsHost, "PlayerData.AddStat is host-only!" );
 

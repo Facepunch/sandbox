@@ -51,9 +51,6 @@ public sealed partial class Player
 		if ( count <= 0 )
 			return 0;
 
-		if ( GameSettings.InfiniteAmmo )
-			return count;
-
 		var to = current - count;
 
 		AmmoCounts[resource] = to;

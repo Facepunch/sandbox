@@ -36,7 +36,7 @@ public class GlockWeapon : BaseBulletWeapon
 		if ( secondary ) aimConeAmount *= 2; // Secondary fire has more spread
 
 		var forward = player.EyeTransform.Rotation.Forward.WithAimCone( 0.1f + aimConeAmount * 3f, 0.1f + aimConeAmount * 3f );
-		var bulletRadius = GameSettings.GlockBulletRadius * GameSettings.BulletRadius;
+		var bulletRadius = 1;
 
 		var tr = Scene.Trace.Ray( player.EyeTransform.ForwardRay with { Forward = forward }, 4096 )
 							.IgnoreGameObjectHierarchy( player.GameObject )
