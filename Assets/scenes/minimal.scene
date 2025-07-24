@@ -130,15 +130,15 @@
           "__enabled": true,
           "Center": "0.5,0.5",
           "Color": "0,0,0,1",
-          "Intensity": 0.59662575,
+          "Intensity": 0.57822084,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "Roundness": 0.51380366,
-          "Smoothness": 0.7162577
+          "Roundness": 0.18865031,
+          "Smoothness": 0.857362
         },
         {
           "__type": "Sandbox.AmbientOcclusion",
@@ -307,9 +307,9 @@
           "Scale": "1,1,1",
           "Tags": "",
           "Enabled": true,
-          "NetworkMode": 2,
+          "NetworkMode": 1,
           "NetworkInterpolation": true,
-          "NetworkOrphaned": 0,
+          "NetworkOrphaned": 1,
           "OwnerTransfer": 1,
           "Components": [
             {
