@@ -11,6 +11,8 @@ public class CameraWeapon : BaseWeapon
 	bool focusing;
 	Vector3 focusPoint;
 
+	public override bool WantsHideHud => true;
+
 	protected override void OnEnabled()
 	{
 		base.OnEnabled();
@@ -97,7 +99,7 @@ public class CameraWeapon : BaseWeapon
 	{
 		if ( !focusing )
 		{
-			dof.BlurSize = Scene.Camera.FieldOfView.Remap( 20, 80, 50, 10 );
+			dof.BlurSize = Scene.Camera.FieldOfView.Remap( 20, 80, 25, 5 );
 			dof.FocusRange = 1024;
 			dof.FrontBlur = false;
 

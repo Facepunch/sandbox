@@ -13,6 +13,11 @@ Feed
 	text-shadow: 0px 0px 5px #f50a;
 	gap: 4px;
 	margin: auto;
+
+	&.hide
+	{
+		opacity: 0;
+	}
 }
 
 

@@ -59,6 +59,11 @@ partial class Feed
 		Invoke( 7, () => panel.Delete() );
 	}
 
+	protected override void OnUpdate()
+	{
+		SetClass( "hide", Player.FindLocalPlayer()?.WantsHideHud ?? false );
+	}
+
 	[Rpc.Broadcast]
 	public void NotifyDeath( PlayerData victim, PlayerData attacker, Texture weaponIcon, TagSet tags )
 	{

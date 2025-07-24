@@ -14,6 +14,11 @@ Chat
 	font-weight: 600;
 	gap: 10px;
 
+	&.hide
+	{
+		opacity: 0;
+	}
+
 	.output
 	{
 		flex-grow: 1;

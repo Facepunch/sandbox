@@ -42,6 +42,11 @@ public partial class BaseCarryable : Component, IKillIcon
 	public virtual bool ShouldAvoid => false;
 
 	/// <summary>
+	/// If true the game should hide the hud when holding this weapon. Useful for cameras, or scopes.
+	/// </summary>
+	public virtual bool WantsHideHud => false;
+
+	/// <summary>
 	/// The value of this weapon, used for auto-switch.
 	/// </summary>
 	[Property, Feature( "Inventory" )] public int Value { get; set; } = 0;

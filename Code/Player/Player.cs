@@ -32,6 +32,21 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 	public long SteamId => PlayerData.SteamId;
 	public string DisplayName => PlayerData.DisplayName;
 
+	/// <summary>
+	/// True if the player wants the HUD not to draw right now
+	/// </summary>
+	public bool WantsHideHud
+	{
+		get
+		{
+			var weapon = GetComponent<PlayerInventory>()?.ActiveWeapon;
+			if ( weapon.IsValid() && weapon.WantsHideHud )
+				return true;
+
+			return false;
+		}
+	}
+
 	protected override void OnFixedUpdate()
 	{
 		if ( !IsProxy )
@@ -242,6 +257,7 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		if ( Scene.Camera.RenderExcludeTags.Contains( "ui" ) )
 			return;
 
+		if ( !WantsHideHud )
 		{
 			var hud = Scene.Camera.Hud;
 			DrawVitals( hud, Screen.Size * new Vector2( 0.1f, 0.9f ) );

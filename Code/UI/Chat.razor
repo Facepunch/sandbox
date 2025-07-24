@@ -50,6 +50,7 @@
         }
 
         SetClass( "open", InputBox.HasFocus );
+        SetClass( "hide", Player.FindLocalPlayer()?.WantsHideHud ?? false );
     }
 
     void ChatFinished()
