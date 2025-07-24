@@ -121,7 +121,7 @@
           "OnComponentStart": null,
           "OnComponentUpdate": null,
           "Strength": 1,
-          "Threshold": 1.8,
+          "Threshold": 2,
           "Tint": "1,1,1,1"
         },
         {
@@ -130,15 +130,15 @@
           "__enabled": true,
           "Center": "0.5,0.5",
           "Color": "0,0,0,1",
-          "Intensity": 0.7782486,
+          "Intensity": 0.59662575,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "Roundness": 0,
-          "Smoothness": 1
+          "Roundness": 0.51380366,
+          "Smoothness": 0.7162577
         },
         {
           "__type": "Sandbox.AmbientOcclusion",
