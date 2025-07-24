@@ -5,11 +5,16 @@
 	[Property] public float SegmentLength { get; set; } = 10.0f;
 	[Property] public int ConstraintIterations { get; set; } = 5;
 	[Property] public Vector3 Gravity { get; set; } = new( 0, 0, -800 );
+	[Property] public float Stiffness { get; set; } = 0.9f;
+	[Property] public float DampingFactor { get; set; } = 0.05f;
+	[Property] public float CollisionCheckLength { get; set; } = 1.0f;
 
 	private struct RopePoint
 	{
 		public Vector3 Position;
 		public Vector3 Previous;
+		public Vector3 Acceleration;
+		public bool IsAttached;
 	}
 
 	private List<RopePoint> points;
@@ -20,14 +25,12 @@
 		for ( int i = 0; i < 10; i++ )
 		{
 			Simulate( 1.0f / 60.0f );
-			SatisfyConstraints();
 		}
 	}
 
 	protected override void OnFixedUpdate()
 	{
 		Simulate( Time.Delta );
-		SatisfyConstraints();
 	}
 
 	protected override void OnUpdate()
@@ -46,48 +49,67 @@
 		for ( int i = 0; i < SegmentCount; i++ )
 		{
 			var pos = start + direction * SegmentLength * i;
-			points.Add( new RopePoint { Position = pos, Previous = pos } );
+			var isAttached = (i == 0) || (i == SegmentCount - 1);
+			points.Add( new RopePoint { Position = pos, Previous = pos, IsAttached = isAttached } );
 		}
 	}
 
 	void Simulate( float dt )
 	{
-		float damping = MathF.Pow( 0.99f, dt * 60.0f );
+		ApplyForces();
+		VerletIntegration( dt );
+		ApplyConstraints();
+		HandleCollisions();
+	}
 
-		for ( int i = 1; i < points.Count - 1; i++ )
+	void VerletIntegration( float dt )
+	{
+		for ( int i = 0; i < points.Count; i++ )
 		{
 			var p = points[i];
-			var velocity = (p.Position - p.Previous) * damping;
 
-			p.Previous = p.Position;
-			p.Position += velocity + Gravity * dt * dt;
-
-			var tr = Scene.Trace
-				.Ray( p.Previous, p.Position )
-				.Radius( 1.0f )
-				.Run();
-
-			if ( tr.Hit )
+			if ( p.IsAttached )
 			{
-				p.Position = tr.EndPosition + tr.Normal * 0.1f;
+				// Update attached points position
+				if ( i == 0 )
+					p.Position = WorldPosition;
+				else if ( i == points.Count - 1 && Attachment != null )
+					p.Position = Attachment.WorldPosition;
 
-				// Kill velocity into the surface
-				Vector3 vel = p.Position - p.Previous;
-				Vector3 intoNormal = Vector3.Dot( vel, tr.Normal ) * tr.Normal;
-
-				p.Previous = p.Position - (vel - intoNormal); // remove bounce component
+				points[i] = p;
+				continue;
 			}
+
+			var positionCopy = p.Position;
+			p.Position = (2.0f * p.Position) - p.Previous + (p.Acceleration * dt * dt);
+			p.Previous = positionCopy;
 
 			points[i] = p;
 		}
-
-		points[0] = points[0] with { Position = WorldPosition };
-
-		if ( Attachment != null )
-			points[^1] = points[^1] with { Position = Attachment.WorldPosition };
 	}
 
-	void SatisfyConstraints()
+	void ApplyForces()
+	{
+		for ( int i = 0; i < points.Count; i++ )
+		{
+			var p = points[i];
+
+			if ( p.IsAttached )
+				continue;
+
+			var totalAcceleration = Gravity;
+
+			// Apply damping
+			var velocity = p.Position - p.Previous;
+			var drag = -DampingFactor * velocity.Length * velocity;
+			totalAcceleration += drag;
+
+			p.Acceleration = totalAcceleration;
+			points[i] = p;
+		}
+	}
+
+	void ApplyConstraints()
 	{
 		for ( int iter = 0; iter < ConstraintIterations; iter++ )
 		{
@@ -136,6 +158,33 @@
 				points[i] = p1;
 				points[i + 2] = p3;
 			}
+		}
+	}
+
+	void HandleCollisions()
+	{
+		for ( int i = 1; i < points.Count; i++ )
+		{
+			if ( points[i].IsAttached ) continue;
+
+			var p = points[i];
+			var tr = Scene.Trace
+				.Ray( p.Previous, p.Position )
+				.Radius( 1.0f )
+				.Run();
+
+			if ( tr.Hit )
+			{
+				p.Position = tr.EndPosition + tr.Normal * 0.1f;
+
+				// Kill velocity into the surface
+				Vector3 vel = p.Position - p.Previous;
+				Vector3 intoNormal = Vector3.Dot( vel, tr.Normal ) * tr.Normal;
+
+				p.Previous = p.Position - (vel - intoNormal); // remove bounce component
+			}
+
+			points[i] = p;
 		}
 	}
 
