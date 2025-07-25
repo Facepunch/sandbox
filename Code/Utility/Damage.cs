@@ -10,8 +10,7 @@ public static class Damage
 		rb.ApplyForceAt( point, force );
 	}
 
-	public static void Radius( Vector3 point, float radius, float baseDamage, TagSet tags,
-		GameObject source = null, GameObject weapon = null, Curve falloff = default, Guid instigatorId = default, GameObject ignore = null, float extraForce = 0 )
+	public static void Radius( Vector3 point, float radius, float baseDamage, TagSet tags, GameObject source = null, GameObject weapon = null, Curve falloff = default, Guid instigatorId = default, GameObject ignore = null, float extraForce = 0 )
 	{
 		Assert.True( Networking.IsHost, "Only the host can deal damage!" );
 		if ( !Networking.IsHost ) return;

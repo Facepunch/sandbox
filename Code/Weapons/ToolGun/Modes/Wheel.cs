@@ -32,6 +32,7 @@ public class Wheel : ToolMode
 	public void SpawnWheel( SelectionPoint point, Model model, Transform tx )
 	{
 		var wheelGo = new GameObject( false, "wheel" );
+		wheelGo.Tags.Add( "removable" );
 		wheelGo.WorldTransform = tx;
 
 		var wheelProp = wheelGo.AddComponent<Prop>();

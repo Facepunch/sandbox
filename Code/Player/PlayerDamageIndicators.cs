@@ -9,6 +9,8 @@ public sealed class PlayerDamageIndicators : Component, IPlayerEvent
 	Vignette damageVignette;
 	List<(Vector3 WorldPos, TimeSince Lifetime)> radialIndicators = new();
 
+	[Property] public Texture RadialDamageIcon { get; set; }
+
 	protected override void OnDisabled()
 	{
 		damageVignette?.Destroy();
@@ -48,10 +50,11 @@ public sealed class PlayerDamageIndicators : Component, IPlayerEvent
 		}
 	}
 
-	Texture texture = Texture.Load( "ui/damage_radial.png" );
-
 	void UpdateRadialIndicators()
 	{
+		if ( RadialDamageIcon is null )
+			return;
+
 		var hud = Scene.Camera.Hud;
 		var playerPos = Player.EyeTransform.Position;
 		var playerRot = Player.EyeTransform.Rotation;
@@ -80,7 +83,7 @@ public sealed class PlayerDamageIndicators : Component, IPlayerEvent
 			var rect = new Rect( new Vector2( RadialDistanceFromCenter * Hud.Scale, -size.y / 2 ), size );
 
 			// scale alpha based on damage dealt or something?
-			hud.DrawTexture( texture, rect, Color.Red.WithAlpha( 1f - (entry.Lifetime / RadialIndicatorLifetime) ) );
+			hud.DrawTexture( RadialDamageIcon, rect, Color.Red.WithAlpha( 1f - (entry.Lifetime / RadialIndicatorLifetime) ) );
 		}
 
 		hud.SetMatrix( Matrix.Identity );

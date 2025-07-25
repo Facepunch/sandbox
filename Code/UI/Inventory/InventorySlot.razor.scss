@@ -2,28 +2,34 @@ InventorySlot
 {
     flex-direction: column;
     gap: 8px;
-    opacity: 0.4;
     width: 64px;
     transition: all 0.1s ease;
-    
 }
 
 InventorySlot .index
 {
-    background-color: #f701;
+    background-color: #a501;
+    backdrop-filter: blur( 10px ) contrast( 0.8 ) brightness( 0.7 );
     aspect-ratio: 1;
     height: 48px;
     width: 48px;
     justify-content: center;
     align-items: center;
-    font-weight: bolder;
+    font-weight: 650;
+    font-family: Poppins;
     border-radius: 4px;
+    color: #feaa;
 }
 
 InventorySlot.active
 {
-    opacity: 1;
     width: 180px;
+
+    > .index
+    {
+        background-color: #f702;
+        color: #fea;
+    }
 }
 
 InventorySlot > .list

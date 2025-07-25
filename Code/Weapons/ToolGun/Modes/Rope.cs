@@ -1,7 +1,7 @@
 ﻿
 [Icon( "🐍" )]
 [ClassName( "rope" )]
-public class Rope : Constraint
+public class Rope : BaseConstraintToolMode
 {
 	[Range( -500, 500 )]
 	[Property]
@@ -13,6 +13,8 @@ public class Rope : Constraint
 	[Range( 0.5f, 5f ), Step( 0.5f )]
 	[Property]
 	public float Width { get; set; } = 1f;
+	
+	public override bool CanConstraintToSelf => true;
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
@@ -62,6 +64,7 @@ public class Rope : Constraint
 		lineRenderer.CastShadows = true;
 		lineRenderer.SplineInterpolation = 4;
 		lineRenderer.Texturing = lineRenderer.Texturing with { Material = Material.Load( "materials/default/rope01.vmat" ), WorldSpace = true, UnitsPerTexture = 32 };
+		lineRenderer.Face = SceneLineObject.FaceMode.Cylinder;
 
 		go2.NetworkSpawn( true, null );
 		go1.NetworkSpawn( true, null );

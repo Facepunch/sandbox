@@ -26,6 +26,6 @@ public static class GamePreferences
 	/// Intensity of your camera's screenshake
 	/// </summary>
 	[ConVar( "sbdm.screenshake", ConVarFlags.Saved )]
-	[Range( 0.1f, 2f, 0.1f ), Group( "Camera" )]
+	[Range( 0.1f, 2f ), Step( 0.1f ), Group( "Camera" )]
 	public static float Screenshake { get; set; } = 0.3f;
 }

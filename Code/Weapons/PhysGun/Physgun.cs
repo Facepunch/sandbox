@@ -1,7 +1,7 @@
-﻿public partial class Physgun : BaseCarryable
-{
-	float MovementSmoothness => 3;
+﻿using Sandbox.Physics;
 
+public partial class Physgun : BaseCarryable
+{
 	[Property, RequireComponent] public HighlightOutline BeamHighlight { get; set; }
 
 	public struct GrabState
@@ -161,24 +161,45 @@
 		}
 	}
 
+	Sandbox.Physics.FixedJoint _joint;
+
 	protected override void OnFixedUpdate()
 	{
 		base.OnFixedUpdate();
 
-		var player = Owner;
-		if ( player is null ) return;
+		if ( !CanMove() )
+		{
+			_joint?.Remove();
+			_joint = null;
 
-		if ( !_state.IsValid() ) return;
-		if ( !_state.Body.IsValid() ) return;
+			return;
+		}
+
+		var targetTx = Owner.EyeTransform.ToWorld( _state.GrabOffset );
+		var targetPoint = new PhysicsPoint( Scene.PhysicsWorld.Body, targetTx.Position, targetTx.Rotation );
+		_joint ??= PhysicsJoint.CreateFixed( targetPoint, new PhysicsPoint( _state.Body.PhysicsBody ) );
+		_joint.Point1 = targetPoint;
+		_joint.SpringLinear = new PhysicsSpring( 16, 4 );
+		_joint.SpringAngular = new PhysicsSpring( 16, 4 );
+		_state.Body.Sleeping = false;
+	}
+
+	bool CanMove()
+	{
+		var player = Owner;
+		if ( player is null ) return false;
+
+		if ( !_state.IsValid() ) return false;
+		if ( !_state.Body.IsValid() ) return false;
 
 		// Only move the body if we own it.
-		if ( _state.Body.IsProxy ) return;
+		if ( _state.Body.IsProxy ) return false;
 
 		// Only move the body if it's dynamic.
-		if ( !_state.Body.MotionEnabled ) return;
+		if ( !_state.Body.MotionEnabled ) return false;
+		if ( !_state.Body.PhysicsBody.IsValid() ) return false;
 
-		var targetTx = player.EyeTransform.ToWorld( _state.GrabOffset );
-		_state.Body.SmoothMove( targetTx, 0.02f * MovementSmoothness, Time.Delta );
+		return true;
 	}
 
 	bool FindGrabbedBody( out GrabState state, Transform aim )

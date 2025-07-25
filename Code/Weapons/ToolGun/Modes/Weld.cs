@@ -1,7 +1,7 @@
 ﻿
 [Icon( "🥽" )]
 [ClassName( "weld" )]
-public class Weld : Constraint
+public class Weld : BaseConstraintToolMode
 {
 	[Property]
 	public bool EasyMode { get; set; } = true;
@@ -14,7 +14,7 @@ public class Weld : Constraint
 	{
 		base.OnControl();
 
-		if ( EasyMode && Stage == 1 )
+		if ( EasyMode && Stage == 1 && IsValidState )
 		{
 			var select = TraceSelect();
 			if ( !select.IsValid() ) return;
@@ -52,7 +52,7 @@ public class Weld : Constraint
 		joint.Body = go2;
 		joint.EnableCollision = true;
 		joint.AngularFrequency = Rigid ? 0 : 10;
-		joint.LinearFrequency = Rigid ? 0 :10;
+		joint.LinearFrequency = Rigid ? 0 : 10;
 
 		go2.NetworkSpawn();
 		go1.NetworkSpawn();
