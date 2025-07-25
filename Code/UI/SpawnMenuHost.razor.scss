@@ -14,8 +14,7 @@ SpawnMenuHost
 	opacity: 0;
 	pointer-events: none;
 	transition: opacity 0.2s linear;
-	backdrop-filter: blur( 8px ) brightness( 1 ) contrast( 0.8 );
-	background-color: #222d;
+	backdrop-filter: brightness( 0.75 ) contrast( 0.75 ) saturate( 0.75 );
 
 	.container .spawnmenuleft
 	{
@@ -127,8 +126,9 @@ SpawnMenuHost.open
 {
 	color: #fff;
 	cursor: pointer;
-	background-color: #222c;
+	background-color: #1f2020aa;
 	pointer-events: none;
+	backdrop-filter: blur( 10px );
 }
 
 
@@ -165,6 +165,7 @@ SpawnMenuHost.open
 {
 	> .body
 	{
-		background-color: #222c;
+		background-color: #1f2020aa;
+		backdrop-filter: blur( 16px );
 	}
 }

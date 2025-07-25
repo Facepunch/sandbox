@@ -7,14 +7,18 @@ SpawnMenuPage
 
 SpawnMenuPage > .left
 {
-	border-right: 1px solid #ffffff05;
 	width: 200px;
 	flex-direction: column;
-	padding: 10px;
+	padding: 8px;
 }
 
 SpawnMenuPage > .body
 {
 	position: relative;
 	flex-grow: 1;
+	background-color: #0008;
+	padding: 8px;
+	border-radius: 8px;
+	margin: 8px;
+	margin-left: 0px;
 }

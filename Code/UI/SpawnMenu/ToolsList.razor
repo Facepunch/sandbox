@@ -6,25 +6,24 @@
 <root>
 
 	<div class="left">
-		<div class="list">
-
-            <VerticalMenu Value="@(CurrentMode?.GetType())">
-                <Options>
-                    @foreach (var group in Game.TypeLibrary.GetTypes<ToolMode>().GroupBy(x => x.Group))
+        <VerticalMenu Value="@(CurrentMode?.GetType())">
+            <Options>
+                @foreach (var group in Game.TypeLibrary.GetTypes<ToolMode>().GroupBy(x => x.Group))
+                {
+                    @if ( !string.IsNullOrWhiteSpace( group.Key ) )
                     {
                         <h2>@group.Key</h2>
-
-                        @foreach (var type in group.OrderBy(x => x.Title))
-                        {
-                            if (type.IsAbstract) continue;
-
-                            <MenuOption Text="@type.Title" Icon="@type.Icon" @onclick="@(() => SwitchMode(type))" Value="@type.TargetType"></MenuOption>
-                        }
                     }
-                </Options>
-            </VerticalMenu>
 
-		</div>
+                    @foreach (var type in group.OrderBy(x => x.Title))
+                    {
+                        if (type.IsAbstract) continue;
+
+                        <MenuOption Text="@type.Title" Icon="@type.Icon" @onclick="@(() => SwitchMode(type))" Value="@type.TargetType"></MenuOption>
+                    }
+                }
+            </Options>
+        </VerticalMenu>
 	</div>
 
 	<div class="body">
