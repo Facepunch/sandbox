@@ -57,6 +57,7 @@ public class Rope : Constraint
 		lineRenderer.CastShadows = true;
 		lineRenderer.SplineInterpolation = 4;
 		lineRenderer.Texturing = lineRenderer.Texturing with { Material = Material.Load( "materials/default/rope01.vmat" ), WorldSpace = true, UnitsPerTexture = 32 };
+		lineRenderer.Face = SceneLineObject.FaceMode.Cylinder;
 
 		go2.NetworkSpawn( true, null );
 		go1.NetworkSpawn( true, null );
