@@ -1,4 +1,4 @@
-﻿public class VerletRope : Component
+﻿public class VerletRope : Component, IScenePhysicsEvents
 {
 	[Property] public GameObject Attachment { get; set; }
 	[Property] public int SegmentCount { get; set; } = 20;
@@ -59,7 +59,7 @@
 		lastEndPos = Attachment?.WorldPosition ?? (WorldPosition + Vector3.Down * SegmentLength * SegmentCount);
 	}
 
-	protected override void OnFixedUpdate()
+	void IScenePhysicsEvents.PrePhysicsStep()
 	{
 		// Check if we need to wake up the rope due to attachment movement
 		if ( isAtRest )
@@ -77,17 +77,8 @@
 			}
 		}
 
-		float fixedTimeStep = 1.0f / (float)SimulationFrequency;
 
-		// Calculate how many substeps we need
-		int substeps = Math.Max( 1, MathX.CeilToInt( Time.Delta / fixedTimeStep ) );
-		float substepDelta = Time.Delta / substeps;
-
-		// Run simulation substeps
-		for ( int i = 0; i < substeps; i++ )
-		{
-			Simulate( substepDelta );
-		}
+		Simulate( Time.Delta );
 
 		// Update attachment positions for tracking
 		lastStartPos = WorldPosition;
