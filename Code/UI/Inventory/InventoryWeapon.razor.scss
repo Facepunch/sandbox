@@ -8,7 +8,8 @@ InventoryWeapon
     height: 48px;
     align-items: center;
     justify-content: center;
-    background-color: #f701;
+    background-color: #a501;
+    backdrop-filter: blur( 10px ) contrast( 0.8 ) brightness( 0.7 );
     transition: all 0.1s ease-in;
     box-shadow: 0px 0px 150px #f800;
     font-weight: bold;
@@ -21,6 +22,8 @@ InventoryWeapon
     {
         transition: opacity 0.1s ease-in;
         opacity: 1;
+        mix-blend-mode: lighten;
+        height: 0px;
     }
 }
 
@@ -30,13 +33,17 @@ InventoryWeapon
     color: #f806;
     width: 100%;
     height: 96px;
+
+    label
+    {
+        height: 24px;
+    }
 }
 
 .active InventoryWeapon.active
 {
-    color: #fc5;
-    box-shadow: 0px 0px 50px #f802;
-    background-color: #f704;
+    background-color: #f702;
+    color: #fea;
     text-shadow: 0px 0px 10px #f50;
 }
 
@@ -53,7 +60,7 @@ InventoryWeapon .icon
     width: 100%;
     height: 100%;
     background-tint: #f704;
-    
+    mix-blend-mode: lighten;
 }
 
 InventoryWeapon.selected
