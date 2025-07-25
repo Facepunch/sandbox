@@ -9,12 +9,14 @@
 
     <div class="left">
 
-        @foreach (var p in options)
-        {
-            var c = activeOption == p ? "active" : "";
-
-            <div class="@c" @onclick="@( () => SwitchOption( p ) )">@p.Name</div>
-        }
+        <VerticalMenu Value="@activeOption">
+            <Options>
+                @foreach (var p in options)
+                {
+                    <MenuOption Value="@p" Text="@p.Name" onclick="@( () => SwitchOption( p ) )"></MenuOption>
+                }
+            </Options>
+        </VerticalMenu>
 
     </div>
 

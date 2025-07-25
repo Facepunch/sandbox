@@ -11,19 +11,23 @@
 
     <div class="left">
 
-        @foreach ( var group in Sandbox.Mounting.Directory.GetAll().GroupBy( x => x.Available ? "Installed" : "Not Installed" ) )
-        {
-            <h2>@group.Key</h2>
+        <VerticalMenu Value="@selected">
+            <Options>
 
-            @foreach (var entry in group)
-            {
-                var active = selected == entry.Ident ? "active" : "";
+                @foreach (var group in Sandbox.Mounting.Directory.GetAll().GroupBy(x => x.Available ? "Installed" : "Not Installed"))
+                {
+                    <h2>@group.Key</h2>
 
-                <div class="entry @active" @onclick=@( () => Switch( entry.Ident ) )>
-                    <label>@entry.Title</label>
-                </div>
-            }
-        }
+                    @foreach (var entry in group)
+                    {
+                        <MenuOption Value="@entry.Ident" Text="@entry.Title" onclick="@( () => Switch( entry.Ident ) )"></MenuOption>
+                    }
+                }
+
+            </Options>
+        </VerticalMenu>
+
+
 
     </div>
 

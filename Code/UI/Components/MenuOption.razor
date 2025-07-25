@@ -1,0 +1,42 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+
+<root>
+
+    @if ( !string.IsNullOrWhiteSpace( Icon ) )
+    {
+        <IconPanel Text="@Icon"></IconPanel>
+    }
+
+    <Label Text="@Text"></Label>
+    
+</root>
+
+@code
+{
+
+    [Parameter, EditorRequired]
+    public string Text { get; set; }
+
+    [Parameter]
+    public string Icon { get; set; }
+
+    [Parameter]
+    public object Value { get; set; }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if ( Value is null )
+            return;
+
+        var menu = Ancestors.OfType<VerticalMenu>().FirstOrDefault();
+        if (menu is not null)
+        {
+            SetClass( "active", menu.Value == Value );
+        }
+    }
+
+}

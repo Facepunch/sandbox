@@ -1,0 +1,15 @@
+VerticalMenu
+{
+	flex-direction: column;
+	font-family: Poppins;
+	font-weight: 600;
+	font-size: 14px;
+	flex-grow: 0;
+	flex-shrink: 0;
+
+	h2
+	{
+		opacity: 0.4;
+		margin-bottom: 0.5rem 0;
+	}
+}

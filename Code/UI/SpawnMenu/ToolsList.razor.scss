@@ -14,44 +14,10 @@ ToolsList > .left
 	.list
 	{
 		flex-direction: column;
-		border: 1px solid #ffffff05;
 		background-color: #2225;
 		padding: 0.5rem;
-		border-radius: 10px;
+		border-radius: 6px;
 		height: 100%;
-	}
-
-	.list .button
-	{
-		cursor: pointer;
-		font-size: 14px;
-		padding: 2px 8px;
-		gap: 0.5rem;
-		font-weight: 550;
-		font-family: poppins;
-		opacity: 0.5;
-		align-items: center;
-		border-radius: 4px;
-
-		&:hover
-		{
-			color: white;
-			opacity: 1;
-		}
-
-		&:active
-		{
-			opacity: 1;
-			background-color: #08f3;
-			color: white;
-		}
-
-		&.active
-		{
-			opacity: 1;
-			background-color: #08f;
-			color: white;
-		}
 	}
 }
 

@@ -7,22 +7,23 @@
 
 	<div class="left">
 		<div class="list">
-            @foreach (var group in Game.TypeLibrary.GetTypes<ToolMode>().GroupBy(x => x.Group))
-			{
-                <h2>@group.Key</h2>
 
-                @foreach (var type in group.OrderBy(x => x.Title))
-				{
-					if (type.IsAbstract) continue;
+            <VerticalMenu Value="@(CurrentMode?.GetType())">
+                <Options>
+                    @foreach (var group in Game.TypeLibrary.GetTypes<ToolMode>().GroupBy(x => x.Group))
+                    {
+                        <h2>@group.Key</h2>
 
-					string activeClass = IsActiveMode(type) ? "active" : string.Empty;
+                        @foreach (var type in group.OrderBy(x => x.Title))
+                        {
+                            if (type.IsAbstract) continue;
 
-					<div class="button @activeClass" @onclick="@(() => SwitchMode( type ) )">
-						<i>@type.Icon</i>
-						<span>@type.Title</span>
-					</div>
-				}
-			}
+                            <MenuOption Text="@type.Title" Icon="@type.Icon" @onclick="@(() => SwitchMode(type))" Value="@type.TargetType"></MenuOption>
+                        }
+                    }
+                </Options>
+            </VerticalMenu>
+
 		</div>
 	</div>
 
@@ -34,7 +35,9 @@
 
 @code
 {
-    protected override int BuildHash() => HashCode.Combine(Player.FindLocalPlayer()?.GetWeapon<Toolgun>()?.GetCurrentMode());
+    ToolMode CurrentMode => Player.FindLocalPlayer()?.GetWeapon<Toolgun>()?.GetCurrentMode();
+
+    protected override int BuildHash() => HashCode.Combine(CurrentMode);
 
 	bool IsActiveMode( TypeDescription t )
 	{

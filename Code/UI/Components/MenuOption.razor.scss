@@ -1,0 +1,32 @@
+MenuOption
+{
+	flex-direction: row;
+	cursor: pointer;
+	padding: 2px 6px;
+	border-radius: 5px;
+	color: #8ad;
+}
+
+.iconpanel
+{
+	width: 24px;
+}
+
+MenuOption:hover
+{
+	color: white;
+	sound-in: ui.button.over;
+}
+
+MenuOption:active
+{
+	color: #fff;
+	background-color: #08f3;
+	sound-in: ui.button.press;
+}
+
+MenuOption.active
+{
+	color: white;
+	background-color: #08f;
+}
