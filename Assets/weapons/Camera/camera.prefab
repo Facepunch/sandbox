@@ -1,13 +1,23 @@
 {
   "RootObject": {
     "__guid": "3c948bf4-5353-443a-bb65-8f28584fed1b",
+    "__version": 1,
     "Flags": 0,
     "Name": "camera",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
+    "Tags": "",
     "Enabled": true,
+    "NetworkMode": 2,
+    "NetworkInterpolation": true,
+    "NetworkOrphaned": 0,
+    "OwnerTransfer": 1,
     "Components": [
       {
         "__type": "CameraWeapon",
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
+        "__enabled": true,
         "AmmoResource": null,
         "CanCancelReload": true,
         "ClipContents": 20,
@@ -18,7 +28,7 @@
           "$source": "svgsource",
           "data": {
             "Size": "512,256",
-            "Source": "\n\u003C?xml version=\u00221.0\u0022 encoding=\u0022UTF-8\u0022?\u003E\n\u003Csvg width=\u00221200pt\u0022 height=\u00221200pt\u0022 version=\u00221.1\u0022 viewBox=\u00220 0 1200 1200\u0022 xmlns=\u0022http://www.w3.org/2000/svg\u0022\u003E\n \u003Cpath d=\u0022m1032 242.2h-241.16l-38.016-57.012c-7.1055-10.715-23.387-19.414-36.215-19.414h-233.18c-12.852 0-29.137 8.6992-36.289 19.414l-37.992 57.012h-241.12c-59.555 0-108.02 48.434-108.02 107.98v576.01c0 59.578 48.469 108.04 108.02 108.04h863.98c59.555 0 108-48.469 108-108.04v-576.01c0-59.543-48.445-107.98-108-107.98zm-804.42 210.9c-33.602 0-60.84-27.238-60.84-60.84 0-33.602 27.238-60.84 60.84-60.84s60.84 27.238 60.84 60.84c0.003906 33.598-27.238 60.84-60.84 60.84zm372.42 437.1c-139.14 0-252-112.81-252-251.96 0-139.2 112.86-252.01 252-252.01 139.18 0 252.01 112.81 252.01 252.01 0 139.15-112.85 251.96-252.01 251.96z\u0022/\u003E\n \u003Cpath d=\u0022m754.13 638.21c0 85.125-69.008 154.13-154.13 154.13s-154.13-69.004-154.13-154.13c0-85.121 69.008-154.13 154.13-154.13s154.13 69.008 154.13 154.13\u0022/\u003E\n\u003C/svg\u003E\n",
+            "Source": "\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"1200pt\" height=\"1200pt\" version=\"1.1\" viewBox=\"0 0 1200 1200\" xmlns=\"http://www.w3.org/2000/svg\">\n <path d=\"m1032 242.2h-241.16l-38.016-57.012c-7.1055-10.715-23.387-19.414-36.215-19.414h-233.18c-12.852 0-29.137 8.6992-36.289 19.414l-37.992 57.012h-241.12c-59.555 0-108.02 48.434-108.02 107.98v576.01c0 59.578 48.469 108.04 108.02 108.04h863.98c59.555 0 108-48.469 108-108.04v-576.01c0-59.543-48.445-107.98-108-107.98zm-804.42 210.9c-33.602 0-60.84-27.238-60.84-60.84 0-33.602 27.238-60.84 60.84-60.84s60.84 27.238 60.84 60.84c0.003906 33.598-27.238 60.84-60.84 60.84zm372.42 437.1c-139.14 0-252-112.81-252-251.96 0-139.2 112.86-252.01 252-252.01 139.18 0 252.01 112.81 252.01 252.01 0 139.15-112.85 251.96-252.01 251.96z\"/>\n <path d=\"m754.13 638.21c0 85.125-69.008 154.13-154.13 154.13s-154.13-69.004-154.13-154.13c0-85.121 69.008-154.13 154.13-154.13s154.13 69.008 154.13 154.13\"/>\n</svg>\n",
             "Colorize": true,
             "TargetColor": "1,1,1,1",
             "Rotate": 0,
@@ -29,14 +39,14 @@
               "EdgeSize": "0,0"
             }
           },
-          "compiled": null
+          "compiled": "textures/generated/svgsource/2507afb45e1ff362.vtex"
         },
         "DisplayName": "Camera",
-        "DisplaySvg": "\n\u003C?xml version=\u00221.0\u0022 encoding=\u0022UTF-8\u0022?\u003E\n\u003Csvg width=\u00221200pt\u0022 height=\u00221200pt\u0022 version=\u00221.1\u0022 viewBox=\u00220 0 1200 1200\u0022 xmlns=\u0022http://www.w3.org/2000/svg\u0022\u003E\n \u003Cpath d=\u0022m1032 242.2h-241.16l-38.016-57.012c-7.1055-10.715-23.387-19.414-36.215-19.414h-233.18c-12.852 0-29.137 8.6992-36.289 19.414l-37.992 57.012h-241.12c-59.555 0-108.02 48.434-108.02 107.98v576.01c0 59.578 48.469 108.04 108.02 108.04h863.98c59.555 0 108-48.469 108-108.04v-576.01c0-59.543-48.445-107.98-108-107.98zm-804.42 210.9c-33.602 0-60.84-27.238-60.84-60.84 0-33.602 27.238-60.84 60.84-60.84s60.84 27.238 60.84 60.84c0.003906 33.598-27.238 60.84-60.84 60.84zm372.42 437.1c-139.14 0-252-112.81-252-251.96 0-139.2 112.86-252.01 252-252.01 139.18 0 252.01 112.81 252.01 252.01 0 139.15-112.85 251.96-252.01 251.96z\u0022/\u003E\n \u003Cpath d=\u0022m754.13 638.21c0 85.125-69.008 154.13-154.13 154.13s-154.13-69.004-154.13-154.13c0-85.121 69.008-154.13 154.13-154.13s154.13 69.008 154.13 154.13\u0022/\u003E\n\u003C/svg\u003E\n",
-        "HoldType": "Punch",
+        "HoldType": "HoldItem",
         "IncrementalReloading": false,
         "InventoryOrder": 10,
         "InventorySlot": 4,
+        "IsSelfAmmo": false,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -45,27 +55,42 @@
         "OnComponentUpdate": null,
         "ParentBone": "hold_r",
         "ReloadTime": 2.5,
+        "StartingAmmo": 0,
         "UsesAmmo": true,
         "UsesClips": true,
+        "Value": 0,
         "ViewModelPrefab": null,
-        "WorldModelPrefab": null
+        "WorldModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/camera/camera_wm.prefab"
+        }
       }
     ],
     "Children": [
       {
         "__guid": "2f190aea-2086-4bc4-b298-d7a980288908",
+        "__version": 1,
         "Flags": 0,
         "Name": "Cube",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
         "Scale": "0.1,0.1,0.1",
+        "Tags": "",
         "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkInterpolation": true,
+        "NetworkOrphaned": 0,
+        "OwnerTransfer": 1,
         "Components": [
           {
             "__type": "Sandbox.ModelRenderer",
             "__guid": "ec0099bd-8e1b-4468-a41a-c67148a83fcf",
+            "__enabled": true,
             "BodyGroups": 18446744073709551615,
             "CreateAttachments": false,
             "MaterialGroup": null,
             "MaterialOverride": null,
+            "Materials": null,
             "Model": "models/dev/box.vmdl",
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -82,19 +107,14 @@
             "RenderType": "On",
             "Tint": "1,1,1,1"
           }
-        ]
+        ],
+        "Children": []
       }
     ],
-    "__variables": [],
     "__properties": {
-      "FixedUpdateFrequency": 50,
-      "MaxFixedUpdates": 5,
-      "NetworkFrequency": 30,
       "NetworkInterpolation": true,
-      "PhysicsSubSteps": 1,
-      "ThreadedAnimation": true,
       "TimeScale": 1,
-      "UseFixedUpdate": true,
+      "WantsSystemScene": true,
       "Metadata": {},
       "NavMesh": {
         "Enabled": false,
@@ -108,13 +128,14 @@
         "ExcludedBodies": "",
         "IncludedBodies": ""
       }
-    }
+    },
+    "__variables": []
   },
+  "ResourceVersion": 2,
   "ShowInMenu": false,
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "ResourceVersion": 1,
   "__references": [],
-  "__version": 1
+  "__version": 2
 }
