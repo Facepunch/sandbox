@@ -74,6 +74,12 @@ public class CameraWeapon : BaseWeapon
 	{
 		base.OnControl( player );
 
+		if ( Input.Pressed( "reload" ) )
+		{
+			fov = 50;
+			roll = 0;
+		}
+
 		if ( Input.Down( "attack2" ) )
 		{
 			fov += Input.AnalogLook.pitch;
