@@ -12,11 +12,11 @@
 	/// <summary>
 	/// Factor after which we consider a rope to be stretched.
 	/// </summary>
-	private float collisionMaxRopeStretchFactor { get; set; } = 2f;
+	private float collisionMaxRopeStretchFactor { get; set; } = 1.8f;
 	/// <summary>
 	/// Ignore collisions when segment is stretched beyond this factor
 	/// </summary>
-	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.6f;
+	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.3f;
 
 	/// <summary>
 	/// Velocity threshold below which we consider the rope to be at rest.
