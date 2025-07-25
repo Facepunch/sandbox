@@ -367,7 +367,15 @@
 				{
 					var velocity = p.Position - p.Previous;
 					var slideVelocity = velocity - Vector3.Dot( velocity, moveTrace.Normal ) * moveTrace.Normal;
-					p.Previous = p.Position - slideVelocity * (1.0f - DampingFactor);
+
+					// Apply surface friction to the sliding velocity
+					float frictionFactor = 1.0f - Math.Clamp( moveTrace.Surface.Friction, 0.0f, 0.95f );
+
+					// Combine surface friction with the existing damping factor
+					float combinedFactor = frictionFactor * (1.0f - DampingFactor);
+
+					// Update previous position to create the sliding effect
+					p.Previous = p.Position - slideVelocity * combinedFactor;
 				}
 			}
 
