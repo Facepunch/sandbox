@@ -91,6 +91,12 @@ public abstract class BaseConstraintToolMode : ToolMode
 	[Rpc.Host]
 	private void Create( SelectionPoint point1, SelectionPoint point2 )
 	{
+		if ( !UpdateValidity( point1, point2 ) )
+		{
+			Log.Warning( "Tried to create invalid constraint" );
+			return;
+		}
+
 		CreateConstraint( point1, point2 );
 	}
 

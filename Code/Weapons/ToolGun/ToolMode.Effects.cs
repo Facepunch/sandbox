@@ -5,6 +5,11 @@
 	{
 		var player = Toolgun.Owner;
 		if ( player is null ) return;
+		if ( !target.IsValid() )
+		{
+			Log.Warning( "ShootEffects: Unknown object" );
+			return;
+		}
 
 		var muzzle = Toolgun.MuzzleTransform;
 
