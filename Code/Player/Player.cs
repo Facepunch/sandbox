@@ -19,6 +19,11 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 
 	[Sync( SyncFlags.FromHost )] public PlayerData PlayerData { get; set; }
 
+	[Header( "Icons" )]
+	[Property] public Texture HealthIcon { get; set; }
+	[Property] public Texture ArmourIcon { get; set; }
+
+
 	public Transform EyeTransform
 	{
 		get
@@ -442,16 +447,13 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		new Punch( new Vector3( -20, 0, 0 ), 0.5f, 2.0f, 1.0f );
 	}
 
-	Texture healthIcon = Texture.Load( "ui/health.png" );
-	Texture armourIcon = Texture.Load( "ui/shield.png" );
-
 	public void DrawVitals( HudPainter hud, Vector2 bottomleft )
 	{
-		hud.DrawHudElement( $"{Health.CeilToInt()}", bottomleft, healthIcon, 30f );
+		hud.DrawHudElement( $"{Health.CeilToInt()}", bottomleft, HealthIcon, 30f );
 
 		if ( Armour > 0f )
 		{
-			hud.DrawHudElement( $"{Armour.CeilToInt()}", bottomleft - new Vector2( 0, 64f * Hud.Scale ), armourIcon, 30f );
+			hud.DrawHudElement( $"{Armour.CeilToInt()}", bottomleft - new Vector2( 0, 64f * Hud.Scale ), ArmourIcon, 30f );
 		}
 	}
 

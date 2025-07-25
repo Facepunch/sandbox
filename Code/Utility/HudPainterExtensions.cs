@@ -20,7 +20,7 @@ public static class HudPainterExtensions
 			if ( flags.HasFlag( TextFlag.Right ) )
 				position.x -= iconSize * Hud.Scale;
 
-			hud.DrawTexture( icon, new Rect( position, iconSize * Hud.Scale ) );
+			hud.DrawTexture( icon, new Rect( position, iconSize * Hud.Scale ), textScope.TextColor );
 		}
 
 		const float padding = 16f;
