@@ -1,6 +1,7 @@
 ﻿
 [Icon( "🌀" )]
 [ClassName( "elastic" )]
+[Group( "Constraints" )]
 public class Elastic : BaseConstraintToolMode
 {
 	[Range( 0, 15 )]

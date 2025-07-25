@@ -1,6 +1,7 @@
 ﻿
 [Icon( "🍄" )]
 [ClassName( "resizer" )]
+[Group( "Tools" )]
 public class Resizer : ToolMode
 {
 	public override void OnControl()

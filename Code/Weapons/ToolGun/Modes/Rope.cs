@@ -1,6 +1,7 @@
 ﻿
 [Icon( "🐍" )]
 [ClassName( "rope" )]
+[Group( "Constraints" )]
 public class Rope : BaseConstraintToolMode
 {
 	[Range( -500, 500 )]

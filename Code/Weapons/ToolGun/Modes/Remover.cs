@@ -1,5 +1,6 @@
 ﻿[Icon( "🧨" )]
 [ClassName( "remover" )]
+[Group( "Tools" )]
 public class Remover : ToolMode
 {
 	[Property]

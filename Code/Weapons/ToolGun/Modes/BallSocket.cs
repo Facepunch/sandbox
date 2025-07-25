@@ -1,6 +1,7 @@
 ﻿
 [Icon( "🎱" )]
 [ClassName( "ballsocket" )]
+[Group( "Constraints" )]
 public class BallSocket : BaseConstraintToolMode
 {
 	[Property]

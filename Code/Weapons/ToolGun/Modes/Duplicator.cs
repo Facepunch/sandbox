@@ -1,6 +1,7 @@
 ﻿
 [Icon( "✌️" )]
 [ClassName( "duplicator" )]
+[Group( "Building" )]
 public class Duplicator : ToolMode
 {
 	SelectionPoint Point1;

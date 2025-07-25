@@ -1,6 +1,7 @@
 ﻿
 [Icon( "🍔" )]
 [ClassName( "mass" )]
+[Group( "Tools" )]
 public class Mass : ToolMode
 {
 	[Sync, Property, Title( "Mass (kg)" ), Range( 1, 1000 )]

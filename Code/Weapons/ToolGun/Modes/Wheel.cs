@@ -1,6 +1,7 @@
 ﻿
 [Icon( "🛞" )]
 [ClassName( "wheel" )]
+[Group( "Building" )]
 public class Wheel : ToolMode
 {
 	Model wheelModel = Cloud.Model( "facepunch/tyre_with_rim" );

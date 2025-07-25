@@ -1,6 +1,7 @@
 ﻿
 [Icon( "🥽" )]
 [ClassName( "weld" )]
+[Group( "Constraints" )]
 public class Weld : BaseConstraintToolMode
 {
 	[Property]
