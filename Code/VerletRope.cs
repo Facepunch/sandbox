@@ -3,10 +3,10 @@
 	[Property] public GameObject Attachment { get; set; }
 	[Property] public int SegmentCount { get; set; } = 20;
 	[Property] public float SegmentLength { get; set; } = 10.0f;
-	[Property] public int ConstraintIterations { get; set; } = 5;
+	[Property] public int ConstraintIterations { get; set; } = 2;
 	[Property] public Vector3 Gravity { get; set; } = new( 0, 0, -800 );
-	[Property] public float Stiffness { get; set; } = 0.9f;
-	[Property] public float DampingFactor { get; set; } = 0.05f;
+	[Property] public float Stiffness { get; set; } = 0.7f;
+	[Property] public float DampingFactor { get; set; } = 0.2f;
 	[Property] public float Width { get; set; } = 1f;
 
 	/// <summary>
@@ -16,7 +16,7 @@
 	/// <summary>
 	/// Ignore collisions when segment is stretched beyond this factor
 	/// </summary>
-	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.5f;
+	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.7f;
 
 	private float currentRopeLength;
 	private float averageSegmentLength;
@@ -27,6 +27,7 @@
 		public Vector3 Previous;
 		public Vector3 Acceleration;
 		public bool IsAttached;
+		public float MovementSinceLastCollision;
 	}
 
 	private List<RopePoint> points;
@@ -42,7 +43,18 @@
 
 	protected override void OnFixedUpdate()
 	{
-		Simulate( Time.Delta );
+		const float targetHz = 60.0f;
+		const float fixedTimeStep = 1.0f / targetHz;
+
+		// Calculate how many substeps we need
+		int substeps = Math.Max( 1, MathX.CeilToInt( Time.Delta / fixedTimeStep ) );
+		float substepDelta = Time.Delta / substeps;
+
+		// Run simulation substeps
+		for ( int i = 0; i < substeps; i++ )
+		{
+			Simulate( substepDelta );
+		}
 	}
 
 	protected override void OnUpdate()
@@ -95,9 +107,12 @@
 				continue;
 			}
 
-			var positionCopy = p.Position;
-			p.Position = (2.0f * p.Position) - p.Previous + (p.Acceleration * dt * dt);
-			p.Previous = positionCopy;
+			Vector3 velocity = p.Position - p.Previous;
+
+			var currentPosition = p.Position;
+
+			p.Position = currentPosition + velocity * (1.0f - DampingFactor * dt) + p.Acceleration * (dt * dt);
+			p.Previous = currentPosition;
 
 			points[i] = p;
 		}
@@ -222,19 +237,30 @@
 
 			var p = points[i];
 
+			p.MovementSinceLastCollision += (p.Position - p.Previous).LengthSquared;
+
+			if ( p.MovementSinceLastCollision < 0.01f * 0.01f )
+			{
+				// Skip if movement is too small
+				points[i] = p;
+				continue;
+			}
+
 			// Skip collision check for stretched segments
 			// This is our attempt to unfuck the rope if it got dragged across the map
 			if ( isRopeStretched )
 			{
 				var prevPoint = points[i - 1];
-				var currentSegmentLength = (prevPoint.Position - p.Position).Length;
+				var currentSegmentLengthSquared = (prevPoint.Position - p.Position).LengthSquared;
 
-				if ( currentSegmentLength > segmentSlideIgnoreLength )
+				if ( currentSegmentLengthSquared > segmentSlideIgnoreLength * segmentSlideIgnoreLength )
 				{
 					points[i] = p;
 					continue;
 				}
 			}
+
+			p.MovementSinceLastCollision = 0.0f; // Reset movement after processing
 
 			// First check for movement-based collisions (from previous to current position)
 			var moveTrace = Scene.Trace.Sphere( Width, p.Previous, p.Position )
@@ -246,14 +272,14 @@
 				// Prevent the rope from clipping through the ground
 				// Would be nice if we could check for backface collision
 				// but that only seems to be available for UseRenderMesh traces.
-				if (moveTrace.Normal.z < -0.5f )
+				if ( moveTrace.Normal.z < -0.5f )
 				{
-					p.Position = moveTrace.HitPosition + Vector3.Up * (2f + 0.5f);
+					p.Position = moveTrace.HitPosition + Vector3.Up;
 				}
 				else
 				{
 					// Hit something during movement
-					p.Position = moveTrace.EndPosition + moveTrace.Normal * 0.4f;
+					p.Position = moveTrace.EndPosition + moveTrace.Normal * 0.01f;
 				}
 
 				// Project velocity along surface for sliding
