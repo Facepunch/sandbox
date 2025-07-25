@@ -8,7 +8,6 @@
 	[Property] public float Stiffness { get; set; } = 0.7f;
 	[Property] public float DampingFactor { get; set; } = 0.2f;
 	[Property] public float Width { get; set; } = 1f;
-	[Property] public int SimulationFrequency { get; set; } = 60;
 
 	/// <summary>
 	/// Factor after which we consider a rope to be stretched.
@@ -34,6 +33,7 @@
 	private int restFrameCount = 0;
 	private Vector3 lastStartPos;
 	private Vector3 lastEndPos;
+	private TimeSince timeSincePhysicsUpdate;
 
 	private struct RopePoint
 	{
@@ -57,6 +57,8 @@
 		// Initialize attachment tracking
 		lastStartPos = WorldPosition;
 		lastEndPos = Attachment?.WorldPosition ?? (WorldPosition + Vector3.Down * SegmentLength * SegmentCount);
+
+		timeSincePhysicsUpdate = 0;
 	}
 
 	void IScenePhysicsEvents.PrePhysicsStep()
@@ -79,6 +81,8 @@
 
 
 		Simulate( Time.Delta );
+
+		timeSincePhysicsUpdate = 0;
 
 		// Update attachment positions for tracking
 		lastStartPos = WorldPosition;
@@ -376,9 +380,35 @@
 		var line = GetComponent<LineRenderer>();
 		if ( line is null ) return;
 
+		// We could use InterpolationBuffer here but i feel like that would be overkill
+		// Also it's private/internal.
+		float fixedDelta = 1f / ProjectSettings.Physics.FixedUpdateFrequency.Clamp( 1, 1000 );
+		float lerpFactor = Math.Min( timeSincePhysicsUpdate / fixedDelta, 1.0f );
+
 		line.UseVectorPoints = true;
 		line.VectorPoints ??= new();
 		line.VectorPoints.Clear();
-		line.VectorPoints.AddRange( points.Select( p => p.Position ) );
+
+		for ( int i = 0; i < points.Count; i++ )
+		{
+			var point = points[i];
+
+			// For attached points, always use their current position
+			if ( point.IsAttached )
+			{
+				if ( i == 0 )
+					line.VectorPoints.Add( WorldPosition );
+				else if ( i == points.Count - 1 && Attachment != null )
+					line.VectorPoints.Add( Attachment.WorldPosition );
+				else
+					line.VectorPoints.Add( point.Position );
+			}
+			else
+			{
+				// For non-attached points, lerp between previous and current position
+				Vector3 lerpedPosition = Vector3.Lerp( point.Previous, point.Position, lerpFactor );
+				line.VectorPoints.Add( lerpedPosition );
+			}
+		}
 	}
 }
