@@ -9,10 +9,14 @@
     return;
 }
 
-@foreach ( var entry in LastResult.Packages )
-{
-    <SpawnButton Icon="@entry.Thumb" Action="@(() => Spawn( entry ))"></SpawnButton>
-}
+<TileGroup>
+    <Tiles>
+    @foreach ( var entry in LastResult.Packages )
+    {
+        <SpawnButton Icon="@entry.Thumb" Action="@(() => Spawn( entry ))"></SpawnButton>
+    }
+    </Tiles>
+</TileGroup>
 
 @code
 {

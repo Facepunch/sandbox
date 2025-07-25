@@ -1,0 +1,19 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+
+<root>
+    @Options
+</root>
+
+@code
+{
+
+    public RenderFragment Options { get; set; }
+
+    /// <summary>
+    /// The currently selected value of any sub-menus
+    /// </summary>
+    public object Value { get; set; }
+
+}

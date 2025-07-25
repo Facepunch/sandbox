@@ -5,10 +5,8 @@
 @attribute [Title( "Props" )]
 
 
-<root>
-
-    <div class="left">
-
+<SpawnMenuPage>
+    <Left>
         <VerticalMenu Value="@activeOption">
             <Options>
                 @foreach (var p in options)
@@ -17,20 +15,18 @@
                 }
             </Options>
         </VerticalMenu>
+    </Left>
 
-    </div>
-
-    <div class="body" @ref="Body">
-
-    </div>
-
-</root>
+    <Body>
+        <PanelSwitcher @ref="Switcher">
+        </PanelSwitcher>
+    </Body>
+</SpawnMenuPage>
 
 @code
 {
     SpawnMenuOption activeOption;
-
-    Panel Body{ get; set; }
+    PanelSwitcher Switcher;
 
     void Spawn( string ident )
     {
@@ -43,7 +39,7 @@
     {
         base.OnAfterTreeRender(firstTime);
 
-        if ( firstTime && Body is not null )
+        if ( firstTime && Switcher.IsValid() )
         {
             Rebuild();
         }
@@ -87,7 +83,7 @@
         if (activeOption.Panel == null )
         {
             activeOption.Panel= activeOption.PanelCreator.Invoke();
-            Body.AddChild(activeOption.Panel);
+            Switcher.AddChild(activeOption.Panel);
         }
 
         activeOption.Panel.SetClass("hidden", false);

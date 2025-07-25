@@ -5,12 +5,8 @@
 @attribute [Title( "Mounts" )]
 @attribute [Order( 1000 )]
 
-
-
-<root>
-
-    <div class="left">
-
+<SpawnMenuPage>
+    <Left>
         <VerticalMenu Value="@selected">
             <Options>
 
@@ -26,25 +22,19 @@
 
             </Options>
         </VerticalMenu>
+    </Left>
 
-
-
-    </div>
-
-    <div class="body">
-
-        @if ( !string.IsNullOrEmpty( selected ) )
+    <Body>
+        @if (!string.IsNullOrEmpty(selected))
         {
             <MountContent Ident="@selected"></MountContent>
         }
         else
         {
-            
+
         }
-
-    </div>
-
-</root>
+    </Body>
+</SpawnMenuPage>
 
 @code
 {

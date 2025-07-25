@@ -3,38 +3,3 @@ SpawnPage
 	
 }
 
-
-SpawnPage > .left
-{
-	border-right: 1px solid #ffffff05;
-	width: 200px;
-	flex-direction: column;
-	padding: 10px;
-
-}
-
-SpawnPage > .body
-{
-	position: relative;
-	flex-grow: 1;
-}
-
-SpawnPage > .body > *
-{
-	padding: 1rem;
-	flex-wrap: wrap;
-	gap: 5px;
-	overflow-y: scroll;
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	right: 0px;
-	bottom: 0px;
-	transition: all 0.1s linear;
-}
-
-SpawnPage > .body > .hidden
-{
-	opacity: 0;
-	transform: translateY( 10px );
-}

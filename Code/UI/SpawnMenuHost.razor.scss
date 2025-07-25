@@ -6,6 +6,7 @@ SpawnMenuHost
 	right: 0;
 	bottom: 0;
 	color: #cdf;
+	justify-content: center;
 }
 
 SpawnMenuHost
@@ -52,6 +53,7 @@ SpawnMenuHost.open
 {
 	width: 100%;
 	height: 100%;
+	max-width: 1900px;
 }
 
 .container .spawnmenuleft
@@ -59,6 +61,11 @@ SpawnMenuHost.open
 	flex-grow: 1;
 	padding: 128px 64px;
 	padding-right: 16px;
+
+	PanelSwitcher
+	{
+		padding-bottom: 128px;
+	}
 }
 
 .container .spawnmenuright
@@ -66,7 +73,6 @@ SpawnMenuHost.open
 	width: 600px;
 	flex-shrink: 0;
 	flex-grow: 0;
-	background-color: #1115;
 	padding: 128px 64px;
 	padding-left: 16px;
 }
