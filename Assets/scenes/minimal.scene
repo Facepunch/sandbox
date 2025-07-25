@@ -238,15 +238,15 @@
               "__type": "Inventory",
               "__guid": "253d6fc1-971f-4abe-9407-a20c02ac2cf2",
               "__enabled": true,
-              "CancelSound": null,
+              "CancelSound": "sounds/kenney/ui/ui.button.deny.sound",
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
               "OnComponentEnabled": null,
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
               "OnComponentUpdate": null,
-              "SelectSound": "redsnail/audio/sfx/panelopen.sound",
-              "SwitchSound": "redsnail/audio/sfx/buttonhover.sound"
+              "SelectSound": "sounds/kenney/ui/ui.button.press.sound",
+              "SwitchSound": "sounds/kenney/ui/ui.button.over.sound"
             }
           ],
           "Children": []
@@ -471,9 +471,6 @@
   "ResourceVersion": 3,
   "Title": null,
   "Description": null,
-  "__references": [
-    "redsnail.redsnail-sound-ui-buttonhover#108219",
-    "redsnail.redsnail-sound-ui-panelopen#108220"
-  ],
+  "__references": [],
   "__version": 3
 }

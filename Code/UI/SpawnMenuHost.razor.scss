@@ -91,7 +91,7 @@ SpawnMenuHost.open
 	color: white;
 	font-weight: 650;
 	font-family: Poppins;
-	margin-left: 32px;
+	margin-left: 8px;
 	margin-bottom: 16px;
 	z-index: 10;
 	flex-shrink: 0;
@@ -99,25 +99,32 @@ SpawnMenuHost.open
 
 .tabs > *
 {
-	padding: 0.5rem 1rem;
-	border-bottom: 1px solid #08f0;
+	padding: 0.5rem 2rem;
 	cursor: pointer;
 	color: #cdfa;
+	border-radius: 32px;
 }
 
 .tabs > *:hover
 {
-	color: #cdfd;
+	color: #cdf;
+	sound-in: ui.button.over;
+}
+
+.tabs > *:active
+{
+	color: #fff;
+	sound-in: ui.button.press;
 }
 
 .tabs > *.active
 {
 	color: #fff;
-	padding: 0.5rem 1rem;
-	border-bottom: 1px solid #08f;
+
 	text-shadow: 0px 0px 6px #08f6;
 	cursor: pointer;
-	background-image: linear-gradient( from bottom, #08f0, #08f2 );
+	background-color: #08f;
+
 	pointer-events: none;
 }
 
