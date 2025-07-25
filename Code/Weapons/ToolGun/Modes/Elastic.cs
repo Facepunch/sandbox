@@ -1,7 +1,7 @@
 ﻿
 [Icon( "🌀" )]
 [ClassName( "elastic" )]
-public class Elastic : Constraint
+public class Elastic : BaseConstraintToolMode
 {
 	[Range( 0, 15 )]
 	[Property]

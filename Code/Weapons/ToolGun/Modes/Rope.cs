@@ -1,7 +1,7 @@
 ﻿
 [Icon( "🐍" )]
 [ClassName( "rope" )]
-public class Rope : Constraint
+public class Rope : BaseConstraintToolMode
 {
 	[Range( -500, 500 )]
 	[Property]
@@ -9,6 +9,8 @@ public class Rope : Constraint
 
 	[Property]
 	public bool Rigid { get; set; } = false;
+
+	public override bool CanConstraintToSelf => true;
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{

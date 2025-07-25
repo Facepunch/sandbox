@@ -1,7 +1,7 @@
 ﻿
 [Icon( "➖" )]
 [ClassName( "slider" )]
-public class Slider : Constraint
+public class Slider : BaseConstraintToolMode
 {
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{

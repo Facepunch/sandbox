@@ -1,7 +1,7 @@
 ﻿
 [Icon( "🎱" )]
 [ClassName( "ballsocket" )]
-public class BallSocket : Constraint
+public class BallSocket : BaseConstraintToolMode
 {
 	[Property]
 	public bool EnableCollision { get; set; } = false;
