@@ -9,55 +9,6 @@ partial class Feed
 	[Property] public Texture ExplosionIcon { get; set; }
 	[Property] public Texture SuicideIcon { get; set; }
 	[Property] public Texture FallIcon { get; set; }
-	[Property] public Texture MultiKillIcon { get; set; }
-
-	private string KillsToText( int kills )
-	{
-		return kills switch
-		{
-			2 => "double kill!",
-			3 => "triple kill!",
-			4 => "monster kill!!",
-			5 => "killtacular!!",
-			6 => "killimanjaro!!!",
-			//
-			_ => $"multi kill ({kills})!!!"
-		};
-	}
-
-	[Rpc.Broadcast]
-	public void NotifyKill( PlayerData attacker, int kills )
-	{
-		if ( Application.IsDedicatedServer ) return;
-		if ( !attacker.IsValid() ) return;
-
-		if ( attacker.IsMe )
-		{
-			var x = Sound.Play( "kill_sound" );
-			x.Pitch = 1f + (1f / 12f * (kills - 2));
-		}
-
-		if ( kills < 2 ) return;
-
-		var panel = new Panel();
-
-		var icons = panel.AddChild<Panel>( "icons" );
-
-		AddIcon( icons, MultiKillIcon );
-
-		var left = panel.AddChild<Label>();
-		left.Text = attacker.DisplayName;
-
-		var right = panel.AddChild<Label>();
-		right.Text = KillsToText( kills );
-
-		if ( attacker.IsValid() && attacker.IsMe )
-			panel.AddClass( "is-me" );
-		panel.FlashClass( "important", 1f );
-
-		Panel?.AddChild( panel );
-		Invoke( 7, () => panel.Delete() );
-	}
 
 	protected override void OnUpdate()
 	{
