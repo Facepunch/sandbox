@@ -10,6 +10,10 @@ public class Rope : Constraint
 	[Property]
 	public bool Rigid { get; set; } = false;
 
+	[Range( 0.5f, 5f ), Step( 0.5f )]
+	[Property]
+	public float Width { get; set; } = 1f;
+
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
 		var go1 = new GameObject( false, "rope" );
@@ -47,11 +51,12 @@ public class Rope : Constraint
 			vertletRope.SegmentCount = Math.Max( 2, MathX.CeilToInt( len / 16.0f ) );
 			vertletRope.SegmentLength = (len / vertletRope.SegmentCount);
 			vertletRope.ConstraintIterations = 2;
+			vertletRope.Width = Width;
 		}
 
 		var lineRenderer = go1.AddComponent<LineRenderer>();
 		lineRenderer.Points = [go1, go2];
-		lineRenderer.Width = 1f;
+		lineRenderer.Width = Width;
 		lineRenderer.Color = Color.White;
 		lineRenderer.Lighting = true;
 		lineRenderer.CastShadows = true;

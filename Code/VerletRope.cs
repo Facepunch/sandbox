@@ -8,6 +8,7 @@
 	[Property] public float Stiffness { get; set; } = 0.7f;
 	[Property] public float DampingFactor { get; set; } = 0.2f;
 	[Property] public float Width { get; set; } = 1f;
+	[Property] public int SimulationFrequency { get; set; } = 60;
 
 	/// <summary>
 	/// Factor after which we consider a rope to be stretched.
@@ -16,10 +17,23 @@
 	/// <summary>
 	/// Ignore collisions when segment is stretched beyond this factor
 	/// </summary>
-	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.7f;
+	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.6f;
+
+	/// <summary>
+	/// Velocity threshold below which we consider the rope to be at rest.
+	/// </summary>
+	private float restVelocityThreshold { get; set; } = 0.03f;
+	/// <summary>
+	/// Consecutive frames of not movement required to consider the rope at rest.
+	/// </summary>
+	private int restFramesRequired { get; set; } = 8;
 
 	private float currentRopeLength;
 	private float averageSegmentLength;
+	private bool isAtRest = false;
+	private int restFrameCount = 0;
+	private Vector3 lastStartPos;
+	private Vector3 lastEndPos;
 
 	private struct RopePoint
 	{
@@ -39,12 +53,31 @@
 		{
 			Simulate( 1.0f / 60.0f );
 		}
+
+		// Initialize attachment tracking
+		lastStartPos = WorldPosition;
+		lastEndPos = Attachment?.WorldPosition ?? (WorldPosition + Vector3.Down * SegmentLength * SegmentCount);
 	}
 
 	protected override void OnFixedUpdate()
 	{
-		const float targetHz = 60.0f;
-		const float fixedTimeStep = 1.0f / targetHz;
+		// Check if we need to wake up the rope due to attachment movement
+		if ( isAtRest )
+		{
+			bool startMoved = (WorldPosition - lastStartPos).LengthSquared > 0.01f;
+			bool endMoved = Attachment != null && (Attachment.WorldPosition - lastEndPos).LengthSquared > 0.01f;
+
+			if ( startMoved || endMoved )
+			{
+				WakeRope();
+			}
+			else
+			{
+				return;
+			}
+		}
+
+		float fixedTimeStep = 1.0f / (float)SimulationFrequency;
 
 		// Calculate how many substeps we need
 		int substeps = Math.Max( 1, MathX.CeilToInt( Time.Delta / fixedTimeStep ) );
@@ -55,11 +88,21 @@
 		{
 			Simulate( substepDelta );
 		}
+
+		// Update attachment positions for tracking
+		lastStartPos = WorldPosition;
+		lastEndPos = Attachment?.WorldPosition ?? lastEndPos;
 	}
 
 	protected override void OnUpdate()
 	{
 		Draw();
+	}
+
+	private void WakeRope()
+	{
+		isAtRest = false;
+		restFrameCount = 0;
 	}
 
 	void InitializePoints()
@@ -87,6 +130,48 @@
 		UpdateRopeLengths();
 
 		HandleCollisions();
+
+		CheckRestState();
+	}
+
+	private void CheckRestState()
+	{
+		if ( isAtRest )
+			return;
+
+		bool isMoving = false;
+		float velocityThresholdSq = restVelocityThreshold * restVelocityThreshold;
+
+		// Check if any non-attached point is moving significantly
+		for ( int i = 0; i < points.Count; i++ )
+		{
+			var p = points[i];
+
+			// Skip attached points as they're controlled externally
+			if ( p.IsAttached )
+				continue;
+
+			var velocitySq = (p.Position - p.Previous).LengthSquared;
+
+			if ( velocitySq > velocityThresholdSq )
+			{
+				isMoving = true;
+				break;
+			}
+		}
+
+		if ( !isMoving )
+		{
+			restFrameCount++;
+			if ( restFrameCount >= restFramesRequired )
+			{
+				isAtRest = true;
+			}
+		}
+		else
+		{
+			restFrameCount = 0;
+		}
 	}
 
 	void VerletIntegration( float dt )
@@ -228,7 +313,7 @@
 		var isExtremelyStretched = currentRopeLength > SegmentLength * SegmentCount * 4;
 		if ( isExtremelyStretched )
 		{
-			return; 
+			return;
 		}
 
 		for ( int i = 1; i < points.Count; i++ )
@@ -283,7 +368,7 @@
 				}
 
 				// Project velocity along surface for sliding
-				if (isRopeStretched)
+				if ( isRopeStretched )
 				{
 					var velocity = p.Position - p.Previous;
 					var slideVelocity = velocity - Vector3.Dot( velocity, moveTrace.Normal ) * moveTrace.Normal;
