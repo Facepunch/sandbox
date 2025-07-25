@@ -98,7 +98,6 @@ SpawnMenuHost.open
 	font-weight: 650;
 	font-family: Poppins;
 	margin-left: 8px;
-	margin-bottom: 16px;
 	z-index: 10;
 	flex-shrink: 0;
 }
@@ -108,7 +107,8 @@ SpawnMenuHost.open
 	padding: 0.5rem 2rem;
 	cursor: pointer;
 	color: #cdfa;
-	border-radius: 32px;
+	border-radius: 8px 8px 0 0;
+	background-color: #2225;
 }
 
 .tabs > *:hover
@@ -126,11 +126,8 @@ SpawnMenuHost.open
 .tabs > *.active
 {
 	color: #fff;
-
-	text-shadow: 0px 0px 6px #08f6;
 	cursor: pointer;
-	background-color: #08f;
-
+	background-color: #222c;
 	pointer-events: none;
 }
 
@@ -161,4 +158,13 @@ SpawnMenuHost.open
 	opacity: 1;
 	transition: all 0.1s linear;
 	transform: translateY( 0px );
+}
+
+.container > .spawnmenuleft,
+.container > .spawnmenuright
+{
+	> .body
+	{
+		background-color: #222c;
+	}
 }
