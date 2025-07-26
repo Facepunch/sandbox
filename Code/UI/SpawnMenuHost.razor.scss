@@ -105,9 +105,10 @@ SpawnMenuHost.open
 {
 	padding: 0.5rem 2rem;
 	cursor: pointer;
-	color: #cdfa;
+	color: #D1D7E3AA;
 	border-radius: 8px 8px 0 0;
-	background-color: #2225;
+	background-color: #464C4FAE;
+	opacity: 1;
 }
 
 .tabs > *:hover
@@ -124,9 +125,10 @@ SpawnMenuHost.open
 
 .tabs > *.active
 {
+	opacity: 1;
 	color: #fff;
 	cursor: pointer;
-	background-color: #1f2020aa;
+	background-color: #031B2CA6;
 	pointer-events: none;
 	backdrop-filter: blur( 8px );
 }
@@ -165,7 +167,14 @@ SpawnMenuHost.open
 {
 	> .body
 	{
-		background-color: #1f2020aa;
+		background-color: #031B2CA6;
 		backdrop-filter: blur( 8px );
 	}
+}
+
+
+.menuinner
+{
+	background-color: #282E3488;
+	border-radius: 8px;
 }

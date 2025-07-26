@@ -7,7 +7,7 @@
 
 <SpawnMenuPage>
     <Left>
-        <VerticalMenu Value="@selected">
+        <VerticalMenu Value="@selected" class="menuinner"> 
             <Options>
 
                 @foreach (var group in Sandbox.Mounting.Directory.GetAll().GroupBy(x => x.Available ? "Installed" : "Not Installed"))
