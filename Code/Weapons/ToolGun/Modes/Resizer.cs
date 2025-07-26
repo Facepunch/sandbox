@@ -4,13 +4,30 @@
 [Group( "Tools" )]
 public class Resizer : ToolMode
 {
+
+	TimeSince timeSinceAction = 0;
+
 	public override void OnControl()
 	{
-		var go = TraceSelect().GameObject;
-		if ( !go.IsValid() ) return;
+		var select = TraceSelect();
 
-		if ( Input.Pressed( "attack1" ) ) Resize( go, 0.1f );
-		else if ( Input.Pressed( "attack2" ) ) Resize( go, -0.1f );
+		IsValidState = select.IsValid() && !select.IsWorld;
+		if ( !IsValidState )
+			return;
+
+		if ( timeSinceAction < 0.03f )
+			return;
+
+		if ( Input.Down( "attack1" ) )
+		{
+			Resize( select.GameObject, 0.033f );
+			timeSinceAction = 0;
+		}
+		else if ( Input.Down( "attack2" ) )
+		{
+			Resize( select.GameObject, -0.033f );
+			timeSinceAction = 0;
+		}
 	}
 
 	[Rpc.Broadcast]
@@ -19,7 +36,11 @@ public class Resizer : ToolMode
 		if ( !go.IsValid() ) return;
 		if ( go.IsProxy ) return;
 
-		var scale = Vector3.Max( go.WorldScale + size, 0.01f );
+		var newScale = go.WorldScale + size;
+		if ( newScale.Length < 0.1f ) return;
+		if ( newScale.Length > 1000f ) return;
+
+		var scale = Vector3.Max( newScale, 0.01f );
 		go.WorldScale = scale;
 	}
 }
