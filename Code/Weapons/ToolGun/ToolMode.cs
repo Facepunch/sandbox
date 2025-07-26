@@ -5,6 +5,11 @@ public abstract partial class ToolMode : Component
 	public Toolgun Toolgun => GetComponent<Toolgun>();
 	public Player Player => GetComponentInParent<Player>();
 
+	/// <summary>
+	/// The mode should set this true or false in OnControl to indicate if the current state is valid for performing actions.
+	/// </summary>
+	public bool IsValidState { get; protected set; } = true;
+
 	public virtual void OnControl() { }
 
 	public virtual void DrawScreen( Rect rect, HudPainter paint )
@@ -23,6 +28,18 @@ public abstract partial class ToolMode : Component
 
 	public virtual void DrawHud( HudPainter painter, Vector2 crosshair )
 	{
-		painter.DrawCircle( crosshair, 5, Color.White );
+		if ( IsValidState )
+		{
+			painter.SetBlendMode( BlendMode.Normal );
+			painter.DrawCircle( crosshair, 5, Color.Black );
+			painter.DrawCircle( crosshair, 3, Color.White );
+		}
+		else
+		{
+			Color redColor = "#e53";
+			painter.SetBlendMode( BlendMode.Normal );
+			painter.DrawCircle( crosshair, 5, redColor.Darken( 0.3f ) );
+			painter.DrawCircle( crosshair, 3, redColor );
+		}
 	}
 }

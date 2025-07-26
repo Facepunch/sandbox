@@ -35,6 +35,17 @@
 		{
 			return GameObject.WorldTransform.ToWorld( LocalTransform );
 		}
+
+		/// <summary>
+		/// Returns true if this object is a part of the static map
+		/// </summary>
+		public bool IsWorld => GameObject.Tags.Has( "world" );
+
+
+		/// <summary>
+		/// Returns true if this object is a player
+		/// </summary>
+		public bool IsPlayer => GameObject.Tags.Has( "player" );
 	}
 
 	/// <summary>

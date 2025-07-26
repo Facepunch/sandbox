@@ -1,15 +1,10 @@
-﻿
-using Sandbox.Rendering;
-
-public abstract class BaseConstraintToolMode : ToolMode
+﻿public abstract class BaseConstraintToolMode : ToolMode
 {
 	protected SelectionPoint Point1;
 	protected SelectionPoint Point2;
 	protected int Stage = 0;
 
 	public virtual bool CanConstraintToSelf => false;
-
-	public bool IsValidState { get; protected set; }
 
 	public override void OnControl()
 	{
@@ -101,21 +96,4 @@ public abstract class BaseConstraintToolMode : ToolMode
 	}
 
 	protected abstract void CreateConstraint( SelectionPoint point1, SelectionPoint point2 );
-
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
-	{
-		if ( IsValidState )
-		{
-			painter.SetBlendMode( BlendMode.Normal );
-			painter.DrawCircle( crosshair, 5, Color.Black );
-			painter.DrawCircle( crosshair, 3, Color.White );
-		}
-		else
-		{
-			Color redColor = "#e53";
-			painter.SetBlendMode( BlendMode.Normal );
-			painter.DrawCircle( crosshair, 5, redColor.Darken( 0.3f ) );
-			painter.DrawCircle( crosshair, 3, redColor );
-		}
-	}
 }
