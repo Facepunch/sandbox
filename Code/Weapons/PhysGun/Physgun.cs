@@ -213,11 +213,8 @@ public partial class Physgun : BaseCarryable
 
 	protected override void OnDisabled()
 	{
-		RemoveJoint();
-	}
+		base.OnDisabled();
 
-	protected override void OnDestroy()
-	{
 		RemoveJoint();
 	}
 
