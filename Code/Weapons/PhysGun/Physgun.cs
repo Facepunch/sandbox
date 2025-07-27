@@ -41,6 +41,9 @@ public partial class Physgun : BaseCarryable
 	bool _preventReselect = false;
 
 	bool _isSpinning;
+	bool _isSnapping;
+	Rotation _spinRotation;
+	Rotation _snapRotation;
 
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
@@ -79,6 +82,12 @@ public partial class Physgun : BaseCarryable
 
 		_isSpinning = Input.Down( "use" );
 
+		var isSnapping = Input.Down( "run" ) || Input.Down( "walk" );
+		var snapAngle = Input.Down( "walk" ) ? 15.0f : 45.0f;
+		if ( !isSnapping && _isSnapping ) _spinRotation = _snapRotation;
+
+		_isSnapping = isSnapping;
+
 		if ( _state.IsValid() )
 		{
 			if ( !Input.Down( "attack1" ) )
@@ -116,11 +125,38 @@ public partial class Physgun : BaseCarryable
 			{
 				var state = _state;
 				var go = state.GrabOffset;
-
 				var pivot = go.PointToWorld( state.LocalOffset );
-				var delta = Rotation.From( Input.AnalogLook * -1 );
-				go.Position = pivot + delta * (go.Position - pivot);
-				go.Rotation = delta * go.Rotation;
+				var look = Input.AnalogLook * -1;
+
+				if ( _isSnapping )
+				{
+					if ( MathF.Abs( look.yaw ) > MathF.Abs( look.pitch ) ) look.pitch = 0;
+					else look.yaw = 0;
+				}
+
+				_spinRotation = Rotation.From( look ) * _spinRotation;
+				var spinRotation = _spinRotation;
+
+				if ( _isSnapping )
+				{
+					// convert rotation to worldspace
+					var eyeRotation = player.EyeTransform.Rotation;
+					var rotation = eyeRotation * spinRotation;
+
+					// snap angles in worldspace
+					var angles = rotation.Angles();
+					angles = angles.SnapToGrid( snapAngle );
+
+					// convert rotation back to localspace
+					spinRotation = eyeRotation.Inverse * Rotation.From( angles );
+					_snapRotation = spinRotation;
+				}
+
+				var offset = go.Position - pivot;
+				offset = spinRotation * go.Rotation.Inverse * offset;
+
+				go.Rotation = spinRotation;
+				go.Position = pivot + offset;
 
 				state.GrabOffset = go;
 
@@ -180,7 +216,7 @@ public partial class Physgun : BaseCarryable
 		_joint ??= PhysicsJoint.CreateFixed( targetPoint, new PhysicsPoint( _state.Body.PhysicsBody ) );
 		_joint.Point1 = targetPoint;
 		_joint.SpringLinear = new PhysicsSpring( 16, 4 );
-		_joint.SpringAngular = new PhysicsSpring( 16, 4 );
+		_joint.SpringAngular = new PhysicsSpring( 0, 0 );
 		_state.Body.Sleeping = false;
 	}
 
@@ -226,6 +262,9 @@ public partial class Physgun : BaseCarryable
 		state.LocalOffset = bodyTransform.PointToLocal( tr.HitPosition );
 		state.LocalNormal = bodyTransform.NormalToLocal( tr.Normal );
 		state.GrabOffset = aim.ToLocal( bodyTransform );
+
+		_spinRotation = state.GrabOffset.Rotation;
+
 		return true;
 	}
 
