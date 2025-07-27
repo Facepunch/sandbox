@@ -5,11 +5,11 @@
 public class Elastic : BaseConstraintToolMode
 {
 	[Range( 0, 15 )]
-	[Property]
+	[Property, Sync]
 	public float Frequency { get; set; } = 2.0f;
 
 	[Range( 0, 4 )]
-	[Property]
+	[Property, Sync]
 	public float Damping { get; set; } = 0.1f;
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )

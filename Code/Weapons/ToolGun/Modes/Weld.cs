@@ -4,10 +4,10 @@
 [Group( "Constraints" )]
 public class Weld : BaseConstraintToolMode
 {
-	[Property]
+	[Property, Sync]
 	public bool EasyMode { get; set; } = true;
 
-	[Property]
+	[Property, Sync]
 	public bool Rigid { get; set; } = false;
 
 

@@ -4,7 +4,7 @@
 [Group( "Constraints" )]
 public class BallSocket : BaseConstraintToolMode
 {
-	[Property]
+	[Property, Sync]
 	public bool EnableCollision { get; set; } = false;
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )

@@ -5,10 +5,10 @@
 public class Rope : BaseConstraintToolMode
 {
 	[Range( -500, 500 )]
-	[Property]
+	[Property, Sync]
 	public float Slack { get; set; } = 0.0f;
 
-	[Property]
+	[Property, Sync]
 	public bool Rigid { get; set; } = false;
 
 	public override bool CanConstraintToSelf => true;
