@@ -149,8 +149,10 @@ public partial class Physgun : BaseCarryable
 
 					// convert rotation back to localspace
 					spinRotation = eyeRotation.Inverse * Rotation.From( angles );
-					_snapRotation = spinRotation;
 				}
+
+				// save snap rotation so it can be applied after snap has finished
+				_snapRotation = spinRotation;
 
 				var offset = go.Position - pivot;
 				offset = spinRotation * go.Rotation.Inverse * offset;
