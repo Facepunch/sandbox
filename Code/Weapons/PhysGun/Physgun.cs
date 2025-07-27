@@ -200,6 +200,26 @@ public partial class Physgun : BaseCarryable
 	}
 
 	Sandbox.Physics.FixedJoint _joint;
+	PhysicsBody _body;
+
+	void RemoveJoint()
+	{
+		_joint?.Remove();
+		_joint = null;
+
+		_body?.Remove();
+		_body = null;
+	}
+
+	protected override void OnDisabled()
+	{
+		RemoveJoint();
+	}
+
+	protected override void OnDestroy()
+	{
+		RemoveJoint();
+	}
 
 	protected override void OnFixedUpdate()
 	{
@@ -207,19 +227,28 @@ public partial class Physgun : BaseCarryable
 
 		if ( !CanMove() )
 		{
-			_joint?.Remove();
-			_joint = null;
+			RemoveJoint();
 
 			return;
 		}
 
-		var targetTx = Owner.EyeTransform.ToWorld( _state.GrabOffset );
-		var targetPoint = new PhysicsPoint( Scene.PhysicsWorld.Body, targetTx.Position, targetTx.Rotation );
-		_joint ??= PhysicsJoint.CreateFixed( targetPoint, new PhysicsPoint( _state.Body.PhysicsBody ) );
-		_joint.Point1 = targetPoint;
-		_joint.SpringLinear = new PhysicsSpring( 16, 4 );
-		_joint.SpringAngular = new PhysicsSpring( 0, 0 );
-		_state.Body.Sleeping = false;
+		var eyeTransform = Owner.EyeTransform;
+		var target = eyeTransform.ToWorld( _state.GrabOffset );
+
+		_body ??= new PhysicsBody( Scene.PhysicsWorld )
+		{
+			BodyType = PhysicsBodyType.Keyframed,
+			AutoSleep = false
+		};
+
+		if ( _joint is null )
+		{
+			_joint = PhysicsJoint.CreateFixed( _body, _state.Body.PhysicsBody );
+			_joint.SpringLinear = new PhysicsSpring( 16, 4 );
+			_joint.SpringAngular = new PhysicsSpring( 0, 0 );
+		}
+
+		_body.Transform = target;
 	}
 
 	bool CanMove()
