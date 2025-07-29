@@ -5,18 +5,18 @@
 	[Property] public float SegmentLength { get; set; } = 10.0f;
 	[Property] public int ConstraintIterations { get; set; } = 2;
 	[Property] public Vector3 Gravity { get; set; } = new( 0, 0, -800 );
-	[Property] public float Stiffness { get; set; } = 0.7f;
+	[Property] public float Stiffness { get; set; } = 0.9f;
 	[Property] public float DampingFactor { get; set; } = 0.2f;
 	[Property] public float Width { get; set; } = 1f;
 
 	/// <summary>
 	/// Factor after which we consider a rope to be stretched.
 	/// </summary>
-	private float collisionMaxRopeStretchFactor { get; set; } = 1.8f;
+	private float collisionMaxRopeStretchFactor { get; set; } = 1.2f;
 	/// <summary>
 	/// Ignore collisions when segment is stretched beyond this factor
 	/// </summary>
-	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.3f;
+	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.2f;
 
 	/// <summary>
 	/// Velocity threshold below which we consider the rope to be at rest.
@@ -118,11 +118,11 @@
 
 	void Simulate( float dt )
 	{
+		UpdateRopeLengths();
+
 		ApplyForces();
 		VerletIntegration( dt );
 		ApplyConstraints();
-
-		UpdateRopeLengths();
 
 		HandleCollisions();
 
@@ -221,17 +221,19 @@
 
 	void ApplyConstraints()
 	{
-		// Apply stiffness constraints
+		// Apply both stiffness and bending constraints in each iteration
 		for ( var iteration = 0; iteration < ConstraintIterations; iteration++ )
 		{
 			for ( var i = 0; i < points.Count - 1; i++ )
 			{
+				// Stiffness constraints for adjacent points
 				var p1 = points[i];
 				var p2 = points[i + 1];
 
 				var segment = p2.Position - p1.Position;
-				var stretch = segment.Length - SegmentLength;
-				var direction = segment.Normal;
+				var segmentLength = MathF.Sqrt( segment.LengthSquared );
+				var stretch = segmentLength - SegmentLength;
+				var direction = segment / segmentLength;
 
 				if ( p1.IsAttached )
 				{
@@ -249,34 +251,33 @@
 
 				points[i] = p1;
 				points[i + 1] = p2;
-			}
 
-			// Bending constraints
-			for ( int i = 0; i < points.Count - 2; i++ )
-			{
-				var p1 = points[i];
-				var p3 = points[i + 2];
+				// Bending constraints for points two segments apart
+				if ( i < points.Count - 2 )
+				{
+					var p3 = points[i + 2];
 
-				var delta = p3.Position - p1.Position;
-				var dist = delta.Length;
-				if ( dist <= 0.001f ) continue;
+					var delta = p3.Position - p1.Position;
+					var distSq = delta.LengthSquared;
+					if ( distSq > 0.000001f )
+					{
+						var dist = MathF.Sqrt( distSq );
+						var diff = (dist - SegmentLength * 2.0f) / dist;
+						var offset = delta * 0.5f * diff * 0.5f; // 0.5 = soft bend
 
-				var targetDist = SegmentLength * 2.0f;
-				var diff = (dist - targetDist) / dist;
-				var offset = delta * 0.5f * diff * 0.5f; // 0.5 = soft bend
+						if ( !p1.IsAttached )
+							p1.Position += offset;
 
-				if ( !p1.IsAttached )
-					p1.Position += offset;
+						if ( !p3.IsAttached )
+							p3.Position -= offset;
 
-				if ( !p3.IsAttached )
-					p3.Position -= offset;
-
-				points[i] = p1;
-				points[i + 2] = p3;
+						points[i] = p1;
+						points[i + 2] = p3;
+					}
+				}
 			}
 		}
 	}
-
 
 	private void UpdateRopeLengths()
 	{
@@ -369,7 +370,8 @@
 					var slideVelocity = velocity - Vector3.Dot( velocity, moveTrace.Normal ) * moveTrace.Normal;
 
 					// Apply surface friction to the sliding velocity
-					float frictionFactor = 1.0f - Math.Clamp( moveTrace.Surface.Friction, 0.0f, 0.95f );
+					float ropeFrictionReductionBias = 0.2f; // we want a little less friction for ropes
+					float frictionFactor = 1.0f - Math.Clamp( moveTrace.Surface.Friction - ropeFrictionReductionBias, 0.0f, 0.95f );
 
 					// Combine surface friction with the existing damping factor
 					float combinedFactor = frictionFactor * (1.0f - DampingFactor);
