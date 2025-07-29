@@ -3,7 +3,7 @@
 	[Property] public GameObject Attachment { get; set; }
 	[Property] public int SegmentCount { get; set; } = 20;
 	[Property] public float SegmentLength { get; set; } = 10.0f;
-	[Property] public int ConstraintIterations { get; set; } = 2;
+	[Property] public int ConstraintIterations { get; set; } = 100;
 	[Property] public Vector3 Gravity { get; set; } = new( 0, 0, -800 );
 	[Property] public float Stiffness { get; set; } = 0.9f;
 	[Property] public float DampingFactor { get; set; } = 0.2f;
@@ -12,11 +12,11 @@
 	/// <summary>
 	/// Factor after which we consider a rope to be stretched.
 	/// </summary>
-	private float collisionMaxRopeStretchFactor { get; set; } = 1.2f;
+	private float collisionMaxRopeStretchFactor { get; set; } = 1.25f;
 	/// <summary>
 	/// Ignore collisions when segment is stretched beyond this factor
 	/// </summary>
-	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.2f;
+	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.05f;
 
 	/// <summary>
 	/// Velocity threshold below which we consider the rope to be at rest.
@@ -118,10 +118,11 @@
 
 	void Simulate( float dt )
 	{
-		UpdateRopeLengths();
-
 		ApplyForces();
 		VerletIntegration( dt );
+
+		UpdateRopeLengths();
+
 		ApplyConstraints();
 
 		HandleCollisions();
@@ -221,62 +222,93 @@
 
 	void ApplyConstraints()
 	{
-		// Apply both stiffness and bending constraints in each iteration
+		// First pass: From start to end
 		for ( var iteration = 0; iteration < ConstraintIterations; iteration++ )
 		{
+			// Forward pass - starting from the anchor point
 			for ( var i = 0; i < points.Count - 1; i++ )
 			{
-				// Stiffness constraints for adjacent points
-				var p1 = points[i];
-				var p2 = points[i + 1];
+				ApplyConstraintBetweenPoints( i, i + 1 );
 
-				var segment = p2.Position - p1.Position;
-				var segmentLength = MathF.Sqrt( segment.LengthSquared );
-				var stretch = segmentLength - SegmentLength;
-				var direction = segment / segmentLength;
+			}
 
-				if ( p1.IsAttached )
-				{
-					p2.Position -= direction * stretch * Stiffness;
-				}
-				else if ( p2.IsAttached )
-				{
-					p1.Position += direction * stretch * Stiffness;
-				}
-				else
-				{
-					p1.Position += direction * stretch * 0.5f * Stiffness;
-					p2.Position -= direction * stretch * 0.5f * Stiffness;
-				}
+			// Backward pass - starting from the end attachment
+			for ( var i = points.Count - 2; i >= 0; i-- )
+			{
+				ApplyConstraintBetweenPoints( i, i + 1 );
+			}
 
-				points[i] = p1;
-				points[i + 1] = p2;
-
-				// Bending constraints for points two segments apart
-				if ( i < points.Count - 2 )
-				{
-					var p3 = points[i + 2];
-
-					var delta = p3.Position - p1.Position;
-					var distSq = delta.LengthSquared;
-					if ( distSq > 0.000001f )
-					{
-						var dist = MathF.Sqrt( distSq );
-						var diff = (dist - SegmentLength * 2.0f) / dist;
-						var offset = delta * 0.5f * diff * 0.5f; // 0.5 = soft bend
-
-						if ( !p1.IsAttached )
-							p1.Position += offset;
-
-						if ( !p3.IsAttached )
-							p3.Position -= offset;
-
-						points[i] = p1;
-						points[i + 2] = p3;
-					}
-				}
+			// Apply bending constraints at the end
+			for ( var i = 0; i < points.Count - 2; i++ )
+			{
+				ApplyBendingConstraint( i, i + 2 );
 			}
 		}
+	}
+
+	private void ApplyConstraintBetweenPoints( int indexA, int indexB )
+	{
+		var p1 = points[indexA];
+		var p2 = points[indexB];
+
+		var segment = p2.Position - p1.Position;
+		var segmentLength = MathF.Sqrt( segment.LengthSquared );
+
+		if ( segmentLength < 0.001f )
+			return; // Avoid division by zero
+
+		var stretch = segmentLength - SegmentLength;
+		var direction = segment / segmentLength;
+
+		// Calculate a stiffness modifier based on attachment points
+		float stiffnessModifier = Stiffness;
+
+		// Points near attachments get stronger correction
+		if ( p1.IsAttached )
+		{
+			p2.Position -= direction * stretch * stiffnessModifier;
+		}
+		else if ( p2.IsAttached )
+		{
+			p1.Position += direction * stretch * stiffnessModifier;
+		}
+		else
+		{
+			// For middle points, we apply a balanced correction
+			p1.Position += direction * stretch * 0.5f * stiffnessModifier;
+			p2.Position -= direction * stretch * 0.5f * stiffnessModifier;
+		}
+
+		points[indexA] = p1;
+		points[indexB] = p2;
+	}
+
+	private void ApplyBendingConstraint( int indexA, int indexC )
+	{
+		var p1 = points[indexA];
+		var p3 = points[indexC];
+
+		var delta = p3.Position - p1.Position;
+		var distSq = delta.LengthSquared;
+
+		if ( distSq < 0.000001f )
+			return;
+
+		var dist = MathF.Sqrt( distSq );
+		var targetLength = SegmentLength * MathF.Abs( indexC - indexA );
+		var diff = (dist - targetLength) / dist;
+
+		// Softer bend constraint (0.5 factor)
+		var offset = delta * 0.5f * diff * 0.5f;
+
+		if ( !p1.IsAttached )
+			p1.Position += offset;
+
+		if ( !p3.IsAttached )
+			p3.Position -= offset;
+
+		points[indexA] = p1;
+		points[indexC] = p3;
 	}
 
 	private void UpdateRopeLengths()

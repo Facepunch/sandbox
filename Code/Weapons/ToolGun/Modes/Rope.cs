@@ -50,7 +50,7 @@ public class Rope : BaseConstraintToolMode
 		{
 			var vertletRope = go1.AddComponent<VerletRope>();
 			vertletRope.Attachment = go2;
-			vertletRope.SegmentCount = Math.Max( 2, MathX.CeilToInt( len / 16.0f ) );
+			vertletRope.SegmentCount = Math.Max( 2, MathX.CeilToInt( len / 32.0f ) );
 			vertletRope.SegmentLength = (len / vertletRope.SegmentCount);
 			vertletRope.ConstraintIterations = 100;
 			vertletRope.Width = Width;
