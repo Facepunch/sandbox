@@ -7,7 +7,7 @@
 	[Property] public Vector3 Gravity { get; set; } = new( 0, 0, -800 );
 	[Property] public float Stiffness { get; set; } = 0.7f;
 	[Property] public float DampingFactor { get; set; } = 0.2f;
-	[Property] public float Width { get; set; } = 1f;
+	[Property] public float Radius { get; set; } = 1f;
 
 	/// <summary>
 	/// Factor after which we consider a rope to be stretched.
@@ -21,7 +21,20 @@
 	/// <summary>
 	/// Velocity threshold below which we consider the rope to be at rest.
 	/// </summary>
-	private float restVelocityThreshold { get; set; } = 0.03f;
+	private float restVelocityThreshold => baseRestVelocityThreshold * (SegmentLength / baseSegmentLength); // Scale the rest velocity threshold based on segment length
+
+	private float slidingVelocityThreshold => restVelocityThreshold * 5f;
+
+	/// <summary>
+	/// Base velocity threshold used for scaling the rest detection
+	/// </summary>
+	private static readonly float baseRestVelocityThreshold = 0.03f;
+
+	/// <summary>
+	/// Base segment length used for calibrating various calculations.
+	/// </summary>
+	private static readonly float baseSegmentLength = 16f;
+
 	/// <summary>
 	/// Consecutive frames of not movement required to consider the rope at rest.
 	/// </summary>
@@ -78,7 +91,6 @@
 				return;
 			}
 		}
-
 
 		Simulate( Time.Delta );
 
@@ -376,7 +388,7 @@
 			p.MovementSinceLastCollision = 0.0f; // Reset movement after processing
 
 			// First check for movement-based collisions (from previous to current position)
-			var moveTrace = Scene.Trace.Sphere( Width, p.Previous, p.Position )
+			var moveTrace = Scene.Trace.Sphere( Radius, p.Previous, p.Position )
 				.UseHitPosition( true )
 				.Run();
 
@@ -410,7 +422,7 @@
 
 				// Dont apply slide if it's too small
 				// so rope comes to rest faster
-				if ( slideComponent.LengthSquared > 0.25f * 0.25f )
+				if ( slideComponent.LengthSquared > slidingVelocityThreshold * slidingVelocityThreshold )
 				{
 					// Add the dampened slide to our position
 					newPosition += slideComponent;
@@ -458,6 +470,8 @@
 				Vector3 lerpedPosition = Vector3.Lerp( point.Previous, point.Position, lerpFactor );
 				line.VectorPoints.Add( lerpedPosition );
 			}
+
+			//DebugOverlay.Sphere( new Sphere( point.Position, Radius * 2f ), Color.Red );
 		}
 	}
 }
