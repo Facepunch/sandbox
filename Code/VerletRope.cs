@@ -12,11 +12,11 @@
 	/// <summary>
 	/// Factor after which we consider a rope to be stretched.
 	/// </summary>
-	private float collisionMaxRopeStretchFactor { get; set; } = 1.25f;
+	private float collisionMaxRopeStretchFactor { get; set; } = 1.1f;
 	/// <summary>
 	/// Ignore collisions when segment is stretched beyond this factor
 	/// </summary>
-	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.05f;
+	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.2f;
 
 	/// <summary>
 	/// Velocity threshold below which we consider the rope to be at rest.
@@ -382,35 +382,42 @@
 
 			if ( moveTrace.Hit )
 			{
-				// Prevent the rope from clipping through the ground
-				// Would be nice if we could check for backface collision
-				// but that only seems to be available for UseRenderMesh traces.
+				var originalMove = p.Position - p.Previous;
+
+				Vector3 newPosition;
+				// Determine base collision response position
 				if ( moveTrace.Normal.z < -0.5f )
 				{
-					p.Position = moveTrace.HitPosition + Vector3.Up;
+					// Prevent clipping through ground
+					newPosition = moveTrace.HitPosition + Vector3.Up;
 				}
 				else
 				{
 					// Hit something during movement
-					p.Position = moveTrace.EndPosition + moveTrace.Normal * 0.01f;
+					newPosition = moveTrace.EndPosition + moveTrace.Normal * 0.01f;
 				}
 
-				// Project velocity along surface for sliding
-				if ( isRopeStretched )
+				// Apply sliding behavior with surface friction
+
+				// Calculate sliding component (project movement onto surface plane)
+				float dot = Vector3.Dot( originalMove, moveTrace.Normal );
+				Vector3 normalComponent = moveTrace.Normal * dot;
+				Vector3 slideComponent = originalMove - normalComponent;
+
+				// Apply surface friction to the slide
+				float frictionFactor = Math.Clamp( moveTrace.Surface.Friction, 0.1f, 0.95f );
+				slideComponent *= (1.0f - frictionFactor);
+
+				// Dont apply slide if it's too small
+				// so rope comes to rest faster
+				if ( slideComponent.LengthSquared > 0.25f * 0.25f )
 				{
-					var velocity = p.Position - p.Previous;
-					var slideVelocity = velocity - Vector3.Dot( velocity, moveTrace.Normal ) * moveTrace.Normal;
-
-					// Apply surface friction to the sliding velocity
-					float ropeFrictionReductionBias = 0.2f; // we want a little less friction for ropes
-					float frictionFactor = 1.0f - Math.Clamp( moveTrace.Surface.Friction - ropeFrictionReductionBias, 0.0f, 0.95f );
-
-					// Combine surface friction with the existing damping factor
-					float combinedFactor = frictionFactor * (1.0f - DampingFactor);
-
-					// Update previous position to create the sliding effect
-					p.Previous = p.Position - slideVelocity * combinedFactor;
+					// Add the dampened slide to our position
+					newPosition += slideComponent;
 				}
+
+
+				p.Position = newPosition;
 			}
 
 			points[i] = p;
