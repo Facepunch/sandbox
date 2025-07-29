@@ -350,7 +350,9 @@
 
 			var p = points[i];
 
-			p.MovementSinceLastCollision += (p.Position - p.Previous).LengthSquared;
+			var plannedMovementDistanceSquared = (p.Position - p.Previous).LengthSquared;
+			p.MovementSinceLastCollision += plannedMovementDistanceSquared;
+
 
 			if ( p.MovementSinceLastCollision < 0.01f * 0.01f )
 			{
@@ -359,16 +361,16 @@
 				continue;
 			}
 
+
 			// Skip collision check for stretched segments
 			// This is our attempt to unfuck the rope if it got dragged across the map
 			if ( isRopeStretched )
 			{
 				var prevPoint = points[i - 1];
-				var currentSegmentLengthSquared = (prevPoint.Position - p.Position).LengthSquared;
-
-				if ( currentSegmentLengthSquared > segmentSlideIgnoreLength * segmentSlideIgnoreLength )
+				if ( plannedMovementDistanceSquared > segmentSlideIgnoreLength * segmentSlideIgnoreLength )
 				{
 					points[i] = p;
+
 					continue;
 				}
 			}
