@@ -8,6 +8,8 @@
 	[Property] public float Stiffness { get; set; } = 0.7f;
 	[Property] public float DampingFactor { get; set; } = 0.2f;
 	[Property] public float Radius { get; set; } = 1f;
+	// Lower values make the rope bend more easily, higher values make it stiffer
+	[Property] public float SoftBendFactor { get; set; } = 0.3f;
 
 	/// <summary>
 	/// Factor after which we consider a rope to be stretched.
@@ -309,7 +311,7 @@
 		var diff = (dist - targetLength) / dist;
 
 		// Softer bend constraint (0.5 factor)
-		var offset = delta * 0.5f * diff * 0.5f;
+		var offset = delta * SoftBendFactor * diff * SoftBendFactor;
 
 		if ( !p1.IsAttached )
 			p1.Position += offset;
