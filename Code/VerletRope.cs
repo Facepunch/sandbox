@@ -1,4 +1,25 @@
-﻿public class VerletRope : Component, IScenePhysicsEvents
+﻿/// <summary>
+/// Simulates VerletRope components in parallel during PrePhysicsStep
+/// </summary>
+sealed class RopeGameSystem : GameObjectSystem
+{
+	public RopeGameSystem( Scene scene ) : base( scene )
+	{
+		// Listen to PrePhysicsStep to run before physics
+		Listen( Stage.StartFixedUpdate, -100, UpdateRopes, "UpdateRopes" );
+	}
+
+	void UpdateRopes()
+	{
+		var ropes = Scene.GetAll<VerletRope>();
+		if ( ropes.Count() == 0 ) return;
+
+		var timeDelta = Time.Delta;
+		Sandbox.Utility.Parallel.ForEach( ropes, rope => rope.Simulate( timeDelta ) );
+	}
+}
+
+public class VerletRope : Component
 {
 	[Property] public GameObject Attachment { get; set; }
 	[Property] public int SegmentCount { get; set; } = 20;
@@ -76,33 +97,6 @@
 		timeSincePhysicsUpdate = 0;
 	}
 
-	void IScenePhysicsEvents.PrePhysicsStep()
-	{
-		// Check if we need to wake up the rope due to attachment movement
-		if ( isAtRest )
-		{
-			bool startMoved = (WorldPosition - lastStartPos).LengthSquared > 0.01f;
-			bool endMoved = Attachment != null && (Attachment.WorldPosition - lastEndPos).LengthSquared > 0.01f;
-
-			if ( startMoved || endMoved )
-			{
-				WakeRope();
-			}
-			else
-			{
-				return;
-			}
-		}
-
-		Simulate( Time.Delta );
-
-		timeSincePhysicsUpdate = 0;
-
-		// Update attachment positions for tracking
-		lastStartPos = WorldPosition;
-		lastEndPos = Attachment?.WorldPosition ?? lastEndPos;
-	}
-
 	protected override void OnUpdate()
 	{
 		Draw();
@@ -130,8 +124,25 @@
 		}
 	}
 
-	void Simulate( float dt )
+	public void Simulate( float dt )
 	{
+
+		// Check if we need to wake up the rope due to attachment movement
+		if ( isAtRest )
+		{
+			bool startMoved = (WorldPosition - lastStartPos).LengthSquared > 0.01f;
+			bool endMoved = Attachment != null && (Attachment.WorldPosition - lastEndPos).LengthSquared > 0.01f;
+
+			if ( startMoved || endMoved )
+			{
+				WakeRope();
+			}
+			else
+			{
+				return;
+			}
+		}
+
 		ApplyForces();
 		VerletIntegration( dt );
 
@@ -142,6 +153,12 @@
 		HandleCollisions();
 
 		CheckRestState();
+
+		timeSincePhysicsUpdate = 0;
+
+		// Update attachment positions for tracking
+		lastStartPos = WorldPosition;
+		lastEndPos = Attachment?.WorldPosition ?? lastEndPos;
 	}
 
 	private void CheckRestState()
@@ -472,8 +489,6 @@
 				Vector3 lerpedPosition = Vector3.Lerp( point.Previous, point.Position, lerpFactor );
 				line.VectorPoints.Add( lerpedPosition );
 			}
-
-			//DebugOverlay.Sphere( new Sphere( point.Position, Radius * 2f ), Color.Red );
 		}
 	}
 }
