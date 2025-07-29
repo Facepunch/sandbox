@@ -222,17 +222,15 @@
 
 	void ApplyConstraints()
 	{
-		// First pass: From start to end
 		for ( var iteration = 0; iteration < ConstraintIterations; iteration++ )
 		{
-			// Forward pass - starting from the anchor point
+			// Doing both a forward and backwards pass increases conversion speed.
 			for ( var i = 0; i < points.Count - 1; i++ )
 			{
 				ApplyConstraintBetweenPoints( i, i + 1 );
 
 			}
 
-			// Backward pass - starting from the end attachment
 			for ( var i = points.Count - 2; i >= 0; i-- )
 			{
 				ApplyConstraintBetweenPoints( i, i + 1 );

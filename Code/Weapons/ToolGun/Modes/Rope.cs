@@ -50,9 +50,9 @@ public class Rope : BaseConstraintToolMode
 		{
 			var vertletRope = go1.AddComponent<VerletRope>();
 			vertletRope.Attachment = go2;
-			vertletRope.SegmentCount = Math.Max( 2, MathX.CeilToInt( len / 32.0f ) );
+			vertletRope.SegmentCount = Math.Max( 2, MathX.CeilToInt( len / 64.0f ) );
 			vertletRope.SegmentLength = (len / vertletRope.SegmentCount);
-			vertletRope.ConstraintIterations = 100;
+			vertletRope.ConstraintIterations = vertletRope.SegmentCount * 4;
 			vertletRope.Width = Width;
 		}
 
@@ -62,7 +62,7 @@ public class Rope : BaseConstraintToolMode
 		lineRenderer.Color = Color.White;
 		lineRenderer.Lighting = true;
 		lineRenderer.CastShadows = true;
-		lineRenderer.SplineInterpolation = 4;
+		lineRenderer.SplineInterpolation = 6;
 		lineRenderer.Texturing = lineRenderer.Texturing with { Material = Material.Load( "materials/default/rope01.vmat" ), WorldSpace = true, UnitsPerTexture = 32 };
 		lineRenderer.Face = SceneLineObject.FaceMode.Cylinder;
 
