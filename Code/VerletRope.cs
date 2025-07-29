@@ -5,7 +5,7 @@
 	[Property] public float SegmentLength { get; set; } = 10.0f;
 	[Property] public int ConstraintIterations { get; set; } = 100;
 	[Property] public Vector3 Gravity { get; set; } = new( 0, 0, -800 );
-	[Property] public float Stiffness { get; set; } = 0.9f;
+	[Property] public float Stiffness { get; set; } = 0.7f;
 	[Property] public float DampingFactor { get; set; } = 0.2f;
 	[Property] public float Width { get; set; } = 1f;
 
