@@ -50,10 +50,14 @@ public class Rope : BaseConstraintToolMode
 		{
 			var vertletRope = go1.AddComponent<VerletRope>();
 			vertletRope.Attachment = go2;
-			vertletRope.SegmentCount = Math.Max( 2, MathX.CeilToInt( len / 48.0f ) );
-			vertletRope.SegmentLength = (len / vertletRope.SegmentCount);
-			vertletRope.ConstraintIterations = Math.Max( 200, vertletRope.SegmentCount * 3 );
-			vertletRope.Width = Width;
+
+			// Fixed segment count, every rope has the same compute budget
+			const int segmentCount = 24;
+
+			vertletRope.SegmentCount = segmentCount;
+			vertletRope.SegmentLength = len / segmentCount;
+			vertletRope.ConstraintIterations = 90;
+			vertletRope.Radius = Width;
 		}
 
 		var lineRenderer = go1.AddComponent<LineRenderer>();
