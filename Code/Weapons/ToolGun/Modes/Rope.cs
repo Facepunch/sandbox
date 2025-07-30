@@ -12,7 +12,7 @@ public class Rope : BaseConstraintToolMode
 
 	[Range( 0.5f, 5f ), Step( 0.5f )]
 	[Property]
-	public float Width { get; set; } = 1f;
+	public float Radius { get; set; } = 1f;
 	
 	public override bool CanConstraintToSelf => true;
 
@@ -59,13 +59,13 @@ public class Rope : BaseConstraintToolMode
 			vertletRope.SegmentCount = segmentCount;
 			vertletRope.SegmentLength = len / segmentCount;
 			vertletRope.ConstraintIterations = MathX.CeilToInt( segmentCount * 1.3f );
-			vertletRope.Radius = Width;
+			vertletRope.Radius = Radius;
 			splineInterpolation = segmentCount > maxSegmentCount ? 8 : 4;
 		}
 
 		var lineRenderer = go1.AddComponent<LineRenderer>();
 		lineRenderer.Points = [go1, go2];
-		lineRenderer.Width = Width;
+		lineRenderer.Width = Radius;
 		lineRenderer.Color = Color.White;
 		lineRenderer.Lighting = true;
 		lineRenderer.CastShadows = true;
