@@ -1,21 +1,29 @@
-﻿/// <summary>
+﻿using System.Diagnostics;
+
+/// <summary>
 /// Simulates VerletRope components in parallel during PrePhysicsStep
 /// </summary>
 sealed class RopeGameSystem : GameObjectSystem
 {
 	public RopeGameSystem( Scene scene ) : base( scene )
 	{
-		// Listen to PrePhysicsStep to run before physics
+		// Listen to StartFixedUpdate to run before physics
 		Listen( Stage.StartFixedUpdate, -100, UpdateRopes, "UpdateRopes" );
 	}
 
 	void UpdateRopes()
 	{
+		Stopwatch sw = Stopwatch.StartNew();
+
 		var ropes = Scene.GetAll<VerletRope>();
 		if ( ropes.Count() == 0 ) return;
 
 		var timeDelta = Time.Delta;
 		Sandbox.Utility.Parallel.ForEach( ropes, rope => rope.Simulate( timeDelta ) );
+
+		sw.Stop();
+
+		//DebugOverlaySystem.Current.ScreenText( new Vector2( 120, 30 ), $"Rope Sim: {sw.Elapsed.TotalMilliseconds,6:F2} ms", 24 );
 	}
 }
 
@@ -39,7 +47,7 @@ public class VerletRope : Component
 	/// <summary>
 	/// Ignore collisions when segment is stretched beyond this factor
 	/// </summary>
-	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.2f;
+	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.6f;
 
 	/// <summary>
 	/// Velocity threshold below which we consider the rope to be at rest.
@@ -70,6 +78,7 @@ public class VerletRope : Component
 	private Vector3 lastStartPos;
 	private Vector3 lastEndPos;
 	private TimeSince timeSincePhysicsUpdate;
+	private TimeSince timeSinceRest;
 
 	private struct RopePoint
 	{
@@ -95,6 +104,7 @@ public class VerletRope : Component
 		lastEndPos = Attachment?.WorldPosition ?? (WorldPosition + Vector3.Down * SegmentLength * SegmentCount);
 
 		timeSincePhysicsUpdate = 0;
+		timeSinceRest = 0;
 	}
 
 	protected override void OnUpdate()
@@ -126,14 +136,13 @@ public class VerletRope : Component
 
 	public void Simulate( float dt )
 	{
-
 		// Check if we need to wake up the rope due to attachment movement
 		if ( isAtRest )
 		{
 			bool startMoved = (WorldPosition - lastStartPos).LengthSquared > 0.01f;
 			bool endMoved = Attachment != null && (Attachment.WorldPosition - lastEndPos).LengthSquared > 0.01f;
 
-			if ( startMoved || endMoved )
+			if ( startMoved || endMoved || timeSinceRest > 2f ) // Occasionally wake up ropes, so we can react to external collisions
 			{
 				WakeRope();
 			}
@@ -193,6 +202,7 @@ public class VerletRope : Component
 			if ( restFrameCount >= restFramesRequired )
 			{
 				isAtRest = true;
+				timeSinceRest = 0;
 			}
 		}
 		else
@@ -253,91 +263,104 @@ public class VerletRope : Component
 
 	void ApplyConstraints()
 	{
+		// Apply overall rope length constraint first
+		// This drastically reduces the number of iterations we need
+		// And only causes minimal artifacts
+		// See https://toqoz.fyi/game-rope.html Number of iterations
+		ApplyOverallRopeConstraint();
+
+		// Apply both stiffness and bending constraints in each iteration
 		for ( var iteration = 0; iteration < ConstraintIterations; iteration++ )
 		{
-			// Doing both a forward and backwards pass increases conversion speed.
 			for ( var i = 0; i < points.Count - 1; i++ )
 			{
-				ApplyConstraintBetweenPoints( i, i + 1 );
+				// Stiffness constraints for adjacent points
+				var p1 = points[i];
+				var p2 = points[i + 1];
 
-			}
+				var segment = p2.Position - p1.Position;
+				var segmentLength = MathF.Sqrt( segment.LengthSquared );
+				var stretch = segmentLength - SegmentLength;
+				var direction = segment / segmentLength;
+				var stretchStiffness = stretch * direction * Stiffness;
 
-			for ( var i = points.Count - 2; i >= 0; i-- )
-			{
-				ApplyConstraintBetweenPoints( i, i + 1 );
-			}
+				if ( p1.IsAttached )
+				{
+					p2.Position -= stretchStiffness;
+				}
+				else if ( p2.IsAttached )
+				{
+					p1.Position += stretchStiffness;
+				}
+				else
+				{
+					p1.Position += stretchStiffness * 0.5f;
+					p2.Position -= stretchStiffness * 0.5f;
+				}
 
-			// Apply bending constraints at the end
-			for ( var i = 0; i < points.Count - 2; i++ )
-			{
-				ApplyBendingConstraint( i, i + 2 );
+				points[i] = p1;
+				points[i + 1] = p2;
+
+				// Bending constraints for points two segments apart
+				if ( i < points.Count - 2 )
+				{
+					var p3 = points[i + 2];
+
+					var delta = p3.Position - p1.Position;
+					var distSq = delta.LengthSquared;
+					if ( distSq > 0.000001f )
+					{
+						var dist = MathF.Sqrt( distSq );
+						var diff = (dist - SegmentLength * 2.0f) / dist;
+						var offset = delta * SoftBendFactor * diff * SoftBendFactor;
+
+						if ( !p1.IsAttached )
+							p1.Position += offset;
+
+						if ( !p3.IsAttached )
+							p3.Position -= offset;
+
+						points[i] = p1;
+						points[i + 2] = p3;
+					}
+				}
 			}
 		}
 	}
 
-	private void ApplyConstraintBetweenPoints( int indexA, int indexB )
+	void ApplyOverallRopeConstraint()
 	{
-		var p1 = points[indexA];
-		var p2 = points[indexB];
-
-		var segment = p2.Position - p1.Position;
-		var segmentLength = MathF.Sqrt( segment.LengthSquared );
-
-		if ( segmentLength < 0.001f )
-			return; // Avoid division by zero
-
-		var stretch = segmentLength - SegmentLength;
-		var direction = segment / segmentLength;
-
-		// Calculate a stiffness modifier based on attachment points
-		float stiffnessModifier = Stiffness;
-
-		// Points near attachments get stronger correction
-		if ( p1.IsAttached )
-		{
-			p2.Position -= direction * stretch * stiffnessModifier;
-		}
-		else if ( p2.IsAttached )
-		{
-			p1.Position += direction * stretch * stiffnessModifier;
-		}
-		else
-		{
-			// For middle points, we apply a balanced correction
-			p1.Position += direction * stretch * 0.5f * stiffnessModifier;
-			p2.Position -= direction * stretch * 0.5f * stiffnessModifier;
-		}
-
-		points[indexA] = p1;
-		points[indexB] = p2;
-	}
-
-	private void ApplyBendingConstraint( int indexA, int indexC )
-	{
-		var p1 = points[indexA];
-		var p3 = points[indexC];
-
-		var delta = p3.Position - p1.Position;
-		var distSq = delta.LengthSquared;
-
-		if ( distSq < 0.000001f )
+		// Only apply if both ends are attached
+		if ( points.Count < 2 || !points[0].IsAttached || !points[points.Count - 1].IsAttached )
 			return;
 
-		var dist = MathF.Sqrt( distSq );
-		var targetLength = SegmentLength * MathF.Abs( indexC - indexA );
-		var diff = (dist - targetLength) / dist;
+		var first = points[0];
+		var last = points[points.Count - 1];
 
-		// Softer bend constraint (0.5 factor)
-		var offset = delta * SoftBendFactor * diff * SoftBendFactor;
+		float currentDistance = (last.Position - first.Position).Length;
 
-		if ( !p1.IsAttached )
-			p1.Position += offset;
+		// Maximum allowed length is the total rope length
+		float maxLength = SegmentLength * (points.Count - 1);
 
-		if ( !p3.IsAttached )
-			p3.Position -= offset;
+		// Only constrain if the rope is stretched beyond its maximum length
+		if ( currentDistance > maxLength )
+		{
+			var direction = (last.Position - first.Position).Normal;
 
-		points[indexA] = p1;
-		points[indexC] = p3;
+			// Adjust the non-attached points along the rope
+			for ( int i = 1; i < points.Count - 1; i++ )
+			{
+				if ( points[i].IsAttached )
+					continue;
+
+				float t = (float)i / (points.Count - 1);
+				Vector3 idealPos = first.Position + direction * maxLength * t;
+
+				var p = points[i];
+				p.Position = Vector3.Lerp( p.Position, idealPos, 0.3f );
+				points[i] = p;
+			}
+		}
 	}
 
 	private void UpdateRopeLengths()

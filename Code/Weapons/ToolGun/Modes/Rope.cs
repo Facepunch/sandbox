@@ -46,18 +46,21 @@ public class Rope : BaseConstraintToolMode
 			joint.EnableCollision = true;
 		}
 
+		var splineInterpolation = 0;
 		if ( !Rigid )
 		{
 			var vertletRope = go1.AddComponent<VerletRope>();
 			vertletRope.Attachment = go2;
 
+			const int maxSegmentCount = 48;
 			// Maximum segment count, so long ropes don't exceed computation limits
-			int segmentCount = Math.Min( 32, MathX.CeilToInt( len / 16f ) );
+			int segmentCount = Math.Min( maxSegmentCount, MathX.CeilToInt( len / 16f ) );
 
 			vertletRope.SegmentCount = segmentCount;
 			vertletRope.SegmentLength = len / segmentCount;
-			vertletRope.ConstraintIterations = MathX.CeilToInt( segmentCount * 3.3F );
+			vertletRope.ConstraintIterations = MathX.CeilToInt( segmentCount * 1.5f );
 			vertletRope.Radius = Width;
+			splineInterpolation = segmentCount > maxSegmentCount ? 6 : 4;
 		}
 
 		var lineRenderer = go1.AddComponent<LineRenderer>();
@@ -66,7 +69,7 @@ public class Rope : BaseConstraintToolMode
 		lineRenderer.Color = Color.White;
 		lineRenderer.Lighting = true;
 		lineRenderer.CastShadows = true;
-		lineRenderer.SplineInterpolation = 6;
+		lineRenderer.SplineInterpolation = splineInterpolation;
 		lineRenderer.Texturing = lineRenderer.Texturing with { Material = Material.Load( "materials/default/rope01.vmat" ), WorldSpace = true, UnitsPerTexture = 32 };
 		lineRenderer.Face = SceneLineObject.FaceMode.Cylinder;
 
