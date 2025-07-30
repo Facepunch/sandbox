@@ -27,17 +27,58 @@ sealed class RopeGameSystem : GameObjectSystem
 	}
 }
 
+/// <summary>
+/// Verlet integration-based rope physics simulation component.
+/// 
+/// Key trade-offs:
+/// - SegmentCount: Visual fidelity &amp; collision accuracy vs. performance (higher values lead to slower constraint solving and more physics traces)
+/// - ConstraintIterations: Quality &amp; stiffness vs. performance (more iterations -> slower solving, but ropes are more rigid/less slack)
+/// </summary>
 public class VerletRope : Component
 {
+	/// <summary>
+	/// The GameObject the end of the rope attaches to.
+	/// </summary>
 	[Property] public GameObject Attachment { get; set; }
+
+	/// <summary>
+	/// Number of segments in the rope. Higher values increase visual fidelity and collision accuracy but quickly reduce performance.
+	/// </summary>
 	[Property] public int SegmentCount { get; set; } = 20;
+
+	/// <summary>
+	/// Length of each rope segment in units.
+	/// </summary>
 	[Property] public float SegmentLength { get; set; } = 10.0f;
+
+	/// <summary>
+	/// Number of iterations to solve constraints. Higher values increase rigidity but reduce performance.
+	/// </summary>
 	[Property] public int ConstraintIterations { get; set; } = 100;
+
+	/// <summary>
+	/// Gravity vector applied to the rope.
+	/// </summary>
 	[Property] public Vector3 Gravity { get; set; } = new( 0, 0, -800 );
+
+	/// <summary>
+	/// Rope stiffness factor. Higher values make the rope more rigid.
+	/// </summary>
 	[Property] public float Stiffness { get; set; } = 0.7f;
+
+	/// <summary>
+	/// Dampens rope movement. Higher values make the rope settle faster.
+	/// </summary>
 	[Property] public float DampingFactor { get; set; } = 0.2f;
+
+	/// <summary>
+	/// Radius of the rope for collision detection.
+	/// </summary>
 	[Property] public float Radius { get; set; } = 1f;
-	// Lower values make the rope bend more easily, higher values make it stiffer
+
+	/// <summary>
+	/// Controls how easily the rope bends. Lower values allow more bending, higher values make it stiffer.
+	/// </summary>
 	[Property] public float SoftBendFactor { get; set; } = 0.3f;
 
 	/// <summary>
@@ -47,7 +88,7 @@ public class VerletRope : Component
 	/// <summary>
 	/// Ignore collisions when segment is stretched beyond this factor
 	/// </summary>
-	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.6f;
+	private float collisionMaxRopeSegmentStretchFactor { get; set; } = 1.7f;
 
 	/// <summary>
 	/// Velocity threshold below which we consider the rope to be at rest.
@@ -71,14 +112,19 @@ public class VerletRope : Component
 	/// </summary>
 	private int restFramesRequired { get; set; } = 8;
 
+	// Stretch detection
 	private float currentRopeLength;
 	private float averageSegmentLength;
-	private bool isAtRest = false;
-	private int restFrameCount = 0;
+
+	// Rest detection variables
 	private Vector3 lastStartPos;
 	private Vector3 lastEndPos;
-	private TimeSince timeSincePhysicsUpdate;
 	private TimeSince timeSinceRest;
+	private bool isAtRest = false;
+	private int currenRestFrameCount = 0;
+
+	// Used for interpolation between physics updates.
+	private TimeSince timeSinceSimulate;
 
 	private struct RopePoint
 	{
@@ -103,7 +149,7 @@ public class VerletRope : Component
 		lastStartPos = WorldPosition;
 		lastEndPos = Attachment?.WorldPosition ?? (WorldPosition + Vector3.Down * SegmentLength * SegmentCount);
 
-		timeSincePhysicsUpdate = 0;
+		timeSinceSimulate = 0;
 		timeSinceRest = 0;
 	}
 
@@ -112,11 +158,31 @@ public class VerletRope : Component
 		Draw();
 	}
 
-	private void WakeRope()
+	private void CheckAndWakeRope()
 	{
-		isAtRest = false;
-		restFrameCount = 0;
+		if ( isAtRest )
+		{
+			bool startMoved = (WorldPosition - lastStartPos).LengthSquared > 0.01f;
+			bool endMoved = Attachment != null && (Attachment.WorldPosition - lastEndPos).LengthSquared > 0.01f;
+
+			if ( startMoved || endMoved || timeSinceRest > 2f ) // Occasionally wake up ropes, so we can react to external collisions
+			{
+				isAtRest = false;
+				currenRestFrameCount = 0;
+
+				if ( timeSinceRest > 2f )
+				{
+					// only tick a single frame when waking up from a long rest
+					currenRestFrameCount = restFramesRequired - 1;
+				}
+			}
+		}
+
+		// Update attachment positions for tracking
+		lastStartPos = WorldPosition;
+		lastEndPos = Attachment?.WorldPosition ?? lastEndPos;
 	}
+
 
 	void InitializePoints()
 	{
@@ -136,21 +202,9 @@ public class VerletRope : Component
 
 	public void Simulate( float dt )
 	{
-		// Check if we need to wake up the rope due to attachment movement
-		if ( isAtRest )
-		{
-			bool startMoved = (WorldPosition - lastStartPos).LengthSquared > 0.01f;
-			bool endMoved = Attachment != null && (Attachment.WorldPosition - lastEndPos).LengthSquared > 0.01f;
+		CheckAndWakeRope();
 
-			if ( startMoved || endMoved || timeSinceRest > 2f ) // Occasionally wake up ropes, so we can react to external collisions
-			{
-				WakeRope();
-			}
-			else
-			{
-				return;
-			}
-		}
+		if ( isAtRest ) return;
 
 		ApplyForces();
 		VerletIntegration( dt );
@@ -163,11 +217,7 @@ public class VerletRope : Component
 
 		CheckRestState();
 
-		timeSincePhysicsUpdate = 0;
-
-		// Update attachment positions for tracking
-		lastStartPos = WorldPosition;
-		lastEndPos = Attachment?.WorldPosition ?? lastEndPos;
+		timeSinceSimulate = 0;
 	}
 
 	private void CheckRestState()
@@ -198,8 +248,8 @@ public class VerletRope : Component
 
 		if ( !isMoving )
 		{
-			restFrameCount++;
-			if ( restFrameCount >= restFramesRequired )
+			currenRestFrameCount++;
+			if ( currenRestFrameCount >= restFramesRequired )
 			{
 				isAtRest = true;
 				timeSinceRest = 0;
@@ -207,7 +257,7 @@ public class VerletRope : Component
 		}
 		else
 		{
-			restFrameCount = 0;
+			currenRestFrameCount = 0;
 		}
 	}
 
@@ -266,7 +316,7 @@ public class VerletRope : Component
 		// Apply overall rope length constraint first
 		// This drastically reduces the number of iterations we need
 		// And only causes minimal artifacts
-		// See https://toqoz.fyi/game-rope.html Number of iterations
+		// See https://toqoz.fyi/game-rope.html # Number of iterations
 		ApplyOverallRopeConstraint();
 
 		// Apply both stiffness and bending constraints in each iteration
@@ -486,7 +536,7 @@ public class VerletRope : Component
 		// We could use InterpolationBuffer here but i feel like that would be overkill
 		// Also it's private/internal.
 		float fixedDelta = 1f / ProjectSettings.Physics.FixedUpdateFrequency.Clamp( 1, 1000 );
-		float lerpFactor = Math.Min( timeSincePhysicsUpdate / fixedDelta, 1.0f );
+		float lerpFactor = Math.Min( timeSinceSimulate / fixedDelta, 1.0f );
 
 		line.UseVectorPoints = true;
 		line.VectorPoints ??= new();

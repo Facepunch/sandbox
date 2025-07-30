@@ -58,9 +58,9 @@ public class Rope : BaseConstraintToolMode
 
 			vertletRope.SegmentCount = segmentCount;
 			vertletRope.SegmentLength = len / segmentCount;
-			vertletRope.ConstraintIterations = MathX.CeilToInt( segmentCount * 1.5f );
+			vertletRope.ConstraintIterations = MathX.CeilToInt( segmentCount * 1.3f );
 			vertletRope.Radius = Width;
-			splineInterpolation = segmentCount > maxSegmentCount ? 6 : 4;
+			splineInterpolation = segmentCount > maxSegmentCount ? 8 : 4;
 		}
 
 		var lineRenderer = go1.AddComponent<LineRenderer>();
