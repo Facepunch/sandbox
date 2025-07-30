@@ -158,32 +158,6 @@ public class VerletRope : Component
 		Draw();
 	}
 
-	private void CheckAndWakeRope()
-	{
-		if ( isAtRest )
-		{
-			bool startMoved = (WorldPosition - lastStartPos).LengthSquared > 0.01f;
-			bool endMoved = Attachment != null && (Attachment.WorldPosition - lastEndPos).LengthSquared > 0.01f;
-
-			if ( startMoved || endMoved || timeSinceRest > 2f ) // Occasionally wake up ropes, so we can react to external collisions
-			{
-				isAtRest = false;
-				currenRestFrameCount = 0;
-
-				if ( timeSinceRest > 2f )
-				{
-					// only tick a single frame when waking up from a long rest
-					currenRestFrameCount = restFramesRequired - 1;
-				}
-			}
-		}
-
-		// Update attachment positions for tracking
-		lastStartPos = WorldPosition;
-		lastEndPos = Attachment?.WorldPosition ?? lastEndPos;
-	}
-
-
 	void InitializePoints()
 	{
 		points = new();
@@ -207,6 +181,7 @@ public class VerletRope : Component
 		if ( isAtRest ) return;
 
 		ApplyForces();
+
 		VerletIntegration( dt );
 
 		UpdateRopeLengths();
@@ -220,45 +195,29 @@ public class VerletRope : Component
 		timeSinceSimulate = 0;
 	}
 
-	private void CheckRestState()
+	private void CheckAndWakeRope()
 	{
 		if ( isAtRest )
-			return;
-
-		bool isMoving = false;
-		float velocityThresholdSq = restVelocityThreshold * restVelocityThreshold;
-
-		// Check if any non-attached point is moving significantly
-		for ( int i = 0; i < points.Count; i++ )
 		{
-			var p = points[i];
+			bool startMoved = (WorldPosition - lastStartPos).LengthSquared > 0.01f;
+			bool endMoved = Attachment != null && (Attachment.WorldPosition - lastEndPos).LengthSquared > 0.01f;
 
-			// Skip attached points as they're controlled externally
-			if ( p.IsAttached )
-				continue;
-
-			var velocitySq = (p.Position - p.Previous).LengthSquared;
-
-			if ( velocitySq > velocityThresholdSq )
+			if ( startMoved || endMoved || timeSinceRest > 2f ) // Occasionally wake up ropes, so we can react to external collisions
 			{
-				isMoving = true;
-				break;
+				isAtRest = false;
+				currenRestFrameCount = 0;
+
+				if ( timeSinceRest > 2f )
+				{
+					// only tick a single frame when waking up from a long rest
+					currenRestFrameCount = restFramesRequired - 1;
+				}
 			}
 		}
 
-		if ( !isMoving )
-		{
-			currenRestFrameCount++;
-			if ( currenRestFrameCount >= restFramesRequired )
-			{
-				isAtRest = true;
-				timeSinceRest = 0;
-			}
-		}
-		else
-		{
-			currenRestFrameCount = 0;
-		}
+		// Update attachment positions for tracking
+		lastStartPos = WorldPosition;
+		lastEndPos = Attachment?.WorldPosition ?? lastEndPos;
 	}
 
 	void VerletIntegration( float dt )
@@ -288,6 +247,21 @@ public class VerletRope : Component
 
 			points[i] = p;
 		}
+	}
+	private void UpdateRopeLengths()
+	{
+		float totalLength = 0f;
+		int segments = 0;
+
+		for ( int i = 0; i < points.Count - 1; i++ )
+		{
+			float segmentLength = (points[i + 1].Position - points[i].Position).Length;
+			totalLength += segmentLength;
+			segments++;
+		}
+
+		currentRopeLength = totalLength;
+		averageSegmentLength = segments > 0 ? totalLength / segments : SegmentLength;
 	}
 
 	void ApplyForces()
@@ -413,22 +387,6 @@ public class VerletRope : Component
 		}
 	}
 
-	private void UpdateRopeLengths()
-	{
-		float totalLength = 0f;
-		int segments = 0;
-
-		for ( int i = 0; i < points.Count - 1; i++ )
-		{
-			float segmentLength = (points[i + 1].Position - points[i].Position).Length;
-			totalLength += segmentLength;
-			segments++;
-		}
-
-		currentRopeLength = totalLength;
-		averageSegmentLength = segments > 0 ? totalLength / segments : SegmentLength;
-	}
-
 	/// <summary>
 	/// This method checks each segment of the rope for collisions and adjusts their positions accordingly.
 	/// It skips collision checks for segments that are excessively stretched to prevent the rope from becoming unstable.
@@ -525,6 +483,48 @@ public class VerletRope : Component
 			}
 
 			points[i] = p;
+		}
+	}
+
+
+	private void CheckRestState()
+	{
+		if ( isAtRest )
+			return;
+
+		bool isMoving = false;
+		float velocityThresholdSq = restVelocityThreshold * restVelocityThreshold;
+
+		// Check if any non-attached point is moving significantly
+		for ( int i = 0; i < points.Count; i++ )
+		{
+			var p = points[i];
+
+			// Skip attached points as they're controlled externally
+			if ( p.IsAttached )
+				continue;
+
+			var velocitySq = (p.Position - p.Previous).LengthSquared;
+
+			if ( velocitySq > velocityThresholdSq )
+			{
+				isMoving = true;
+				break;
+			}
+		}
+
+		if ( !isMoving )
+		{
+			currenRestFrameCount++;
+			if ( currenRestFrameCount >= restFramesRequired )
+			{
+				isAtRest = true;
+				timeSinceRest = 0;
+			}
+		}
+		else
+		{
+			currenRestFrameCount = 0;
 		}
 	}
 
