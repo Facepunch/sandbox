@@ -212,6 +212,18 @@
               ]
             },
             "Wireframe": false
+          },
+          {
+            "__type": "Sandbox.LineRendererLight",
+            "__guid": "99fc90b6-b23a-4af9-8c26-b0f29eb1eb55",
+            "__enabled": true,
+            "Brightness": 0.1,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null
           }
         ],
         "Children": []

@@ -21,7 +21,7 @@ public partial class Physgun : BaseCarryable
 			BeamHighlight.Color = Color.Lerp( Color.Cyan, Color.White, Noise.Fbm( 3, Time.Now * 40.0f ) * 0.5f ) * 200.0f;
 		}
 
-		bool justEnabled = !BeamRenderer.Enabled;
+		bool justEnabled = !BeamRenderer.GameObject.Enabled;
 
 		if ( BeamRenderer.VectorPoints.Count != 4 )
 			BeamRenderer.VectorPoints = new List<Vector3>( [0, 0, 0, 0] );
@@ -43,7 +43,7 @@ public partial class Physgun : BaseCarryable
 
 		if ( justEnabled )
 		{
-			BeamRenderer.Enabled = true;
+			BeamRenderer.GameObject.Enabled = true;
 			BeamRenderer.VectorPoints[1] = targetMiddle;
 			middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 0.2f, 4, 0.2f );
 		}
@@ -69,7 +69,7 @@ public partial class Physgun : BaseCarryable
 
 		if ( !BeamRenderer.IsValid() ) return;
 
-		BeamRenderer.Enabled = false;
+		BeamRenderer.GameObject.Enabled = false;
 	}
 
 }
