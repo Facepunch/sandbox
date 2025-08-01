@@ -120,6 +120,7 @@
               ],
               "alpha": []
             },
+            "CylinderSegments": 12,
             "DepthFeather": 4,
             "EndCap": "None",
             "Face": "Camera",

@@ -71,10 +71,207 @@
 					},
 				]
 			},
+			{
+				_class = "AnimConstraintList"
+				children = 
+				[
+					{
+						_class = "Prefab"
+						target_file = "models/first_person/prefabs/first_person_arms_animconstraintlist.vmdl_prefab"
+					},
+				]
+			},
+			{
+				_class = "IKData"
+				children = 
+				[
+					{
+						_class = "Prefab"
+						target_file = "models/first_person/prefabs/first_person_arms_ikdata.vmdl_prefab"
+					},
+				]
+			},
+			{
+				_class = "BoneMarkupList"
+				children = 
+				[
+					{
+						_class = "BoneMarkup"
+						target_bone = ""
+						ignore_Translation = false
+						ignore_rotation = false
+						do_not_discard = false
+					},
+				]
+				bone_cull_type = "None"
+			},
+			{
+				_class = "WeightListList"
+				children = 
+				[
+					{
+						_class = "Prefab"
+						target_file = "models/first_person/prefabs/first_person_arms_weightlistlist.vmdl_prefab"
+					},
+				]
+			},
+			{
+				_class = "AnimationList"
+				children = 
+				[
+					{
+						_class = "Prefab"
+						target_file = "models/first_person/prefabs/first_person_arms_animationlist_adjustmentlayers.vmdl_prefab"
+					},
+					{
+						_class = "Prefab"
+						target_file = "models/first_person/prefabs/first_person_arms_animationlist_shared.vmdl_prefab"
+					},
+					{
+						_class = "AnimBindPose"
+						name = "bindPose_internal"
+						activity_name = ""
+						activity_weight = 1
+						weight_list_name = ""
+						fade_in_time = 0.2
+						fade_out_time = 0.2
+						looping = false
+						delta = false
+						worldSpace = false
+						hidden = false
+						anim_markup_ordered = false
+						disable_compression = false
+						disable_interpolation = false
+						enable_scale = false
+						frame_count = 1
+						frame_rate = 30
+					},
+					{
+						_class = "AnimFile"
+						name = "IdlePose"
+						activity_name = ""
+						activity_weight = 1
+						weight_list_name = ""
+						fade_in_time = 0.2
+						fade_out_time = 0.2
+						looping = true
+						delta = false
+						worldSpace = false
+						hidden = false
+						anim_markup_ordered = false
+						disable_compression = false
+						disable_interpolation = false
+						enable_scale = false
+						source_filename = "weapons/Physgun/animations/v_physgun@IdlePose.fbx"
+						start_frame = -1
+						end_frame = -1
+						framerate = -1.0
+						take = 0
+						reverse = false
+					},
+					{
+						_class = "AnimFile"
+						name = "bindPose"
+						activity_name = ""
+						activity_weight = 1
+						weight_list_name = ""
+						fade_in_time = 0.2
+						fade_out_time = 0.2
+						looping = false
+						delta = false
+						worldSpace = false
+						hidden = false
+						anim_markup_ordered = false
+						disable_compression = false
+						disable_interpolation = false
+						enable_scale = false
+						source_filename = "weapons/Physgun/v_physgun.fbx"
+						start_frame = -1
+						end_frame = 0
+						framerate = -1.0
+						take = 0
+						reverse = false
+					},
+					{
+						_class = "AnimFile"
+						name = "bindPose_delta"
+						children = 
+						[
+							{
+								_class = "AnimSubtract"
+								anim_name = "bindPose_delta"
+								frame = 0
+							},
+						]
+						activity_name = ""
+						activity_weight = 1
+						weight_list_name = ""
+						fade_in_time = 0.2
+						fade_out_time = 0.2
+						looping = false
+						delta = false
+						worldSpace = false
+						hidden = false
+						anim_markup_ordered = false
+						disable_compression = false
+						disable_interpolation = false
+						enable_scale = false
+						source_filename = "weapons/Physgun/v_physgun.fbx"
+						start_frame = -1
+						end_frame = 0
+						framerate = -1.0
+						take = 0
+						reverse = false
+					},
+				]
+				default_root_bone_name = ""
+			},
+			{
+				_class = "AttachmentList"
+				children = 
+				[
+					{
+						_class = "Attachment"
+						name = "muzzle"
+						parent_bone = "weapon_root"
+						relative_origin = [ 42.689999, 0.0, 2.35 ]
+						relative_angles = [ 0.0, 0.0, 0.0 ]
+						weight = 1.0
+						ignore_rotation = false
+					},
+					{
+						_class = "Attachment"
+						name = "stylus_L"
+						parent_bone = "stylus_L"
+						relative_origin = [ 17.04314, 6.84666, 0.329597 ]
+						relative_angles = [ -10.0, 135.0, 0.0 ]
+						weight = 1.0
+						ignore_rotation = false
+					},
+					{
+						_class = "Attachment"
+						name = "stylus_C"
+						parent_bone = "stylus_C"
+						relative_origin = [ 16.948591, 6.95009, -0.377521 ]
+						relative_angles = [ 15.000025, 132.999969, -0.000196 ]
+						weight = 1.0
+						ignore_rotation = false
+					},
+					{
+						_class = "Attachment"
+						name = "stylus_R"
+						parent_bone = "stylus_R"
+						relative_origin = [ 16.918346, 6.987715, -0.371085 ]
+						relative_angles = [ 15.000027, 132.999969, -0.000176 ]
+						weight = 1.0
+						ignore_rotation = false
+					},
+				]
+			},
 		]
 		model_archetype = ""
 		primary_associated_entity = ""
-		anim_graph_name = ""
+		anim_graph_name = "weapons/physgun/v_physgun.vanmgrph"
 		base_model_name = ""
 	}
 }
