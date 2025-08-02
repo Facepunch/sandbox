@@ -19,6 +19,7 @@ partial class Feed
 	public void NotifyDeath( PlayerData victim, PlayerData attacker, Texture weaponIcon, TagSet tags )
 	{
 		if ( Application.IsDedicatedServer ) return;
+		if ( !victim.IsValid() ) return;
 
 		Panel panel = new Panel();
 
