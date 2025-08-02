@@ -87,13 +87,13 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		var ragdollRenderer = ragdoll.GetComponent<SkinnedModelRenderer>();
 		ragdollRenderer.CreateBoneObjects = true;
 
-		var ragdollObjects = ragdoll.GetAllObjects( true ).ToDictionary( x => x.Name );
+		var ragdollObjects = ragdoll.GetAllObjects( true ).ToLookup( x => x.Name );
 
 		for ( var i = 0; i <= playerRenderer.Model.BoneCount; ++i )
 		{
 			var boneName = playerRenderer.Model.GetBoneName( i );
 
-			if ( !ragdollObjects.TryGetValue( boneName, out GameObject boneOnRagdoll ) )
+			if ( !ragdollObjects.Contains( boneName ) )
 				continue;
 
 			var boneObject = playerRenderer.GetBoneObject( boneName );
@@ -101,6 +101,8 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 			{
 				continue;
 			}
+
+			var boneOnRagdoll = ragdollObjects[boneName].FirstOrDefault();
 
 			if ( boneOnRagdoll.IsValid() && boneObject.WorldScale != Vector3.One )
 			{
