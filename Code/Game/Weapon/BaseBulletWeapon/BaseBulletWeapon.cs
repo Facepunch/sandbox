@@ -40,6 +40,7 @@ public partial class BaseBulletWeapon : BaseWeapon
 	public void ShootEffects( Vector3 hitpoint, bool hit, Vector3 normal, GameObject hitObject, Surface hitSurface, Vector3? origin = null, bool noEvents = false )
 	{
 		if ( Application.IsDedicatedServer ) return;
+		if ( !hitSurface.IsValid() ) return;
 
 		if ( !Owner.IsValid() )
 			return;
