@@ -64,7 +64,7 @@
         },
         "WorldModelPrefab": {
           "_type": "gameobject",
-          "prefab": "weapons/glock/glock_wm.prefab"
+          "prefab": "weapons/physgun/physgun_wm.prefab"
         }
       },
       {
