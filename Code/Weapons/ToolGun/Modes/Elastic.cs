@@ -12,6 +12,9 @@ public class Elastic : BaseConstraintToolMode
 	[Property, Sync]
 	public float Damping { get; set; } = 0.1f;
 
+	[Property, Sync]
+	public bool StretchOnly { get; set; } = false;
+
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
 		var go1 = new GameObject( false, "elastic" );
@@ -36,6 +39,7 @@ public class Elastic : BaseConstraintToolMode
 			joint.Frequency = Frequency;
 			joint.Damping = Damping;
 			joint.EnableCollision = true;
+			joint.ForceMode = StretchOnly ? SpringJoint.SpringForceMode.Pull : SpringJoint.SpringForceMode.Both;
 		}
 
 		var vertletRope = go1.AddComponent<VerletRope>();
