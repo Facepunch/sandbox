@@ -8,7 +8,7 @@
 	<div class="left">
         <VerticalMenu Value="@(CurrentMode?.GetType())"  class="menuinner">
             <Options>
-                @foreach (var group in Game.TypeLibrary.GetTypes<ToolMode>().GroupBy(x => x.Group))
+                @foreach (var group in Game.TypeLibrary.GetTypes<ToolMode>().GroupBy(x => x.Group).OrderBy( x => x.Key ) )
                 {
                     @if ( !string.IsNullOrWhiteSpace( group.Key ) )
                     {
