@@ -1,0 +1,96 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@implements ISpawnMenuTab
+@attribute [Title( "Entity" )]
+@attribute [Order( 2000 )]
+<SpawnMenuPage>
+    <Left>
+        <VerticalMenu Value="@activeOption" class="menuinner">
+            <Options>
+                @foreach (var p in options)
+                {
+                    <MenuOption Value="@p" Text="@p.Name" onclick="@( () => SwitchOption( p ) )"></MenuOption>
+                }
+            </Options>
+        </VerticalMenu>
+    </Left>
+
+    <Body>
+        <PanelSwitcher @ref="Switcher">
+        </PanelSwitcher>
+    </Body>
+</SpawnMenuPage>
+
+@code
+{
+    SpawnMenuOption activeOption;
+    PanelSwitcher Switcher;
+
+    void Spawn( string ident )
+    {
+        Log.Info( $"Spawning {ident}" );
+
+        GameManager.Spawn( ident );
+    }
+
+    protected override void OnAfterTreeRender(bool firstTime)
+    {
+        base.OnAfterTreeRender(firstTime);
+
+        if ( firstTime && Switcher.IsValid() )
+        {
+            Rebuild();
+        }
+    }
+
+    void Rebuild()
+    {
+        options.Clear();
+
+        AddOption("All", () => new EntityListCloud() { Query = "sort:newest" });
+        AddOption("Favourites", () => new EntityListCloud() { Query = "sort:favourites" });
+
+        SwitchOption(options.First());
+    }
+
+    void AddOption(string name, Func<Panel> createPanelFunction)
+    {
+        var o = new SpawnMenuOption
+            {
+                Name = name,
+                PanelCreator = createPanelFunction
+            };
+
+        options.Add(o);
+    }
+
+    void SwitchOption( SpawnMenuOption o )
+    {
+        if (o == activeOption) return;
+
+        activeOption?.Panel?.SetClass("hidden", true);
+
+        activeOption = o;
+
+        if (activeOption.Panel == null )
+        {
+            activeOption.Panel= activeOption.PanelCreator.Invoke();
+            Switcher.AddChild(activeOption.Panel);
+        }
+
+        activeOption.Panel.SetClass("hidden", false);
+    }
+
+
+    class SpawnMenuOption
+    {
+        public string Name { get; set; }
+        public string Icon { get; set; }
+        public Func<Panel> PanelCreator { get; set; }
+        public Panel Panel { get; set; }
+    }
+
+    List<SpawnMenuOption> options = new();
+
+}

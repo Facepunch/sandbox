@@ -228,21 +228,30 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		// TODO - can this user spawn this package?
 
-		var modelPath = await FindModelPath( path_or_ident );
-		if ( string.IsNullOrWhiteSpace( modelPath ) )
+		// we're a model
+		if ( await FindModelPath( path_or_ident ) is string modelPath )
 		{
-			Log.Warning( $"Couldn't find {path_or_ident}" );
+			var model = await Model.LoadAsync( modelPath );
+			SpawnModel( model, spawnTransform, player );
 			return;
 		}
 
-		var model = await Model.LoadAsync( modelPath );
-		SpawnModel( model, spawnTransform, player );
+		// we're a model
+		if ( await FindEntityPath( path_or_ident ) is ScriptedEntity entity )
+		{
+			//var model = await Model.LoadAsync( modelPath );
+			//SpawnModel( model, spawnTransform, player );
+			Log.Info( $"Spawn Entity {entity}" );
+			SpawnEntity( entity, spawnTransform, player );
+			return;
+		}
+
+		Log.Warning( $"Couldn't resolve '{path_or_ident}'" );
 	}
 
 	static async Task<string> FindModelPath( string ident_or_path )
 	{
-		if ( ident_or_path.EndsWith( ".vmdl", StringComparison.OrdinalIgnoreCase ) )
-			return ident_or_path;
+		if ( ident_or_path.EndsWith( ".vmdl", StringComparison.OrdinalIgnoreCase ) ) return ident_or_path;
 
 		var package = await Package.FetchAsync( ident_or_path, false );
 		if ( package is null ) return null;
@@ -252,6 +261,11 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		var modelName = package.GetMeta<string>( "PrimaryAsset" );
 		return modelName;
+	}
+
+	static async Task<ScriptedEntity> FindEntityPath( string ident_or_path )
+	{
+		return await Cloud.Load<ScriptedEntity>( ident_or_path );
 	}
 
 	private static void SpawnModel( Model model, Transform spawnTransform, Player player )
@@ -280,6 +294,26 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 			go.AddComponent<Rigidbody>();
 		}
+
+		go.NetworkSpawn( true, null );
+
+		var undo = player.Undo.Create();
+		undo.Add( go );
+
+	}
+
+	private static void SpawnEntity( ScriptedEntity entity, Transform spawnTransform, Player player )
+	{
+		Log.Info( $"[{player}] Spawning Entity {entity.Title}" );
+
+		var prefabFile = entity.Prefab;
+
+		//var depth = -model.Bounds.Mins.z;
+		//spawnTransform.Position += spawnTransform.Up * depth;
+
+		var go = GameObject.Clone( prefabFile, new CloneConfig { Transform = spawnTransform, StartEnabled = false } );
+		go.Tags.Add( "removable" );
+		go.WorldTransform = spawnTransform;
 
 		go.NetworkSpawn( true, null );
 
