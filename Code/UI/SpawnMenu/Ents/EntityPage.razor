@@ -34,13 +34,20 @@
         GameManager.Spawn( ident );
     }
 
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        Rebuild();
+    }
+
     protected override void OnAfterTreeRender(bool firstTime)
     {
         base.OnAfterTreeRender(firstTime);
 
         if ( firstTime && Switcher.IsValid() )
         {
-            Rebuild();
+            SwitchOption(options.First());
         }
     }
 
@@ -48,10 +55,15 @@
     {
         options.Clear();
 
-        AddOption("All", () => new EntityListCloud() { Query = "sort:newest" });
-        AddOption("Favourites", () => new EntityListCloud() { Query = "sort:favourites" });
+        AddOption("All", () => new EntityListCloud() { Query = "sort:random" });
+        AddOption("Newest", () => new EntityListCloud() { Query = "sort:newest" });
+        AddOption("Favourites", () => new EntityListCloud() { Query = "sort:favourite" });
 
-        SwitchOption(options.First());
+        if ( Application.IsEditor )
+        {
+            AddOption("Local", () => new EntityListLocal() { });
+        }
+
     }
 
     void AddOption(string name, Func<Panel> createPanelFunction)

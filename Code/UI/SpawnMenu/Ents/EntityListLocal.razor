@@ -1,0 +1,15 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+
+<root>
+    @foreach ( var entry in FileSystem.Mounted.FindFile("/", "*.sent", true ) )
+    {
+        <div onclick=@(()=> GameManager.Spawn(entry))>@entry</div>
+    }
+</root>
+
+@code
+{
+    
+}
