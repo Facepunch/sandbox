@@ -1,4 +1,5 @@
-﻿[GameResource( "Ammo Resource", "ammo", "Ammo", Icon = "📦", IconBgColor = "#f54248" )]
+﻿
+[AssetType( Name = "Ammo Type", Extension = "ammo", Category = "Sandbox", Flags = AssetTypeFlags.NoEmbedding )]
 public class AmmoResource : GameResource
 {
 	/// <summary>
@@ -12,4 +13,9 @@ public class AmmoResource : GameResource
 	/// </summary>
 	[Property, Group( "Ammo" )]
 	public int MaxAmount { get; set; }
+
+	protected override Bitmap CreateAssetTypeIcon( int width, int height )
+	{
+		return CreateSimpleAssetTypeIcon( "📦", width, height, "#f54248" );
+	}
 }
