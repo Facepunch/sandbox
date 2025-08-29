@@ -15,14 +15,14 @@
     return;
 }
 
-<TileGroup>
-    <Tiles>
-    @foreach ( var entry in LastResult.Packages )
-    {
-        <SpawnButton Icon="@entry.Thumb" Action="@(() => Spawn( entry ))"></SpawnButton>
-    }
-    </Tiles>
-</TileGroup>
+<VirtualGrid Items=@( LastResult.Packages ) ItemSize=@(120)>
+    <Item Context="item">
+        @if (item is Package entry)
+        {
+            <SpawnButton Icon="@entry.Thumb" Action="@(() => Spawn(entry))"></SpawnButton>
+        }
+    </Item>
+</VirtualGrid>
 
 @code
 {

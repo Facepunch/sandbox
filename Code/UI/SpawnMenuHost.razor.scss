@@ -178,3 +178,27 @@ SpawnMenuHost.open
 	background-color: #282E3488;
 	border-radius: 8px;
 }
+
+VirtualGrid
+{
+	width: 100%;
+	height: 100%;
+	gap: 5px;
+	padding: 100px 0 0 0;
+
+	.cell
+	{
+		background-color: #7771;
+
+
+		&:hover
+		{
+			background-color: #7773;
+		}
+
+		&:active
+		{
+			background-color: #08f;
+		}
+	}
+}

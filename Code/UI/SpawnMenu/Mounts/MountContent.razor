@@ -18,13 +18,15 @@
     </div>
 
     <div class="body">
-
-        @foreach (var r in mount.Resources)
-        {
-            if ( r.Type != ResourceType.Model ) continue;
-
-            <SpawnIcon Path="@r.Path" @onclick=@( () => Spawn( r.Path ) )></SpawnIcon>
-        }
+               
+        <VirtualGrid Items=@( GetData() ) ItemSize=@(120)>
+            <Item Context="item">
+                @if (item is ResourceLoader loader)
+                {
+                    <SpawnIcon Path="@loader.Path" @onclick=@( () => Spawn( loader.Path ) )></SpawnIcon>
+                }
+            </Item>
+        </VirtualGrid>
 
     </div>
 
@@ -35,10 +37,10 @@
     public string Ident { get; set; }
 
     BaseGameMount mount;
-    
+
     protected override async Task OnParametersSetAsync()
     {
-        mount = await Sandbox.Mounting.Directory.Mount(Ident);
+        mount = await Sandbox.Mounting.Directory.Mount( Ident );
     }
 
     void Spawn(string ident)
@@ -46,6 +48,11 @@
         Log.Info($"Spawning {ident}");
 
         GameManager.Spawn(ident);
+    }
+
+    IEnumerable<object> GetData()
+    {
+        return mount?.Resources.Where( x => x.Type == ResourceType.Model );
     }
 
 }

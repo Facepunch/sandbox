@@ -2,12 +2,15 @@
 @using Sandbox.UI;
 @inherits Panel
 
-<root>
-    @foreach ( var entry in FileSystem.Mounted.FindFile("/", "*.sent", true ) )
-    {
-        <div onclick=@(()=> GameManager.Spawn(entry))>@entry</div>
-    }
-</root>
+
+<VirtualGrid Items=@( FileSystem.Mounted.FindFile("/", "*.sent", true ) ) ItemSize=@(120)>
+    <Item Context="item">
+        @if (item is string entry)
+        {
+            <div onclick=@(() => GameManager.Spawn(entry))>@entry</div>
+        }
+    </Item>
+</VirtualGrid>
 
 @code
 {
