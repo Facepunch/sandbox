@@ -7,9 +7,11 @@ SpawnMenuPage
 
 SpawnMenuPage > .left
 {
-	width: 200px;
+	width: 256px;
 	flex-direction: column;
 	padding: 8px;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 SpawnMenuPage > .body
