@@ -59,6 +59,8 @@
         AddOption("Food", () => new SpawnPageCloud() { Category = "food" });
 
         SwitchOption(options.First());
+
+        StateHasChanged();
     }
 
     void AddOption(string name, Func<Panel> createPanelFunction)
@@ -87,6 +89,7 @@
         }
 
         activeOption.Panel.SetClass("hidden", false);
+        StateHasChanged();
     }
 
 
