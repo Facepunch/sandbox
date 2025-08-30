@@ -282,7 +282,7 @@
   "DontBreakAsTemplate": true,
   "ResourceVersion": 1,
   "__references": [
-    "facepunch.9mm_bullet#28861",
+    "facepunch.9mm_bullet#108322",
     "facepunch.ammobox9mm#95475"
   ],
   "__version": 1
