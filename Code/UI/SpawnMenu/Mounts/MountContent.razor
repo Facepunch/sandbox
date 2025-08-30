@@ -11,14 +11,14 @@
     return;
 }
 
-<root>
 
-    <div class="header">
-        <div>@mount.Title</div>
-    </div>
+<SpawnMenuContent>
 
-    <div class="body">
-               
+    <Header>
+        <SpawnMenuToolbar></SpawnMenuToolbar>
+    </Header>
+
+    <Body>
         <VirtualGrid Items=@( GetData() ) ItemSize=@(120)>
             <Item Context="item">
                 @if (item is ResourceLoader loader)
@@ -27,10 +27,9 @@
                 }
             </Item>
         </VirtualGrid>
+    </Body>
 
-    </div>
-
-</root>
+</SpawnMenuContent>
 
 @code
 {

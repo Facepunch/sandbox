@@ -9,6 +9,13 @@
     return;
 }
 
+<SpawnMenuContent>
+
+    <Header>
+        <SpawnMenuToolbar></SpawnMenuToolbar>
+    </Header>
+
+    <Body>
 <VirtualGrid Items=@( LastResult.Packages ) ItemSize=@(120)>
     <Item Context="item">
         @if (item is Package entry)
@@ -17,6 +24,9 @@
         }
     </Item>
 </VirtualGrid>
+    </Body>
+
+</SpawnMenuContent>
 
 @code
 {

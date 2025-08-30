@@ -2,14 +2,24 @@
 @using Sandbox.UI;
 @inherits Panel
 
-<VirtualGrid Items=@( Entries ) ItemSize=@(120)>
-    <Item Context="item">
-        @if (item is Entry entry)
-        {
-            <SpawnButton Icon=@entry.Icon Action="@(() => Spawn(entry.Ident))"></SpawnButton>
-        }
-    </Item>
-</VirtualGrid>
+<SpawnMenuContent>
+
+    <Header>
+        <SpawnMenuToolbar></SpawnMenuToolbar>
+    </Header>
+
+    <Body>
+        <VirtualGrid Items=@( Entries ) ItemSize=@(120)>
+            <Item Context="item">
+                @if (item is Entry entry)
+                {
+                    <SpawnButton Icon=@entry.Icon Action="@(() => Spawn(entry.Ident))"></SpawnButton>
+                }
+            </Item>
+        </VirtualGrid>
+    </Body>
+
+</SpawnMenuContent>
 
 @code
 {

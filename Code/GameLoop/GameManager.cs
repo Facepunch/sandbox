@@ -262,8 +262,11 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 	static async Task<Model> FindModelPath( string ident_or_path )
 	{
-		var se = await ResourceLibrary.LoadAsync<Model>( ident_or_path );
-		if ( se is not null ) return se;
+		if ( ident_or_path.EndsWith( ".vmdl" ) )
+		{
+			var se = await ResourceLibrary.LoadAsync<Model>( ident_or_path );
+			if ( se is not null ) return se;
+		}
 
 		return await Cloud.Load<Model>( ident_or_path );
 	}

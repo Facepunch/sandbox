@@ -1,50 +1,8 @@
 MountContent
 {
-	flex-direction: column;
-	position: relative;
-	width: 100%;
-
-	> .header
-	{
-		flex-shrink: 0;
-		padding: 1rem;
-	}
+	
 }
 
-
-MountsPage > .left
-{
-	border-right: 1px solid #ffffff05;
-	flex-grow: 0;
-	flex-shrink: 0;
-	width: 200px;
-	flex-direction: column;
-
-	h2
-	{
-		font-size: 16px;
-		text-transform: uppercase;
-		opacity: 0.3;
-		padding: 1rem;
-	}
-
-	.entry
-	{
-		cursor: pointer;
-		padding: 5px 1rem;
-
-		&:hover
-		{
-			color: white;
-		}
-
-		&.active
-		{
-			color: white;
-			background-color: #08f;
-		}
-	}
-}
 
 MountContent > .body
 {

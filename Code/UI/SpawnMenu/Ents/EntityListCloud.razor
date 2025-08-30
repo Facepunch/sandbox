@@ -15,14 +15,26 @@
     return;
 }
 
-<VirtualGrid Items=@( LastResult.Packages ) ItemSize=@(120)>
-    <Item Context="item">
-        @if (item is Package entry)
-        {
-            <SpawnButton Icon="@entry.Thumb" Action="@(() => Spawn(entry))"></SpawnButton>
-        }
-    </Item>
-</VirtualGrid>
+
+
+<SpawnMenuContent>
+
+    <Header>
+        <SpawnMenuToolbar></SpawnMenuToolbar>
+    </Header>
+
+    <Body>
+        <VirtualGrid Items=@( LastResult.Packages ) ItemSize=@(120)>
+            <Item Context="item">
+                @if (item is Package entry)
+                {
+                    <SpawnButton Icon="@entry.Thumb" Action="@(() => Spawn(entry))"></SpawnButton>
+                }
+            </Item>
+        </VirtualGrid>
+    </Body>
+
+</SpawnMenuContent>
 
 @code
 {
