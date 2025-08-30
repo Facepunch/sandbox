@@ -23,7 +23,7 @@
             <Item Context="item">
                 @if (item is ResourceLoader loader)
                 {
-                    <SpawnIcon Path="@loader.Path" @onclick=@( () => Spawn( loader.Path ) )></SpawnIcon>
+                    <SpawnIcon Loader="@loader" @onclick=@( () => Spawn( loader.Path ) )></SpawnIcon>
                 }
             </Item>
         </VirtualGrid>
