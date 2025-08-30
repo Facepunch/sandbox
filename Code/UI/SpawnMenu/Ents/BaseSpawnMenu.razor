@@ -1,0 +1,21 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@implements ISpawnMenuTab
+
+<SpawnMenuPage>
+    <Left>
+        <VerticalMenu Value="@activeOption" class="menuinner">
+            <Options>
+                @foreach (var p in options)
+                {
+                    <MenuOption Value="@p" Text="@p.Name" onclick="@( () => SwitchOption( p ) )"></MenuOption>
+                }
+            </Options>
+        </VerticalMenu>
+    </Left>
+
+    <Body>
+        <PanelSwitcher @ref="Switcher"></PanelSwitcher>
+    </Body>
+</SpawnMenuPage>

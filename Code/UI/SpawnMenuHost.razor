@@ -65,6 +65,7 @@
         foreach ( var p in Game.TypeLibrary.GetTypes<ISpawnMenuTab>().OrderBy(x => x.Order).ThenBy(x => x.Title) ) 
         {  
             if (p.IsAbstract) continue;
+            if (p.TargetType == typeof(BaseSpawnMenu)) continue;
 
             var panel = p.Create<Panel>();
             TabContainer.AddChild(panel);
