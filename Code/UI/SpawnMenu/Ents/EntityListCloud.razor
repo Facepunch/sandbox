@@ -28,7 +28,7 @@
             <Item Context="item">
                 @if (item is Package entry)
                 {
-                    <SpawnButton Icon="@entry.Thumb" Action="@(() => Spawn(entry))"></SpawnButton>
+                    <SpawnButton Package="@entry" Icon="@entry.Thumb" Action="@(() => Spawn(entry))"></SpawnButton>
                 }
             </Item>
         </VirtualGrid>

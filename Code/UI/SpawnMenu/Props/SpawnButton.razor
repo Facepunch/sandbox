@@ -3,7 +3,12 @@
 @inherits Panel
 
 
-<root style="background-image: url( @Icon )" onclick="@Action">
+<root onclick="@Action" style="background-image: url( @Icon )">
+
+    @if ( Package is not null )
+    {
+        <div class="title">@Package.Title</div>
+    }
 
 </root>
 
@@ -11,4 +16,5 @@
 {
     public string Icon { get; set; } = "https://cdn.sbox.game/asset/facepunch.oildrumexplosive/thumb.png.fff8e3787c17283";
     public Action Action { get; set; }
+    public Package Package { get; set; }
 }
