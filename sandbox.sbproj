@@ -23,13 +23,14 @@
     "PerMapRanking": false,
     "LeaderboardType": "None",
     "CsProjName": "",
-    "StartupScene": "scenes/minimal.scene",
+    "StartupScene": "scenes/sandbox.scene",
     "ControlModes": {
       "Keyboard": true,
       "VR": false,
       "Gamepad": true
     },
     "LaunchMode": "Launcher",
-    "MapStartupScene": "scenes/minimal.scene"
+    "MapStartupScene": "scenes/sandbox.scene",
+    "DedicatedServerStartupScene": "scenes/sandbox.scene"
   }
 }
