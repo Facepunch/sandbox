@@ -10,10 +10,17 @@ SpawnMenuContent
 SpawnMenuContent > .header
 {
 	flex-direction: column;
+	display: none;
 }
 
 SpawnMenuContent > .body
 {
 	position: relative;
 	flex-grow: 1;
+}
+
+SpawnMenuContent > .body .cell:hover
+{
+	color: white;
+	sound-in: ui.button.over;
 }

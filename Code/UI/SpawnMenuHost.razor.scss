@@ -199,6 +199,7 @@ VirtualGrid
 		&:active
 		{
 			background-color: #08f;
+			filter: brightness( 2 );
 		}
 	}
 }
