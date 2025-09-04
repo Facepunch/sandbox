@@ -1,46 +1,31 @@
 {
-  "UI": true,
-  "Volume": "0.1",
-  "Pitch": "1",
+  "UI": false,
+  "Volume": "0.2",
+  "Pitch": "0.5 0.8",
   "Decibels": 70,
-  "SelectionMode": "Forward",
+  "SelectionMode": "Random",
   "Sounds": [
-    "sounds/ui/spawn01.vsnd",
-    "sounds/ui/spawn02.vsnd"
+    "weapons/toolgun/sounds/shoot03.vsnd"
   ],
   "Occlusion": true,
   "AirAbsorption": true,
   "Transmission": true,
-  "OcclusionRadius": 64,
+  "OcclusionRadius": 128,
   "DistanceAttenuation": true,
   "Distance": 15000,
   "Falloff": [
     {
       "x": 0,
       "y": 1,
-      "in": 0,
-      "out": -1.8,
-      "mode": "Mirrored"
-    },
-    {
-      "x": 0.05,
-      "y": 0.22,
-      "in": 3.5,
-      "out": -3.5,
-      "mode": "Mirrored"
-    },
-    {
-      "x": 0.2,
-      "y": 0.04,
-      "in": 0.16,
-      "out": -0.16,
+      "in": 3.1415927,
+      "out": -3.1415927,
       "mode": "Mirrored"
     },
     {
       "x": 1,
       "y": 0,
-      "in": 0,
-      "out": 0,
+      "in": -0,
+      "out": -0,
       "mode": "Mirrored"
     }
   ],

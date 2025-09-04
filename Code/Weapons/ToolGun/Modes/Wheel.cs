@@ -23,6 +23,7 @@ public class Wheel : ToolMode
 		if ( Input.Pressed( "attack1" ) )
 		{
 			SpawnWheel( select, wheelModel, placementTrans );
+			ShootEffects( select );
 		}
 
 		DebugOverlay.Model( wheelModel, transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );

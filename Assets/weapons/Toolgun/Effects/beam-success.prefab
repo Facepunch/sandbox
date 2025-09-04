@@ -88,6 +88,7 @@
             "InitialBurst": 3,
             "Lighting": false,
             "Looped": false,
+            "Material": null,
             "MaxBeams": 3,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -171,6 +172,73 @@
                 }
               ]
             }
+          }
+        ],
+        "Children": []
+      },
+      {
+        "__guid": "038cc440-288b-410d-bb14-97ef5336d0dc",
+        "__version": 1,
+        "Flags": 0,
+        "Name": "Sound",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkInterpolation": true,
+        "NetworkOrphaned": 0,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.SoundPointComponent",
+            "__guid": "c9e0f7b4-855c-45f7-a3fb-04b563356bce",
+            "__enabled": true,
+            "Distance": 512,
+            "DistanceAttenuation": false,
+            "DistanceAttenuationOverride": false,
+            "Falloff": [
+              {
+                "x": 0,
+                "y": 1,
+                "in": 3.1415927,
+                "out": -3.1415927,
+                "mode": "Mirrored"
+              },
+              {
+                "x": 1,
+                "y": 0,
+                "in": 0,
+                "out": 0,
+                "mode": "Mirrored"
+              }
+            ],
+            "Force2d": false,
+            "MaxRepeatTime": 1,
+            "MinRepeatTime": 1,
+            "Occlusion": false,
+            "OcclusionOverride": false,
+            "OcclusionRadius": 32,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Pitch": 1,
+            "PlayOnStart": true,
+            "ReflectionOverride": false,
+            "Reflections": false,
+            "Repeat": false,
+            "SoundEvent": "weapons/toolgun/sounds/shoot.sound",
+            "SoundOverride": false,
+            "StopOnNew": false,
+            "TargetMixer": {
+              "Name": "unknown",
+              "Id": "00000000-0000-0000-0000-000000000000"
+            },
+            "Volume": 1
           }
         ],
         "Children": []
