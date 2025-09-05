@@ -22,30 +22,52 @@ public class LinkedGameObjectBuilder
 	/// </summary>
 	public void AddConnected( GameObject source )
 	{
-		//
-		// we're only interested in root objects
-		//
-		source = source.Root;
+		// Use iterative approach to avoid stack overflow with complex object hierarchies
+		var toProcess = new Queue<GameObject>();
+		toProcess.Enqueue( source );
 
-		// If we can't add this then don't add children
-		// because we must have already added it, or it's the world.
-		if ( !Add( source ) ) return;
+		while ( toProcess.Count > 0 )
+		{
+			var current = toProcess.Dequeue();
+			
+			// We're only interested in root objects
+			current = current.Root;
 
-		foreach ( var rb in source.GetComponents<Rigidbody>() )
+			// If we can't add this then skip it
+			// because we must have already added it, or it's the world.
+			if ( !Add( current ) ) continue;
+
+			// Find all connected objects through joints
+			AddConnectedObjectsToQueue( current, toProcess );
+		}
+	}
+
+	/// <summary>
+	/// Helper method to find connected objects and add them to the processing queue
+	/// </summary>
+	private void AddConnectedObjectsToQueue( GameObject obj, Queue<GameObject> queue )
+	{
+		// Check rigidbody joints
+		foreach ( var rb in obj.GetComponents<Rigidbody>() )
 		{
 			foreach ( var joint in rb.Joints )
 			{
-				AddConnected( joint.Object1 );
-				AddConnected( joint.Object2 );
+				if ( joint.Object1.IsValid() && joint.Object1 != obj )
+					queue.Enqueue( joint.Object1 );
+				if ( joint.Object2.IsValid() && joint.Object2 != obj )
+					queue.Enqueue( joint.Object2 );
 			}
 		}
 
-		foreach ( var collider in source.GetComponents<Collider>() )
+		// Check collider joints
+		foreach ( var collider in obj.GetComponents<Collider>() )
 		{
 			foreach ( var joint in collider.Joints )
 			{
-				AddConnected( joint.Object1 );
-				AddConnected( joint.Object2 );
+				if ( joint.Object1.IsValid() && joint.Object1 != obj )
+					queue.Enqueue( joint.Object1 );
+				if ( joint.Object2.IsValid() && joint.Object2 != obj )
+					queue.Enqueue( joint.Object2 );
 			}
 		}
 	}

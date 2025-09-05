@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Reflection;
 
 [Icon( "✌️" )]
 [ClassName( "duplicator" )]
@@ -35,13 +36,8 @@ public class Duplicator : ToolMode
 				return;
 			}
 
-			var tx = new Transform();
-			tx.Position = select.WorldPosition() + Vector3.Down * dupe.Bounds.Mins.z;
-
-			var relative = Player.EyeTransform.Rotation.Angles();
-			tx.Rotation = new Angles( 0, relative.yaw, 0 );
-
-			Duplicate( tx );
+			var placementTransform = CalculatePlacementTransform( select );
+			Duplicate( placementTransform );
 			ShootEffects( select );
 			return;
 		}
@@ -54,8 +50,8 @@ public class Duplicator : ToolMode
 				return;
 			}
 
-			var selectionAngle = new Transform( select.WorldPosition(), Player.EyeTransform.Rotation.Angles().WithPitch( 0 ) );
-			Copy( select.GameObject, selectionAngle, Input.Down( "run" ) );
+			var selectionTransform = CreateSelectionTransform( select );
+			Copy( select.GameObject, selectionTransform, Input.Down( "run" ) );
 
 			ShootEffects( select );
 		}
@@ -86,12 +82,42 @@ public class Duplicator : ToolMode
 
 	void JsonChanged()
 	{
+		RefreshDuplicationData();
+	}
+
+	/// <summary>
+	/// Refreshes the duplication data from the JSON string
+	/// </summary>
+	private void RefreshDuplicationData()
+	{
 		dupe = null;
 
 		if ( string.IsNullOrWhiteSpace( CopiedJson ) )
 			return;
 
 		dupe = Json.Deserialize<DuplicationData>( CopiedJson );
+	}
+
+	/// <summary>
+	/// Calculates the placement transform for duplication based on selection point
+	/// </summary>
+	private Transform CalculatePlacementTransform( SelectionPoint select )
+	{
+		var tx = new Transform();
+		tx.Position = select.WorldPosition() + Vector3.Down * dupe.Bounds.Mins.z;
+
+		var relative = Player.EyeTransform.Rotation.Angles();
+		tx.Rotation = new Angles( 0, relative.yaw, 0 );
+
+		return tx;
+	}
+
+	/// <summary>
+	/// Creates the selection transform for copying objects
+	/// </summary>
+	private Transform CreateSelectionTransform( SelectionPoint select )
+	{
+		return new Transform( select.WorldPosition(), Player.EyeTransform.Rotation.Angles().WithPitch( 0 ) );
 	}
 
 	void DrawPreview()
@@ -101,34 +127,42 @@ public class Duplicator : ToolMode
 		var select = TraceSelect();
 		if ( !IsValidPlacementTarget( select ) ) return;
 
-		var tx = new Transform();
-
-		tx.Position = select.WorldPosition() + Vector3.Down * dupe.Bounds.Mins.z;
-
-		var relative = Player.EyeTransform.Rotation.Angles();
-		tx.Rotation = new Angles( 0, relative.yaw, 0 );
+		var placementTransform = CalculatePlacementTransform( select );
 
 		var overlayMaterial = IsProxy ? Material.Load( "materials/effects/duplicator_override_other.vmat" ) : Material.Load( "materials/effects/duplicator_override.vmat" );
 		foreach ( var model in dupe.PreviewModels )
 		{
-			DebugOverlay.Model( model.Model, transform: tx.ToWorld( model.Transform ), overlay: false, materialOveride: overlayMaterial );
+			DebugOverlay.Model( model.Model, transform: placementTransform.ToWorld( model.Transform ), overlay: false, materialOveride: overlayMaterial );
 		}
 	}
 
 
+	/// <summary>
+	/// Validates if the selection point is a valid target for copying
+	/// </summary>
 	bool IsValidTarget( SelectionPoint source )
 	{
 		if ( !source.IsValid() ) return false;
 		if ( source.IsWorld ) return false;
 		if ( source.IsPlayer ) return false;
 
+		// Additional validation: check if object is duplicatable
+		var gameObject = source.GameObject?.Network?.RootGameObject ?? source.GameObject;
+		if ( gameObject?.Tags.Contains( "world" ) == true ) return false;
+		if ( gameObject?.IsProxy == true ) return false;
+
 		return true;
 	}
 
+	/// <summary>
+	/// Validates if the selection point is a valid target for placing duplicated objects
+	/// </summary>
 	bool IsValidPlacementTarget( SelectionPoint source )
 	{
 		if ( !source.IsValid() ) return false;
 
+		// Could add more specific placement validation here
+		// For example: check if there's enough space, valid surface, etc.
 		return true;
 	}
 
@@ -138,36 +172,93 @@ public class Duplicator : ToolMode
 		if ( dupe is null )
 			return;
 
-		var jsonObject = Json.ToNode( dupe ) as JsonObject;
-
-		SceneUtility.MakeIdGuidsUnique( jsonObject );
-
+		var jsonObject = PrepareJsonForDuplication( dupe );
 		var undo = Player.Undo.Create();
 
+		CreateObjectsFromJson( jsonObject, dest, undo );
+	}
+
+	/// <summary>
+	/// Prepares the duplication JSON by making IDs unique
+	/// </summary>
+	private JsonObject PrepareJsonForDuplication( DuplicationData duplicationData )
+	{
+		var jsonObject = Json.ToNode( duplicationData ) as JsonObject;
+		SceneUtility.MakeIdGuidsUnique( jsonObject );
+		return jsonObject;
+	}
+
+	/// <summary>
+	/// Creates GameObjects from JSON array and transforms them to the destination
+	/// </summary>
+	private void CreateObjectsFromJson( JsonObject jsonObject, Transform destination, object undo )
+	{
 		SceneUtility.RunInBatchGroup( () =>
 		{
-
 			foreach ( var entry in jsonObject["Objects"] as JsonArray )
 			{
-				if ( entry is JsonObject obj )
+				if ( entry is JsonObject objectJson )
 				{
-					var pos = entry["Position"]?.Deserialize<Vector3>() ?? default;
-					var rot = entry["Rotation"]?.Deserialize<Rotation>() ?? Rotation.Identity;
-
-					var world = dest.ToWorld( new Transform( pos, rot ) );
-
-					entry["Position"] = JsonValue.Create( world.Position );
-					entry["Rotation"] = JsonValue.Create( world.Rotation );
-
-					var go = new GameObject( false );
-					go.Deserialize( obj );
-
-					go.NetworkSpawn( null );
-
-					undo.Add( go );
+					CreateSingleObject( objectJson, destination, undo );
 				}
 			}
 		} );
+	}
+
+	/// <summary>
+	/// Creates a single GameObject from JSON and adds it to the undo system
+	/// </summary>
+	private void CreateSingleObject( JsonObject objectJson, Transform destination, object undo )
+	{
+		var localTransform = ExtractLocalTransform( objectJson );
+		var worldTransform = TransformToDestination( localTransform, destination );
+		
+		UpdateJsonTransform( objectJson, worldTransform );
+		
+		var gameObject = CreateAndSpawnObject( objectJson );
+		
+		// Add to undo system via reflection since undo.Add is dynamic
+		var undoType = undo.GetType();
+		var addMethod = undoType.GetMethod( "Add" );
+		addMethod?.Invoke( undo, new object[] { gameObject } );
+	}
+
+	/// <summary>
+	/// Extracts local transform from JSON object
+	/// </summary>
+	private Transform ExtractLocalTransform( JsonObject objectJson )
+	{
+		var pos = objectJson["Position"]?.Deserialize<Vector3>() ?? default;
+		var rot = objectJson["Rotation"]?.Deserialize<Rotation>() ?? Rotation.Identity;
+		return new Transform( pos, rot );
+	}
+
+	/// <summary>
+	/// Transforms local coordinates to destination world coordinates
+	/// </summary>
+	private Transform TransformToDestination( Transform localTransform, Transform destination )
+	{
+		return destination.ToWorld( localTransform );
+	}
+
+	/// <summary>
+	/// Updates the JSON object with new world transform
+	/// </summary>
+	private void UpdateJsonTransform( JsonObject objectJson, Transform worldTransform )
+	{
+		objectJson["Position"] = JsonValue.Create( worldTransform.Position );
+		objectJson["Rotation"] = JsonValue.Create( worldTransform.Rotation );
+	}
+
+	/// <summary>
+	/// Creates and spawns a GameObject from JSON
+	/// </summary>
+	private GameObject CreateAndSpawnObject( JsonObject objectJson )
+	{
+		var go = new GameObject( false );
+		go.Deserialize( objectJson );
+		go.NetworkSpawn( null );
+		return go;
 	}
 
 }
