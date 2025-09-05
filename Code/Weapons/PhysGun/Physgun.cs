@@ -89,7 +89,7 @@ public partial class Physgun : BaseCarryable
 
 		_isSnapping = isSnapping;
 
-		ViewModel.RunEvent<ViewModel>( UpdateViewModel );
+		ViewModel?.RunEvent<ViewModel>( UpdateViewModel );
 
 		if ( _state.IsValid() )
 		{
