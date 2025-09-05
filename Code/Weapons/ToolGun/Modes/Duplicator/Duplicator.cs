@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Reflection;
 
 [Icon( "✌️" )]
 [ClassName( "duplicator" )]
@@ -217,10 +216,8 @@ public class Duplicator : ToolMode
 		
 		var gameObject = CreateAndSpawnObject( objectJson );
 		
-		// Add to undo system via reflection since undo.Add is dynamic
-		var undoType = undo.GetType();
-		var addMethod = undoType.GetMethod( "Add" );
-		addMethod?.Invoke( undo, new object[] { gameObject } );
+		// Add to undo system
+		((dynamic)undo).Add( gameObject );
 	}
 
 	/// <summary>
