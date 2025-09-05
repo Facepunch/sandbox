@@ -9,7 +9,6 @@ public class Notices : PanelComponent
 
 	public static Notices Current => Game.ActiveScene.Get<Notices>();
 
-	[Rpc.Broadcast]
 	public static void AddNotice( string text, float seconds = 5 )
 	{
 		var current = Current;
@@ -23,7 +22,6 @@ public class Notices : PanelComponent
 		current.Panel.AddChild( notice );
 	}
 
-	[Rpc.Broadcast]
 	public static void AddNotice( string icon, Color iconColor, string text, float seconds = 5 )
 	{
 		var current = Current;

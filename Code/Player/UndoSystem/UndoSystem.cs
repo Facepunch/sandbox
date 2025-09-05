@@ -86,11 +86,18 @@ public class UndoSystem
 			{
 				using ( Rpc.FilterInclude( Player.Network.Owner ) )
 				{
-					Notices.AddNotice( "cached", "#4af", $"Undo {Name}".Trim(), 4 );
+					UndoNotice( Name );
 				}
 			}
 
 			return true;
+		}
+
+		[Rpc.Broadcast]
+		public static void UndoNotice( string title )
+		{
+			Notices.AddNotice( "cached", "#4af", $"Undo {title}".Trim(), 4 );
+			Sound.Play( "sounds/ui/undo.sound" );
 		}
 	}
 }
