@@ -1,6 +1,4 @@
-using static BaseWeapon;
-
-public sealed partial class ViewModel : WeaponModel, IWeaponEvent, ICameraSetup
+public sealed partial class ViewModel : WeaponModel, ICameraSetup
 {
 	[ConVar( "sbdm.hideviewmodel", ConVarFlags.Cheat )]
 	private static bool HideViewModel { get; set; } = false;
@@ -29,7 +27,8 @@ public sealed partial class ViewModel : WeaponModel, IWeaponEvent, ICameraSetup
 	[Property, Group( "Inertia" )]
 	Vector2 InertiaScale { get; set; } = new Vector2( 2, 2 );
 
-	bool IsAttacking;
+	public bool IsAttacking { get; set; }
+
 	TimeSince AttackDuration;
 
 	Vector2 lastInertia;
@@ -52,18 +51,20 @@ public sealed partial class ViewModel : WeaponModel, IWeaponEvent, ICameraSetup
 
 	void ApplyInertia()
 	{
+		var rot = Scene.Camera.WorldRotation.Angles();
+
 		// Need to fetch data from the camera for the first frame
 		if ( isFirstUpdate )
 		{
-			var rot = Scene.Camera.WorldRotation;
 
-			lastInertia = new Vector2( rot.Pitch(), rot.Yaw() );
+
+			lastInertia = new Vector2( rot.pitch, rot.yaw );
 			currentInertia = Vector2.Zero;
 			isFirstUpdate = false;
 		}
 
-		var newPitch = Scene.Camera.WorldRotation.Pitch();
-		var newYaw = Scene.Camera.WorldRotation.Yaw();
+		var newPitch = rot.pitch;
+		var newYaw = rot.yaw;
 
 		currentInertia = new Vector2( Angles.NormalizeAngle( newPitch - lastInertia.x ), Angles.NormalizeAngle( lastInertia.y - newYaw ) );
 		lastInertia = new( newPitch, newYaw );
@@ -97,17 +98,37 @@ public sealed partial class ViewModel : WeaponModel, IWeaponEvent, ICameraSetup
 		var playerController = GetComponentInParent<PlayerController>();
 		if ( !playerController.IsValid() ) return;
 
+		var rot = Scene.Camera.WorldRotation.Angles();
+
 		Renderer.Set( "b_twohanded", true );
 		Renderer.Set( "b_grounded", playerController.IsOnGround );
 		Renderer.Set( "move_bob", GamePreferences.ViewBobbing ? playerController.Velocity.Length.Remap( 0, playerController.RunSpeed * 2f ) : 0 );
 
+		Renderer.Set( "aim_pitch", rot.pitch );
 		Renderer.Set( "aim_pitch_inertia", currentInertia.x * InertiaScale.x );
+
+		Renderer.Set( "aim_yaw", rot.yaw );
 		Renderer.Set( "aim_yaw_inertia", currentInertia.y * InertiaScale.y );
 
 		Renderer.Set( "attack_hold", IsAttacking ? AttackDuration.Relative.Clamp( 0f, 1f ) : 0f );
+
+		var velocity = playerController.Velocity;
+
+		var dir = velocity;
+		var forward = Scene.Camera.WorldRotation.Forward.Dot( dir );
+		var sideward = Scene.Camera.WorldRotation.Right.Dot( dir );
+
+		var angle = MathF.Atan2( sideward, forward ).RadianToDegree().NormalizeDegrees();
+
+		Renderer.Set( "move_direction", angle );
+		Renderer.Set( "move_speed", velocity.Length );
+		Renderer.Set( "move_groundspeed", velocity.WithZ( 0 ).Length );
+		Renderer.Set( "move_y", sideward );
+		Renderer.Set( "move_x", forward );
+		Renderer.Set( "move_z", velocity.z );
 	}
 
-	void IWeaponEvent.OnAttack( IWeaponEvent.AttackEvent e )
+	public void OnAttack()
 	{
 		Renderer?.Set( "b_attack", true );
 
@@ -126,7 +147,7 @@ public sealed partial class ViewModel : WeaponModel, IWeaponEvent, ICameraSetup
 		}
 	}
 
-	void IWeaponEvent.CreateRangedEffects( BaseWeapon weapon, Vector3 hitPoint, Vector3? origin )
+	public void CreateRangedEffects( BaseWeapon weapon, Vector3 hitPoint, Vector3? origin )
 	{
 		DoTracerEffect( hitPoint, origin );
 	}
@@ -134,7 +155,7 @@ public sealed partial class ViewModel : WeaponModel, IWeaponEvent, ICameraSetup
 	/// <summary>
 	/// Called when starting to reload a weapon.
 	/// </summary>
-	void IWeaponEvent.OnReloadStart()
+	public void OnReloadStart()
 	{
 		Renderer?.Set( "speed_reload", AnimationSpeed );
 		Renderer?.Set( IsIncremental ? "b_reloading" : "b_reload", true );
@@ -143,13 +164,13 @@ public sealed partial class ViewModel : WeaponModel, IWeaponEvent, ICameraSetup
 	/// <summary>
 	/// Called when incrementally reloading a weapon.
 	/// </summary>
-	void IWeaponEvent.OnIncrementalReload()
+	public void OnIncrementalReload()
 	{
 		Renderer?.Set( "speed_reload", IncrementalAnimationSpeed );
 		Renderer?.Set( "b_reloading_shell", true );
 	}
 
-	void IWeaponEvent.OnReloadFinish()
+	public void OnReloadFinish()
 	{
 		if ( IsIncremental )
 		{

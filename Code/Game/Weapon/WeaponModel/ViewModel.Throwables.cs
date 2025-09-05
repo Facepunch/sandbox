@@ -1,5 +1,3 @@
-using static BaseWeapon;
-
 public partial class ViewModel
 {
 	/// <summary>
@@ -30,25 +28,5 @@ public partial class ViewModel
 		{
 			Renderer?.Set( "throwable_type", (int)ThrowableType );
 		}
-	}
-
-	void IWeaponEvent.OnAttackStart( IWeaponEvent.AttackEvent ev )
-	{
-		if ( IsThrowable )
-		{
-			Renderer?.Set( "b_pull", true );
-		}
-		else
-		{
-			Renderer?.Set( "b_attack", true );
-		}
-
-		IsAttacking = true;
-		AttackDuration = 0;
-	}
-
-	void IWeaponEvent.OnAttackStop()
-	{
-		IsAttacking = false;
 	}
 }

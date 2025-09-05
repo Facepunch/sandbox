@@ -49,9 +49,8 @@ public partial class BaseBulletWeapon : BaseWeapon
 
 		if ( !noEvents )
 		{
-			var ev = new IWeaponEvent.AttackEvent( ViewModel.IsValid() );
-			IWeaponEvent.PostToGameObject( GameObject.Root, x => x.OnAttack( ev ) );
-			IWeaponEvent.PostToGameObject( GameObject.Root, x => x.CreateRangedEffects( this, hitpoint, origin ) );
+			ViewModel?.RunEvent<ViewModel>( x => x.OnAttack() );
+			ViewModel?.RunEvent<ViewModel>( x => x.CreateRangedEffects( this, hitpoint, origin ) );
 
 			if ( ShootSound.IsValid() )
 			{

@@ -18,14 +18,14 @@ public class Mp5Weapon : BaseBulletWeapon
 		{
 			if ( Input.Pressed( "Attack1" ) )
 			{
-				StartAttack();
+				//StartAttack();
 			}
 
 			ShootBullet( player );
 		}
 		else if ( Input.Released( "attack1" ) )
 		{
-			StopAttack();
+			//StopAttack();
 		}
 	}
 

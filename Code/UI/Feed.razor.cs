@@ -2,7 +2,7 @@ using Sandbox.UI;
 
 namespace Sandbox;
 
-partial class Feed
+partial class Feed : PanelComponent
 {
 	[Property] public Texture DeathIcon { get; set; }
 	[Property] public Texture HeadshotIcon { get; set; }

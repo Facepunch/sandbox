@@ -77,7 +77,7 @@ public partial class BaseWeapon
 	{
 		try
 		{
-			IWeaponEvent.PostToGameObject( ViewModel, x => x.OnReloadStart() );
+			ViewModel?.RunEvent<ViewModel>( x => x.OnReloadStart() );
 
 			BroadcastReload();
 
@@ -95,14 +95,14 @@ public partial class BaseWeapon
 				if ( available <= 0 )
 					break;
 
-				IWeaponEvent.PostToGameObject( ViewModel, x => x.OnIncrementalReload() );
+				ViewModel?.RunEvent<ViewModel>( x => x.OnIncrementalReload() );
 
 				ClipContents += available;
 			}
 
 			if ( ClipContents > 0 )
 			{
-				IWeaponEvent.PostToGameObject( ViewModel, x => x.OnReloadFinish() );
+				ViewModel?.RunEvent<ViewModel>( x => x.OnReloadFinish() );
 			}
 		}
 		finally

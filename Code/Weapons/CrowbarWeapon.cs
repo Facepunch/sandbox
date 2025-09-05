@@ -1,5 +1,4 @@
 ﻿using Sandbox.Rendering;
-using static BaseWeapon;
 
 public class CrowbarWeapon : BaseCarryable
 {
@@ -62,8 +61,8 @@ public class CrowbarWeapon : BaseCarryable
 		if ( player.IsValid() )
 			player.Controller.Renderer.Set( "b_attack", true );
 
-		var ev = new IWeaponEvent.AttackEvent( ViewModel.IsValid() );
-		IWeaponEvent.PostToGameObject( GameObject.Root, x => x.OnAttack( ev ) );
+		//var ev = new IWeaponEvent.AttackEvent( ViewModel.IsValid() );
+		//IWeaponEvent.PostToGameObject( GameObject.Root, x => x.OnAttack( ev ) );
 
 		GameObject.PlaySound( SwingSound );
 
