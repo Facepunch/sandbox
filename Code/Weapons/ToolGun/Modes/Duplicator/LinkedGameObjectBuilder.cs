@@ -22,52 +22,32 @@ public class LinkedGameObjectBuilder
 	/// </summary>
 	public void AddConnected( GameObject source )
 	{
-		// Use iterative approach to avoid stack overflow with complex object hierarchies
 		var toProcess = new Queue<GameObject>();
 		toProcess.Enqueue( source );
 
 		while ( toProcess.Count > 0 )
 		{
 			var current = toProcess.Dequeue();
-			
-			// We're only interested in root objects
 			current = current.Root;
 
-			// If we can't add this then skip it
-			// because we must have already added it, or it's the world.
 			if ( !Add( current ) ) continue;
 
-			// Find all connected objects through joints
-			AddConnectedObjectsToQueue( current, toProcess );
-		}
-	}
-
-	/// <summary>
-	/// Helper method to find connected objects and add them to the processing queue
-	/// </summary>
-	private void AddConnectedObjectsToQueue( GameObject obj, Queue<GameObject> queue )
-	{
-		// Check rigidbody joints
-		foreach ( var rb in obj.GetComponents<Rigidbody>() )
-		{
-			foreach ( var joint in rb.Joints )
+			foreach ( var rb in current.GetComponents<Rigidbody>() )
 			{
-				if ( joint.Object1.IsValid() && joint.Object1 != obj )
-					queue.Enqueue( joint.Object1 );
-				if ( joint.Object2.IsValid() && joint.Object2 != obj )
-					queue.Enqueue( joint.Object2 );
+				foreach ( var joint in rb.Joints )
+				{
+					toProcess.Enqueue( joint.Object1 );
+					toProcess.Enqueue( joint.Object2 );
+				}
 			}
-		}
 
-		// Check collider joints
-		foreach ( var collider in obj.GetComponents<Collider>() )
-		{
-			foreach ( var joint in collider.Joints )
+			foreach ( var collider in current.GetComponents<Collider>() )
 			{
-				if ( joint.Object1.IsValid() && joint.Object1 != obj )
-					queue.Enqueue( joint.Object1 );
-				if ( joint.Object2.IsValid() && joint.Object2 != obj )
-					queue.Enqueue( joint.Object2 );
+				foreach ( var joint in collider.Joints )
+				{
+					toProcess.Enqueue( joint.Object1 );
+					toProcess.Enqueue( joint.Object2 );
+				}
 			}
 		}
 	}
