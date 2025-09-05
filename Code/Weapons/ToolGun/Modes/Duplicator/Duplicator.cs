@@ -143,6 +143,7 @@ public class Duplicator : ToolMode
 		SceneUtility.MakeIdGuidsUnique( jsonObject );
 
 		var undo = Player.Undo.Create();
+		undo.Name = "Duplication";
 
 		SceneUtility.RunInBatchGroup( () =>
 		{

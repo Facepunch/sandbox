@@ -1,3 +1,5 @@
+using Sandbox.UI;
+
 public class UndoSystem
 {
 	Player Player { get; init; }
@@ -25,7 +27,12 @@ public class UndoSystem
 			return;
 
 		var entry = entries.Pop();
-		entry.Run();
+
+		// if we didn't do anything, do the next one
+		if ( !entry.Run() )
+		{
+			Undo();
+		}
 
 		// TODO - pop up notice
 	}
@@ -33,10 +40,16 @@ public class UndoSystem
 
 	public class Entry
 	{
+		/// <summary>
+		/// The name of the undo, should fit the format "Undo <something>". Like "Undo Spawn Prop".
+		/// </summary>
+		public string Name { get; set; }
+
 		UndoSystem System;
 		Player Player => System.Player;
 
 		Action actions = null;
+		bool actioned;
 
 		internal Entry( UndoSystem system )
 		{
@@ -53,6 +66,7 @@ public class UndoSystem
 				if ( go.IsValid() )
 				{
 					go.Destroy();
+					actioned = true;
 				}
 			};
 		}
@@ -60,9 +74,23 @@ public class UndoSystem
 		/// <summary>
 		/// Run this undo
 		/// </summary>
-		public void Run()
+		public bool Run( bool sendNotice = true )
 		{
+			actioned = false;
 			actions?.InvokeWithWarning();
+
+			if ( !actioned )
+				return false;
+
+			if ( sendNotice )
+			{
+				using ( Rpc.FilterInclude( Player.Network.Owner ) )
+				{
+					Notices.AddNotice( "cached", "#4af", $"Undo {Name}".Trim(), 4 );
+				}
+			}
+
+			return true;
 		}
 	}
 }

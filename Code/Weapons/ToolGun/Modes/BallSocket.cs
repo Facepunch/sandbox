@@ -27,6 +27,7 @@ public class BallSocket : BaseConstraintToolMode
 		go1.NetworkSpawn();
 
 		var undo = Player.Undo.Create();
+		undo.Name = "Ballsocket";
 		undo.Add( go1 );
 		undo.Add( go2 );
 	}

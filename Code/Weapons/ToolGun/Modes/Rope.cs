@@ -14,7 +14,7 @@ public class Rope : BaseConstraintToolMode
 	[Range( 0.5f, 5f ), Step( 0.5f )]
 	[Property]
 	public float Radius { get; set; } = 1f;
-	
+
 	public override bool CanConstraintToSelf => true;
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
@@ -78,6 +78,7 @@ public class Rope : BaseConstraintToolMode
 		go1.NetworkSpawn( true, null );
 
 		var undo = Player.Undo.Create();
+		undo.Name = "Rope";
 		undo.Add( go1 );
 		undo.Add( go2 );
 	}

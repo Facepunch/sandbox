@@ -57,6 +57,7 @@ public class Wheel : ToolMode
 		jointGo.NetworkSpawn( true, null );
 
 		var undo = Player.Undo.Create();
+		undo.Name = "Wheel";
 		undo.Add( wheelGo );
 		undo.Add( jointGo );
 	}

@@ -59,6 +59,7 @@ public class Elastic : BaseConstraintToolMode
 		go1.NetworkSpawn();
 
 		var undo = Player.Undo.Create();
+		undo.Name = "Elastic";
 		undo.Add( go1 );
 		undo.Add( go2 );
 	}
