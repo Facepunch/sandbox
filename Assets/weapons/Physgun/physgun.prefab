@@ -44,9 +44,21 @@
             "FlipVertical": false,
             "FlipHorizontal": false
           },
-          "compiled": "textures/generated/svgsource/407f8bb88236ea44.vtex"
+          "compiled": null
         },
         "DisplayName": "Physics Gun",
+        "EndPointEffectPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/physgun/effects/beam-end.prefab"
+        },
+        "FreezeEffectPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/physgun/effects/freeze.prefab"
+        },
+        "GrabEffectPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/physgun/effects/grab.prefab"
+        },
         "HoldType": "Pistol",
         "InventoryOrder": 1,
         "InventorySlot": 0,
@@ -97,7 +109,7 @@
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
-        "Enabled": true,
+        "Enabled": false,
         "NetworkMode": 2,
         "NetworkInterpolation": true,
         "NetworkOrphaned": 0,
@@ -213,6 +225,104 @@
               ]
             },
             "Wireframe": false
+          },
+          {
+            "__type": "Sandbox.SoundPointComponent",
+            "__guid": "d009e61e-73b0-45e5-a287-f45052ab18c7",
+            "__enabled": true,
+            "Distance": 512,
+            "DistanceAttenuation": false,
+            "DistanceAttenuationOverride": false,
+            "Falloff": [
+              {
+                "x": 0,
+                "y": 1,
+                "in": 3.1415927,
+                "out": -3.1415927,
+                "mode": "Mirrored"
+              },
+              {
+                "x": 1,
+                "y": 0,
+                "in": 0,
+                "out": 0,
+                "mode": "Mirrored"
+              }
+            ],
+            "Force2d": false,
+            "MaxRepeatTime": 1,
+            "MinRepeatTime": 1,
+            "Occlusion": false,
+            "OcclusionOverride": false,
+            "OcclusionRadius": 32,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Pitch": 1,
+            "PlayOnStart": true,
+            "ReflectionOverride": false,
+            "Reflections": false,
+            "Repeat": false,
+            "SoundEvent": "weapons/physgun/sounds/active-loop.sound",
+            "SoundOverride": false,
+            "StopOnNew": false,
+            "TargetMixer": {
+              "Name": "unknown",
+              "Id": "00000000-0000-0000-0000-000000000000"
+            },
+            "Volume": 1
+          },
+          {
+            "__type": "Sandbox.SoundPointComponent",
+            "__guid": "d3511a52-adea-4eee-92ab-ebd116f411e4",
+            "__enabled": true,
+            "Distance": 512,
+            "DistanceAttenuation": false,
+            "DistanceAttenuationOverride": false,
+            "Falloff": [
+              {
+                "x": 0,
+                "y": 1,
+                "in": 3.1415927,
+                "out": -3.1415927,
+                "mode": "Mirrored"
+              },
+              {
+                "x": 1,
+                "y": 0,
+                "in": 0,
+                "out": 0,
+                "mode": "Mirrored"
+              }
+            ],
+            "Force2d": false,
+            "MaxRepeatTime": 1,
+            "MinRepeatTime": 1,
+            "Occlusion": false,
+            "OcclusionOverride": false,
+            "OcclusionRadius": 32,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Pitch": 1,
+            "PlayOnStart": true,
+            "ReflectionOverride": false,
+            "Reflections": false,
+            "Repeat": false,
+            "SoundEvent": "weapons/physgun/sounds/startup.sound",
+            "SoundOverride": false,
+            "StopOnNew": false,
+            "TargetMixer": {
+              "Name": "unknown",
+              "Id": "00000000-0000-0000-0000-000000000000"
+            },
+            "Volume": 1
           }
         ],
         "Children": []
