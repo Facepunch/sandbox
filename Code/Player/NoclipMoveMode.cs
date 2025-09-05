@@ -70,6 +70,12 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 			direction = 0;
 		}
 
+		// if we're hold down jump move upwards
+		if ( Input.Down( "jump" ) ) direction += Vector3.Up;
+
+		// if we're hold down duck move downwards
+		if ( Input.Down( "duck" ) ) direction += Vector3.Down;
+
 		return direction * velocity;
 	}
 
