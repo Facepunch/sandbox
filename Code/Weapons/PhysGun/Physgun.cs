@@ -89,6 +89,8 @@ public partial class Physgun : BaseCarryable
 
 		_isSnapping = isSnapping;
 
+		ViewModel.RunEvent<ViewModel>( UpdateViewModel );
+
 		if ( _state.IsValid() )
 		{
 			if ( !Input.Down( "attack1" ) )
@@ -187,6 +189,8 @@ public partial class Physgun : BaseCarryable
 
 		if ( Input.Down( "attack1" ) )
 		{
+			ViewModel?.RunEvent<ViewModel>( x => x.OnAttack() );
+
 			var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? player.EyeTransform;
 
 			_state = _stateHovered with { Active = true };
@@ -201,6 +205,22 @@ public partial class Physgun : BaseCarryable
 			_state = default;
 			_preventReselect = false;
 		}
+	}
+
+	private void UpdateViewModel( ViewModel model )
+	{
+		float stylus = 0;
+
+		if ( _stateHovered.IsValid() )
+			stylus = 0.5f;
+
+		if ( _state.Active )
+			stylus = 1;
+
+		model.IsAttacking = _state.Active;
+		model.Renderer?.Set( "stylus", stylus );
+		model.Renderer?.Set( "b_button", _isSpinning );
+		model.Renderer?.Set( "brake", _state.Active ? 1 : 0 );
 	}
 
 	Sandbox.Physics.FixedJoint _joint;
@@ -306,7 +326,11 @@ public partial class Physgun : BaseCarryable
 		if ( !body.IsValid() ) return;
 
 		var effect = FreezeEffectPrefab.Clone( body.WorldTransform );
-		effect.GetComponentInChildren<ParticleModelEmitter>().Target = body.GameObject;
+
+		foreach ( var emitter in effect.GetComponentsInChildren<ParticleModelEmitter>() )
+		{
+			emitter.Target = body.GameObject;
+		}
 
 		if ( body.IsProxy ) return;
 
