@@ -435,7 +435,7 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		if ( !IsLocalPlayer ) return;
 
 		Log.Info( $"you picked up {message}" );
-		Scene.RunEvent<Notices>( x => x.Display( message ) );
+		//Scene.RunEvent<Sandbox.UI.Notices>( x => x.Display( message ) );
 	}
 
 	void PlayerController.IEvents.OnJumped()

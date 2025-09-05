@@ -339,6 +339,35 @@
           "Children": []
         },
         {
+          "__guid": "e29b4f7e-1f61-49d0-8567-40acaf24e447",
+          "__version": 1,
+          "Flags": 0,
+          "Name": "Notices",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkInterpolation": true,
+          "NetworkOrphaned": 0,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Sandbox.UI.Notices",
+              "__guid": "08314d20-a82b-4d2e-9be1-d45499983fde",
+              "__enabled": true,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          ],
+          "Children": []
+        },
+        {
           "__guid": "a685f9bf-7194-4aaf-aed1-b623f5072866",
           "__version": 1,
           "Flags": 0,
@@ -371,7 +400,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": "textures/generated/svgsource/446f82161774c1e.vtex"
+                "compiled": null
               },
               "ExplosionIcon": {
                 "$compiler": "texture",
@@ -387,7 +416,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": "textures/generated/svgsource/518a1f211cbd3e6b.vtex"
+                "compiled": null
               },
               "FallIcon": {
                 "$compiler": "texture",
@@ -403,7 +432,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": "textures/generated/svgsource/d9151d4f46d3f9f2.vtex"
+                "compiled": null
               },
               "HeadshotIcon": {
                 "$compiler": "texture",
@@ -419,7 +448,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": true
                 },
-                "compiled": "textures/generated/svgsource/2ef92c96449c07ac.vtex"
+                "compiled": null
               },
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
@@ -441,7 +470,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": "textures/generated/svgsource/83c263c6e0f8ced2.vtex"
+                "compiled": null
               }
             }
           ],
