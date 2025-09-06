@@ -410,6 +410,7 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		IPlayerEvent.PostToGameObject( GameObject, x => x.OnLand( distance, impactVelocity ) );
 
 		var player = Components.Get<Player>();
+		if ( !player.IsValid() ) return;
 
 		if ( Controller.ThirdPerson || !player.IsLocalPlayer ) return;
 

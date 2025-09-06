@@ -24,7 +24,7 @@ public partial class BaseSpawnMenu : Panel
 	{
 		base.OnAfterTreeRender( firstTime );
 
-		if ( firstTime && Switcher.IsValid() )
+		if ( firstTime && Switcher.IsValid() && options.Count > 0 )
 		{
 			SwitchOption( options.First() );
 		}
