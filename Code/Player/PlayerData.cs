@@ -35,7 +35,7 @@ public sealed partial class PlayerData : Component
 	/// </summary>
 	/// <param name="connection"></param>
 	/// <returns></returns>
-	public static PlayerData For( Connection connection ) => For( connection.Id );
+	public static PlayerData For( Connection connection ) => connection == null ? default : For( connection.Id );
 
 	/// <summary>
 	/// Get player data for a player's id
