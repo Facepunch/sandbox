@@ -22,6 +22,8 @@ public class LinkedGameObjectBuilder
 	/// </summary>
 	public void AddConnected( GameObject source )
 	{
+		if ( !source.IsValid() ) return;
+
 		//
 		// we're only interested in root objects
 		//
@@ -31,7 +33,7 @@ public class LinkedGameObjectBuilder
 		// because we must have already added it, or it's the world.
 		if ( !Add( source ) ) return;
 
-		foreach ( var rb in source.GetComponents<Rigidbody>() )
+		foreach ( var rb in source.GetComponentsInChildren<Rigidbody>() )
 		{
 			foreach ( var joint in rb.Joints )
 			{
@@ -40,7 +42,7 @@ public class LinkedGameObjectBuilder
 			}
 		}
 
-		foreach ( var collider in source.GetComponents<Collider>() )
+		foreach ( var collider in source.GetComponentsInChildren<Collider>() )
 		{
 			foreach ( var joint in collider.Joints )
 			{
