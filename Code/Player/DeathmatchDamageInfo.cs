@@ -9,11 +9,6 @@ public sealed class DeathmatchDamageInfo : DamageInfo
 	public Guid InstigatorId { get; set; }
 
 	/// <summary>
-	/// Where did this damage originate from?
-	/// </summary>
-	public Vector3 Origin { get; set; }
-
-	/// <summary>
 	/// Create damage info, inflicted by a player (or bot)
 	/// </summary>
 	public DeathmatchDamageInfo( float damage, Player attacker, GameObject weapon = default )
