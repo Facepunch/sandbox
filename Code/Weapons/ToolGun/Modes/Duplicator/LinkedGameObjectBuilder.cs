@@ -12,6 +12,7 @@ public class LinkedGameObjectBuilder
 		if ( !obj.IsValid() ) return false;
 		if ( obj.Tags.Contains( "world" ) ) return false;
 		if ( Objects.Contains( obj ) ) return false;
+		if ( obj.GetComponent<MapInstance>() is not null ) return false;
 
 		Objects.Add( obj );
 		return true;
