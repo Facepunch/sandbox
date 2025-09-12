@@ -400,7 +400,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/446f82161774c1e.vtex"
               },
               "ExplosionIcon": {
                 "$compiler": "texture",
@@ -416,7 +416,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/518a1f211cbd3e6b.vtex"
               },
               "FallIcon": {
                 "$compiler": "texture",
@@ -432,7 +432,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/d9151d4f46d3f9f2.vtex"
               },
               "HeadshotIcon": {
                 "$compiler": "texture",
@@ -448,7 +448,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": true
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/2ef92c96449c07ac.vtex"
               },
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
@@ -470,7 +470,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/83c263c6e0f8ced2.vtex"
               }
             }
           ],
