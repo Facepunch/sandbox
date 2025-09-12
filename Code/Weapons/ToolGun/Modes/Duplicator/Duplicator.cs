@@ -111,7 +111,7 @@ public class Duplicator : ToolMode
 		var overlayMaterial = IsProxy ? Material.Load( "materials/effects/duplicator_override_other.vmat" ) : Material.Load( "materials/effects/duplicator_override.vmat" );
 		foreach ( var model in dupe.PreviewModels )
 		{
-			DebugOverlay.Model( model.Model, transform: tx.ToWorld( model.Transform ), overlay: false, materialOveride: overlayMaterial );
+			DebugOverlay.Model( model.Model, transform: tx.ToWorld( model.Transform ), overlay: false, materialOveride: overlayMaterial, localBoneTransforms: model.Bones );
 		}
 	}
 

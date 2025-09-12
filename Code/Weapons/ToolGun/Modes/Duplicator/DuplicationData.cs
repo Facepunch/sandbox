@@ -22,7 +22,7 @@ public class DuplicationData
 	/// <summary>
 	/// Describes where to draw a model for the preview
 	/// </summary>
-	public record struct PreviewModel( Model Model, Transform Transform );
+	public record struct PreviewModel( Model Model, Transform Transform, Transform[] Bones );
 
 	/// <summary>
 	/// A list of preview models to help visualze where the duplication will be placed
@@ -59,8 +59,15 @@ public class DuplicationData
 			{
 				if ( model.Model.IsError ) continue;
 
+				Transform[] bones = null;
+
+				if ( model is SkinnedModelRenderer skinned )
+				{
+					bones = skinned.GetBoneTransforms( false );
+				}
+
 				var modelTx = center.ToLocal( model.WorldTransform );
-				dupe.PreviewModels.Add( new DuplicationData.PreviewModel( model.Model, modelTx ) );
+				dupe.PreviewModels.Add( new DuplicationData.PreviewModel( model.Model, modelTx, bones ) );
 			}
 		}
 
