@@ -7,7 +7,9 @@
     <Item Context="item">
         @if (item is string entry)
         {
-            <div onclick=@(() => GameManager.Spawn(entry))>@entry</div>
+            var name = System.IO.Path.GetFileName(entry);
+
+            <div onclick=@(() => GameManager.Spawn(entry))>@name</div>
         }
     </Item>
 </VirtualGrid>
