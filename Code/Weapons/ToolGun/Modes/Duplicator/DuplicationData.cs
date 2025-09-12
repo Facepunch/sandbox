@@ -41,15 +41,14 @@ public class DuplicationData
 		dupe.Bounds = BBox.FromPositionAndSize( 0, 0.01f );
 		dupe.PreviewModels = new();
 
+		List<BBox> worldBounds = new List<BBox>();
+
 		foreach ( var obj in objects )
 		{
 			var entry = obj.Serialize();
-			var bounds = obj.GetLocalBounds();
+			worldBounds.Add( GetWorldBounds( obj ) );
 
 			var localized = center.ToLocal( obj.WorldTransform );
-
-			dupe.Bounds = dupe.Bounds.AddBBox( bounds.Transform( localized ) );
-
 			entry["Position"] = JsonValue.Create( localized.Position );
 			entry["Rotation"] = JsonValue.Create( localized.Rotation );
 
@@ -71,6 +70,32 @@ public class DuplicationData
 			}
 		}
 
+		if ( worldBounds.Count > 0 )
+		{
+			var txi = new Transform( -center.Position, center.Rotation.Inverse );
+
+			dupe.Bounds = BBox.FromBoxes( worldBounds.Select( x => x.Transform( txi ) ) );
+		}
+
+
 		return dupe;
+	}
+
+	public static BBox GetWorldBounds( GameObject go )
+	{
+		BBox box = BBox.FromPositionAndSize( 0, 0.01f );
+
+		var rb = go.GetComponentsInChildren<Collider>( false, true ).ToArray();
+		if ( rb.Length > 0 )
+		{
+			box = rb[0].GetWorldBounds();
+
+			foreach ( var b in rb )
+			{
+				box = box.AddBBox( b.GetWorldBounds() );
+			}
+		}
+
+		return box;
 	}
 }
