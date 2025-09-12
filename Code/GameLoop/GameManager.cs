@@ -63,8 +63,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		// Spawn this object and make the client the owner
 		var playerGo = GameObject.Clone( "/prefabs/engine/player.prefab", new CloneConfig { Name = playerData.DisplayName, StartEnabled = false, Transform = startLocation } );
 
-		Log.Info( playerGo );
-
 		var player = playerGo.Components.Get<Player>( true );
 		player.PlayerData = playerData;
 
