@@ -147,7 +147,6 @@ public class Duplicator : ToolMode
 
 		SceneUtility.RunInBatchGroup( () =>
 		{
-
 			foreach ( var entry in jsonObject["Objects"] as JsonArray )
 			{
 				if ( entry is JsonObject obj )
@@ -157,13 +156,10 @@ public class Duplicator : ToolMode
 
 					var world = dest.ToWorld( new Transform( pos, rot ) );
 
-					entry["Position"] = JsonValue.Create( world.Position );
-					entry["Rotation"] = JsonValue.Create( world.Rotation );
-
 					var go = new GameObject( false );
-					go.Deserialize( obj );
+					go.Deserialize( obj, new GameObject.DeserializeOptions { TransformOverride = world } );
 
-					go.NetworkSpawn( null );
+					go.NetworkSpawn( true, null );
 
 					undo.Add( go );
 				}
