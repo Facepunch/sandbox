@@ -8,7 +8,6 @@ public interface IPlayerEvent : ISceneEvent<IPlayerEvent>
 	public struct DamageParams
 	{
 		public float Damage { get; set; }
-		public Guid InstigatorId { get; set; }
 		public GameObject Attacker { get; set; }
 		public GameObject Weapon { get; set; }
 		public TagSet Tags { get; set; }
@@ -19,7 +18,6 @@ public interface IPlayerEvent : ISceneEvent<IPlayerEvent>
 
 	public struct DiedParams
 	{
-		public Guid InstigatorId { get; set; }
 		public GameObject Attacker { get; set; }
 	}
 	void OnDied( DiedParams args ) { }

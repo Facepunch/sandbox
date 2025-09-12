@@ -254,13 +254,12 @@ public partial class BaseCarryable : Component, IKillIcon
 		var damagable = attack.Target.GetComponentInParent<IDamageable>();
 		if ( damagable is not null )
 		{
-			var info = new DeathmatchDamageInfo( attack.Damage, Owner.GameObject, GameObject );
-			info.InstigatorId = Owner.PlayerId;
+			var info = new DamageInfo( attack.Damage, Owner.GameObject, GameObject );
 			info.Position = attack.Position;
 			info.Origin = attack.Origin;
 			info.Tags = attack.Tags;
 
-			damagable.Damage( info );
+			damagable.OnDamage( info );
 		}
 
 		if ( attack.Target.GetComponentInChildren<Rigidbody>() is var rb && rb.IsValid() )

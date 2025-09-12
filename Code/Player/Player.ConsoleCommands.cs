@@ -35,7 +35,7 @@ public sealed partial class Player
 	{
 		if ( Rpc.Caller != Network.Owner ) return;
 
-		this.Damage( new DeathmatchDamageInfo( 5000, this ) );
+		this.OnDamage( new DamageInfo( 5000, GameObject, null ) );
 	}
 
 	/// <summary>

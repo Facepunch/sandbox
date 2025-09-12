@@ -84,14 +84,14 @@ public static class Damage
 				position += collider.End / 2;
 			}
 
-			var damageInfo = new DeathmatchDamageInfo( damage, source, weapon )
+			var damageInfo = new DamageInfo( damage, source, weapon )
 			{
-				InstigatorId = instigatorId,
 				Origin = point,
 				Position = position,
 				Tags = tags
 			};
-			damageable.Damage( damageInfo );
+
+			damageable.OnDamage( damageInfo );
 		}
 	}
 }

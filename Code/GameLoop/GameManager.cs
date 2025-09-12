@@ -158,7 +158,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	/// <summary>
 	/// Called on the host when a played is killed
 	/// </summary>
-	public void OnDeath( Player player, DeathmatchDamageInfo dmg )
+	public void OnDeath( Player player, DamageInfo dmg )
 	{
 		Assert.True( Networking.IsHost );
 
@@ -166,28 +166,29 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		Assert.True( player.PlayerData.IsValid(), $"{player.GameObject.Name}'s PlayerData invalid" );
 
 		var weapon = dmg.Weapon;
-		var attackerData = PlayerData.For( dmg.InstigatorId );
-		bool isSuicide = attackerData == player.PlayerData;
 
-		if ( attackerData.IsValid() && !isSuicide )
+		var attacker = dmg.Attacker?.GetComponent<Player>();
+		bool isSuicide = attacker == player;
+
+		if ( attacker.IsValid() && !isSuicide )
 		{
-			Assert.True( weapon.IsValid(), $"Weapon invalid. (Attacker: {attackerData.DisplayName}, Victim: {player.DisplayName})" );
+			Assert.True( weapon.IsValid(), $"Weapon invalid. (Attacker: {attacker.DisplayName}, Victim: {player.DisplayName})" );
 
-			attackerData.Kills++;
-			attackerData.AddStat( $"kills" );
+			attacker.PlayerData.Kills++;
+			attacker.PlayerData.AddStat( $"kills" );
 
 			if ( weapon.IsValid() )
 			{
-				attackerData.AddStat( $"kills.{weapon.Name}" );
+				attacker.PlayerData.AddStat( $"kills.{weapon.Name}" );
 			}
 		}
 
 		player.PlayerData.Deaths++;
 
 		var w = weapon.IsValid() ? weapon.GetComponentInChildren<IKillIcon>() : null;
-		Scene.RunEvent<Feed>( x => x.NotifyDeath( player.PlayerData, attackerData, w?.DisplayIcon, dmg.Tags ) );
+		Scene.RunEvent<Feed>( x => x.NotifyDeath( player.PlayerData, attacker.PlayerData, w?.DisplayIcon, dmg.Tags ) );
 
-		string attackerName = attackerData.IsValid() ? attackerData.DisplayName : dmg.Attacker?.Name;
+		string attackerName = attacker.IsValid() ? attacker.DisplayName : dmg.Attacker?.Name;
 		if ( string.IsNullOrEmpty( attackerName ) )
 			SendMessage( $"{player.DisplayName} died (tags: {dmg.Tags})" );
 		else if ( weapon.IsValid() )

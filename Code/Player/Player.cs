@@ -1,11 +1,10 @@
 using Sandbox.CameraNoise;
 using Sandbox.Rendering;
-using static Sandbox.Component;
 
 /// <summary>
 /// Holds player information like health
 /// </summary>
-public sealed partial class Player : Component, IDamageable, PlayerController.IEvents
+public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents
 {
 	public static Player FindLocalPlayer() => Game.ActiveScene.GetAllComponents<Player>().Where( x => x.IsLocalPlayer ).FirstOrDefault();
 
@@ -145,11 +144,11 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 	/// Broadcasts death to other players
 	/// </summary>
 	[Rpc.Broadcast( NetFlags.HostOnly | NetFlags.Reliable )]
-	void NotifyDeath( Guid i, IPlayerEvent.DiedParams args )
+	void NotifyDeath( IPlayerEvent.DiedParams args )
 	{
 		IPlayerEvent.PostToGameObject( GameObject, x => x.OnDied( args ) );
 
-		if ( args.InstigatorId == PlayerId )
+		if ( args.Attacker == GameObject )
 		{
 			IPlayerEvent.PostToGameObject( GameObject, x => x.OnSuicide() );
 		}
@@ -169,7 +168,7 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 	/// <summary>
 	/// Called on the host when a player dies
 	/// </summary>
-	void Kill( in DeathmatchDamageInfo d )
+	void Kill( in DamageInfo d )
 	{
 		//
 		// Play the flatline sound on the owner
@@ -183,11 +182,7 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		// Let everyone know about the death
 		//
 
-		NotifyDeath( d.InstigatorId, new IPlayerEvent.DiedParams()
-		{
-			InstigatorId = d.InstigatorId,
-			Attacker = d.Attacker,
-		} );
+		NotifyDeath( new IPlayerEvent.DiedParams() { Attacker = d.Attacker } );
 
 		var inventory = GetComponent<PlayerInventory>();
 		if ( inventory.IsValid() )
@@ -196,7 +191,7 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 			inventory.DropCoffin();
 		}
 
-		if ( d.IsGibType() )
+		if ( d.Tags.HasAny( DamageTags.Crush, DamageTags.Explosion, DamageTags.GibAlways ) )
 		{
 			Gib( d.Position, d.Origin );
 		}
@@ -301,22 +296,14 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		}
 	}
 
-	public void OnDamage( in DamageInfo d )
+	public void OnDamage( in DamageInfo dmg )
 	{
 		if ( Health < 1 ) return;
 		if ( PlayerData.IsGodMode ) return;
 
-		// We don't care for damage that isn't of our type
-		if ( d is not DeathmatchDamageInfo dmg ) return;
-
 		var damage = dmg.Damage;
 		if ( dmg.Tags.Contains( DamageTags.Headshot ) )
 			damage *= 2;
-
-		if ( dmg.InstigatorId.Equals( PlayerId ) && !dmg.Tags.Contains( DamageTags.FullSelfDamage ) )
-		{
-			damage *= 1.5f;
-		}
 
 		if ( Armour > 0 )
 		{
@@ -330,7 +317,6 @@ public sealed partial class Player : Component, IDamageable, PlayerController.IE
 		NotifyOnDamage( new IPlayerEvent.DamageParams()
 		{
 			Damage = damage,
-			InstigatorId = dmg.InstigatorId,
 			Attacker = dmg.Attacker,
 			Weapon = dmg.Weapon,
 			Tags = dmg.Tags,
