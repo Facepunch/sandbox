@@ -25,6 +25,9 @@ public class PlayerFallDamage : Component, IPlayerEvent
 	/// </summary>
 	[Property] public SoundEvent FallSound { get; set; }
 
+
+	int landCount = 0;
+
 	[Rpc.Owner]
 	private void PlayFallSound()
 	{
@@ -35,6 +38,11 @@ public class PlayerFallDamage : Component, IPlayerEvent
 	{
 		if ( !Networking.IsHost ) return;
 
+		landCount++;
+
+		if ( landCount < 1 )
+			return;
+
 		var damageScale = MathX.Remap( distance, MinimumFallDistance, DeathFallDistance, 0, 1 );
 		int damageAmount = (int)(damageScale * 100 * DamageMultiplier);
 		if ( damageAmount < 1 ) return;
@@ -43,12 +51,9 @@ public class PlayerFallDamage : Component, IPlayerEvent
 
 		if ( Player is IDamageable damage )
 		{
-			Log.Info( $"PlayerFallDamage: dealing {damageAmount} to {Player.DisplayName} (dist: {distance}, vel: {velocity})" );
-
-			var dmg = new DeathmatchDamageInfo( damageAmount, GameObject );
+			var dmg = new DamageInfo( damageAmount, Player.GameObject, null );
 			dmg.Tags.Add( DamageTags.Fall );
-
-			damage.Damage( dmg );
+			damage.OnDamage( dmg );
 
 			PlayFallSound();
 		}
