@@ -15,6 +15,11 @@ public class VerletRope : Component
 	[Property] public GameObject Attachment { get; set; }
 
 	/// <summary>
+	/// Will delete Attachment and our parent GameObject if either of us are deleted.
+	/// </summary>
+	[Property] public bool AutomaticCleanUp { get; set; }
+
+	/// <summary>
 	/// Number of segments in the rope. Higher values increase visual fidelity and collision accuracy but quickly reduce performance.
 	/// </summary>
 	[Property] public int SegmentCount { get; set; } = 20;
@@ -147,8 +152,24 @@ public class VerletRope : Component
 		}
 	}
 
+	protected override void OnDestroy()
+	{
+		if ( AutomaticCleanUp && Attachment.IsValid() )
+		{
+			Attachment.Destroy();
+		}
+
+		base.OnDestroy();
+	}
+
 	public void Simulate( float dt )
 	{
+		if ( AutomaticCleanUp && !Attachment.IsValid() )
+		{
+			DestroyGameObject();
+			return;
+		}
+
 		CheckAndWakeRope();
 
 		if ( isAtRest ) return;
@@ -505,6 +526,12 @@ public class VerletRope : Component
 	{
 		var line = GetComponent<LineRenderer>();
 		if ( line is null ) return;
+
+		if ( !Attachment.IsValid() )
+		{
+			line.Enabled = false;
+			return;
+		}
 
 		// We could use InterpolationBuffer here but i feel like that would be overkill
 		// Also it's private/internal.

@@ -43,6 +43,7 @@ public class Elastic : BaseConstraintToolMode
 		}
 
 		var vertletRope = go1.AddComponent<VerletRope>();
+		vertletRope.AutomaticCleanUp = true;
 		vertletRope.Attachment = go2;
 		vertletRope.SegmentCount = MathX.CeilToInt( len / 16.0f );
 		vertletRope.SegmentLength = (len / vertletRope.SegmentCount);
