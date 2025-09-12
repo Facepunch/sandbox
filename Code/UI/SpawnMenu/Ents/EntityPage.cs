@@ -8,9 +8,16 @@ public class EntityPage : BaseSpawnMenu
 	protected override void Rebuild()
 	{
 		AddOption( "All", () => new EntityListCloud() { Query = "sort:newest" } );
-		AddOption( "Toy", () => new EntityListCloud() { Query = "cat:toy" } );
-		AddOption( "Effect", () => new EntityListCloud() { Query = "cat:effect" } );
 		AddOption( "Favourites", () => new EntityListCloud() { Query = "sort:favourite" } );
+
+		AddOption( "Animals", () => new EntityListCloud() { Query = "cat:animal" } );
+		AddOption( "Audio", () => new EntityListCloud() { Query = "cat:audio" } );
+		AddOption( "Effect", () => new EntityListCloud() { Query = "cat:effect" } );
+		AddOption( "Npc", () => new EntityListCloud() { Query = "cat:npc" } );
+		AddOption( "Other", () => new EntityListCloud() { Query = "cat:other" } );
+		AddOption( "Showcase", () => new EntityListCloud() { Query = "cat:showcase" } );
+		AddOption( "Toys & Fun", () => new EntityListCloud() { Query = "cat:toy" } );
+		AddOption( "Vehicle", () => new EntityListCloud() { Query = "cat:vehicle" } );
 
 		if ( Application.IsEditor )
 		{
