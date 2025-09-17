@@ -1661,7 +1661,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.v_toolgun#110842"
+    "facepunch.v_toolgun#118524"
   ],
   "__version": 2
 }
