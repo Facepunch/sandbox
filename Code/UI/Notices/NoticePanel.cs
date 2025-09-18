@@ -15,7 +15,7 @@ public class NoticePanel : Panel
 	{
 		if ( initialized == false )
 		{
-			_springy = new Vector3.SpringDamped( new Vector3( Screen.Width + 50, vector2.y + Random.Shared.Float( -10, 10 ), 0 ), 20.0f, 0.0f );
+			_springy = new Vector3.SpringDamped( new Vector3( Screen.Width + 50, vector2.y + Random.Shared.Float( -10, 10 ), 0 ), 0.0f );
 			_springy.Velocity = Vector3.Random * 1000;
 			initialized = true;
 		}

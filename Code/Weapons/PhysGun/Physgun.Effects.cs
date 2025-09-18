@@ -7,7 +7,7 @@ public partial class Physgun : BaseCarryable
 	[Property] public GameObject FreezeEffectPrefab { get; set; }
 	[Property] public GameObject GrabEffectPrefab { get; set; }
 
-	Vector3.SpringDamped middleSpring = new Vector3.SpringDamped( 0, 0, 0.1f );
+	Vector3.SpringDamped middleSpring = new Vector3.SpringDamped( 0, 0 );
 
 	GameObject _endPointEffect;
 	GameObject _grabEffect;
@@ -92,7 +92,7 @@ public partial class Physgun : BaseCarryable
 		{
 			BeamRenderer.GameObject.Enabled = true;
 			BeamRenderer.VectorPoints[1] = targetMiddle;
-			middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 0.2f, 4, 0.2f );
+			middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 4, 0.2f );
 		}
 
 

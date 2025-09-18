@@ -9,11 +9,10 @@ class Punch : BaseCameraNoise
 	{
 		damping.Current = target * GamePreferences.Screenshake;
 		damping.Target = 0;
-		damping.SmoothTime = time;
 		damping.Frequency = frequency;
 		damping.Damping = damp;
 
-		deathTime = damping.SmoothTime;
+		deathTime = time;
 	}
 
 	public override bool IsDone => deathTime <= 0;
