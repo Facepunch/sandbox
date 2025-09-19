@@ -247,6 +247,7 @@ public partial class Physgun : BaseCarryable
 		base.OnDisabled();
 
 		RemoveJoint();
+		CloseBeam();
 	}
 
 	protected override void OnFixedUpdate()
