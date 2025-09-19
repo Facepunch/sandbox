@@ -236,20 +236,23 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		var spawnTransform = new Transform( trace.EndPosition, facingAngle );
 
-		// get their player
 
+
+		using var spawnInfo = new SpawnConfig();
+		spawnInfo.Location = new Transform( trace.EndPosition, facingAngle );
+		spawnInfo.Path = path_or_ident;
 
 		// TODO - can this user spawn this package?
 
 		// we're a model
-		if ( await FindModelPath( path_or_ident ) is Model model )
+		if ( await FindModelPath( spawnInfo ) is Model model )
 		{
 			SpawnModel( model, spawnTransform, player );
 			return;
 		}
 
 		// we're a model
-		if ( await FindEntityPath( path_or_ident ) is ScriptedEntity entity )
+		if ( await FindEntityPath( spawnInfo ) is ScriptedEntity entity )
 		{
 			//var model = await Model.LoadAsync( modelPath );
 			//SpawnModel( model, spawnTransform, player );
@@ -259,26 +262,94 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		}
 
 		Log.Warning( $"Couldn't resolve '{path_or_ident}'" );
+
 	}
 
-	static async Task<Model> FindModelPath( string ident_or_path )
+	class SpawnConfig : IDisposable
 	{
-		if ( ident_or_path.EndsWith( ".vmdl" ) )
+		public SpawningProgress Placeholder;
+		public Transform Location;
+		public string Path;
+
+		public void Dispose()
 		{
-			var se = await ResourceLibrary.LoadAsync<Model>( ident_or_path );
+			Placeholder?.GameObject?.Destroy();
+		}
+
+		public void CreatePlaceholder()
+		{
+			if ( Placeholder is not null )
+				return;
+
+			const string placeholderPath = "/prefabs/engine/spawn-progress.prefab";
+
+			var go = GameObject.Clone( placeholderPath );
+			go.WorldTransform = Location.WithScale( 1 );
+
+			go.NetworkSpawn( true, null );
+			Placeholder = go.GetComponent<SpawningProgress>();
+		}
+
+		internal void UpdatePlaceholder( Package package )
+		{
+			var mins = package.GetMeta<Vector3>( "RenderMins", -1 );
+			var maxs = package.GetMeta<Vector3>( "RenderMaxs", -1 );
+
+			Placeholder.SpawnBounds = new BBox( mins, maxs );
+		}
+	}
+
+	static async Task<Model> FindModelPath( SpawnConfig spawn )
+	{
+		if ( spawn.Path.EndsWith( ".vmdl" ) )
+		{
+			var se = await ResourceLibrary.LoadAsync<Model>( spawn.Path );
 			if ( se is not null ) return se;
 		}
 
-		return await Cloud.Load<Model>( ident_or_path );
+		Package package = default;
+
+		// Already downloaded, cool
+		if ( Package.TryGetCached( spawn.Path, out package, false ) )
+		{
+			return await Cloud.Load<Model>( spawn.Path );
+		}
+
+		spawn.CreatePlaceholder();
+
+		package = await Package.FetchAsync( spawn.Path, false );
+		if ( package is null || package.TypeName != "model" )
+			return null;
+
+		spawn.UpdatePlaceholder( package );
+
+		return await Cloud.Load<Model>( spawn.Path );
 	}
 
-	static async Task<ScriptedEntity> FindEntityPath( string ident_or_path )
+	static async Task<ScriptedEntity> FindEntityPath( SpawnConfig spawn )
 	{
-		var se = await ResourceLibrary.LoadAsync<ScriptedEntity>( ident_or_path );
+		var se = await ResourceLibrary.LoadAsync<ScriptedEntity>( spawn.Path );
 		if ( se is not null ) return se;
 
-		return await Cloud.Load<ScriptedEntity>( ident_or_path, true );
+		Package package = default;
+
+		// Already downloaded, cool
+		if ( Package.TryGetCached( spawn.Path, out package, false ) )
+		{
+			return await Cloud.Load<ScriptedEntity>( spawn.Path, true );
+		}
+
+		spawn.CreatePlaceholder();
+
+		package = await Package.FetchAsync( spawn.Path, false );
+		if ( package is null || package.TypeName != "sent" )
+			return null;
+
+		spawn.UpdatePlaceholder( package );
+
+		return await Cloud.Load<ScriptedEntity>( spawn.Path, true );
 	}
+
 
 	private static void SpawnModel( Model model, Transform spawnTransform, Player player )
 	{
