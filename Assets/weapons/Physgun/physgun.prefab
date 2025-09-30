@@ -59,7 +59,7 @@
           "_type": "gameobject",
           "prefab": "weapons/physgun/effects/grab.prefab"
         },
-        "HoldType": "Pistol",
+        "HoldType": "Physgun",
         "InventoryOrder": 1,
         "InventorySlot": 0,
         "OnComponentDestroy": null,
