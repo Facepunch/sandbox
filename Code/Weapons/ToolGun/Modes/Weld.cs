@@ -48,6 +48,9 @@ public class Weld : BaseConstraintToolMode
 		go2.LocalTransform = point2.LocalTransform;
 		go2.LocalRotation = Rotation.Identity;
 
+		var cleanup = go1.AddComponent<ConstraintCleanup>();
+		cleanup.Attachment = go2;
+
 		var joint = go1.AddComponent<FixedJoint>();
 		joint.Attachment = Joint.AttachmentMode.Auto;
 		joint.Body = go2;

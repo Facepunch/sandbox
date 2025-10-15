@@ -27,6 +27,9 @@ public class Elastic : BaseConstraintToolMode
 		go2.LocalTransform = point2.LocalTransform;
 		go2.LocalRotation = Rotation.Identity;
 
+		var cleanup = go1.AddComponent<ConstraintCleanup>();
+		cleanup.Attachment = go2;
+
 		var len = point1.WorldPosition().Distance( point2.WorldPosition() );
 
 		if ( point1.GameObject != point2.GameObject )
@@ -43,11 +46,8 @@ public class Elastic : BaseConstraintToolMode
 		}
 
 		var vertletRope = go1.AddComponent<VerletRope>();
-		vertletRope.AutomaticCleanUp = true;
 		vertletRope.Attachment = go2;
 		vertletRope.SegmentCount = MathX.CeilToInt( len / 16.0f );
-		vertletRope.SegmentLength = (len / vertletRope.SegmentCount);
-		vertletRope.ConstraintIterations = 2;
 
 		var lineRenderer = go1.AddComponent<LineRenderer>();
 		lineRenderer.Points = [go1, go2];

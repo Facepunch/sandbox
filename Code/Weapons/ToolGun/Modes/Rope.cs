@@ -32,6 +32,9 @@ public class Rope : BaseConstraintToolMode
 		var len = point1.WorldPosition().Distance( point2.WorldPosition() );
 		len = MathF.Max( 1.0f, len + Slack );
 
+		var cleanup = go1.AddComponent<ConstraintCleanup>();
+		cleanup.Attachment = go2;
+
 		//
 		// If it's ourself - we want to create the rope, but no joint between
 		//
@@ -52,15 +55,12 @@ public class Rope : BaseConstraintToolMode
 		{
 			var vertletRope = go1.AddComponent<VerletRope>();
 			vertletRope.Attachment = go2;
-			vertletRope.AutomaticCleanUp = true;
 
 			const int maxSegmentCount = 48;
 			// Maximum segment count, so long ropes don't exceed computation limits
 			int segmentCount = Math.Min( maxSegmentCount, MathX.CeilToInt( len / 16f ) );
 
 			vertletRope.SegmentCount = segmentCount;
-			vertletRope.SegmentLength = len / segmentCount;
-			vertletRope.ConstraintIterations = MathX.CeilToInt( segmentCount * 1.3f );
 			vertletRope.Radius = Radius;
 			splineInterpolation = segmentCount > maxSegmentCount ? 8 : 4;
 		}

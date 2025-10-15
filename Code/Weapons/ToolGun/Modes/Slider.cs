@@ -21,6 +21,9 @@ public class Slider : BaseConstraintToolMode
 		go2.LocalTransform = point2.LocalTransform;
 		go2.WorldRotation = axis;
 
+		var cleanup = go1.AddComponent<ConstraintCleanup>();
+		cleanup.Attachment = go2;
+
 		var len = point1.WorldPosition().Distance( point2.WorldPosition() );
 
 		var joint = go1.AddComponent<SliderJoint>();
