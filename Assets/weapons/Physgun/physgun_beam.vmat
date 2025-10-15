@@ -9,7 +9,7 @@ Layer0
 
 	//---- Material ----
 	TextureAmbientOcclusion "materials/default/default_ao.tga"
-	TextureColor "textures/beams/beam_plasma_02.tga"
+	TextureColor "materials/default/default_color.tga"
 	TextureMetalness "materials/default/default_metal.tga"
 	TextureNormal "materials/default/default_normal.tga"
 	TextureRoughness "materials/default/default_rough.tga"
