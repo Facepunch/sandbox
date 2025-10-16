@@ -167,6 +167,6 @@ public partial class BaseWeapon : BaseCarryable
 		hud.DrawHudElement( str, bottomright, ammoIcon, 32f, TextFlag.RightCenter );
 	}
 
-	protected Color CrosshairCanShoot => Color.Yellow;
+	protected Color CrosshairCanShoot => Color.White;
 	protected Color CrosshairNoShoot => Color.Red;
 }

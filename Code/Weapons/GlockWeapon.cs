@@ -65,16 +65,10 @@ public class GlockWeapon : BaseBulletWeapon
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
-		var gap = 10 + GetAimConeAmount() * 22;
-		var len = 8;
-		var w = 2f;
-
 		Color color = !CanShoot() ? CrosshairNoShoot : CrosshairCanShoot;
 
-		hud.SetBlendMode( BlendMode.Lighten );
-		hud.DrawLine( center + Vector2.Left * (len + gap), center + Vector2.Left * gap, w, color );
-		hud.DrawLine( center - Vector2.Left * (len + gap), center - Vector2.Left * gap, w, color );
-		hud.DrawLine( center + Vector2.Up * (len + gap), center + Vector2.Up * gap, w, color );
-		hud.DrawCircle( center, w * 2f, color );
+		hud.SetBlendMode( BlendMode.Normal );
+		hud.DrawCircle( center, 5, Color.Black );
+		hud.DrawCircle( center, 3, color );
 	}
 }
