@@ -7,6 +7,14 @@ public partial class Toolgun : BaseCarryable
 		base.OnCameraMove( player, ref angles );
 	}
 
+	protected override void OnStart()
+	{
+		if ( IsProxy )
+			return;
+
+		SetToolMode( "remover" );
+	}
+
 	public override void OnControl( Player player )
 	{
 		var currentMode = GetCurrentMode();
