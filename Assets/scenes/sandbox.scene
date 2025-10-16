@@ -58,6 +58,7 @@
           "__enabled": true,
           "BackgroundColor": "0.33333,0.46275,0.52157,1",
           "ClearFlags": "All",
+          "EnablePostProcessing": true,
           "FieldOfView": 60,
           "FovAxis": "Horizontal",
           "IsMainCamera": true,
@@ -69,13 +70,15 @@
           "OnComponentUpdate": null,
           "Orthographic": false,
           "OrthographicHeight": 1204,
+          "PostProcessAnchor": null,
           "Priority": 1,
           "RenderExcludeTags": "",
           "RenderTags": "",
+          "RenderTexture": null,
           "TargetEye": "None",
           "Viewport": "0,0,1,1",
           "ZFar": 32000,
-          "ZNear": 0.05
+          "ZNear": 1
         },
         {
           "__type": "CameraSetup",
@@ -112,6 +115,7 @@
           "__guid": "6ebc278c-cc61-48db-acfa-60675588f69d",
           "__enabled": true,
           "__version": 1,
+          "Filter": "Bilinear",
           "Gamma": 2.2,
           "Mode": "Additive",
           "OnComponentDestroy": null,
@@ -154,7 +158,6 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "Quality": "High",
           "Radius": 128,
           "ThinCompensation": 5
         },
@@ -179,8 +182,7 @@
           "OnComponentEnabled": null,
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
-          "OnComponentUpdate": null,
-          "RoughnessCutoff": 100
+          "OnComponentUpdate": null
         }
       ],
       "Children": []

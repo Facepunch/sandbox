@@ -78,9 +78,6 @@ public class Mp5Weapon : BaseBulletWeapon
 							.UseHitboxes()
 							.Run();
 
-		Log.Info( $"{tr.Surface}" );
-		Log.Info( $"{tr.Hitbox}" );
-
 		ShootEffects( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface );
 		TraceAttack( TraceAttackInfo.From( tr, Damage ) );
 		TimeSinceShoot = 0;

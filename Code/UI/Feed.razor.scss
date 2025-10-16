@@ -8,9 +8,9 @@ Feed
 	align-items: flex-end;
 	font-size: 22px;
 	font-family: Poppins;
-	font-weight: bold;
-	color: #fc5;
-	text-shadow: 0px 0px 5px #f50a;
+	font-weight: semibold;
+	color: #fff4;
+	text-shadow: 0px 0px 5px #fffa;
 	gap: 4px;
 	margin: auto;
 	z-index: -1000;
@@ -20,7 +20,6 @@ Feed
 		opacity: 0;
 	}
 }
-
 
 Feed > *
 {
@@ -46,7 +45,7 @@ Feed > *
 		background-position: center;
 		background-size: contain;
 		background-repeat: no-repeat;
-		background-tint: #f744;
+		background-tint: #fff4;
 		height: 80%;
 		transform: rotateY(180deg);
 	}
@@ -70,7 +69,7 @@ Feed > *
 	&.is-me
 	{
 		border-radius: 8px;
-		background-color: #ffcc550a;
+		background-color: #0c202faa;
 	}
 
 	&.important
