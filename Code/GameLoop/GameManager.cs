@@ -166,9 +166,14 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		Assert.True( player.PlayerData.IsValid(), $"{player.GameObject.Name}'s PlayerData invalid" );
 
 		var weapon = dmg.Weapon;
-
 		var attacker = dmg.Attacker?.GetComponent<Player>();
-		bool isSuicide = attacker == player;
+
+		if ( !dmg.Attacker.IsValid() || !attacker.IsValid() )
+		{
+			return;
+		}
+
+		var isSuicide = attacker == player;
 
 		if ( attacker.IsValid() && !isSuicide )
 		{
