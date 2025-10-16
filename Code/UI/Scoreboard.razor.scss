@@ -3,8 +3,8 @@ Scoreboard
 	position: absolute;
 	justify-content: center;
 	align-items: center;
-	font-family: Roboto;
-	font-size: 22px;
+	font-family: Poppins;
+	font-size: 18px;
 	color: #fff;
 	opacity: 0;
 	transform: scale( 0.8 );
@@ -23,11 +23,18 @@ Scoreboard
 	.title
 	{
 		width: 100%;
-		height: 64px;
-		background-color: rgba( black, 0.2 );
-		justify-content: center;
+		height: 48px;
+		background-color: rgba( black, 0.25 );
+		justify-content: space-between;
 		align-items: center;
-		flex-direction: column;
+		flex-direction: row;
+		padding: 0px 16px;
+
+		label
+		{
+			font-weight: 600;
+			opacity: 0.5;
+		}
 
 		> .small
 		{
@@ -39,29 +46,24 @@ Scoreboard
 	{
 		margin-left: 4px;
 		width: 24px;
+		border-radius: 10px;
 		height: 24px;
-		border: 0.2px solid black;
 		box-shadow: 1px 1px 10px rgba( black, 0.5 );
 	}
 
 	.table
 	{
+		overflow: hidden;
 		flex-direction: column;
 		width: 600px;
-		background-color: #000a;
-		border: 0.5px solid #d7b35bff;
-		color: #d7b35b;
+		background-color: #0c202faa;
+		color: #cdf;
 		border-radius: 2px;
 		min-height: 600px;
 		min-width: 800px;
 		backdrop-filter: blur( 3px );
 		box-shadow: 1px 1px 10px rgba( black, 0.5 );
-
-		.header
-		{
-			padding: 8px 0px 8px 0px;
-			opacity: 0.3;
-		}
+		border-radius: 10px;
 
 		.center label
 		{
@@ -69,20 +71,22 @@ Scoreboard
 			text-align: center;
 		}
 
-		.header
+		.col
 		{
-			> .stat
-			{
-				font-size: 16px;
-			}
+			flex-direction: column;
+			padding: 8px;
+			gap: 4px;
 		}
 
 		.row
 		{
+			width: 100%;
 			white-space: nowrap;
 			align-items: center;
-			height: 32px;
 			cursor: pointer;
+			border-radius: 8px;
+			padding: 4px 8px;
+			gap: 8px;
 
 			> .name
 			{
@@ -95,17 +99,35 @@ Scoreboard
 				justify-content: flex-end;
 				text-transform: lowercase;
 			}
+		}
 
-			> *
+		.header
+		{
+			align-items: flex-end;
+			justify-content: flex-end;
+
+			> .stat
 			{
-				padding: 0px 8px;
+				font-size: 16px;
+				font-weight: 600;
+				opacity: 0.2;
+			}
+		}
+
+		.player
+		{
+			background-color: #1a34483e;
+			height: 40px;
+
+			&:nth-child( even )
+			{
+				background-color: #2447603e;
 			}
 		}
 
 		.me
 		{
 			color: #fff;
-			background-image: linear-gradient( to right, #d7b35b88, #d7b35b33 );
 			cursor: default;
 		}
 	}
@@ -115,33 +137,5 @@ Scoreboard
 		opacity: 1.0;
 		transform: scale( 1 );
 		transition: all 0.1s ease-out;
-	}
-
-	&.interact
-	{
-		pointer-events: all;
-	}
-}
-
-.popup-panel {
-	background-color: rgba( black, 0.8 );
-	color: white;
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	border-radius: 4px;
-	font-family: Poppins;
-	font-size: 16px;
-
-	.button {
-		cursor: pointer;
-		gap: 16px;
-		margin: 8px;
-		color: white;
-		align-items: center;
-
-		&:hover {
-			color: #d7b35bff;
-		}
 	}
 }

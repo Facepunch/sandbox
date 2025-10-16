@@ -9,34 +9,34 @@
             <label class="small">@(Connection.All.Count) / @Networking.MaxPlayers</label>
         </div>
 
-        <div class="header row">
-            <div class="name"></div>
-            <div class="stat">Kills</div>
-            <div class="stat">Deaths</div>
-            <div class="stat">Ping</div>
-        </div>
-
-        @foreach ( var entry in Scene.GetAll<PlayerData>().OrderByDescending( x => x.Kills ).ThenBy( x => x.DisplayName ) )
-        {
-            string specialClass = "";
-            if (entry.IsMe) specialClass = "me";
-
-            <div class="row @specialClass" onclick=@(() => OnPlayerClick(entry))>
-                <img class="avatar" src="avatar:@entry.Connection.SteamId" />
-                <div class="name">@entry.DisplayName</div>
-                <div class="stat">@entry.Kills</div>
-                <div class="stat">@entry.Deaths</div>
-                <div class="stat">@(entry.Ping.CeilToInt())</div>
+        <div class="col">
+            <div class="header row">
+                <div class="name"></div>
+                <div class="stat">Kills</div>
+                <div class="stat">Deaths</div>
+                <div class="stat">Ping</div>
             </div>
-        }
-    </div>
 
+            @foreach ( var entry in Scene.GetAll<PlayerData>().OrderByDescending( x => x.Kills ).ThenBy( x => x.DisplayName ) )
+            {
+                string specialClass = "";
+                if ( entry.IsMe ) specialClass = "me";
+
+                <div class="row player @specialClass">
+                    <img class="avatar" src="avatar:@entry.Connection.SteamId" />
+                    <div class="name">@entry.DisplayName</div>
+                    <div class="stat">@entry.Kills</div>
+                    <div class="stat">@entry.Deaths</div>
+                    <div class="stat">@(entry.Ping.CeilToInt())</div>
+                </div>
+            }
+        </div>
+    </div>
 </root>
 
 @code
 {
     bool IsVisible => HasClass( "visible" );
-	bool IsInteractable => HasClass( "interact" );
 
 	string GetTime( Connection c )
 	{
@@ -50,70 +50,7 @@
 
 	protected override void OnUpdate()
 	{
-		if ( IsInteractable )
-		{
-			if ( Input.Pressed( "score" ) )
-			{
-				SetClass( "visible", false );
-				SetClass( "interact", false );
-			}
-		}
-		else
-		{
-			SetClass( "visible", Input.Down( "score" ) );
-				
-			if ( IsVisible && Input.Pressed( "Attack2" ) )
-			{
-				SetClass( "interact", true );
-				Input.ReleaseAction( "Attack2" );
-				Input.SetAction( "Attack2", false );
-			}
-		}
-	}
-
-	Popup popupPanel;
-
-	void OnPlayerClick( PlayerData player )
-	{
-		Assert.True( player.IsValid(), "Player invalid!" );
-
-		var friend = new Friend( player.SteamId );
-		if ( friend.IsMe )
-			return;
-
-		if ( !popupPanel.IsValid() )
-		{
-			popupPanel = new Popup( Panel, Popup.PositionMode.UnderMouse, 0.0f);
-			popupPanel.StyleSheet.Load( "ui/Scoreboard.razor.scss" ); // hate this
-			popupPanel.CloseWhenParentIsHidden = true;
-		}
-
-		popupPanel.DeleteChildren();
-
-		popupPanel.Title = player.DisplayName;
-		popupPanel.AddChild( new Button( "View Profile", "person", () =>
-		{
-			friend.OpenInOverlay();
-			popupPanel.Delete();
-		} ));
-
-		if ( !friend.IsFriend )
-		{
-			popupPanel.AddChild( new Button( "Add Friend", "group_add", () =>
-			{
-				friend.OpenAddFriendOverlay();
-				popupPanel.Delete();
-			} ) );
-		}
-
-		if ( Networking.IsHost && player.Connection is not null )
-		{
-			popupPanel.AddChild( new Button( "Kick", "do_not_step", () =>
-			{
-				player.Connection.Kick( $"Kicked by {Connection.Local.DisplayName}" );
-				popupPanel.Delete();
-			} ) );
-		}
+		SetClass( "visible", Input.Down( "score" ) );
 	}
 
     /// <summary>
