@@ -33,7 +33,6 @@ public class Remover : ToolMode
 	{
 		if ( !go.IsValid() ) return false;
 		if ( !go.Tags.Contains( "removable" ) ) return false;
-		if ( go.IsProxy ) return false;
 
 		return true;
 	}
@@ -48,18 +47,23 @@ public class Remover : ToolMode
 			if ( !select.IsValid() ) return;
 
 			var target = select.GameObject?.Network?.RootGameObject;
+			if ( !target.IsValid() ) return;
+			if ( !CanDestroy( target ) ) return;
 
-			if ( !CanDestroy( target ) )
-			{
-				// fail effect
-				return;
-			}
-
-			target.Destroy();
-
+			Remove( target );
 			ShootEffects( select );
 		}
+	}
 
+	[Rpc.Host]
+	public void Remove( GameObject go )
+	{
+		go = go?.Network?.RootGameObject;
+
+		if ( !CanDestroy( go ) ) return;
+		if ( go.IsProxy ) return;
+
+		go.Destroy();
 	}
 
 }
