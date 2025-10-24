@@ -3,7 +3,7 @@
 @inherits PanelComponent
 @namespace Sandbox
 
-<root>
+<root @onmousedown=@OnMenuClicked>
 	
     <div class="container">
 
@@ -120,6 +120,11 @@
         }
     }
 
-
+	// When clicking anywhere in the spawn menu, blur any focused text inputs
+	// so we can close the menu by pressing the spawnmenu key.
+	void OnMenuClicked()
+	{
+		Sandbox.UI.InputFocus.Clear();
+	}
 
 }
