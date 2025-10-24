@@ -1,8 +1,8 @@
-
+﻿
 /// <summary>
 /// This component has a kill icon that can be used in the killfeed, or somewhere else.
 /// </summary>
-[Title( "Props" ), Order( 0 )]
+[Title( "Props" ), Order( 0 ), Icon( "📦" )]
 public class PropsPage : BaseSpawnMenu
 {
 	protected override void Rebuild()

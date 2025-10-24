@@ -17,7 +17,10 @@
 
                     var c = activeTab == t ? "active" : "";
 
-                    <div class="@c" @onclick=@(() => SwitchTab(t))>@type.Title</div>
+                    <div class="@c" @onclick=@(() => SwitchTab(t))>
+						<span>@type.Icon</span>
+						<span>@type.Title</span>
+					</div>
                 }
 
             </div>

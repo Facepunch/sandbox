@@ -15,15 +15,24 @@ public static class Storage
 			.ToArray();
 	}
 
+	static Dictionary<string, StorageContent> cache = new();
+
 	static StorageContent Load( string type, string metaFilename )
 	{
-		Log.Info( metaFilename );
+		var cacheKey = $"{type}:{metaFilename}";
+
+		if ( cache.TryGetValue( cacheKey, out var cached ) )
+		{
+			return cached;
+		}
 
 		var meta = Sandbox.FileSystem.Data.ReadJson<StorageMeta>( $"/storage/{type}/{metaFilename}" );
 		if ( meta is null ) return null;
 		if ( meta.Type != type ) return null;
 
-		return new StorageContent( meta );
+		var content = new StorageContent( meta );
+		cache[cacheKey] = content;
+		return content;
 	}
 }
 

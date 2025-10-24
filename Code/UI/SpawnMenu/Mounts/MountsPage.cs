@@ -1,8 +1,8 @@
-
+﻿
 /// <summary>
 /// This component has a kill icon that can be used in the killfeed, or somewhere else.
 /// </summary>
-[Title( "Games" ), Order( 2000 )]
+[Title( "Games" ), Order( 2000 ), Icon( "🧩" )]
 public class MountsPage : BaseSpawnMenu
 {
 	protected override void Rebuild()

@@ -59,6 +59,22 @@ public class Duplicator : ToolMode
 
 			ShootEffects( select );
 		}
+
+		if ( Input.Pressed( "reload" ) )
+		{
+			Save( "teseft", CopiedJson );
+		}
+	}
+
+	void Save( string filename, string data )
+	{
+		var storage = Storage.Create( "dupe", filename );
+		storage.WriteAsString( data );
+	}
+
+	public void Load( string json )
+	{
+		CopiedJson = json;
 	}
 
 	protected override void OnUpdate()

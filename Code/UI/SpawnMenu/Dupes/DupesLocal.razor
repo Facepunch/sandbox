@@ -1,0 +1,69 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@using Sandbox.Mounting;
+@inherits Panel
+
+<SpawnMenuContent>
+
+    <Body>
+		
+        <VirtualGrid Items=@( GetData() ) ItemSize=@ItemSize>
+            <Item Context="item">
+
+				@if (item is StorageContent content)
+                {
+                    <div class="folder" @onclick="@(() => SwitchToDupe(content))">
+						<div class="name">@content.Path</div>
+					</div>
+                }
+
+            </Item>
+        </VirtualGrid>
+    </Body>
+
+</SpawnMenuContent>
+
+@code
+{
+    public static int ItemSize { get; set; } = 120;
+
+	protected override int BuildHash() => HashCode.Combine(ItemSize);
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+    }
+
+    void SwitchToDupe( StorageContent content )
+    {
+        Log.Info($"Spawning {content}");
+
+		var localPlayer = Player.FindLocalPlayer();
+		var toolgun = localPlayer?.GetWeapon<Toolgun>();
+		if (!toolgun.IsValid()) return;
+
+		localPlayer.SwitchWeapon<Toolgun>();
+		toolgun.SetToolMode( "Duplicator" );
+
+		var toolmode = localPlayer.GetComponentInChildren<Duplicator>();
+		Log.Info( toolmode );
+		if ( toolmode is null )
+		{
+			// we are a client and didn't switch tools in time, we need to wait for the server to tell us we have the tool
+			// Some kind of async wait on an rpc would work, probably.
+			Log.Warning( "I thought this might happen. We are a client and didn't switch tools in time." );
+			return;
+		}
+
+		var json = content.ReadString();
+		toolmode.Load( json );
+
+
+    }
+
+    IEnumerable<object> GetData()
+    {
+		return Storage.GetAll( "dupe" );
+    }
+
+}
