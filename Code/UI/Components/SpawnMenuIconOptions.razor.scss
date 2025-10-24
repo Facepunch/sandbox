@@ -1,0 +1,29 @@
+
+SpawnMenuToolbar
+{
+	width: 100%;
+	height: 48px;
+	border-radius: 8px 8px 0 0;
+	z-index: 100;
+}
+
+.iconsize
+{
+	gap: 0.5rem;
+	padding: 2px;
+
+	IconPanel
+	{
+		opacity: 0.3;
+
+		&:hover
+		{
+			opacity: 0.7;
+		}
+
+		&.active
+		{
+			opacity: 1;
+		}
+	}
+}

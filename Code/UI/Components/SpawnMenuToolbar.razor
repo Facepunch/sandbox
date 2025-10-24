@@ -2,22 +2,20 @@
 @using Sandbox.UI;
 @inherits Panel
 
-<root>
+<root class="">
+
     @if ( Left != null )
     {
         <div class="left">@Left</div>
     }
 
-    <div class="body menuinner">@Body</div>
+    <div class="body">@Body</div>
 
-    <div class="right">
+	@if ( Right != null )
+    {
+        <div class="right">@Right</div>
+    }
 
-        <div class="iconsize">
-            <IconPanel Text="view_compact"></IconPanel>
-            <IconPanel Text="view_module"></IconPanel>
-            <IconPanel Text="grid_view"></IconPanel>
-        </div>
-    </div>
 </root>
 
 @code
@@ -25,5 +23,6 @@
 
     public RenderFragment Left { get; set; }
     public RenderFragment Body { get; set; }
+    public RenderFragment Right { get; set; }
 
 }

@@ -1,0 +1,14 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+
+<root>
+	<TextEntry class="filter islandbg" placeholder="Filter.." Value:bind=@Query HasClearButton></TextEntry>
+</root>
+
+
+@code
+{
+	public string Query { get; set; }
+
+}

@@ -10,13 +10,14 @@ SpawnMenuContent
 SpawnMenuContent > .header
 {
 	flex-direction: column;
-	display: none;
+	flex-shrink: 0;
 }
 
 SpawnMenuContent > .body
 {
 	position: relative;
 	flex-grow: 1;
+	padding: 8px;
 }
 
 SpawnMenuContent > .body .cell:hover

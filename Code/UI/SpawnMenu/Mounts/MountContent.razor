@@ -15,12 +15,30 @@
 <SpawnMenuContent>
 
     <Header>
-        <SpawnMenuToolbar></SpawnMenuToolbar>
+        <SpawnMenuToolbar>
+			<Left>
+				@*
+				<Button Icon="home" @onclick="@GoHome"></Button>
+				<Button Icon="arrow_upward" Disabled=@( currentDir?.Parent == null ) @onclick="@GoUp"></Button>
+				*@
+			</left>
+			<Body>
+				@*
+				<SpawnMenuPath Path=@CurrentPath></SpawnMenuPath>
+				*@
+
+				<label>@( $"{mount.Title}, {@GetData().Count()} items" )</label>
+			</Body>
+			<Right>
+				<SpawnMenuFilter Query:bind="@Filter"></SpawnMenuFilter>
+				<SpawnMenuIconOptions Size:bind="@ItemSize"></SpawnMenuIconOptions>
+			</Right>
+		</SpawnMenuToolbar>
     </Header>
 
     <Body>
 		
-        <VirtualGrid Items=@( GetData() ) ItemSize=@(120)>
+        <VirtualGrid Items=@( GetData() ) ItemSize=@ItemSize>
             <Item Context="item">
 
 				@if (item is ResourceFolder dir)
@@ -45,15 +63,43 @@
 @code
 {
     public string Ident { get; set; }
+    public string Filter { get; set; }
+
+    public static int ItemSize { get; set; } = 120;
 
 	ResourceFolder currentDir;
 
     BaseGameMount mount;
 
+	protected override int BuildHash() => HashCode.Combine(Ident, ItemSize, Filter);
+
     protected override async Task OnParametersSetAsync()
     {
         mount = await Sandbox.Mounting.Directory.Mount( Ident );
     }
+
+	void GoHome()
+	{
+		currentDir = mount.RootFolder;
+	}
+
+	void GoUp()
+	{
+		if ( currentDir.Parent != null )
+		{
+			currentDir = currentDir.Parent;
+		}
+	}
+
+	string CurrentPath
+	{
+		get => currentDir?.Path ?? "/";
+
+		set
+		{
+			Log.Info( value );
+		}
+	}
 
     void Spawn(string ident)
     {
@@ -64,6 +110,18 @@
 
     IEnumerable<object> GetData()
     {
+		var q = mount.Resources
+						.Where( x => x.Type == ResourceType.Model )
+						.Where( x => !x.Flags.Contains( Sandbox.Mounting.ResourceFlags.DeveloperOnly ) ); // Hide dev-only junk models
+
+		if ( !string.IsNullOrWhiteSpace( Filter ) )
+		{
+			q = q.Where( x => x.Path.Contains( Filter, StringComparison.OrdinalIgnoreCase ) );
+		}
+
+		return q;
+
+		/*
 		var dir = (currentDir ?? mount.RootFolder );
 
 		foreach ( var folder in dir.Folders.Where( x => x.ContainsType( ResourceType.Model ) ) )
@@ -75,6 +133,7 @@
 		{
 			yield return r;
 		}
+		*/
     }
 
 }

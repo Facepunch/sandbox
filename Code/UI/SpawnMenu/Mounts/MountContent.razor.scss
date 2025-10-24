@@ -28,10 +28,12 @@ MountContent > .body
 	align-items: center;
 	cursor: pointer;
 	font-family: Poppins;
+	white-space: nowrap;
+	overflow: hidden;
 
 	i
 	{
 		color: #e6db74;
-		font-size: 6rem;
+		font-size: 40px;
 	}
 }
