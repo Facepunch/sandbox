@@ -19,12 +19,23 @@
     </Header>
 
     <Body>
+		
         <VirtualGrid Items=@( GetData() ) ItemSize=@(120)>
             <Item Context="item">
+
+				@if (item is ResourceFolder dir)
+                {
+                    <div class="folder" @onclick=@( () => currentDir = dir )>
+						<div><i>folder</i></div>
+						<div class="name">@dir.Name</div>
+					</div>
+                }
+
                 @if (item is ResourceLoader loader)
                 {
                     <SpawnIcon Loader="@loader" @onclick=@( () => Spawn( loader.Path ) )></SpawnIcon>
                 }
+
             </Item>
         </VirtualGrid>
     </Body>
@@ -34,6 +45,8 @@
 @code
 {
     public string Ident { get; set; }
+
+	ResourceFolder currentDir;
 
     BaseGameMount mount;
 
@@ -51,7 +64,17 @@
 
     IEnumerable<object> GetData()
     {
-        return mount?.Resources.Where( x => x.Type == ResourceType.Model );
+		var dir = (currentDir ?? mount.RootFolder );
+
+		foreach ( var folder in dir.Folders.Where( x => x.ContainsType( ResourceType.Model ) ) )
+		{
+			yield return folder;
+		}
+
+        foreach( var r in dir.Files.Where( x => x.Type == ResourceType.Model ) )
+		{
+			yield return r;
+		}
     }
 
 }
