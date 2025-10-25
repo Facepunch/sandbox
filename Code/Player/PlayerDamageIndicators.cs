@@ -6,19 +6,18 @@ public sealed class PlayerDamageIndicators : Component, IPlayerEvent
 	float RadialIndicatorLifetime => 2f;
 
 	TimeSince timeSinceHurt = 10f;
-	Vignette damageVignette;
 	List<(Vector3 WorldPos, TimeSince Lifetime)> radialIndicators = new();
 
 	[Property] public Texture RadialDamageIcon { get; set; }
 
 	protected override void OnDisabled()
 	{
-		damageVignette?.Destroy();
+
 	}
 
 	protected override void OnDestroy()
 	{
-		damageVignette?.Destroy();
+
 	}
 
 	protected override void OnPreRender()
@@ -32,22 +31,7 @@ public sealed class PlayerDamageIndicators : Component, IPlayerEvent
 
 	void UpdateVignette()
 	{
-		if ( damageVignette is null )
-		{
-			damageVignette = Scene.Camera.AddComponent<Vignette>();
-			damageVignette.Flags |= ComponentFlags.NotNetworked;
-			damageVignette.Color = Color.Red;
-			damageVignette.Intensity = 0;
-		}
 
-		if ( timeSinceHurt < 1f )
-		{
-			damageVignette.Intensity = (1f - timeSinceHurt) / 10f;
-		}
-		else
-		{
-			damageVignette.Intensity = 0;
-		}
 	}
 
 	void UpdateRadialIndicators()

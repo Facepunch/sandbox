@@ -115,8 +115,8 @@
           "__guid": "6ebc278c-cc61-48db-acfa-60675588f69d",
           "__enabled": true,
           "__version": 1,
-          "Filter": "Bilinear",
-          "Gamma": 2.2,
+          "Filter": "Biquadratic",
+          "Gamma": 3,
           "Mode": "Additive",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
@@ -124,7 +124,7 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "Strength": 1,
+          "Strength": 3,
           "Threshold": 2,
           "Tint": "1,1,1,1"
         },
@@ -134,15 +134,15 @@
           "__enabled": true,
           "Center": "0.5,0.5",
           "Color": "0,0,0,1",
-          "Intensity": 0.57822084,
+          "Intensity": 0.65798044,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "Roundness": 0.18865031,
-          "Smoothness": 0.857362
+          "Roundness": 0.18892509,
+          "Smoothness": 0.7687296
         },
         {
           "__type": "Sandbox.AmbientOcclusion",
@@ -183,6 +183,22 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null
+        },
+        {
+          "__type": "Sandbox.ColorAdjustments",
+          "__guid": "ecfad951-ca1f-4fdb-8188-81714abf5431",
+          "__enabled": true,
+          "Blend": 1,
+          "Brightness": 1,
+          "Contrast": 1,
+          "HueRotate": 0,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Saturation": 1.4
         }
       ],
       "Children": []
