@@ -12,9 +12,7 @@
 
 				@if (item is StorageContent content)
                 {
-                    <div class="folder" @onclick="@(() => SwitchToDupe(content))">
-						<div class="name">@content.Path</div>
-					</div>
+					<LocalDupeIcon Content="@content" @onclick="@(() => SwitchToDupe(content))"></LocalDupeIcon>
                 }
 
             </Item>

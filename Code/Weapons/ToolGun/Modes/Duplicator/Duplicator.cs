@@ -4,7 +4,7 @@ using System.Text.Json.Nodes;
 [Icon( "✌️" )]
 [ClassName( "duplicator" )]
 [Group( "Building" )]
-public class Duplicator : ToolMode
+public partial class Duplicator : ToolMode
 {
 	/// <summary>
 	/// When we right click, to "copy" something, we create a Duplication object
@@ -62,7 +62,8 @@ public class Duplicator : ToolMode
 
 		if ( Input.Pressed( "reload" ) )
 		{
-			Save( "teseft", CopiedJson );
+			var t = DateTime.UtcNow;
+			Save( $"test-{t.ToString( "ddMMyyyy-HHmmss" )}", CopiedJson );
 		}
 	}
 
@@ -73,6 +74,12 @@ public class Duplicator : ToolMode
 		var storage = Storage.Create( "dupe", filename );
 		storage.SetMeta( "packages", packages.Select( x => x.FullIdent ) );
 		storage.WriteAsString( data );
+
+		var bitmap = new Bitmap( 1024, 1024 );
+		RenderIconToBitmap( data, bitmap );
+
+		var downscaled = bitmap.Resize( 512, 512 );
+		storage.SetThumbnail( downscaled );
 	}
 
 	public void Load( string json )

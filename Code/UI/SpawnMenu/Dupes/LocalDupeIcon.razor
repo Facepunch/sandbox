@@ -1,0 +1,18 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@using Sandbox.Mounting;
+@inherits Panel
+
+<root>
+	<div class="name">@Content.Path</div>
+</div>
+
+@code
+{
+	public StorageContent Content;
+
+    protected override async Task OnParametersSetAsync()
+    {
+		Style.SetBackgroundImage( Content.Thumbnail );
+    }
+}

@@ -17,13 +17,13 @@ public static class Storage
 			.ToArray();
 	}
 
-	static Dictionary<string, StorageContent> cache = new();
+	static Dictionary<string, StorageContent> newCache = new();
 
 	static StorageContent Load( string type, string metaFilename )
 	{
 		var cacheKey = $"{type}:{metaFilename}";
 
-		if ( cache.TryGetValue( cacheKey, out var cached ) )
+		if ( newCache.TryGetValue( cacheKey, out var cached ) )
 		{
 			return cached;
 		}
@@ -35,7 +35,7 @@ public static class Storage
 			if ( meta.Type != type ) return null;
 
 			var content = new StorageContent( meta );
-			cache[cacheKey] = content;
+			newCache[cacheKey] = content;
 			return content;
 		}
 		catch ( System.Exception e )
@@ -187,5 +187,39 @@ public sealed class StorageContent
 		Sandbox.FileSystem.Data.WriteJson( metaFn, meta );
 	}
 
+	bool _thumbGenerated = false;
+	Texture _thumbnail;
 
+	public Texture Thumbnail
+	{
+		get
+		{
+			if ( _thumbGenerated ) return _thumbnail;
+			_thumbGenerated = true;
+
+			var fn = GenerateFilename() + ".png";
+			if ( !Sandbox.FileSystem.Data.FileExists( fn ) ) return null;
+
+			var data = Sandbox.FileSystem.Data.ReadAllBytes( fn );
+			using var bitmap = Bitmap.CreateFromBytes( data.ToArray() );
+			_thumbnail = bitmap?.ToTexture();
+
+			Log.Info( _thumbnail );
+
+			return _thumbnail;
+		}
+	}
+
+
+	public void SetThumbnail( Bitmap bitmap )
+	{
+		_thumbGenerated = false;
+
+		var fn = GenerateFilename() + ".png";
+		var png = bitmap.ToPng();
+		using ( var stream = Sandbox.FileSystem.Data.OpenWrite( fn ) )
+		{
+			stream.Write( png );
+		}
+	}
 }
