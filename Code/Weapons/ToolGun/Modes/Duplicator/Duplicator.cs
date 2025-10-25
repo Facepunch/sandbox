@@ -111,6 +111,22 @@ public class Duplicator : ToolMode
 			return;
 
 		dupe = Json.Deserialize<DuplicationData>( CopiedJson );
+
+		_ = InstallPackages( dupe );
+	}
+
+	async Task InstallPackages( DuplicationData data )
+	{
+		if ( data?.Packages is null || data.Packages.Count == 0 )
+			return;
+
+		foreach ( var pkg in data.Packages )
+		{
+			if ( Cloud.IsInstalled( pkg ) )
+				continue;
+
+			await Cloud.Load( pkg );
+		}
 	}
 
 	void DrawPreview()
