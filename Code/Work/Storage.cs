@@ -1,3 +1,5 @@
+using System.Text.Json.Nodes;
+
 namespace Sandbox;
 
 public static class Storage
@@ -42,6 +44,7 @@ internal class StorageMeta
 	public string Path { get; set; }
 	public string Schema { get; set; }
 	public DateTime Timestamp { get; set; }
+	public Dictionary<string, JsonValue> Meta { get; set; }
 }
 
 public sealed class StorageContent
@@ -49,6 +52,7 @@ public sealed class StorageContent
 	public string Type { get; private set; }
 	public string Path { get; private set; }
 	public string Schema { get; private set; }
+	public Dictionary<string, JsonValue> Meta { get; } = new();
 
 	public StorageContent( string type, string filename )
 	{
@@ -83,11 +87,39 @@ public sealed class StorageContent
 		this.Type = meta.Type;
 		this.Path = meta.Path;
 		this.Schema = meta.Schema;
+		this.Meta = meta.Meta.ToDictionary( x => x.Key, x => x.Value ) ?? this.Meta;
 	}
 
 	string GenerateFilename()
 	{
 		return $"/storage/{Type}/{Path}";
+	}
+
+	/// <summary>
+	/// Set a meta value
+	/// </summary>
+	public void SetMeta<T>( string key, T value )
+	{
+		if ( value == null )
+		{
+			Meta.Remove( key );
+			return;
+		}
+
+		Meta[key] = JsonValue.Create( value );
+	}
+
+	/// <summary>
+	/// Get a meta value
+	/// </summary>
+	public T GetMeta<T>( string key, T defaultValue = default )
+	{
+		if ( Meta.TryGetValue( key, out var val ) )
+		{
+			return val.GetValue<T>();
+		}
+
+		return defaultValue;
 	}
 
 	/// <summary>
@@ -141,6 +173,7 @@ public sealed class StorageContent
 			Type = this.Type,
 			Path = this.Path,
 			Schema = this.Schema,
+			Meta = this.Meta,
 			Timestamp = DateTime.UtcNow
 		};
 		Sandbox.FileSystem.Data.WriteJson( metaFn, meta );

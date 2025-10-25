@@ -30,6 +30,11 @@ public class DuplicationData
 	public List<PreviewModel> PreviewModels { get; set; }
 
 	/// <summary>
+	/// Packages used in this
+	/// </summary>
+	public List<string> Packages { get; set; }
+
+	/// <summary>
 	/// Create DuplicationData from a bunch of objects.
 	/// center is the transform to use as the origin for the duplication.
 	/// The rotation of center should be the player's view yaw when they made the selection.
@@ -76,6 +81,9 @@ public class DuplicationData
 
 			dupe.Bounds = BBox.FromBoxes( worldBounds.Select( x => x.Transform( txi ) ) );
 		}
+
+		var packages = Cloud.ResolvePrimaryAssetsFromJson( dupe.Objects );
+		dupe.Packages = packages.Select( x => x.FullIdent ).ToList();
 
 
 		return dupe;

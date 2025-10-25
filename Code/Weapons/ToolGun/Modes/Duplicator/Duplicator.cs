@@ -68,7 +68,10 @@ public class Duplicator : ToolMode
 
 	void Save( string filename, string data )
 	{
+		var packages = Cloud.ResolvePrimaryAssetsFromJson( data );
+
 		var storage = Storage.Create( "dupe", filename );
+		storage.SetMeta( "packages", packages.Select( x => x.FullIdent ) );
 		storage.WriteAsString( data );
 	}
 
