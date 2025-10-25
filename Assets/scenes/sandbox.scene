@@ -198,7 +198,7 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "Saturation": 1.4
+          "Saturation": 1.25
         }
       ],
       "Children": []

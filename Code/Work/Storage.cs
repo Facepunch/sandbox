@@ -44,6 +44,14 @@ public static class Storage
 			return null;
 		}
 	}
+
+	internal static void OnDeleted( StorageContent source )
+	{
+		foreach ( var kv in newCache.Where( x => x.Value == source ).ToArray() )
+		{
+			newCache.Remove( kv.Key );
+		}
+	}
 }
 
 internal class StorageMeta
@@ -51,7 +59,7 @@ internal class StorageMeta
 	public string Type { get; set; }
 	public string Path { get; set; }
 	public string Schema { get; set; }
-	public DateTime Timestamp { get; set; }
+	public DateTimeOffset Timestamp { get; set; }
 	public Dictionary<string, string> Meta { get; set; }
 }
 
@@ -61,6 +69,7 @@ public sealed class StorageContent
 	public string Path { get; private set; }
 	public string Schema { get; private set; }
 	public Dictionary<string, string> Meta { get; } = new();
+	public DateTimeOffset Created { get; private set; } = DateTimeOffset.UtcNow;
 
 	public StorageContent( string type, string filename )
 	{
@@ -96,6 +105,7 @@ public sealed class StorageContent
 		this.Path = meta.Path;
 		this.Schema = meta.Schema;
 		this.Meta = meta.Meta?.ToDictionary() ?? this.Meta;
+		this.Created = meta.Timestamp;
 	}
 
 	string GenerateFilename()
@@ -182,7 +192,7 @@ public sealed class StorageContent
 			Path = this.Path,
 			Schema = this.Schema,
 			Meta = this.Meta,
-			Timestamp = DateTime.UtcNow
+			Timestamp = this.Created
 		};
 		Sandbox.FileSystem.Data.WriteJson( metaFn, meta );
 	}
@@ -220,6 +230,28 @@ public sealed class StorageContent
 		using ( var stream = Sandbox.FileSystem.Data.OpenWrite( fn ) )
 		{
 			stream.Write( png );
+		}
+	}
+
+	public void Delete()
+	{
+		var fn = GenerateFilename();
+
+		if ( Sandbox.FileSystem.Data.FileExists( fn ) )
+		{
+			Sandbox.FileSystem.Data.DeleteFile( fn );
+		}
+
+		var metaFn = fn + ".meta";
+		if ( Sandbox.FileSystem.Data.FileExists( metaFn ) )
+		{
+			Sandbox.FileSystem.Data.DeleteFile( metaFn );
+		}
+
+		var thumbFn = fn + ".png";
+		if ( Sandbox.FileSystem.Data.FileExists( thumbFn ) )
+		{
+			Sandbox.FileSystem.Data.DeleteFile( thumbFn );
 		}
 	}
 }

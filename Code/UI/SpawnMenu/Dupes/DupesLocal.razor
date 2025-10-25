@@ -34,8 +34,6 @@
 
     void SwitchToDupe( StorageContent content )
     {
-        Log.Info($"Spawning {content}");
-
 		var localPlayer = Player.FindLocalPlayer();
 		var toolgun = localPlayer?.GetWeapon<Toolgun>();
 		if (!toolgun.IsValid()) return;
@@ -55,13 +53,11 @@
 
 		var json = content.ReadString();
 		toolmode.Load( json );
-
-
     }
 
     IEnumerable<object> GetData()
     {
-		return Storage.GetAll( "dupe" );
+		return Storage.GetAll( "dupe" ).OrderByDescending( x => x.Created );
     }
 
 }
