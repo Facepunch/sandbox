@@ -28,13 +28,21 @@ public static class Storage
 			return cached;
 		}
 
-		var meta = Sandbox.FileSystem.Data.ReadJson<StorageMeta>( $"/storage/{type}/{metaFilename}" );
-		if ( meta is null ) return null;
-		if ( meta.Type != type ) return null;
+		try
+		{
+			var meta = Sandbox.FileSystem.Data.ReadJson<StorageMeta>( $"/storage/{type}/{metaFilename}" );
+			if ( meta is null ) return null;
+			if ( meta.Type != type ) return null;
 
-		var content = new StorageContent( meta );
-		cache[cacheKey] = content;
-		return content;
+			var content = new StorageContent( meta );
+			cache[cacheKey] = content;
+			return content;
+		}
+		catch ( System.Exception e )
+		{
+			Log.Warning( e );
+			return null;
+		}
 	}
 }
 
@@ -44,7 +52,7 @@ internal class StorageMeta
 	public string Path { get; set; }
 	public string Schema { get; set; }
 	public DateTime Timestamp { get; set; }
-	public Dictionary<string, JsonValue> Meta { get; set; }
+	public Dictionary<string, string> Meta { get; set; }
 }
 
 public sealed class StorageContent
@@ -52,7 +60,7 @@ public sealed class StorageContent
 	public string Type { get; private set; }
 	public string Path { get; private set; }
 	public string Schema { get; private set; }
-	public Dictionary<string, JsonValue> Meta { get; } = new();
+	public Dictionary<string, string> Meta { get; } = new();
 
 	public StorageContent( string type, string filename )
 	{
@@ -87,7 +95,7 @@ public sealed class StorageContent
 		this.Type = meta.Type;
 		this.Path = meta.Path;
 		this.Schema = meta.Schema;
-		this.Meta = meta.Meta.ToDictionary( x => x.Key, x => x.Value ) ?? this.Meta;
+		this.Meta = meta.Meta?.ToDictionary() ?? this.Meta;
 	}
 
 	string GenerateFilename()
@@ -106,7 +114,7 @@ public sealed class StorageContent
 			return;
 		}
 
-		Meta[key] = JsonValue.Create( value );
+		Meta[key] = JsonValue.Create( value )?.ToJsonString();
 	}
 
 	/// <summary>
@@ -116,7 +124,7 @@ public sealed class StorageContent
 	{
 		if ( Meta.TryGetValue( key, out var val ) )
 		{
-			return val.GetValue<T>();
+			return Json.Deserialize<T>( val );
 		}
 
 		return defaultValue;
