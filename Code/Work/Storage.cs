@@ -1,3 +1,4 @@
+using Sandbox.Modals;
 using System.Text.Json.Nodes;
 
 namespace Sandbox;
@@ -214,8 +215,6 @@ public sealed class StorageContent
 			using var bitmap = Bitmap.CreateFromBytes( data.ToArray() );
 			_thumbnail = bitmap?.ToTexture();
 
-			Log.Info( _thumbnail );
-
 			return _thumbnail;
 		}
 	}
@@ -253,5 +252,36 @@ public sealed class StorageContent
 		{
 			Sandbox.FileSystem.Data.DeleteFile( thumbFn );
 		}
+	}
+
+	public void Publish()
+	{
+		var fn = GenerateFilename();
+		var meta = Sandbox.FileSystem.Data.ReadAllText( fn + ".meta" );
+
+		var o = new WorkshopPublishOptions();
+
+		o.Title = "Unnammed";
+		o.FileSystem = FileSystem.CreateMemoryFileSystem();
+		o.FileSystem.WriteAllText( "/content.data", Sandbox.FileSystem.Data.ReadAllText( fn ) );
+
+		var thumbFile = GenerateFilename() + ".png";
+		if ( thumbFile != null )
+		{
+			var thumbData = Sandbox.FileSystem.Data.ReadAllBytes( thumbFile );
+			var bitmap = Bitmap.CreateFromBytes( thumbData.ToArray() );
+			o.Thumbnail = bitmap;
+		}
+
+		o.KeyValues ??= new();
+		o.KeyValues["storage"] = Schema;
+		o.KeyValues["type"] = Type;
+		o.KeyValues["source"] = "storage";
+
+		o.Tags = [Type];
+
+		o.Metadata = meta;
+
+		Game.Overlay.WorkshopPublish( o );
 	}
 }
