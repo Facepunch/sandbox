@@ -82,6 +82,7 @@ public partial class Duplicator : ToolMode
 		storage.SetThumbnail( downscaled );
 	}
 
+	[Rpc.Host]
 	public void Load( string json )
 	{
 		CopiedJson = json;
@@ -218,15 +219,10 @@ public partial class Duplicator : ToolMode
 		localPlayer.SwitchWeapon<Toolgun>();
 		toolgun.SetToolMode( "Duplicator" );
 
-		var toolmode = localPlayer.GetComponentInChildren<Duplicator>();
+		var toolmode = localPlayer.GetComponentInChildren<Duplicator>( true );
 
-		if ( toolmode is null )
-		{
-			// we are a client and didn't switch tools in time, we need to wait for the server to tell us we have the tool
-			// Some kind of async wait on an rpc would work, probably.
-			Log.Warning( "I thought this might happen. We are a client and didn't switch tools in time." );
-			return;
-		}
+		// we don't have a duplicator tool!
+		if ( toolmode is null ) return;
 
 		var json = item.Files.ReadAllText( "/dupe.json" );
 		toolmode.Load( json );

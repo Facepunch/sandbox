@@ -7,12 +7,31 @@ public partial class Toolgun : BaseCarryable
 		base.OnCameraMove( player, ref angles );
 	}
 
-	protected override void OnStart()
+	protected override void OnAwake()
 	{
 		if ( IsProxy )
 			return;
 
-		SetToolMode( "remover" );
+	}
+
+	public void CreateToolComponents()
+	{
+		if ( !Networking.IsHost )
+		{
+			Log.Warning( "CreateToolComponents should be called on the host" );
+			return;
+		}
+
+		bool enabled = true;
+
+		// create every available mode, but disabled
+		foreach ( var mode in Game.TypeLibrary.GetTypes<ToolMode>() )
+		{
+			if ( mode.IsAbstract ) continue;
+
+			Components.Create( mode, enabled );
+			enabled = false;
+		}
 	}
 
 	public override void OnControl( Player player )
@@ -39,20 +58,33 @@ public partial class Toolgun : BaseCarryable
 	[Rpc.Host]
 	public void SetToolMode( string name )
 	{
-		foreach ( var c in GetComponents<ToolMode>( true ) )
+		var targetMode = Game.TypeLibrary.GetType<ToolMode>( name );
+		if ( targetMode == null )
 		{
-			c.Destroy();
+			Log.Warning( $"Unknown Mode {name}" );
+			return;
 		}
 
-		var td = Game.TypeLibrary.GetType<ToolMode>( name );
-		if ( td != null )
+		var newMode = GetComponents<ToolMode>( true ).Where( x => x.GetType() == targetMode.TargetType ).FirstOrDefault();
+		if ( newMode == null )
 		{
-			var newMode = Components.Create( td, true );
-
-			// newMode on enabled
+			Log.Warning( $"Toolgun missing mode component for {name}" );
+			return;
 		}
 
+		var currentMode = GetCurrentMode();
+
+		// already in this mode
+		if ( newMode == currentMode )
+			return;
+
+		if ( currentMode != null )
+		{
+			currentMode.Enabled = false;
+		}
+
+		newMode.Enabled = true;
 		GameObject.Enabled = true;
-		Network.Refresh();
+		Network.Refresh( GameObject );
 	}
 }

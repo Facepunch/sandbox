@@ -17,6 +17,9 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		Pickup( "weapons/glock/glock.prefab" );
 
 		Player.GiveAmmo( ResourceLibrary.Get<AmmoResource>( "ammotype/9mm.ammo" ), 200, false );
+
+		var toolgun = GetComponentInChildren<Toolgun>( true );
+		toolgun?.CreateToolComponents();
 	}
 
 	public bool Pickup( string prefabName, bool notice = true )
