@@ -219,7 +219,7 @@ public partial class Duplicator : ToolMode
 		toolgun.SetToolMode( "Duplicator" );
 
 		var toolmode = localPlayer.GetComponentInChildren<Duplicator>();
-		Log.Info( toolmode );
+
 		if ( toolmode is null )
 		{
 			// we are a client and didn't switch tools in time, we need to wait for the server to tell us we have the tool
@@ -232,7 +232,7 @@ public partial class Duplicator : ToolMode
 		toolmode.Load( json );
 	}
 
-	public static async Task FromWorkshop( Sandbox.Services.Ugc.Item item )
+	public static async Task FromWorkshop( Storage.QueryItem item )
 	{
 		var installed = await item.Install();
 		if ( installed == null ) return;

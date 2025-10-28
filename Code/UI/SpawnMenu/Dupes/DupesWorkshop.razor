@@ -10,7 +10,7 @@
         <VirtualGrid Items=@Items ItemSize=@(200)>
             <Item Context="context">
 
-				@if (context is Sandbox.Services.Ugc.Item item)
+				@if (context is Storage.QueryItem item)
                 {
 					<WorkshopIcon Item="@item" @onclick=@( () => Duplicator.FromWorkshop( item ) )></WorkshopIcon>
                 }
@@ -29,27 +29,18 @@
 		await QueryNext();
     }
 
-	List<Sandbox.Services.Ugc.Item> Items = new();
-	Sandbox.Services.Ugc.QueryResult LastResult;
+	List<Storage.QueryItem> Items = new();
+	Storage.QueryResult LastResult;
 
 	async Task QueryNext()
 	{
-		var query = new Sandbox.Services.Ugc.Query();
+		var query = new Storage.Query();
 		query.KeyValues["package"] = "facepunch.sandbox";
 		query.KeyValues["type"] = "dupe";
 
 		LastResult = await query.Run();
 
-		Log.Info( $"result.ResultCount: {LastResult.ResultCount}" );
-		Log.Info( $"result.TotalCount: {LastResult.TotalCount}" );
-
-		foreach ( var item in LastResult.Items )
-		{
-			Log.Info( $"{item.Title} / {item.Url} / {item.Preview} / {item.Created} / {item.Updated} / {item.Owner.Id} / {item.Owner.Name}" );
-		}
-
 		Items.AddRange( LastResult.Items );
 		StateHasChanged();
 	}
-
 }
