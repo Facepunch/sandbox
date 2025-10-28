@@ -51,7 +51,7 @@
 			return;
 		}
 
-		var json = content.ReadString();
+		var json = content.Files.ReadAllText( "/dupe.json" );
 		toolmode.Load( json );
     }
 

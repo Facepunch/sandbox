@@ -10,9 +10,9 @@
         <VirtualGrid Items=@Items ItemSize=@(200)>
             <Item Context="context">
 
-				@if (context is Sandbox.Services.Ugc.ItemDetail item)
+				@if (context is Sandbox.Services.Ugc.Item item)
                 {
-					<WorkshopIcon Item=@item></WorkshopIcon>
+					<WorkshopIcon Item="@item" @onclick=@( () => Duplicator.FromWorkshop( item ) )></WorkshopIcon>
                 }
 
             </Item>
@@ -29,7 +29,7 @@
 		_ = QueryNext();
     }
 
-	List<Sandbox.Services.Ugc.ItemDetail> Items = new();
+	List<Sandbox.Services.Ugc.Item> Items = new();
 	Sandbox.Services.Ugc.QueryResult LastResult;
 
 	async Task QueryNext()

@@ -63,17 +63,17 @@ public partial class Duplicator : ToolMode
 		if ( Input.Pressed( "reload" ) )
 		{
 			var t = DateTime.UtcNow;
-			Save( $"test-{t.ToString( "ddMMyyyy-HHmmss" )}", CopiedJson );
+			Save( CopiedJson );
 		}
 	}
 
-	void Save( string filename, string data )
+	void Save( string data )
 	{
 		var packages = Cloud.ResolvePrimaryAssetsFromJson( data );
 
-		var storage = Storage.Create( "dupe", filename );
+		var storage = Storage.Create( "dupe" );
 		storage.SetMeta( "packages", packages.Select( x => x.FullIdent ) );
-		storage.WriteAsString( data );
+		storage.Files.WriteAllText( "/dupe.json", data );
 
 		var bitmap = new Bitmap( 1024, 1024 );
 		RenderIconToBitmap( data, bitmap );
@@ -207,6 +207,25 @@ public partial class Duplicator : ToolMode
 				}
 			}
 		} );
+	}
+
+
+	public static async Task FromWorkshop( Sandbox.Services.Ugc.Item item )
+	{
+		var installed = await item.Install();
+
+		Log.Info( "installed" );
+		Log.Info( $"{installed.Id}" );
+		Log.Info( $"{installed.FileSize}" );
+		Log.Info( $"{installed.FileSystem}" );
+
+		foreach ( var file in installed.FileSystem.FindFile( "/", "*", true ) )
+		{
+			Log.Info( $"file: {file}" );
+		}
+
+		var json = installed.FileSystem.ReadAllText( "content.data" );
+		Log.Info( json );
 	}
 
 }

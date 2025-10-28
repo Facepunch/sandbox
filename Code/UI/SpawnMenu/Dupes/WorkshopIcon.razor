@@ -18,11 +18,10 @@
 
 @code
 {
-	public Sandbox.Services.Ugc.ItemDetail Item { get; set; }
+	public Sandbox.Services.Ugc.Item Item { get; set; }
 
 	protected override async Task OnParametersSetAsync()
 	{
-		Log.Info( Item.Preview );
 		Style.SetBackgroundImage( Item.Preview );
 	}
 	
