@@ -20,7 +20,7 @@
 {
 	public Sandbox.Services.Ugc.Item Item { get; set; }
 
-	protected override async Task OnParametersSetAsync()
+	protected override void OnParametersSet()
 	{
 		Style.SetBackgroundImage( Item.Preview );
 	}

@@ -26,7 +26,7 @@
     protected override async Task OnParametersSetAsync()
     {
 		Items.Clear();
-		_ = QueryNext();
+		await QueryNext();
     }
 
 	List<Sandbox.Services.Ugc.Item> Items = new();

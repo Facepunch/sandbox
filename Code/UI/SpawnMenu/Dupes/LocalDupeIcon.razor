@@ -9,9 +9,9 @@
 
 @code
 {
-	public StorageContent Content;
+	public Storage.Entry Content;
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
 		Style.SetBackgroundImage( Content.Thumbnail );
     }

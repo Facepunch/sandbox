@@ -71,7 +71,7 @@ public partial class Duplicator : ToolMode
 	{
 		var packages = Cloud.ResolvePrimaryAssetsFromJson( data );
 
-		var storage = Storage.Create( "dupe" );
+		var storage = Storage.CreateEntry( "dupe" );
 		storage.SetMeta( "packages", packages.Select( x => x.FullIdent ) );
 		storage.Files.WriteAllText( "/dupe.json", data );
 
@@ -209,23 +209,35 @@ public partial class Duplicator : ToolMode
 		} );
 	}
 
+	public static void FromStorage( Storage.Entry item )
+	{
+		var localPlayer = Player.FindLocalPlayer();
+		var toolgun = localPlayer?.GetWeapon<Toolgun>();
+		if ( !toolgun.IsValid() ) return;
+
+		localPlayer.SwitchWeapon<Toolgun>();
+		toolgun.SetToolMode( "Duplicator" );
+
+		var toolmode = localPlayer.GetComponentInChildren<Duplicator>();
+		Log.Info( toolmode );
+		if ( toolmode is null )
+		{
+			// we are a client and didn't switch tools in time, we need to wait for the server to tell us we have the tool
+			// Some kind of async wait on an rpc would work, probably.
+			Log.Warning( "I thought this might happen. We are a client and didn't switch tools in time." );
+			return;
+		}
+
+		var json = item.Files.ReadAllText( "/dupe.json" );
+		toolmode.Load( json );
+	}
 
 	public static async Task FromWorkshop( Sandbox.Services.Ugc.Item item )
 	{
 		var installed = await item.Install();
+		if ( installed == null ) return;
 
-		Log.Info( "installed" );
-		Log.Info( $"{installed.Id}" );
-		Log.Info( $"{installed.FileSize}" );
-		Log.Info( $"{installed.FileSystem}" );
-
-		foreach ( var file in installed.FileSystem.FindFile( "/", "*", true ) )
-		{
-			Log.Info( $"file: {file}" );
-		}
-
-		var json = installed.FileSystem.ReadAllText( "content.data" );
-		Log.Info( json );
+		FromStorage( installed );
 	}
 
 }
