@@ -284,4 +284,22 @@ public sealed class StorageContent
 
 		Game.Overlay.WorkshopPublish( o );
 	}
+
+	[ConCmd( "query" )]
+	public static async Task QueryTest()
+	{
+		var query = new Sandbox.Services.Ugc.Query();
+		query.KeyValues["package"] = "facepunch.sandbox";
+		query.KeyValues["type"] = "dupe";
+
+		var result = await query.Run();
+
+		Log.Info( $"result.ResultCount: {result.ResultCount}" );
+		Log.Info( $"result.TotalCount: {result.TotalCount}" );
+
+		foreach ( var item in result.Items )
+		{
+			Log.Info( $"{item.Title} / {item.Url} / {item.Preview} / {item.Created} / {item.Updated} / {item.Owner.Id} / {item.Owner.Name}" );
+		}
+	}
 }

@@ -1,0 +1,55 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@using Sandbox.Mounting;
+@inherits Panel
+
+<SpawnMenuContent>
+
+    <Body>
+		
+        <VirtualGrid Items=@Items ItemSize=@(200)>
+            <Item Context="context">
+
+				@if (context is Sandbox.Services.Ugc.ItemDetail item)
+                {
+					<WorkshopIcon Item=@item></WorkshopIcon>
+                }
+
+            </Item>
+        </VirtualGrid>
+    </Body>
+
+</SpawnMenuContent>
+
+@code
+{
+    protected override async Task OnParametersSetAsync()
+    {
+		Items.Clear();
+		_ = QueryNext();
+    }
+
+	List<Sandbox.Services.Ugc.ItemDetail> Items = new();
+	Sandbox.Services.Ugc.QueryResult LastResult;
+
+	async Task QueryNext()
+	{
+		var query = new Sandbox.Services.Ugc.Query();
+		query.KeyValues["package"] = "facepunch.sandbox";
+		query.KeyValues["type"] = "dupe";
+
+		LastResult = await query.Run();
+
+		Log.Info( $"result.ResultCount: {LastResult.ResultCount}" );
+		Log.Info( $"result.TotalCount: {LastResult.TotalCount}" );
+
+		foreach ( var item in LastResult.Items )
+		{
+			Log.Info( $"{item.Title} / {item.Url} / {item.Preview} / {item.Created} / {item.Updated} / {item.Owner.Id} / {item.Owner.Name}" );
+		}
+
+		Items.AddRange( LastResult.Items );
+		StateHasChanged();
+	}
+
+}

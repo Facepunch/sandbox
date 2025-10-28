@@ -1,0 +1,30 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@using Sandbox.Mounting;
+@inherits Panel
+
+<root>
+
+	<div class="title">@Item.Title</div>
+
+	<div class="author">
+
+		<div class="avatar" style="background-image: url('@Item.Owner.Avatar');"></div>
+		<div class="name">By @Item.Owner.Name</div>
+
+	</div>
+
+</root>
+
+@code
+{
+	public Sandbox.Services.Ugc.ItemDetail Item { get; set; }
+
+	protected override async Task OnParametersSetAsync()
+	{
+		Log.Info( Item.Preview );
+		Style.SetBackgroundImage( Item.Preview );
+	}
+	
+
+}

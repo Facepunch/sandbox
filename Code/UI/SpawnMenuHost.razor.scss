@@ -191,7 +191,7 @@ VirtualGrid
 	.cell
 	{
 		background-color: #7771;
-
+		cursor: pointer;
 
 		&:hover
 		{
@@ -201,7 +201,7 @@ VirtualGrid
 		&:active
 		{
 			background-color: #08f;
-			filter: brightness( 2 );
+			padding: 2px;
 		}
 	}
 }
