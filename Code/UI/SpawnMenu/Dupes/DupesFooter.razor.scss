@@ -1,0 +1,31 @@
+
+DupesFooter
+{
+    width: 100%;
+    flex-shrink: 0;
+    padding: 8px;
+}
+
+button.primary
+{
+    color: white;
+    border: 1px solid #08f;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%;
+    gap: 1rem;
+
+    &:hover
+    {
+        background-color: #08f2;
+        sound-in: ui.button.over;
+    }
+
+    &.disabled
+    {
+       pointer-events: none;
+       opacity: 0.2;
+    }
+}

@@ -4,6 +4,7 @@ public partial class BaseSpawnMenu : Panel
 {
 	SpawnMenuOption activeOption;
 	PanelSwitcher Switcher;
+	protected Panel MenuFooter;
 
 	void Spawn( string ident )
 	{
@@ -28,9 +29,19 @@ public partial class BaseSpawnMenu : Panel
 		{
 			SwitchOption( options.Where( x => x.PanelCreator != null || x.Panel != null ).FirstOrDefault() );
 		}
+
+		if ( firstTime && MenuFooter.IsValid() )
+		{
+			OnMenuFooter( MenuFooter );
+		}
 	}
 
 	protected virtual void Rebuild()
+	{
+
+	}
+
+	protected virtual void OnMenuFooter( Panel footer )
 	{
 
 	}

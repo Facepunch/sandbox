@@ -59,16 +59,14 @@ public partial class Duplicator : ToolMode
 
 			ShootEffects( select );
 		}
-
-		if ( Input.Pressed( "reload" ) )
-		{
-			var t = DateTime.UtcNow;
-			Save( CopiedJson );
-		}
 	}
 
-	void Save( string data )
+	/// <summary>
+	/// Save the current dupe to storage.
+	/// </summary>
+	public void Save()
 	{
+		string data = CopiedJson;
 		var packages = Cloud.ResolvePrimaryAssetsFromJson( data );
 
 		var storage = Storage.CreateEntry( "dupe" );

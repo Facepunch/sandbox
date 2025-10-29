@@ -6,7 +6,6 @@
 <SpawnMenuContent>
 
     <Body>
-		
         <VirtualGrid Items=@( GetData() ) ItemSize=@ItemSize>
             <Item Context="item">
 
@@ -42,7 +41,7 @@
 		toolgun.SetToolMode( "Duplicator" );
 
 		var toolmode = localPlayer.GetComponentInChildren<Duplicator>();
-		Log.Info( toolmode );
+
 		if ( toolmode is null )
 		{
 			// we are a client and didn't switch tools in time, we need to wait for the server to tell us we have the tool

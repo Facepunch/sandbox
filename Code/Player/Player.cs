@@ -7,6 +7,8 @@ using Sandbox.Rendering;
 public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents
 {
 	public static Player FindLocalPlayer() => Game.ActiveScene.GetAllComponents<Player>().Where( x => x.IsLocalPlayer ).FirstOrDefault();
+	public static T FindLocalWeapon<T>() where T : BaseCarryable => FindLocalPlayer()?.GetComponentInChildren<T>( true );
+	public static T FindLocalToolMode<T>() where T : ToolMode => FindLocalPlayer()?.GetComponentInChildren<T>( true );
 
 	[RequireComponent] public PlayerController Controller { get; set; }
 	[Property] public GameObject Body { get; set; }

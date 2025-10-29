@@ -13,16 +13,22 @@ SpawnMenuPage > .left
 	white-space: nowrap;
 	overflow: hidden;
 
-	h1
+	> div
 	{
-		padding: 0.5rem;
-		color: #08f;
-		flex-shrink: 0;
-	}
+		flex-grow: 1;
+		flex-direction: column;
 
-	.grow
-	{
-		flex-grow:1;
+		h1
+		{
+			padding: 0.5rem;
+			color: #08f;
+			flex-shrink: 0;
+		}
+
+		.grow
+		{
+			flex-grow:1;
+		}
 	}
 }
 

@@ -55,6 +55,11 @@ public partial class Toolgun : BaseCarryable
 
 	public ToolMode GetCurrentMode() => GetComponent<ToolMode>();
 
+	public T GetMode<T>() where T : ToolMode
+	{
+		return GetComponent<T>( true );
+	}
+
 	[Rpc.Host]
 	public void SetToolMode( string name )
 	{

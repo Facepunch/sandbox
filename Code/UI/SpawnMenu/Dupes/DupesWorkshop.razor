@@ -39,6 +39,7 @@
 		query.KeyValues["type"] = "dupe";
 
 		LastResult = await query.Run();
+		if ( LastResult.Items == null ) return;
 
 		Items.AddRange( LastResult.Items );
 		StateHasChanged();
