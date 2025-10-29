@@ -38,10 +38,10 @@ Layer0
 
 	//---- Self Illum ----
 	g_flSelfIllumAlbedoFactor "0.000"
-	g_flSelfIllumBrightness "1.085"
+	g_flSelfIllumBrightness "2.544"
 	g_flSelfIllumScale "16.000"
 	g_vSelfIllumScrollSpeed "[1.000 2.000]"
-	g_vSelfIllumTint "[0.000000 0.647059 1.000000 1.000000]"
+	g_vSelfIllumTint "[0.533333 0.835294 1.000000 1.000000]"
 	TextureSelfIllumMask "materials/default/default_mod2x.tga"
 
 	//---- Texture Coordinates ----
