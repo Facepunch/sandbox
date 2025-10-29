@@ -6,7 +6,11 @@ public class DupesPage : BaseSpawnMenu
 {
 	protected override void Rebuild()
 	{
-		AddOption( "Popular Dupes", () => new DupesWorkshop() );
-		AddOption( "Local Dupes", () => new DupesLocal() );
+		AddHeader( "Workshop" );
+		AddOption( "🎖️", "Popular Dupes", () => new DupesWorkshop() );
+
+		AddGrow();
+		AddHeader( "Local" );
+		AddOption( "📂", "Local Dupes", () => new DupesLocal() );
 	}
 }

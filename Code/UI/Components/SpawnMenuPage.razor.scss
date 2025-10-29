@@ -7,11 +7,23 @@ SpawnMenuPage
 
 SpawnMenuPage > .left
 {
-	width: 256px;
+	width: 300px;
 	flex-direction: column;
 	padding: 8px;
 	white-space: nowrap;
 	overflow: hidden;
+
+	h1
+	{
+		padding: 0.5rem;
+		color: #08f;
+		flex-shrink: 0;
+	}
+
+	.grow
+	{
+		flex-grow:1;
+	}
 }
 
 SpawnMenuPage > .body
@@ -21,3 +33,5 @@ SpawnMenuPage > .body
 	margin: 8px;
 	margin-left: 0px;
 }
+
+

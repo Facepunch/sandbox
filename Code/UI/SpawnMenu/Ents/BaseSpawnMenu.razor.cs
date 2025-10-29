@@ -26,7 +26,7 @@ public partial class BaseSpawnMenu : Panel
 
 		if ( firstTime && Switcher.IsValid() && options.Count > 0 )
 		{
-			SwitchOption( options.First() );
+			SwitchOption( options.Where( x => x.PanelCreator != null || x.Panel != null ).FirstOrDefault() );
 		}
 	}
 
@@ -35,10 +35,46 @@ public partial class BaseSpawnMenu : Panel
 
 	}
 
+	public void AddHeader( string name )
+	{
+		var o = new SpawnMenuOption
+		{
+			Type = "header",
+			Name = name
+		};
+
+		options.Add( o );
+		StateHasChanged();
+	}
+
+	public void AddGrow()
+	{
+		var o = new SpawnMenuOption
+		{
+			Type = "grow"
+		};
+
+		options.Add( o );
+		StateHasChanged();
+	}
+
 	public void AddOption( string name, Func<Panel> createPanelFunction )
 	{
 		var o = new SpawnMenuOption
 		{
+			Name = name,
+			PanelCreator = createPanelFunction
+		};
+
+		options.Add( o );
+		StateHasChanged();
+	}
+
+	public void AddOption( string icon, string name, Func<Panel> createPanelFunction )
+	{
+		var o = new SpawnMenuOption
+		{
+			Icon = icon,
 			Name = name,
 			PanelCreator = createPanelFunction
 		};
@@ -55,7 +91,7 @@ public partial class BaseSpawnMenu : Panel
 
 		activeOption = o;
 
-		if ( activeOption.Panel == null )
+		if ( activeOption.Panel == null && activeOption.PanelCreator != null )
 		{
 			activeOption.Panel = activeOption.PanelCreator.Invoke();
 			Switcher.AddChild( activeOption.Panel );
@@ -68,6 +104,7 @@ public partial class BaseSpawnMenu : Panel
 
 	class SpawnMenuOption
 	{
+		public string Type { get; set; } = "option";
 		public string Name { get; set; }
 		public string Icon { get; set; }
 		public Func<Panel> PanelCreator { get; set; }
