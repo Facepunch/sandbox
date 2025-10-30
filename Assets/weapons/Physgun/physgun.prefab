@@ -127,7 +127,7 @@
               "color": [
                 {
                   "t": 0.51890755,
-                  "c": "10.46512,16.74418,18,1"
+                  "c": "1.74419,2.7907,3,1"
                 }
               ],
               "alpha": []
@@ -186,10 +186,10 @@
               },
               "Material": "weapons/physgun/physgun_beam.vmat",
               "WorldSpace": true,
-              "UnitsPerTexture": 32,
+              "UnitsPerTexture": 512,
               "Scale": 1,
               "Offset": 0,
-              "Scroll": 2,
+              "Scroll": 1,
               "Clamp": false
             },
             "UseVectorPoints": true,
@@ -199,7 +199,7 @@
               "307.8,126.6,0"
             ],
             "Width": {
-              "rangey": "0.1674,0.3",
+              "rangey": "0.1674,5",
               "frames": [
                 {
                   "x": 0,
