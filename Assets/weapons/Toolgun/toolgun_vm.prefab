@@ -1700,7 +1700,7 @@
   "DontBreakAsTemplate": false,
   "__references": [
     "facepunch.v_first_person_arms_human#122024",
-    "facepunch.v_toolgun#118524"
+    "facepunch.v_toolgun#125834"
   ],
   "__version": 2
 }

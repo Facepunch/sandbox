@@ -52,7 +52,7 @@
         "__version": 1,
         "Flags": 0,
         "Name": "w_physgun",
-        "Position": "-10.24904,9.162633,6.03894",
+        "Position": "3.830974,-0.3073678,-5.301069",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -1527,7 +1527,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.w_physgun#119289"
+    "facepunch.w_physgun#126091"
   ],
   "__version": 2
 }
