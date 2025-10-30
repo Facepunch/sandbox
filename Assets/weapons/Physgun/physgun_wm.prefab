@@ -123,7 +123,102 @@
             "NetworkOrphaned": 0,
             "OwnerTransfer": 1,
             "Components": [],
-            "Children": []
+            "Children": [
+              {
+                "__guid": "fabe23f5-e124-4a06-a96b-e9b6d7ea598a",
+                "__version": 1,
+                "__Prefab": "weapons/physgun/effects/wm-glow.prefab",
+                "__PrefabInstancePatch": {
+                  "AddedObjects": [],
+                  "RemovedObjects": [],
+                  "PropertyOverrides": [
+                    {
+                      "Target": {
+                        "Type": "GameObject",
+                        "IdValue": "e5cf5f34-17b5-4e70-b8db-d7f54a8ad61d"
+                      },
+                      "Property": "Position",
+                      "Value": "2.55024,0,0"
+                    },
+                    {
+                      "Target": {
+                        "Type": "Component",
+                        "IdValue": "feb67b66-6937-4970-b707-655e5b1eb784"
+                      },
+                      "Property": "Sprite",
+                      "Value": {
+                        "$compiler": "embed",
+                        "$source": null,
+                        "data": {
+                          "Animations": [
+                            {
+                              "Name": "Default",
+                              "FrameRate": 15,
+                              "Origin": "0.5,0.5",
+                              "LoopMode": "Loop",
+                              "Frames": [
+                                {
+                                  "Texture": {
+                                    "$compiler": "texture",
+                                    "$source": "imagefile",
+                                    "data": {
+                                      "FilePath": "textures/lightcookies/lightcookies_z009.tga",
+                                      "MaxSize": 4096,
+                                      "ConvertHeightToNormals": false,
+                                      "NormalScale": 1,
+                                      "Rotate": 0,
+                                      "FlipVertical": false,
+                                      "FlipHorizontal": false,
+                                      "Cropping": {
+                                        "Left": 0,
+                                        "Top": 0,
+                                        "Right": 0,
+                                        "Bottom": 0
+                                      },
+                                      "Padding": {
+                                        "Left": 0,
+                                        "Top": 0,
+                                        "Right": 0,
+                                        "Bottom": 0
+                                      },
+                                      "InvertColor": false,
+                                      "Tint": "1,1,1,1",
+                                      "Blur": 0,
+                                      "Sharpen": 0,
+                                      "Brightness": 1,
+                                      "Contrast": 1,
+                                      "Saturation": 1,
+                                      "Hue": 0,
+                                      "Colorize": false,
+                                      "TargetColor": "0,1,0,1",
+                                      "CacheToDisk": true
+                                    },
+                                    "compiled": null
+                                  },
+                                  "BroadcastMessages": []
+                                }
+                              ]
+                            }
+                          ],
+                          "__references": null
+                        },
+                        "compiled": null
+                      }
+                    }
+                  ],
+                  "MovedObjects": []
+                },
+                "__PrefabIdToInstanceId": {
+                  "e5cf5f34-17b5-4e70-b8db-d7f54a8ad61d": "fabe23f5-e124-4a06-a96b-e9b6d7ea598a",
+                  "3c06d747-a92f-49b3-9749-0902446440a0": "b19c76d9-cfd2-4ded-bebc-295aa6a821c4",
+                  "1eade6ef-bca3-4844-967d-98d7e79c224e": "ae72664f-fbc1-4486-9ac1-640063658a9a",
+                  "14848a05-e916-4b3f-abdf-34cf6ff912c9": "978d3b0c-a5e3-40df-98f6-0d7422643bde",
+                  "41ef4816-f57a-420c-bc59-2411a9f5251a": "2137ee9f-b86d-4a59-9ee7-7cf8cfb8fa1d",
+                  "feb67b66-6937-4970-b707-655e5b1eb784": "8719f679-5e74-4b73-bebc-5466540b8acb",
+                  "aa79498c-82a3-4823-9f26-a5eda7dac889": "e68cb065-f4a6-49f3-8a66-cfe6d802ec5a"
+                }
+              }
+            ]
           },
           {
             "__guid": "1d5347e0-820c-4015-96dc-4efd0679eca3",
