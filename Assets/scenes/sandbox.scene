@@ -495,6 +495,202 @@
           "Children": []
         }
       ]
+    },
+    {
+      "__guid": "52e6d2d8-061d-4a4e-b8a0-78f5869110e9",
+      "__version": 1,
+      "Flags": 0,
+      "Name": "wooden_chair_a",
+      "Position": "448.5704,-148.5858,289.8191",
+      "Rotation": "0,0,0,1",
+      "Scale": "1,1,1",
+      "Tags": "",
+      "Enabled": true,
+      "NetworkMode": 1,
+      "NetworkInterpolation": true,
+      "NetworkOrphaned": 0,
+      "OwnerTransfer": 1,
+      "Components": [
+        {
+          "__type": "Sandbox.ModelRenderer",
+          "__guid": "aadc5f54-5915-4348-908d-c328b023b285",
+          "__enabled": true,
+          "BodyGroups": 18446744073709551615,
+          "CreateAttachments": false,
+          "LodOverride": null,
+          "MaterialGroup": null,
+          "MaterialOverride": null,
+          "Materials": null,
+          "Model": "models/props/trim_sheets/chairs/wooden_chair_a.vmdl",
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Tint": "1,1,1,1"
+        },
+        {
+          "__type": "Sandbox.ModelCollider",
+          "__guid": "4abaf334-1505-4840-9e43-9f3e05b04bd9",
+          "__enabled": true,
+          "Elasticity": null,
+          "Friction": null,
+          "IsTrigger": false,
+          "Model": "models/props/trim_sheets/chairs/wooden_chair_a.vmdl",
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "OnObjectTriggerEnter": null,
+          "OnObjectTriggerExit": null,
+          "OnTriggerEnter": null,
+          "OnTriggerExit": null,
+          "RollingResistance": null,
+          "Static": false,
+          "Surface": null,
+          "SurfaceVelocity": "0,0,0"
+        },
+        {
+          "__type": "Sandbox.Rigidbody",
+          "__guid": "2f517659-9a6d-4dca-80f8-286eda712502",
+          "__enabled": true,
+          "AngularDamping": 0,
+          "Gravity": true,
+          "GravityScale": 1,
+          "LinearDamping": 0,
+          "Locking": {
+            "X": false,
+            "Y": false,
+            "Z": false,
+            "Pitch": false,
+            "Yaw": false,
+            "Roll": false
+          },
+          "MassCenterOverride": "0,0,0",
+          "MassOverride": 0,
+          "MotionEnabled": true,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "OverrideMassCenter": false,
+          "RigidbodyFlags": 0,
+          "StartAsleep": false
+        },
+        {
+          "__type": "Sandbox.Chair",
+          "__guid": "625fbf70-c398-4116-a7c8-a95b645dd7f6",
+          "__enabled": true,
+          "EyePosition": {
+            "_type": "gameobject",
+            "go": "cea0991b-42ea-4b81-b152-291c826499e2"
+          },
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "PitchRange": "-90,70",
+          "SeatPosition": {
+            "_type": "gameobject",
+            "go": "d491515f-f270-400f-afc9-590820d492c0"
+          },
+          "SitPose": "Sitting",
+          "YawRange": "-120,120"
+        }
+      ],
+      "Children": [
+        {
+          "__guid": "cea0991b-42ea-4b81-b152-291c826499e2",
+          "__version": 1,
+          "Flags": 0,
+          "Name": "eyepos",
+          "Position": "0.8091431,0.8099976,53.08115",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkInterpolation": true,
+          "NetworkOrphaned": 0,
+          "OwnerTransfer": 1,
+          "Components": [],
+          "Children": [
+            {
+              "__guid": "8d01a21d-5b20-4bfd-9211-df4615efa2a2",
+              "__version": 1,
+              "Flags": 0,
+              "Name": "collider",
+              "Position": "0,0,-4.195129",
+              "Rotation": "0,0,0,1",
+              "Scale": "1,1,1",
+              "Tags": "playercontroller",
+              "Enabled": true,
+              "NetworkMode": 2,
+              "NetworkInterpolation": true,
+              "NetworkOrphaned": 0,
+              "OwnerTransfer": 1,
+              "Components": [
+                {
+                  "__type": "Sandbox.SphereCollider",
+                  "__guid": "e66a1710-20f0-4596-a117-79f35214eea5",
+                  "__enabled": true,
+                  "Center": "0,0,0",
+                  "Elasticity": null,
+                  "Friction": null,
+                  "IsTrigger": false,
+                  "OnComponentDestroy": null,
+                  "OnComponentDisabled": null,
+                  "OnComponentEnabled": null,
+                  "OnComponentFixedUpdate": null,
+                  "OnComponentStart": null,
+                  "OnComponentUpdate": null,
+                  "OnObjectTriggerEnter": null,
+                  "OnObjectTriggerExit": null,
+                  "OnTriggerEnter": null,
+                  "OnTriggerExit": null,
+                  "Radius": 9,
+                  "RollingResistance": null,
+                  "Static": false,
+                  "Surface": "surface/nomass.surface",
+                  "SurfaceVelocity": "0,0,0"
+                }
+              ],
+              "Children": []
+            }
+          ]
+        },
+        {
+          "__guid": "d491515f-f270-400f-afc9-590820d492c0",
+          "__version": 1,
+          "Flags": 0,
+          "Name": "sitpos",
+          "Position": "4.139984,0.8099976,9.030029",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkInterpolation": true,
+          "NetworkOrphaned": 0,
+          "OwnerTransfer": 1,
+          "Components": [],
+          "Children": []
+        }
+      ]
     }
   ],
   "SceneProperties": {
@@ -518,6 +714,8 @@
   "ResourceVersion": 3,
   "Title": null,
   "Description": null,
-  "__references": [],
+  "__references": [
+    "facepunch.wooden_chair_a#43573"
+  ],
   "__version": 3
 }

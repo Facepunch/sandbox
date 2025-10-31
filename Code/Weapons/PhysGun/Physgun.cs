@@ -81,7 +81,11 @@ public partial class Physgun : BaseCarryable
 		if ( Scene.TimeScale == 0 )
 			return;
 
-		_isSpinning = Input.Down( "use" );
+		_isSpinning = Input.Down( "use" ) && _state.IsValid();
+		if ( _isSpinning )
+		{
+			Input.Clear( "use" );
+		}
 
 		var isSnapping = Input.Down( "run" ) || Input.Down( "walk" );
 		var snapAngle = Input.Down( "walk" ) ? 15.0f : 45.0f;

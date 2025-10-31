@@ -218,10 +218,9 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			inventory.SwitchWeapon( inventory.GetBestWeapon() );
 	}
 
-	protected override void OnUpdate()
+	void PlayerController.IEvents.PreInput()
 	{
-		if ( IsLocalPlayer )
-			OnControl();
+		OnControl();
 	}
 
 	RealTimeSince timeSinceJumpPressed;
