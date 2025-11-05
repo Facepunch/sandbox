@@ -308,8 +308,8 @@
         "WalkSpeed": 200
       },
       {
-        "__type": "Sandbox.SittingMoveMode",
-        "__guid": "7cc1def4-f125-4721-9050-d99894dcab46",
+        "__type": "Sandbox.Movement.SitMoveMode",
+        "__guid": "b50161a7-01f2-4249-9102-efbc916e97d1",
         "__enabled": true,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -2840,6 +2840,7 @@
             "__type": "Sandbox.CapsuleCollider",
             "__guid": "219302c7-aa52-4fba-9847-24ed24c0a1fc",
             "__enabled": true,
+            "ColliderFlags": 0,
             "Elasticity": null,
             "End": "0,0,45.05097",
             "Friction": 0,
@@ -2866,6 +2867,7 @@
             "__guid": "2ebbabdd-3815-4968-b8da-e26bbeac6da9",
             "__enabled": true,
             "Center": "0,0,18",
+            "ColliderFlags": 0,
             "Elasticity": null,
             "Friction": 0,
             "IsTrigger": false,
