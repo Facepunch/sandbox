@@ -28,11 +28,11 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 	{
 		if ( TubeFxMaterial is null ) return;
 
-		_scrollSpeed = MathX.SmoothDamp( _scrollSpeed, BeamActive ? 2.0f : 0, ref _scrollSpeedVel, BeamActive ? 0.5f : 2.5f, Time.Delta );
+		_scrollSpeed = MathX.SmoothDamp( _scrollSpeed, BeamActive ? 3.0f : 0.5f, ref _scrollSpeedVel, BeamActive ? 0.5f : 2.5f, Time.Delta );
 		_scroll += _scrollSpeed * Time.Delta;
 
 		TubeFxMaterial.Set( "g_vTexCoordOffset", new Vector2( _scroll % 1.0f, 0 ) );
-		TubeFxMaterial.Set( "g_flSelfIllumBrightness", BeamActive ? 4.0f : 1.5f );
+		TubeFxMaterial.Set( "g_flSelfIllumBrightness", BeamActive ? 8.0f : 2.5f );
 	}
 
 	void UpdateTipSprites()

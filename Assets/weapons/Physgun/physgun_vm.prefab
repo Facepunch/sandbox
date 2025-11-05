@@ -91,7 +91,7 @@
             "component_type": "SpriteRenderer"
           }
         ],
-        "TubeFxMaterial": "models/weapons/sbox_physgun/v_physgun_tubefx.vmat"
+        "TubeFxMaterial": "models/weapons/sbox_physgun/v_physgun_tube.vmat"
       }
     ],
     "Children": [
@@ -644,7 +644,7 @@
                                             "TargetColor": "0,1,0,1",
                                             "CacheToDisk": true
                                           },
-                                          "compiled": null
+                                          "compiled": "textures/generated/imagefile/14af22c9ac0e9f53.vtex"
                                         },
                                         "BroadcastMessages": []
                                       }
@@ -815,10 +815,15 @@
                                   "mode": "Mirrored"
                                 }
                               ],
-                              "CurveB": {
-                                "rangex": "0,0",
-                                "rangey": "0,0"
-                              }
+                              "CurveB": [
+                                {
+                                  "x": 0.5,
+                                  "y": 0.5,
+                                  "in": 0,
+                                  "out": 0,
+                                  "mode": "Mirrored"
+                                }
+                              ]
                             },
                             "MaxParticles": 40,
                             "OnComponentDestroy": null,
@@ -985,7 +990,7 @@
                                             "TargetColor": "0,1,0,1",
                                             "CacheToDisk": true
                                           },
-                                          "compiled": null
+                                          "compiled": "textures/generated/imagefile/14af22c9ac0e9f53.vtex"
                                         },
                                         "BroadcastMessages": []
                                       }
@@ -1042,7 +1047,7 @@
                             "__version": 2,
                             "Additive": true,
                             "Billboard": "Always",
-                            "Color": "0.35349,1.23163,2,0.40173",
+                            "Color": "0.35349,1.23163,2,0.79404",
                             "DepthFeather": 3,
                             "FlipHorizontal": false,
                             "FlipVertical": false,
@@ -1059,6 +1064,7 @@
                             "OnComponentStart": null,
                             "OnComponentUpdate": null,
                             "Opaque": false,
+                            "OverlayColor": "1,1,1,0",
                             "PlaybackSpeed": 1,
                             "RenderOptions": {
                               "GameLayer": false,
@@ -1067,7 +1073,7 @@
                               "AfterUILayer": false
                             },
                             "Shadows": false,
-                            "Size": "6.112237,6.112237",
+                            "Size": "6.111311,6.111311",
                             "Sprite": {
                               "$compiler": "embed",
                               "$source": null,
@@ -1136,7 +1142,7 @@
                             "__version": 2,
                             "Additive": true,
                             "Billboard": "Always",
-                            "Color": "0.35349,1.23163,2,0.41049",
+                            "Color": "0.35349,1.23163,2,0.56382",
                             "DepthFeather": 3,
                             "FlipHorizontal": false,
                             "FlipVertical": false,
@@ -1153,6 +1159,7 @@
                             "OnComponentStart": null,
                             "OnComponentUpdate": null,
                             "Opaque": false,
+                            "OverlayColor": "1,1,1,0",
                             "PlaybackSpeed": 1,
                             "RenderOptions": {
                               "GameLayer": false,
@@ -1161,7 +1168,7 @@
                               "AfterUILayer": false
                             },
                             "Shadows": false,
-                            "Size": "6.491042,6.491042",
+                            "Size": "6.005605,6.005605",
                             "Sprite": {
                               "$compiler": "embed",
                               "$source": null,
@@ -1230,7 +1237,7 @@
                             "__version": 2,
                             "Additive": true,
                             "Billboard": "Always",
-                            "Color": "0.35349,1.23163,2,0.88538",
+                            "Color": "0.35349,1.23163,2,0.73014",
                             "DepthFeather": 3,
                             "FlipHorizontal": false,
                             "FlipVertical": false,
@@ -1247,6 +1254,7 @@
                             "OnComponentStart": null,
                             "OnComponentUpdate": null,
                             "Opaque": false,
+                            "OverlayColor": "1,1,1,0",
                             "PlaybackSpeed": 1,
                             "RenderOptions": {
                               "GameLayer": false,
@@ -1255,7 +1263,7 @@
                               "AfterUILayer": false
                             },
                             "Shadows": false,
-                            "Size": "6.409173,6.409173",
+                            "Size": "6.593512,6.593512",
                             "Sprite": {
                               "$compiler": "embed",
                               "$source": null,
@@ -2709,7 +2717,7 @@
   "DontBreakAsTemplate": false,
   "__references": [
     "facepunch.v_first_person_arms_human#122024",
-    "facepunch.v_physgun#126118"
+    "facepunch.v_physgun#126846"
   ],
   "__version": 2
 }
