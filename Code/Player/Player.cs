@@ -459,4 +459,11 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 		GetComponent<PlayerInventory>().SwitchWeapon( weapon );
 	}
+
+
+	public override void OnParentDestroy()
+	{
+		// When parent is destroyed, unparent the player to avoid destroying it
+		GameObject.SetParent( null, true );
+	}
 }
