@@ -9,7 +9,7 @@
         {
             var name = System.IO.Path.GetFileName(entry);
 
-            <div onclick=@(() => GameManager.Spawn(entry))>@name</div>
+            <div class="localicon" onclick=@(() => GameManager.Spawn(entry))>@name</div>
         }
     </Item>
 </VirtualGrid>
