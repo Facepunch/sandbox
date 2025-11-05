@@ -4,6 +4,7 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 	[Property] public ParticleEffect GlowEffect { get; set; }
 	[Property] public ParticleEffect SparksEffect { get; set; }
 	[Property] public Material TubeFxMaterial { get; set; }
+	[Property] public Material BottleMaterial { get; set; }
 
 	[Property] public bool BeamActive { get; set; }
 
@@ -18,6 +19,7 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 		UpdateTipSprites();
 		UpdateTubeFx();
 		UpdateSparks();
+		UpdateBottleGlow();
 	}
 
 	float _scroll;
@@ -28,11 +30,21 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 	{
 		if ( TubeFxMaterial is null ) return;
 
-		_scrollSpeed = MathX.SmoothDamp( _scrollSpeed, BeamActive ? 3.0f : 0.5f, ref _scrollSpeedVel, BeamActive ? 0.5f : 2.5f, Time.Delta );
+		_scrollSpeed = MathX.SmoothDamp( _scrollSpeed, BeamActive ? 3.0f : 0.05f, ref _scrollSpeedVel, BeamActive ? 0.5f : 2.5f, Time.Delta );
 		_scroll += _scrollSpeed * Time.Delta;
 
 		TubeFxMaterial.Set( "g_vTexCoordOffset", new Vector2( _scroll % 1.0f, 0 ) );
-		TubeFxMaterial.Set( "g_flSelfIllumBrightness", BeamActive ? 8.0f : 2.5f );
+		TubeFxMaterial.Set( "g_flSelfIllumBrightness", BeamActive ? 8.0f : 1.1f );
+	}
+
+	void UpdateBottleGlow()
+	{
+		if ( BottleMaterial is null ) return;
+
+		float bounce = MathF.Sin( Time.Now * (BeamActive ? 45.0f : 3.0f) ) * 0.5f;
+
+
+		BottleMaterial.Set( "g_flSelfIllumBrightness", (BeamActive ? 6.0f : 1.5f) + bounce );
 	}
 
 	void UpdateTipSprites()
