@@ -6,14 +6,14 @@ public class PlayerFallDamage : Component, IPlayerEvent
 	[RequireComponent] public Player Player { get; set; }
 
 	/// <summary>
-	/// Falling over this distance is considered a damaging fall
+	/// Fatal fall speed, you will die if you fall at or above this speed
 	/// </summary>
-	[Property] public float MinimumFallDistance { get; set; } = 200;
+	[Property] public float FatalFallSpeed { get; set; } = 1536.0f;
 
 	/// <summary>
-	/// If you fall this distance it's death
+	/// Maximum safe fall speed, you won't take damage at or below this speed
 	/// </summary>
-	[Property] public float DeathFallDistance { get; set; } = 800;
+	[Property] public float MaxSafeFallSpeed { get; set; } = 512.0f;
 
 	/// <summary>
 	/// Multiply damage amount by this much
@@ -24,7 +24,6 @@ public class PlayerFallDamage : Component, IPlayerEvent
 	/// Fall damage sound
 	/// </summary>
 	[Property] public SoundEvent FallSound { get; set; }
-
 
 	int landCount = 0;
 
@@ -43,15 +42,17 @@ public class PlayerFallDamage : Component, IPlayerEvent
 		if ( landCount < 1 )
 			return;
 
-		var damageScale = MathX.Remap( distance, MinimumFallDistance, DeathFallDistance, 0, 1 );
-		int damageAmount = (int)(damageScale * 100 * DamageMultiplier);
-		if ( damageAmount < 1 ) return;
+		var fallSpeed = Math.Abs( velocity.z );
 
-		// play smashed legs on the ground sound
+		if ( fallSpeed <= MaxSafeFallSpeed )
+			return;
+
+		var damageAmount = MathX.Remap( fallSpeed, MaxSafeFallSpeed, FatalFallSpeed, 0f, 100f ) * DamageMultiplier;
+		if ( damageAmount < 1 ) return;
 
 		if ( Player is IDamageable damage )
 		{
-			var dmg = new DamageInfo( damageAmount, Player.GameObject, null );
+			var dmg = new DamageInfo( damageAmount.CeilToInt(), Player.GameObject, null );
 			dmg.Tags.Add( DamageTags.Fall );
 			damage.OnDamage( dmg );
 
