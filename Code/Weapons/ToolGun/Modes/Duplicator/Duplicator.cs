@@ -18,6 +18,11 @@ public partial class Duplicator : ToolMode
 	/// </summary>
 	DuplicationData dupe;
 
+	/// <summary>
+	/// Have all packaged finished loading.
+	/// </summary>
+	bool packagesReady = false;
+
 	LinkedGameObjectBuilder builder = new();
 
 	public override void OnControl()
@@ -27,7 +32,7 @@ public partial class Duplicator : ToolMode
 		var select = TraceSelect();
 		IsValidState = IsValidTarget( select );
 
-		if ( dupe is not null && Input.Pressed( "attack1" ) )
+		if ( dupe is not null && packagesReady && Input.Pressed( "attack1" ) )
 		{
 			if ( !IsValidPlacementTarget( select ) )
 			{
@@ -112,6 +117,7 @@ public partial class Duplicator : ToolMode
 	void JsonChanged()
 	{
 		dupe = null;
+		packagesReady = false;
 
 		if ( string.IsNullOrWhiteSpace( CopiedJson ) )
 			return;
@@ -133,6 +139,8 @@ public partial class Duplicator : ToolMode
 
 			await Cloud.Load( pkg );
 		}
+
+		packagesReady = true;
 	}
 
 	void DrawPreview()
@@ -152,7 +160,19 @@ public partial class Duplicator : ToolMode
 		var overlayMaterial = IsProxy ? Material.Load( "materials/effects/duplicator_override_other.vmat" ) : Material.Load( "materials/effects/duplicator_override.vmat" );
 		foreach ( var model in dupe.PreviewModels )
 		{
-			DebugOverlay.Model( model.Model, transform: tx.ToWorld( model.Transform ), overlay: false, materialOveride: overlayMaterial, localBoneTransforms: model.Bones );
+			if ( model.Model.IsError )
+			{
+				var bounds = model.Bounds;
+				if ( bounds.Size.IsNearlyZero() ) continue;
+
+				var transform = tx.ToWorld( model.Transform );
+				transform = new Transform( transform.PointToWorld( bounds.Center ), transform.Rotation, transform.Scale * (bounds.Size / 50) );
+				DebugOverlay.Model( Model.Cube, transform: transform, overlay: false, materialOveride: overlayMaterial );
+			}
+			else
+			{
+				DebugOverlay.Model( model.Model, transform: tx.ToWorld( model.Transform ), overlay: false, materialOveride: overlayMaterial, localBoneTransforms: model.Bones );
+			}
 		}
 	}
 

@@ -22,7 +22,7 @@ public class DuplicationData
 	/// <summary>
 	/// Describes where to draw a model for the preview
 	/// </summary>
-	public record struct PreviewModel( Model Model, Transform Transform, Transform[] Bones );
+	public record struct PreviewModel( Model Model, Transform Transform, Transform[] Bones, BBox Bounds );
 
 	/// <summary>
 	/// A list of preview models to help visualze where the duplication will be placed
@@ -71,7 +71,7 @@ public class DuplicationData
 				}
 
 				var modelTx = center.ToLocal( model.WorldTransform );
-				dupe.PreviewModels.Add( new DuplicationData.PreviewModel( model.Model, modelTx, bones ) );
+				dupe.PreviewModels.Add( new DuplicationData.PreviewModel( model.Model, modelTx, bones, model.Model.Bounds ) );
 			}
 		}
 
