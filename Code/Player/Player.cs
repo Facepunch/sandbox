@@ -90,9 +90,9 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 		var ragdollObjects = ragdoll.GetAllObjects( true ).ToLookup( x => x.Name );
 
-		for ( var i = 0; i <= playerRenderer.Model.BoneCount; ++i )
+		foreach ( var bone in bones.AllBones )
 		{
-			var boneName = playerRenderer.Model.GetBoneName( i );
+			var boneName = bone.Name;
 
 			if ( !ragdollObjects.Contains( boneName ) )
 				continue;
