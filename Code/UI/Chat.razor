@@ -27,7 +27,7 @@
 
 @code
 {
-    TextEntry InputBox;
+    TextEntry InputBox = default;
 
     public record Entry( ulong steamid, string author, string message, RealTimeSince timeSinceAdded );
     List<Entry> Entries = new();

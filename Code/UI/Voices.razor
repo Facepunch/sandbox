@@ -1,7 +1,8 @@
 @namespace Facepunch.UI
 @inherits PanelComponent
 
-<root class="">
+<root>
+
     @foreach (var voice in VoiceList.Where( x => CanDisplay( x ) ) )
     {
         <div class="item-row" style="transform: scale( @GetAmplitudeScale( voice ) )">

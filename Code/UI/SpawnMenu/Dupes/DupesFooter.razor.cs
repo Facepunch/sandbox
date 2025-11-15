@@ -1,4 +1,5 @@
 ﻿using Sandbox.UI;
+namespace Sandbox;
 
 public partial class DupesFooter : Panel
 {

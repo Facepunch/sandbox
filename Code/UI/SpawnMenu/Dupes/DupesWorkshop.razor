@@ -2,6 +2,7 @@
 @using Sandbox.UI;
 @using Sandbox.Mounting;
 @inherits Panel
+@namespace Sandbox
 
 <SpawnMenuContent>
 
@@ -12,7 +13,7 @@
 
 				@if (context is Storage.QueryItem item)
                 {
-					<WorkshopIcon Item="@item" @onclick=@( () => Duplicator.FromWorkshop( item ) )></WorkshopIcon>
+					<WorkshopIcon Item="@item" @onclick=@( () => _ = Duplicator.FromWorkshop( item ) )></WorkshopIcon>
                 }
 
             </Item>
@@ -23,11 +24,13 @@
 
 @code
 {
-    protected override async Task OnParametersSetAsync()
-    {
+	public Storage.SortOrder SortOrder { get; set; } = Storage.SortOrder.RankedByVote;
+
+	protected override async Task OnParametersSetAsync()
+	{
 		Items.Clear();
 		await QueryNext();
-    }
+	}
 
 	List<Storage.QueryItem> Items = new();
 	Storage.QueryResult LastResult;
@@ -37,6 +40,7 @@
 		var query = new Storage.Query();
 		query.KeyValues["package"] = "facepunch.sandbox";
 		query.KeyValues["type"] = "dupe";
+		query.SortOrder = SortOrder;
 
 		LastResult = await query.Run();
 		if ( LastResult.Items == null ) return;

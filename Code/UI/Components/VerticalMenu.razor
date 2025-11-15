@@ -1,6 +1,7 @@
 ﻿@using Sandbox;
 @using Sandbox.UI;
 @inherits Panel
+@namespace Sandbox
 
 <root>
     @Options
@@ -9,11 +10,11 @@
 @code
 {
 
-    public RenderFragment Options { get; set; }
+    [Parameter] public RenderFragment Options { get; set; }
 
     /// <summary>
     /// The currently selected value of any sub-menus
     /// </summary>
-    public object Value { get; set; }
+    [Parameter] public object Value { get; set; }
 
 }

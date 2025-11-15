@@ -9,7 +9,8 @@ public class DupesPage : BaseSpawnMenu
 	protected override void Rebuild()
 	{
 		AddHeader( "Workshop" );
-		AddOption( "🎖️", "Popular Dupes", () => new DupesWorkshop() );
+		AddOption( "🎖️", "Popular Dupes", () => new DupesWorkshop() { SortOrder = Storage.SortOrder.RankedByVote } );
+		//	AddOption( "🎖️", "Newest Dupes", () => new DupesWorkshop() { SortOrder = Storage.SortOrder.RankedByPublicationDate } );
 
 		AddGrow();
 		AddHeader( "Local" );

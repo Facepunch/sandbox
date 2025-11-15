@@ -1,9 +1,10 @@
 ﻿using Sandbox.UI;
+namespace Sandbox;
 
 public partial class BaseSpawnMenu : Panel
 {
 	SpawnMenuOption activeOption;
-	PanelSwitcher Switcher;
+	PanelSwitcher Switcher = default;
 	protected Panel MenuFooter;
 
 	void Spawn( string ident )

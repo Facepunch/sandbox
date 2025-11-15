@@ -26,6 +26,7 @@
     void ILocalPlayerEvent.OnPickup(BaseCarryable weapon)
     {
         StateHasChanged();
+        var x = new Sandbox.UI.Inventory.Inventory();
     }
 
     protected override void OnUpdate()

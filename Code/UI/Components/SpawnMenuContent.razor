@@ -1,6 +1,7 @@
 ﻿@using Sandbox;
 @using Sandbox.UI;
 @inherits Panel
+@namespace Sandbox
 
 <root>
     @if (Header != null)
@@ -14,7 +15,7 @@
 @code
 {
 
-    public RenderFragment Header { get; set; }
-    public RenderFragment Body { get; set; }
+    [Parameter] public RenderFragment Header { get; set; }
+    [Parameter] public RenderFragment Body { get; set; }
 
 }
