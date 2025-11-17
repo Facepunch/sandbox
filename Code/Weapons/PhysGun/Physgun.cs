@@ -3,7 +3,7 @@
 public partial class Physgun : BaseCarryable
 {
 	[Property, RequireComponent] public HighlightOutline BeamHighlight { get; set; }
-
+	[Property] SoundEvent ReleasedSound { get; set; }
 	public struct GrabState
 	{
 		public bool Active { get; set; }
@@ -81,6 +81,15 @@ public partial class Physgun : BaseCarryable
 		if ( Scene.TimeScale == 0 )
 			return;
 
+		if ( Input.Pressed( "use" ) && _state.IsValid() )
+		{
+			Sound.Play( "physgun.button.in.1" );
+		}
+		else if ( Input.Released( "use" ) && _state.IsValid() )
+		{
+			Sound.Play( "physgun.button.out.1" );
+		}
+
 		_isSpinning = Input.Down( "use" ) && _state.IsValid();
 		if ( _isSpinning )
 		{
@@ -109,6 +118,7 @@ public partial class Physgun : BaseCarryable
 				Freeze( _state.Body );
 				_state = default;
 				_preventReselect = true;
+				GameObject.PlaySound( ReleasedSound );
 				return;
 			}
 
@@ -203,6 +213,10 @@ public partial class Physgun : BaseCarryable
 			{
 				Unfreeze( _state.Body );
 			}
+		}
+		else if ( Input.Released( "attack1" ) )
+		{
+			GameObject.PlaySound( ReleasedSound );
 		}
 		else if ( Input.Pressed( "reload" ) )
 		{

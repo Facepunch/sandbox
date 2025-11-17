@@ -12,6 +12,7 @@
     "NetworkMode": 1,
     "NetworkInterpolation": true,
     "NetworkOrphaned": 1,
+    "NetworkTransmit": true,
     "OwnerTransfer": 1,
     "Components": [
       {
@@ -69,6 +70,7 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "ParentBone": "hold_r",
+        "ReleasedSound": "weapons/physgun/sounds/shutdown.sound",
         "Value": 2,
         "ViewModelPrefab": {
           "_type": "gameobject",
@@ -113,6 +115,7 @@
         "NetworkMode": 2,
         "NetworkInterpolation": true,
         "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
         "OwnerTransfer": 1,
         "Components": [
           {

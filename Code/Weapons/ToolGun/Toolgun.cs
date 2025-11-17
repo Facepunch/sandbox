@@ -11,7 +11,6 @@ public partial class Toolgun : BaseCarryable
 	{
 		if ( IsProxy )
 			return;
-
 	}
 
 	public void CreateToolComponents()
@@ -34,6 +33,7 @@ public partial class Toolgun : BaseCarryable
 		}
 	}
 
+	float _coilSpin = 0;
 	public override void OnControl( Player player )
 	{
 		var currentMode = GetCurrentMode();
@@ -45,6 +45,19 @@ public partial class Toolgun : BaseCarryable
 		UpdateViewmodelScreen();
 
 		base.OnControl( player );
+
+		if ( currentMode.TraceSelect().IsValid() )
+		{
+			if ( Input.Pressed( "Attack1" ) )
+			{
+				_coilSpin += 10;
+			}
+		}
+
+		_coilSpin = _coilSpin.LerpTo( 0, Time.Delta * 1 );
+
+		var coil = ViewModel.GetAllObjects( true ).FirstOrDefault( x => x.Name == "coil" );
+		coil.WorldRotation *= Rotation.From( 0, 0, _coilSpin );
 	}
 
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )

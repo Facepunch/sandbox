@@ -1,11 +1,11 @@
 {
   "UI": true,
-  "Volume": "0.1",
+  "Volume": "1",
   "Pitch": "1.1",
   "Decibels": 70,
   "SelectionMode": "Random",
   "Sounds": [
-    "sounds/kenney/ui/drop_002.vsnd"
+    "sounds/ui/ui.select.vsnd"
   ],
   "Occlusion": true,
   "AirAbsorption": true,
@@ -44,8 +44,8 @@
     }
   ],
   "DefaultMixer": {
-    "Name": "unknown",
-    "Id": "00000000-0000-0000-0000-000000000000"
+    "Name": "ui",
+    "Id": "83a5e0a0-de64-4c8b-ad30-167560549748"
   },
   "__references": [],
   "__version": 1

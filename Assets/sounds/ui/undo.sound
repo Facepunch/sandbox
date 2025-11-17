@@ -1,11 +1,11 @@
 {
   "UI": true,
-  "Volume": "0.5",
+  "Volume": "1",
   "Pitch": "1 1.1",
   "Decibels": 70,
   "SelectionMode": "Random",
   "Sounds": [
-    "sounds/ui/undo.vsnd"
+    "sounds/ui/ui.undo.vsnd"
   ],
   "Occlusion": true,
   "AirAbsorption": true,

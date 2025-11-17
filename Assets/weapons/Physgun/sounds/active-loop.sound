@@ -1,11 +1,11 @@
 {
   "UI": false,
-  "Volume": "0.05",
+  "Volume": "1",
   "Pitch": "1",
   "Decibels": 70,
   "SelectionMode": "Random",
   "Sounds": [
-    "weapons/physgun/sounds/active-loop.vsnd"
+    "weapons/physgun/sounds/physgun.active.loop.1.vsnd"
   ],
   "Occlusion": true,
   "AirAbsorption": true,
