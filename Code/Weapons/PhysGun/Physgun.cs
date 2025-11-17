@@ -110,6 +110,7 @@ public partial class Physgun : BaseCarryable
 			{
 				_state = default;
 				_preventReselect = true;
+				GameObject.PlaySound( ReleasedSound );
 				return;
 			}
 
