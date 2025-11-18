@@ -31,6 +31,8 @@
           "go": "38c1b57f-3b24-4d7b-b222-982dd9ed9ebf",
           "component_type": "LineRenderer"
         },
+        "ButtonInSound": "weapons/physgun/sounds/physgun.button.in.1.sound",
+        "ButtonOutSound": "weapons/physgun/sounds/physgun.button.out.1.sound",
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "svgsource",

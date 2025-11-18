@@ -1,7 +1,7 @@
 {
   "UI": false,
-  "Volume": "1",
-  "Pitch": "1",
+  "Volume": "0.5",
+  "Pitch": "1 1.1",
   "Decibels": 70,
   "SelectionMode": "Random",
   "Sounds": [
@@ -12,7 +12,7 @@
   "Transmission": true,
   "OcclusionRadius": 64,
   "DistanceAttenuation": true,
-  "Distance": 15000,
+  "Distance": 1500,
   "Falloff": [
     {
       "x": 0,
@@ -44,8 +44,8 @@
     }
   ],
   "DefaultMixer": {
-    "Name": "unknown",
-    "Id": "00000000-0000-0000-0000-000000000000"
+    "Name": "game",
+    "Id": "6657f113-3de7-4434-b089-6dddc9bb830a"
   },
   "__references": [],
   "__version": 1

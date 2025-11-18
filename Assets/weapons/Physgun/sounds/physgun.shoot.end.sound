@@ -5,14 +5,14 @@
   "Decibels": 70,
   "SelectionMode": "Random",
   "Sounds": [
-    "weapons/physgun/sounds/physgun.active.loop.1.vsnd"
+    "weapons/physgun/sounds/physgun.shoot.end.1.vsnd"
   ],
   "Occlusion": true,
   "AirAbsorption": true,
   "Transmission": true,
   "OcclusionRadius": 64,
   "DistanceAttenuation": true,
-  "Distance": 3910,
+  "Distance": 3500,
   "Falloff": [
     {
       "x": 0,
@@ -44,8 +44,8 @@
     }
   ],
   "DefaultMixer": {
-    "Name": "unknown",
-    "Id": "00000000-0000-0000-0000-000000000000"
+    "Name": "game",
+    "Id": "6657f113-3de7-4434-b089-6dddc9bb830a"
   },
   "__references": [],
   "__version": 1
