@@ -97,7 +97,7 @@ public class UndoSystem
 		public static void UndoNotice( string title )
 		{
 			Notices.AddNotice( "cached", "#4af", $"Undo {title}".Trim(), 4 );
-			Sound.Play( "sounds/ui/undo.sound" );
+			Sound.Play( "sounds/ui/ui.undo.sound" );
 		}
 	}
 }

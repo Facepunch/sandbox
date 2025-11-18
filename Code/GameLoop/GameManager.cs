@@ -212,7 +212,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 			data["ident"] = path_or_ident;
 			Sandbox.Services.Stats.Increment( "spawn", 1, data );
 
-			Sound.Play( "sounds/ui/spawn.sound" );
+			Sound.Play( "sounds/ui/ui.spawn.sound" );
 		}
 
 		// Only actually spawn it on the host
