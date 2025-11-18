@@ -72,7 +72,7 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "ParentBone": "hold_r",
-        "ReleasedSound": "weapons/physgun/sounds/shutdown.sound",
+        "ReleasedSound": "weapons/physgun/sounds/physgun.shoot.end.sound",
         "Value": 2,
         "ViewModelPrefab": {
           "_type": "gameobject",
@@ -271,7 +271,7 @@
             "ReflectionOverride": false,
             "Reflections": false,
             "Repeat": false,
-            "SoundEvent": "weapons/physgun/sounds/active-loop.sound",
+            "SoundEvent": "weapons/physgun/sounds/physgun.active.loop.sound",
             "SoundOverride": false,
             "StopOnNew": false,
             "TargetMixer": {
@@ -320,7 +320,7 @@
             "ReflectionOverride": false,
             "Reflections": false,
             "Repeat": false,
-            "SoundEvent": "weapons/physgun/sounds/startup.sound",
+            "SoundEvent": "weapons/physgun/sounds/physgun.shoot.start.sound",
             "SoundOverride": false,
             "StopOnNew": false,
             "TargetMixer": {
