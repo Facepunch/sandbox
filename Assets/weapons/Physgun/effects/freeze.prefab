@@ -12,12 +12,14 @@
     "NetworkMode": 2,
     "NetworkInterpolation": true,
     "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
     "OwnerTransfer": 1,
     "Components": [
       {
         "__type": "TemporaryEffect",
         "__guid": "efd434b8-3b7f-4dbf-be75-086c2abd0203",
         "__enabled": true,
+        "BecomeOrphan": false,
         "DestroyAfterSeconds": 1,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -67,7 +69,7 @@
         "ReflectionOverride": false,
         "Reflections": false,
         "Repeat": false,
-        "SoundEvent": "weapons/physgun/sounds/freeze.sound",
+        "SoundEvent": "weapons/physgun/sounds/physgun.freeze.sound",
         "SoundOverride": false,
         "StopOnNew": false,
         "TargetMixer": {
@@ -91,6 +93,7 @@
         "NetworkMode": 2,
         "NetworkInterpolation": true,
         "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
         "OwnerTransfer": 1,
         "Components": [
           {
@@ -362,6 +365,7 @@
             "__type": "Sandbox.ParticleSpriteRenderer",
             "__guid": "19d464f6-8041-4eb8-bc4e-7f28a1bcea6f",
             "__enabled": true,
+            "__version": 2,
             "Additive": true,
             "Alignment": "LookAtCamera",
             "BlurAmount": 0.5,
@@ -380,7 +384,7 @@
             "OnComponentStart": null,
             "OnComponentUpdate": null,
             "Opaque": false,
-            "Pivot": "0.5,0.5",
+            "PlaybackSpeed": 1,
             "RenderOptions": {
               "GameLayer": true,
               "OverlayLayer": false,
@@ -391,43 +395,65 @@
             "Scale": 1.0413625,
             "Shadows": false,
             "SortMode": "Unsorted",
-            "Texture": {
-              "$compiler": "texture",
-              "$source": "imagefile",
+            "Sprite": {
+              "$compiler": "embed",
+              "$source": null,
               "data": {
-                "FilePath": "textures/beams/lightning.png",
-                "MaxSize": 4096,
-                "ConvertHeightToNormals": false,
-                "NormalScale": 1,
-                "Rotate": 0,
-                "FlipVertical": false,
-                "FlipHorizontal": false,
-                "Cropping": {
-                  "Left": 0,
-                  "Top": 0,
-                  "Right": 0,
-                  "Bottom": 0
-                },
-                "Padding": {
-                  "Left": 0,
-                  "Top": 0,
-                  "Right": 0,
-                  "Bottom": 0
-                },
-                "InvertColor": false,
-                "Tint": "1,1,1,1",
-                "Blur": 0,
-                "Sharpen": 0,
-                "Brightness": 1,
-                "Contrast": 1,
-                "Saturation": 1,
-                "Hue": 0,
-                "Colorize": false,
-                "TargetColor": "0,1,0,1",
-                "CacheToDisk": true
+                "Animations": [
+                  {
+                    "Name": "Default",
+                    "FrameRate": 15,
+                    "Origin": "0.5,0.5",
+                    "LoopMode": "Loop",
+                    "Frames": [
+                      {
+                        "Texture": {
+                          "$compiler": "texture",
+                          "$source": "imagefile",
+                          "data": {
+                            "FilePath": "textures/beams/lightning.png",
+                            "MaxSize": 4096,
+                            "ConvertHeightToNormals": false,
+                            "NormalScale": 1,
+                            "Rotate": 0,
+                            "FlipVertical": false,
+                            "FlipHorizontal": false,
+                            "Cropping": {
+                              "Left": 0,
+                              "Top": 0,
+                              "Right": 0,
+                              "Bottom": 0
+                            },
+                            "Padding": {
+                              "Left": 0,
+                              "Top": 0,
+                              "Right": 0,
+                              "Bottom": 0
+                            },
+                            "InvertColor": false,
+                            "Tint": "1,1,1,1",
+                            "Blur": 0,
+                            "Sharpen": 0,
+                            "Brightness": 1,
+                            "Contrast": 1,
+                            "Saturation": 1,
+                            "Hue": 0,
+                            "Colorize": false,
+                            "TargetColor": "0,1,0,1",
+                            "CacheToDisk": true
+                          },
+                          "compiled": "textures/generated/imagefile/96fc930aa159677f.vtex"
+                        },
+                        "BroadcastMessages": []
+                      }
+                    ]
+                  }
+                ],
+                "__references": null
               },
               "compiled": null
             },
+            "StartingAnimationName": "Default",
             "TextureFilter": "Bilinear"
           },
           {
@@ -513,6 +539,7 @@
         "NetworkMode": 2,
         "NetworkInterpolation": true,
         "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
         "OwnerTransfer": 1,
         "Components": [
           {
@@ -777,6 +804,7 @@
             "__type": "Sandbox.ParticleSpriteRenderer",
             "__guid": "9690bb90-e03d-4439-8ed6-b5849fd0c0f4",
             "__enabled": true,
+            "__version": 2,
             "Additive": true,
             "Alignment": "LookAtCamera",
             "BlurAmount": 1,
@@ -795,7 +823,7 @@
             "OnComponentStart": null,
             "OnComponentUpdate": null,
             "Opaque": false,
-            "Pivot": "0.5,0.5",
+            "PlaybackSpeed": 1,
             "RenderOptions": {
               "GameLayer": true,
               "OverlayLayer": false,
@@ -806,43 +834,65 @@
             "Scale": 1.0413625,
             "Shadows": false,
             "SortMode": "Unsorted",
-            "Texture": {
-              "$compiler": "texture",
-              "$source": "imagefile",
+            "Sprite": {
+              "$compiler": "embed",
+              "$source": null,
               "data": {
-                "FilePath": "textures/particles/base_sprite.tga",
-                "MaxSize": 4096,
-                "ConvertHeightToNormals": false,
-                "NormalScale": 1,
-                "Rotate": 0,
-                "FlipVertical": false,
-                "FlipHorizontal": false,
-                "Cropping": {
-                  "Left": 0,
-                  "Top": 0,
-                  "Right": 0,
-                  "Bottom": 0
-                },
-                "Padding": {
-                  "Left": 0,
-                  "Top": 0,
-                  "Right": 0,
-                  "Bottom": 0
-                },
-                "InvertColor": false,
-                "Tint": "1,1,1,1",
-                "Blur": 0,
-                "Sharpen": 0,
-                "Brightness": 1,
-                "Contrast": 1,
-                "Saturation": 1,
-                "Hue": 0,
-                "Colorize": false,
-                "TargetColor": "0,1,0,1",
-                "CacheToDisk": true
+                "Animations": [
+                  {
+                    "Name": "Default",
+                    "FrameRate": 15,
+                    "Origin": "0.5,0.5",
+                    "LoopMode": "Loop",
+                    "Frames": [
+                      {
+                        "Texture": {
+                          "$compiler": "texture",
+                          "$source": "imagefile",
+                          "data": {
+                            "FilePath": "textures/particles/base_sprite.tga",
+                            "MaxSize": 4096,
+                            "ConvertHeightToNormals": false,
+                            "NormalScale": 1,
+                            "Rotate": 0,
+                            "FlipVertical": false,
+                            "FlipHorizontal": false,
+                            "Cropping": {
+                              "Left": 0,
+                              "Top": 0,
+                              "Right": 0,
+                              "Bottom": 0
+                            },
+                            "Padding": {
+                              "Left": 0,
+                              "Top": 0,
+                              "Right": 0,
+                              "Bottom": 0
+                            },
+                            "InvertColor": false,
+                            "Tint": "1,1,1,1",
+                            "Blur": 0,
+                            "Sharpen": 0,
+                            "Brightness": 1,
+                            "Contrast": 1,
+                            "Saturation": 1,
+                            "Hue": 0,
+                            "Colorize": false,
+                            "TargetColor": "0,1,0,1",
+                            "CacheToDisk": true
+                          },
+                          "compiled": "textures/generated/imagefile/616b9ae80942869.vtex"
+                        },
+                        "BroadcastMessages": []
+                      }
+                    ]
+                  }
+                ],
+                "__references": null
               },
               "compiled": null
             },
+            "StartingAnimationName": "Default",
             "TextureFilter": "Bilinear"
           },
           {
@@ -884,6 +934,7 @@
         "NetworkMode": 2,
         "NetworkInterpolation": true,
         "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
         "OwnerTransfer": 1,
         "Components": [
           {

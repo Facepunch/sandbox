@@ -12,12 +12,14 @@
     "NetworkMode": 2,
     "NetworkInterpolation": true,
     "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
     "OwnerTransfer": 1,
     "Components": [
       {
         "__type": "TemporaryEffect",
         "__guid": "efd434b8-3b7f-4dbf-be75-086c2abd0203",
         "__enabled": true,
+        "BecomeOrphan": false,
         "DestroyAfterSeconds": 1,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -67,7 +69,7 @@
         "ReflectionOverride": false,
         "Reflections": false,
         "Repeat": false,
-        "SoundEvent": "weapons/physgun/sounds/attach.sound",
+        "SoundEvent": "weapons/physgun/sounds/physgun.attach.sound",
         "SoundOverride": false,
         "StopOnNew": false,
         "TargetMixer": {
@@ -91,6 +93,7 @@
         "NetworkMode": 2,
         "NetworkInterpolation": true,
         "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
         "OwnerTransfer": 1,
         "Components": [
           {
@@ -363,6 +366,7 @@
             "__type": "Sandbox.ParticleSpriteRenderer",
             "__guid": "75f967d5-8894-4b66-ae28-0205140d9b79",
             "__enabled": true,
+            "__version": 2,
             "Additive": true,
             "Alignment": "LookAtCamera",
             "BlurAmount": 1,
@@ -381,7 +385,7 @@
             "OnComponentStart": null,
             "OnComponentUpdate": null,
             "Opaque": false,
-            "Pivot": "0.51,0",
+            "PlaybackSpeed": 1,
             "RenderOptions": {
               "GameLayer": true,
               "OverlayLayer": false,
@@ -392,43 +396,65 @@
             "Scale": 1,
             "Shadows": false,
             "SortMode": "Unsorted",
-            "Texture": {
-              "$compiler": "texture",
-              "$source": "imagefile",
+            "Sprite": {
+              "$compiler": "embed",
+              "$source": null,
               "data": {
-                "FilePath": "textures/shapes/triangle1.png",
-                "MaxSize": 4096,
-                "ConvertHeightToNormals": false,
-                "NormalScale": 1,
-                "Rotate": 0,
-                "FlipVertical": false,
-                "FlipHorizontal": false,
-                "Cropping": {
-                  "Left": 0,
-                  "Top": 0,
-                  "Right": 0,
-                  "Bottom": 0
-                },
-                "Padding": {
-                  "Left": 0,
-                  "Top": 0,
-                  "Right": 0,
-                  "Bottom": 0
-                },
-                "InvertColor": false,
-                "Tint": "1,1,1,1",
-                "Blur": 0,
-                "Sharpen": 0,
-                "Brightness": 1,
-                "Contrast": 1,
-                "Saturation": 1,
-                "Hue": 0,
-                "Colorize": false,
-                "TargetColor": "0,1,0,1",
-                "CacheToDisk": true
+                "Animations": [
+                  {
+                    "Name": "Default",
+                    "FrameRate": 15,
+                    "Origin": "0.5,0.5",
+                    "LoopMode": "Loop",
+                    "Frames": [
+                      {
+                        "Texture": {
+                          "$compiler": "texture",
+                          "$source": "imagefile",
+                          "data": {
+                            "FilePath": "textures/shapes/triangle1.png",
+                            "MaxSize": 4096,
+                            "ConvertHeightToNormals": false,
+                            "NormalScale": 1,
+                            "Rotate": 0,
+                            "FlipVertical": false,
+                            "FlipHorizontal": false,
+                            "Cropping": {
+                              "Left": 0,
+                              "Top": 0,
+                              "Right": 0,
+                              "Bottom": 0
+                            },
+                            "Padding": {
+                              "Left": 0,
+                              "Top": 0,
+                              "Right": 0,
+                              "Bottom": 0
+                            },
+                            "InvertColor": false,
+                            "Tint": "1,1,1,1",
+                            "Blur": 0,
+                            "Sharpen": 0,
+                            "Brightness": 1,
+                            "Contrast": 1,
+                            "Saturation": 1,
+                            "Hue": 0,
+                            "Colorize": false,
+                            "TargetColor": "0,1,0,1",
+                            "CacheToDisk": true
+                          },
+                          "compiled": "textures/generated/imagefile/760a6cd994d08dc9.vtex"
+                        },
+                        "BroadcastMessages": []
+                      }
+                    ]
+                  }
+                ],
+                "__references": null
               },
               "compiled": null
             },
+            "StartingAnimationName": "Default",
             "TextureFilter": "Bilinear"
           },
           {
