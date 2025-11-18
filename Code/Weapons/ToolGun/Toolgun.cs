@@ -56,6 +56,7 @@ public partial class Toolgun : BaseCarryable
 
 		_coilSpin = _coilSpin.LerpTo( 0, Time.Delta * 1 );
 
+		if ( !ViewModel.IsValid() ) return;
 		var coil = ViewModel.GetAllObjects( true ).FirstOrDefault( x => x.Name == "coil" );
 		coil.WorldRotation *= Rotation.From( 0, 0, _coilSpin );
 	}
