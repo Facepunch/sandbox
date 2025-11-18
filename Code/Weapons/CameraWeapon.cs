@@ -1,5 +1,4 @@
-﻿
-using Sandbox.Rendering;
+﻿using Sandbox.Rendering;
 using Sandbox.Utility;
 
 public class CameraWeapon : BaseWeapon
@@ -12,6 +11,8 @@ public class CameraWeapon : BaseWeapon
 	Vector3 focusPoint;
 
 	public override bool WantsHideHud => true;
+
+	[Property] SoundEvent CameraShoot { get; set; }
 
 	protected override void OnEnabled()
 	{
@@ -96,6 +97,8 @@ public class CameraWeapon : BaseWeapon
 		{
 			Game.TakeScreenshot();
 			Sandbox.Services.Stats.Increment( "photos", 1 );
+
+			GameObject.PlaySound( CameraShoot );
 		}
 
 		focusing = Input.Down( "attack1" );
