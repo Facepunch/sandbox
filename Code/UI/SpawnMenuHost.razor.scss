@@ -120,13 +120,13 @@ SpawnMenuHost.open
 .tabs > *:hover
 {
 	color: #cdf;
-	sound-in: ui.button.over;
+	sound-in: ui.hover;
 }
 
 .tabs > *:active
 {
 	color: #fff;
-	sound-in: ui.button.press;
+	sound-in: ui.select;
 }
 
 .tabs > *.active

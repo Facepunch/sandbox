@@ -15,14 +15,14 @@ MenuOption
 MenuOption:hover
 {
 	color: white;
-	sound-in: ui.button.over;
+	sound-in: ui.hover;
 }
 
 MenuOption:active
 {
 	color: #fff;
 	background-color: #08f3;
-	sound-in: ui.button.press;
+	sound-in: ui.select;
 }
 
 MenuOption.active

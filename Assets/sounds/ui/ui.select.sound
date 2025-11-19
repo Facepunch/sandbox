@@ -1,11 +1,11 @@
 {
   "UI": true,
-  "Volume": "1",
-  "Pitch": "1 1.1",
+  "Volume": "0.25",
+  "Pitch": "1",
   "Decibels": 70,
-  "SelectionMode": "Forward",
+  "SelectionMode": "Random",
   "Sounds": [
-    "sounds/ui/ui.select.vsnd"
+    "sounds/ui/ui.select.1.vsnd"
   ],
   "Occlusion": true,
   "AirAbsorption": true,
@@ -45,7 +45,7 @@
   ],
   "DefaultMixer": {
     "Name": "ui",
-    "Id": "83a5e0a0-de64-4c8b-ad30-167560549748"
+    "Id": "662dc30e-b6a8-4c23-a2e0-56d53334c07c"
   },
   "__references": [],
   "__version": 1
