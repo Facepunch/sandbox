@@ -109,7 +109,7 @@ public partial class Physgun : BaseCarryable
 			{
 				_state = default;
 				_preventReselect = true;
-				Sound.Play( "physgun.shoot.end", ViewModel.WorldPosition );
+				ViewModel?.PlaySound( ReleasedSound );
 				return;
 			}
 
@@ -118,7 +118,7 @@ public partial class Physgun : BaseCarryable
 				Freeze( _state.Body );
 				_state = default;
 				_preventReselect = true;
-				Sound.Play( "physgun.shoot.end", ViewModel.WorldPosition );
+				ViewModel?.PlaySound( ReleasedSound );
 				return;
 			}
 
