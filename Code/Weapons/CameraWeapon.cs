@@ -12,8 +12,6 @@ public class CameraWeapon : BaseWeapon
 
 	public override bool WantsHideHud => true;
 
-	[Property] SoundEvent CameraShoot { get; set; }
-
 	protected override void OnEnabled()
 	{
 		base.OnEnabled();
@@ -98,7 +96,7 @@ public class CameraWeapon : BaseWeapon
 			Game.TakeScreenshot();
 			Sandbox.Services.Stats.Increment( "photos", 1 );
 
-			GameObject.PlaySound( CameraShoot );
+			Sound.Play( "camera.shoot", WorldPosition );
 		}
 
 		focusing = Input.Down( "attack1" );
