@@ -36,6 +36,10 @@
       "mode": "Mirrored"
     }
   ],
+  "DefaultMixer": {
+    "Name": "weapons",
+    "Id": "df5c2c7c-870d-4db2-8df0-9d5be1f943f2"
+  },
   "__references": [],
   "__version": 1
 }
