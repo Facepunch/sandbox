@@ -46,19 +46,7 @@ public partial class Toolgun : BaseCarryable
 
 		base.OnControl( player );
 
-		if ( currentMode.TraceSelect().IsValid() )
-		{
-			if ( Input.Pressed( "Attack1" ) )
-			{
-				_coilSpin += 10;
-			}
-		}
-
-		_coilSpin = _coilSpin.LerpTo( 0, Time.Delta * 1 );
-
-		if ( !ViewModel.IsValid() ) return;
-		var coil = ViewModel.GetAllObjects( true ).FirstOrDefault( x => x.Name == "coil" );
-		coil.WorldRotation *= Rotation.From( 0, 0, _coilSpin );
+		ApplyCoilSpin();
 	}
 
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )
@@ -106,4 +94,5 @@ public partial class Toolgun : BaseCarryable
 		GameObject.Enabled = true;
 		Network.Refresh( GameObject );
 	}
+
 }
