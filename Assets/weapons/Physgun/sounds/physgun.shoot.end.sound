@@ -1,6 +1,6 @@
 {
   "UI": false,
-  "Volume": "0.5",
+  "Volume": "1",
   "Pitch": "1",
   "Decibels": 70,
   "SelectionMode": "Random",
@@ -44,8 +44,8 @@
     }
   ],
   "DefaultMixer": {
-    "Name": "game",
-    "Id": "6657f113-3de7-4434-b089-6dddc9bb830a"
+    "Name": "weapons",
+    "Id": "df5c2c7c-870d-4db2-8df0-9d5be1f943f2"
   },
   "__references": [],
   "__version": 1
