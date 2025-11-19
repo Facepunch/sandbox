@@ -394,6 +394,8 @@ public partial class Physgun : BaseCarryable
 		var bodies = new HashSet<Rigidbody>();
 		GetConnectedBodies( body.GameObject, bodies );
 
+		Sound.Play( "physgun.unfreeze.1", bodies.FirstOrDefault().WorldPosition );
+
 		foreach ( var rb in bodies )
 		{
 			Unfreeze( rb );
