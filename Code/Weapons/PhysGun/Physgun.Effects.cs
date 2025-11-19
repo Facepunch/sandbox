@@ -5,6 +5,7 @@ public partial class Physgun : BaseCarryable
 	[Property] public LineRenderer BeamRenderer { get; set; }
 	[Property] public GameObject EndPointEffectPrefab { get; set; }
 	[Property] public GameObject FreezeEffectPrefab { get; set; }
+	[Property] public GameObject UnFreezeEffectPrefab { get; set; }
 	[Property] public GameObject GrabEffectPrefab { get; set; }
 
 	Vector3.SpringDamped middleSpring = new Vector3.SpringDamped( 0, 0 );

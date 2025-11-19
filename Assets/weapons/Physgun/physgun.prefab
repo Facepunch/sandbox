@@ -73,6 +73,10 @@
         "OnComponentUpdate": null,
         "ParentBone": "hold_r",
         "ReleasedSound": "weapons/physgun/sounds/physgun.shoot.end.sound",
+        "UnFreezeEffectPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/physgun/effects/unfreeze.prefab"
+        },
         "UnFreezeSound": "weapons/physgun/sounds/physgun.unfreeze.1.sound",
         "Value": 2,
         "ViewModelPrefab": {

@@ -4,7 +4,6 @@ public partial class Physgun : BaseCarryable
 {
 	[Property, RequireComponent] public HighlightOutline BeamHighlight { get; set; }
 
-	[Property, Group("Sound")] SoundEvent UnFreezeSound { get; set; }
 	[Property, Group("Sound")] SoundEvent ReleasedSound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent ButtonInSound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent ButtonOutSound { get; set; }
@@ -386,7 +385,7 @@ public partial class Physgun : BaseCarryable
 	{
 		if ( !body.IsValid() ) return;
 		if ( body.IsProxy ) return;
-
+		
 		body.MotionEnabled = true;
 	}
 
@@ -399,7 +398,11 @@ public partial class Physgun : BaseCarryable
 		var bodies = new HashSet<Rigidbody>();
 		GetConnectedBodies( body.GameObject, bodies );
 
-		bodies.FirstOrDefault()?.GameObject.PlaySound( UnFreezeSound );
+		var effect = UnFreezeEffectPrefab.Clone( body.WorldTransform );
+		foreach ( var emitter in effect.GetComponentsInChildren<ParticleModelEmitter>() )
+		{
+			emitter.Target = body.GameObject;
+		}
 
 		foreach ( var rb in bodies )
 		{
