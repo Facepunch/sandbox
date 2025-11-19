@@ -260,12 +260,15 @@
               "__type": "Sandbox.UI.Inventory.Inventory",
               "__guid": "253d6fc1-971f-4abe-9407-a20c02ac2cf2",
               "__enabled": true,
+              "CancelSound": "sounds/ui/ui.weapon.close.sound",
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
               "OnComponentEnabled": null,
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
-              "OnComponentUpdate": null
+              "OnComponentUpdate": null,
+              "SelectSound": "sounds/ui/ui.weapon.select.sound",
+              "SwitchSound": "sounds/ui/ui.weapon.switch.sound"
             }
           ],
           "Children": []

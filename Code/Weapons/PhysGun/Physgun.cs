@@ -3,6 +3,11 @@
 public partial class Physgun : BaseCarryable
 {
 	[Property, RequireComponent] public HighlightOutline BeamHighlight { get; set; }
+
+	[Property, Group("Sound")] SoundEvent UnFreezeSound { get; set; }
+	[Property, Group("Sound")] SoundEvent ReleasedSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent ButtonInSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent ButtonOutSound { get; set; }
 	public struct GrabState
 	{
 		public bool Active { get; set; }
@@ -82,11 +87,11 @@ public partial class Physgun : BaseCarryable
 
 		if ( Input.Pressed( "use" ) && _state.IsValid() )
 		{
-			Sound.Play( "physgun.button.in.1", ViewModel.WorldPosition );
+			ViewModel?.PlaySound( ButtonInSound );
 		}
 		else if ( Input.Released( "use" ) && _state.IsValid() )
 		{
-			Sound.Play( "physgun.button.out.1", ViewModel.WorldPosition );
+			ViewModel?.PlaySound( ButtonOutSound );
 		}
 
 		_isSpinning = Input.Down( "use" ) && _state.IsValid();
@@ -216,7 +221,7 @@ public partial class Physgun : BaseCarryable
 		}
 		else if ( Input.Released( "attack1" ) )
 		{
-			Sound.Play( "physgun.shoot.end", ViewModel.WorldPosition );
+			ViewModel?.PlaySound( ReleasedSound );
 		}
 		else if ( Input.Pressed( "reload" ) )
 		{
@@ -394,7 +399,7 @@ public partial class Physgun : BaseCarryable
 		var bodies = new HashSet<Rigidbody>();
 		GetConnectedBodies( body.GameObject, bodies );
 
-		Sound.Play( "physgun.unfreeze.1", bodies.FirstOrDefault().WorldPosition );
+		bodies.FirstOrDefault()?.GameObject.PlaySound( UnFreezeSound );
 
 		foreach ( var rb in bodies )
 		{

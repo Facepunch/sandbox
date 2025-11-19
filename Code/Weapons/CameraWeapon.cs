@@ -10,6 +10,8 @@ public class CameraWeapon : BaseWeapon
 	bool focusing;
 	Vector3 focusPoint;
 
+	[Property] SoundEvent CameraShoot { get; set; }
+
 	public override bool WantsHideHud => true;
 
 	protected override void OnEnabled()
@@ -96,7 +98,7 @@ public class CameraWeapon : BaseWeapon
 			Game.TakeScreenshot();
 			Sandbox.Services.Stats.Increment( "photos", 1 );
 
-			Sound.Play( "camera.shoot", WorldPosition );
+			GameObject?.PlaySound( CameraShoot );
 		}
 
 		focusing = Input.Down( "attack1" );
