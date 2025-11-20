@@ -1,19 +1,18 @@
 {
-  "UI": true,
-  "Volume": "0.1",
+  "UI": false,
+  "Volume": "0.05",
   "Pitch": "1",
   "Decibels": 70,
-  "SelectionMode": "Forward",
+  "SelectionMode": "Random",
   "Sounds": [
-    "sounds/ui/spawn01.vsnd",
-    "sounds/ui/spawn02.vsnd"
+    "weapons/physgun/sounds/physgun.idle.1.vsnd"
   ],
   "Occlusion": true,
   "AirAbsorption": true,
   "Transmission": true,
   "OcclusionRadius": 64,
   "DistanceAttenuation": true,
-  "Distance": 15000,
+  "Distance": 2000,
   "Falloff": [
     {
       "x": 0,
@@ -45,8 +44,8 @@
     }
   ],
   "DefaultMixer": {
-    "Name": "unknown",
-    "Id": "00000000-0000-0000-0000-000000000000"
+    "Name": "weapons",
+    "Id": "df5c2c7c-870d-4db2-8df0-9d5be1f943f2"
   },
   "__references": [],
   "__version": 1

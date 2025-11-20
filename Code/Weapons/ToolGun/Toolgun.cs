@@ -11,7 +11,6 @@ public partial class Toolgun : BaseCarryable
 	{
 		if ( IsProxy )
 			return;
-
 	}
 
 	public void CreateToolComponents()
@@ -34,6 +33,7 @@ public partial class Toolgun : BaseCarryable
 		}
 	}
 
+	float _coilSpin = 0;
 	public override void OnControl( Player player )
 	{
 		var currentMode = GetCurrentMode();
@@ -45,6 +45,8 @@ public partial class Toolgun : BaseCarryable
 		UpdateViewmodelScreen();
 
 		base.OnControl( player );
+
+		ApplyCoilSpin();
 	}
 
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )
@@ -92,4 +94,5 @@ public partial class Toolgun : BaseCarryable
 		GameObject.Enabled = true;
 		Network.Refresh( GameObject );
 	}
+
 }

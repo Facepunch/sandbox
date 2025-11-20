@@ -12,9 +12,9 @@
 
 @code
 {
-    [Property] public SoundEvent SwitchSound { get; set; }
-    [Property] public SoundEvent SelectSound { get; set; }
-    [Property] public SoundEvent CancelSound { get; set; }
+    [Property, Group("Sound")] public SoundEvent SwitchSound { get; set; }
+    [Property, Group("Sound")] public SoundEvent SelectSound { get; set; }
+    [Property, Group("Sound")] public SoundEvent CancelSound { get; set; }
 
     PlayerInventory inventory;
     BaseCarryable hovered;
@@ -65,63 +65,63 @@
         }
     }
 
-	public void HandleInput()
-	{
-		if (inventory is null)
-			return;
+    public void HandleInput()
+    {
+        if (inventory is null)
+            return;
 
-		MoveSlot(-(int)Input.MouseWheel.y);
+        MoveSlot(-(int)Input.MouseWheel.y);
 
-		if ( Input.Pressed( "invprev" ) && prev.IsValid() )
-		{
-			var weapon = prev;
-			prev = inventory.ActiveWeapon;
-			inventory.SwitchWeapon( weapon );
-		}
+        if ( Input.Pressed( "invprev" ) && prev.IsValid() )
+        {
+            var weapon = prev;
+            prev = inventory.ActiveWeapon;
+            inventory.SwitchWeapon( weapon );
+        }
 
-		if (Input.Pressed("SlotNext")) MoveSlot(1);
-		if (Input.Pressed("SlotPrev")) MoveSlot(-1);
+        if (Input.Pressed("SlotNext")) MoveSlot(1);
+        if (Input.Pressed("SlotPrev")) MoveSlot(-1);
 
-		if (Input.Pressed("Slot1")) IterateSlot(0);
-		if (Input.Pressed("Slot2")) IterateSlot(1);
-		if (Input.Pressed("Slot3")) IterateSlot(2);
-		if (Input.Pressed("Slot4")) IterateSlot(3);
-		if (Input.Pressed("Slot5")) IterateSlot(4);
+        if (Input.Pressed("Slot1")) IterateSlot(0);
+        if (Input.Pressed("Slot2")) IterateSlot(1);
+        if (Input.Pressed("Slot3")) IterateSlot(2);
+        if (Input.Pressed("Slot4")) IterateSlot(3);
+        if (Input.Pressed("Slot5")) IterateSlot(4);
 
 
-	}
+    }
 
-	public void MoveSlot( int delta )
-	{
-		if ( delta == 0 )
-			return;
+    public void MoveSlot( int delta )
+    {
+        if ( delta == 0 )
+            return;
 
-		var weapons = inventory.Weapons.Where( x => x.CanSwitch() ).ToList();
+        var weapons = inventory.Weapons.Where( x => x.CanSwitch() ).ToList();
 
-		if ( weapons.Count == 0 )
-			return;
+        if ( weapons.Count == 0 )
+            return;
 
-		var currentHover = hovered ?? active ?? inventory.ActiveWeapon ?? weapons.FirstOrDefault();
+        var currentHover = hovered ?? active ?? inventory.ActiveWeapon ?? weapons.FirstOrDefault();
 
-		int currentIndex = weapons.IndexOf( currentHover );
+        int currentIndex = weapons.IndexOf( currentHover );
 
-		currentIndex += delta;
-		currentIndex %= weapons.Count;
-		if ( currentIndex < 0 )
-			currentIndex = weapons.Count + currentIndex;
+        currentIndex += delta;
+        currentIndex %= weapons.Count;
+        if ( currentIndex < 0 )
+            currentIndex = weapons.Count + currentIndex;
 
-		active = null;
-		if ( GamePreferences.FastSwitch )
-		{
-			inventory.SwitchWeapon( weapons[currentIndex] );
-		}
-		else
-		{
-			hovered = weapons[currentIndex];
-			timeSinceInteraction = 0;
-		}
+        active = null;
+        if ( GamePreferences.FastSwitch )
+        {
+            inventory.SwitchWeapon( weapons[currentIndex] );
+        }
+        else
+        {
+            hovered = weapons[currentIndex];
+            timeSinceInteraction = 0;
+        }
 
-		Sound.Play( SwitchSound );
+        Sound.Play(SwitchSound);
 	}
 
 	public void IterateSlot( int slot )
@@ -152,6 +152,6 @@
 			timeSinceInteraction = 0;
 		}
 
-		Sound.Play( SwitchSound );
+        Sound.Play(SwitchSound);
     }
 }

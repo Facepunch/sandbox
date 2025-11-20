@@ -11,6 +11,8 @@
 			return;
 		}
 
+		Toolgun.SpinCoil();
+
 		var muzzle = Toolgun.MuzzleTransform;
 
 

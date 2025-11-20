@@ -6,7 +6,7 @@
       "__version": 1,
       "Flags": 0,
       "Name": "MapLoader",
-      "Position": "89.1582,155.6181,-94.39316",
+      "Position": "0,0,0",
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
@@ -260,15 +260,15 @@
               "__type": "Sandbox.UI.Inventory.Inventory",
               "__guid": "253d6fc1-971f-4abe-9407-a20c02ac2cf2",
               "__enabled": true,
-              "CancelSound": "sounds/kenney/ui/ui.button.deny.sound",
+              "CancelSound": "sounds/ui/ui.weapon.close.sound",
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
               "OnComponentEnabled": null,
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
               "OnComponentUpdate": null,
-              "SelectSound": "sounds/kenney/ui/ui.button.press.sound",
-              "SwitchSound": "sounds/kenney/ui/ui.button.over.sound"
+              "SelectSound": "sounds/ui/ui.weapon.select.sound",
+              "SwitchSound": "sounds/ui/ui.weapon.switch.sound"
             }
           ],
           "Children": []

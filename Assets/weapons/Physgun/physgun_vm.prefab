@@ -12,6 +12,7 @@
     "NetworkMode": 0,
     "NetworkInterpolation": true,
     "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
     "OwnerTransfer": 1,
     "Components": [
       {
@@ -109,6 +110,7 @@
         "NetworkMode": 2,
         "NetworkInterpolation": true,
         "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
         "OwnerTransfer": 1,
         "Components": [
           {
@@ -170,6 +172,7 @@
             "NetworkMode": 2,
             "NetworkInterpolation": true,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": [
@@ -186,6 +189,7 @@
                 "NetworkMode": 2,
                 "NetworkInterpolation": true,
                 "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
                 "OwnerTransfer": 1,
                 "Components": [],
                 "Children": [
@@ -202,6 +206,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": []
@@ -219,6 +224,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": []
@@ -236,6 +242,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": []
@@ -253,6 +260,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": []
@@ -270,6 +278,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": []
@@ -287,6 +296,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": []
@@ -304,6 +314,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": []
@@ -321,6 +332,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": [
@@ -337,6 +349,7 @@
                         "NetworkMode": 2,
                         "NetworkInterpolation": true,
                         "NetworkOrphaned": 0,
+                        "NetworkTransmit": true,
                         "OwnerTransfer": 1,
                         "Components": [],
                         "Children": []
@@ -356,6 +369,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": [
@@ -372,6 +386,7 @@
                         "NetworkMode": 2,
                         "NetworkInterpolation": true,
                         "NetworkOrphaned": 0,
+                        "NetworkTransmit": true,
                         "OwnerTransfer": 1,
                         "Components": [],
                         "Children": []
@@ -391,6 +406,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": [
@@ -407,6 +423,7 @@
                         "NetworkMode": 2,
                         "NetworkInterpolation": true,
                         "NetworkOrphaned": 0,
+                        "NetworkTransmit": true,
                         "OwnerTransfer": 1,
                         "Components": [
                           {
@@ -610,43 +627,7 @@
                                     "LoopMode": "Loop",
                                     "Frames": [
                                       {
-                                        "Texture": {
-                                          "$compiler": "texture",
-                                          "$source": "imagefile",
-                                          "data": {
-                                            "FilePath": "textures/lightcookies/lightcookies_z009.tga",
-                                            "MaxSize": 4096,
-                                            "ConvertHeightToNormals": false,
-                                            "NormalScale": 1,
-                                            "Rotate": 0,
-                                            "FlipVertical": false,
-                                            "FlipHorizontal": false,
-                                            "Cropping": {
-                                              "Left": 0,
-                                              "Top": 0,
-                                              "Right": 0,
-                                              "Bottom": 0
-                                            },
-                                            "Padding": {
-                                              "Left": 0,
-                                              "Top": 0,
-                                              "Right": 0,
-                                              "Bottom": 0
-                                            },
-                                            "InvertColor": false,
-                                            "Tint": "1,1,1,1",
-                                            "Blur": 0,
-                                            "Sharpen": 0,
-                                            "Brightness": 1,
-                                            "Contrast": 1,
-                                            "Saturation": 1,
-                                            "Hue": 0,
-                                            "Colorize": false,
-                                            "TargetColor": "0,1,0,1",
-                                            "CacheToDisk": true
-                                          },
-                                          "compiled": "textures/generated/imagefile/14af22c9ac0e9f53.vtex"
-                                        },
+                                        "Texture": "textures/lightcookies/lightcookies_09.vtex",
                                         "BroadcastMessages": []
                                       }
                                     ]
@@ -696,6 +677,7 @@
                         "NetworkMode": 2,
                         "NetworkInterpolation": true,
                         "NetworkOrphaned": 0,
+                        "NetworkTransmit": true,
                         "OwnerTransfer": 1,
                         "Components": [
                           {
@@ -956,43 +938,7 @@
                                     "LoopMode": "Loop",
                                     "Frames": [
                                       {
-                                        "Texture": {
-                                          "$compiler": "texture",
-                                          "$source": "imagefile",
-                                          "data": {
-                                            "FilePath": "textures/lightcookies/lightcookies_z009.tga",
-                                            "MaxSize": 4096,
-                                            "ConvertHeightToNormals": false,
-                                            "NormalScale": 1,
-                                            "Rotate": 0,
-                                            "FlipVertical": false,
-                                            "FlipHorizontal": false,
-                                            "Cropping": {
-                                              "Left": 0,
-                                              "Top": 0,
-                                              "Right": 0,
-                                              "Bottom": 0
-                                            },
-                                            "Padding": {
-                                              "Left": 0,
-                                              "Top": 0,
-                                              "Right": 0,
-                                              "Bottom": 0
-                                            },
-                                            "InvertColor": false,
-                                            "Tint": "1,1,1,1",
-                                            "Blur": 0,
-                                            "Sharpen": 0,
-                                            "Brightness": 1,
-                                            "Contrast": 1,
-                                            "Saturation": 1,
-                                            "Hue": 0,
-                                            "Colorize": false,
-                                            "TargetColor": "0,1,0,1",
-                                            "CacheToDisk": true
-                                          },
-                                          "compiled": "textures/generated/imagefile/14af22c9ac0e9f53.vtex"
-                                        },
+                                        "Texture": "textures/lightcookies/lightcookies_09.vtex",
                                         "BroadcastMessages": []
                                       }
                                     ]
@@ -1023,6 +969,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": [
@@ -1039,6 +986,7 @@
                         "NetworkMode": 2,
                         "NetworkInterpolation": true,
                         "NetworkOrphaned": 0,
+                        "NetworkTransmit": true,
                         "OwnerTransfer": 1,
                         "Components": [
                           {
@@ -1048,7 +996,7 @@
                             "__version": 2,
                             "Additive": true,
                             "Billboard": "Always",
-                            "Color": "0.35349,1.23163,2,0.42697",
+                            "Color": "0.35349,1.23163,2,0.82607",
                             "DepthFeather": 3,
                             "FlipHorizontal": false,
                             "FlipVertical": false,
@@ -1074,7 +1022,7 @@
                               "AfterUILayer": false
                             },
                             "Shadows": false,
-                            "Size": "6.699856,6.699856",
+                            "Size": "6.177765,6.177765",
                             "Sprite": {
                               "$compiler": "embed",
                               "$source": null,
@@ -1118,6 +1066,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": [
@@ -1134,6 +1083,7 @@
                         "NetworkMode": 2,
                         "NetworkInterpolation": true,
                         "NetworkOrphaned": 0,
+                        "NetworkTransmit": true,
                         "OwnerTransfer": 1,
                         "Components": [
                           {
@@ -1143,7 +1093,7 @@
                             "__version": 2,
                             "Additive": true,
                             "Billboard": "Always",
-                            "Color": "0.35349,1.23163,2,0.83758",
+                            "Color": "0.35349,1.23163,2,0.77596",
                             "DepthFeather": 3,
                             "FlipHorizontal": false,
                             "FlipVertical": false,
@@ -1169,7 +1119,7 @@
                               "AfterUILayer": false
                             },
                             "Shadows": false,
-                            "Size": "6.792194,6.792194",
+                            "Size": "6.80875,6.80875",
                             "Sprite": {
                               "$compiler": "embed",
                               "$source": null,
@@ -1213,6 +1163,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": [
@@ -1229,6 +1180,7 @@
                         "NetworkMode": 2,
                         "NetworkInterpolation": true,
                         "NetworkOrphaned": 0,
+                        "NetworkTransmit": true,
                         "OwnerTransfer": 1,
                         "Components": [
                           {
@@ -1238,7 +1190,7 @@
                             "__version": 2,
                             "Additive": true,
                             "Billboard": "Always",
-                            "Color": "0.35349,1.23163,2,0.72868",
+                            "Color": "0.35349,1.23163,2,0.46304",
                             "DepthFeather": 3,
                             "FlipHorizontal": false,
                             "FlipVertical": false,
@@ -1264,7 +1216,7 @@
                               "AfterUILayer": false
                             },
                             "Shadows": false,
-                            "Size": "6.709298,6.709298",
+                            "Size": "6.840319,6.840319",
                             "Sprite": {
                               "$compiler": "embed",
                               "$source": null,
@@ -1308,6 +1260,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": []
@@ -1325,6 +1278,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": []
@@ -1344,6 +1298,7 @@
                 "NetworkMode": 2,
                 "NetworkInterpolation": true,
                 "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
                 "OwnerTransfer": 1,
                 "Components": [],
                 "Children": []
@@ -1361,6 +1316,7 @@
                 "NetworkMode": 2,
                 "NetworkInterpolation": true,
                 "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
                 "OwnerTransfer": 1,
                 "Components": [],
                 "Children": []
@@ -1378,6 +1334,7 @@
                 "NetworkMode": 2,
                 "NetworkInterpolation": true,
                 "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
                 "OwnerTransfer": 1,
                 "Components": [
                   {
@@ -1418,6 +1375,7 @@
             "NetworkMode": 2,
             "NetworkInterpolation": true,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": [
@@ -1434,6 +1392,7 @@
                 "NetworkMode": 2,
                 "NetworkInterpolation": true,
                 "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
                 "OwnerTransfer": 1,
                 "Components": [],
                 "Children": [
@@ -1450,6 +1409,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": [
@@ -1466,6 +1426,7 @@
                         "NetworkMode": 2,
                         "NetworkInterpolation": true,
                         "NetworkOrphaned": 0,
+                        "NetworkTransmit": true,
                         "OwnerTransfer": 1,
                         "Components": [],
                         "Children": [
@@ -1482,6 +1443,7 @@
                             "NetworkMode": 2,
                             "NetworkInterpolation": true,
                             "NetworkOrphaned": 0,
+                            "NetworkTransmit": true,
                             "OwnerTransfer": 1,
                             "Components": [],
                             "Children": [
@@ -1498,6 +1460,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": [
@@ -1514,6 +1477,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": [
@@ -1530,6 +1494,7 @@
                                         "NetworkMode": 2,
                                         "NetworkInterpolation": true,
                                         "NetworkOrphaned": 0,
+                                        "NetworkTransmit": true,
                                         "OwnerTransfer": 1,
                                         "Components": [],
                                         "Children": [
@@ -1546,6 +1511,7 @@
                                             "NetworkMode": 2,
                                             "NetworkInterpolation": true,
                                             "NetworkOrphaned": 0,
+                                            "NetworkTransmit": true,
                                             "OwnerTransfer": 1,
                                             "Components": [],
                                             "Children": []
@@ -1569,6 +1535,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": []
@@ -1586,6 +1553,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": [
@@ -1602,6 +1570,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": [
@@ -1618,6 +1587,7 @@
                                         "NetworkMode": 2,
                                         "NetworkInterpolation": true,
                                         "NetworkOrphaned": 0,
+                                        "NetworkTransmit": true,
                                         "OwnerTransfer": 1,
                                         "Components": [],
                                         "Children": [
@@ -1634,6 +1604,7 @@
                                             "NetworkMode": 2,
                                             "NetworkInterpolation": true,
                                             "NetworkOrphaned": 0,
+                                            "NetworkTransmit": true,
                                             "OwnerTransfer": 1,
                                             "Components": [],
                                             "Children": []
@@ -1657,6 +1628,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": [
@@ -1673,6 +1645,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": [
@@ -1689,6 +1662,7 @@
                                         "NetworkMode": 2,
                                         "NetworkInterpolation": true,
                                         "NetworkOrphaned": 0,
+                                        "NetworkTransmit": true,
                                         "OwnerTransfer": 1,
                                         "Components": [],
                                         "Children": [
@@ -1705,6 +1679,7 @@
                                             "NetworkMode": 2,
                                             "NetworkInterpolation": true,
                                             "NetworkOrphaned": 0,
+                                            "NetworkTransmit": true,
                                             "OwnerTransfer": 1,
                                             "Components": [],
                                             "Children": []
@@ -1728,6 +1703,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": [
@@ -1744,6 +1720,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": [
@@ -1760,6 +1737,7 @@
                                         "NetworkMode": 2,
                                         "NetworkInterpolation": true,
                                         "NetworkOrphaned": 0,
+                                        "NetworkTransmit": true,
                                         "OwnerTransfer": 1,
                                         "Components": [],
                                         "Children": [
@@ -1776,6 +1754,7 @@
                                             "NetworkMode": 2,
                                             "NetworkInterpolation": true,
                                             "NetworkOrphaned": 0,
+                                            "NetworkTransmit": true,
                                             "OwnerTransfer": 1,
                                             "Components": [],
                                             "Children": []
@@ -1799,6 +1778,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": []
@@ -1816,6 +1796,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": [
@@ -1832,6 +1813,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": [
@@ -1848,6 +1830,7 @@
                                         "NetworkMode": 2,
                                         "NetworkInterpolation": true,
                                         "NetworkOrphaned": 0,
+                                        "NetworkTransmit": true,
                                         "OwnerTransfer": 1,
                                         "Components": [],
                                         "Children": []
@@ -1871,6 +1854,7 @@
                             "NetworkMode": 2,
                             "NetworkInterpolation": true,
                             "NetworkOrphaned": 0,
+                            "NetworkTransmit": true,
                             "OwnerTransfer": 1,
                             "Components": [],
                             "Children": [
@@ -1887,6 +1871,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": []
@@ -1904,6 +1889,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": [
@@ -1920,6 +1906,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": [
@@ -1936,6 +1923,7 @@
                                         "NetworkMode": 2,
                                         "NetworkInterpolation": true,
                                         "NetworkOrphaned": 0,
+                                        "NetworkTransmit": true,
                                         "OwnerTransfer": 1,
                                         "Components": [],
                                         "Children": []
@@ -1955,6 +1943,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": []
@@ -1982,6 +1971,7 @@
                 "NetworkMode": 2,
                 "NetworkInterpolation": true,
                 "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
                 "OwnerTransfer": 1,
                 "Components": [],
                 "Children": [
@@ -1998,6 +1988,7 @@
                     "NetworkMode": 2,
                     "NetworkInterpolation": true,
                     "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": [
@@ -2014,6 +2005,7 @@
                         "NetworkMode": 2,
                         "NetworkInterpolation": true,
                         "NetworkOrphaned": 0,
+                        "NetworkTransmit": true,
                         "OwnerTransfer": 1,
                         "Components": [],
                         "Children": [
@@ -2030,6 +2022,7 @@
                             "NetworkMode": 2,
                             "NetworkInterpolation": true,
                             "NetworkOrphaned": 0,
+                            "NetworkTransmit": true,
                             "OwnerTransfer": 1,
                             "Components": [],
                             "Children": [
@@ -2046,6 +2039,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": [
@@ -2062,6 +2056,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": [
@@ -2078,6 +2073,7 @@
                                         "NetworkMode": 2,
                                         "NetworkInterpolation": true,
                                         "NetworkOrphaned": 0,
+                                        "NetworkTransmit": true,
                                         "OwnerTransfer": 1,
                                         "Components": [],
                                         "Children": [
@@ -2094,6 +2090,7 @@
                                             "NetworkMode": 2,
                                             "NetworkInterpolation": true,
                                             "NetworkOrphaned": 0,
+                                            "NetworkTransmit": true,
                                             "OwnerTransfer": 1,
                                             "Components": [],
                                             "Children": []
@@ -2117,6 +2114,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": [
@@ -2133,6 +2131,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": [
@@ -2149,6 +2148,7 @@
                                         "NetworkMode": 2,
                                         "NetworkInterpolation": true,
                                         "NetworkOrphaned": 0,
+                                        "NetworkTransmit": true,
                                         "OwnerTransfer": 1,
                                         "Components": [],
                                         "Children": [
@@ -2165,6 +2165,7 @@
                                             "NetworkMode": 2,
                                             "NetworkInterpolation": true,
                                             "NetworkOrphaned": 0,
+                                            "NetworkTransmit": true,
                                             "OwnerTransfer": 1,
                                             "Components": [],
                                             "Children": []
@@ -2188,6 +2189,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": [
@@ -2204,6 +2206,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": [
@@ -2220,6 +2223,7 @@
                                         "NetworkMode": 2,
                                         "NetworkInterpolation": true,
                                         "NetworkOrphaned": 0,
+                                        "NetworkTransmit": true,
                                         "OwnerTransfer": 1,
                                         "Components": [],
                                         "Children": [
@@ -2236,6 +2240,7 @@
                                             "NetworkMode": 2,
                                             "NetworkInterpolation": true,
                                             "NetworkOrphaned": 0,
+                                            "NetworkTransmit": true,
                                             "OwnerTransfer": 1,
                                             "Components": [],
                                             "Children": []
@@ -2259,6 +2264,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": [
@@ -2275,6 +2281,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": [
@@ -2291,6 +2298,7 @@
                                         "NetworkMode": 2,
                                         "NetworkInterpolation": true,
                                         "NetworkOrphaned": 0,
+                                        "NetworkTransmit": true,
                                         "OwnerTransfer": 1,
                                         "Components": [],
                                         "Children": [
@@ -2307,6 +2315,7 @@
                                             "NetworkMode": 2,
                                             "NetworkInterpolation": true,
                                             "NetworkOrphaned": 0,
+                                            "NetworkTransmit": true,
                                             "OwnerTransfer": 1,
                                             "Components": [],
                                             "Children": []
@@ -2330,6 +2339,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": []
@@ -2347,6 +2357,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": []
@@ -2364,6 +2375,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": [
@@ -2380,6 +2392,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": [
@@ -2396,6 +2409,7 @@
                                         "NetworkMode": 2,
                                         "NetworkInterpolation": true,
                                         "NetworkOrphaned": 0,
+                                        "NetworkTransmit": true,
                                         "OwnerTransfer": 1,
                                         "Components": [],
                                         "Children": []
@@ -2419,6 +2433,7 @@
                             "NetworkMode": 2,
                             "NetworkInterpolation": true,
                             "NetworkOrphaned": 0,
+                            "NetworkTransmit": true,
                             "OwnerTransfer": 1,
                             "Components": [],
                             "Children": [
@@ -2435,6 +2450,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": [
@@ -2451,6 +2467,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": [
@@ -2467,6 +2484,7 @@
                                         "NetworkMode": 2,
                                         "NetworkInterpolation": true,
                                         "NetworkOrphaned": 0,
+                                        "NetworkTransmit": true,
                                         "OwnerTransfer": 1,
                                         "Components": [],
                                         "Children": []
@@ -2486,6 +2504,7 @@
                                     "NetworkMode": 2,
                                     "NetworkInterpolation": true,
                                     "NetworkOrphaned": 0,
+                                    "NetworkTransmit": true,
                                     "OwnerTransfer": 1,
                                     "Components": [],
                                     "Children": []
@@ -2505,6 +2524,7 @@
                                 "NetworkMode": 2,
                                 "NetworkInterpolation": true,
                                 "NetworkOrphaned": 0,
+                                "NetworkTransmit": true,
                                 "OwnerTransfer": 1,
                                 "Components": [],
                                 "Children": []
@@ -2532,6 +2552,7 @@
             "NetworkMode": 2,
             "NetworkInterpolation": true,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
@@ -2549,6 +2570,7 @@
             "NetworkMode": 2,
             "NetworkInterpolation": true,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
@@ -2566,6 +2588,7 @@
             "NetworkMode": 2,
             "NetworkInterpolation": true,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
@@ -2583,6 +2606,7 @@
             "NetworkMode": 2,
             "NetworkInterpolation": true,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
@@ -2600,6 +2624,7 @@
             "NetworkMode": 2,
             "NetworkInterpolation": true,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
@@ -2617,6 +2642,7 @@
             "NetworkMode": 2,
             "NetworkInterpolation": true,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
@@ -2636,6 +2662,7 @@
         "NetworkMode": 2,
         "NetworkInterpolation": true,
         "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
         "OwnerTransfer": 1,
         "Components": [
           {

@@ -3,7 +3,7 @@
     "__guid": "e5cf5f34-17b5-4e70-b8db-d7f54a8ad61d",
     "__version": 1,
     "Flags": 0,
-    "Name": "freeze",
+    "Name": "unfreeze",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
@@ -69,7 +69,7 @@
         "ReflectionOverride": false,
         "Reflections": false,
         "Repeat": false,
-        "SoundEvent": "weapons/physgun/sounds/physgun.freeze.sound",
+        "SoundEvent": "weapons/physgun/sounds/physgun.unfreeze.1.sound",
         "SoundOverride": false,
         "StopOnNew": false,
         "TargetMixer": {
@@ -353,7 +353,7 @@
             "Stretch": 0,
             "TimeScale": 1,
             "Timing": "GameTime",
-            "Tint": "0.7907,0.98605,1,1",
+            "Tint": "0.7907,1,0.90233,1",
             "UsePrefabFeature": false,
             "Yaw": {
               "Type": "Range",
@@ -392,7 +392,7 @@
               "AfterUILayer": false
             },
             "RotationOffset": 0,
-            "Scale": 1.0413625,
+            "Scale": 1,
             "Shadows": false,
             "SortMode": "Unsorted",
             "Sprite": {

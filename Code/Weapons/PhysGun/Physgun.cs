@@ -4,6 +4,9 @@ public partial class Physgun : BaseCarryable
 {
 	[Property, RequireComponent] public HighlightOutline BeamHighlight { get; set; }
 
+	[Property, Group("Sound")] SoundEvent ReleasedSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent ButtonInSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent ButtonOutSound { get; set; }
 	public struct GrabState
 	{
 		public bool Active { get; set; }
@@ -81,6 +84,15 @@ public partial class Physgun : BaseCarryable
 		if ( Scene.TimeScale == 0 )
 			return;
 
+		if ( Input.Pressed( "use" ) && _state.IsValid() )
+		{
+			ViewModel?.PlaySound( ButtonInSound );
+		}
+		else if ( Input.Released( "use" ) && _state.IsValid() )
+		{
+			ViewModel?.PlaySound( ButtonOutSound );
+		}
+
 		_isSpinning = Input.Down( "use" ) && _state.IsValid();
 		if ( _isSpinning )
 		{
@@ -101,6 +113,7 @@ public partial class Physgun : BaseCarryable
 			{
 				_state = default;
 				_preventReselect = true;
+				ViewModel?.PlaySound( ReleasedSound );
 				return;
 			}
 
@@ -109,6 +122,7 @@ public partial class Physgun : BaseCarryable
 				Freeze( _state.Body );
 				_state = default;
 				_preventReselect = true;
+				ViewModel?.PlaySound( ReleasedSound );
 				return;
 			}
 
@@ -203,6 +217,10 @@ public partial class Physgun : BaseCarryable
 			{
 				Unfreeze( _state.Body );
 			}
+		}
+		else if ( Input.Released( "attack1" ) )
+		{
+			ViewModel?.PlaySound( ReleasedSound );
 		}
 		else if ( Input.Pressed( "reload" ) )
 		{
@@ -367,7 +385,7 @@ public partial class Physgun : BaseCarryable
 	{
 		if ( !body.IsValid() ) return;
 		if ( body.IsProxy ) return;
-
+		
 		body.MotionEnabled = true;
 	}
 
@@ -379,6 +397,12 @@ public partial class Physgun : BaseCarryable
 
 		var bodies = new HashSet<Rigidbody>();
 		GetConnectedBodies( body.GameObject, bodies );
+
+		var effect = UnFreezeEffectPrefab.Clone( body.WorldTransform );
+		foreach ( var emitter in effect.GetComponentsInChildren<ParticleModelEmitter>() )
+		{
+			emitter.Target = body.GameObject;
+		}
 
 		foreach ( var rb in bodies )
 		{
