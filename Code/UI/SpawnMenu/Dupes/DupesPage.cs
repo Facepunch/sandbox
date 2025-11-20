@@ -10,7 +10,7 @@ public class DupesPage : BaseSpawnMenu
 	{
 		AddHeader( "Workshop" );
 		AddOption( "🎖️", "Popular Dupes", () => new DupesWorkshop() { SortOrder = Storage.SortOrder.RankedByVote } );
-		//	AddOption( "🎖️", "Newest Dupes", () => new DupesWorkshop() { SortOrder = Storage.SortOrder.RankedByPublicationDate } );
+		AddOption( "🐣", "Newest Dupes", () => new DupesWorkshop() { SortOrder = Storage.SortOrder.RankedByPublicationDate } );
 
 		AddGrow();
 		AddHeader( "Local" );
