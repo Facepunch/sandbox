@@ -1,0 +1,99 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits Panel
+
+<root>
+
+    @if ( selected.IsValid() )
+    {
+        <div class="window">
+            <GameObjectInspector Target=@selected></GameObjectInspector>
+        </div>
+    }
+
+</root>
+
+@code
+{
+    public GameObject Hovered => hovered;
+
+    protected override int BuildHash() => HashCode.Combine(hovered, selected);
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if ( !IsVisible )
+            return;
+
+        UpdateCursor();
+
+        if (selected != null)
+        {
+            Scene.DebugOverlay.Box(selected.GetBounds(), Color.Cyan.WithAlpha(0.6f) );
+        }
+
+        if (hovered != null && hovered != selected)
+        {
+            Scene.DebugOverlay.Box(hovered.GetBounds(), Color.Cyan.WithAlpha(0.3f) );
+        }
+    }
+
+    GameObject hovered;
+    GameObject selected;
+
+    void UpdateCursor()
+    {
+        var cursorPos = Mouse.Position;
+        var screenRay = Scene.Camera.ScreenPixelToRay( cursorPos );
+        var tr = Scene.Trace.Ray(screenRay, 4096 )
+                            .IgnoreGameObjectHierarchy( Player.FindLocalPlayer()?.GameObject )
+                            .Run();
+
+      //  Scene.DebugOverlay.Sphere(new Sphere(tr.EndPosition, 1), Color.Yellow );
+
+        var go = tr.GameObject;
+        if (!CanSelect(go)) go = null;
+
+        UpdateHovered(go);
+
+
+    }
+
+    bool CanSelect( GameObject o )
+    {
+        if (o == null) return false;
+        if (o.Tags.Has("world")) return false;
+        if (o.NetworkMode == NetworkMode.Never) return false;
+
+        o = o?.Network?.RootGameObject;
+
+
+        return true;
+    }
+
+    void UpdateHovered( GameObject o )
+    {
+        if (hovered == o) return;
+
+        hovered = o;
+        PlaySound("ui.button.over");
+    }
+
+
+    public void WorldMouseDown(MousePanelEvent e)
+    {
+        SelectObject(hovered);
+    }
+
+    public void WorldMouseUp(MousePanelEvent e)
+    {
+        // nothing.
+    }
+
+    public void SelectObject( GameObject o )
+    {
+        selected = o;
+    }
+}

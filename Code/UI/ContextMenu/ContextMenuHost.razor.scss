@@ -1,0 +1,29 @@
+ContextMenuHost
+{
+	position: absolute;
+	width:100%;
+	height: 100%;
+	color: #cdf;
+	justify-content: center;
+	font-family: Poppins;
+	font-size: 14px;
+	font-weight: 600;
+	z-index: 500;
+
+
+	> .container
+	{
+		position: absolute;
+		top: 0px;
+		bottom: 0px;
+		right: 0px;
+		left: 0px;
+		margin: 0px;
+	}
+}
+
+ContextMenuHost
+{
+	pointer-events: all;
+}
+

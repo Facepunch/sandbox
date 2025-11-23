@@ -1,0 +1,25 @@
+
+Inspector
+{
+    position: absolute;
+    right: 6vw;
+    bottom: 10vh;
+    font-size: 1.3rem;
+    color: #ddd;
+    transition: all 0.2s linear;
+
+    > .window
+    {
+        background-color: #000d;
+        padding: 1rem;
+        width: 500px;
+        height: 80vh;
+        border-radius: 8px;
+        pointer-events: all;
+    }
+}
+
+Inventory.hidden
+{
+    opacity: 0;
+}

@@ -1,0 +1,108 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits Panel
+@attribute [SpawnMenuHost.SpawnMenuMode]
+@attribute [Icon( "📦" )]
+@attribute [Title( "Spawn" )]
+@attribute [Order( -100 )]
+
+<root>
+
+    <div class="container">
+
+        <div class="spawnmenuleft">
+
+            <div class="tabs">
+
+                @foreach (var t in tabs)
+                {
+                    var type = Game.TypeLibrary.GetType(t.GetType());
+
+                    var c = activeTab == t ? "active" : "";
+
+                    <div class="@c" @onclick=@(() => SwitchTab(t))>
+                        <span>@type.Icon</span>
+                        <span>@type.Title</span>
+                    </div>
+                }
+
+            </div>
+
+            <div class="body" @ref="TabContainer">
+            </div>
+
+        </div>
+
+        <div class="spawnmenuright">
+
+            <div class="tabs">
+
+                <div class="active">Tools</div>
+                <div>Options</div>
+
+            </div>
+
+            <div class="body">
+
+                <ToolsList></ToolsList>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</root>
+
+@code
+{
+    Panel activeTab;
+    Panel TabContainer = default;
+
+    List<Panel> tabs = new List<Panel>();
+
+    public void BuildTabs()
+    {
+        foreach (var p in Game.TypeLibrary.GetTypes<ISpawnMenuTab>().OrderBy(x => x.Order).ThenBy(x => x.Title))
+        {
+            if (p.IsAbstract) continue;
+            if (p.TargetType == typeof(BaseSpawnMenu)) continue;
+
+            var panel = p.Create<Panel>();
+            TabContainer.AddChild(panel);
+
+            tabs.Add(panel);
+        }
+
+        SwitchTab(tabs.FirstOrDefault());
+    }
+
+    protected override void OnAfterTreeRender(bool firstTime)
+    {
+        if (firstTime && TabContainer.IsValid())
+        {
+            BuildTabs();
+        }
+    }
+
+    void SwitchTab(Panel tab)
+    {
+        activeTab = tab;
+        StateHasChanged();
+
+        foreach (var t in tabs)
+        {
+            t.SetClass("active", t == tab);
+            t.SetClass("hidden", t != tab);
+        }
+    }
+
+    // When clicking anywhere in the spawn menu, blur any focused text inputs
+    // so we can close the menu by pressing the spawnmenu key.
+    void OnMenuClicked()
+    {
+        Sandbox.UI.InputFocus.Clear();
+    }
+}

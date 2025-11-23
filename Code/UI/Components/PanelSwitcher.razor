@@ -3,18 +3,39 @@
 @inherits Panel
 @namespace Sandbox
 
-<root>
-    @Options
-</root>
+<root></root>
 
 @code
 {
+    Panel _active;
 
-    public RenderFragment Options { get; set; }
+    public Panel ActivePanel
+    {
+        get => _active;
+        set => SwitchToPanel(value );
+    }
 
-    /// <summary>
-    /// The currently selected value of any sub-menus
-    /// </summary>
-    public object Value { get; set; }
+    protected override void OnChildAdded(Panel child)
+    {
+        base.OnChildAdded(child);
 
+        if ( ChildrenCount == 1 )
+        {
+            SwitchToPanel(child);
+        }
+        else
+        {
+            child.AddClass("hidden");
+        }
+    }
+
+    public void SwitchToPanel( Panel panel )
+    {
+        _active = panel;
+
+        foreach ( var child in Children )
+        {
+            child.SetClass("hidden", child != panel);
+        }
+    }
 }

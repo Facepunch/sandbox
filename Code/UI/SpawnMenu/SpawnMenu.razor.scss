@@ -1,0 +1,197 @@
+
+SpawnMenu
+{
+    width: 100%;
+    height: 100%;
+    color: #cdf;
+    justify-content: center;
+    font-family: Poppins;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 1000;
+    backdrop-filter: brightness( 0.4 ) contrast( 0.7 ) saturate( 0.7 );
+}
+
+SpawnMenu .container
+{
+    width: 100%;
+    height: 100%;
+    max-width: 1900px;
+}
+
+SpawnMenu .container .spawnmenuleft
+{
+    transform: translateX( -100px );
+    transition: all 0.2s ease-in;
+}
+
+SpawnMenu .container .spawnmenuright
+{
+    transform: translateX( 100px );
+    transition: all 0.2s ease-in;
+}
+
+SpawnMenuHost.open SpawnMenu
+{
+    .container .spawnmenuleft
+    {
+        transform: translateX( 0px );
+        transition: all 0.1s ease-out;
+    }
+
+    .container .spawnmenuright
+    {
+        transform: translateX( 0px );
+        transition: all 0.1s ease-out;
+    }
+}
+
+.container .spawnmenuleft
+{
+    flex-grow: 1;
+    padding: 128px 64px;
+    padding-right: 16px;
+
+    PanelSwitcher
+    {
+        padding-bottom: 128px;
+    }
+}
+
+.container .spawnmenuright
+{
+    width: 600px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    padding: 128px 64px;
+    padding-left: 16px;
+}
+
+.container > .spawnmenuleft,
+.container > .spawnmenuright
+{
+    flex-direction: column;
+}
+
+
+.container > .spawnmenuleft > .body,
+.container > .spawnmenuright > .body
+{
+    border-radius: 8px;
+    flex-grow: 1;
+}
+
+.tabs
+{
+    font-size: 14px;
+    color: white;
+    font-weight: 650;
+    font-family: Poppins;
+    margin-left: 8px;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.tabs > *
+{
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    color: #D1D7E3AA;
+    border-radius: 8px 8px 0 0;
+    background-color: #0c202faa;
+    opacity: 1;
+    border-right: 1px solid #0004;
+    gap: 0.4rem;
+}
+
+.tabs > *:hover
+{
+    color: #cdf;
+    sound-in: ui.hover;
+}
+
+.tabs > *:active
+{
+    color: #fff;
+    sound-in: ui.select;
+}
+
+.tabs > *.active
+{
+    opacity: 1;
+    color: #fff;
+    cursor: pointer;
+    background-color: #0c202fcc;
+    pointer-events: none;
+    backdrop-filter: blur( 8px );
+}
+
+
+.container > .spawnmenuleft > .body
+{
+    position: relative;
+}
+
+
+.container > .spawnmenuleft > .body > *
+{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+.container > .spawnmenuleft > .body > .hidden
+{
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.1s linear;
+    transform: translateY( 20px );
+}
+
+.container > .spawnmenuleft > .body > .active
+{
+    opacity: 1;
+    transition: all 0.1s linear;
+    transform: translateY( 0px );
+}
+
+.container > .spawnmenuleft,
+.container > .spawnmenuright
+{
+    > .body
+    {
+        background-color: #0c202fcc;
+        backdrop-filter: blur( 2px );
+    }
+}
+
+
+.menuinner
+{
+    background-color: #13161a88;
+    border-radius: 8px;
+}
+
+VirtualGrid
+{
+    width: 100%;
+    height: 100%;
+    gap: 5px;
+
+    .cell
+    {
+        background-color: #7771;
+        cursor: pointer;
+
+        &:hover
+        {
+            background-color: #7773;
+        }
+
+        &:active
+        {
+            background-color: #08f;
+            padding: 2px;
+        }
+    }
+}

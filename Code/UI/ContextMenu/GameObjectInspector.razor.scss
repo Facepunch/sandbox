@@ -1,0 +1,21 @@
+
+GameObjectInspector
+{
+    flex-direction: column;
+    pointer-events: all;
+    overflow: hidden;
+}
+
+.header
+{
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.body
+{
+	flex-direction: column;
+	flex-grow: 1;
+    flex-shrink: 0;
+	overflow-y: scroll;
+}

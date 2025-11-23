@@ -1,0 +1,67 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits Panel
+
+<root>
+
+    <div class="header">
+        <h2>@Target.Name</h2>
+        <h3>@Target.Id</h3>
+    </div>
+
+    <div class="body">
+    @foreach (var c in Properties)
+    {
+        <ControlSheetRow Property="@c"></ControlSheetRow>
+    }
+    </div>
+
+</root>
+
+@code
+{
+    [Parameter]
+    public GameObject Target{ get; set; }
+
+    readonly List<SerializedProperty> Properties = new();
+
+    protected override void OnParametersSet()
+    {
+        Properties.Clear();
+
+        @foreach (var c in Target.Components.GetAll())
+        {
+            CollectProperties(c);
+        }
+    }
+
+    void CollectProperties( Component component )
+    {
+        if ( component is ModelRenderer mr )
+        {
+            var so = TypeLibrary.GetSerializedObject(mr);
+            so.OnPropertyChanged = PropertyChanged;
+
+            foreach (var prop in so )
+            {
+                if (!prop.IsProperty) continue;
+                if (!prop.HasAttribute<PropertyAttribute>()) continue;
+
+                Properties.Add(prop);
+            }
+        }
+    }
+
+    void SetProperty( Component component, string name, object value )
+    {
+        
+    }
+
+    void PropertyChanged( SerializedProperty prop )
+    {
+        var c = prop.Parent.Targets.First() as Component;
+
+        Log.Info($"{c}.{prop.Name} = {prop.GetValue<object>()}");
+    }
+}
