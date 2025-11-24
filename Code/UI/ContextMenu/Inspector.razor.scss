@@ -10,12 +10,13 @@ Inspector
 
     > .window
     {
-        background-color: #000d;
+        background-color: #222222fa;
         padding: 1rem;
         width: 500px;
         height: 80vh;
         border-radius: 8px;
         pointer-events: all;
+        backdrop-filter: blur( 10px );
     }
 }
 

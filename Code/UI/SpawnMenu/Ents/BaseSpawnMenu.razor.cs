@@ -109,7 +109,7 @@ public partial class BaseSpawnMenu : Panel
 			Switcher.AddChild( activeOption.Panel );
 		}
 
-		activeOption.Panel.SetClass( "hidden", false );
+		activeOption?.Panel?.SetClass( "hidden", false );
 		StateHasChanged();
 	}
 

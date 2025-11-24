@@ -7,7 +7,7 @@
 
     @if ( selected.IsValid() )
     {
-        <div class="window">
+        <div class="window" @onmousedown="@WindowPress">
             <GameObjectInspector Target=@selected></GameObjectInspector>
         </div>
     }
@@ -77,6 +77,8 @@
     {
         if (hovered == o) return;
 
+        o = o?.Network?.RootGameObject;
+
         hovered = o;
         PlaySound("ui.button.over");
     }
@@ -95,5 +97,10 @@
     public void SelectObject( GameObject o )
     {
         selected = o;
+    }
+
+    void WindowPress( PanelEvent panelEvent )
+    {
+        panelEvent.StopPropagation();
     }
 }

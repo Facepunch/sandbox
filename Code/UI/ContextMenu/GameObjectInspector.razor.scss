@@ -4,6 +4,7 @@ GameObjectInspector
     flex-direction: column;
     pointer-events: all;
     overflow: hidden;
+	width: 100%;
 }
 
 .header
@@ -16,6 +17,19 @@ GameObjectInspector
 {
 	flex-direction: column;
 	flex-grow: 1;
-    flex-shrink: 0;
+	flex-shrink: 0;
 	overflow-y: scroll;
+	gap: 2px;
+
+	controlsheetrow
+	{
+		flex-direction: column;
+		max-height: auto;
+		width: 100%;
+
+		> .right, > .left
+		{
+			flex-shrink: 0;
+		}
+	}
 }
