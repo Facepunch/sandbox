@@ -43,25 +43,26 @@
             var so = TypeLibrary.GetSerializedObject(mr);
             so.OnPropertyChanged = PropertyChanged;
 
-            foreach (var prop in so )
-            {
-                if (!prop.IsProperty) continue;
-                if (!prop.HasAttribute<PropertyAttribute>()) continue;
-
-                Properties.Add(prop);
-            }
+            Properties.Add( so.GetProperty( nameof( ModelRenderer.Tint ) ) );
+            Properties.Add( so.GetProperty( nameof( ModelRenderer.RenderType ) ) );
         }
-    }
 
-    void SetProperty( Component component, string name, object value )
-    {
-        
+        if (component is Rigidbody rb)
+        {
+            var so = TypeLibrary.GetSerializedObject(rb);
+            so.OnPropertyChanged = PropertyChanged;
+
+            Properties.Add(so.GetProperty(nameof(Rigidbody.LinearDamping)));
+            Properties.Add(so.GetProperty(nameof(Rigidbody.AngularDamping)));
+        }
     }
 
     void PropertyChanged( SerializedProperty prop )
     {
-        var c = prop.Parent.Targets.First() as Component;
+        // TODO - can we debounce?
 
-        Log.Info($"{c}.{prop.Name} = {prop.GetValue<object>()}");
+
+        var c = prop.Parent.Targets.First() as Component;
+        GameManager.ChangeProperty(c, prop.Name, prop.GetValue<object>());
     }
 }

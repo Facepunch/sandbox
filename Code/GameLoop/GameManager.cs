@@ -413,4 +413,24 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		undo.Add( go );
 
 	}
+
+	/// <summary>
+	/// Change a property, remotely
+	/// </summary>
+	[Rpc.Host]
+	public static void ChangeProperty( Component c, string propertyName, object value )
+	{
+		if ( c is null ) return;
+
+		var tl = TypeLibrary.GetType( c.GetType() );
+		if ( tl is null ) return;
+
+		var prop = tl.GetProperty( propertyName );
+		if ( prop is null ) return;
+
+		prop.SetValue( c, value );
+
+		// Broadcast the change to everyone
+		c.GameObject.Network.Refresh( c );
+	}
 }
