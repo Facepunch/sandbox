@@ -1,8 +1,8 @@
 ﻿@using Sandbox;
 @using Sandbox.UI;
+
 @inherits Panel
 @namespace Sandbox
-
 
 @if ( LastResult is null )
 {
@@ -13,7 +13,15 @@
 <SpawnMenuContent>
 
     <Header>
-        <SpawnMenuToolbar></SpawnMenuToolbar>
+        <SpawnMenuToolbar>
+            <Left>
+                <TextEntry Placeholder="Search..." class="filter" Value:bind=@Filter />
+            </Left>
+
+            <Right>
+                <DropDown Value:bind=@SortOrder />
+            </Right>
+        </SpawnMenuToolbar>
     </Header>
 
     <Body>
@@ -33,6 +41,18 @@
 {
     public string Category { get; set; } = "";
 
+    private string Filter
+    {
+        get;
+        set { field = value; Rebuild(); }
+    }
+
+    public PackageSortMode SortOrder
+    {
+        get;
+        set { field = value; Rebuild(); }
+    }
+
     void Spawn( Package package )
     {
         GameManager.Spawn( package.FullIdent );
@@ -40,18 +60,19 @@
 
     protected override void OnParametersSet()
     {
-        base.OnParametersSet();
-
-        _ = Rebuild();
+        SortOrder = PackageSortMode.Newest;
+        Rebuild();
     }
-
 
     Package.FindResult LastResult;
 
-    async Task Rebuild()
+    async void Rebuild()
     {
-        LastResult = await Package.FindAsync($"sort:newest type:model category:{Category}");
+        var query = $"sort:{SortOrder.ToIdentifier()} type:model";
+        if ( !string.IsNullOrEmpty( Filter ) ) query += $" {Filter} ";
+        if ( !string.IsNullOrEmpty( Category ) ) query += $" category:{Category}";
+
+        LastResult = await Package.FindAsync( query );
         StateHasChanged();
     }
-    
 }

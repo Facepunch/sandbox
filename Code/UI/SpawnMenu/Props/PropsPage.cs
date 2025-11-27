@@ -11,6 +11,7 @@ public class PropsPage : BaseSpawnMenu
 		AddOption( "⭐", "Favourites", () => new SpawnPageFavourites() );
 
 		AddHeader( "Workshop" );
+		AddOption( "🧠", "All", () => new SpawnPageCloud() );
 		AddOption( "🥸", "Humans", () => new SpawnPageCloud() { Category = "human" } );
 		AddOption( "🌲", "Nature", () => new SpawnPageCloud() { Category = "nature" } );
 		AddOption( "🪑", "Furniture", () => new SpawnPageCloud() { Category = "furniture" } );
@@ -18,5 +19,6 @@ public class PropsPage : BaseSpawnMenu
 		AddOption( "🪠", "Prop", () => new SpawnPageCloud() { Category = "prop" } );
 		AddOption( "🪀", "Toy", () => new SpawnPageCloud() { Category = "toy" } );
 		AddOption( "🍦", "Food", () => new SpawnPageCloud() { Category = "food" } );
+		AddOption( "🔫", "Guns", () => new SpawnPageCloud() { Category = "weapon" } );
 	}
 }
