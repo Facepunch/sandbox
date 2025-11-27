@@ -1,0 +1,40 @@
+ComponentHandle
+{
+	width: 38px;
+	height: 38px;
+	background-color: #eee;
+	box-shadow: 2px 2px 16px black;
+	border-radius: 20px;
+	position: absolute;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	transform: scale( 1 ) translateX( -50% ) translateY( -50% );
+
+	.icon
+	{
+		font-family: "Material Icons";
+		color: #08f;
+		font-size: 23px;
+		pointer-events: none;
+	}
+
+	&:hover
+	{
+		opacity: 1;
+		background-color: #fff;
+	}
+
+	&:active
+	{
+		border: 1px solid #08f;
+		background-color: #fff;
+		opacity: 1;
+	}
+
+	&:outro
+	{
+		transform: scale( 0 ) translateX( -50% ) translateY( -50% );
+		transition: transform 0.2s ease-out;
+	}
+}
