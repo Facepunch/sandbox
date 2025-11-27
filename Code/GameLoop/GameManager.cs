@@ -202,6 +202,12 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 			SendMessage( $"{attackerName} killed {(isSuicide ? "self" : player.DisplayName)} (tags: {dmg.Tags})" );
 	}
 
+	[ConCmd( "spawn" )]
+	private static void SpawnCommand( string path_or_ident )
+	{
+		Spawn( path_or_ident );
+	}
+
 	[Rpc.Broadcast]
 	public static async void Spawn( string path_or_ident )
 	{
