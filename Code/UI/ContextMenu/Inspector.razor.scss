@@ -1,23 +1,35 @@
 
 Inspector
 {
-    position: absolute;
-    right: 6vw;
-    bottom: 10vh;
-    font-size: 1.3rem;
-    color: #ddd;
-    transition: all 0.2s linear;
+	font-size: 1.3rem;
+	color: #ddd;
+	transition: all 0.2s linear;
 
-    > .window
-    {
-        background-color: #222222fa;
-        padding: 1rem;
-        width: 500px;
-        height: 80vh;
-        border-radius: 8px;
-        pointer-events: all;
-        backdrop-filter: blur( 10px );
-    }
+	> .window
+	{
+		position: absolute;
+		right: 6vw;
+		bottom: 10vh;
+		background-color: #222222fa;
+		padding: 1rem;
+		width: 500px;
+		height: 80vh;
+		border-radius: 8px;
+		pointer-events: all;
+		backdrop-filter: blur( 10px );
+		z-index: 200;
+	}
+
+	> .canvas
+	{
+		width: 100%;
+		height: 100%;
+		z-index: 0;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		pointer-events: all;
+	}
 }
 
 Inventory.hidden

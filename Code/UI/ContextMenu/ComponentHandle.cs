@@ -7,13 +7,15 @@ namespace Sandbox;
 /// </summary>
 public class ComponentHandle : Panel
 {
+	readonly Inspector _inspector;
 	readonly Component _component;
 	readonly Label _icon;
 	Vector3 worldpos;
 
-	public ComponentHandle( Panel parent, Component c ) : base( parent )
+	public ComponentHandle( Panel parent, Component c, Inspector i ) : base( parent )
 	{
 		_component = c;
+		_inspector = i;
 		worldpos = _component.WorldPosition;
 
 		_icon = AddChild<Label>( "icon" );
@@ -37,6 +39,7 @@ public class ComponentHandle : Panel
 			Style.Top = screenPos.y * ScaleFromScreen;
 
 			SetClass( "behind", behind );
+			SetClass( "active", _inspector?.Selected == _component?.GameObject );
 		}
 
 		if ( ShouldDelete() )
@@ -50,6 +53,13 @@ public class ComponentHandle : Panel
 		if ( !_component.IsValid() ) return true;
 
 		return false;
+	}
+
+	protected override void OnMouseDown( MousePanelEvent e )
+	{
+		e.StopPropagation();
+
+		_inspector.SelectObject( _component.GameObject );
 	}
 
 }

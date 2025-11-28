@@ -10,6 +10,7 @@ ComponentHandle
 	align-items: center;
 	cursor: pointer;
 	transform: scale( 1 ) translateX( -50% ) translateY( -50% );
+	z-index: 100;
 
 	.icon
 	{
@@ -30,6 +31,19 @@ ComponentHandle
 		border: 1px solid #08f;
 		background-color: #fff;
 		opacity: 1;
+		transform: scale( 0.95 ) translateX( -50% ) translateY( -50% );
+	}
+
+	&.active
+	{
+		border: 2px solid #fff;
+		background-color: #08f;
+		opacity: 1;
+
+		.icon
+		{
+			color: #fff;
+		}
 	}
 
 	&:outro

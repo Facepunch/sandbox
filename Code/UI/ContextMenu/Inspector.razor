@@ -5,6 +5,8 @@
 
 <root>
 
+    <div class="canvas" @ref=_canvas></div>
+
     @if ( selected.IsValid() )
     {
         <div class="window" @onmousedown="@WindowPress">
@@ -17,6 +19,9 @@
 @code
 {
     public GameObject Hovered => hovered;
+    public GameObject Selected => selected;
+
+    Panel _canvas = default;
 
     protected override int BuildHash() => HashCode.Combine(hovered, selected);
 
@@ -51,7 +56,9 @@
                             .IgnoreGameObjectHierarchy( Player.FindLocalPlayer()?.GameObject )
                             .Run();
 
-      //  Scene.DebugOverlay.Sphere(new Sphere(tr.EndPosition, 1), Color.Yellow );
+        //  Scene.DebugOverlay.Sphere(new Sphere(tr.EndPosition, 1), Color.Yellow );
+
+        if (!_canvas.HasHovered) tr.GameObject = default;
 
         var go = tr.GameObject;
         if (!CanSelect(go)) go = null;
@@ -98,6 +105,7 @@
     {
         selected = o;
     }
+
 
     void WindowPress( PanelEvent panelEvent )
     {

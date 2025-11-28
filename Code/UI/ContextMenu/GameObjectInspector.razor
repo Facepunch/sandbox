@@ -55,6 +55,17 @@
             Properties.Add(so.GetProperty(nameof(Rigidbody.LinearDamping)));
             Properties.Add(so.GetProperty(nameof(Rigidbody.AngularDamping)));
         }
+
+        if (component is HingeJoint hj)
+        {
+            var so = TypeLibrary.GetSerializedObject(hj);
+            so.OnPropertyChanged = PropertyChanged;
+
+            Properties.Add(so.GetProperty(nameof(HingeJoint.EnableCollision)));
+            Properties.Add(so.GetProperty(nameof(HingeJoint.Motor)));
+            Properties.Add(so.GetProperty(nameof(HingeJoint.TargetVelocity)));
+            Properties.Add(so.GetProperty(nameof(HingeJoint.MaxTorque)));
+        }
     }
 
     void PropertyChanged( SerializedProperty prop )
