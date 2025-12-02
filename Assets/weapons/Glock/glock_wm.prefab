@@ -12,6 +12,7 @@
     "NetworkMode": 0,
     "NetworkInterpolation": true,
     "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
     "OwnerTransfer": 1,
     "Components": [
       {
@@ -57,6 +58,7 @@
         "NetworkMode": 2,
         "NetworkInterpolation": true,
         "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
         "OwnerTransfer": 1,
         "Components": [
           {
@@ -64,12 +66,14 @@
             "__guid": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
             "__enabled": true,
             "AnimationGraph": null,
-            "BodyGroups": 9493,
+            "BodyGroups": 9513,
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": true,
+            "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
+            "Materials": null,
             "Model": "models/weapons/sbox_pistol_usp/w_usp.vmdl",
             "Morphs": {},
             "OnComponentDestroy": null,
@@ -108,7 +112,7 @@
             "__version": 1,
             "Flags": 8,
             "Name": "muzzle",
-            "Position": "3.854532,0,4.955329",
+            "Position": "0,0,0",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -116,6 +120,7 @@
             "NetworkMode": 2,
             "NetworkInterpolation": true,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
@@ -125,14 +130,15 @@
             "__version": 1,
             "Flags": 8,
             "Name": "eject",
-            "Position": "-0.843271,0,5.183321",
-            "Rotation": "0,-0.7071068,0,0.7071068",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
             "Enabled": true,
             "NetworkMode": 2,
             "NetworkInterpolation": true,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
@@ -140,7 +146,7 @@
           {
             "__guid": "8d74fc05-f7a5-4d25-b3cd-74aaae956572",
             "__version": 1,
-            "Flags": 4,
+            "Flags": 0,
             "Name": "hold_R",
             "Position": "-1.848641,0,3.195872",
             "Rotation": "0,0,0,1",
@@ -150,6 +156,7 @@
             "NetworkMode": 2,
             "NetworkInterpolation": true,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
