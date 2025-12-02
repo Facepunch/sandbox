@@ -11,10 +11,7 @@
     </div>
 
     <div class="body">
-    @foreach (var c in Properties)
-    {
-        <ControlSheetRow Property="@c"></ControlSheetRow>
-    }
+        <ControlSheet Target="@Properties"></ControlSheet>
     </div>
 
 </root>
@@ -24,11 +21,11 @@
     [Parameter]
     public GameObject Target{ get; set; }
 
-    readonly List<SerializedProperty> Properties = new();
+    List<SerializedProperty> Properties = new();
 
     protected override void OnParametersSet()
     {
-        Properties.Clear();
+        Properties = new();
 
         @foreach (var c in Target.Components.GetAll())
         {
