@@ -92,7 +92,7 @@ public sealed class NPC : Component, IDamageable, IActor
 	private readonly List<IActor> _enemies = new();
 
 	private IActor _currentTarget;
-	private BaseWeapon _weapon;
+	private BaseCarryable _weapon;
 
 	private CancellationTokenSource _cts;
 
@@ -125,7 +125,7 @@ public sealed class NPC : Component, IDamageable, IActor
 		var go = WeaponPrefab.Clone();
 		go.SetParent( GameObject, false );
 
-		_weapon = go.GetComponent<BaseWeapon>();
+		_weapon = go.GetComponent<BaseCarryable>();
 		_weapon.CreateWorldModel( Renderer );
 	}
 
@@ -260,7 +260,7 @@ public sealed class NPC : Component, IDamageable, IActor
 
 				TriggerAttack();
 
-				if ( _weapon.IsValid() && _weapon.CanShoot() )
+				if ( _weapon.IsValid() && _weapon is BaseWeapon weapon && weapon.CanShoot() )
 					PrimaryAttack( _currentTarget );
 
 				await Task.Delay( (int)(1000f / AttackRate), t );
