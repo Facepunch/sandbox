@@ -14,21 +14,40 @@ public partial class BaseCarryable : Component
 
 	protected void CreateWorldModel()
 	{
-		DestroyWorldModel();
-
-		if ( WorldModelPrefab is null )
-			return;
-
 		var player = GetComponentInParent<PlayerController>();
 		if ( player is null || player.Renderer is null ) return;
 
-		var parentBone = player.Renderer.GetBoneObject( ParentBone );
+		CreateWorldModel( player.Renderer, ParentBone );
+	}
 
-		WorldModel = WorldModelPrefab.Clone( new CloneConfig { Parent = parentBone, StartEnabled = false, Transform = global::Transform.Zero } );
-		WorldModel.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked;
-		WorldModel.Enabled = true;
+	public GameObject CreateWorldModel( SkinnedModelRenderer renderer, string boneName = "hold_r" )
+	{
+		DestroyWorldModel();
+
+		if ( WorldModelPrefab is null )
+			return null;
+
+		if ( !renderer.IsValid() )
+			return null;
+
+		var bone = renderer.GetBoneObject( boneName ) ?? GameObject;
+
+		var worldModel = WorldModelPrefab.Clone( new CloneConfig
+		{
+			Parent = bone,
+			StartEnabled = false,
+			Transform = global::Transform.Zero
+		} );
+
+		worldModel.Enabled = true;
+		worldModel.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked;
+
+		// Track on the weapon so other systems can reference it.
+		WorldModel = worldModel;
 
 		IEvent.PostToGameObject( WorldModel, x => x.OnCreateWorldModel() );
+
+		return worldModel;
 	}
 
 	protected void DestroyWorldModel()
