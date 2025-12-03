@@ -10,7 +10,6 @@ public sealed partial class Npc
 
 	IActor _currentTarget;
 	BaseCarryable _weapon;
-	Vector3? _eyeTarget;
 
 	CancellationTokenSource _cts;
 	State _currentState = State.Idle;

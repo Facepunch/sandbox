@@ -64,6 +64,11 @@ public sealed partial class Npc : Component, IActor
 	[Property, Range( 1, 16f ), Group( "Body" )] public float BodyTurnSpeed { get; set; } = 6f;
 
 	/// <summary>
+	/// Delay before body starts turning when idling (in seconds)
+	/// </summary>
+	[Property, Range( 0f, 2f ), Group( "Body" )] public float IdleBodyTurnDelay { get; set; } = 0.5f;
+
+	/// <summary>
 	/// NPC's aiming skill level (0.0 = terrible aim, 1.0 = perfect aim)
 	/// </summary>
 	[Property, Range( 0, 1 ), Step( 0.05f ), Group( "Skill" )] public float AimingSkill { get; set; } = 0.5f;
@@ -82,6 +87,11 @@ public sealed partial class Npc : Component, IActor
 	/// Distance tolerance so they don't just go back and forth 
 	/// </summary>
 	[Property, Range( 4f, 64f )] public float FollowTolerance { get; set; } = 50f;
+
+	// Tracking for delayed body turning
+	TimeSince _timeSinceEyeTargetChanged;
+	Vector3? _previousEyeTarget;
+	Vector3? _eyeTarget;
 
 	protected override void OnStart()
 	{
@@ -130,6 +140,13 @@ public sealed partial class Npc : Component, IActor
 	/// <param name="worldPosition">World position to look at, or null to clear target</param>
 	public void SetEyeTarget( Vector3? worldPosition )
 	{
+		// Track when the eye target changes
+		if ( _eyeTarget != worldPosition )
+		{
+			_previousEyeTarget = _eyeTarget;
+			_timeSinceEyeTargetChanged = 0f;
+		}
+
 		_eyeTarget = worldPosition;
 	}
 
@@ -164,6 +181,8 @@ public sealed partial class Npc : Component, IActor
 	{
 		if ( _eyeTarget is null )
 		{
+			// No rotation when no target
+			_currentRotationSpeed = 0f;
 			return;
 		}
 
@@ -174,25 +193,13 @@ public sealed partial class Npc : Component, IActor
 		var lookDirection = (targetPosition - eyePosition).Normal;
 
 		if ( lookDirection.IsNearlyZero() )
-			return;
-
-		// Always try to look at the target with head and body
-		var desiredBodyDirection = lookDirection.WithZ( 0 ).Normal;
-		var headLookDirection = lookDirection;
-
-		if ( !desiredBodyDirection.IsNearlyZero() )
 		{
-			var desiredBodyRotation = Rotation.LookAt( desiredBodyDirection, Vector3.Up );
-			var currentYaw = WorldRotation.Yaw();
-			var desiredYaw = desiredBodyRotation.Yaw();
-			var yawDifference = Angles.NormalizeAngle( desiredYaw - currentYaw );
-
-			// Only rotate if the difference is significant enough
-			if ( MathF.Abs( yawDifference ) > 5f )
-			{
-				WorldRotation = Rotation.Lerp( WorldRotation, desiredBodyRotation, BodyTurnSpeed * Time.Delta );
-			}
+			_currentRotationSpeed = 0f;
+			return;
 		}
+
+		// Always update head and eye look immediately
+		var headLookDirection = lookDirection;
 
 		// Update head and eye look using Vector3 parameters
 		if ( Renderer.IsValid() )
@@ -205,6 +212,55 @@ public sealed partial class Npc : Component, IActor
 		}
 
 		EyeSource.WorldRotation = Rotation.LookAt( headLookDirection );
+
+		// Handle body turning with delay for idle state
+		var desiredBodyDirection = lookDirection.WithZ( 0 ).Normal;
+
+		if ( !desiredBodyDirection.IsNearlyZero() )
+		{
+			var desiredBodyRotation = Rotation.LookAt( desiredBodyDirection, Vector3.Up );
+			var currentYaw = WorldRotation.Yaw();
+			var desiredYaw = desiredBodyRotation.Yaw();
+			var yawDifference = Angles.NormalizeAngle( desiredYaw - currentYaw );
+
+			// Only rotate if the difference is significant enough
+			if ( MathF.Abs( yawDifference ) > 5f )
+			{
+				bool shouldTurnBody = true;
+
+				// Apply delay for body turning when idling
+				if ( _currentState == State.Idle )
+				{
+					shouldTurnBody = _timeSinceEyeTargetChanged >= IdleBodyTurnDelay;
+				}
+
+				if ( shouldTurnBody )
+				{
+					// Store current yaw for rotation speed calculation
+					var previousYaw = WorldRotation.Yaw();
+
+					// Apply rotation
+					WorldRotation = Rotation.Lerp( WorldRotation, desiredBodyRotation, BodyTurnSpeed * Time.Delta );
+
+					// Calculate rotation speed (degrees per second)
+					var newYaw = WorldRotation.Yaw();
+					var yawDelta = Angles.NormalizeAngle( newYaw - previousYaw );
+					_currentRotationSpeed = MathF.Abs( yawDelta ) / Time.Delta;
+				}
+				else
+				{
+					_currentRotationSpeed = 0f;
+				}
+			}
+			else
+			{
+				_currentRotationSpeed = 0f;
+			}
+		}
+		else
+		{
+			_currentRotationSpeed = 0f;
+		}
 	}
 
 	TimeSince _timeSinceGatheredTargets;
@@ -278,6 +334,10 @@ public sealed partial class Npc : Component, IActor
 		}
 	}
 
+	// Rotation speed tracking
+	float _previousYaw;
+	float _currentRotationSpeed;
+
 	private void UpdateAnimation()
 	{
 		if ( !Renderer.IsValid() )
@@ -291,6 +351,7 @@ public sealed partial class Npc : Component, IActor
 		Renderer.Set( "move_x", forward );
 		Renderer.Set( "move_y", side );
 		Renderer.Set( "move_speed", vel.Length );
+		Renderer.Set( "move_rotationspeed", _currentRotationSpeed );
 		Renderer.Set( "holdtype", _weapon.IsValid() ? (int)_weapon.HoldType : 0 );
 	}
 }
