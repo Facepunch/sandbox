@@ -252,15 +252,9 @@ public sealed class NPC : Component, IDamageable, IActor
 
 
 	[Rpc.Broadcast( NetFlags.HostOnly )]
-	private void TriggerAttack()
+	private void TriggerAnimation( string animation )
 	{
-		Renderer?.Set( "b_attack", true );
-	}
-
-	[Rpc.Broadcast( NetFlags.HostOnly )]
-	private void TriggerReload()
-	{
-		Renderer?.Set( "b_reload", true );
+		Renderer?.Set( animation, true );
 	}
 
 	private async Task AttackLoop( CancellationToken t )
@@ -280,13 +274,13 @@ public sealed class NPC : Component, IDamageable, IActor
 				{
 					if ( weapon.CanPrimaryAttack() )
 					{
-						TriggerAttack();
+						TriggerAnimation( "b_attack" );
 						weapon.PrimaryAttack();
 					}
 
 					if ( !weapon.HasAmmo() )
 					{
-						TriggerReload();
+						TriggerAnimation( "b_reload" );
 						await weapon.ReloadAsync( _cts.Token );
 					}
 				}
@@ -322,7 +316,7 @@ public sealed class NPC : Component, IDamageable, IActor
 			while ( !t.IsCancellationRequested )
 			{
 				// Only follow players
-				if ( _currentTarget.IsValid() != true || _currentTarget is not Player )
+				if ( !_currentTarget.IsValid() || _currentTarget is not Player )
 					break;
 
 				var d = DistanceTo( _currentTarget );
@@ -422,7 +416,7 @@ public sealed class NPC : Component, IDamageable, IActor
 		if ( look is null )
 			return;
 
-		var dir = (look.Value - GetEye()).WithZ( 0 ).Normal;
+		var dir = (look.Value - EyeTransform.Position).WithZ( 0 ).Normal;
 		if ( dir.IsNearlyZero() ) return;
 
 		var desired = Rotation.LookAt( dir, Vector3.Up );
@@ -451,7 +445,7 @@ public sealed class NPC : Component, IDamageable, IActor
 			return;
 		}
 
-		var dir = (look.Value - GetEye()).Normal;
+		var dir = (look.Value - EyeTransform.Position).Normal;
 		var local = WorldRotation.Inverse * Rotation.LookAt( dir );
 		var ang = local.Angles();
 
@@ -459,22 +453,9 @@ public sealed class NPC : Component, IDamageable, IActor
 		Renderer.Set( "aim_body_yaw", ang.yaw.Clamp( LookYaw.Min, LookYaw.Max ) );
 	}
 
-	private Vector3 GetEye( IActor actor = null )
+	private Vector3 GetEye( IActor actor )
 	{
-		if ( !actor.IsValid() )
-			return EyeTransform.Position;
-
-		//
-		// Bit shit, might need a common method here
-		//
-
-		if ( actor is Player p )
-			return p.EyeTransform.Position;
-
-		if ( actor is NPC npc )
-			return npc.GetEye();
-
-		return actor.WorldPosition + Vector3.Up * 64f;
+		return actor.EyeTransform.Position;
 	}
 
 	private void Animate()
