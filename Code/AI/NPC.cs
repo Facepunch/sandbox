@@ -78,6 +78,11 @@ public sealed class NPC : Component, IDamageable, IActor
 	[Property] public float FootShuffleThreshold { get; set; } = 45f;
 
 	/// <summary>
+	/// NPC's aiming skill level (0.0 = terrible aim, 1.0 = perfect aim)
+	/// </summary>
+	[Property, Range( 0, 1 ), Step( 0.05f )] public float AimingSkill { get; set; } = 0.5f;
+
+	/// <summary>
 	/// How far away do we start shooting at a target -- this could probably be on the weapon
 	/// </summary>
 	[Property] private float AttackRange { get; set; } = 4096;
@@ -173,6 +178,32 @@ public sealed class NPC : Component, IDamageable, IActor
 		_eyeTarget = worldPosition;
 	}
 
+	/// <summary>
+	/// Calculates aim offset based on skill level and distance to target
+	/// </summary>
+	/// <returns>Modified aim position with skill-based inaccuracy</returns>
+	private Vector3 CalculateAimVector( Vector3 targetPosition, float distance )
+	{
+		// Perfect aim (skill = 1.0) returns exact target position
+		if ( AimingSkill >= 1f )
+			return targetPosition;
+
+		// Calculate maximum spread based on inverse skill level
+		// Lower skill = higher spread, distance also increases spread
+		var maxSpread = (1f - AimingSkill) * 100f; 
+		var distanceMultiplier = distance / 1000f;
+		var totalSpread = maxSpread * (1f + distanceMultiplier);
+
+		// Add random offset in a circle around the target
+		var randomAngle = Game.Random.Float( 0f, 360f );
+		var randomDistance = Game.Random.Float( 0f, totalSpread );
+
+		var offsetX = MathF.Cos( MathF.PI * randomAngle / 180f ) * randomDistance;
+		var offsetY = MathF.Sin( MathF.PI * randomAngle / 180f ) * randomDistance;
+
+		return targetPosition + new Vector3( offsetX, offsetY, 0f );
+	}
+
 	private void UpdateEyeTarget()
 	{
 		Vector3? newTarget = null;
@@ -185,7 +216,16 @@ public sealed class NPC : Component, IDamageable, IActor
 		}
 		else if ( _currentTarget.IsValid() )
 		{
-			newTarget = GetEye( _currentTarget );
+			if ( _currentState == State.Attack )
+			{
+				var targetEye = GetEye( _currentTarget );
+				var distance = DistanceTo( _currentTarget );
+				newTarget = CalculateAimVector( targetEye, distance );
+			}
+			else
+			{
+				newTarget = GetEye( _currentTarget );
+			}
 		}
 
 		SetEyeTarget( newTarget );
