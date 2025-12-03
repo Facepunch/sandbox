@@ -3,7 +3,7 @@
     "__guid": "8793f0d2-ee77-4701-8c5a-cb2d40046862",
     "__version": 1,
     "Flags": 0,
-    "Name": "example_npc",
+    "Name": "example_npc (1)",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
@@ -19,9 +19,7 @@
         "__type": "NPC",
         "__guid": "211b353c-9670-4c13-ab96-968217f65113",
         "__enabled": true,
-        "AttackDamage": 25,
         "AttackRange": 2048,
-        "AttackRate": 1,
         "CurrentRelationship": "Hostile",
         "DetectionRange": 512,
         "EyeSource": {
@@ -1973,7 +1971,7 @@
             ]
           },
           {
-            "__guid": "e8abfcbd-a27d-494b-9e4e-7835a7d8549c",
+            "__guid": "ef8ac204-1901-4f4a-a493-106ca2540d41",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - hair_slicked_back_balding",
@@ -1990,7 +1988,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "7af9e55f-5b89-4c94-9574-3439185b70c8",
+                "__guid": "495a1355-2a48-4674-8fc8-7733841c5cfe",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2041,7 +2039,7 @@
             "Children": []
           },
           {
-            "__guid": "6b44f8c7-81b1-4974-a26d-0ad76eafc3c1",
+            "__guid": "169a1441-feac-4d80-9842-0d883f6bd5c0",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - denim_skirt_blue",
@@ -2058,7 +2056,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "5573e530-5585-4728-b8a5-549f658a8620",
+                "__guid": "f6aedad9-af04-48c2-a533-950db6fb1025",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2109,7 +2107,7 @@
             "Children": []
           },
           {
-            "__guid": "8bff9876-de8b-406b-b551-781d4abe5acb",
+            "__guid": "cf4c5878-66ea-40bc-81a1-3d0b0c34c826",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - blue_sneakers",
@@ -2126,7 +2124,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "7a78fe02-2214-4876-a065-41513996ed21",
+                "__guid": "d8d02fa1-f2ce-45a6-9b60-a26609a2a92e",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2177,7 +2175,7 @@
             "Children": []
           },
           {
-            "__guid": "1a0115cc-2c98-4de2-b416-eb69e78b6695",
+            "__guid": "ca56af0e-15bd-436e-a6ee-a66f7fcff8e7",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - tshirt",
@@ -2194,7 +2192,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "5f41e05f-df07-4f65-aa3d-d01104c324df",
+                "__guid": "80ebbfcb-ff30-4dbf-9c8d-1b4ef6a1dc39",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2245,7 +2243,7 @@
             "Children": []
           },
           {
-            "__guid": "2fd3ebbb-fdb5-4da4-b905-61da46a43b39",
+            "__guid": "c532b6ab-8734-4465-ae5c-415f1b05869a",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - nerdy_glasses",
@@ -2262,7 +2260,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "47336642-9a0c-4dba-91bb-9fba53752dfa",
+                "__guid": "abd85ba8-b8e0-4107-9864-0c717f5d9ae4",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2319,7 +2317,7 @@
         "__version": 1,
         "Flags": 0,
         "Name": "Eyes",
-        "Position": "0,0,64.33325",
+        "Position": "0,0,46.54425",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",

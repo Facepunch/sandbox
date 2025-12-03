@@ -68,6 +68,16 @@ public sealed class NPC : Component, IDamageable, IActor
 	[Property] public RangedFloat LookYaw = new( -60f, 60f );
 
 	/// <summary>
+	/// How fast the body turns to follow the eye target
+	/// </summary>
+	[Property] public float BodyTurnSpeed { get; set; } = 6f;
+
+	/// <summary>
+	/// Minimum angle difference (in degrees) before the body will turn to follow the target
+	/// </summary>
+	[Property] public float FootShuffleThreshold { get; set; } = 45f;
+
+	/// <summary>
 	/// How far away do we start shooting at a target -- this could probably be on the weapon
 	/// </summary>
 	[Property] private float AttackRange { get; set; } = 4096;
@@ -89,6 +99,11 @@ public sealed class NPC : Component, IDamageable, IActor
 	private BaseCarryable _weapon;
 
 	private CancellationTokenSource _cts;
+
+	/// <summary>
+	/// Current eye target position in world space. Null means no target.
+	/// </summary>
+	private Vector3? _eyeTarget;
 
 	public enum Relationship
 	{
@@ -136,8 +151,8 @@ public sealed class NPC : Component, IDamageable, IActor
 		if ( !IsProxy )
 		{
 			UpdatePerception();
-			UpdateLook();
-			UpdateBodyTurn();
+			UpdateEyeTarget();
+			UpdateEyeSystem();
 			UpdateState();
 		}
 
@@ -147,12 +162,80 @@ public sealed class NPC : Component, IDamageable, IActor
 	/// <summary>
 	/// Implements IActor.EyeTransform
 	/// </summary>
-	public Transform EyeTransform
+	public Transform EyeTransform => EyeSource.WorldTransform;
+
+	/// <summary>
+	/// Sets the world position for the NPC to look at
+	/// </summary>
+	/// <param name="worldPosition">World position to look at, or null to clear target</param>
+	public void SetEyeTarget( Vector3? worldPosition )
 	{
-		get
+		_eyeTarget = worldPosition;
+	}
+
+	private void UpdateEyeTarget()
+	{
+		Vector3? newTarget = null;
+
+		if ( _currentState == State.Idle )
 		{
-			return EyeSource.WorldTransform;
+			var friend = FindClosest( _friends );
+			if ( friend.IsValid() )
+				newTarget = GetEye( friend );
 		}
+		else if ( _currentTarget.IsValid() )
+		{
+			newTarget = GetEye( _currentTarget );
+		}
+
+		SetEyeTarget( newTarget );
+	}
+
+	private void UpdateEyeSystem()
+	{
+		if ( _eyeTarget is null )
+		{
+			return;
+		}
+
+		var eyePosition = EyeTransform.Position;
+		var targetPosition = _eyeTarget.Value;
+		targetPosition = targetPosition.WithZ( eyePosition.z );
+
+		var lookDirection = (targetPosition - eyePosition).Normal;
+
+		if ( lookDirection.IsNearlyZero() )
+			return;
+
+		// Always try to look at the target with head and body
+		var desiredBodyDirection = lookDirection.WithZ( 0 ).Normal;
+		var headLookDirection = lookDirection;
+
+		if ( !desiredBodyDirection.IsNearlyZero() )
+		{
+			var desiredBodyRotation = Rotation.LookAt( desiredBodyDirection, Vector3.Up );
+			var currentYaw = WorldRotation.Yaw();
+			var desiredYaw = desiredBodyRotation.Yaw();
+			var yawDifference = Angles.NormalizeAngle( desiredYaw - currentYaw );
+
+			// Only rotate if the difference is significant enough
+			if ( MathF.Abs( yawDifference ) > 5f )
+			{
+				WorldRotation = Rotation.Lerp( WorldRotation, desiredBodyRotation, BodyTurnSpeed * Time.Delta );
+			}
+		}
+
+		// Update head and eye look using Vector3 parameters
+		if ( Renderer.IsValid() )
+		{
+			// Project the head look direction forward by 1024 units to prevent steep upward angles for close objects
+			var localTargetPosition = WorldTransform.PointToLocal( eyePosition + headLookDirection * 1024f );
+
+			Renderer.Set( "aim_head", localTargetPosition.Normal );
+			Renderer.Set( "aim_eyes", localTargetPosition.Normal );
+		}
+
+		EyeSource.WorldRotation = Rotation.LookAt( headLookDirection );
 	}
 
 	private State DecideState()
@@ -401,58 +484,9 @@ public sealed class NPC : Component, IDamageable, IActor
 	private float DistanceTo( IActor actor ) =>
 		Vector3.DistanceBetween( WorldPosition, actor.WorldPosition );
 
-	private void UpdateBodyTurn()
-	{
-		if ( _currentState == State.Idle && _friends.Count == 0 )
-			return;
-
-		Vector3? look = null;
-
-		if ( _currentTarget.IsValid() )
-			look = GetEye( _currentTarget );
-		else
-			look = FindClosest( _friends ).IsValid() ? GetEye( FindClosest( _friends ) ) : null;
-
-		if ( look is null )
-			return;
-
-		var dir = (look.Value - EyeTransform.Position).WithZ( 0 ).Normal;
-		if ( dir.IsNearlyZero() ) return;
-
-		var desired = Rotation.LookAt( dir, Vector3.Up );
-		WorldRotation = Rotation.Lerp( WorldRotation, desired, 6f * Time.Delta );
-	}
-
-	private void UpdateLook()
-	{
-		Vector3? look = null;
-
-		if ( _currentState == State.Idle )
-		{
-			var friend = FindClosest( _friends );
-			if ( friend.IsValid() )
-				look = GetEye( friend );
-		}
-		else if ( _currentTarget.IsValid() )
-		{
-			look = GetEye( _currentTarget );
-		}
-
-		if ( look is null )
-		{
-			Renderer.Set( "aim_body_pitch", 0f );
-			Renderer.Set( "aim_body_yaw", 0f );
-			return;
-		}
-
-		var dir = (look.Value - EyeTransform.Position).Normal;
-		var local = WorldRotation.Inverse * Rotation.LookAt( dir );
-		var ang = local.Angles();
-
-		Renderer.Set( "aim_body_pitch", ang.pitch.Clamp( LookPitch.Min, LookPitch.Max ) );
-		Renderer.Set( "aim_body_yaw", ang.yaw.Clamp( LookYaw.Min, LookYaw.Max ) );
-	}
-
+	/// <summary>
+	/// Gets the eye position of an actor for targeting
+	/// </summary>
 	private Vector3 GetEye( IActor actor )
 	{
 		return actor.EyeTransform.Position;
