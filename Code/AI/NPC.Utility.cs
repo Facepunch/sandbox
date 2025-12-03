@@ -69,16 +69,17 @@ public sealed partial class Npc
 	/// <summary>
 	/// Create a ragdoll gameobject version of our render body.
 	/// </summary>
-	public GameObject CreateRagdoll( string name = "Ragdoll" )
+	[Rpc.Broadcast( NetFlags.OwnerOnly )]
+	public void CreateRagdoll()
 	{
-		var go = new GameObject( true, name );
-		go.Tags.Add( "ragdoll" );
-		go.WorldTransform = WorldTransform;
-
 		var originalBody = Renderer.Components.Get<SkinnedModelRenderer>();
 
 		if ( !originalBody.IsValid() )
-			return go;
+			return;
+
+		var go = new GameObject( true, "Ragdoll" );
+		go.Tags.Add( "ragdoll" );
+		go.WorldTransform = WorldTransform;
 
 		var mainBody = go.Components.Create<SkinnedModelRenderer>();
 		mainBody.CopyFrom( originalBody );
@@ -101,7 +102,5 @@ public sealed partial class Npc
 		physics.Model = mainBody.Model;
 		physics.Renderer = mainBody;
 		physics.CopyBonesFrom( originalBody, true );
-
-		return go;
 	}
 }

@@ -334,8 +334,6 @@ public sealed partial class Npc : Component, IActor
 		}
 	}
 
-	// Rotation speed tracking
-	float _previousYaw;
 	float _currentRotationSpeed;
 
 	private void UpdateAnimation()
