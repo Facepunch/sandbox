@@ -120,6 +120,7 @@ public sealed class Npc : Component, Component.IDamageable, IActor
 
 	List<IActor> _friends = new();
 	List<IActor> _enemies = new();
+	HashSet<IActor> _attackers = new(); // Remember who has attacked this NPC
 
 	IActor _currentTarget;
 	BaseCarryable _weapon;
@@ -188,7 +189,7 @@ public sealed class Npc : Component, Component.IDamageable, IActor
 		if ( AimingSkill >= 1f )
 			return targetPosition;
 
-		// Calculate maximum spread based on inverse skill level
+		// Calculate maximum spread based in verse skill level
 		// Lower skill = higher spread, distance also increases spread
 		var maxSpread = (1f - AimingSkill) * 100f;
 		var distanceMultiplier = distance / 1000f;
@@ -278,9 +279,25 @@ public sealed class Npc : Component, Component.IDamageable, IActor
 		EyeSource.WorldRotation = Rotation.LookAt( headLookDirection );
 	}
 
+	/// <summary>
+	/// Check if the NPC has a usable weapon
+	/// </summary>
+	private bool HasWeapon()
+	{
+		return _weapon is BaseWeapon weapon && weapon.IsValid();
+	}
+
 	private State DecideState()
 	{
 		var hp = Health / MaxHealth * 100f;
+
+		// For neutral NPCs without weapons, flee from attackers instead of fighting
+		if ( Relationship == Relationship.Neutral && !HasWeapon() && _attackers.Count > 0 )
+		{
+			_currentTarget = FindClosest( _attackers.Where( a => a.IsValid() && DistanceTo( a ) <= DetectionRange ).ToList() );
+			if ( _currentTarget is not null )
+				return State.Flee;
+		}
 
 		if ( hp <= FleeThreshold && _enemies.Count > 0 )
 			return State.Flee;
@@ -437,7 +454,18 @@ public sealed class Npc : Component, Component.IDamageable, IActor
 		{
 			while ( !t.IsCancellationRequested )
 			{
-				var enemy = FindClosest( _enemies );
+				// For neutral NPCs, prioritize fleeing from attackers if they have no weapon
+				IActor enemy = null;
+				if ( Relationship == Relationship.Neutral && !HasWeapon() && _attackers.Count > 0 )
+				{
+					enemy = FindClosest( _attackers.Where( a => a.IsValid() && DistanceTo( a ) <= DetectionRange ).ToList() );
+				}
+
+				if ( enemy is null )
+				{
+					enemy = FindClosest( _enemies );
+				}
+
 				if ( enemy is null ) break;
 
 				var dir = (WorldPosition - enemy.WorldPosition).Normal;
@@ -533,6 +561,15 @@ public sealed class Npc : Component, Component.IDamageable, IActor
 			}
 
 			//
+			// Revenge
+			//
+			if ( _attackers.Contains( target ) )
+			{
+				_enemies.Add( target );
+				continue;
+			}
+
+			//
 			// Friendlies and Neutrals: player is friend; hostile NPCs are enemies
 			//
 			if ( target is Player player )
@@ -605,6 +642,11 @@ public sealed class Npc : Component, Component.IDamageable, IActor
 	{
 		if ( Health <= 0 )
 			return;
+
+		if ( info.Attacker.GetComponent<IActor>() is var attacker && attacker != this )
+		{
+			_attackers.Add( attacker );
+		}
 
 		Health -= info.Damage;
 

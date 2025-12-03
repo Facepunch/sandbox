@@ -23,12 +23,16 @@
         "AttackRange": 4096,
         "BodyTurnSpeed": 6,
         "DetectionRange": 4096,
-        "EyeSource": null,
+        "EyeSource": {
+          "_type": "gameobject",
+          "go": "1a005aef-98c3-4e26-a831-f4a22f572f25"
+        },
         "FleeRange": 4096,
         "FleeThreshold": 25,
         "FollowDistance": 300,
         "FollowTolerance": 50,
         "Health": 100,
+        "IdleLookRange": 512,
         "LookPitch": "-45 45",
         "LookYaw": "-60 60",
         "MaxHealth": 100,
@@ -39,8 +43,16 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "Relationship": "Neutral",
-        "Renderer": null,
-        "WeaponPrefab": null
+        "Renderer": {
+          "_type": "component",
+          "component_id": "ab258a71-24c8-40b4-bac3-5bb77889aad7",
+          "go": "1002aa01-cd99-4c2e-bd62-1ff285953ae9",
+          "component_type": "SkinnedModelRenderer"
+        },
+        "WeaponPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/glock/glock.prefab"
+        }
       },
       {
         "__type": "Sandbox.NavMeshAgent",
@@ -1987,7 +1999,7 @@
             ]
           },
           {
-            "__guid": "15123695-dee6-4535-84fd-80790f6eb427",
+            "__guid": "2568d912-61ef-4096-a15b-eb9ff97ba1f1",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - hair_slicked_back_balding",
@@ -2004,7 +2016,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "31039acc-dfcb-456c-ad31-0bc6632c1892",
+                "__guid": "b9a2c684-a4ff-4e34-b068-45cafe2c6a72",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2055,7 +2067,7 @@
             "Children": []
           },
           {
-            "__guid": "8ddba777-44b3-4af8-afcc-9564fb94607a",
+            "__guid": "b9c4ca77-e8c3-4792-81a2-de1c26972658",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - denim_skirt_blue",
@@ -2072,7 +2084,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "ce4caa74-946a-4825-b45a-a38b99f90615",
+                "__guid": "b1ead7d9-c16a-456e-bf45-ed259fe558f2",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2123,7 +2135,7 @@
             "Children": []
           },
           {
-            "__guid": "222f3bd3-45ee-4690-b5db-a91daee43259",
+            "__guid": "f414e027-b713-4c44-a6e5-5ab0ae7b956d",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - blue_sneakers",
@@ -2140,7 +2152,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "2f8eaa4b-24fb-47f7-bfe0-21cde5e63b51",
+                "__guid": "fb9b57c4-8aee-46c1-abde-e74eb29a238a",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2191,7 +2203,7 @@
             "Children": []
           },
           {
-            "__guid": "509bd868-d5df-484d-805d-238de97a6a0c",
+            "__guid": "9815df5a-0fa1-4c27-8f37-520977730005",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - tshirt",
@@ -2208,7 +2220,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "ee72956f-138f-4e5e-ba87-89ee18435793",
+                "__guid": "649208d3-ccfe-4961-9f05-3a76ef1fac1d",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2259,7 +2271,7 @@
             "Children": []
           },
           {
-            "__guid": "e79e61a9-7e22-42e7-958d-4808d75ab813",
+            "__guid": "5491dc71-d834-423e-ac6e-fbd44107b0b1",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - nerdy_glasses",
@@ -2276,7 +2288,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "ea1f6375-eba2-4290-b40b-ead6fd97ad12",
+                "__guid": "47ace672-acdc-421f-8ff3-636e5cc6633f",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
