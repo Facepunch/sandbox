@@ -3,7 +3,7 @@
     "__guid": "8793f0d2-ee77-4701-8c5a-cb2d40046862",
     "__version": 1,
     "Flags": 0,
-    "Name": "example_npc (1)",
+    "Name": "example_npc",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
@@ -16,19 +16,17 @@
     "OwnerTransfer": 1,
     "Components": [
       {
-        "__type": "NPC",
-        "__guid": "211b353c-9670-4c13-ab96-968217f65113",
+        "__type": "Sandbox.AI.Npc",
+        "__guid": "6993eedf-c351-4859-b633-4d3a58690205",
         "__enabled": true,
-        "AttackRange": 2048,
-        "CurrentRelationship": "Hostile",
-        "DetectionRange": 512,
-        "EyeSource": {
-          "_type": "gameobject",
-          "go": "1a005aef-98c3-4e26-a831-f4a22f572f25"
-        },
-        "FleeRange": 200,
+        "AimingSkill": 0.5,
+        "AttackRange": 4096,
+        "BodyTurnSpeed": 6,
+        "DetectionRange": 4096,
+        "EyeSource": null,
+        "FleeRange": 4096,
         "FleeThreshold": 25,
-        "FollowDistance": 128,
+        "FollowDistance": 300,
         "FollowTolerance": 50,
         "Health": 100,
         "LookPitch": "-45 45",
@@ -40,16 +38,9 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "Renderer": {
-          "_type": "component",
-          "component_id": "ab258a71-24c8-40b4-bac3-5bb77889aad7",
-          "go": "1002aa01-cd99-4c2e-bd62-1ff285953ae9",
-          "component_type": "SkinnedModelRenderer"
-        },
-        "WeaponPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/mp5/mp5.prefab"
-        }
+        "Relationship": "Neutral",
+        "Renderer": null,
+        "WeaponPrefab": null
       },
       {
         "__type": "Sandbox.NavMeshAgent",
@@ -72,6 +63,31 @@
         "Separation": 1,
         "UpdatePosition": true,
         "UpdateRotation": false
+      },
+      {
+        "__type": "Sandbox.BoxCollider",
+        "__guid": "00718541-cbed-4057-8165-615c6489419e",
+        "__enabled": true,
+        "Center": "0,0,35",
+        "ColliderFlags": 0,
+        "Elasticity": null,
+        "Friction": null,
+        "IsTrigger": false,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnObjectTriggerEnter": null,
+        "OnObjectTriggerExit": null,
+        "OnTriggerEnter": null,
+        "OnTriggerExit": null,
+        "RollingResistance": null,
+        "Scale": "25,25,70",
+        "Static": false,
+        "Surface": null,
+        "SurfaceVelocity": "0,0,0"
       }
     ],
     "Children": [
@@ -1971,7 +1987,7 @@
             ]
           },
           {
-            "__guid": "ef8ac204-1901-4f4a-a493-106ca2540d41",
+            "__guid": "15123695-dee6-4535-84fd-80790f6eb427",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - hair_slicked_back_balding",
@@ -1988,7 +2004,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "495a1355-2a48-4674-8fc8-7733841c5cfe",
+                "__guid": "31039acc-dfcb-456c-ad31-0bc6632c1892",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2039,7 +2055,7 @@
             "Children": []
           },
           {
-            "__guid": "169a1441-feac-4d80-9842-0d883f6bd5c0",
+            "__guid": "8ddba777-44b3-4af8-afcc-9564fb94607a",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - denim_skirt_blue",
@@ -2056,7 +2072,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "f6aedad9-af04-48c2-a533-950db6fb1025",
+                "__guid": "ce4caa74-946a-4825-b45a-a38b99f90615",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2107,7 +2123,7 @@
             "Children": []
           },
           {
-            "__guid": "cf4c5878-66ea-40bc-81a1-3d0b0c34c826",
+            "__guid": "222f3bd3-45ee-4690-b5db-a91daee43259",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - blue_sneakers",
@@ -2124,7 +2140,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "d8d02fa1-f2ce-45a6-9b60-a26609a2a92e",
+                "__guid": "2f8eaa4b-24fb-47f7-bfe0-21cde5e63b51",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2175,7 +2191,7 @@
             "Children": []
           },
           {
-            "__guid": "ca56af0e-15bd-436e-a6ee-a66f7fcff8e7",
+            "__guid": "509bd868-d5df-484d-805d-238de97a6a0c",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - tshirt",
@@ -2192,7 +2208,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "80ebbfcb-ff30-4dbf-9c8d-1b4ef6a1dc39",
+                "__guid": "ee72956f-138f-4e5e-ba87-89ee18435793",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
@@ -2243,7 +2259,7 @@
             "Children": []
           },
           {
-            "__guid": "c532b6ab-8734-4465-ae5c-415f1b05869a",
+            "__guid": "e79e61a9-7e22-42e7-958d-4808d75ab813",
             "__version": 1,
             "Flags": 0,
             "Name": "Clothing - nerdy_glasses",
@@ -2260,7 +2276,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "abd85ba8-b8e0-4107-9864-0c717f5d9ae4",
+                "__guid": "ea1f6375-eba2-4290-b40b-ead6fd97ad12",
                 "__enabled": true,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,

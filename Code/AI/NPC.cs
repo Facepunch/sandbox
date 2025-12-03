@@ -1,26 +1,47 @@
-using Sandbox;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using static Sandbox.Component;
+﻿using System.Threading;
+
+namespace Sandbox.AI;
 
 /// <summary>
-/// The goal of this class is to provide a configurable easy NPC.
+/// Basic relationship information for NPCs
 /// </summary>
-public sealed class NPC : Component, IDamageable, IActor
+public enum Relationship
+{
+	Neutral,
+	Friendly,
+	Hostile
+}
+
+/// <summary>
+/// A finite amount of states for a NPC. We could expand on this later.
+/// </summary>
+public enum State
+{
+	Idle,
+	Move,
+	Attack,
+	Flee,
+	Follow,
+	KeepDistance
+}
+
+/// <summary>
+/// The goal of this class is to provide a mini-framework for NPCs. Right now it's a simple state machine with perception, and a bunch of configurable properties.
+/// </summary>
+[Title( "NPC" ), Icon( "🥸" )]
+public sealed class Npc : Component, Component.IDamageable, IActor
 {
 	[RequireComponent] NavMeshAgent NavMeshAgent { get; set; }
 
 	/// <summary>
 	/// The body of the npc
 	/// </summary>
-	[Property] public SkinnedModelRenderer Renderer { get; set; }
+	[Property, Group( "Body" )] public SkinnedModelRenderer Renderer { get; set; }
 
 	/// <summary>
 	/// Where are their eyes?
 	/// </summary>
-	[Property] public GameObject EyeSource { get; set; }
+	[Property, Group( "Body" )] public GameObject EyeSource { get; set; }
 
 	/// <summary>
 	/// Optionally spawn a weapon in the NPC's hands that they can use
@@ -30,103 +51,82 @@ public sealed class NPC : Component, IDamageable, IActor
 	/// <summary>
 	/// The NPC's relationship to other NPCs and players
 	/// </summary>
-	[Property] public Relationship CurrentRelationship { get; set; } = Relationship.Neutral;
+	[Property] public Relationship Relationship { get; set; } = Relationship.Neutral;
 
 	/// <summary>
 	/// How healthy is this npc
 	/// </summary>
-	[Property] public float Health { get; set; } = 100f;
+	[Property, Range( 1, 100f )] public float Health { get; set; } = 100f;
 
 	/// <summary>
 	/// The max hp, used for thresholds for fleeing right now
 	/// </summary>
-	[Property] public float MaxHealth { get; set; } = 100f;
+	[Property, Range( 1, 100f )] public float MaxHealth { get; set; } = 100f;
 
 	/// <summary>
 	/// How far away do we search for targets
 	/// </summary>
-	[Property] public float DetectionRange { get; set; } = 4096f;
+	[Property, Group( "Skill" )] public float DetectionRange { get; set; } = 4096f;
+
+	/// <summary>
+	/// How far away can the NPC look at friendlies when idle
+	/// </summary>
+	[Property, Group( "Body" ), Range( 64f, 1024f )] public float IdleLookRange { get; set; } = 512f;
 
 	/// <summary>
 	/// The health threshold for a npc running away from its target  
 	/// </summary>
-	[Property] public float FleeThreshold { get; set; } = 25f;
+	[Property, Group( "Skill" )] public float FleeThreshold { get; set; } = 25f;
 
 	/// <summary>
 	/// How far does the NPC flee
 	/// </summary>
-	[Property] public float FleeRange { get; set; } = 4096f;
+	[Property, Group( "Skill" )] public float FleeRange { get; set; } = 4096f;
 
 	/// <summary>
 	/// Constraint for the look pitch
 	/// </summary>
-	[Property] public RangedFloat LookPitch = new( -45f, 45f );
+	[Property, Group( "Body" )] public RangedFloat LookPitch = new( -45f, 45f );
 
 	/// <summary>
 	/// Constraint for the look yaw
 	/// </summary>
-	[Property] public RangedFloat LookYaw = new( -60f, 60f );
+	[Property, Group( "Body" )] public RangedFloat LookYaw = new( -60f, 60f );
 
 	/// <summary>
 	/// How fast the body turns to follow the eye target
 	/// </summary>
-	[Property] public float BodyTurnSpeed { get; set; } = 6f;
-
-	/// <summary>
-	/// Minimum angle difference (in degrees) before the body will turn to follow the target
-	/// </summary>
-	[Property] public float FootShuffleThreshold { get; set; } = 45f;
+	[Property, Range( 1, 16f ), Group( "Body" )] public float BodyTurnSpeed { get; set; } = 6f;
 
 	/// <summary>
 	/// NPC's aiming skill level (0.0 = terrible aim, 1.0 = perfect aim)
 	/// </summary>
-	[Property, Range( 0, 1 ), Step( 0.05f )] public float AimingSkill { get; set; } = 0.5f;
+	[Property, Range( 0, 1 ), Step( 0.05f ), Group( "Skill" )] public float AimingSkill { get; set; } = 0.5f;
 
 	/// <summary>
 	/// How far away do we start shooting at a target -- this could probably be on the weapon
 	/// </summary>
-	[Property] private float AttackRange { get; set; } = 4096;
+	[Property, Range( 256, 16834 ), Step( 1 ), Group( "Skill" )] private float AttackRange { get; set; } = 4096;
 
 	/// <summary>
 	/// If we're following a friendly, what's the desired distance away from them? The npc will try to abide by this
 	/// </summary>
-	[Property] public float FollowDistance { get; set; } = 300f;
+	[Property, Range( 64, 512f )] public float FollowDistance { get; set; } = 300f;
 
 	/// <summary>
 	/// Distance tolerance so they don't just go back and forth 
 	/// </summary>
-	[Property] public float FollowTolerance { get; set; } = 50f;
+	[Property, Range( 4f, 64f )] public float FollowTolerance { get; set; } = 50f;
 
-	private readonly List<IActor> _friends = new();
-	private readonly List<IActor> _enemies = new();
+	List<IActor> _friends = new();
+	List<IActor> _enemies = new();
 
-	private IActor _currentTarget;
-	private BaseCarryable _weapon;
+	IActor _currentTarget;
+	BaseCarryable _weapon;
+	Vector3? _eyeTarget;
 
-	private CancellationTokenSource _cts;
-
-	/// <summary>
-	/// Current eye target position in world space. Null means no target.
-	/// </summary>
-	private Vector3? _eyeTarget;
-
-	public enum Relationship
-	{
-		Neutral,
-		Friendly,
-		Hostile
-	}
-
-	public enum State
-	{
-		Idle,
-		Move,
-		Attack,
-		Flee,
-		Follow
-	}
-
-	private State _currentState = State.Idle;
+	CancellationTokenSource _cts;
+	State _currentState = State.Idle;
 
 	protected override void OnStart()
 	{
@@ -161,7 +161,7 @@ public sealed class NPC : Component, IDamageable, IActor
 			UpdateState();
 		}
 
-		Animate();
+		UpdateAnimation();
 	}
 
 	/// <summary>
@@ -190,7 +190,7 @@ public sealed class NPC : Component, IDamageable, IActor
 
 		// Calculate maximum spread based on inverse skill level
 		// Lower skill = higher spread, distance also increases spread
-		var maxSpread = (1f - AimingSkill) * 100f; 
+		var maxSpread = (1f - AimingSkill) * 100f;
 		var distanceMultiplier = distance / 1000f;
 		var totalSpread = maxSpread * (1f + distanceMultiplier);
 
@@ -210,7 +210,7 @@ public sealed class NPC : Component, IDamageable, IActor
 
 		if ( _currentState == State.Idle )
 		{
-			var friend = FindClosest( _friends );
+			var friend = FindClosestWithinRange( _friends, IdleLookRange );
 			if ( friend.IsValid() )
 				newTarget = GetEye( friend );
 		}
@@ -294,9 +294,9 @@ public sealed class NPC : Component, IDamageable, IActor
 		}
 
 		//
-		// Only follow players
+		// Follow behavior for friendly NPCs
 		//
-		if ( CurrentRelationship == Relationship.Friendly )
+		if ( Relationship == Relationship.Friendly )
 		{
 			_currentTarget = FindClosest( _friends );
 			if ( _currentTarget is not null && _currentTarget is Player )
@@ -304,6 +304,23 @@ public sealed class NPC : Component, IDamageable, IActor
 				var d = DistanceTo( _currentTarget );
 				if ( d > FollowDistance + FollowTolerance || d < FollowDistance - FollowTolerance )
 					return State.Follow;
+			}
+		}
+
+		//
+		// Keep distance behavior for neutral NPCs - avoid getting too close to players
+		//
+		if ( Relationship == Relationship.Neutral )
+		{
+			var closestPlayer = FindClosest( _friends.Where( f => f is Player ).ToList() );
+			if ( closestPlayer is not null )
+			{
+				var d = DistanceTo( closestPlayer );
+				if ( d < FollowDistance - FollowTolerance )
+				{
+					_currentTarget = closestPlayer;
+					return State.KeepDistance;
+				}
 			}
 		}
 
@@ -329,6 +346,7 @@ public sealed class NPC : Component, IDamageable, IActor
 			case State.Attack: _ = AttackLoop( t ); break;
 			case State.Flee: _ = FleeLoop( t ); break;
 			case State.Follow: _ = FollowLoop( t ); break;
+			case State.KeepDistance: _ = KeepDistanceLoop( t ); break;
 		}
 	}
 
@@ -372,7 +390,6 @@ public sealed class NPC : Component, IDamageable, IActor
 		}
 		catch { }
 	}
-
 
 	[Rpc.Broadcast( NetFlags.HostOnly )]
 	private void TriggerAnimation( string animation )
@@ -455,6 +472,29 @@ public sealed class NPC : Component, IDamageable, IActor
 		catch { }
 	}
 
+	private async Task KeepDistanceLoop( CancellationToken t )
+	{
+		try
+		{
+			while ( !t.IsCancellationRequested )
+			{
+				if ( !_currentTarget.IsValid() )
+					break;
+
+				var d = DistanceTo( _currentTarget );
+				if ( d >= FollowDistance - FollowTolerance )
+					break;
+
+				// Move away from the player to maintain desired distance
+				var dir = (WorldPosition - _currentTarget.WorldPosition).Normal;
+				NavMeshAgent.MoveTo( WorldPosition + dir * (FollowDistance - d + FollowTolerance) );
+
+				await Task.Delay( 150, t );
+			}
+		}
+		catch { }
+	}
+
 	TimeSince _timeSinceGatheredTargets;
 	List<IActor> _potentialTargets = new();
 
@@ -486,28 +526,32 @@ public sealed class NPC : Component, IDamageable, IActor
 			//
 			// Hostiles: everyone is an enemy
 			//
-			if ( CurrentRelationship is Relationship.Hostile )
+			if ( Relationship is Relationship.Hostile )
 			{
 				_enemies.Add( target );
 				continue;
 			}
 
 			//
-			// Friendlies: player is friend; hostile NPCs are enemies; ignore non-hostile NPCs for follow
+			// Friendlies and Neutrals: player is friend; hostile NPCs are enemies
 			//
 			if ( target is Player player )
 			{
-				if ( CurrentRelationship is Relationship.Friendly )
+				if ( Relationship is Relationship.Friendly or Relationship.Neutral )
 					_friends.Add( player );
 
 				continue;
 			}
 
-			if ( target is NPC npc )
+			if ( target is Npc npc )
 			{
-				if ( npc.CurrentRelationship is Relationship.Hostile )
+				if ( npc.Relationship is Relationship.Hostile )
 				{
 					_enemies.Add( npc );
+				}
+				else if ( Relationship is Relationship.Neutral && npc.Relationship is Relationship.Friendly or Relationship.Neutral )
+				{
+					_friends.Add( npc );
 				}
 			}
 		}
@@ -517,6 +561,15 @@ public sealed class NPC : Component, IDamageable, IActor
 	{
 		return list
 			.Where( v => v.IsValid() )
+			.OrderBy( DistanceTo )
+			.FirstOrDefault();
+	}
+
+	private IActor FindClosestWithinRange( List<IActor> list, float maxRange )
+	{
+		return list
+			.Where( v => v.IsValid() )
+			.Where( v => DistanceTo( v ) <= maxRange )
 			.OrderBy( DistanceTo )
 			.FirstOrDefault();
 	}
@@ -532,7 +585,7 @@ public sealed class NPC : Component, IDamageable, IActor
 		return actor.EyeTransform.Position;
 	}
 
-	private void Animate()
+	private void UpdateAnimation()
 	{
 		if ( !Renderer.IsValid() )
 			return;
