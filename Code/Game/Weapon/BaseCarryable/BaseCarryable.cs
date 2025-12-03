@@ -259,13 +259,13 @@ public partial class BaseCarryable : Component, IKillIcon
 		if ( !attack.Target.IsValid() )
 			return;
 
-		if ( !Owner.IsValid() )
+		if ( !Actor.IsValid() )
 			return;
 
 		var damagable = attack.Target.GetComponentInParent<IDamageable>();
 		if ( damagable is not null )
 		{
-			var info = new DamageInfo( attack.Damage, Owner.GameObject, GameObject );
+			var info = new DamageInfo( attack.Damage, Actor.GameObject, GameObject );
 			info.Position = attack.Position;
 			info.Origin = attack.Origin;
 			info.Tags = attack.Tags;
