@@ -85,19 +85,6 @@ public partial class BaseWeapon : BaseCarryable
 		}
 	}
 
-	/// <summary>
-	/// Are we allowed to shoot this weapon? Can be overriden per-weapon
-	/// </summary>
-	/// <returns></returns>
-	public virtual bool CanShoot()
-	{
-		if ( !HasAmmo() ) return false;
-		if ( IsReloading() ) return false;
-		if ( TimeUntilNextShotAllowed > 0 ) return false;
-
-		return true;
-	}
-
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )
 	{
 		DrawCrosshair( painter, crosshair );
@@ -137,7 +124,75 @@ public partial class BaseWeapon : BaseCarryable
 		{
 			OnReloadStart();
 		}
+
+		if ( CanPrimaryAttack() && WantsPrimaryAttack() )
+		{
+			PrimaryAttack();
+		}
+
+		if ( CanSecondaryAttack() && WantsSecondaryAttack() )
+		{
+			SecondaryAttack();
+		}
 	}
+
+	protected virtual bool WantsSecondaryAttack()
+	{
+		return Input.Down( "attack2" );
+	}
+
+	protected virtual bool WantsPrimaryAttack()
+	{
+		return Input.Down( "attack1" );
+	}
+
+	/// <summary>
+	/// Override to perform the weapon's primary attack. Default no-op.
+	/// </summary>
+	public virtual void PrimaryAttack()
+	{
+	}
+
+	/// <summary>
+	/// Override to perform the weapon's secondary attack. Default no-op.
+	/// </summary>
+	public virtual void SecondaryAttack()
+	{
+	}
+
+	/// <summary>
+	/// Determines if the primary attack should trigger
+	/// </summary>
+	public virtual bool CanPrimaryAttack()
+	{
+		if ( !HasAmmo() ) return false;
+		if ( IsReloading() ) return false;
+		if ( TimeUntilNextShotAllowed > 0 ) return false;
+
+		return true;
+	}
+
+	/// <summary>
+	/// Determines if the secondary attack should trigger
+	/// </summary>
+	public virtual bool CanSecondaryAttack()
+	{
+		if ( !HasAmmo() ) return false;
+		if ( IsReloading() ) return false;
+		if ( TimeUntilNextShotAllowed > 0 ) return false;
+
+		return true;
+	}
+
+	/// <summary>
+	/// Override the primary fire rate
+	/// </summary>
+	protected virtual float GetPrimaryFireRate() => 0.1f;
+
+	/// <summary>
+	/// Override the secondary fire rate
+	/// </summary>
+	protected virtual float GetSecondaryFireRate() => 0.2f;
 
 	public virtual void DrawCrosshair( HudPainter hud, Vector2 center )
 	{

@@ -5,8 +5,9 @@ namespace Sandbox;
 /// </summary>
 public interface IActor : IValid
 {
-	public GameObject GameObject { get; }
-	public Vector3 WorldPosition { get; }
-	public T GetComponent<T>( bool includeDisabled = false );
-	public T GetComponentInParent<T>( bool includeDisabled = false, bool includeSelf = true );
+	Transform EyeTransform { get; }
+	GameObject GameObject { get; }
+	Vector3 WorldPosition { get; }
+	T GetComponent<T>( bool includeDisabled = false );
+	T GetComponentInParent<T>( bool includeDisabled = false, bool includeSelf = true );
 }

@@ -67,12 +67,6 @@ public sealed class NPC : Component, IDamageable, IActor
 	/// </summary>
 	[Property] public RangedFloat LookYaw = new( -60f, 60f );
 
-	//
-	// todo: Delete me and use the weapon's shit instead
-	//
-	[Property] private float AttackDamage { get; set; } = 25f;
-	[Property] private float AttackRate { get; set; } = 1f;
-
 	/// <summary>
 	/// How far away do we start shooting at a target -- this could probably be on the weapon
 	/// </summary>
@@ -148,6 +142,17 @@ public sealed class NPC : Component, IDamageable, IActor
 		}
 
 		Animate();
+	}
+
+	/// <summary>
+	/// Implements IActor.EyeTransform
+	/// </summary>
+	public Transform EyeTransform
+	{
+		get
+		{
+			return EyeSource.WorldTransform;
+		}
 	}
 
 	private State DecideState()
@@ -245,6 +250,19 @@ public sealed class NPC : Component, IDamageable, IActor
 		catch { }
 	}
 
+
+	[Rpc.Broadcast( NetFlags.HostOnly )]
+	private void TriggerAttack()
+	{
+		Renderer?.Set( "b_attack", true );
+	}
+
+	[Rpc.Broadcast( NetFlags.HostOnly )]
+	private void TriggerReload()
+	{
+		Renderer?.Set( "b_reload", true );
+	}
+
 	private async Task AttackLoop( CancellationToken t )
 	{
 		try
@@ -258,12 +276,22 @@ public sealed class NPC : Component, IDamageable, IActor
 
 				NavMeshAgent.MoveTo( WorldPosition );
 
-				TriggerAttack();
+				if ( _weapon is BaseWeapon weapon )
+				{
+					if ( weapon.CanPrimaryAttack() )
+					{
+						TriggerAttack();
+						weapon.PrimaryAttack();
+					}
 
-				if ( _weapon.IsValid() && _weapon is BaseWeapon weapon && weapon.CanShoot() )
-					PrimaryAttack( _currentTarget );
+					if ( !weapon.HasAmmo() )
+					{
+						TriggerReload();
+						await weapon.ReloadAsync( _cts.Token );
+					}
+				}
 
-				await Task.Delay( (int)(1000f / AttackRate), t );
+				await Task.Delay( 100, t );
 			}
 		}
 		catch { }
@@ -434,7 +462,7 @@ public sealed class NPC : Component, IDamageable, IActor
 	private Vector3 GetEye( IActor actor = null )
 	{
 		if ( !actor.IsValid() )
-			return EyeSource?.WorldPosition ?? (WorldPosition + Vector3.Up * 64f);
+			return EyeTransform.Position;
 
 		//
 		// Bit shit, might need a common method here
@@ -463,35 +491,6 @@ public sealed class NPC : Component, IDamageable, IActor
 		Renderer.Set( "move_y", side );
 		Renderer.Set( "move_speed", vel.Length );
 		Renderer.Set( "holdtype", _weapon.IsValid() ? (int)_weapon.HoldType : 0 );
-	}
-
-	[Rpc.Broadcast( NetFlags.HostOnly )]
-	private void TriggerAttack()
-	{
-		Renderer?.Set( "b_attack", true );
-	}
-
-	private void PrimaryAttack( IActor target )
-	{
-		var muzzle = _weapon.MuzzleTransform.WorldPosition;
-		var dir = (GetEye( target ) - muzzle).Normal;
-
-		var tr = Scene.Trace
-			.Ray( new Ray( muzzle, dir ), AttackRange * 2f )
-			.IgnoreGameObjectHierarchy( GameObject )
-			.UseHitboxes()
-			.Run();
-
-		if ( target.GetComponentInParent<IDamageable>() is not IDamageable dmg )
-			return;
-
-		var info = new DamageInfo( AttackDamage, GameObject, _weapon.IsValid() ? _weapon.GameObject : GameObject )
-		{
-			Position = tr.HitPosition,
-			Origin = WorldPosition
-		};
-
-		dmg.OnDamage( info );
 	}
 
 	public void OnDamage( in DamageInfo info )

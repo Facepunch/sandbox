@@ -5,55 +5,28 @@ public class Mp5Weapon : BaseBulletWeapon
 	[Property] public float TimeBetweenShots { get; set; } = 0.1f;
 	[Property] public float Damage { get; set; } = 12.0f;
 	[Property] public GameObject ProjectilePrefab { get; set; }
-	[Property] AmmoResource ProjectileAmmoResource { get; set; }
 
-	bool _isShooting;
+	protected TimeSince TimeSinceShoot = 0;
 
-	public override void OnControl( Player player )
+	protected override float GetPrimaryFireRate() => TimeBetweenShots;
+
+	public override bool CanPrimaryAttack()
 	{
-		base.OnControl( player );
+		if ( !HasAmmo() ) return false;
+		if ( IsReloading() ) return false;
+		if ( TimeUntilNextShotAllowed > 0 ) return false;
 
-		_isShooting = Input.Down( "attack1" );
-		if ( _isShooting )
-		{
-			if ( Input.Pressed( "Attack1" ) )
-			{
-				//StartAttack();
-			}
-
-			ShootBullet( player );
-		}
-		else if ( Input.Released( "attack1" ) )
-		{
-			//StopAttack();
-		}
+		return true;
 	}
 
-	public override bool IsInUse() => _isShooting;
-
-	/// <summary>
-	/// How long until we can shoot again
-	/// </summary>
-	protected TimeUntil TimeUntilNextSecondaryShotAllowed;
-
-	/// <summary>
-	/// Adds a delay, making it so we can't shoot for the specified time
-	/// </summary>
-	/// <param name="seconds"></param>
-	public void AddSecondaryShootDelay( float seconds )
+	public override void PrimaryAttack()
 	{
-		TimeUntilNextSecondaryShotAllowed = seconds;
+		ShootBullet();
 	}
 
-	public override bool CanSwitch()
+	private void ShootBullet()
 	{
-		return base.CanSwitch() || HasAmmo( ProjectileAmmoResource );
-	}
-
-
-	public void ShootBullet( Player player )
-	{
-		if ( !CanShoot() )
+		if ( !HasAmmo() || IsReloading() || TimeUntilNextShotAllowed > 0 )
 		{
 			TryAutoReload();
 			return;
@@ -68,11 +41,11 @@ public class Mp5Weapon : BaseBulletWeapon
 		AddShootDelay( TimeBetweenShots );
 
 		var aimConeAmount = GetAimConeAmount();
-		var forward = player.EyeTransform.Rotation.Forward.WithAimCone( 0.5f + aimConeAmount * 4f, 0.25f + aimConeAmount * 4f );
+		var forward = Actor.EyeTransform.Rotation.Forward.WithAimCone( 0.5f + aimConeAmount * 4f, 0.25f + aimConeAmount * 4f );
 		var bulletRadius = 1;
 
-		var tr = Scene.Trace.Ray( player.EyeTransform.ForwardRay with { Forward = forward }, 4096 )
-							.IgnoreGameObjectHierarchy( player.GameObject )
+		var tr = Scene.Trace.Ray( Actor.EyeTransform.ForwardRay with { Forward = forward }, 4096 )
+							.IgnoreGameObjectHierarchy( Actor.GameObject )
 							.WithoutTags( "playercontroller" ) // don't hit playercontroller colliders
 							.Radius( bulletRadius )
 							.UseHitboxes()
@@ -82,9 +55,14 @@ public class Mp5Weapon : BaseBulletWeapon
 		TraceAttack( TraceAttackInfo.From( tr, Damage ) );
 		TimeSinceShoot = 0;
 
-		player.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.1f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
+		if ( !Owner.IsValid() )
+		{
+			return;
+		}
 
-		if ( !player.Controller.ThirdPerson && player.IsLocalPlayer )
+		Owner.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.1f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
+
+		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
 		{
 			new Sandbox.CameraNoise.Recoil( 1.0f, 1 );
 		}
@@ -102,22 +80,12 @@ public class Mp5Weapon : BaseBulletWeapon
 		var len = 12;
 		var w = 2f;
 
-		var color = !CanShoot() ? CrosshairNoShoot : CrosshairCanShoot;
+		var color = !HasAmmo() || IsReloading() || TimeUntilNextShotAllowed > 0 ? CrosshairNoShoot : CrosshairCanShoot;
 
 		hud.SetBlendMode( BlendMode.Lighten );
 		hud.DrawLine( center + Vector2.Left * (len + gap), center + Vector2.Left * gap, w, color );
 		hud.DrawLine( center - Vector2.Left * (len + gap), center - Vector2.Left * gap, w, color );
 		hud.DrawLine( center + Vector2.Up * (len + gap), center + Vector2.Up * gap, w, color );
 		hud.DrawLine( center - Vector2.Up * (len + gap), center - Vector2.Up * gap, w, color );
-	}
-
-	Texture ammoIcon = Texture.Load( $"ui/bullet_icon.png" );
-
-	public override void DrawAmmo( HudPainter hud, Vector2 bottomright )
-	{
-		base.DrawAmmo( hud, bottomright );
-
-		var ammoCount = Owner.GetAmmoCount( ProjectileAmmoResource );
-		hud.DrawHudElement( $"{ammoCount}", bottomright - (new Vector2( 0, 64f ) * Hud.Scale), ammoIcon, 30f, TextFlag.RightCenter );
 	}
 }

@@ -73,7 +73,7 @@ public partial class BaseWeapon
 		Owner.Controller.Renderer.Set( "b_reload", true );
 	}
 
-	protected virtual async Task ReloadAsync( CancellationToken ct )
+	public virtual async Task ReloadAsync( CancellationToken ct )
 	{
 		try
 		{
@@ -86,18 +86,23 @@ public partial class BaseWeapon
 				await Task.DelaySeconds( ReloadTime, ct );
 
 				var owner = Owner;
-				if ( !owner.IsValid() )
-					break;
+				if ( owner.IsValid() )
+				{
+					var needed = IncrementalReloading ? 1 : (ClipMaxSize - ClipContents);
+					var available = owner.SubtractAmmoCount( AmmoResource, needed );
 
-				var needed = IncrementalReloading ? 1 : (ClipMaxSize - ClipContents);
-				var available = owner.SubtractAmmoCount( AmmoResource, needed );
+					if ( available <= 0 )
+						break;
 
-				if ( available <= 0 )
-					break;
+					ClipContents += available;
+				}
+				else
+				{
+					ClipContents = ClipMaxSize;
+				}
 
 				ViewModel?.RunEvent<ViewModel>( x => x.OnIncrementalReload() );
 
-				ClipContents += available;
 			}
 
 			if ( ClipContents > 0 )

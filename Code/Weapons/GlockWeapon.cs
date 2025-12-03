@@ -6,22 +6,31 @@ public class GlockWeapon : BaseBulletWeapon
 	[Property] public float PrimaryFireRate { get; set; } = 0.15f;
 	[Property] public float SecondaryFireRate { get; set; } = 0.2f;
 
-	public override void OnControl( Player player )
+	protected TimeSince TimeSinceShoot = 0f;
+
+	protected override float GetPrimaryFireRate() => PrimaryFireRate;
+	protected override float GetSecondaryFireRate() => SecondaryFireRate;
+
+	protected override bool WantsPrimaryAttack()
 	{
-		base.OnControl( player );
-
-		bool secondary = Input.Down( "attack2" );
-		float fireRate = secondary ? SecondaryFireRate : PrimaryFireRate;
-
-		if ( IsInputQueued( () => secondary ? secondary : Input.Pressed( "Attack1" ), fireRate ) )
-		{
-			ShootBullet( player, secondary, fireRate );
-		}
+		return Input.Pressed( "attack1" );
 	}
 
-	public void ShootBullet( Player player, bool secondary, float fireRate )
+	public override void PrimaryAttack()
 	{
-		if ( !CanShoot() )
+		ShootBullet( false, PrimaryFireRate );
+	}
+
+	public override void SecondaryAttack()
+	{
+		ShootBullet( true, SecondaryFireRate );
+	}
+
+	private void ShootBullet( bool secondary, float fireRate )
+	{
+		// Primary/secondary gating already handled by CanPrimary/CanSecondary,
+		// but still respect auto-reload and ammo consumption here.
+		if ( !HasAmmo() || IsReloading() || TimeUntilNextShotAllowed > 0 )
 		{
 			TryAutoReload();
 			return;
@@ -35,11 +44,11 @@ public class GlockWeapon : BaseBulletWeapon
 		var aimConeAmount = GetAimConeAmount();
 		if ( secondary ) aimConeAmount *= 2; // Secondary fire has more spread
 
-		var forward = player.EyeTransform.Rotation.Forward.WithAimCone( 0.1f + aimConeAmount * 3f, 0.1f + aimConeAmount * 3f );
+		var forward = Actor.EyeTransform.Rotation.Forward.WithAimCone( 0.1f + aimConeAmount * 3f, 0.1f + aimConeAmount * 3f );
 		var bulletRadius = 1;
 
-		var tr = Scene.Trace.Ray( player.EyeTransform.ForwardRay with { Forward = forward }, 4096 )
-							.IgnoreGameObjectHierarchy( player.GameObject )
+		var tr = Scene.Trace.Ray( Actor.EyeTransform.ForwardRay with { Forward = forward }, 4096 )
+							.IgnoreGameObjectHierarchy( Actor.GameObject )
 							.WithoutTags( "playercontroller" ) // don't hit playercontroller colliders
 							.Radius( bulletRadius )
 							.UseHitboxes()
@@ -49,9 +58,14 @@ public class GlockWeapon : BaseBulletWeapon
 		TraceAttack( TraceAttackInfo.From( tr, Damage ) );
 		TimeSinceShoot = 0;
 
-		player.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.5f ), Random.Shared.Float( -1, 1 ) * 0.4f, 0 );
+		if ( !Owner.IsValid() )
+		{
+			return;
+		}
 
-		if ( !player.Controller.ThirdPerson && player.IsLocalPlayer )
+		Owner.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.5f ), Random.Shared.Float( -1, 1 ) * 0.4f, 0 );
+
+		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
 		{
 			_ = new Sandbox.CameraNoise.Recoil( 1f, 0.3f );
 		}
@@ -65,7 +79,7 @@ public class GlockWeapon : BaseBulletWeapon
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
-		Color color = !CanShoot() ? CrosshairNoShoot : CrosshairCanShoot;
+		Color color = !HasAmmo() || IsReloading() || TimeUntilNextShotAllowed > 0 ? CrosshairNoShoot : CrosshairCanShoot;
 
 		hud.SetBlendMode( BlendMode.Normal );
 		hud.DrawCircle( center, 5, Color.Black );
