@@ -42,7 +42,7 @@ public class Balloon : ToolMode
 			ShootEffects( select );
 		}
 
-		DebugOverlay.Model( model, transform: placementTx, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
+		DebugOverlay.Model( model, transform: placementTx, castShadows: true, color: Tint.WithAlpha( 0.9f ) );
 	}
 
 	[Rpc.Host]
