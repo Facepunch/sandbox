@@ -26,6 +26,10 @@ public sealed partial class Npc : Component.IDamageable
 
 		Health -= info.Damage;
 
+		// Increase scared level based on damage taken
+		var scareIncrease = info.Damage * DamageScareMultiplier;
+		AddScare( scareIncrease );
+
 		if ( Health >= 1 )
 			return;
 

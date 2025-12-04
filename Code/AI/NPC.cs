@@ -1,4 +1,6 @@
-﻿namespace Sandbox.AI;
+﻿using System.Text.Json.Serialization;
+
+namespace Sandbox.AI;
 
 /// <summary>
 /// The goal of this class is to provide a mini-framework for NPCs. Right now it's a simple state machine with perception, and a bunch of configurable properties.
@@ -39,14 +41,40 @@ public sealed partial class Npc : Component, IActor
 	[Property, Group( "Body" ), Range( 64f, 1024f )] public float IdleLookRange { get; set; } = 512f;
 
 	/// <summary>
-	/// The health threshold for a npc running away from its target  
-	/// </summary>
-	[Property, Group( "Skill" )] public float FleeThreshold { get; set; } = 25f;
-
-	/// <summary>
 	/// How far does the NPC flee
 	/// </summary>
 	[Property, Group( "Skill" )] public float FleeRange { get; set; } = 4096f;
+
+	/// <summary>
+	/// Current scared level (0-100) - affects likelihood to flee
+	/// </summary>
+	[Property, ReadOnly, JsonIgnore, Range( 0f, 100f ), Group( "Data" )] public float ScaredLevel { get; private set; }
+
+	/// <summary>
+	/// How quickly scared level decreases over time (per second)
+	/// </summary>
+	[Property, Range( 1f, 20f ), Group( "Skill" )] public float ScaredDecayRate { get; set; } = 5f;
+
+	/// <summary>
+	/// Scared level at which NPC will start considering fleeing
+	/// </summary>
+	[Property, Range( 20f, 80f ), Group( "Skill" )] public float ScaredFleeThreshold { get; set; } = 50f;
+
+	/// <summary>
+	/// How much damage increases scared level (per point of damage)
+	/// </summary>
+	[Property, Range( 0.5f, 5f ), Group( "Skill" )] public float DamageScareMultiplier { get; set; } = 2f;
+
+	/// <summary>
+	/// Distance at which neutral NPCs start feeling uncomfortable with players
+	/// </summary>
+	[Property, Range( 64f, 256f ), Group( "Skill" )] public float PersonalSpaceDistance { get; set; } = 128f;
+
+	/// <summary>
+	/// How much scared level increases per second when players are too close
+	/// </summary>
+	[Property, Range( 0f, 50f ), Group( "Skill" ), ShowIf( nameof( Relationship ), AI.Relationship.Neutral )] 
+	public float ProximityScareRate { get; set; } = 3f;
 
 	/// <summary>
 	/// Constraint for the look pitch
@@ -62,16 +90,6 @@ public sealed partial class Npc : Component, IActor
 	/// How fast the body turns to follow the eye target
 	/// </summary>
 	[Property, Range( 2f, 15f ), Group( "Body" )] public float BodyTurnSpeed { get; set; } = 5f;
-
-	/// <summary>
-	/// NPC's aiming skill level (0.0 = terrible aim, 1.0 = perfect aim)
-	/// </summary>
-	[Property, Range( 0, 1 ), Step( 0.05f ), Group( "Skill" )] public float AimingSkill { get; set; } = 0.5f;
-
-	/// <summary>
-	/// How far away do we start shooting at a target -- this could probably be on the weapon
-	/// </summary>
-	[Property, Range( 256, 16834 ), Step( 1 ), Group( "Skill" )] private float AttackRange { get; set; } = 4096;
 
 	/// <summary>
 	/// If we're following a friendly, what's the desired distance away from them? The npc will try to abide by this
@@ -114,6 +132,7 @@ public sealed partial class Npc : Component, IActor
 	{
 		if ( !IsProxy )
 		{
+			UpdateScaredLevel();
 			UpdatePerception();
 			UpdateEyeTarget();
 			UpdateEyeSystem();
@@ -121,6 +140,48 @@ public sealed partial class Npc : Component, IActor
 		}
 
 		UpdateAnimation();
+	}
+
+	/// <summary>
+	/// Updates the scared level, gradually decreasing it over time and checking for proximity stress
+	/// </summary>
+	private void UpdateScaredLevel()
+	{
+		// Check for proximity stress (neutral NPCs only)
+		if ( Relationship == Relationship.Neutral )
+		{
+			var closestPlayer = _potentialTargets?.OfType<Player>()
+				.Where( p => p.IsValid() )
+				.OrderBy( p => DistanceTo( p ) )
+				.FirstOrDefault();
+
+			if ( closestPlayer.IsValid() )
+			{
+				var distance = DistanceTo( closestPlayer );
+				if ( distance < PersonalSpaceDistance )
+				{
+					// Calculate proximity stress - closer = more stress
+					var proximityFactor = 1f - (distance / PersonalSpaceDistance);
+					var scareIncrease = ProximityScareRate * proximityFactor * Time.Delta;
+					AddScare( scareIncrease );
+				}
+			}
+		}
+
+		// Natural scared level decay over time
+		if ( ScaredLevel > 0f )
+		{
+			ScaredLevel = MathF.Max( 0f, ScaredLevel - ScaredDecayRate * Time.Delta );
+		}
+	}
+
+	/// <summary>
+	/// Increase the NPC's scared level
+	/// </summary>
+	/// <param name="amount">Amount to increase scared level by</param>
+	public void AddScare( float amount )
+	{
+		ScaredLevel = MathF.Min( 100f, ScaredLevel + amount );
 	}
 
 	/// <summary>
@@ -143,9 +204,44 @@ public sealed partial class Npc : Component, IActor
 
 		if ( _currentState == State.Idle )
 		{
-			var friend = FindClosestWithinRange( _friends, IdleLookRange );
-			if ( friend.IsValid() )
-				newTarget = GetEye( friend );
+			// First, prioritize players within idle look range
+			var closestPlayer = _friends
+				.OfType<Player>()
+				.Where( p => p.IsValid() && DistanceTo( p ) <= IdleLookRange )
+				.OrderBy( p => DistanceTo( p ) )
+				.FirstOrDefault();
+
+			if ( closestPlayer != null )
+			{
+				newTarget = GetEye( closestPlayer );
+			}
+			else
+			{
+				// Only look at other NPCs if no players are nearby
+				var closestNpc = _friends
+					.OfType<Npc>()
+					.Where( npc => npc.IsValid() && DistanceTo( npc ) <= IdleLookRange )
+					.OrderBy( npc => DistanceTo( npc ) )
+					.FirstOrDefault();
+
+				if ( closestNpc != null )
+					newTarget = GetEye( closestNpc );
+			}
+		}
+		else if ( _currentState == State.Flee )
+		{
+			// When fleeing, don't look at the target - look forward in movement direction or straight ahead
+			var moveDirection = NavMeshAgent?.Velocity.Normal ?? Vector3.Zero;
+			if ( !moveDirection.IsNearlyZero() )
+			{
+				// Look in the direction we're moving
+				newTarget = EyeTransform.Position + moveDirection * 1024f;
+			}
+			else
+			{
+				// Look straight ahead if not moving
+				newTarget = EyeTransform.Position + WorldRotation.Forward * 1024f;
+			}
 		}
 		else if ( _currentTarget.IsValid() )
 		{
