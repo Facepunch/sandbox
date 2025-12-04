@@ -31,6 +31,7 @@
     },
     "LaunchMode": "Launcher",
     "MapStartupScene": "scenes/sandbox.scene",
-    "DedicatedServerStartupScene": "scenes/sandbox.scene"
+    "DedicatedServerStartupScene": "scenes/sandbox.scene",
+    "SystemScene": "scenes/system.scene"
   }
 }
