@@ -41,27 +41,29 @@ public sealed partial class Npc
 	}
 
 	/// <summary>
-	/// Calculates aim offset based on skill level and distance to target
+	/// Calculates aim offset based on skill level, using angular deviation
 	/// </summary>
-	/// <returns>Modified aim position with skill-based inaccuracy</returns>
 	private Vector3 CalculateAimVector( Vector3 targetPosition, float distance )
 	{
 		// Perfect aim (skill = 1.0) returns exact target position
 		if ( AimingSkill >= 1f )
 			return targetPosition;
 
-		// Calculate maximum spread based in verse skill level
-		// Lower skill = higher spread, distance also increases spread
-		var maxSpread = (1f - AimingSkill) * 100f;
-		var distanceMultiplier = distance / 1000f;
-		var totalSpread = maxSpread * (1f + distanceMultiplier);
+		var baseSpreadDegrees = 2f; // magic number 
+		var skillMultiplier = (1f - AimingSkill) * 5f; // magic number 2
 
-		// Add random offset in a circle around the target
+		// don't like all these magic numbers
+		var distancePenalty = distance > 2048f ? 1f + ((distance - 2048f) / 4096f) : 1f;
+
+		var maxSpreadDegrees = baseSpreadDegrees * skillMultiplier * distancePenalty;
 		var randomAngle = Game.Random.Float( 0f, 360f );
-		var randomDistance = Game.Random.Float( 0f, totalSpread );
+		var randomSpread = Game.Random.Float( 0f, maxSpreadDegrees );
+		var spreadRadians = randomSpread * (MathF.PI / 180f);
+		var spreadRadius = MathF.Tan( spreadRadians ) * distance;
 
-		var offsetX = MathF.Cos( MathF.PI * randomAngle / 180f ) * randomDistance;
-		var offsetY = MathF.Sin( MathF.PI * randomAngle / 180f ) * randomDistance;
+		// Apply the offset in a circle around the target
+		var offsetX = MathF.Cos( MathF.PI * randomAngle / 180f ) * spreadRadius;
+		var offsetY = MathF.Sin( MathF.PI * randomAngle / 180f ) * spreadRadius;
 
 		return targetPosition + new Vector3( offsetX, offsetY, 0f );
 	}
