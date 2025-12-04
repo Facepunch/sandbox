@@ -61,12 +61,7 @@ public sealed partial class Npc : Component, IActor
 	/// <summary>
 	/// How fast the body turns to follow the eye target
 	/// </summary>
-	[Property, Range( 1, 16f ), Group( "Body" )] public float BodyTurnSpeed { get; set; } = 6f;
-
-	/// <summary>
-	/// Delay before body starts turning when idling (in seconds)
-	/// </summary>
-	[Property, Range( 0f, 2f ), Group( "Body" )] public float IdleBodyTurnDelay { get; set; } = 0.5f;
+	[Property, Range( 2f, 15f ), Group( "Body" )] public float BodyTurnSpeed { get; set; } = 5f;
 
 	/// <summary>
 	/// NPC's aiming skill level (0.0 = terrible aim, 1.0 = perfect aim)
@@ -88,10 +83,9 @@ public sealed partial class Npc : Component, IActor
 	/// </summary>
 	[Property, Range( 4f, 64f )] public float FollowTolerance { get; set; } = 50f;
 
-	// Tracking for delayed body turning
-	TimeSince _timeSinceEyeTargetChanged;
-	Vector3? _previousEyeTarget;
 	Vector3? _eyeTarget;
+	bool _isCompletingTurn;
+	Rotation _targetBodyRotation;
 
 	protected override void OnStart()
 	{
@@ -140,13 +134,6 @@ public sealed partial class Npc : Component, IActor
 	/// <param name="worldPosition">World position to look at, or null to clear target</param>
 	public void SetEyeTarget( Vector3? worldPosition )
 	{
-		// Track when the eye target changes
-		if ( _eyeTarget != worldPosition )
-		{
-			_previousEyeTarget = _eyeTarget;
-			_timeSinceEyeTargetChanged = 0f;
-		}
-
 		_eyeTarget = worldPosition;
 	}
 
@@ -177,19 +164,37 @@ public sealed partial class Npc : Component, IActor
 		SetEyeTarget( newTarget );
 	}
 
+	/// <summary>
+	/// Determines the desired body rotation and rotation threshold based on current state and movement
+	/// </summary>
+	private (Rotation rotation, float threshold) GetBodyRotationBehavior( Vector3 lookDirection, bool isMoving )
+	{
+		var defaultRotation = Rotation.LookAt( lookDirection.WithZ( 0 ).Normal, Vector3.Up );
+
+		return _currentState switch
+		{
+			// Always face attack target when shooting
+			State.Attack => (defaultRotation, 0f),
+
+			// When moving, always face target (low threshold)
+			State.Flee when isMoving => (defaultRotation, 5f),
+			State.Follow when isMoving => (defaultRotation, 5f),
+			State.Idle when isMoving => (defaultRotation, 5f),
+
+			_ => (defaultRotation, 45f),
+		};
+	}
+
 	private void UpdateEyeSystem()
 	{
 		if ( _eyeTarget is null )
 		{
-			// No rotation when no target
 			_currentRotationSpeed = 0f;
 			return;
 		}
 
 		var eyePosition = EyeTransform.Position;
-		var targetPosition = _eyeTarget.Value;
-		targetPosition = targetPosition.WithZ( eyePosition.z );
-
+		var targetPosition = _eyeTarget.Value.WithZ( eyePosition.z );
 		var lookDirection = (targetPosition - eyePosition).Normal;
 
 		if ( lookDirection.IsNearlyZero() )
@@ -198,64 +203,74 @@ public sealed partial class Npc : Component, IActor
 			return;
 		}
 
-		// Always update head and eye look immediately
-		var headLookDirection = lookDirection;
+		// Update head and eye look
+		UpdateHeadAndEyeLook( lookDirection );
 
-		// Update head and eye look using Vector3 parameters
+		// Handle body rotation - consider movement state
+		var isMoving = NavMeshAgent?.Velocity.Length > 10f;
+		var (desiredRotation, threshold) = GetBodyRotationBehavior( lookDirection, isMoving );
+		UpdateBodyRotation( desiredRotation, threshold );
+	}
+
+	/// <summary>
+	/// Updates the head and eye look directions
+	/// </summary>
+	private void UpdateHeadAndEyeLook( Vector3 lookDirection )
+	{
 		if ( Renderer.IsValid() )
 		{
 			// Project the head look direction forward by 1024 units to prevent steep upward angles for close objects
-			var localTargetPosition = WorldTransform.PointToLocal( eyePosition + headLookDirection * 1024f );
+			var eyePosition = EyeTransform.Position;
+			var localTargetPosition = WorldTransform.PointToLocal( eyePosition + lookDirection * 1024f );
 
 			Renderer.Set( "aim_head", localTargetPosition.Normal );
 			Renderer.Set( "aim_eyes", localTargetPosition.Normal );
 		}
 
-		EyeSource.WorldRotation = Rotation.LookAt( headLookDirection );
+		EyeSource.WorldRotation = Rotation.LookAt( lookDirection );
+	}
 
-		// Handle body turning with delay for idle state
-		var desiredBodyDirection = lookDirection.WithZ( 0 ).Normal;
+	/// <summary>
+	/// Handles body rotation logic with turn completion
+	/// </summary>
+	private void UpdateBodyRotation( Rotation desiredRotation, float threshold )
+	{
+		var currentYaw = WorldRotation.Yaw();
+		var desiredYaw = desiredRotation.Yaw();
+		var yawDifference = Angles.NormalizeAngle( desiredYaw - currentYaw );
 
-		if ( !desiredBodyDirection.IsNearlyZero() )
+		bool shouldRotateBody = false;
+
+		if ( _isCompletingTurn )
 		{
-			var desiredBodyRotation = Rotation.LookAt( desiredBodyDirection, Vector3.Up );
-			var currentYaw = WorldRotation.Yaw();
-			var desiredYaw = desiredBodyRotation.Yaw();
-			var yawDifference = Angles.NormalizeAngle( desiredYaw - currentYaw );
+			var targetYaw = _targetBodyRotation.Yaw();
+			var currentTargetDifference = Angles.NormalizeAngle( targetYaw - currentYaw );
 
-			// Only rotate if the difference is significant enough
-			if ( MathF.Abs( yawDifference ) > 5f )
+			if ( MathF.Abs( currentTargetDifference ) > 5f )
 			{
-				bool shouldTurnBody = true;
-
-				// Apply delay for body turning when idling
-				if ( _currentState == State.Idle )
-				{
-					shouldTurnBody = _timeSinceEyeTargetChanged >= IdleBodyTurnDelay;
-				}
-
-				if ( shouldTurnBody )
-				{
-					// Store current yaw for rotation speed calculation
-					var previousYaw = WorldRotation.Yaw();
-
-					// Apply rotation
-					WorldRotation = Rotation.Lerp( WorldRotation, desiredBodyRotation, BodyTurnSpeed * Time.Delta );
-
-					// Calculate rotation speed (degrees per second)
-					var newYaw = WorldRotation.Yaw();
-					var yawDelta = Angles.NormalizeAngle( newYaw - previousYaw );
-					_currentRotationSpeed = MathF.Abs( yawDelta ) / Time.Delta;
-				}
-				else
-				{
-					_currentRotationSpeed = 0f;
-				}
+				shouldRotateBody = true;
+				desiredRotation = _targetBodyRotation;
 			}
 			else
 			{
-				_currentRotationSpeed = 0f;
+				_isCompletingTurn = false;
 			}
+		}
+		else if ( MathF.Abs( yawDifference ) > threshold )
+		{
+			_isCompletingTurn = true;
+			_targetBodyRotation = desiredRotation;
+			shouldRotateBody = true;
+		}
+
+		if ( shouldRotateBody )
+		{
+			var previousYaw = WorldRotation.Yaw();
+			WorldRotation = Rotation.Lerp( WorldRotation, desiredRotation, BodyTurnSpeed * Time.Delta );
+
+			var newYaw = WorldRotation.Yaw();
+			var yawDelta = Angles.NormalizeAngle( newYaw - previousYaw );
+			_currentRotationSpeed = MathF.Abs( yawDelta ) / Time.Delta;
 		}
 		else
 		{
