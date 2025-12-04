@@ -63,7 +63,7 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 		if ( Controller.RunByDefault ) run = !run;
 
 		// if we're running, use run speed, if not use walk speed
-		var velocity = run ? RunSpeed : WalkSpeed;
+		var velocity = run ? RunSpeed * 2.0f : RunSpeed;
 
 		if ( direction.IsNearlyZero( 0.1f ) )
 		{
