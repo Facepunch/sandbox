@@ -1,14 +1,14 @@
 SpawnMenuModeBar
 {
 	position: absolute;
-	bottom: 0;
+	top: 0;
 	left: 0;
 	right: 0;
 	justify-content: center;
 	align-items: center;
 	padding: 3rem;
 	gap: 1rem;
-	background-image: linear-gradient( to top, rgba( black, 0.5 ), rgba( black, 0.0 ) );
+	background-image: linear-gradient( to bottom, rgba( black, 0.5 ), rgba( black, 0.0 ) );
 }
 
 .groupbutton
