@@ -27,21 +27,44 @@
 
     public override void Tick()
     {
-        base.Tick();
+        UpdateHighlights();
+        UpdateCursor();
+    }
 
-        if ( !IsVisible )
+    protected override void OnVisibilityChanged()
+    {
+        UpdateHighlights();
+    }
+
+    void UpdateHighlights()
+    {
+        var host = Ancestors.OfType<ContextMenuHost>().FirstOrDefault();
+        if (host is null) return;
+
+        host.SelectedOutline.Targets ??= new();
+        host.SelectedOutline.Targets.Clear();
+        host.SelectedOutline.Color = new Color(4.7f, 10.1f, 30.6f, 1);
+        host.SelectedOutline.ObscuredColor = new Color(2.2f, 2.3f, 2.9f, 0.1f);
+        host.SelectedOutline.Width = 0.2f;
+
+        host.HoveredOutline.Targets ??= new();
+        host.HoveredOutline.Targets.Clear();
+        host.HoveredOutline.Color = new Color(2.6f, 2.0f, 0.2f, 1);
+        host.HoveredOutline.ObscuredColor = new Color(2.6f, 2.0f, 0.2f, 0.1f);
+        host.HoveredOutline.Width = 0.2f;
+
+        if (!IsVisible)
             return;
 
-        UpdateCursor();
+        host.SelectedOutline.Targets.AddRange(selected?.GetComponentsInChildren<Renderer>() ?? []);
 
-        if (selected != null)
+        if (hovered != selected)
         {
-            Scene.DebugOverlay.Box(selected.GetBounds(), Color.Cyan.WithAlpha(0.6f) );
+            host.HoveredOutline.Targets = hovered?.GetComponentsInChildren<Renderer>().ToList();
         }
-
-        if (hovered != null && hovered != selected)
+        else
         {
-            Scene.DebugOverlay.Box(hovered.GetBounds(), Color.Cyan.WithAlpha(0.3f) );
+            host.HoveredOutline.Targets = default;
         }
     }
 

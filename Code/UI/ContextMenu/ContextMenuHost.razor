@@ -7,7 +7,6 @@
 @attribute [Title("Inspect")]
 @attribute [Order( -50 )]
 
-
 <root>
 	
     <div class="container">
@@ -21,6 +20,23 @@
 @code
 {
     Inspector Inspector = default;
+
+    public HighlightOutline SelectedOutline;
+    public HighlightOutline HoveredOutline;
+
+    protected override void OnAfterTreeRender(bool firstTime)
+    {
+        base.OnAfterTreeRender(firstTime);
+
+        //if (firstTime)
+        {
+            SelectedOutline ??= GameObject.AddComponent<HighlightOutline>();
+            HoveredOutline ??= GameObject.AddComponent<HighlightOutline>();
+
+            SelectedOutline.OverrideTargets = true;
+            HoveredOutline.OverrideTargets = true;
+        }
+    }
 
     public override void Tick()
     {
