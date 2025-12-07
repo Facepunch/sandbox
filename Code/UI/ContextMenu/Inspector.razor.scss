@@ -10,10 +10,11 @@ Inspector
 		position: absolute;
 		right: 6vw;
 		bottom: 10vh;
-		background-color: #222222fa;
+		background-color: #222222ee;
+		border: 1px solid #444;
 		padding: 1rem;
-		width: 500px;
-		height: 80vh;
+		width: 400px;
+		max-height: 80vh;
 		border-radius: 8px;
 		pointer-events: all;
 		backdrop-filter: blur( 10px );

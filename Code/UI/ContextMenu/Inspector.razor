@@ -41,6 +41,9 @@
         var host = Ancestors.OfType<ContextMenuHost>().FirstOrDefault();
         if (host is null) return;
 
+        if (host.SelectedOutline is null || host.HoveredOutline is null)
+            return;
+
         host.SelectedOutline.Targets ??= new();
         host.SelectedOutline.Targets.Clear();
         host.SelectedOutline.Color = new Color(4.7f, 10.1f, 30.6f, 1);

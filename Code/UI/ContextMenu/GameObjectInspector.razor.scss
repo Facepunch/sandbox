@@ -6,17 +6,25 @@ GameObjectInspector
 	width: 100%;
 }
 
-.header
+GameObjectInspector > .header
 {
-    flex-direction: column;
-    flex-shrink: 0;
+	flex-direction: column;
+	flex-shrink: 0;
+	padding-bottom: 0.25rem;
+	margin-bottom: 0.25rem;
+
+	h2
+	{
+		gap: 0.5rem;
+		align-items: center;
+	}
 }
 
-.body
+GameObjectInspector > .body
 {
 	flex-direction: column;
 	flex-grow: 1;
-	flex-shrink: 0;
+	flex-shrink: 1;
 	overflow-y: scroll;
 	gap: 2px;
 
