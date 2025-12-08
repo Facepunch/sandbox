@@ -48,7 +48,8 @@ public class Wheel : ToolMode
 		jointGo.Parent = point.GameObject;
 		jointGo.WorldTransform = wheelAnchor.WorldTransform;
 
-		var joint = jointGo.AddComponent<HingeJoint>();
+		//var joint = jointGo.AddComponent<HingeJoint>();
+		var joint = jointGo.AddComponent<WheelJoint>();
 		joint.Attachment = Joint.AttachmentMode.Auto;
 		joint.Body = wheelAnchor;
 		joint.EnableCollision = false;
