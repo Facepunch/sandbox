@@ -37,10 +37,32 @@
 
     void CollectProperties( Component component )
     {
+        var tl = TypeLibrary.GetType( component.GetType() );
+        if (tl is null) return;
+
+        SerializedObject so = null;
+
+        foreach ( var prop in tl.Properties )
+        {
+            if (!prop.HasAttribute<ClientEditableAttribute>()) continue;
+
+            if (so is null)
+            {
+                so ??= TypeLibrary.GetSerializedObject(component);
+                so.OnPropertyChanged = PropertyChanged;
+            }
+
+            Properties.Add(so.GetProperty(prop.Name));
+        }
+
+
         if ( component is ModelRenderer mr )
         {
-            var so = TypeLibrary.GetSerializedObject(mr);
-            so.OnPropertyChanged = PropertyChanged;
+            if (so is null)
+            {
+                so ??= TypeLibrary.GetSerializedObject(mr);
+                so.OnPropertyChanged = PropertyChanged;
+            }
 
             Properties.Add( so.GetProperty( nameof( ModelRenderer.Tint ) ) );
             Properties.Add( so.GetProperty( nameof( ModelRenderer.RenderType ) ) );
@@ -48,8 +70,11 @@
 
         if (component is Rigidbody rb)
         {
-            var so = TypeLibrary.GetSerializedObject(rb);
-            so.OnPropertyChanged = PropertyChanged;
+            if (so is null)
+            {
+                so ??= TypeLibrary.GetSerializedObject(rb);
+                so.OnPropertyChanged = PropertyChanged;
+            }
 
             Properties.Add(so.GetProperty(nameof(Rigidbody.LinearDamping)));
             Properties.Add(so.GetProperty(nameof(Rigidbody.AngularDamping)));
@@ -57,8 +82,11 @@
 
         if (component is HingeJoint hj)
         {
-            var so = TypeLibrary.GetSerializedObject(hj);
-            so.OnPropertyChanged = PropertyChanged;
+            if (so is null)
+            {
+                so ??= TypeLibrary.GetSerializedObject(hj);
+                so.OnPropertyChanged = PropertyChanged;
+            }
 
             Properties.Add(so.GetProperty(nameof(HingeJoint.EnableCollision)));
             Properties.Add(so.GetProperty(nameof(HingeJoint.Motor)));

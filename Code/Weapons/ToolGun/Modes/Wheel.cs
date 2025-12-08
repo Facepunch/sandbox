@@ -53,6 +53,8 @@ public class Wheel : ToolMode
 		joint.Body = wheelAnchor;
 		joint.EnableCollision = false;
 
+		jointGo.AddComponent<EditableWheel>();
+
 		wheelGo.NetworkSpawn( true, null );
 		jointGo.NetworkSpawn( true, null );
 
