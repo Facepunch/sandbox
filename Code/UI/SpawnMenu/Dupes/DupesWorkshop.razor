@@ -8,7 +8,7 @@
 
     <Body>
 		
-        <VirtualGrid Items=@Items ItemSize=@(200)>
+        <VirtualGrid Items=@Items ItemSize=@(200) OnLastCell="@(() => { _ = QueryNext(); })">
             <Item Context="context">
 
 				@if (context is Storage.QueryItem item)
@@ -24,19 +24,33 @@
 
 @code
 {
-	public Storage.SortOrder SortOrder { get; set; } = Storage.SortOrder.RankedByVote;
+    public Storage.SortOrder SortOrder { get; set; } = Storage.SortOrder.RankedByVote;
 
-	protected override async Task OnParametersSetAsync()
-	{
-		Items.Clear();
-		await QueryNext();
-	}
+    protected override async Task OnParametersSetAsync()
+    {
+        Items.Clear();
+        await QueryNext();
+    }
 
-	List<Storage.QueryItem> Items = new();
-	Storage.QueryResult LastResult;
+    List<Storage.QueryItem> Items = new();
+    Storage.QueryResult LastResult;
 
-	async Task QueryNext()
-	{
+    async Task QueryNext()
+    {
+        if ( LastResult != null )
+        {
+            // No more items to load
+            if (!LastResult.HasMoreResults())
+                return;
+
+            LastResult = await LastResult.GetNextResults();
+            if (LastResult.Items == null) return;
+
+            Items.AddRange(LastResult.Items);
+            StateHasChanged();
+            return;
+        }
+
 		var query = new Storage.Query();
 		query.KeyValues["package"] = "facepunch.sandbox";
 		query.KeyValues["type"] = "dupe";
