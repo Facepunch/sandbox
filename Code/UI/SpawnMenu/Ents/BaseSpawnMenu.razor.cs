@@ -7,13 +7,6 @@ public partial class BaseSpawnMenu : Panel
 	PanelSwitcher Switcher = default;
 	protected Panel MenuFooter;
 
-	void Spawn( string ident )
-	{
-		Log.Info( $"Spawning {ident}" );
-
-		GameManager.Spawn( ident );
-	}
-
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
@@ -26,16 +19,27 @@ public partial class BaseSpawnMenu : Panel
 	{
 		base.OnAfterTreeRender( firstTime );
 
-		if ( firstTime && Switcher.IsValid() && options.Count > 0 )
-		{
-			SwitchOption( options.Where( x => x.PanelCreator != null || x.Panel != null ).FirstOrDefault() );
-		}
-
 		if ( firstTime && MenuFooter.IsValid() )
 		{
 			OnMenuFooter( MenuFooter );
 		}
 	}
+
+	bool _firstViewed;
+
+	public override void Tick()
+	{
+		base.Tick();
+
+		if ( !IsVisible ) return;
+		if ( _firstViewed ) return;
+		if ( options.Count == 0 ) return;
+		if ( !Switcher.IsValid() ) return;
+
+		_firstViewed = true;
+		SwitchOption( options.Where( x => x.PanelCreator != null || x.Panel != null ).FirstOrDefault() );
+	}
+
 
 	protected virtual void Rebuild()
 	{
