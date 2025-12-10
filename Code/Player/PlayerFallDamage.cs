@@ -35,8 +35,6 @@ public class PlayerFallDamage : Component, IPlayerEvent
 
 	void IPlayerEvent.OnLand( float distance, Vector3 velocity )
 	{
-		if ( !Networking.IsHost ) return;
-
 		landCount++;
 
 		if ( landCount < 1 )
@@ -50,9 +48,19 @@ public class PlayerFallDamage : Component, IPlayerEvent
 		var damageAmount = MathX.Remap( fallSpeed, MaxSafeFallSpeed, FatalFallSpeed, 0f, 100f ) * DamageMultiplier;
 		if ( damageAmount < 1 ) return;
 
+		TakeFallDamage( damageAmount );
+	}
+
+
+	[Rpc.Broadcast]
+	public void TakeFallDamage( float amount )
+	{
+		if ( !Networking.IsHost ) return;
+
+
 		if ( Player is IDamageable damage )
 		{
-			var dmg = new DamageInfo( damageAmount.CeilToInt(), Player.GameObject, null );
+			var dmg = new DamageInfo( amount.CeilToInt(), Player.GameObject, null );
 			dmg.Tags.Add( DamageTags.Fall );
 			damage.OnDamage( dmg );
 
