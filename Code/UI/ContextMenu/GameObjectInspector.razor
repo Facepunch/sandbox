@@ -64,7 +64,19 @@
                 so.OnPropertyChanged = PropertyChanged;
             }
 
-            Properties.Add( so.GetProperty( nameof( ModelRenderer.Tint ) ) );
+            var prop = mr.GetComponent<Prop>();
+            if (prop is not null)
+            {
+                var propso = TypeLibrary.GetSerializedObject(prop);
+                propso.OnPropertyChanged = PropertyChanged;
+
+                Properties.Add(propso.GetProperty(nameof(ModelRenderer.Tint)));
+            }
+            else
+            {
+                Properties.Add(so.GetProperty(nameof(ModelRenderer.Tint)));
+            }
+
             Properties.Add( so.GetProperty( nameof( ModelRenderer.RenderType ) ) );
         }
 
