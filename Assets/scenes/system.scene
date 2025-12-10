@@ -381,7 +381,7 @@
           "__enabled": true,
           "__version": 1,
           "Filter": "Biquadratic",
-          "Gamma": 3,
+          "Gamma": 2.2,
           "Mode": "Additive",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
@@ -389,8 +389,8 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "Strength": 1.5,
-          "Threshold": 2,
+          "Strength": 1.25,
+          "Threshold": 1.8,
           "Tint": "1,1,1,1"
         },
         {
@@ -399,7 +399,7 @@
           "__enabled": true,
           "Center": "0.5,0.5",
           "Color": "0,0,0,1",
-          "Intensity": 0.65798044,
+          "Intensity": 0.4,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -463,7 +463,7 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "Saturation": 1.25
+          "Saturation": 1.15
         }
       ],
       "Children": []
