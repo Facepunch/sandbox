@@ -30,11 +30,14 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 	{
 		if ( TubeFxMaterial is null ) return;
 
-		_scrollSpeed = MathX.SmoothDamp( _scrollSpeed, BeamActive ? 3.0f : 0.05f, ref _scrollSpeedVel, BeamActive ? 0.5f : 2.5f, Time.Delta );
+		// ideally we'd scroll the self illum on its own - but that's not an option.
+		// we have g_vSelfIllumScrollSpeed but we can't scale that speed up and down, because it's multiplied by time internally.
+
+		_scrollSpeed = MathX.SmoothDamp( _scrollSpeed, BeamActive ? 2.0f : 0.2f, ref _scrollSpeedVel, BeamActive ? 0.5f : 2.5f, Time.Delta );
 		_scroll += _scrollSpeed * Time.Delta;
 
-		TubeFxMaterial.Set( "g_vTexCoordOffset", new Vector2( _scroll % 1.0f, 0 ) );
-		TubeFxMaterial.Set( "g_flSelfIllumBrightness", BeamActive ? 8.0f : 1.1f );
+		TubeFxMaterial.Set( "g_vTexCoordOffset", new Vector2( _scroll % 1, 0 ) );
+		TubeFxMaterial.Set( "g_flSelfIllumBrightness", 3 * (_scrollSpeed + 1.5) );
 	}
 
 	void UpdateBottleGlow()
