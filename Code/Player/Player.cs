@@ -303,6 +303,20 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		if ( Health < 1 ) return;
 		if ( PlayerData.IsGodMode ) return;
 
+		//
+		// Ignore impact damage from the world, for now
+		//
+		if ( dmg.Tags.Contains( "impact" ) )
+		{
+			// Was this fall damage? If so, we can bail out here
+			if ( Controller.Velocity.Dot( Vector3.Down ) > 10 )
+				return;
+
+			// We were hit by some flying object, or flew into a wall, 
+			// so lets take that damage.
+		}
+
+
 		var damage = dmg.Damage;
 		if ( dmg.Tags.Contains( DamageTags.Headshot ) )
 			damage *= 2;
