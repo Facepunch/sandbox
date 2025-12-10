@@ -5,7 +5,9 @@ public partial class BaseSpawnMenu : Panel
 {
 	SpawnMenuOption activeOption;
 	PanelSwitcher Switcher = default;
+
 	protected Panel MenuFooter;
+	bool _addedFooter;
 
 	protected override void OnParametersSet()
 	{
@@ -19,8 +21,9 @@ public partial class BaseSpawnMenu : Panel
 	{
 		base.OnAfterTreeRender( firstTime );
 
-		if ( firstTime && MenuFooter.IsValid() )
+		if ( !_addedFooter && MenuFooter.IsValid() )
 		{
+			_addedFooter = true;
 			OnMenuFooter( MenuFooter );
 		}
 	}
