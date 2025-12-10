@@ -83,7 +83,7 @@
         if ( PanelSwitcher == null )
             return;
 
-        // Make sure we've created all the modes, creae SpawnMenu first so it's selected by default
+        // Make sure we've created all the modes, create SpawnMenu first so it's selected by default
         foreach ( var type in Game.TypeLibrary.GetTypesWithAttribute<SpawnMenuMode>().OrderBy( x => x.Type.Name != "SpawnMenu" ) )
         {
             if (PanelSwitcher.Children.Any(x => x.GetType() == type.Type.TargetType)) continue;
