@@ -43,12 +43,10 @@ public class ThrusterTool : ToolMode
 		go.WorldTransform = tx;
 
 		var thuster = go.AddComponent<Thruster>();
-		thuster.Activate = thuster.Activate with { Button = "left" };
 
 		var prop = go.AddComponent<Prop>();
 		prop.Model = model;
 
-		//var joint = jointGo.AddComponent<HingeJoint>();
 		var joint = thuster.AddComponent<FixedJoint>();
 		joint.Attachment = Joint.AttachmentMode.LocalFrames;
 		joint.LocalFrame2 = point.GameObject.WorldTransform.ToLocal( tx );

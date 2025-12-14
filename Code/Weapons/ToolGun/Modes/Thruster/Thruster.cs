@@ -8,7 +8,7 @@ public class Thruster : Component
 	/// <summary>
 	/// While the client input is active we'll apply thrust
 	/// </summary>
-	[Property, Sync]
+	[Property, Sync, ClientEditable]
 	public ClientInput Activate { get; set; }
 
 	protected override void OnFixedUpdate()
@@ -34,9 +34,9 @@ public struct ClientInput
 {
 	static Connection Current => Connection.Local;
 
-	public readonly bool IsEnabled => !string.IsNullOrWhiteSpace( Button );
+	public readonly bool IsEnabled => !string.IsNullOrWhiteSpace( Action );
 
-	public string Button { get; set; }
+	public string Action { get; set; }
 
 	/// <summary>
 	/// Returns an analog value between 0 and 1 representing how much the input is pressed
@@ -54,7 +54,7 @@ public struct ClientInput
 	{
 		if ( !IsEnabled ) return false;
 
-		return Current?.Down( Button ) ?? false;
+		return Current?.Down( Action ) ?? false;
 	}
 
 	/// <summary>
@@ -64,7 +64,7 @@ public struct ClientInput
 	{
 		if ( !IsEnabled ) return false;
 
-		return Current?.Released( Button ) ?? false;
+		return Current?.Released( Action ) ?? false;
 	}
 
 	/// <summary>
@@ -74,6 +74,6 @@ public struct ClientInput
 	{
 		if ( !IsEnabled ) return false;
 
-		return Current?.Pressed( Button ) ?? false;
+		return Current?.Pressed( Action ) ?? false;
 	}
 }
