@@ -44,6 +44,7 @@ public class UndoSystem
 		/// The name of the undo, should fit the format "Undo something". Like "Undo Spawn Prop".
 		/// </summary>
 		public string Name { get; set; }
+		public string Icon { get; set; }
 
 		UndoSystem System;
 		Player Player => System.Player;
