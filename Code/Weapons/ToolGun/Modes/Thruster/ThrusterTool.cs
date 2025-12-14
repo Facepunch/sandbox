@@ -43,6 +43,7 @@ public class ThrusterTool : ToolMode
 		go.WorldTransform = tx;
 
 		var thuster = go.AddComponent<Thruster>();
+		thuster.Activate = thuster.Activate with { Button = "left" };
 
 		var prop = go.AddComponent<Prop>();
 		prop.Model = model;
