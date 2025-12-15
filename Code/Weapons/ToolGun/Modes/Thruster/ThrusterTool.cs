@@ -1,10 +1,11 @@
 ﻿[Title( "Thruster" )]
 [Icon( "🚀" )]
-[ClassName( "thruster" )]
+[ClassName( "thrustertool" )]
 [Group( "Building" )]
+[Hide]
 public class ThrusterTool : ToolMode
 {
-	Model wheelModel = Cloud.Model( "facepunch.soda_can" );
+	const string defaultPrefab = "entities/thruster/basic.prefab";
 
 	Vector3 _axis = Vector3.Right;
 
@@ -25,36 +26,43 @@ public class ThrusterTool : ToolMode
 		var placementTrans = new Transform( pos.Position );
 		placementTrans.Rotation = pos.Rotation * new Angles( 90, 0, 0 );
 
+		var prefabFile = ResourceLibrary.Get<PrefabFile>( defaultPrefab );
+		if ( prefabFile == null ) return;
+
 		if ( Input.Pressed( "attack1" ) )
 		{
-			SpawnWheel( select, wheelModel, placementTrans );
+			SpawnWheel( select, prefabFile, placementTrans );
 			ShootEffects( select );
 		}
 
-		DebugOverlay.Model( wheelModel, transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
+		DebugOverlay.GameObject( prefabFile.GetScene(), transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
 
 	}
 
 	[Rpc.Host]
-	public void SpawnWheel( SelectionPoint point, Model model, Transform tx )
+	public void SpawnWheel( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx )
 	{
-		var go = new GameObject( false, "thruster" );
+		if ( thrusterPrefab == null )
+			return;
+
+		var go = thrusterPrefab.GetScene().Clone();
 		go.Tags.Add( "removable" );
 		go.WorldTransform = tx;
 
-		var thuster = go.AddComponent<Thruster>();
+		var thuster = go.GetComponent<Thruster>();
 
-		var prop = go.AddComponent<Prop>();
-		prop.Model = model;
-
-		var joint = thuster.AddComponent<FixedJoint>();
-		joint.Attachment = Joint.AttachmentMode.LocalFrames;
-		joint.LocalFrame2 = point.GameObject.WorldTransform.ToLocal( tx );
-		joint.LocalFrame1 = new Transform();
-		joint.AngularFrequency = 0;
-		joint.LinearFrequency = 0;
-		joint.Body = point.GameObject;
-		joint.EnableCollision = false;
+		if ( !point.GameObject.Tags.Contains( "world" ) )
+		{
+			// attach it
+			var joint = thuster.AddComponent<FixedJoint>();
+			joint.Attachment = Joint.AttachmentMode.LocalFrames;
+			joint.LocalFrame2 = point.GameObject.WorldTransform.ToLocal( tx );
+			joint.LocalFrame1 = new Transform();
+			joint.AngularFrequency = 0;
+			joint.LinearFrequency = 0;
+			joint.Body = point.GameObject;
+			joint.EnableCollision = false;
+		}
 
 		go.NetworkSpawn( true, null );
 

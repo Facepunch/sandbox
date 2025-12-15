@@ -1,8 +1,10 @@
 ﻿
-[Hide]
 public class Thruster : Component
 {
-	[Range( 0, 1 )]
+	[Property, Range( 0, 1 )]
+	public GameObject OnEffect { get; set; }
+
+	[Property, Range( 0, 1 )]
 	public float Power { get; set; } = 0.5f;
 
 	/// <summary>
@@ -11,11 +13,21 @@ public class Thruster : Component
 	[Property, Sync, ClientEditable]
 	public ClientInput Activate { get; set; }
 
+	protected override void OnEnabled()
+	{
+		base.OnEnabled();
+
+		OnEffect?.Enabled = false;
+	}
+
 	protected override void OnFixedUpdate()
 	{
 		base.OnFixedUpdate();
 
-		AddThrust( Activate.GetAnalog() );
+		var analog = Activate.GetAnalog();
+
+		AddThrust( analog );
+		SetActiveState( analog > 0.1f );
 	}
 
 	void AddThrust( float amount )
@@ -26,6 +38,20 @@ public class Thruster : Component
 		if ( body == null ) return;
 
 		body.ApplyImpulse( WorldRotation.Up * -10000 * amount * Power );
+	}
+
+	bool _state;
+
+	public void SetActiveState( bool state )
+	{
+		if ( _state == state ) return;
+
+		_state = state;
+
+		OnEffect?.Enabled = state;
+
+		Network.Refresh();
+
 	}
 }
 
