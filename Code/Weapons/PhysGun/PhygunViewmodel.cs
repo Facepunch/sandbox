@@ -36,7 +36,7 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 		_scrollSpeed = MathX.SmoothDamp( _scrollSpeed, BeamActive ? 2.0f : 0.2f, ref _scrollSpeedVel, BeamActive ? 0.5f : 2.5f, Time.Delta );
 		_scroll += _scrollSpeed * Time.Delta;
 
-		TubeFxMaterial.Set( "g_vTexCoordOffset", new Vector2( _scroll % 1, 0 ) );
+		TubeFxMaterial.Set( "g_vSelfIllumOffset", new Vector2( _scroll % 1, 0 ) );
 		TubeFxMaterial.Set( "g_flSelfIllumBrightness", 3 * (_scrollSpeed + 1.5) );
 	}
 
