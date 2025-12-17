@@ -17,7 +17,7 @@ public partial class ClientInputControl : BaseControl
 
 	private List<Option> BuildButtonOptions()
 	{
-		var options = Input.ActionNames.Select( x => new Option( x, x ) ).ToList();
+		var options = Input.GetActions().Select( x => new Option( x.Title ?? x.Name, x.Name ) ).ToList();
 		options.Insert( 0, new Option( "No Binding", "" ) );
 
 		return options;
