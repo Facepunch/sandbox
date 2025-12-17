@@ -265,9 +265,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		// we're a model
 		if ( await FindEntityPath( spawnInfo ) is ScriptedEntity entity )
 		{
-			//var model = await Model.LoadAsync( modelPath );
-			//SpawnModel( model, spawnTransform, player );
-			Log.Info( $"Spawn Entity {entity}" );
 			SpawnEntity( entity, spawnTransform, player );
 			return;
 		}

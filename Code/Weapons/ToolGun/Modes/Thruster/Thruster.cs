@@ -1,5 +1,8 @@
 ﻿
-public class Thruster : Component
+
+using Sandbox.Utility;
+
+public class Thruster : Component, IPlayerControllable
 {
 	[Property, Range( 0, 1 )]
 	public GameObject OnEffect { get; set; }
@@ -18,16 +21,6 @@ public class Thruster : Component
 		base.OnEnabled();
 
 		OnEffect?.Enabled = false;
-	}
-
-	protected override void OnFixedUpdate()
-	{
-		base.OnFixedUpdate();
-
-		var analog = Activate.GetAnalog();
-
-		AddThrust( analog );
-		SetActiveState( analog > 0.1f );
 	}
 
 	void AddThrust( float amount )
@@ -53,12 +46,32 @@ public class Thruster : Component
 		Network.Refresh();
 
 	}
+
+	public void OnStartControl()
+	{
+	}
+
+	public void OnEndControl()
+	{
+	}
+
+	public void OnControl()
+	{
+		var analog = Activate.GetAnalog();
+
+		AddThrust( analog );
+		SetActiveState( analog > 0.1f );
+	}
 }
 
 
 public struct ClientInput
 {
-	static Connection Current => Connection.Local;
+	readonly record struct State( Connection connection, PlayerController playerController );
+
+	static State _currentState;
+
+	static Connection Connection => _currentState.connection;
 
 	public readonly bool IsEnabled => !string.IsNullOrWhiteSpace( Action );
 
@@ -80,7 +93,7 @@ public struct ClientInput
 	{
 		if ( !IsEnabled ) return false;
 
-		return Current?.Down( Action ) ?? false;
+		return Connection?.Down( Action ) ?? false;
 	}
 
 	/// <summary>
@@ -90,7 +103,7 @@ public struct ClientInput
 	{
 		if ( !IsEnabled ) return false;
 
-		return Current?.Released( Action ) ?? false;
+		return Connection?.Released( Action ) ?? false;
 	}
 
 	/// <summary>
@@ -100,6 +113,14 @@ public struct ClientInput
 	{
 		if ( !IsEnabled ) return false;
 
-		return Current?.Pressed( Action ) ?? false;
+		return Connection?.Pressed( Action ) ?? false;
+	}
+
+	internal static IDisposable PushScope( PlayerController player )
+	{
+		var previousState = _currentState;
+		_currentState = new State( player?.Network?.Owner, player );
+
+		return DisposeAction.Create( () => _currentState = previousState );
 	}
 }
