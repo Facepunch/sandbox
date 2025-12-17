@@ -59,19 +59,21 @@ public class DuplicationData
 
 			dupe.Objects.Add( entry );
 
-			foreach ( var model in obj.GetComponentsInChildren<ModelRenderer>() )
+			foreach ( var renderer in obj.GetComponentsInChildren<ModelRenderer>() )
 			{
-				if ( model.Model.IsError ) continue;
+				var model = renderer.Model ?? Model.Cube;
+
+				if ( model.IsError ) continue;
 
 				Transform[] bones = null;
 
-				if ( model is SkinnedModelRenderer skinned )
+				if ( renderer is SkinnedModelRenderer skinned )
 				{
 					bones = skinned.GetBoneTransforms( false );
 				}
 
-				var modelTx = center.ToLocal( model.WorldTransform );
-				dupe.PreviewModels.Add( new DuplicationData.PreviewModel( model.Model, modelTx, bones, model.Model.Bounds ) );
+				var modelTx = center.ToLocal( renderer.WorldTransform );
+				dupe.PreviewModels.Add( new DuplicationData.PreviewModel( model, modelTx, bones, model.Bounds ) );
 			}
 		}
 
