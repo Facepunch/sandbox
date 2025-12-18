@@ -94,7 +94,7 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "OverrideMassCenter": false,
-        "RigidbodyFlags": 0,
+        "RigidbodyFlags": "DisableCollisionSounds",
         "StartAsleep": false
       },
       {
@@ -170,8 +170,8 @@
             "SteeringHertz": 10,
             "SteeringLimits": "0,0",
             "SuspensionDampingRatio": 1,
-            "SuspensionHertz": 10,
-            "SuspensionLimits": "-13.46154,10.92233",
+            "SuspensionHertz": 15,
+            "SuspensionLimits": "-6.73077,4.61165",
             "TargetSteeringAngle": 0
           }
         ],
