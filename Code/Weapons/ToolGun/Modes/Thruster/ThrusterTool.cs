@@ -1,11 +1,11 @@
-﻿[Title( "Thruster" )]
+﻿[Hide]
+[Title( "Thruster" )]
 [Icon( "🚀" )]
 [ClassName( "thrustertool" )]
 [Group( "Building" )]
-[Hide]
 public class ThrusterTool : ToolMode
 {
-	const string defaultPrefab = "entities/thruster/basic.prefab";
+	const string defaultDef = "entities/thruster/basic.tdef";
 
 	Vector3 _axis = Vector3.Right;
 
@@ -26,16 +26,16 @@ public class ThrusterTool : ToolMode
 		var placementTrans = new Transform( pos.Position );
 		placementTrans.Rotation = pos.Rotation * new Angles( 90, 0, 0 );
 
-		var prefabFile = ResourceLibrary.Get<PrefabFile>( defaultPrefab );
-		if ( prefabFile == null ) return;
+		var thrusterDef = ResourceLibrary.Get<ThrusterDefinition>( defaultDef );
+		if ( thrusterDef == null ) return;
 
 		if ( Input.Pressed( "attack1" ) )
 		{
-			SpawnWheel( select, prefabFile, placementTrans );
+			SpawnWheel( select, thrusterDef.Prefab, placementTrans );
 			ShootEffects( select );
 		}
 
-		DebugOverlay.GameObject( prefabFile.GetScene(), transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
+		DebugOverlay.GameObject( thrusterDef.Prefab.GetScene(), transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
 
 	}
 
@@ -49,7 +49,7 @@ public class ThrusterTool : ToolMode
 		go.Tags.Add( "removable" );
 		go.WorldTransform = tx;
 
-		var thuster = go.GetComponent<Thruster>();
+		var thuster = go.GetComponent<ThrusterEntity>();
 
 		if ( !point.GameObject.Tags.Contains( "world" ) )
 		{

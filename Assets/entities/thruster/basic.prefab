@@ -48,7 +48,7 @@
         "StartAsleep": false
       },
       {
-        "__type": "Thruster",
+        "__type": "ThrusterEntity",
         "__guid": "5ec6f51b-3e7b-455f-b911-a298981faebe",
         "__enabled": true,
         "Activate": {
@@ -148,7 +148,7 @@
         "Rotation": "0,-0.7071067,0,0.7071068",
         "Scale": "1,1,1",
         "Tags": "particles",
-        "Enabled": true,
+        "Enabled": false,
         "NetworkMode": 2,
         "NetworkInterpolation": true,
         "NetworkOrphaned": 0,
@@ -223,10 +223,15 @@
                   }
                 ]
               },
-              "CurveB": {
-                "rangex": "0,0",
-                "rangey": "0,0"
-              }
+              "CurveB": [
+                {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
+                }
+              ]
             },
             "Bumpiness": 0,
             "Collision": false,
@@ -339,10 +344,15 @@
                   "mode": "Mirrored"
                 }
               ],
-              "CurveB": {
-                "rangex": "0,0",
-                "rangey": "0,0"
-              }
+              "CurveB": [
+                {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
+                }
+              ]
             },
             "MaxParticles": 50,
             "OnComponentDestroy": null,
