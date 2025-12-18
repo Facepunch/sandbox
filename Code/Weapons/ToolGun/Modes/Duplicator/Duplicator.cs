@@ -214,8 +214,10 @@ public partial class Duplicator : ToolMode
 				{
 					var pos = entry["Position"]?.Deserialize<Vector3>() ?? default;
 					var rot = entry["Rotation"]?.Deserialize<Rotation>() ?? Rotation.Identity;
+					var scl = entry["Scale"]?.Deserialize<Vector3>() ?? Vector3.One;
 
 					var world = dest.ToWorld( new Transform( pos, rot ) );
+					world.Scale = scl;
 
 					var go = new GameObject( false );
 					go.Deserialize( obj, new GameObject.DeserializeOptions { TransformOverride = world } );
