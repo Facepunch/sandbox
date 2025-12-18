@@ -52,32 +52,26 @@ public class Wheel : ToolMode
 		var wheelProp = wheelGo.AddComponent<Prop>();
 		wheelProp.Model = model;
 
-		var wheelAnchor = new GameObject( false, "anchor2" );
+		var wheelAnchor = new GameObject( true, "anchor2" );
 		wheelAnchor.Parent = wheelGo;
-		wheelAnchor.LocalRotation = Rotation.FromRoll( 90 );
-
-		var jointGo = new GameObject( false, "anchor1" );
-		jointGo.Parent = point.GameObject;
-		jointGo.WorldTransform = wheelAnchor.WorldTransform;
+		wheelAnchor.LocalRotation = new Angles( 0, 90, 90 );
 
 		//var joint = jointGo.AddComponent<HingeJoint>();
-		var joint = jointGo.AddComponent<WheelJoint>();
+		var joint = wheelAnchor.AddComponent<WheelJoint>();
 		joint.Attachment = Joint.AttachmentMode.Auto;
 		joint.EnableSuspension = true;
 		joint.EnableSuspensionLimit = true;
 		joint.SuspensionLimits = new Vector2( -32, 32 );
-		joint.Body = wheelAnchor;
+		joint.Body = point.GameObject;
 		joint.EnableCollision = false;
 
-		jointGo.AddComponent<EditableWheel>();
+		joint.AddComponent<EditableWheel>();
 
 		wheelGo.NetworkSpawn( true, null );
-		jointGo.NetworkSpawn( true, null );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Wheel";
 		undo.Add( wheelGo );
-		undo.Add( jointGo );
 	}
 
 }
