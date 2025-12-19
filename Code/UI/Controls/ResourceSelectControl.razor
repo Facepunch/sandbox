@@ -50,8 +50,6 @@
 
     public void OnValueChanged()
     {
-        Log.Info( "Value Changed" );
-
         var path = Property.As.String;
 
         if (string.IsNullOrWhiteSpace(path))
@@ -85,8 +83,6 @@
     protected override void OnClick(MousePanelEvent e)
     {
         base.OnClick(e);
-
-        Log.Info( "Open Modal" );
 
         var popup = new ResourceSelectPopup();
         popup.Extension = ResourceAttribute?.Extension;

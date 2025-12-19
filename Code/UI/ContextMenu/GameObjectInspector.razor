@@ -55,7 +55,6 @@
             Properties.Add(so.GetProperty(prop.Name));
         }
 
-
         if ( component is ModelRenderer mr )
         {
             if (so is null)
@@ -78,32 +77,6 @@
             }
 
             Properties.Add( so.GetProperty( nameof( ModelRenderer.RenderType ) ) );
-        }
-
-        if (component is Rigidbody rb)
-        {
-            if (so is null)
-            {
-                so ??= TypeLibrary.GetSerializedObject(rb);
-                so.OnPropertyChanged = PropertyChanged;
-            }
-
-            Properties.Add(so.GetProperty(nameof(Rigidbody.LinearDamping)));
-            Properties.Add(so.GetProperty(nameof(Rigidbody.AngularDamping)));
-        }
-
-        if (component is HingeJoint hj)
-        {
-            if (so is null)
-            {
-                so ??= TypeLibrary.GetSerializedObject(hj);
-                so.OnPropertyChanged = PropertyChanged;
-            }
-
-            Properties.Add(so.GetProperty(nameof(HingeJoint.EnableCollision)));
-            Properties.Add(so.GetProperty(nameof(HingeJoint.Motor)));
-            Properties.Add(so.GetProperty(nameof(HingeJoint.TargetVelocity)));
-            Properties.Add(so.GetProperty(nameof(HingeJoint.MaxTorque)));
         }
     }
 
