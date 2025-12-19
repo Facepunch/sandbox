@@ -8,7 +8,7 @@ ToolsList > .left
 	flex-grow: 0;
 	flex-shrink: 0;
 	flex-direction: column;
-	width: 200px;
+	width: 180px;
 	padding: 0.5rem;
 
 	.list
@@ -28,4 +28,62 @@ ToolsList > .body
 	padding: 8px;
 	margin: 8px;
 	margin-left: 0;
+}
+
+
+ToolsList
+{
+	ControlSheet .body
+	{
+		padding: 0;
+		margin: 0;
+	}
+
+	ControlSheet .controlgroup
+	{
+		padding: 0;
+
+		> .body
+		{
+			padding: 0;
+		}
+	}
+
+	ControlSheetGroup
+	{
+		> .body
+		{
+			padding: 0;
+			margin: 0;
+		}
+	}
+
+	controlsheetrow
+	{
+		width: 100%;
+		background-color: #53698111;
+		padding: 8px;
+		max-height: auto;
+
+		&:hover
+		{
+			background-color: #53698122;
+			
+			> .left 
+			{
+				color: #fff;
+			}
+		}
+
+		> .left
+		{
+			width: 150px;
+			overflow: hidden;
+		}
+
+		> .right, > .left
+		{
+			flex-shrink: 0;
+		}
+	}
 }
