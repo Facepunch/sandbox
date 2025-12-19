@@ -14,6 +14,8 @@ public sealed class FreeCamGameObjectSystem : GameObjectSystem<FreeCamGameObject
 	float fov = 80;
 	float smoothFov = 80;
 
+	GameObject _ui;
+
 	public FreeCamGameObjectSystem( Scene scene ) : base( scene )
 	{
 
@@ -26,6 +28,43 @@ public sealed class FreeCamGameObjectSystem : GameObjectSystem<FreeCamGameObject
 
 		Input.Suppressed = true;
 
+
+	}
+
+	void StartFreeCamMode()
+	{
+		if ( !_ui.IsValid() )
+		{
+			_ui = new GameObject( true, "freecam_overlay" );
+			_ui.Flags = GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked;
+			var fc = _ui.AddComponent<FreeCamOverlay>();
+			var sp = _ui.AddComponent<ScreenPanel>();
+		}
+
+		if ( _ui.IsValid() )
+		{
+			_ui.Enabled = true;
+		}
+
+		smoothPosition = Scene.Camera.WorldPosition;
+		position = smoothPosition + Scene.Camera.WorldRotation.Backward * 50;
+		angles = smoothAngles = Scene.Camera.WorldRotation;
+		smoothFov = fov = Scene.Camera.FieldOfView;
+
+		Scene.Camera.RenderExcludeTags.Add( "firstperson" );
+		Scene.Camera.RenderExcludeTags.Add( "ui" );
+	}
+
+	void EndFreeCamMode()
+	{
+		if ( _ui.IsValid() )
+		{
+			_ui.Enabled = false;
+		}
+
+		Scene.TimeScale = 1;
+		Scene.Camera.RenderExcludeTags.Remove( "firstperson" );
+		Scene.Camera.RenderExcludeTags.Remove( "ui" );
 	}
 
 	void ISceneStage.End()
@@ -41,35 +80,32 @@ public sealed class FreeCamGameObjectSystem : GameObjectSystem<FreeCamGameObject
 
 			if ( IsActive )
 			{
-				smoothPosition = Scene.Camera.WorldPosition;
-				position = smoothPosition + Scene.Camera.WorldRotation.Backward * 50;
-				angles = smoothAngles = Scene.Camera.WorldRotation;
-				smoothFov = fov = Scene.Camera.FieldOfView;
-				Scene.TimeScale = 0;
-
-				Scene.Camera.RenderExcludeTags.Add( "firstperson" );
-				Scene.Camera.RenderExcludeTags.Add( "ui" );
+				StartFreeCamMode();
 			}
 			else
 			{
-				Scene.TimeScale = 1;
-				Scene.Camera.RenderExcludeTags.Remove( "firstperson" );
-				Scene.Camera.RenderExcludeTags.Remove( "ui" );
+				EndFreeCamMode();
 			}
 		}
 
 		if ( !IsActive )
 			return;
 
-		UpdateCameraPosition();
+		if ( _ui.IsValid() )
+		{
+			var fc = _ui.GetOrAddComponent<FreeCamOverlay>();
+			fc.Update( Input.Down( "score" ) );
+
+			UpdateCameraPosition( fc );
+		}
 	}
 
 
-	void UpdateCameraPosition()
+	void UpdateCameraPosition( FreeCamOverlay overlay )
 	{
 		var speed = 50;
 		if ( Input.Down( "duck" ) ) speed = 5;
-		if ( Input.Down( "run" ) ) speed = 500;
+		if ( Input.Down( "run" ) ) speed = 300;
 
 		if ( Input.Down( "attack2" ) )
 		{
@@ -86,10 +122,10 @@ public sealed class FreeCamGameObjectSystem : GameObjectSystem<FreeCamGameObject
 
 		position += velocity * RealTime.SmoothDelta;
 
-		smoothPosition = smoothPosition.LerpTo( position, RealTime.SmoothDelta * 3.0f );
+		smoothPosition = smoothPosition.LerpTo( position, MathF.Pow( RealTime.SmoothDelta * 16.0f, overlay.CameraSmoothing * 2.0f ) );
 		Scene.Camera.WorldPosition = smoothPosition;
 
-		smoothAngles = smoothAngles.LerpTo( angles, RealTime.SmoothDelta * 5.0f );
+		smoothAngles = smoothAngles.LerpTo( angles, MathF.Pow( RealTime.SmoothDelta * 16.0f, overlay.CameraSmoothing * 2.0f ) );
 		Scene.Camera.WorldRotation = smoothAngles + new Angles( Noise.Fbm( 2, Time.Now * 40, 1 ) * 2, Noise.Fbm( 2, Time.Now * 30, 60 ) * 2, 0 );
 
 		smoothFov = smoothFov.LerpTo( fov, RealTime.SmoothDelta * 20.0f );
