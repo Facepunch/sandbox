@@ -7,10 +7,10 @@
 
 	<div class="canvas" @ref=_canvas></div>
 
-	@if ( selected.IsValid() )
+    @if (_selected.Any())
 	{
 		<div class="window" @onmousedown="@WindowPress">
-			<GameObjectInspector Target=@selected></GameObjectInspector>
+            <GameObjectInspector Target=@_selected></GameObjectInspector>
 		</div>
 	}
 
@@ -18,119 +18,133 @@
 
 @code
 {
-	public GameObject Hovered => hovered;
-	public GameObject Selected => selected;
+    public GameObject Hovered => hovered;
 
-	Panel _canvas = default;
+    Panel _canvas = default;
 
-	protected override int BuildHash() => HashCode.Combine(hovered, selected);
+    protected override int BuildHash() => HashCode.Combine(hovered, _selected.Count);
 
-	public override void Tick()
-	{
-		UpdateHighlights();
-		UpdateCursor();
-	}
+    public override void Tick()
+    {
+        UpdateHighlights();
+        UpdateCursor();
+    }
 
-	protected override void OnVisibilityChanged()
-	{
-		UpdateHighlights();
-	}
+    protected override void OnVisibilityChanged()
+    {
+        UpdateHighlights();
+    }
 
-	void UpdateHighlights()
-	{
-		var host = Ancestors.OfType<ContextMenuHost>().FirstOrDefault();
-		if (host is null) return;
+    void UpdateHighlights()
+    {
+        var host = Ancestors.OfType<ContextMenuHost>().FirstOrDefault();
+        if (host is null) return;
 
-		if (host.SelectedOutline is null || host.HoveredOutline is null)
-			return;
+        if (host.SelectedOutline is null || host.HoveredOutline is null)
+            return;
 
-		host.SelectedOutline.Targets ??= new();
-		host.SelectedOutline.Targets.Clear();
-		host.SelectedOutline.Color = new Color(4.7f, 10.1f, 30.6f, 1);
-		host.SelectedOutline.ObscuredColor = new Color(2.2f, 2.3f, 2.9f, 0.1f);
-		host.SelectedOutline.Width = 0.2f;
+        host.SelectedOutline.Targets ??= new();
+        host.SelectedOutline.Targets.Clear();
+        host.SelectedOutline.Color = new Color(4.7f, 10.1f, 30.6f, 1);
+        host.SelectedOutline.ObscuredColor = new Color(2.2f, 2.3f, 2.9f, 0.1f);
+        host.SelectedOutline.Width = 0.2f;
 
-		host.HoveredOutline.Targets ??= new();
-		host.HoveredOutline.Targets.Clear();
-		host.HoveredOutline.Color = new Color(2.6f, 2.0f, 0.2f, 1);
-		host.HoveredOutline.ObscuredColor = new Color(2.6f, 2.0f, 0.2f, 0.1f);
-		host.HoveredOutline.Width = 0.2f;
+        host.HoveredOutline.Targets ??= new();
+        host.HoveredOutline.Targets.Clear();
+        host.HoveredOutline.Color = new Color(2.6f, 2.0f, 0.2f, 1);
+        host.HoveredOutline.ObscuredColor = new Color(2.6f, 2.0f, 0.2f, 0.1f);
+        host.HoveredOutline.Width = 0.2f;
 
-		if (!IsVisible)
-			return;
+        if (!IsVisible)
+            return;
 
-		host.SelectedOutline.Targets.AddRange(selected?.GetComponentsInChildren<Renderer>() ?? []);
+        host.SelectedOutline.Targets.AddRange(_selected.SelectMany( x => x.GetComponentsInChildren<Renderer>() ) ?? []);
 
-		if (hovered != selected)
-		{
-			host.HoveredOutline.Targets = hovered?.GetComponentsInChildren<Renderer>().ToList();
-		}
-		else
-		{
-			host.HoveredOutline.Targets = default;
-		}
-	}
+        if ( !_selected.Contains( hovered  ) )
+        {
+            host.HoveredOutline.Targets = hovered?.GetComponentsInChildren<Renderer>().ToList();
+        }
+        else
+        {
+            host.HoveredOutline.Targets = default;
+        }
+    }
 
-	GameObject hovered;
-	GameObject selected;
+    GameObject hovered;
+    MultiSerializedObject _serialized;
 
-	void UpdateCursor()
-	{
-		var cursorPos = Mouse.Position;
-		var screenRay = Scene.Camera.ScreenPixelToRay( cursorPos );
-		var tr = Scene.Trace.Ray(screenRay, 4096 )
-							.IgnoreGameObjectHierarchy( Player.FindLocalPlayer()?.GameObject )
-							.Run();
+    List<GameObject> _selected = new();
 
-		//  Scene.DebugOverlay.Sphere(new Sphere(tr.EndPosition, 1), Color.Yellow );
+    void UpdateCursor()
+    {
+        var cursorPos = Mouse.Position;
+        var screenRay = Scene.Camera.ScreenPixelToRay( cursorPos );
+        var tr = Scene.Trace.Ray(screenRay, 4096 )
+                            .IgnoreGameObjectHierarchy( Player.FindLocalPlayer()?.GameObject )
+                            .Run();
 
-		if (!_canvas.HasHovered) tr.GameObject = default;
+        //  Scene.DebugOverlay.Sphere(new Sphere(tr.EndPosition, 1), Color.Yellow );
 
-		var go = tr.GameObject;
-		if (!CanSelect(go)) go = null;
+        if (!_canvas.HasHovered) tr.GameObject = default;
 
-		UpdateHovered(go);
+        var go = tr.GameObject;
+        if (!CanSelect(go)) go = null;
 
-
-	}
-
-	bool CanSelect( GameObject o )
-	{
-		if (o == null) return false;
-		if (o.Tags.Has("world")) return false;
-		if (o.NetworkMode == NetworkMode.Never) return false;
-
-		o = o?.Network?.RootGameObject;
+        UpdateHovered(go);
 
 
-		return true;
-	}
+    }
 
-	void UpdateHovered( GameObject o )
-	{
-		o = o?.Network?.RootGameObject;
+    bool CanSelect( GameObject o )
+    {
+        if (o == null) return false;
+        if (o.Tags.Has("world")) return false;
+        if (o.NetworkMode == NetworkMode.Never) return false;
 
-		if (hovered == o) return;
+        o = o?.Network?.RootGameObject;
 
-		hovered = o;
-		PlaySound("ui.button.over");
-	}
+        return true;
+    }
+
+    void UpdateHovered( GameObject o )
+    {
+        o = o?.Network?.RootGameObject;
+
+        if (hovered == o) return;
+
+        hovered = o;
+        PlaySound("ui.button.over");
+    }
 
 
-	public void WorldMouseDown(MousePanelEvent e)
-	{
-		SelectObject(hovered);
-	}
+    public void WorldMouseDown(MousePanelEvent e)
+    {
+        SelectObject(hovered);
+    }
 
-	public void WorldMouseUp(MousePanelEvent e)
-	{
-		// nothing.
-	}
+    public void WorldMouseUp(MousePanelEvent e)
+    {
+        // nothing.
+    }
 
-	public void SelectObject( GameObject o )
-	{
-		selected = o;
-	}
+    public void SelectObject( GameObject o )
+    {
+        if ( !o.IsValid() )
+        {
+            _selected.Clear();
+        }
+        else
+        {
+            if (!Input.Down("run"))
+                _selected.Clear();
+
+            _selected.Remove(o);
+            _selected.Add(o);
+        }
+
+        //_selected.RemoveAll(x => !x.IsValid() );
+        _selected = _selected.Distinct().ToList();
+    }
 
 
 	void WindowPress( PanelEvent panelEvent )

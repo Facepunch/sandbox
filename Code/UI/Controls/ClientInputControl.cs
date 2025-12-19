@@ -8,6 +8,8 @@ public partial class ClientInputControl : BaseControl
 
 	SerializedObject _so;
 
+	public override bool SupportsMultiEdit => true;
+
 	public ClientInputControl()
 	{
 		_bindButton = AddChild<DropDown>( "bind-button" );

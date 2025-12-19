@@ -39,7 +39,7 @@ public class ComponentHandle : Panel
 			Style.Top = screenPos.y * ScaleFromScreen;
 
 			SetClass( "behind", behind );
-			SetClass( "active", _inspector?.Selected == _component?.GameObject );
+			//SetClass( "active", _inspector?.Selected == _component?.GameObject );
 		}
 
 		if ( ShouldDelete() )

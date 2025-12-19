@@ -8,7 +8,24 @@
     <div class="header">
         <h2>
             <span>📦</span>
-            <span>@Target.Name</span>
+
+            @if (Target == null || Target.Count == 0)
+            {
+                
+            }
+            else if ( Target.Count == 1 )
+            {
+                <span>@Target[0].GetType().Name</span>
+            }
+            else if (Target.Count == 2)
+            {
+                <span>@Target[0].GetType().Name (and 1 other)</span>
+            }
+            else
+            {
+                <span>@Target[0].GetType().Name (and @(Target.Count-1) others)</span>
+            }
+
         </h2>
     </div>
 
@@ -21,7 +38,7 @@
 @code
 {
     [Parameter]
-    public GameObject Target{ get; set; }
+    public List<GameObject> Target { get; set; }
 
     List<SerializedProperty> Properties = new();
 
@@ -29,40 +46,53 @@
     {
         Properties = new();
 
-        @foreach (var c in Target.Components.GetAll())
+        @foreach (var c in Target.SelectMany( x => x.Components.GetAll() ).Distinct().GroupBy( x => x.GetType() ) )
         {
-            CollectProperties(c);
+            CollectProperties(c.ToArray());
         }
     }
 
-    void CollectProperties( Component component )
+    bool HasEditableProperties( Type type, PropertyDescription[] properties )
     {
-        var tl = TypeLibrary.GetType( component.GetType() );
+        if (type.IsAssignableTo(typeof(ModelRenderer))) return true;
+
+        foreach ( var prop in properties )
+        {
+            if (prop.HasAttribute<ClientEditableAttribute>()) 
+                return true;
+        }
+
+        return false;
+    }
+
+    void CollectProperties( Component[] components )
+    {
+        var firstComponent = components.First();
+
+        var tl = TypeLibrary.GetType(firstComponent.GetType());
         if (tl is null) return;
 
-        SerializedObject so = null;
+        bool hasProperties = HasEditableProperties(firstComponent.GetType(), tl.Properties);
+        if (!hasProperties) return;
+
+        var so = new MultiSerializedObject();
+        so.OnPropertyChanged = PropertyChanged;
+
+        foreach( var component in components )
+        {
+            so.Add(TypeLibrary.GetSerializedObject(component));
+        };
+
+        so.Rebuild();
 
         foreach ( var prop in tl.Properties )
         {
             if (!prop.HasAttribute<ClientEditableAttribute>()) continue;
-
-            if (so is null)
-            {
-                so ??= TypeLibrary.GetSerializedObject(component);
-                so.OnPropertyChanged = PropertyChanged;
-            }
-
             Properties.Add(so.GetProperty(prop.Name));
         }
-
-        if ( component is ModelRenderer mr )
+        
+        if (firstComponent is ModelRenderer mr)
         {
-            if (so is null)
-            {
-                so ??= TypeLibrary.GetSerializedObject(mr);
-                so.OnPropertyChanged = PropertyChanged;
-            }
-
             var prop = mr.GetComponent<Prop>();
             if (prop is not null)
             {
@@ -85,7 +115,12 @@
         // TODO - can we debounce?
 
 
-        var c = prop.Parent.Targets.First() as Component;
-        GameManager.ChangeProperty(c, prop.Name, prop.GetValue<object>());
+        foreach (var c in prop.Parent.Targets )
+        {
+            if (c is Component component)
+            {
+                GameManager.ChangeProperty(component, prop.Name, prop.GetValue<object>());
+            }
+        }
     }
 }
