@@ -1,7 +1,7 @@
 ﻿
 
 [AssetType( Name = "Sandbox Entity", Extension = "sent", Category = "Sandbox", Flags = AssetTypeFlags.NoEmbedding )]
-public class ScriptedEntity : GameResource
+public class ScriptedEntity : GameResource, IDefinitionResource
 {
 	[Property]
 	public PrefabFile Prefab { get; set; }

@@ -1,0 +1,25 @@
+
+ResourceSelectControl
+{
+	justify-content: flex-start;
+	align-items: center;
+	flex-grow: 1;
+	padding: 0.5rem 1rem;
+	font-size: 1rem;
+	font-weight: 600;
+	color: #fff;
+	border-radius: 8px;
+	cursor: pointer;
+	background-color: #0088ff55;
+	border: 1px solid #0088ff88;
+
+	&:hover
+	{
+		background-color: #0088ff88;
+	}
+
+	&:active
+	{
+		background-color: #08f;
+	}
+}

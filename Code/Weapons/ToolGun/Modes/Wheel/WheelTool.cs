@@ -1,4 +1,6 @@
 ﻿
+using Sandbox.UI;
+
 [Hide]
 [Title( "Wheel" )]
 [Icon( "🛞" )]
@@ -6,7 +8,8 @@
 [Group( "Building" )]
 public class WheelTool : ToolMode
 {
-	const string defaultDef = "entities/wheel/basic.wdef";
+	[Property, ResourceSelect( Extension = "wdef", AllowPackages = true ), Title( "Wheel" )]
+	public string Definition { get; set; } = "entities/wheel/basic.wdef";
 
 	Vector3 _axis = Vector3.Right;
 
@@ -17,7 +20,7 @@ public class WheelTool : ToolMode
 		var select = TraceSelect();
 		if ( !select.IsValid() ) return;
 
-		var def = ResourceLibrary.Get<WheelDefinition>( defaultDef );
+		var def = ResourceLibrary.Get<WheelDefinition>( Definition );
 		if ( def == null || def.Prefab?.GetScene() is not Scene scene ) return;
 
 		var pos = select.WorldTransform();

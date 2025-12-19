@@ -1,7 +1,7 @@
 ﻿
 
 [AssetType( Name = "Sandbox Thruster", Extension = "tdef", Category = "Sandbox", Flags = AssetTypeFlags.NoEmbedding )]
-public class ThrusterDefinition : GameResource
+public class ThrusterDefinition : GameResource, IDefinitionResource
 {
 	[Property]
 	public PrefabFile Prefab { get; set; }

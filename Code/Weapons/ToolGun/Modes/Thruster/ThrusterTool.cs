@@ -1,11 +1,14 @@
-﻿[Hide]
+﻿using Sandbox.UI;
+
+[Hide]
 [Title( "Thruster" )]
 [Icon( "🚀" )]
 [ClassName( "thrustertool" )]
 [Group( "Building" )]
 public class ThrusterTool : ToolMode
 {
-	const string defaultDef = "entities/thruster/basic.tdef";
+	[Property, ResourceSelect( Extension = "tdef", AllowPackages = true ), Title( "Thruster" )]
+	public string Definition { get; set; } = "entities/thruster/basic.tdef";
 
 	Vector3 _axis = Vector3.Right;
 
@@ -26,7 +29,7 @@ public class ThrusterTool : ToolMode
 		var placementTrans = new Transform( pos.Position );
 		placementTrans.Rotation = pos.Rotation * new Angles( 90, 0, 0 );
 
-		var thrusterDef = ResourceLibrary.Get<ThrusterDefinition>( defaultDef );
+		var thrusterDef = ResourceLibrary.Get<ThrusterDefinition>( Definition );
 		if ( thrusterDef == null ) return;
 
 		if ( Input.Pressed( "attack1" ) )

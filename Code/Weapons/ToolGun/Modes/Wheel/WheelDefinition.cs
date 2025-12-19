@@ -1,7 +1,7 @@
 ﻿
 
 [AssetType( Name = "Sandbox Wheel", Extension = "wdef", Category = "Sandbox", Flags = AssetTypeFlags.NoEmbedding )]
-public class WheelDefinition : GameResource
+public class WheelDefinition : GameResource, IDefinitionResource
 {
 	[Property]
 	public PrefabFile Prefab { get; set; }
