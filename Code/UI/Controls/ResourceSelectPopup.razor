@@ -1,0 +1,86 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits BasePopup
+
+<root>
+
+    <div class="inner" onclick:preventDefault=@true>
+        
+        <h2>@Title</h2>
+
+        <VirtualGrid Items=@(_localResources) ItemSize=@(new Vector2( 180, 200 )) class="grid">
+            <Item Context="item">
+                @if (item is Resource res)
+                {
+                    bool selected = res.ResourcePath.Equals(CurrentValue, StringComparison.OrdinalIgnoreCase);
+                    string itemClass = selected ? "item active" : "item";
+
+                    <div class="@itemClass" @onclick=@(() => { SelectResource(res); })>
+
+                        @if ( res is IDefinitionResource definitionResource )
+                        {
+                            <div class="icon">😘</div>
+                            <div class="title">@definitionResource.Title</div>
+                            <div class="desc">@definitionResource.Description</div>
+                        }
+                        else
+                        {
+                            <div class="icon">😘</div>
+                            <div class="title">@res.ResourcePath</div>
+                            <div class="desc"></div>
+                        }
+                        
+                    </div>
+                }
+            </Item>
+        </VirtualGrid>
+
+    </div>
+
+</root>
+
+@code
+{
+    public string Title { get; set; } = "Select Resource";
+    public string Extension { get; set; } = "vmdl";
+    public string CurrentValue { get; set; }
+    public Action<string> OnSelectedFile;
+
+    readonly List<Resource> _localResources = new();
+
+    protected override void OnParametersSet()
+    {
+        _localResources.Clear();
+
+        var resources = ResourceLibrary.GetAll<Resource>().Where(Filter);
+
+        _localResources.AddRange(resources);
+    }
+
+    bool Filter(Resource res)
+    {
+        if (res == null) return false;
+        if (string.IsNullOrEmpty(Extension)) return true;
+
+        var ext = System.IO.Path.GetExtension(res.ResourcePath);
+        if (string.IsNullOrEmpty(ext)) return false;
+
+        return ext.TrimStart('.').Equals(Extension, StringComparison.OrdinalIgnoreCase);
+    }
+
+    protected override void OnMouseDown(MousePanelEvent e)
+    {
+        base.OnMouseDown(e);
+
+        if (e.Target == this)
+            Delete();
+    }
+
+    void SelectResource(Resource res)
+    {
+        OnSelectedFile?.Invoke(res.ResourcePath);
+        Delete();
+    }
+
+}

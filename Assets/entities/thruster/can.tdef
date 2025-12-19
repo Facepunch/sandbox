@@ -1,0 +1,7 @@
+{
+  "Prefab": "entities/thruster/can.prefab",
+  "Title": "Can",
+  "Description": "This drink really packs a punch. This description is extra long to see if it breaks the UI. It needs to be even longer to start creating issues though. It's going to squash shit. That's okay though, that's allowed.",
+  "__references": [],
+  "__version": 0
+}

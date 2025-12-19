@@ -1,0 +1,91 @@
+ResourceSelectPopup
+{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	bottom: 0px;
+	right: 0px;
+	background-color: #000d;
+	backdrop-filter: blur( 5px );
+	z-index: 10000;
+	justify-content: center;
+	align-items: center;
+	pointer-events: all;
+	font-family: Poppins;
+
+	.inner
+	{
+		padding: 8px;
+		width: 800px;
+		height: 800px;
+		flex-direction: column;
+
+		h2
+		{
+			color: #eee;
+			font-size: 3rem;
+			font-weight: 700;
+
+		}
+	}
+}
+
+
+ResourceSelectPopup .inner .grid
+{
+	width: 100%;
+	flex-grow: 1;
+	gap: 1rem;
+	background-color: #222a;
+	padding: 1rem;
+	border-radius: 10px;
+}
+
+ResourceSelectPopup .inner .grid .item
+{
+	width: 100%;
+	height: 100%;
+	color: #aaa;
+	pointer-events: all;
+	border-radius: 10px;
+	margin: 0.25rem;
+	cursor: pointer;
+	position: relative;
+	flex-direction: column;
+	padding: 1rem;
+	font-size: 1rem;
+	background-color: #0088ff02;
+
+	.icon
+	{
+		height: 100px;
+		font-size: 60px;
+		overflow: hidden;
+		justify-content: center;
+		align-items: center;
+		flex-shrink: 0;
+	}
+
+	.title
+	{
+		font-weight: 700;
+		font-size: 1.5rem;
+		color: white;
+		flex-shrink: 0;
+	}
+
+	.desc
+	{
+		overflow: hidden;
+	}
+
+	&:hover
+	{
+		background-color: #08f5;
+	}
+
+	&.active
+	{
+		background-color: #08f5;
+	}
+}

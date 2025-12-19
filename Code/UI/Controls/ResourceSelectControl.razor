@@ -76,10 +76,23 @@
 
     }
 
+    void SelectFile( string filePath )
+    {
+        Property.As.String = filePath;
+        OnValueChanged();
+    }
+
     protected override void OnClick(MousePanelEvent e)
     {
         base.OnClick(e);
 
         Log.Info( "Open Modal" );
+
+        var popup = new ResourceSelectPopup();
+        popup.Extension = ResourceAttribute?.Extension;
+        popup.CurrentValue = Property.As.String;
+        popup.Parent = FindPopupPanel();
+
+        popup.OnSelectedFile = SelectFile;
     }
 }
