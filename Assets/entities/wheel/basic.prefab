@@ -44,8 +44,8 @@
       {
         "__type": "Sandbox.ModelCollider",
         "__guid": "3acd7709-1882-41b1-b534-dbcd585be78f",
-        "__enabled": true,
-        "ColliderFlags": 0,
+        "__enabled": false,
+        "ColliderFlags": "IgnoreTraces",
         "Elasticity": null,
         "Friction": null,
         "IsTrigger": false,
@@ -112,6 +112,31 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "Power": 0.5
+      },
+      {
+        "__type": "Sandbox.SphereCollider",
+        "__guid": "fdb04f48-779e-494a-a98b-0d5021799786",
+        "__enabled": true,
+        "Center": "0,0,0",
+        "ColliderFlags": "IgnoreTraces",
+        "Elasticity": null,
+        "Friction": null,
+        "IsTrigger": false,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnObjectTriggerEnter": null,
+        "OnObjectTriggerExit": null,
+        "OnTriggerEnter": null,
+        "OnTriggerExit": null,
+        "Radius": 21.069878,
+        "RollingResistance": null,
+        "Static": false,
+        "Surface": null,
+        "SurfaceVelocity": "0,0,0"
       }
     ],
     "Children": [
@@ -203,8 +228,6 @@
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "__references": [
-    "garry.wheel#10656"
-  ],
+  "__references": [],
   "__version": 2
 }
