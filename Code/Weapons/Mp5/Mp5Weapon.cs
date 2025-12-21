@@ -41,11 +41,11 @@ public class Mp5Weapon : BaseBulletWeapon
 		AddShootDelay( TimeBetweenShots );
 
 		var aimConeAmount = GetAimConeAmount();
-		var forward = Actor.EyeTransform.Rotation.Forward.WithAimCone( 0.5f + aimConeAmount * 4f, 0.25f + aimConeAmount * 4f );
+		var forward = Owner.EyeTransform.Rotation.Forward.WithAimCone( 0.5f + aimConeAmount * 4f, 0.25f + aimConeAmount * 4f );
 		var bulletRadius = 1;
 
-		var tr = Scene.Trace.Ray( Actor.EyeTransform.ForwardRay with { Forward = forward }, 4096 )
-							.IgnoreGameObjectHierarchy( Actor.GameObject )
+		var tr = Scene.Trace.Ray( Owner.EyeTransform.ForwardRay with { Forward = forward }, 4096 )
+							.IgnoreGameObjectHierarchy( Owner.GameObject )
 							.WithoutTags( "playercontroller" ) // don't hit playercontroller colliders
 							.Radius( bulletRadius )
 							.UseHitboxes()

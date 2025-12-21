@@ -81,17 +81,6 @@ public partial class BaseCarryable : Component, IKillIcon
 	}
 
 	/// <summary>
-	/// The owner as an actor -- can exist if a NPC is controlling this
-	/// </summary>
-	protected IActor Actor
-	{
-		get
-		{
-			return GetComponentInParent<IActor>( true );
-		}
-	}
-
-	/// <summary>
 	/// Where shoot effects come from. Either the point on the world model or the viewmodel, whichever is currently being used.
 	/// </summary>
 	public GameObject MuzzleTransform
@@ -259,13 +248,13 @@ public partial class BaseCarryable : Component, IKillIcon
 		if ( !attack.Target.IsValid() )
 			return;
 
-		if ( !Actor.IsValid() )
+		if ( !Owner.IsValid() )
 			return;
 
 		var damagable = attack.Target.GetComponentInParent<IDamageable>();
 		if ( damagable is not null )
 		{
-			var info = new DamageInfo( attack.Damage, Actor.GameObject, GameObject );
+			var info = new DamageInfo( attack.Damage, Owner.GameObject, GameObject );
 			info.Position = attack.Position;
 			info.Origin = attack.Origin;
 			info.Tags = attack.Tags;

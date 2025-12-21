@@ -19,7 +19,7 @@ public partial class BaseBulletWeapon : BaseWeapon
 			if ( ShootSound.IsValid() )
 			{
 				var snd = GameObject.PlaySound( ShootSound );
-			
+
 				// If we're shooting, the sound should not be spatialized
 				if ( Owner.IsValid() && Owner.IsLocalPlayer && snd.IsValid() )
 				{
@@ -41,7 +41,28 @@ public partial class BaseBulletWeapon : BaseWeapon
 				impact.WorldPosition = hitpoint;
 				impact.WorldRotation = fwd;
 				impact.SetParent( hitObject, true );
+
+				if ( hitObject.GetComponentInChildren<SkinnedModelRenderer>() is SkinnedModelRenderer skinned && skinned.CreateBoneObjects )
+				{
+					// find closest bone
+					var bones = skinned.GetBoneTransforms( true );
+
+					float closestDist = float.MaxValue;
+
+					for ( int i = 0; i < bones.Length; i++ )
+					{
+						var bone = bones[i];
+						var dist = bone.Position.Distance( hitpoint );
+						if ( dist < closestDist )
+						{
+							closestDist = dist;
+							impact.SetParent( skinned.GetBoneObject( i ), true );
+						}
+					}
+				}
 			}
 		}
 	}
+
+
 }
