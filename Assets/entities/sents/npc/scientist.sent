@@ -1,8 +1,8 @@
 {
   "Prefab": "entities/sents/npc/scientist.prefab",
   "Title": "Scientist",
-  "Description": "A scientist npc",
+  "Description": "It's a fucking scientist",
   "IncludeCode": false,
   "__references": [],
   "__version": 0
-}
+} 
