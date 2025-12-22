@@ -1,0 +1,40 @@
+@namespace Sandbox
+@using Sandbox.UI
+@inherits Sandbox.UI.Panel
+
+<root>
+
+    @if ( !string.IsNullOrWhiteSpace( Title ) )
+    {
+        <div class="title">@Title</div>
+    }
+
+</root>
+
+@code
+{
+    [Parameter] public string Type { get; set; }
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string Path { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (string.IsNullOrWhiteSpace( Icon ) )
+        {
+            Icon = $"thumb:{Path}";
+            Log.Info($"{Icon}");
+        }
+
+        Style.SetBackgroundImage(Icon);
+    }
+
+    protected override void OnClick(MousePanelEvent e)
+    {
+        base.OnClick(e);
+
+        GameManager.Spawn(Path);
+    }
+}

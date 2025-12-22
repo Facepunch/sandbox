@@ -4,18 +4,25 @@
 @namespace Sandbox
 
 
-<VirtualGrid Items=@( FileSystem.Mounted.FindFile("/", "*.sent", true ) ) ItemSize=@(120)>
+<VirtualGrid Items=@Entities ItemSize=@(160)>
     <Item Context="item">
-        @if (item is string entry)
+        @if (item is ScriptedEntity entry)
         {
-            var name = System.IO.Path.GetFileName(entry);
-
-            <div class="localicon" onclick=@(() => GameManager.Spawn(entry))>@name</div>
+            <SpawnMenuIcon Type="entity" Title=@entry.Title Path=@entry.ResourcePath></SpawnMenuIcon>
         }
     </Item>
 </VirtualGrid>
 
 @code
 {
-    
+    List<ScriptedEntity> Entities = [];
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        Entities = ResourceLibrary.GetAll<ScriptedEntity>().ToList();
+
+
+    }
 }

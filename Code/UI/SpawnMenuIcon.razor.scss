@@ -1,0 +1,37 @@
+SpawnMenuIcon
+{
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	flex-grow: 1;
+	width: 100%;
+	position: relative;
+	border: 1px solid #08f0;
+	background-position: center;
+	background-size: contain;
+
+	.title
+	{
+		background-color: #111c;
+		border-radius: 4px;
+		padding: 5px 10px;
+		font-size: 10px;
+		font-weight: 500;
+		max-width: 90%;
+		position: absolute;
+		bottom: 6px;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+	&:hover
+	{
+		border: 1px solid #08f;
+
+		.title
+		{
+			color: white;
+			background-color: #0003;
+		}
+	}
+}

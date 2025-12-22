@@ -52,7 +52,8 @@
 
                 @if (item is ResourceLoader loader)
                 {
-                    <SpawnIcon Loader="@loader" @onclick=@( () => Spawn( loader.Path ) )></SpawnIcon>
+                    var nameWithoutExt = System.IO.Path.GetFileNameWithoutExtension(loader.Name);
+                    <SpawnMenuIcon Type="mount" Title="@nameWithoutExt" Path="@loader.Path"></SpawnMenuIcon>
                 }
 
             </Item>
@@ -95,19 +96,7 @@
 	string CurrentPath
 	{
 		get => currentDir?.Path ?? "/";
-
-		set
-		{
-			Log.Info( value );
-		}
 	}
-
-    void Spawn(string ident)
-    {
-        Log.Info($"Spawning {ident}");
-
-        GameManager.Spawn(ident);
-    }
 
     IEnumerable<object> GetData()
     {
@@ -121,20 +110,6 @@
 		}
 
 		return q;
-
-		/*
-		var dir = (currentDir ?? mount.RootFolder );
-
-		foreach ( var folder in dir.Folders.Where( x => x.ContainsType( ResourceType.Model ) ) )
-		{
-			yield return folder;
-		}
-
-        foreach( var r in dir.Files.Where( x => x.Type == ResourceType.Model ) )
-		{
-			yield return r;
-		}
-		*/
     }
 
 }

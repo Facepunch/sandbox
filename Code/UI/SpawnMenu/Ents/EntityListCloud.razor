@@ -25,11 +25,11 @@
     </Header>
 
     <Body>
-        <VirtualGrid Items=@( LastResult.Packages ) ItemSize=@(120)>
+        <VirtualGrid Items=@(LastResult.Packages) ItemSize=@(160)>
             <Item Context="item">
                 @if (item is Package entry)
                 {
-                    <SpawnButton Package="@entry" Icon="@entry.Thumb" Action="@(() => Spawn(entry))"></SpawnButton>
+                    <SpawnMenuIcon Type="entity" Icon="@entry.Thumb" Title=@entry.Title Path=@entry.FullIdent></SpawnMenuIcon>
                 }
             </Item>
         </VirtualGrid>
