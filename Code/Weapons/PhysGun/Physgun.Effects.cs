@@ -43,7 +43,7 @@ public partial class Physgun : BaseCarryable
 		{
 			if ( _grabEffect != null )
 			{
-				ITemporaryEffect.DisableLoopingEffects( _grabEffect );
+				_grabEffect.Destroy();
 				_grabEffect = null;
 			}
 
