@@ -1,6 +1,6 @@
 ﻿
 
-[AssetType( Name = "Sandbox Entity", Extension = "sent", Category = "Sandbox", Flags = AssetTypeFlags.NoEmbedding )]
+[AssetType( Name = "Sandbox Entity", Extension = "sent", Category = "Sandbox", Flags = AssetTypeFlags.NoEmbedding | AssetTypeFlags.IncludeThumbnails )]
 public class ScriptedEntity : GameResource, IDefinitionResource
 {
 	[Property]

@@ -29,7 +29,7 @@
     <Item Context="item">
         @if (item is Package entry)
         {
-            <SpawnButton Package="@entry" Icon="@entry.Thumb" Action="@(() => Spawn(entry))"></SpawnButton>
+            <SpawnMenuIcon Type="@entry.TypeName" Path="@entry.FullIdent" Title="@entry.Title"></SpawnMenuIcon>
         }
     </Item>
 </VirtualGrid>
@@ -51,11 +51,6 @@
     {
         get;
         set { field = value; Rebuild(); }
-    }
-
-    void Spawn( Package package )
-    {
-        GameManager.Spawn( package.FullIdent );
     }
 
     protected override void OnParametersSet()

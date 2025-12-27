@@ -1,6 +1,6 @@
 ﻿
 
-[AssetType( Name = "Sandbox Thruster", Extension = "tdef", Category = "Sandbox", Flags = AssetTypeFlags.NoEmbedding )]
+[AssetType( Name = "Sandbox Thruster", Extension = "tdef", Category = "Sandbox", Flags = AssetTypeFlags.NoEmbedding | AssetTypeFlags.IncludeThumbnails )]
 public class ThrusterDefinition : GameResource, IDefinitionResource
 {
 	[Property]

@@ -14,7 +14,7 @@
             <Item Context="item">
                 @if (item is Entry entry)
                 {
-                    <SpawnButton Icon=@entry.Icon Action="@(() => Spawn(entry.Ident))"></SpawnButton>
+                    <SpawnMenuIcon Type="@entry.Ident" Path="@entry.Ident"></SpawnMenuIcon>
                 }
             </Item>
         </VirtualGrid>

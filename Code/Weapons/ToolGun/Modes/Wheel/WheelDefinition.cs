@@ -1,6 +1,6 @@
 ﻿
 
-[AssetType( Name = "Sandbox Wheel", Extension = "wdef", Category = "Sandbox", Flags = AssetTypeFlags.NoEmbedding )]
+[AssetType( Name = "Sandbox Wheel", Extension = "wdef", Category = "Sandbox", Flags = AssetTypeFlags.NoEmbedding | AssetTypeFlags.IncludeThumbnails )]
 public class WheelDefinition : GameResource, IDefinitionResource
 {
 	[Property]
