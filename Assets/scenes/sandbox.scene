@@ -21,6 +21,7 @@
           "__type": "Sandbox.MapInstance",
           "__guid": "50042ecd-9dd2-457a-837c-0cda534d9eb8",
           "__enabled": true,
+          "Flags": 0,
           "__version": 1,
           "EnableCollision": true,
           "MapName": "facepunch.flatgrass",
