@@ -12,7 +12,7 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 	{
 		if ( GetComponentInParent<Physgun>() is Physgun physgun )
 		{
-			BeamActive = physgun.BeamRenderer?.Active ?? false;
+			BeamActive = physgun.BeamActive;
 		}
 
 		UpdateGlowEffect();
