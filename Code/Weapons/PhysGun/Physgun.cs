@@ -278,7 +278,8 @@ public partial class Physgun : BaseCarryable
 		};
 
 		var eyeTransform = Owner.EyeTransform;
-		var targetPosition = eyeTransform.Position + eyeTransform.Rotation.Forward * _state.GrabDistance;
+		var grabDistance = ClampGrabDistance( _state.Body, _state.EndPoint, eyeTransform, _state.GrabDistance );
+		var targetPosition = eyeTransform.Position + eyeTransform.Rotation.Forward * grabDistance;
 		var targetRotation = Rotation.FromYaw( Owner.Controller.EyeAngles.yaw ) * _state.GrabOffset;
 		_body.Transform = new Transform( targetPosition, targetRotation );
 
@@ -338,12 +339,20 @@ public partial class Physgun : BaseCarryable
 		state.LocalNormal = bodyTransform.NormalToLocal( tr.Normal );
 		state.GrabOffset = Rotation.FromYaw( yaw ).Inverse * bodyTransform.Rotation;
 		state.GrabDistance = Vector3.DistanceBetween( aim.Position, tr.HitPosition );
-		state.GrabDistance = MathF.Max( 0.0f, state.GrabDistance );
+		state.GrabDistance = ClampGrabDistance( state.Body, tr.HitPosition, aim, state.GrabDistance );
 
 		_spinRotation = state.GrabOffset;
 		_snapRotation = _spinRotation;
 
 		return true;
+	}
+
+	static float ClampGrabDistance( Rigidbody body, Vector3 point, Transform eye, float distance, float min = 50.0f )
+	{
+		distance = MathF.Max( 0.0f, distance );
+		var closest = body.FindClosestPoint( eye.Position );
+		var along = distance + Vector3.Dot( closest - point, eye.Rotation.Forward );
+		return along < min ? distance + (min - along) : distance;
 	}
 
 	[Rpc.Broadcast]
