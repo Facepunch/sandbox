@@ -1,0 +1,7 @@
+{
+  "Prefab": "entities/balloon/circle.prefab",
+  "Title": "Circle",
+  "Description": "A circle balloon",
+  "__references": [],
+  "__version": 0
+}

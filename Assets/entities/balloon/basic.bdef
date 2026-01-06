@@ -1,0 +1,7 @@
+{
+  "Prefab": "entities/balloon/basic.prefab",
+  "Title": "Basic",
+  "Description": "A normal balloon",
+  "__references": [],
+  "__version": 0
+}

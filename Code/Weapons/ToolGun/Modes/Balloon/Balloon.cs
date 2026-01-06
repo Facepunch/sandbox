@@ -1,19 +1,20 @@
-﻿
+﻿using Sandbox.UI;
+
 [Icon( "🎈" )]
 [ClassName( "balloon" )]
 [Group( "Building" )]
 public class Balloon : ToolMode
 {
-	// TODO: Choose model
-	readonly Model model = Cloud.Model( "facepunch.balloonheart" );
+	[Property, ResourceSelect( Extension = "bdef", AllowPackages = true ), Title( "Balloon" )]
+	public string Definition { get; set; } = "entities/balloon/basic.bdef";
 
 	[Range( 0, 500 )]
 	[Property, Sync]
 	public float Length { get; set; } = 50.0f;
 
-	[Range( -1, 1 )]
+	[Range( -10, 10 )]
 	[Property, Sync]
-	public float Force { get; set; } = 0.2f;
+	public float Force { get; set; } = 1.0f;
 
 	[Property, Sync]
 	public bool Rigid { get; set; } = false;
@@ -31,30 +32,34 @@ public class Balloon : ToolMode
 		var pos = select.WorldTransform();
 		var placementTx = new Transform( pos.Position );
 
+		var thrusterDef = ResourceLibrary.Get<BalloonDefinition>( Definition );
+		if ( thrusterDef == null ) return;
+
 		if ( Input.Pressed( "attack1" ) )
 		{
-			Spawn( select, model, placementTx, true );
+			Spawn( select, thrusterDef.Prefab, placementTx, true );
 			ShootEffects( select );
 		}
 		else if ( Input.Pressed( "attack2" ) )
 		{
-			Spawn( select, model, placementTx, false );
+			Spawn( select, thrusterDef.Prefab, placementTx, false );
 			ShootEffects( select );
 		}
 
-		DebugOverlay.Model( model, transform: placementTx, castShadows: true, color: Tint.WithAlpha( 0.9f ) );
+		DebugOverlay.GameObject( thrusterDef.Prefab.GetScene(), transform: placementTx, castShadows: true, color: Tint.WithAlpha( 0.9f ) );
 	}
 
 	[Rpc.Host]
-	public void Spawn( SelectionPoint point, Model model, Transform tx, bool withRope )
+	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx, bool withRope )
 	{
-		var go = new GameObject( false, "balloon" );
+		var go = thrusterPrefab.GetScene().Clone( global::Transform.Zero, startEnabled: false );
 		go.Tags.Add( "removable" );
 		go.WorldTransform = Rigid && withRope ? tx.WithPosition( tx.Position + Vector3.Up * Length ) : tx;
 
-		var prop = go.AddComponent<Prop>();
-		prop.Model = model;
-		prop.Tint = Tint;
+		foreach ( var c in go.GetComponentsInChildren<Prop>( true ) )
+		{
+			c.Tint = Tint;
+		}
 
 		if ( withRope )
 		{
@@ -104,8 +109,10 @@ public class Balloon : ToolMode
 
 		go.NetworkSpawn( true, null );
 
-		var rb = go.GetComponent<Rigidbody>();
-		if ( rb.IsValid() ) rb.GravityScale = -Force.Clamp( -1, 1 );
+		foreach ( var c in go.GetComponentsInChildren<Rigidbody>( true ) )
+		{
+			c.GravityScale = Force;
+		}
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Balloon";
