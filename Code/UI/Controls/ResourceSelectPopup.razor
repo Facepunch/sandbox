@@ -63,7 +63,6 @@
     {
         if (res == null) return false;
         if (string.IsNullOrEmpty(Extension)) return true;
-        if (res.ResourcePath.StartsWith("thumb:")) return false;
 
         var ext = System.IO.Path.GetExtension(res.ResourcePath);
         if (string.IsNullOrEmpty(ext)) return false;
