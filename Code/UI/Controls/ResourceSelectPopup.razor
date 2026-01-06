@@ -15,18 +15,19 @@
                 {
                     bool selected = res.ResourcePath.Equals(CurrentValue, StringComparison.OrdinalIgnoreCase);
                     string itemClass = selected ? "item active" : "item";
+                    string thumbUrl = $"thumb:{res.ResourcePath}";
 
                     <div class="@itemClass" @onclick=@(() => { SelectResource(res); })>
 
+                        <div class="icon" style="background-image: url( @thumbUrl )"></div>
+
                         @if ( res is IDefinitionResource definitionResource )
                         {
-                            <div class="icon">😘</div>
                             <div class="title">@definitionResource.Title</div>
                             <div class="desc">@definitionResource.Description</div>
                         }
                         else
                         {
-                            <div class="icon">😘</div>
                             <div class="title">@res.ResourcePath</div>
                             <div class="desc"></div>
                         }
@@ -62,6 +63,7 @@
     {
         if (res == null) return false;
         if (string.IsNullOrEmpty(Extension)) return true;
+        if (res.ResourcePath.StartsWith("thumb:")) return false;
 
         var ext = System.IO.Path.GetExtension(res.ResourcePath);
         if (string.IsNullOrEmpty(ext)) return false;

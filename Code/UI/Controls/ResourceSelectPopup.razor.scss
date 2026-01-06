@@ -64,6 +64,9 @@ ResourceSelectPopup .inner .grid .item
 		justify-content: center;
 		align-items: center;
 		flex-shrink: 0;
+		background-position: center;
+		background-size: contain;
+		background-repeat: no-repeat;
 	}
 
 	.title
