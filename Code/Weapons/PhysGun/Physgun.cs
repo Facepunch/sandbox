@@ -400,7 +400,7 @@ public partial class Physgun : BaseCarryable
 		if ( tr.Component is not Rigidbody ) return false;
 
 		var go = tr.Body.GameObject;
-		if ( !go.IsValid() ) return false;
+		if ( !go.IsValid() || go.IsDestroyed ) return false;
 
 		// Trace hits physics, convert to local using scaled physics transform.
 		var bodyTransform = tr.Body.Transform.WithScale( go.WorldScale );
