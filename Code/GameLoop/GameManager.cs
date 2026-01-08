@@ -423,7 +423,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	[Rpc.Host]
 	public static void ChangeProperty( Component c, string propertyName, object value )
 	{
-		if ( c is null ) return;
+		if ( !c.IsValid() ) return;
 
 		var tl = TypeLibrary.GetType( c.GetType() );
 		if ( tl is null ) return;
@@ -438,6 +438,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		// BUG - this is optimal I think, but doesn't work??
 		// c.GameObject.Network.Refresh( c );
 
-		c.GameObject.Network.Refresh();
+		c.GameObject.Network?.Refresh();
 	}
 }
