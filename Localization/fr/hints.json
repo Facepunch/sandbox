@@ -1,0 +1,4 @@
+{
+  "hint.openspawnmenu": "Maintenez {input:SpawnMenu} pour ouvrir le menu de spawn",
+  "hint.openinspectmenu": "Maintenez {input:InspectMenu} pour ouvrir le menu d'inspection"
+}

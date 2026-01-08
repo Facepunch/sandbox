@@ -1,0 +1,4 @@
+{
+  "hint.openspawnmenu": "按住 {input:SpawnMenu} 打开生成菜单",
+  "hint.openinspectmenu": "按住 {input:InspectMenu} 打开检查菜单"
+}

@@ -1,0 +1,4 @@
+{
+  "hint.openspawnmenu": "Hold {input:SpawnMenu} t' open th' Spawn menu",
+  "hint.openinspectmenu": "Hold {input:InspectMenu} t' open th' Inspect menu"
+}

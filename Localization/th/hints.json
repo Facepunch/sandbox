@@ -1,0 +1,4 @@
+{
+  "hint.openspawnmenu": "กด {input:SpawnMenu} เพื่อเปิดเมนู Spawn",
+  "hint.openinspectmenu": "กด {input:InspectMenu} เพื่อเปิดเมนูตรวจสอบ"
+}
