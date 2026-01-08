@@ -14,7 +14,7 @@ public class Hints : GameObjectSystem<Hints>
 
 	public Hints( Scene scene ) : base( scene )
 	{
-		Queue( "openspawnmenu", "ℹ️", 2 );
+		Queue( "openspawnmenu", "ℹ️", 10 );
 		Queue( "openinspectmenu", "ℹ️", 40 );
 
 		Listen( Stage.StartUpdate, 0, Tick, "UpdateHints" );
@@ -45,7 +45,7 @@ public class Hints : GameObjectSystem<Hints>
 		var phrase = Game.Language.GetPhrase( $"hint.{next.Name}" );
 		phrase = ReplaceSpecialTokens( phrase );
 
-		Notices.AddNotice( next.Icon, Color.White, phrase, 400 );
+		Notices.AddNotice( next.Icon, Color.White, phrase, 5 );
 	}
 
 	public void Cancel( string hintName )
