@@ -1,43 +1,70 @@
 using Sandbox.UI;
 
-public class UndoSystem
+public class UndoSystem : GameObjectSystem<UndoSystem>
 {
-	Player Player { get; init; }
+	Dictionary<long, PlayerStack> stacks = new();
 
-	Stack<Entry> entries = new Stack<Entry>();
-
-	public UndoSystem( Player player )
+	public UndoSystem( Scene scene ) : base( scene )
 	{
-		Player = player;
-	}
-
-	public Entry Create()
-	{
-		var entry = new Entry( this );
-		entries.Push( entry );
-		return entry;
 	}
 
 	/// <summary>
-	/// Run the undo
+	/// Get the undo stack for a specific SteamId
 	/// </summary>
-	public void Undo()
+	public PlayerStack For( long steamId )
 	{
-		if ( entries.Count == 0 )
-			return;
-
-		var entry = entries.Pop();
-
-		// if we didn't do anything, do the next one
-		if ( !entry.Run() )
+		if ( !stacks.TryGetValue( steamId, out var stack ) )
 		{
-			Undo();
+			stack = new PlayerStack( steamId );
+			stacks[steamId] = stack;
 		}
-
-		// TODO - pop up notice
+		return stack;
 	}
 
+	/// <summary>
+	/// Per-player undo stack
+	/// </summary>
+	public class PlayerStack
+	{
+		long steamId;
+		Stack<Entry> entries = new();
 
+		public PlayerStack( long steamId )
+		{
+			this.steamId = steamId;
+		}
+
+		/// <summary>
+		/// Create a new undo entry
+		/// </summary>
+		public Entry Create()
+		{
+			var entry = new Entry( steamId );
+			entries.Push( entry );
+			return entry;
+		}
+
+		/// <summary>
+		/// Run the undo
+		/// </summary>
+		public void Undo()
+		{
+			if ( entries.Count == 0 )
+				return;
+
+			var entry = entries.Pop();
+
+			// if we didn't do anything, do the next one
+			if ( !entry.Run() )
+			{
+				Undo();
+			}
+		}
+	}
+
+	/// <summary>
+	/// An undo entry
+	/// </summary>
 	public class Entry
 	{
 		/// <summary>
@@ -46,15 +73,14 @@ public class UndoSystem
 		public string Name { get; set; }
 		public string Icon { get; set; }
 
-		UndoSystem System;
-		Player Player => System.Player;
+		long SteamId;
 
 		Action actions = null;
 		bool actioned;
 
-		internal Entry( UndoSystem system )
+		internal Entry( long steamId )
 		{
-			System = system;
+			SteamId = steamId;
 		}
 
 		/// <summary>
@@ -85,9 +111,13 @@ public class UndoSystem
 
 			if ( sendNotice )
 			{
-				using ( Rpc.FilterInclude( Player.Network.Owner ) )
+				var c = Connection.All.FirstOrDefault( x => x.SteamId == SteamId );
+				if ( c is not null )
 				{
-					UndoNotice( Name );
+					using ( Rpc.FilterInclude( c ) )
+					{
+						UndoNotice( Name );
+					}
 				}
 			}
 

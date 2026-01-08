@@ -1,7 +1,7 @@
 public sealed partial class Player
 {
 	/// <summary>
-	/// Allows adding to a list of actions that can be undone.
+	/// Access the undo system for this player
 	/// </summary>
-	public UndoSystem Undo { get; private set; }
+	public UndoSystem.PlayerStack Undo => UndoSystem.Current.For( SteamId );
 }
