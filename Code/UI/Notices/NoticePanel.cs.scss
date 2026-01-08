@@ -1,7 +1,7 @@
 NoticePanel
 {
 	position: absolute;
-	backdrop-filter: blur( 2px ) brightness( 0.6 );
+	backdrop-filter: blur( 4px ) brightness( 0.4 );
 	padding: 0.5rem 1.5rem;
 	border-radius: 10px;
 	font-family: Poppins;
@@ -19,4 +19,11 @@ NoticePanel
 		font-size: 24px;
 		font-family: "Material Icons";
 	}
+}
+
+span.key
+{
+	font-weight: 500;
+	color: #fff;
+	background-color: #08f;
 }

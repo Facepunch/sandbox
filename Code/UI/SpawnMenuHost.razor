@@ -54,12 +54,14 @@
             {
                 if (Input.Pressed("inspectmenu"))
                 {
+                    Hints.Current.Cancel("openinspectmenu");
                     SwitchMode("ContextMenuHost", false);
                     PanelSwitcher.SkipTransitions();
                 }
 
                 if (Input.Pressed("spawnmenu"))
                 {
+                    Hints.Current.Cancel("openspawnmenu");
                     SwitchMode(_lastMode, false);
                     PanelSwitcher.SkipTransitions();
                 }

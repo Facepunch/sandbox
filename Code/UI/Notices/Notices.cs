@@ -16,7 +16,7 @@ public class Notices : PanelComponent
 
 		var notice = new NoticePanel();
 
-		notice.AddChild( new Label() { Text = text, Classes = "text" } );
+		notice.AddChild( new Label() { Text = text, Classes = "text", IsRich = true } );
 		notice.TimeUntilDie = seconds;
 
 		current.Panel.AddChild( notice );
@@ -33,7 +33,7 @@ public class Notices : PanelComponent
 		iconPanel.Style.FontColor = iconColor;
 
 		notice.AddChild( iconPanel );
-		notice.AddChild( new Label() { Text = text, Classes = "text" } );
+		notice.AddChild( new Label() { Text = text, Classes = "text", IsRich = true } );
 		notice.TimeUntilDie = seconds;
 
 		current.Panel.AddChild( notice );
