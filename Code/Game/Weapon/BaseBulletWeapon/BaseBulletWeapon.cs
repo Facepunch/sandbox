@@ -28,7 +28,7 @@ public partial class BaseBulletWeapon : BaseWeapon
 			}
 		}
 
-		if ( hit )
+		if ( hit && hitObject.IsValid() )
 		{
 			var prefab = hitSurface.PrefabCollection.BulletImpact;
 			if ( prefab is null ) prefab = hitSurface.GetBaseSurface()?.PrefabCollection.BulletImpact;
