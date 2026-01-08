@@ -39,6 +39,8 @@ public class DecalTool : ToolMode
 		}
 	}
 
+	uint _layer = 0;
+
 	[Rpc.Host]
 	public void SpawnDecal( SelectionPoint point, DecalDefinition def )
 	{
@@ -50,9 +52,11 @@ public class DecalTool : ToolMode
 		go.Tags.Add( "removable" );
 		go.WorldPosition = pos.Position + pos.Rotation.Forward * 1f;
 		go.WorldRotation = Rotation.LookAt( -pos.Rotation.Forward );
+		go.SetParent( point.GameObject, true );
 
 		var decal = go.AddComponent<Decal>();
 		decal.Decals = [def];
+		decal.SortLayer = _layer++;
 
 		go.NetworkSpawn();
 
