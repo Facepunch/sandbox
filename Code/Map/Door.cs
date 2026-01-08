@@ -70,11 +70,11 @@ public sealed class Door : Component, Component.IPressable
 	/// </summary>
 	[Property, Group( "Events" )]
 	public Action<DoorState> OnStateChanged { get; set; }
-	
+
 	public DoorState State
 	{
-		get => _state; 
-		set
+		get => _state;
+		private set
 		{
 			if ( _state == value )
 				return;
@@ -120,30 +120,63 @@ public sealed class Door : Component, Component.IPressable
 		return true;
 	}
 
+	/// <summary>
+	/// Opens the door. Does nothing if already open or opening.
+	/// </summary>
+	/// <param name="presser">The GameObject that triggered the open action</param>
+	[Rpc.Host]
+	public void Open( GameObject presser )
+	{
+		// Don't do anything if already open or opening
+		if ( State is DoorState.Open or DoorState.Opening )
+			return;
+
+		LastUse = 0;
+		State = DoorState.Opening;
+
+		if ( OpenSound is not null )
+		PlaySound( OpenSound );
+
+		if ( OpenAwayFromPlayer && presser.IsValid() )
+		{
+			var doorToPlayer = (presser.WorldPosition - _pivotPosition).Normal;
+			var doorForward = Transform.Local.Rotation.Forward;
+
+			_reverseDirection = Vector3.Dot( doorToPlayer, doorForward ) > 0;
+		}
+	}
+
+	/// <summary>
+	/// Closes the door. Does nothing if already closed or closing.
+	/// </summary>
+	[Rpc.Host]
+	public void Close()
+	{
+		// Don't do anything if already closed or closing
+		if ( State is DoorState.Closed or DoorState.Closing )
+			return;
+
+		LastUse = 0;
+		State = DoorState.Closing;
+
+		if ( CloseSound is not null )
+			PlaySound( CloseSound );
+	}
+
+	/// <summary>
+	/// Toggles the door between open and closed states.
+	/// </summary>
+	/// <param name="presser">The GameObject that triggered the toggle action</param>
 	[Rpc.Host]
 	public void Toggle( GameObject presser )
 	{
-		LastUse = 0;
-
-		if ( State == DoorState.Closed )
+		if ( State is DoorState.Closed )
 		{
-			State = DoorState.Opening;
-			if ( OpenSound is not null )
-				PlaySound( OpenSound );
-
-			if ( OpenAwayFromPlayer )
-			{
-				var doorToPlayer = (presser.WorldPosition - _pivotPosition).Normal;
-				var doorForward = Transform.Local.Rotation.Forward;
-
-				_reverseDirection = Vector3.Dot( doorToPlayer, doorForward ) > 0;
-			}
+			Open( presser );
 		}
-		else if ( State == DoorState.Open )
+		else if ( State is DoorState.Open )
 		{
-			State = DoorState.Closing;
-			if ( CloseSound is not null )
-				PlaySound( CloseSound );
+			Close();
 		}
 	}
 
