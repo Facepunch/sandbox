@@ -13,6 +13,11 @@ public sealed class Door : Component, Component.IPressable
 	[Property, Group( "Sound" )] public SoundEvent OpenSound { get; set; }
 
 	/// <summary>
+	/// Sound to play when a door is interacted with while locked.
+	/// </summary>
+	[Property, Group( "Sound" )] public SoundEvent LockedSound { get; set; }
+
+	/// <summary>
 	/// Sound to play when a door is fully opened.
 	/// </summary>
 	[Property, Group( "Sound" )] public SoundEvent OpenFinishedSound { get; set; }
@@ -61,6 +66,11 @@ public sealed class Door : Component, Component.IPressable
 	Transform _startTransform;
 	Vector3 _pivotPosition;
 	bool _reverseDirection;
+
+	/// <summary>
+	/// Is this door locked?
+	/// </summary>
+	[Property, Sync] public bool IsLocked { get; set; }
 
 	[Sync] private TimeSince LastUse { get; set; }
 	[Sync] private DoorState _state { get; set; }
@@ -123,13 +133,21 @@ public sealed class Door : Component, Component.IPressable
 	/// <summary>
 	/// Opens the door. Does nothing if already open or opening.
 	/// </summary>
-	/// <param name="presser">The GameObject that triggered the open action</param>
 	[Rpc.Host]
+	[ActionGraphNode( "sandbox.door.open" ), Pure]
 	public void Open( GameObject presser )
 	{
-		// Don't do anything if already open or opening
 		if ( State is DoorState.Open or DoorState.Opening )
+		{
 			return;
+		}
+
+		if ( IsLocked )
+		{
+			if ( LockedSound is not null )
+				PlaySound( LockedSound );
+			return;
+		}
 
 		LastUse = 0;
 		State = DoorState.Opening;
@@ -150,6 +168,7 @@ public sealed class Door : Component, Component.IPressable
 	/// Closes the door. Does nothing if already closed or closing.
 	/// </summary>
 	[Rpc.Host]
+	[ActionGraphNode( "sandbox.door.close" ), Pure]
 	public void Close()
 	{
 		// Don't do anything if already closed or closing
@@ -166,8 +185,8 @@ public sealed class Door : Component, Component.IPressable
 	/// <summary>
 	/// Toggles the door between open and closed states.
 	/// </summary>
-	/// <param name="presser">The GameObject that triggered the toggle action</param>
 	[Rpc.Host]
+	[ActionGraphNode( "sandbox.door.toggle" ), Pure]
 	public void Toggle( GameObject presser )
 	{
 		if ( State is DoorState.Closed )
