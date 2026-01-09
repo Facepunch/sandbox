@@ -355,9 +355,12 @@ public partial class Physgun : BaseCarryable
 
 		if ( _joint is null )
 		{
+			// Scale is built into physics, remove it.
+			var bodyTransform = _state.Body.WorldTransform.WithScale( 1.0f );
+
 			var body = _state.Body.PhysicsBody;
 			var point1 = new PhysicsPoint( _body );
-			var point2 = new PhysicsPoint( body, _state.LocalOffset );
+			var point2 = new PhysicsPoint( body, bodyTransform.PointToLocal( _state.EndPoint ) );
 			var maxForce = body.Mass * body.World.Gravity.LengthSquared;
 
 			_joint = PhysicsJoint.CreateControl( point1, point2 );
