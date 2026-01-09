@@ -1,0 +1,148 @@
+﻿
+using Sandbox.Utility;
+
+public class HydraulicEntity : Component, IPlayerControllable
+{
+	[Property, Range( 0, 1 )]
+	public GameObject OnEffect { get; set; }
+
+	[Property, Range( 0, 100 ), ClientEditable]
+	public float MinLength { get; set; } = 10f;
+
+	[Property, Range( 0, 100 ), ClientEditable]
+	public float MaxLength { get; set; } = 100f;
+
+	[Property, Range( 0, 1 ), ClientEditable]
+	public float Length { get; set; } = 0.5f;
+
+	/// <summary>
+	/// While the client input is active we'll apply thrust
+	/// </summary>
+	[Property, Sync, ClientEditable]
+	public ClientInput Activate { get; set; }
+
+	[Property]
+	public SliderJoint Joint { get; set; }
+
+
+	[Property, ClientEditable, ToggleGroup( "Animated" )]
+	public bool Animated { get; set; }
+
+	[Property, ClientEditable, ToggleGroup( "Animated" ), Range( 0, 10 )]
+	public float AnimationSpeed { get; set; } = 1.0f;
+
+	[Property, ClientEditable, ToggleGroup( "Animated" )]
+	public EaseType EaseIn { get; set; } = EaseType.Linear;
+
+	[Property, ClientEditable, ToggleGroup( "Animated" )]
+	public EaseType EaseOut { get; set; } = EaseType.Linear;
+
+
+	public enum EaseType
+	{
+		Linear,
+		EaseIn,
+		EaseOut,
+		EaseInOut,
+		Bounce
+	}
+
+	protected override void OnEnabled()
+	{
+		base.OnEnabled();
+
+		OnEffect?.Enabled = false;
+	}
+
+	bool _state;
+
+	public void SetActiveState( bool state )
+	{
+		if ( _state == state ) return;
+
+		_state = state;
+
+		OnEffect?.Enabled = state;
+
+		Network.Refresh();
+
+	}
+
+	public void OnStartControl()
+	{
+	}
+
+	public void OnEndControl()
+	{
+	}
+
+	public void OnControl()
+	{
+		var analog = Activate.GetAnalog();
+
+		//AddThrust( analog );
+		//SetActiveState( analog > 0.1f );
+	}
+
+	float _animTime = 0;
+
+	protected override void OnUpdate()
+	{
+		base.OnUpdate();
+
+		if ( !Joint.IsValid() ) return;
+
+		DebugOverlay.Line( Joint.GameObject.WorldPosition, Joint.Body.WorldPosition, Color.Green );
+
+		if ( Animated )
+		{
+			_animTime += Time.Delta * AnimationSpeed * 0.33f;
+			_animTime = _animTime % 2;
+
+			var delta = _animTime;
+			if ( delta > 1 )
+			{
+				delta = 2 - delta;
+				delta = GetEase( 1 - delta, EaseOut );
+				delta = 1 - delta;
+			}
+			else
+			{
+				delta = GetEase( delta, EaseIn );
+			}
+
+			Length = (delta);
+		}
+
+
+		Joint.MinLength = MinLength + (Length * (MaxLength - MinLength));
+		Joint.MaxLength = MinLength + (Length * (MaxLength - MinLength));
+		//joint.RestLength = Length;
+		//joint.Damping = 1;
+		//joint.Frequency = 10;
+
+		if ( GetComponent<CapsuleCollider>() is CapsuleCollider capsule )
+		{
+			capsule.Static = false;
+			capsule.Start = capsule.WorldTransform.PointToLocal( Joint.GameObject.WorldPosition );
+			capsule.End = capsule.WorldTransform.PointToLocal( Joint.Body.WorldPosition );
+			capsule.Radius = 1.0f;
+			capsule.ColliderFlags = default;
+			capsule.Tags.Set( "trigger", true );
+		}
+	}
+
+	private float GetEase( float delta, EaseType easeIn )
+	{
+		switch ( easeIn )
+		{
+			case EaseType.Linear: return delta;
+			case EaseType.EaseIn: return Easing.EaseIn( delta );
+			case EaseType.EaseOut: return Easing.EaseOut( delta );
+			case EaseType.EaseInOut: return Easing.EaseInOut( delta );
+			case EaseType.Bounce: return Easing.BounceOut( delta );
+		}
+
+		return delta;
+	}
+}

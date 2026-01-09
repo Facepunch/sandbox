@@ -1,0 +1,76 @@
+﻿[Hide]
+[Title( "Hydraulic" )]
+[Icon( "⚙️" )]
+[ClassName( "HydraulicTool" )]
+[Group( "Building" )]
+public class HydraulicTool : BaseConstraintToolMode
+{
+	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
+	{
+		DebugOverlay.Line( point1.WorldPosition(), point2.WorldPosition(), Color.Red, 5.0f );
+
+		if ( point1.GameObject == point2.GameObject )
+			return;
+
+		var line = point1.WorldPosition() - point2.WorldPosition();
+
+		var go1 = new GameObject( false, "hydraulic_a" );
+
+
+		//
+		go1.Parent = point1.GameObject;
+		go1.LocalTransform = point1.LocalTransform;
+		go1.WorldRotation = Rotation.LookAt( -line );
+
+		var go2 = new GameObject( false, "hydraulic_b" );
+		go2.Parent = point2.GameObject;
+		go2.LocalTransform = point2.LocalTransform;
+		go2.WorldRotation = Rotation.LookAt( -line );
+
+		var cleanup = go1.AddComponent<ConstraintCleanup>();
+		cleanup.Attachment = go2;
+
+		var len = (point1.WorldPosition() - point2.WorldPosition()).Length;
+
+		SliderJoint joint = default;
+
+		// Joint
+		{
+			joint = go1.AddComponent<SliderJoint>();
+			joint.Attachment = Joint.AttachmentMode.Auto;
+			joint.Body = go2;
+			joint.MinLength = len;
+			joint.MaxLength = len;
+			joint.EnableCollision = true;
+		}
+
+		//
+		// If it's ourself - we want to create the rope, but no joint between
+		//
+
+		var jointGo = new GameObject( go1, true, "hydraulic" );
+
+		var entity = jointGo.AddComponent<HydraulicEntity>();
+		entity.Length = 0.5f;
+		entity.MinLength = 5.0f;
+		entity.MaxLength = len * 2.0f;
+		entity.Joint = joint;
+
+		//	var rb = go1.AddComponent<Rigidbody>();
+		//	rb.Gravity = false;
+		//	rb.MotionEnabled = false;
+		var capsule = jointGo.AddComponent<CapsuleCollider>();
+
+		go2.NetworkSpawn( true, null );
+		go1.NetworkSpawn( true, null );
+		jointGo.NetworkSpawn( true, null );
+
+		var undo = Player.Undo.Create();
+		undo.Name = "Hydraulic";
+		undo.Add( go1 );
+		undo.Add( go2 );
+		undo.Add( jointGo );
+	}
+
+}
+
