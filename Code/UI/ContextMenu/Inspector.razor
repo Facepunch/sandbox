@@ -58,15 +58,35 @@
         if (!IsVisible)
             return;
 
-        host.SelectedOutline.Targets.AddRange(_selected.SelectMany( x => x.GetComponentsInChildren<Renderer>() ) ?? []);
+        host.SelectedOutline.Targets.AddRange(_selected.SelectMany(x => GetRenderers( x ) ) ?? []);
 
         if ( !_selected.Contains( hovered  ) )
         {
-            host.HoveredOutline.Targets = hovered?.GetComponentsInChildren<Renderer>().ToList();
+            host.HoveredOutline.Targets = GetRenderers( Hovered ).ToList();
         }
         else
         {
             host.HoveredOutline.Targets = default;
+        }
+    }
+
+    IEnumerable<Renderer> GetRenderers( GameObject o )
+    {
+        if ( o == null ) yield break;
+
+        foreach ( var r in o.GetComponents<Renderer>() )
+        {
+            yield return r;
+        }
+
+        foreach( var c in o.Children )
+        {
+            if (c.NetworkMode == NetworkMode.Object) continue;
+
+            foreach (var rr in GetRenderers( c ) )
+            {
+                yield return rr;
+            }
         }
     }
 
@@ -83,16 +103,14 @@
                             .IgnoreGameObjectHierarchy( Player.FindLocalPlayer()?.GameObject )
                             .Run();
 
+        var go = tr.Collider?.GameObject ?? tr.GameObject;
+        go = go.FindNetworkRoot();
         //  Scene.DebugOverlay.Sphere(new Sphere(tr.EndPosition, 1), Color.Yellow );
 
-        if (!_canvas.HasHovered) tr.GameObject = default;
-
-        var go = tr.GameObject;
+        if (!_canvas.HasHovered) go = default;
         if (!CanSelect(go)) go = null;
 
         UpdateHovered(go);
-
-
     }
 
     bool CanSelect( GameObject o )
@@ -101,14 +119,14 @@
         if (o.Tags.Has("world")) return false;
         if (o.NetworkMode == NetworkMode.Never) return false;
 
-        o = o?.Network?.RootGameObject;
+        o = o?.FindNetworkRoot();
 
         return true;
     }
 
     void UpdateHovered( GameObject o )
     {
-        o = o?.Network?.RootGameObject;
+        o = o?.FindNetworkRoot();
 
         if (hovered == o) return;
 
