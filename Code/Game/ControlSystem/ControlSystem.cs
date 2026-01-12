@@ -29,10 +29,12 @@ public class ControlSystem : GameObjectSystem<ControlSystem>
 
 		foreach ( var o in builder.Objects )
 		{
-			var controllable = o.GetComponent<IPlayerControllable>();
-			if ( controllable is null ) continue;
+			foreach ( var controllable in o.GetComponentsInChildren<IPlayerControllable>() )
+			{
+				if ( controllable is null ) continue;
 
-			controllable.OnControl();
+				controllable.OnControl();
+			}
 		}
 
 	}

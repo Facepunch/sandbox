@@ -15,6 +15,25 @@ public class HydraulicEntity : Component, IPlayerControllable
 	[Property, Range( 0, 1 ), ClientEditable]
 	public float Length { get; set; } = 0.5f;
 
+	[Property, Range( 0, 1 ), ClientEditable]
+	public float Speed { get; set; } = 0.25f;
+
+	[Property, Sync, ClientEditable]
+	public ClientInput Push { get; set; }
+
+	[Property, Range( 0, 1 ), ClientEditable]
+	public float PushSpeed { get; set; } = 0.25f;
+
+
+	[Property, Sync, ClientEditable]
+	public ClientInput Pull { get; set; }
+
+	[Property, Range( 0, 1 ), ClientEditable]
+	public float PullSpeed { get; set; } = 0.25f;
+
+	[Property, Sync, ClientEditable]
+	public ClientInput Toggle { get; set; }
+
 	/// <summary>
 	/// While the client input is active we'll apply thrust
 	/// </summary>
@@ -76,8 +95,63 @@ public class HydraulicEntity : Component, IPlayerControllable
 	{
 	}
 
+	float? _lastTargetValue;
+	float? _targetValue;
+
 	public void OnControl()
 	{
+		if ( Activate.Down() )
+		{
+			Length += Speed * Time.Delta;
+
+		}
+		else if ( Activate.Released() )
+		{
+			Length = 0;
+		}
+
+		if ( Push.Down() )
+		{
+			Length += PushSpeed * Time.Delta * 5.0f;
+		}
+
+		if ( Pull.Down() )
+		{
+			Length -= PullSpeed * Time.Delta * 5.0f;
+		}
+
+		if ( Toggle.Pressed() )
+		{
+			_targetValue = _lastTargetValue.HasValue ? (_lastTargetValue > 0.5f ? 0.0f : 1.0f) : 1;
+			_lastTargetValue = _targetValue;
+
+			Log.Info( _targetValue );
+		}
+
+		if ( _targetValue.HasValue )
+		{
+			if ( _targetValue > Length )
+			{
+				Length += PushSpeed * Time.Delta * 5.0f;
+
+				if ( Length > 1 )
+				{
+					_targetValue = null;
+				}
+			}
+			else
+			{
+				Length -= PullSpeed * Time.Delta * 5.0f;
+
+				if ( Length < 0 )
+				{
+					_targetValue = null;
+				}
+			}
+		}
+
+		Length = Length.Clamp( 0, 1 );
+
 		var analog = Activate.GetAnalog();
 
 		//AddThrust( analog );
