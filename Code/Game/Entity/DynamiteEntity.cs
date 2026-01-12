@@ -35,6 +35,7 @@ public class DynamiteEntity : Component, IPlayerControllable, Component.IDamagea
 			x.Radius = Radius;
 			x.PhysicsForceScale = Force;
 			x.DamageAmount = Damage;
+			x.Attacker = go;
 		}, FindMode.EverythingInSelfAndDescendants );
 
 		go.Enabled = true;
