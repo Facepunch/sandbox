@@ -8,17 +8,14 @@ public interface IDefinitionResource
 
 public static class EngineAdditions
 {
-	extension( AssetTypeAttribute game )
+	extension( GameObject go )
 	{
-		public static TypeDescription FindTypeByExtension( string extension )
+		public GameObject FindNetworkRoot()
 		{
-			foreach ( var t in TypeLibrary.GetTypesWithAttribute<AssetTypeAttribute>() )
-			{
-				if ( string.Equals( t.Attribute.Extension, extension, StringComparison.OrdinalIgnoreCase ) )
-					return t.Type;
-			}
+			if ( !go.IsValid() ) return null;
 
-			return null;
+			if ( go.NetworkMode == NetworkMode.Object ) return go;
+			return go.Parent?.FindNetworkRoot();
 		}
 	}
 }
