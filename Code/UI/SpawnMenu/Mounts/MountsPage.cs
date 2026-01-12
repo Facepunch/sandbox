@@ -19,11 +19,14 @@ public class MountsPage : BaseSpawnMenu
 			}
 		}
 
-		foreach ( var entry in unavailable.OrderBy( x => x.Title ) )
+		if ( unavailable.Any() )
 		{
 			AddHeader( "Not Installed" );
-
-			AddOption( entry.Title, null );
+			
+			foreach ( var entry in unavailable.OrderBy( x => x.Title ) )
+			{
+				AddOption( entry.Title, null );
+			}
 		}
 	}
 }
