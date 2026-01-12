@@ -264,45 +264,4 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			ActiveWeapon.OnCameraSetup( Player, camera );
 		}
 	}
-
-	public void DropCoffin()
-	{
-		if ( !Networking.IsHost )
-			return;
-
-		// Create a coffin
-		var coffinPrefab = GameObject.Clone( "items/coffin/coffin.prefab" );
-		if ( coffinPrefab is null ) return;
-
-		coffinPrefab.Name = $"Coffin for {GameObject.Name}";
-		coffinPrefab.WorldPosition = Player.EyeTransform.Position;
-		coffinPrefab.WorldRotation = Rotation.LookAt( Player.EyeTransform.Forward.WithZ( 0 ), Vector3.Up );
-
-		// Collect ammo and set all this stuff before we spawn it
-		var coffin = coffinPrefab.GetComponent<Coffin>();
-		Assert.True( coffin.IsValid(), "Coffin not on coffin prefab" );
-
-		coffin.AmmoCounts = new( Player.AmmoCounts );
-
-		if ( coffinPrefab.GetComponent<Rigidbody>() is { } rb )
-		{
-			rb.Velocity = Player.Controller.Velocity + (Player.EyeTransform.Backward * 128);
-		}
-
-		coffinPrefab.NetworkSpawn( true, null );
-
-		foreach ( var weapon in GetComponentsInChildren<BaseCarryable>( true ).ToArray() )
-		{
-			// Conna: drop ownership first - this gives it to us (the host).
-			weapon.Network.DropOwnership();
-
-			// Now change our parent and enabled state. Enabled state is not networked automatically
-			// so we'll need to do a network refresh.
-			weapon.GameObject.Parent = coffinPrefab;
-			weapon.GameObject.Enabled = false;
-
-			// Do a network refresh so other clients get the changed enabled state.
-			weapon.Network.Refresh();
-		}
-	}
 }

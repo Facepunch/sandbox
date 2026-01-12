@@ -54,7 +54,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		Assert.True( Networking.IsHost, $"Client tried to SpawnPlayer: {playerData.DisplayName}" );
 
 		// does this connection already have a player?
-		if ( Scene.GetAll<Player>().Where( x => x.Network.Owner?.Id == playerData.PlayerId ).Any() )
+		if ( Scene.GetAll<Player>().Any( x => x.Network.Owner?.Id == playerData.PlayerId ) )
 			return;
 
 		// Find a spawn location for this player
@@ -94,7 +94,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	/// </summary>
 	Transform FindSpawnLocation()
 	{
-
 		//
 		// If we have any SpawnPoint components in the scene, then use those
 		//
@@ -146,7 +145,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 			}
 		}
 
-		return spawnPointFurthestAway.Transform.World;
+		return spawnPointFurthestAway.WorldTransform;
 	}
 
 	[Rpc.Broadcast]
@@ -193,13 +192,19 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		var w = weapon.IsValid() ? weapon.GetComponentInChildren<IKillIcon>() : null;
 		Scene.RunEvent<Feed>( x => x.NotifyDeath( player.PlayerData, attacker.PlayerData, w?.DisplayIcon, dmg.Tags ) );
 
-		string attackerName = attacker.IsValid() ? attacker.DisplayName : dmg.Attacker?.Name;
+		var attackerName = attacker.IsValid() ? attacker.DisplayName : dmg.Attacker?.Name;
 		if ( string.IsNullOrEmpty( attackerName ) )
+		{
 			SendMessage( $"{player.DisplayName} died (tags: {dmg.Tags})" );
+		}
 		else if ( weapon.IsValid() )
+		{
 			SendMessage( $"{attackerName} killed {(isSuicide ? "self" : player.DisplayName)} with {weapon.Name} (tags: {dmg.Tags})" );
+		}
 		else
+		{
 			SendMessage( $"{attackerName} killed {(isSuicide ? "self" : player.DisplayName)} (tags: {dmg.Tags})" );
+		}
 	}
 
 	[ConCmd( "spawn" )]
@@ -242,12 +247,9 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		var right = Vector3.Cross( up, backward ).Normal;
 		var forward = Vector3.Cross( right, up ).Normal;
-
 		var facingAngle = Rotation.LookAt( forward, up );
 
 		var spawnTransform = new Transform( trace.EndPosition, facingAngle );
-
-
 
 		using var spawnInfo = new SpawnConfig();
 		spawnInfo.Location = new Transform( trace.EndPosition, facingAngle );
