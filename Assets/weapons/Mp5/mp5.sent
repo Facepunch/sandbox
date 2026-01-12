@@ -1,0 +1,8 @@
+{
+  "Prefab": "weapons/mp5/item_mp5.prefab",
+  "Title": "MP5",
+  "Description": "Semi-automatic sub machine gun",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}
