@@ -15,9 +15,6 @@ public class HydraulicTool : BaseConstraintToolMode
 		var line = point1.WorldPosition() - point2.WorldPosition();
 
 		var go1 = new GameObject( false, "hydraulic_a" );
-
-
-		//
 		go1.Parent = point1.GameObject;
 		go1.LocalTransform = point1.LocalTransform;
 		go1.WorldRotation = Rotation.LookAt( -line );
@@ -34,10 +31,13 @@ public class HydraulicTool : BaseConstraintToolMode
 
 		SliderJoint joint = default;
 
+		var jointGo = new GameObject( go1, true, "hydraulic" );
+
 		// Joint
 		{
-			joint = go1.AddComponent<SliderJoint>();
+			joint = jointGo.AddComponent<SliderJoint>();
 			joint.Attachment = Joint.AttachmentMode.Auto;
+			//	joint.AnchorBody = go1;
 			joint.Body = go2;
 			joint.MinLength = len;
 			joint.MaxLength = len;
@@ -47,19 +47,16 @@ public class HydraulicTool : BaseConstraintToolMode
 		//
 		// If it's ourself - we want to create the rope, but no joint between
 		//
-
-		var jointGo = new GameObject( go1, true, "hydraulic" );
-
 		var entity = jointGo.AddComponent<HydraulicEntity>();
 		entity.Length = 0.5f;
 		entity.MinLength = 5.0f;
 		entity.MaxLength = len * 2.0f;
 		entity.Joint = joint;
 
-		//	var rb = go1.AddComponent<Rigidbody>();
-		//	rb.Gravity = false;
-		//	rb.MotionEnabled = false;
 		var capsule = jointGo.AddComponent<CapsuleCollider>();
+		var renderer = jointGo.AddComponent<SkinnedModelRenderer>();
+		renderer.Model = Model.Load( "hydraulics/hydraulics_blockout.vmdl" );
+		renderer.CreateBoneObjects = true;
 
 		go2.NetworkSpawn( true, null );
 		go1.NetworkSpawn( true, null );

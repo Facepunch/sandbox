@@ -92,6 +92,9 @@ public class HydraulicEntity : Component, IPlayerControllable
 
 		if ( !Joint.IsValid() ) return;
 
+		var line = Joint.Body.WorldPosition - Joint.GameObject.WorldPosition;
+		var line_rot = Rotation.LookAt( line, WorldRotation.Up );
+
 		DebugOverlay.Line( Joint.GameObject.WorldPosition, Joint.Body.WorldPosition, Color.Green );
 
 		if ( Animated )
@@ -127,8 +130,29 @@ public class HydraulicEntity : Component, IPlayerControllable
 			capsule.Start = capsule.WorldTransform.PointToLocal( Joint.GameObject.WorldPosition );
 			capsule.End = capsule.WorldTransform.PointToLocal( Joint.Body.WorldPosition );
 			capsule.Radius = 1.0f;
-			capsule.ColliderFlags = default;
+			capsule.ColliderFlags = ColliderFlags.IgnoreMass;
 			capsule.Tags.Set( "trigger", true );
+		}
+
+		if ( GetComponent<SkinnedModelRenderer>() is SkinnedModelRenderer renderer )
+		{
+			renderer.CreateBoneObjects = true;
+
+			var len = line.Length - MinLength;
+
+			var a = Joint.GameObject.WorldPosition;
+			var b = a + line.Normal * MinLength * 0.5f;
+			var c = b + line.Normal * len;
+			var d = c + line.Normal * MinLength * 0.5f;
+
+			renderer.GetBoneObject( 0 )?.WorldTransform = new Transform( a, line_rot );
+			renderer.GetBoneObject( 0 )?.Flags |= GameObjectFlags.ProceduralBone;
+			renderer.GetBoneObject( 1 )?.WorldTransform = new Transform( b, line_rot ); ;
+			renderer.GetBoneObject( 1 )?.Flags |= GameObjectFlags.ProceduralBone;
+			renderer.GetBoneObject( 2 )?.WorldTransform = new Transform( c, line_rot ); ;
+			renderer.GetBoneObject( 2 )?.Flags |= GameObjectFlags.ProceduralBone;
+			renderer.GetBoneObject( 3 )?.WorldTransform = new Transform( d, line_rot ); ;
+			renderer.GetBoneObject( 3 )?.Flags |= GameObjectFlags.ProceduralBone;
 		}
 	}
 
