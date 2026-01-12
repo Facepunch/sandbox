@@ -3,7 +3,7 @@
   "GameObjects": [
     {
       "__guid": "f7192e2f-1093-4cca-a93c-40cb86e20686",
-      "__version": 1,
+      "__version": 2,
       "Flags": 0,
       "Name": "MapLoader",
       "Position": "0,0,0",
@@ -12,7 +12,7 @@
       "Tags": "",
       "Enabled": true,
       "NetworkMode": 2,
-      "NetworkInterpolation": true,
+      "NetworkFlags": 0,
       "NetworkOrphaned": 0,
       "NetworkTransmit": true,
       "OwnerTransfer": 1,
@@ -38,6 +38,266 @@
         }
       ],
       "Children": []
+    },
+    {
+      "__guid": "3609ecd2-6c5d-4489-9d5c-b88b13471d38",
+      "__version": 2,
+      "Flags": 0,
+      "Name": "Door",
+      "Position": "-68.11172,148.4144,384",
+      "Rotation": "0,0,0,1",
+      "Scale": "1,1,1",
+      "Tags": "",
+      "Enabled": true,
+      "NetworkMode": 1,
+      "NetworkFlags": 0,
+      "NetworkOrphaned": 0,
+      "NetworkTransmit": true,
+      "OwnerTransfer": 1,
+      "Components": [
+        {
+          "__type": "Sandbox.ModelRenderer",
+          "__guid": "ca0a35f8-9f36-417c-9e7b-512a8646f7f6",
+          "__enabled": true,
+          "Flags": 0,
+          "BodyGroups": 18446744073709551615,
+          "CreateAttachments": false,
+          "LodOverride": null,
+          "MaterialGroup": null,
+          "MaterialOverride": null,
+          "Materials": null,
+          "Model": "models/props/trim_sheets/doors/wooden_doors/wooden_door_01a.vmdl",
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Tint": "1,1,1,1"
+        },
+        {
+          "__type": "Sandbox.ModelCollider",
+          "__guid": "b2bdbc84-ed9c-41aa-b210-1e48b8a42452",
+          "__enabled": true,
+          "Flags": 0,
+          "ColliderFlags": 0,
+          "Elasticity": null,
+          "Friction": null,
+          "IsTrigger": false,
+          "Model": "models/props/trim_sheets/doors/wooden_doors/wooden_door_01a.vmdl",
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "OnObjectTriggerEnter": null,
+          "OnObjectTriggerExit": null,
+          "OnTriggerEnter": null,
+          "OnTriggerExit": null,
+          "RollingResistance": null,
+          "Static": false,
+          "Surface": null,
+          "SurfaceVelocity": "0,0,0"
+        }
+      ],
+      "Children": [
+        {
+          "__guid": "451dc1c9-ec51-4a03-a581-40d24ccaade0",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "Pivot",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [],
+          "Children": []
+        }
+      ]
+    },
+    {
+      "__guid": "b3d7e91c-8e78-41f4-b4a3-04ec224f1d74",
+      "__version": 2,
+      "Flags": 0,
+      "Name": "Button",
+      "Position": "-147.4122,148.4144,381.8036",
+      "Rotation": "0,0,0,1",
+      "Scale": "1,1,1",
+      "Tags": "",
+      "Enabled": true,
+      "NetworkMode": 1,
+      "NetworkFlags": 0,
+      "NetworkOrphaned": 0,
+      "NetworkTransmit": true,
+      "OwnerTransfer": 1,
+      "Components": [
+        {
+          "__type": "Sandbox.ModelCollider",
+          "__guid": "23f5cc0e-79cb-405c-8ed8-2ef2c533d266",
+          "__enabled": true,
+          "Flags": 0,
+          "ColliderFlags": 0,
+          "Elasticity": null,
+          "Friction": null,
+          "IsTrigger": false,
+          "Model": "models/props/big_button/big_button.vmdl",
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "OnObjectTriggerEnter": null,
+          "OnObjectTriggerExit": null,
+          "OnTriggerEnter": null,
+          "OnTriggerExit": null,
+          "RollingResistance": null,
+          "Static": false,
+          "Surface": null,
+          "SurfaceVelocity": "0,0,0"
+        },
+        {
+          "__type": "Button",
+          "__guid": "b48ae2b2-1a3a-45e7-a5eb-3e9e9c6b097b",
+          "__enabled": true,
+          "Flags": 0,
+          "AnimationCurve": [
+            {
+              "x": 0,
+              "y": 0,
+              "in": 0,
+              "out": 0,
+              "mode": "Mirrored"
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "in": 0,
+              "out": 0,
+              "mode": "Mirrored"
+            }
+          ],
+          "AnimationTime": 0.1,
+          "AutoReset": false,
+          "Mode": "Toggle",
+          "Move": true,
+          "MoveDelta": "0,0,-1",
+          "MoveTarget": {
+            "_type": "gameobject",
+            "go": "b5ef4f3a-a516-4aa0-b8d8-f220015d4c11"
+          },
+          "OffSound": null,
+          "OnButtonPressed": null,
+          "OnButtonReleased": null,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "OnSound": null,
+          "OnStateChanged": null,
+          "ResetTime": 1
+        },
+        {
+          "__type": "Sandbox.SkinnedModelRenderer",
+          "__guid": "801bf3fe-e241-4291-ae89-acca4e324c57",
+          "__enabled": true,
+          "Flags": 0,
+          "AnimationGraph": null,
+          "BodyGroups": 18446744073709551615,
+          "BoneMergeTarget": null,
+          "CreateAttachments": false,
+          "CreateBoneObjects": true,
+          "LodOverride": null,
+          "MaterialGroup": null,
+          "MaterialOverride": null,
+          "Materials": null,
+          "Model": "models/props/big_button/big_button.vmdl",
+          "Morphs": {},
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Parameters": {
+            "bools": {},
+            "ints": {},
+            "floats": {},
+            "vectors": {},
+            "rotations": {}
+          },
+          "PlaybackRate": 1,
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Sequence": {
+            "Name": null,
+            "Looping": true,
+            "Blending": false
+          },
+          "Tint": "1,1,1,1",
+          "UseAnimGraph": true
+        }
+      ],
+      "Children": [
+        {
+          "__guid": "1e494770-8f08-4754-b9ae-748b7343c6c1",
+          "__version": 2,
+          "Flags": 4,
+          "Name": "base",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [],
+          "Children": [
+            {
+              "__guid": "b5ef4f3a-a516-4aa0-b8d8-f220015d4c11",
+              "__version": 2,
+              "Flags": 1028,
+              "Name": "button",
+              "Position": "0,0,0",
+              "Rotation": "0,0,0,1",
+              "Scale": "1,1,1",
+              "Tags": "",
+              "Enabled": true,
+              "NetworkMode": 2,
+              "NetworkFlags": 0,
+              "NetworkOrphaned": 0,
+              "NetworkTransmit": true,
+              "OwnerTransfer": 1,
+              "Components": [],
+              "Children": []
+            }
+          ]
+        }
+      ]
     }
   ],
   "SceneProperties": {
@@ -61,6 +321,9 @@
   "ResourceVersion": 3,
   "Title": null,
   "Description": null,
-  "__references": [],
+  "__references": [
+    "facepunch.big_button#130219",
+    "facepunch.wooden_door_01a#107470"
+  ],
   "__version": 3
 }
