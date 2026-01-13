@@ -25,6 +25,7 @@
 @code
 {
     public Storage.SortOrder SortOrder { get; set; } = Storage.SortOrder.RankedByVote;
+    public string Category { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -55,6 +56,8 @@
 		query.KeyValues["package"] = "facepunch.sandbox";
 		query.KeyValues["type"] = "dupe";
 		query.SortOrder = SortOrder;
+
+        if (Category != null) query.KeyValues["category"] = Category;
 
 		LastResult = await query.Run();
 		if ( LastResult.Items == null ) return;

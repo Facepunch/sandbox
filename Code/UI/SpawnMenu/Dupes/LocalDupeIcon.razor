@@ -10,25 +10,35 @@
 
 @code
 {
-	public Storage.Entry Content;
+    public Storage.Entry Content;
 
     protected override void OnParametersSet()
     {
-		Style.SetBackgroundImage( Content.Thumbnail );
+        Style.SetBackgroundImage( Content.Thumbnail );
     }
 
-	protected override void OnMouseDown( MousePanelEvent e )
-	{
-		if ( e.MouseButton == MouseButtons.Right )
-		{
-			var menu = MenuPanel.Open( this );
-			
-			menu.AddOption( "delete", "Delete", () => Content.Delete() );
-			menu.AddOption( "publish", "Publish", () => Content.Publish() );
+    protected override void OnMouseDown( MousePanelEvent e )
+    {
+        if ( e.MouseButton == MouseButtons.Right )
+        {
+            var menu = MenuPanel.Open( this );
 
-			return;
-		}
+            menu.AddOption( "delete", "Delete", () => Content.Delete() );
+            menu.AddOption( "publish", "Publish", Publish );
 
-		base.OnMouseDown( e );
-	}
+            return;
+        }
+
+        base.OnMouseDown( e );
+    }
+
+    void Publish()
+    {
+        var options = new Modals.WorkshopPublishOptions();
+        options.Title = "My Dupe";
+        options.AddCategory<DupeCategory>( "Category" );
+        options.AddCategory<DupeMovement>( "Movement");
+
+        Content.Publish(options);
+    }
 }
