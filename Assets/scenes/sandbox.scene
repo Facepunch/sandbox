@@ -38,6 +38,116 @@
         }
       ],
       "Children": []
+    },
+    {
+      "__guid": "7140ae19-052b-4b02-949a-5ddf85243a00",
+      "__version": 2,
+      "Flags": 0,
+      "Name": "Cube",
+      "Position": "113.8334,217.2568,399.8756",
+      "Rotation": "0,0,0,1",
+      "Scale": "0.2,0.2,0.2",
+      "Tags": "",
+      "Enabled": true,
+      "NetworkMode": 2,
+      "NetworkFlags": 0,
+      "NetworkOrphaned": 0,
+      "NetworkTransmit": true,
+      "OwnerTransfer": 1,
+      "Components": [
+        {
+          "__type": "Sandbox.ModelRenderer",
+          "__guid": "4a7c6893-da7a-4481-b7af-6fb39ec736c6",
+          "__enabled": true,
+          "Flags": 0,
+          "BodyGroups": 18446744073709551615,
+          "CreateAttachments": false,
+          "LodOverride": null,
+          "MaterialGroup": null,
+          "MaterialOverride": null,
+          "Materials": null,
+          "Model": "models/dev/box.vmdl",
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Tint": "1,1,1,1"
+        },
+        {
+          "__type": "Button",
+          "__guid": "e0a70ab9-2b56-455f-bb5b-0c4810e40450",
+          "__enabled": true,
+          "Flags": 0,
+          "AnimationCurve": [
+            {
+              "x": 0,
+              "y": 0,
+              "in": 0,
+              "out": 0,
+              "mode": "Mirrored"
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "in": 0,
+              "out": 0,
+              "mode": "Mirrored"
+            }
+          ],
+          "AnimationTime": 0.5,
+          "AutoReset": true,
+          "Mode": "Toggle",
+          "Move": false,
+          "MoveDelta": "0,0,0",
+          "MoveTarget": null,
+          "OffSound": null,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "OnSound": null,
+          "OnStateChanged": null,
+          "ResetTime": 1
+        },
+        {
+          "__type": "Sandbox.BoxCollider",
+          "__guid": "1d092f5d-d106-4a64-a23d-16fffe546925",
+          "__enabled": true,
+          "Flags": 0,
+          "Center": "0,0,0",
+          "ColliderFlags": 0,
+          "Elasticity": null,
+          "Friction": null,
+          "IsTrigger": false,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "OnObjectTriggerEnter": null,
+          "OnObjectTriggerExit": null,
+          "OnTriggerEnter": null,
+          "OnTriggerExit": null,
+          "RollingResistance": null,
+          "Scale": "50,50,50",
+          "Static": false,
+          "Surface": null,
+          "SurfaceVelocity": "0,0,0"
+        }
+      ],
+      "Children": []
     }
   ],
   "SceneProperties": {
@@ -56,7 +166,8 @@
       "AgentMaxSlope": 40,
       "ExcludedBodies": "",
       "IncludedBodies": ""
-    }
+    },
+    "GameObjectSystems": []
   },
   "ResourceVersion": 3,
   "Title": null,

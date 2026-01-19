@@ -1,0 +1,46 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+<root>
+	
+    <div class="crosshair">
+    </div>
+
+    @if (tooltips.FirstOrDefault() is { } tooltip )
+    {
+        <div class="tt">
+            <div class="title">@tooltip.Title</div>
+            
+            @if (tooltip.Description is not null)
+            {
+                <div class="description">@tooltip.Description</div>
+            }
+        </div>
+    }
+
+</root>
+
+@code
+{
+    readonly List<IPressable.Tooltip> tooltips = new List<IPressable.Tooltip>();
+
+    protected override void OnUpdate()
+    {
+        base.OnUpdate();
+
+        tooltips.Clear();
+        GetHovered();
+        StateHasChanged();
+    }
+
+    void GetHovered()
+    {
+        var lp = Player.FindLocalPlayer();
+        if (lp is null) return;
+        if (lp.Controller.Tooltips.Count == 0) return;
+
+        tooltips.AddRange(lp.Controller.Tooltips);
+    }
+}
