@@ -1,7 +1,7 @@
 /// <summary>
 /// Holds persistent player information like deaths, kills
 /// </summary>
-public sealed partial class PlayerData : Component
+public sealed partial class PlayerData : Component, ISaveEvents
 {
 	/// <summary>
 	/// Unique Id per each player and bot, equal to owning Player connection Id if it's a real player.
@@ -67,6 +67,16 @@ public sealed partial class PlayerData : Component
 		using ( Rpc.FilterInclude( Connection ) )
 		{
 			RpcAddStat( identifier, amount );
+		}
+	}
+
+	void ISaveEvents.OnAfterLoad()
+	{
+		var connection = Connection;
+		if ( connection == null )
+		{
+			// Get new PlayerId from SteamId if this is a new session
+			PlayerId = Connection.All.FirstOrDefault( x => x.SteamId == SteamId )?.Id ?? Guid.Empty;
 		}
 	}
 }
