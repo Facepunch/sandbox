@@ -1,0 +1,104 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits Panel
+@attribute [SpawnMenuHost.SpawnMenuMode]
+@attribute [Icon( "💾" )]
+@attribute [Title( "Saves" )]
+@attribute [Order( 500 )]
+
+<root>
+
+    <div class="save-menu">
+
+        <div class="save-input">
+            <TextEntry @ref="SaveNameEntry" Placeholder="Enter save name..." @onsubmit="@OnSave"></TextEntry>
+            <button @onclick="@OnSave">Save</button>
+        </div>
+
+        <div class="save-list">
+            @foreach ( var save in SaveFiles )
+            {
+                <div class="save-item">
+                    <div class="save-info" @onclick="@(() => LoadSave( save.FileName ))">
+                        <div class="save-name">@save.DisplayName</div>
+                        <div class="save-filename">@save.FileName</div>
+                    </div>
+                    <div class="save-delete" @onclick="@(() => DeleteSave( save.FileName ))">
+                        <i>delete</i>
+                    </div>
+                </div>
+            }
+        </div>
+
+    </div>
+
+</root>
+
+@code
+{
+    TextEntry SaveNameEntry;
+    List<SaveFileEntry> SaveFiles = new();
+
+    record SaveFileEntry( string FileName, string DisplayName );
+
+    protected override void OnAfterTreeRender( bool firstTime )
+    {
+        if ( firstTime )
+        {
+            RefreshSaveList();
+        }
+    }
+
+    void RefreshSaveList()
+    {
+        SaveFiles.Clear();
+
+        if ( !FileSystem.Data.DirectoryExists( "saves" ) )
+        {
+            FileSystem.Data.CreateDirectory( "saves" );
+        }
+
+        foreach ( var file in FileSystem.Data.FindFile( "saves", "*.sav" ) )
+        {
+            var filePath = $"saves/{file}";
+            var displayName = file;
+
+            var metadata = SaveSystem.GetMetadata( filePath );
+            if ( metadata != null && metadata.TryGetValue( "Name", out var name ) )
+            {
+                displayName = name;
+            }
+
+            SaveFiles.Add( new SaveFileEntry( file, displayName ) );
+        }
+
+        StateHasChanged();
+    }
+
+    void OnSave()
+    {
+        var saveName = SaveNameEntry?.Text?.Trim();
+        if ( string.IsNullOrEmpty( saveName ) )
+            return;
+
+        var fileName = $"saves/{saveName}.sav";
+
+        SaveSystem.SetMetadata( "Name", DateTime.Now.ToString( "yyyy-MM-dd HH:mm:ss" ) );
+        SaveSystem.Save( fileName );
+
+        SaveNameEntry.Text = "";
+        RefreshSaveList();
+    }
+
+    void LoadSave( string fileName )
+    {
+        SaveSystem.Load( $"saves/{fileName}" );
+    }
+
+    void DeleteSave( string fileName )
+    {
+        FileSystem.Data.DeleteFile( $"saves/{fileName}" );
+        RefreshSaveList();
+    }
+}
