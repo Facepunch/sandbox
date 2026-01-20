@@ -1,0 +1,7 @@
+{
+  "Prefab": "entities/wheel/wheelbarrow.prefab",
+  "Title": "Wheelbarrow",
+  "Description": "Thick and bouncy",
+  "__references": [],
+  "__version": 0
+}

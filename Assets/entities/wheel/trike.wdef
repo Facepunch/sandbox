@@ -1,0 +1,7 @@
+{
+  "Prefab": "entities/wheel/trike.prefab",
+  "Title": "Trike",
+  "Description": "More stable than it looks",
+  "__references": [],
+  "__version": 0
+}
