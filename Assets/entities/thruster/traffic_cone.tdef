@@ -1,0 +1,7 @@
+{
+  "Prefab": "entities/thruster/traffic_cone.prefab",
+  "Title": "Traffic Cone",
+  "Description": "",
+  "__references": [],
+  "__version": 0
+}

@@ -3,7 +3,7 @@
     "__guid": "974f0ca5-f160-4b71-92a3-c26b65ad498f",
     "__version": 2,
     "Flags": 0,
-    "Name": "can",
+    "Name": "cementmixer",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
@@ -68,7 +68,7 @@
           "_type": "gameobject",
           "go": "c6f0b6b9-0db0-41de-a892-522bd1ee37e3"
         },
-        "Power": 0.5
+        "Power": 3
       }
     ],
     "Children": [
@@ -99,7 +99,7 @@
             "MaterialGroup": "orange",
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/sbox_props/cola_can/cola_can.vmdl",
+            "Model": "models/props/cement_mixer/cement_mixer.vmdl",
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -120,7 +120,7 @@
             "__guid": "4a1aa819-3447-482f-95b2-7e0d28b03eaf",
             "__enabled": true,
             "Flags": 0,
-            "Center": "0.04588497,0.02514791,3.372257",
+            "Center": "0,0,14",
             "ColliderFlags": 0,
             "Elasticity": null,
             "Friction": null,
@@ -136,7 +136,7 @@
             "OnTriggerEnter": null,
             "OnTriggerExit": null,
             "RollingResistance": null,
-            "Scale": "3.686821,3.760139,6.592344",
+            "Scale": "28,28,28",
             "Static": false,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
@@ -465,7 +465,7 @@
               "AfterUILayer": false
             },
             "RotationOffset": 0,
-            "Scale": 1,
+            "Scale": 2,
             "Shadows": false,
             "SortMode": "Unsorted",
             "Sprite": {
@@ -540,7 +540,7 @@
             "Burst": 0,
             "CenterBias": 1,
             "CenterBiasVelocity": 0,
-            "ConeAngle": 1,
+            "ConeAngle": 3,
             "ConeFar": 52.91,
             "ConeNear": 33.240055,
             "Delay": 0,
@@ -555,9 +555,9 @@
             "OnComponentStart": null,
             "OnComponentUpdate": null,
             "OnEdge": false,
-            "Rate": 50,
+            "Rate": 25,
             "RateOverDistance": 0,
-            "VelocityMultiplier": 5,
+            "VelocityMultiplier": 3,
             "VelocityRandom": 0
           }
         ],
@@ -699,7 +699,7 @@
   "DontBreakAsTemplate": false,
   "__references": [
     "exorealms.76fccc8db731288a#41169",
-    "facepunch.soda_can#33662"
+    "facepunch.cementmixerdrum#142024"
   ],
   "__version": 2
 }

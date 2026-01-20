@@ -1,0 +1,7 @@
+{
+  "Prefab": "entities/thruster/gas_cylinder.prefab",
+  "Title": "Gas Cylinder",
+  "Description": "",
+  "__references": [],
+  "__version": 0
+}

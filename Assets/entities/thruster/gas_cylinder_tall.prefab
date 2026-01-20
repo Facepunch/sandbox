@@ -3,7 +3,7 @@
     "__guid": "974f0ca5-f160-4b71-92a3-c26b65ad498f",
     "__version": 2,
     "Flags": 0,
-    "Name": "can",
+    "Name": "gas_cylinder_tall",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
@@ -68,7 +68,7 @@
           "_type": "gameobject",
           "go": "c6f0b6b9-0db0-41de-a892-522bd1ee37e3"
         },
-        "Power": 0.5
+        "Power": 4
       }
     ],
     "Children": [
@@ -99,7 +99,7 @@
             "MaterialGroup": "orange",
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/sbox_props/cola_can/cola_can.vmdl",
+            "Model": "models/sbox_props/gas_cylinder_tall/gas_cylinder_tall.vmdl",
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -120,7 +120,7 @@
             "__guid": "4a1aa819-3447-482f-95b2-7e0d28b03eaf",
             "__enabled": true,
             "Flags": 0,
-            "Center": "0.04588497,0.02514791,3.372257",
+            "Center": "-0.03528357,0.0741663,29.29607",
             "ColliderFlags": 0,
             "Elasticity": null,
             "Friction": null,
@@ -136,7 +136,7 @@
             "OnTriggerEnter": null,
             "OnTriggerExit": null,
             "RollingResistance": null,
-            "Scale": "3.686821,3.760139,6.592344",
+            "Scale": "15.9534,15.78506,58.79168",
             "Static": false,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
@@ -149,7 +149,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "effect",
-        "Position": "-0.03716397,0.00003054738,13.96289",
+        "Position": "-0.03716278,0.00003054738,57.27313",
         "Rotation": "0,-0.7071067,0,0.7071068",
         "Scale": "1,1,1",
         "Tags": "particles",
@@ -465,7 +465,7 @@
               "AfterUILayer": false
             },
             "RotationOffset": 0,
-            "Scale": 1,
+            "Scale": 1.3,
             "Shadows": false,
             "SortMode": "Unsorted",
             "Sprite": {
@@ -518,7 +518,7 @@
                             "ConvertHeightToNormals": false,
                             "NormalScale": 1
                           },
-                          "compiled": "textures/generated/gradientradial/36c736076a8aa2e3.vtex"
+                          "compiled": null
                         },
                         "BroadcastMessages": []
                       }
@@ -555,9 +555,9 @@
             "OnComponentStart": null,
             "OnComponentUpdate": null,
             "OnEdge": false,
-            "Rate": 50,
+            "Rate": 25,
             "RateOverDistance": 0,
-            "VelocityMultiplier": 5,
+            "VelocityMultiplier": 1,
             "VelocityRandom": 0
           }
         ],
@@ -567,7 +567,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "Point Light",
-            "Position": "11.64149,0,-0.0000009536743",
+            "Position": "5.588051,0,-0.000002384186",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "light_point,light",
@@ -699,7 +699,7 @@
   "DontBreakAsTemplate": false,
   "__references": [
     "exorealms.76fccc8db731288a#41169",
-    "facepunch.soda_can#33662"
+    "facepunch.gascylinder_tall#29062"
   ],
   "__version": 2
 }
