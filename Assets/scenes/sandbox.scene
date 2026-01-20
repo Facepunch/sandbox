@@ -104,7 +104,7 @@
             }
           ],
           "AnimationTime": 0.5,
-          "AutoReset": true,
+          "AutoReset": false,
           "Mode": "Toggle",
           "Move": false,
           "MoveDelta": "0,0,0",
@@ -118,7 +118,13 @@
           "OnComponentUpdate": null,
           "OnSound": null,
           "OnStateChanged": null,
-          "ResetTime": 1
+          "ResetTime": 1,
+          "TooltipDescription": "",
+          "TooltipDescriptionOff": "",
+          "TooltipIcon": "touch_app",
+          "TooltipIconOff": "touch_app",
+          "TooltipTitle": "Switch On",
+          "TooltipTitleOff": "Switch Off"
         },
         {
           "__type": "Sandbox.BoxCollider",

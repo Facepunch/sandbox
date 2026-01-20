@@ -142,11 +142,6 @@ public sealed class Button : Component, Component.IPressable
 		Release( e.Source.GameObject );
 	}
 
-	IPressable.Tooltip? IPressable.GetTooltip( IPressable.Event e )
-	{
-		return new IPressable.Tooltip( "Press", "finger", "Press this button" );
-	}
-
 	/// <summary>
 	/// Turns the button on. Does nothing if already on or animating.
 	/// </summary>
@@ -159,7 +154,7 @@ public sealed class Button : Component, Component.IPressable
 			return;
 
 		LastUse = 0;
-		IsAnimating = true;
+		IsAnimating = Move;
 		IsOn = true;
 
 		if ( OnSound is not null )
@@ -183,7 +178,7 @@ public sealed class Button : Component, Component.IPressable
 			return;
 
 		LastUse = 0;
-		IsAnimating = true;
+		IsAnimating = Move;
 		IsOn = false;
 
 		if ( OffSound is not null )
@@ -306,5 +301,40 @@ public sealed class Button : Component, Component.IPressable
 		if ( time < 1f ) return;
 
 		IsAnimating = false;
+	}
+
+	[Property, Feature( "Tooltip" )]
+	public string TooltipTitle { get; set; } = "Press";
+
+	[Property, Feature( "Tooltip" )]
+	public string TooltipIcon { get; set; } = "touch_app";
+
+	[Property, Feature( "Tooltip" )]
+	public string TooltipDescription { get; set; } = "";
+
+	[Header( "Off State" )]
+	[ShowIf( "Mode", ButtonMode.Toggle )]
+	[Property, Feature( "Tooltip" )]
+	public string TooltipTitleOff { get; set; } = "Press";
+
+	[ShowIf( "Mode", ButtonMode.Toggle )]
+	[Property, Feature( "Tooltip" )]
+	public string TooltipIconOff { get; set; } = "touch_app";
+
+	[ShowIf( "Mode", ButtonMode.Toggle )]
+	[Property, Feature( "Tooltip" )]
+	public string TooltipDescriptionOff { get; set; } = "";
+
+	IPressable.Tooltip? IPressable.GetTooltip( IPressable.Event e )
+	{
+		if ( string.IsNullOrWhiteSpace( TooltipTitle ) && string.IsNullOrWhiteSpace( TooltipIcon ) )
+			return default;
+
+		if ( Mode == ButtonMode.Toggle && IsOn )
+		{
+			return new IPressable.Tooltip( TooltipTitleOff, TooltipIconOff, TooltipDescriptionOff );
+		}
+
+		return new IPressable.Tooltip( TooltipTitle, TooltipIcon, TooltipDescription );
 	}
 }
