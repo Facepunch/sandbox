@@ -1,0 +1,8 @@
+{
+  "Prefab": "entities/sents/chairs/toilet.prefab",
+  "Title": "Toilet",
+  "Description": "garry woz 'ere",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}
