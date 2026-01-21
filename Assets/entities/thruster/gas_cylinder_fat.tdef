@@ -1,0 +1,7 @@
+{
+  "Prefab": "entities/thruster/gas_cylinder_fat.prefab",
+  "Title": "Propane Tank",
+  "Description": "",
+  "__references": [],
+  "__version": 0
+}

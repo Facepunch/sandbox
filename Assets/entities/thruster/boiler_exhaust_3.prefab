@@ -3,7 +3,7 @@
     "__guid": "974f0ca5-f160-4b71-92a3-c26b65ad498f",
     "__version": 2,
     "Flags": 0,
-    "Name": "waterdrum",
+    "Name": "boiler_exhaust_3",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
@@ -68,7 +68,7 @@
           "_type": "gameobject",
           "go": "c6f0b6b9-0db0-41de-a892-522bd1ee37e3"
         },
-        "Power": 3
+        "Power": 1
       }
     ],
     "Children": [
@@ -77,7 +77,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "0,0,0",
+        "Position": "1.302791,0,0",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -99,7 +99,7 @@
             "MaterialGroup": "orange",
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/props/trim_sheets/storage/water_drum_01_base.vmdl",
+            "Model": "models/props/boiler_exhausts/boiler_exhaust_3.vmdl",
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -120,7 +120,7 @@
             "__guid": "4a1aa819-3447-482f-95b2-7e0d28b03eaf",
             "__enabled": true,
             "Flags": 0,
-            "Center": "-0.005706787,0,18.91052",
+            "Center": "-1.397721,-0.185195,5.243711",
             "ColliderFlags": 0,
             "Elasticity": null,
             "Friction": null,
@@ -136,7 +136,7 @@
             "OnTriggerEnter": null,
             "OnTriggerExit": null,
             "RollingResistance": null,
-            "Scale": "24.58876,28,38.02057",
+            "Scale": "13.98776,13.90585,10.3537",
             "Static": false,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
@@ -149,7 +149,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "effect",
-        "Position": "-0.03716278,0.00003054738,32",
+        "Position": "0,0.00003054738,10.23917",
         "Rotation": "0,-0.7071067,0,0.7071068",
         "Scale": "1,1,1",
         "Tags": "particles",
@@ -465,7 +465,7 @@
               "AfterUILayer": false
             },
             "RotationOffset": 0,
-            "Scale": 2,
+            "Scale": 1,
             "Shadows": false,
             "SortMode": "Unsorted",
             "Sprite": {
@@ -557,7 +557,7 @@
             "OnEdge": false,
             "Rate": 25,
             "RateOverDistance": 0,
-            "VelocityMultiplier": 3,
+            "VelocityMultiplier": 2,
             "VelocityRandom": 0
           }
         ],
@@ -699,7 +699,7 @@
   "DontBreakAsTemplate": false,
   "__references": [
     "exorealms.76fccc8db731288a#41169",
-    "facepunch.water_drum_01_base#123276"
+    "facepunch.boiler_exhaust_3#65758"
   ],
   "__version": 2
 }

@@ -3,7 +3,7 @@
     "__guid": "974f0ca5-f160-4b71-92a3-c26b65ad498f",
     "__version": 2,
     "Flags": 0,
-    "Name": "waterdrum",
+    "Name": "fireextinguisher",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
@@ -68,7 +68,7 @@
           "_type": "gameobject",
           "go": "c6f0b6b9-0db0-41de-a892-522bd1ee37e3"
         },
-        "Power": 3
+        "Power": 1
       }
     ],
     "Children": [
@@ -77,7 +77,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "0,0,0",
+        "Position": "0,0,1.274642",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -99,7 +99,7 @@
             "MaterialGroup": "orange",
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/props/trim_sheets/storage/water_drum_01_base.vmdl",
+            "Model": "models/sbox_props/fire_extinguisher/fire_extinguisher.vmdl",
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -120,7 +120,7 @@
             "__guid": "4a1aa819-3447-482f-95b2-7e0d28b03eaf",
             "__enabled": true,
             "Flags": 0,
-            "Center": "-0.005706787,0,18.91052",
+            "Center": "-3.927722,-0.02298117,11.51504",
             "ColliderFlags": 0,
             "Elasticity": null,
             "Friction": null,
@@ -136,7 +136,7 @@
             "OnTriggerEnter": null,
             "OnTriggerExit": null,
             "RollingResistance": null,
-            "Scale": "24.58876,28,38.02057",
+            "Scale": "15.97761,7.598422,25.60505",
             "Static": false,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
@@ -149,7 +149,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "effect",
-        "Position": "-0.03716278,0.00003054738,32",
+        "Position": "-0.03716278,0.00003054738,23.86804",
         "Rotation": "0,-0.7071067,0,0.7071068",
         "Scale": "1,1,1",
         "Tags": "particles",
@@ -270,31 +270,11 @@
                 "color": [
                   {
                     "t": 0,
-                    "c": "0.26726,0.76161,0.9907,1"
+                    "c": "0,0,0,1"
                   },
                   {
-                    "t": 0,
-                    "c": "0.44348,3.61439,4.76744,1"
-                  },
-                  {
-                    "t": 0.15336135,
-                    "c": "0.99167,0.99729,0.01126,1"
-                  },
-                  {
-                    "t": 0.15546219,
-                    "c": "2.97407,2.98186,0.03535,1"
-                  },
-                  {
-                    "t": 0.3760504,
-                    "c": "0.95814,0.64357,0.06685,1"
-                  },
-                  {
-                    "t": 0.37815127,
-                    "c": "1.91637,1.28422,0.13397,1"
-                  },
-                  {
-                    "t": 0.789916,
-                    "c": "0.96744,0.35638,0.09449,1"
+                    "t": 1,
+                    "c": "1,1,1,1"
                   }
                 ],
                 "alpha": [
@@ -329,7 +309,7 @@
             "Lifetime": {
               "Type": "Range",
               "Evaluation": "Seed",
-              "Constants": "0.1,0.1,0,0"
+              "Constants": "0.1,0.3,0,0"
             },
             "LocalSpace": {
               "Type": "Curve",
@@ -384,20 +364,28 @@
               "Type": "Curve",
               "Evaluation": "Life",
               "CurveA": {
-                "rangey": "3,5",
+                "rangex": "-0.00000005960464,1",
+                "rangey": "2.999999,9.771719",
                 "frames": [
                   {
                     "x": 0,
-                    "y": 1,
+                    "y": 0.20264024,
                     "in": -0,
                     "out": -0,
                     "mode": "Mirrored"
                   },
                   {
+                    "x": 0.61603767,
+                    "y": 0.9972389,
+                    "in": 0,
+                    "out": 0,
+                    "mode": "Mirrored"
+                  },
+                  {
                     "x": 1,
                     "y": 0,
-                    "in": 3.1415927,
-                    "out": -3.1415927,
+                    "in": 24.666672,
+                    "out": -24.666672,
                     "mode": "Mirrored"
                   }
                 ]
@@ -422,10 +410,10 @@
               "Evaluation": "Seed",
               "Constants": "90,100,0,0"
             },
-            "Stretch": 1,
+            "Stretch": 0,
             "TimeScale": 1,
             "Timing": "GameTime",
-            "Tint": "1,1,1,1",
+            "Tint": "0.33488,0.33488,0.33488,1",
             "UsePrefabFeature": false,
             "Yaw": {
               "Type": "Range",
@@ -465,7 +453,7 @@
               "AfterUILayer": false
             },
             "RotationOffset": 0,
-            "Scale": 2,
+            "Scale": 1.0262172,
             "Shadows": false,
             "SortMode": "Unsorted",
             "Sprite": {
@@ -518,7 +506,7 @@
                             "ConvertHeightToNormals": false,
                             "NormalScale": 1
                           },
-                          "compiled": null
+                          "compiled": "textures/generated/gradientradial/36c736076a8aa2e3.vtex"
                         },
                         "BroadcastMessages": []
                       }
@@ -540,7 +528,7 @@
             "Burst": 0,
             "CenterBias": 1,
             "CenterBiasVelocity": 0,
-            "ConeAngle": 3,
+            "ConeAngle": 1,
             "ConeFar": 52.91,
             "ConeNear": 33.240055,
             "Delay": 0,
@@ -557,48 +545,11 @@
             "OnEdge": false,
             "Rate": 25,
             "RateOverDistance": 0,
-            "VelocityMultiplier": 3,
+            "VelocityMultiplier": 1,
             "VelocityRandom": 0
           }
         ],
         "Children": [
-          {
-            "__guid": "f1345619-d547-4305-b18f-eec8577dd817",
-            "__version": 2,
-            "Flags": 0,
-            "Name": "Point Light",
-            "Position": "11.64149,0,-0.0000009536743",
-            "Rotation": "0,0,0,1",
-            "Scale": "1,1,1",
-            "Tags": "light_point,light",
-            "Enabled": true,
-            "NetworkMode": 2,
-            "NetworkFlags": 0,
-            "NetworkOrphaned": 0,
-            "NetworkTransmit": true,
-            "OwnerTransfer": 1,
-            "Components": [
-              {
-                "__type": "Sandbox.PointLight",
-                "__guid": "c0577f4e-39ba-4237-ba75-b917b7ba77c3",
-                "__enabled": true,
-                "Flags": 0,
-                "Attenuation": 4,
-                "FogMode": "Enabled",
-                "FogStrength": 0.91402715,
-                "LightColor": "0.93953,0.70225,0.14858,1",
-                "OnComponentDestroy": null,
-                "OnComponentDisabled": null,
-                "OnComponentEnabled": null,
-                "OnComponentFixedUpdate": null,
-                "OnComponentStart": null,
-                "OnComponentUpdate": null,
-                "Radius": 100,
-                "Shadows": true
-              }
-            ],
-            "Children": []
-          },
           {
             "__guid": "e8a04b5e-6b23-4029-8c0c-0226de3b6eb8",
             "__version": 2,
@@ -699,7 +650,7 @@
   "DontBreakAsTemplate": false,
   "__references": [
     "exorealms.76fccc8db731288a#41169",
-    "facepunch.water_drum_01_base#123276"
+    "facepunch.fireextinguisher#33672"
   ],
   "__version": 2
 }
