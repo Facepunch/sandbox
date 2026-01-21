@@ -153,7 +153,7 @@
         "Rotation": "0,-0.7071067,0,0.7071068",
         "Scale": "1,1,1",
         "Tags": "particles",
-        "Enabled": true,
+        "Enabled": false,
         "NetworkMode": 2,
         "NetworkFlags": 0,
         "NetworkOrphaned": 0,
