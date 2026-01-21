@@ -1,0 +1,58 @@
+.tt
+{
+	position: absolute;
+	width: 512px;
+	height: 512px;
+	flex-direction: column;
+	font-family: Poppins;
+	font-weight: 700;
+	font-size: 1.5rem;
+	color: #fff;
+	text-shadow: 1px 1px 4px black;
+
+	.icon
+	{
+		align-items: flex-end;
+		justify-content: center;
+		flex-shrink: 0;
+		flex-grow: 0;
+		font-size: 4rem;
+		font-family: "Material Icons";
+		height: 180px;
+	}
+
+	.title
+	{
+		flex-shrink: 0;
+		flex-grow: 0;
+		align-items: flex-end;
+		justify-content: center;
+		font-size: 1.5rem;
+		margin-bottom: 80px;
+	}
+
+	.description
+	{
+		margin-top: 20px;
+		flex-grow: 1;
+		align-items: flex-start;
+		justify-content: center;
+		flex-shrink: 0;
+		font-weight: 600;
+		font-size: 1rem;
+	}
+
+	transition: all 0.1s ease;
+
+	&:intro
+	{
+		transform: scale( 0.2 );
+		opacity: 0;
+	}
+
+	&:outro
+	{
+		transform: scale( 0.9 );
+		opacity: 0;
+	}
+}

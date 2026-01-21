@@ -1,0 +1,36 @@
+PressableHud
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	justify-content: center;
+	align-items: center;
+	font-family: Poppins;
+	font-size: 14px;
+	font-weight: 600;
+	z-index: 1000;
+	opacity: 0.2;
+
+	.crosshair
+	{
+		width: 12px;
+		height: 12px;
+		background-color: white;
+		border-radius: 50%;
+		box-shadow: 0px 0px 8px black;
+		opacity: 0;
+		transition: all 0.1s linear;
+	}
+
+	&.active
+	{
+		opacity: 1;
+
+		.crosshair
+		{
+			opacity: 1;
+		}
+	}
+}

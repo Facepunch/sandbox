@@ -1,0 +1,19 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<root class="tt">
+
+    <div class="icon">@Icon</div>
+    <div class="title">@Title</div>
+    <div class="description">@Description</div>
+
+</root>
+
+@code
+{
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public string Description { get; set; }
+}

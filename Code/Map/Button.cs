@@ -2,22 +2,6 @@
 public sealed class Button : Component, Component.IPressable
 {
 	/// <summary>
-	/// Sound to play when the button is pressed.
-	/// </summary>
-	[Property, Group( "Sound" )] public SoundEvent OnSound { get; set; }
-
-	/// <summary>
-	/// Sound to play when the button is released.
-	/// </summary>
-	[Property, Group( "Sound" )] public SoundEvent OffSound { get; set; }
-
-	/// <summary>
-	/// Called when the button's state changes.
-	/// </summary>
-	[Property, Group( "Events" )]
-	public Action<bool> OnStateChanged { get; set; }
-
-	/// <summary>
 	/// The button's behavior mode.
 	/// </summary>
 	public enum ButtonMode
@@ -41,19 +25,35 @@ public sealed class Button : Component, Component.IPressable
 	[Property, ShowIf( "Mode", ButtonMode.Toggle )] public bool AutoReset { get; set; } = true;
 	[Property, ShowIf( "AutoReset", true )] public float ResetTime { get; set; } = 1.0f;
 
-	[Property, Group( "Movement" ), Order( 0 )] public bool Move { get; set; }
-	[Property, Group( "Movement" ), ShowIf( nameof( Move ), true )] public GameObject MoveTarget { get; set; }
-	[Property, Group( "Movement" ), ShowIf( nameof( Move ), true )] public Vector3 MoveDelta { get; set; }
+	[Property, FeatureEnabled( "Movement", Icon = "edgesensor_high" )] public bool Move { get; set; }
+	[Property, Feature( "Movement" ), ShowIf( nameof( Move ), true )] public GameObject MoveTarget { get; set; }
+	[Property, Feature( "Movement" ), ShowIf( nameof( Move ), true )] public Vector3 MoveDelta { get; set; }
 
 	/// <summary>
 	/// Animation curve to use, X is the time between 0-1 and Y is how much the button is pressed from 0-1.
 	/// </summary>
-	[Property, Group( "Movement" ), ShowIf( nameof( Move ), true )] public Curve AnimationCurve { get; set; } = new Curve( new Curve.Frame( 0f, 0f ), new Curve.Frame( 1f, 1.0f ) );
+	[Property, Feature( "Movement" ), ShowIf( nameof( Move ), true )] public Curve AnimationCurve { get; set; } = new Curve( new Curve.Frame( 0f, 0f ), new Curve.Frame( 1f, 1.0f ) );
 
 	/// <summary>
 	/// How long in seconds should it take to animate this button.
 	/// </summary>
 	[Property, Group( "Movement" ), ShowIf( nameof( Move ), true )] public float AnimationTime { get; set; } = 0.5f;
+
+	/// <summary>
+	/// Sound to play when the button is pressed.
+	/// </summary>
+	[Property, Feature( "Sound", Icon = "volume_up" )] public SoundEvent OnSound { get; set; }
+
+	/// <summary>
+	/// Sound to play when the button is released.
+	/// </summary>
+	[Property, Feature( "Sound" )] public SoundEvent OffSound { get; set; }
+
+	/// <summary>
+	/// Called when the button's state changes.
+	/// </summary>
+	[Property, Feature( "Events", Icon = "double_arrow" )]
+	public Action<bool> OnStateChanged { get; set; }
 
 	Vector3 _initialPosition;
 	Transform _startTransform;
@@ -154,7 +154,7 @@ public sealed class Button : Component, Component.IPressable
 			return;
 
 		LastUse = 0;
-		IsAnimating = true;
+		IsAnimating = Move;
 		IsOn = true;
 
 		if ( OnSound is not null )
@@ -178,7 +178,7 @@ public sealed class Button : Component, Component.IPressable
 			return;
 
 		LastUse = 0;
-		IsAnimating = true;
+		IsAnimating = Move;
 		IsOn = false;
 
 		if ( OffSound is not null )
@@ -301,5 +301,40 @@ public sealed class Button : Component, Component.IPressable
 		if ( time < 1f ) return;
 
 		IsAnimating = false;
+	}
+
+	[Property, Feature( "Tooltip" )]
+	public string TooltipTitle { get; set; } = "Press";
+
+	[Property, Feature( "Tooltip" )]
+	public string TooltipIcon { get; set; } = "touch_app";
+
+	[Property, Feature( "Tooltip" )]
+	public string TooltipDescription { get; set; } = "";
+
+	[Header( "Off State" )]
+	[ShowIf( "Mode", ButtonMode.Toggle )]
+	[Property, Feature( "Tooltip" )]
+	public string TooltipTitleOff { get; set; } = "Press";
+
+	[ShowIf( "Mode", ButtonMode.Toggle )]
+	[Property, Feature( "Tooltip" )]
+	public string TooltipIconOff { get; set; } = "touch_app";
+
+	[ShowIf( "Mode", ButtonMode.Toggle )]
+	[Property, Feature( "Tooltip" )]
+	public string TooltipDescriptionOff { get; set; } = "";
+
+	IPressable.Tooltip? IPressable.GetTooltip( IPressable.Event e )
+	{
+		if ( string.IsNullOrWhiteSpace( TooltipTitle ) && string.IsNullOrWhiteSpace( TooltipIcon ) )
+			return default;
+
+		if ( Mode == ButtonMode.Toggle && IsOn )
+		{
+			return new IPressable.Tooltip( TooltipTitleOff, TooltipIconOff, TooltipDescriptionOff );
+		}
+
+		return new IPressable.Tooltip( TooltipTitle, TooltipIcon, TooltipDescription );
 	}
 }

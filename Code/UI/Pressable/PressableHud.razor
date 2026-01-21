@@ -1,0 +1,52 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+<root>
+
+    <div class="crosshair">
+    </div>   
+
+</root>
+
+@code
+{
+    int _hashCode;
+    PressableTooltip _tooltip;
+
+    protected override void OnUpdate()
+    {
+        base.OnUpdate();
+
+        var tt = GetHovered();
+        var hc = HashCode.Combine(tt.Title, tt.Icon, tt.Description);
+
+        if (hc != _hashCode)
+        {
+            _hashCode = hc;
+            _tooltip?.Delete();
+            _tooltip = null;
+
+            if (!string.IsNullOrWhiteSpace(tt.Title) || !string.IsNullOrWhiteSpace(tt.Icon) || !string.IsNullOrWhiteSpace(tt.Description))
+            {
+                _tooltip = Panel.AddChild<PressableTooltip>();
+                _tooltip.Title = tt.Title;
+                _tooltip.Icon = tt.Icon;
+                _tooltip.Description = tt.Description;
+            }
+
+        }
+
+        SetClass("active", tt.Pressable != null && tt.Enabled);
+    }
+
+    IPressable.Tooltip GetHovered()
+    {
+        var lp = Player.FindLocalPlayer();
+        if (lp is null) return default;
+        if (lp.Controller.Tooltips.Count == 0) return default;
+
+        return lp.Controller.Tooltips.FirstOrDefault();
+    }
+}
