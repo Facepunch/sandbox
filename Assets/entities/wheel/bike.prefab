@@ -6,7 +6,7 @@
     "Name": "bike",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
-    "Scale": "0.75,0.75,0.75",
+    "Scale": "1,1,1",
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 2,
