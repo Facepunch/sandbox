@@ -274,27 +274,19 @@
                   },
                   {
                     "t": 0,
-                    "c": "0.44348,3.61439,4.76744,1"
+                    "c": "0,0.35795,1.07385,1"
                   },
                   {
-                    "t": 0.15336135,
-                    "c": "0.99167,0.99729,0.01126,1"
+                    "t": 0.1764706,
+                    "c": "0.99729,0.89869,0.01126,1"
                   },
                   {
-                    "t": 0.15546219,
-                    "c": "2.97407,2.98186,0.03535,1"
-                  },
-                  {
-                    "t": 0.3760504,
-                    "c": "0.95814,0.64357,0.06685,1"
-                  },
-                  {
-                    "t": 0.37815127,
-                    "c": "1.91637,1.28422,0.13397,1"
-                  },
-                  {
-                    "t": 0.789916,
+                    "t": 0.6659664,
                     "c": "0.96744,0.35638,0.09449,1"
+                  },
+                  {
+                    "t": 1,
+                    "c": "0.96744,0.09449,0.09449,1"
                   }
                 ],
                 "alpha": [
@@ -384,13 +376,20 @@
               "Type": "Curve",
               "Evaluation": "Life",
               "CurveA": {
-                "rangey": "3,5",
+                "rangey": "3,7",
                 "frames": [
                   {
                     "x": 0,
                     "y": 1,
                     "in": -0,
                     "out": -0,
+                    "mode": "Mirrored"
+                  },
+                  {
+                    "x": 0.2734375,
+                    "y": 0.63067055,
+                    "in": 0,
+                    "out": 0,
                     "mode": "Mirrored"
                   },
                   {
@@ -416,13 +415,18 @@
             "SequenceSpeed": 1,
             "SequenceTime": 1,
             "SheetSequence": false,
+            "SnapToFrame": false,
             "StartDelay": 0,
             "StartVelocity": {
               "Type": "Range",
               "Evaluation": "Seed",
               "Constants": "90,100,0,0"
             },
-            "Stretch": 1,
+            "Stretch": {
+              "Type": "Range",
+              "Evaluation": "Life",
+              "Constants": "1,4,0,0"
+            },
             "TimeScale": 1,
             "Timing": "GameTime",
             "Tint": "1,1,1,1",
@@ -444,7 +448,7 @@
             "BlurAmount": 1,
             "BlurOpacity": 1,
             "BlurSpacing": 1,
-            "DepthFeather": 0,
+            "DepthFeather": 25.65543,
             "FaceVelocity": true,
             "FogStrength": 1,
             "LeadingTrail": true,
@@ -518,7 +522,7 @@
                             "ConvertHeightToNormals": false,
                             "NormalScale": 1
                           },
-                          "compiled": "textures/generated/gradientradial/36c736076a8aa2e3.vtex"
+                          "compiled": null
                         },
                         "BroadcastMessages": []
                       }
@@ -557,7 +561,7 @@
             "OnEdge": false,
             "Rate": 25,
             "RateOverDistance": 0,
-            "VelocityMultiplier": 3,
+            "VelocityMultiplier": 2,
             "VelocityRandom": 0
           }
         ],

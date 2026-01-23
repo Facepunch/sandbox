@@ -1,0 +1,8 @@
+{
+  "Prefab": "entities/sents/chairs/trolley.prefab",
+  "Title": "Trolley",
+  "Description": "Like being a kid again",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}

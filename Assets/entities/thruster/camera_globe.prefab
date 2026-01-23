@@ -3,7 +3,7 @@
     "__guid": "974f0ca5-f160-4b71-92a3-c26b65ad498f",
     "__version": 2,
     "Flags": 0,
-    "Name": "plastic_vent_large",
+    "Name": "camera_globe",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
@@ -96,10 +96,10 @@
             "BodyGroups": 18446744073709551615,
             "CreateAttachments": false,
             "LodOverride": null,
-            "MaterialGroup": "orange",
+            "MaterialGroup": "default",
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/props/roof_vents/roof_vent_5.vmdl",
+            "Model": "models/sbox_props/cctv_globe/cctv_globe.vmdl",
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -120,7 +120,7 @@
             "__guid": "4a1aa819-3447-482f-95b2-7e0d28b03eaf",
             "__enabled": true,
             "Flags": 0,
-            "Center": "0.04349709,0.06503105,19.66129",
+            "Center": "0.02930832,0.0216279,1.676019",
             "ColliderFlags": 0,
             "Elasticity": null,
             "Friction": null,
@@ -136,7 +136,7 @@
             "OnTriggerEnter": null,
             "OnTriggerExit": null,
             "RollingResistance": null,
-            "Scale": "21.96802,21.96782,39.52212",
+            "Scale": "8.603186,8.700543,6.93392",
             "Static": false,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
@@ -149,7 +149,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "effect",
-        "Position": "0,0.00003054738,41.88511",
+        "Position": "0,0.00003054738,3.200466",
         "Rotation": "0,-0.7071067,0,0.7071068",
         "Scale": "1,1,1",
         "Tags": "particles",
@@ -274,27 +274,19 @@
                   },
                   {
                     "t": 0,
-                    "c": "0.44348,3.61439,4.76744,1"
+                    "c": "0,0.35795,1.07385,1"
                   },
                   {
-                    "t": 0.15336135,
-                    "c": "0.99167,0.99729,0.01126,1"
+                    "t": 0.1764706,
+                    "c": "0.99729,0.89869,0.01126,1"
                   },
                   {
-                    "t": 0.15546219,
-                    "c": "2.97407,2.98186,0.03535,1"
-                  },
-                  {
-                    "t": 0.3760504,
-                    "c": "0.95814,0.64357,0.06685,1"
-                  },
-                  {
-                    "t": 0.37815127,
-                    "c": "1.91637,1.28422,0.13397,1"
-                  },
-                  {
-                    "t": 0.789916,
+                    "t": 0.6659664,
                     "c": "0.96744,0.35638,0.09449,1"
+                  },
+                  {
+                    "t": 1,
+                    "c": "0.96744,0.09449,0.09449,1"
                   }
                 ],
                 "alpha": [
@@ -329,7 +321,7 @@
             "Lifetime": {
               "Type": "Range",
               "Evaluation": "Seed",
-              "Constants": "0.1,0.1,0,0"
+              "Constants": "0.05,0.2,0,0"
             },
             "LocalSpace": {
               "Type": "Curve",
@@ -389,8 +381,8 @@
                   {
                     "x": 0,
                     "y": 1,
-                    "in": -0,
-                    "out": -0,
+                    "in": 2.615384,
+                    "out": -2.615384,
                     "mode": "Mirrored"
                   },
                   {
@@ -423,7 +415,11 @@
               "Evaluation": "Seed",
               "Constants": "90,100,0,0"
             },
-            "Stretch": 1,
+            "Stretch": {
+              "Type": "Range",
+              "Evaluation": "Life",
+              "Constants": "1,2,0,0"
+            },
             "TimeScale": 1,
             "Timing": "GameTime",
             "Tint": "1,1,1,1",
@@ -445,7 +441,7 @@
             "BlurAmount": 1,
             "BlurOpacity": 1,
             "BlurSpacing": 1,
-            "DepthFeather": 0,
+            "DepthFeather": 30.337078,
             "FaceVelocity": true,
             "FogStrength": 1,
             "LeadingTrail": true,
@@ -466,7 +462,7 @@
               "AfterUILayer": false
             },
             "RotationOffset": 0,
-            "Scale": 2,
+            "Scale": 0.9363296,
             "Shadows": false,
             "SortMode": "Unsorted",
             "Sprite": {
@@ -497,11 +493,7 @@
                                   "c": "1,1,1,1"
                                 },
                                 {
-                                  "t": 0.50630254,
-                                  "c": "0.0105,0.0105,0.0105,1"
-                                },
-                                {
-                                  "t": 1,
+                                  "t": 0.49369746,
                                   "c": "0,0,0,1"
                                 }
                               ],
@@ -519,7 +511,7 @@
                             "ConvertHeightToNormals": false,
                             "NormalScale": 1
                           },
-                          "compiled": "textures/generated/gradientradial/36c736076a8aa2e3.vtex"
+                          "compiled": "textures/generated/gradientradial/edcd79bdf235cdc.vtex"
                         },
                         "BroadcastMessages": []
                       }
@@ -540,10 +532,10 @@
             "Flags": 0,
             "Burst": 0,
             "CenterBias": 1,
-            "CenterBiasVelocity": 0,
-            "ConeAngle": 3,
-            "ConeFar": 52.91,
-            "ConeNear": 33.240055,
+            "CenterBiasVelocity": 1,
+            "ConeAngle": 5,
+            "ConeFar": 22,
+            "ConeNear": 22,
             "Delay": 0,
             "DestroyOnEnd": false,
             "Duration": 1,
@@ -556,9 +548,9 @@
             "OnComponentStart": null,
             "OnComponentUpdate": null,
             "OnEdge": false,
-            "Rate": 25,
+            "Rate": 33,
             "RateOverDistance": 0,
-            "VelocityMultiplier": 3,
+            "VelocityMultiplier": 2,
             "VelocityRandom": 0
           }
         ],
@@ -568,7 +560,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "Point Light",
-            "Position": "11.64149,0,-0.0000009536743",
+            "Position": "5.588051,0,-0.000002384186",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "light_point,light",
@@ -605,7 +597,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "Sound",
-            "Position": "6.942768,0,0.000001192093",
+            "Position": "2.758867,0,0.0000003576279",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -700,7 +692,7 @@
   "DontBreakAsTemplate": false,
   "__references": [
     "exorealms.76fccc8db731288a#41169",
-    "facepunch.roof_vent_5#34894"
+    "facepunch.cctv_globe#33660"
   ],
   "__version": 2
 }

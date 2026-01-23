@@ -3,8 +3,8 @@
     "__guid": "9a36a5d3-e6b7-4330-a985-42b33685617d",
     "__version": 2,
     "Flags": 0,
-    "Name": "plastic-chair",
-    "Position": "8.190678,0,0",
+    "Name": "trolley",
+    "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
     "Tags": "",
@@ -23,10 +23,10 @@
         "BodyGroups": 18446744073709551615,
         "CreateAttachments": false,
         "LodOverride": null,
-        "MaterialGroup": null,
+        "MaterialGroup": "default",
         "MaterialOverride": null,
         "Materials": null,
-        "Model": "models/props/plastic_chair/plastic_chair.vmdl",
+        "Model": "models/sbox_props/trolley/trolley.vmdl",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -51,7 +51,7 @@
         "Elasticity": null,
         "Friction": null,
         "IsTrigger": false,
-        "Model": "models/props/plastic_chair/plastic_chair.vmdl",
+        "Model": "models/sbox_props/trolley/trolley.vmdl",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -118,6 +118,10 @@
           {
             "_type": "gameobject",
             "go": "7e547e9f-57ba-41a8-81b2-b70b0b9fa451"
+          },
+          {
+            "_type": "gameobject",
+            "go": "10a7848e-2f88-4e08-a238-e642eeb7b151"
           }
         ],
         "EyePosition": {
@@ -135,8 +139,8 @@
           "_type": "gameobject",
           "go": "00c385bd-a4e1-466a-96fa-6fb27067d1ab"
         },
-        "SitHeight": 0.22394681,
-        "SitPose": "Chair",
+        "SitHeight": 0.06093192,
+        "SitPose": "Ground",
         "TooltipDescription": "",
         "TooltipIcon": "airline_seat_recline_normal",
         "TooltipTitle": "Sit",
@@ -149,8 +153,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "sit",
-        "Position": "-5.548875,0,4.442077",
-        "Rotation": "0,0,0,1",
+        "Position": "-3.07816,0.0000019744,20.0282",
+        "Rotation": "0.00000003214129,0.0411986,-0.000000001325301,0.999151",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -167,7 +171,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "eye",
-        "Position": "-6.828688,-3.56279,54.04361",
+        "Position": "1.577774,0.000002489165,52.12244",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -184,7 +188,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "collider",
-            "Position": "0,0,-2.47538",
+            "Position": "-0.6033549,0,-2.199615",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -231,7 +235,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "exit",
-        "Position": "-8.190678,0,0",
+        "Position": "0,0,0",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -284,7 +288,25 @@
             "__version": 2,
             "Flags": 0,
             "Name": "c",
-            "Position": "26.39404,0,0",
+            "Position": "37.94406,-0.00000899549,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
+          },
+          {
+            "__guid": "10a7848e-2f88-4e08-a238-e642eeb7b151",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "d",
+            "Position": "-48.89346,0.00005863606,0",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -327,7 +349,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.plastic_chair#143798"
+    "facepunch.trolley#143796"
   ],
   "__version": 2
 }

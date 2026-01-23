@@ -140,7 +140,7 @@
         "TooltipDescription": "",
         "TooltipIcon": "airline_seat_recline_normal",
         "TooltipTitle": "Sit",
-        "YawRange": "-120,120"
+        "YawRange": "-180,180"
       }
     ],
     "Children": [

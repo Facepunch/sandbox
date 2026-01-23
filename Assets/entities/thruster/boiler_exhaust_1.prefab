@@ -68,7 +68,7 @@
           "_type": "gameobject",
           "go": "c6f0b6b9-0db0-41de-a892-522bd1ee37e3"
         },
-        "Power": 1
+        "Power": 0.5
       }
     ],
     "Children": [
@@ -416,6 +416,7 @@
             "SequenceSpeed": 1,
             "SequenceTime": 1,
             "SheetSequence": false,
+            "SnapToFrame": false,
             "StartDelay": 0,
             "StartVelocity": {
               "Type": "Range",
@@ -518,7 +519,7 @@
                             "ConvertHeightToNormals": false,
                             "NormalScale": 1
                           },
-                          "compiled": null
+                          "compiled": "textures/generated/gradientradial/36c736076a8aa2e3.vtex"
                         },
                         "BroadcastMessages": []
                       }

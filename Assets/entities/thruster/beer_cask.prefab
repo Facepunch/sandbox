@@ -68,7 +68,7 @@
           "_type": "gameobject",
           "go": "c6f0b6b9-0db0-41de-a892-522bd1ee37e3"
         },
-        "Power": 2
+        "Power": 1
       }
     ],
     "Children": [
@@ -149,7 +149,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "effect",
-        "Position": "-0.03716278,0.00003054738,21.45142",
+        "Position": "-0.03716278,0.00003054738,15.38999",
         "Rotation": "0,-0.7071067,0,0.7071068",
         "Scale": "1,1,1",
         "Tags": "particles",
@@ -274,27 +274,19 @@
                   },
                   {
                     "t": 0,
-                    "c": "0.44348,3.61439,4.76744,1"
+                    "c": "0,0.35795,1.07385,1"
                   },
                   {
-                    "t": 0.15336135,
-                    "c": "0.99167,0.99729,0.01126,1"
+                    "t": 0.1764706,
+                    "c": "0.99729,0.89869,0.01126,1"
                   },
                   {
-                    "t": 0.15546219,
-                    "c": "2.97407,2.98186,0.03535,1"
-                  },
-                  {
-                    "t": 0.3760504,
-                    "c": "0.95814,0.64357,0.06685,1"
-                  },
-                  {
-                    "t": 0.37815127,
-                    "c": "1.91637,1.28422,0.13397,1"
-                  },
-                  {
-                    "t": 0.789916,
+                    "t": 0.6659664,
                     "c": "0.96744,0.35638,0.09449,1"
+                  },
+                  {
+                    "t": 1,
+                    "c": "0.96744,0.09449,0.09449,1"
                   }
                 ],
                 "alpha": [
@@ -416,6 +408,7 @@
             "SequenceSpeed": 1,
             "SequenceTime": 1,
             "SheetSequence": false,
+            "SnapToFrame": false,
             "StartDelay": 0,
             "StartVelocity": {
               "Type": "Range",
@@ -518,7 +511,7 @@
                             "ConvertHeightToNormals": false,
                             "NormalScale": 1
                           },
-                          "compiled": null
+                          "compiled": "textures/generated/gradientradial/36c736076a8aa2e3.vtex"
                         },
                         "BroadcastMessages": []
                       }
@@ -567,7 +560,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "Point Light",
-            "Position": "8.084202,0,-0.000001907349",
+            "Position": "8.873306,0,-0.000001907349",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "light_point,light",
@@ -604,7 +597,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "Sound",
-            "Position": "-11.88784,0,-0.000002384186",
+            "Position": "-1.731556,0,-0.0000007748604",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
