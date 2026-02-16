@@ -41,6 +41,7 @@
     List<SaveFileEntry> SaveFiles = new();
 
     record SaveFileEntry( string FileName, string DisplayName );
+	static string SavesPath => "saves";
 
     protected override void OnAfterTreeRender( bool firstTime )
     {
@@ -54,20 +55,20 @@
     {
         SaveFiles.Clear();
 
-        if ( !FileSystem.Data.DirectoryExists( "saves" ) )
+		if ( !FileSystem.Data.DirectoryExists( SavesPath ) )
         {
-            FileSystem.Data.CreateDirectory( "saves" );
+			FileSystem.Data.CreateDirectory( SavesPath );
         }
 
-        foreach ( var file in FileSystem.Data.FindFile( "saves", "*.sav" ) )
+		foreach ( var file in FileSystem.Data.FindFile( SavesPath, "*.sav" ) )
         {
-            var filePath = $"saves/{file}";
+			var filePath = $"{SavesPath}/{file}";
             var displayName = file;
 
-            var metadata = SaveSystem.GetMetadata( filePath );
+            var metadata = SaveSystem.GetFileMetadata( filePath );
             if ( metadata != null && metadata.TryGetValue( "Name", out var name ) )
             {
-                displayName = name;
+                displayName = name.ToString();
             }
 
             SaveFiles.Add( new SaveFileEntry( file, displayName ) );
@@ -82,10 +83,10 @@
         if ( string.IsNullOrEmpty( saveName ) )
             return;
 
-        var fileName = $"saves/{saveName}.sav";
+		var fileName = $"{SavesPath}/{saveName}.sav";
 
-        SaveSystem.SetMetadata( "Name", DateTime.Now.ToString( "yyyy-MM-dd HH:mm:ss" ) );
-        SaveSystem.Save( fileName );
+        SaveSystem.Current.SetMetadata( "Name", DateTime.Now.ToString( "yyyy-MM-dd HH:mm:ss" ) );
+        SaveSystem.Current.Save( fileName );
 
         SaveNameEntry.Text = "";
         RefreshSaveList();
@@ -93,12 +94,12 @@
 
     void LoadSave( string fileName )
     {
-        SaveSystem.Load( $"saves/{fileName}" );
+		SaveSystem.Current.Load( $"{SavesPath}/{fileName}" );
     }
 
     void DeleteSave( string fileName )
     {
-        FileSystem.Data.DeleteFile( $"saves/{fileName}" );
+		FileSystem.Data.DeleteFile( $"{SavesPath}/{fileName}" );
         RefreshSaveList();
     }
 }
