@@ -70,7 +70,7 @@ public sealed partial class PlayerData : Component, ISaveEvents
 		}
 	}
 
-	void ISaveEvents.OnAfterLoad()
+	void ISaveEvents.AfterLoad( string filename )
 	{
 		var connection = Connection;
 		if ( connection == null )
