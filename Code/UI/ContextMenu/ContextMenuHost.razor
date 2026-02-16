@@ -68,6 +68,9 @@
 
     void DrawHandles()
     {
+		if ( Scene?.Camera is not { IsValid: true } )
+			return;
+
         var objects = Scene.FindInPhysics(new Sphere( Scene.Camera.WorldPosition, 1000 ));
         var rootObjects = objects.Select( x => x.Network?.RootGameObject ).Where( x => x.IsValid() ).Distinct();
 
