@@ -14,6 +14,7 @@ public partial class Physgun : BaseCarryable
 	GameObject _grabEffect;
 
 	public bool BeamActive => BeamRenderer?.Active == true || _state.Pulling || _stateHovered.Pulling;
+	public bool PullActive => _state.Pulling || _stateHovered.Pulling;
 
 	void UpdateBeam( Transform source, Vector3 end, Vector3 endNormal, bool grabbed )
 	{
