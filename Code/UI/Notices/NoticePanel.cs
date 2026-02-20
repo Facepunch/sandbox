@@ -8,8 +8,22 @@ public class NoticePanel : Panel
 
 	public RealTimeUntil TimeUntilDie;
 
-	public bool IsDead => TimeUntilDie < 0;
+	/// <summary>
+	/// If true, the notice won't auto-dismiss. Call <see cref="Dismiss"/> to remove it.
+	/// </summary>
+	public bool Manual { get; set; }
+
+	public bool IsDead => !Manual && TimeUntilDie < 0;
 	public bool wasDead = false;
+
+	/// <summary>
+	/// Dismiss a manual notice, causing it to slide out and be deleted.
+	/// </summary>
+	public void Dismiss()
+	{
+		Manual = false;
+		TimeUntilDie = 0;
+	}
 
 	internal void UpdatePosition( Vector2 vector2 )
 	{
@@ -20,7 +34,7 @@ public class NoticePanel : Panel
 			initialized = true;
 		}
 
-		if ( TimeUntilDie < 0.4f )
+		if ( !Manual && TimeUntilDie < 0.4f )
 		{
 			vector2.x -= 50;
 		}

@@ -9,23 +9,29 @@ public class Notices : PanelComponent
 
 	public static Notices Current => Game.ActiveScene.Get<Notices>();
 
-	public static void AddNotice( string text, float seconds = 5 )
+	public static NoticePanel AddNotice( string text, float seconds = 5 )
 	{
 		var current = Current;
-		if ( current == null || current.Panel == null ) return;
+		if ( current == null || current.Panel == null ) return null;
 
 		var notice = new NoticePanel();
 
 		notice.AddChild( new Label() { Text = text, Classes = "text", IsRich = true } );
-		notice.TimeUntilDie = seconds;
+
+		if ( seconds <= 0 )
+			notice.Manual = true;
+		else
+			notice.TimeUntilDie = seconds;
 
 		current.Panel.AddChild( notice );
+
+		return notice;
 	}
 
-	public static void AddNotice( string icon, Color iconColor, string text, float seconds = 5 )
+	public static NoticePanel AddNotice( string icon, Color iconColor, string text, float seconds = 5 )
 	{
 		var current = Current;
-		if ( current == null || current.Panel == null ) return;
+		if ( current == null || current.Panel == null ) return null;
 
 		var notice = new NoticePanel();
 
@@ -34,9 +40,15 @@ public class Notices : PanelComponent
 
 		notice.AddChild( iconPanel );
 		notice.AddChild( new Label() { Text = text, Classes = "text", IsRich = true } );
-		notice.TimeUntilDie = seconds;
+
+		if ( seconds <= 0 )
+			notice.Manual = true;
+		else
+			notice.TimeUntilDie = seconds;
 
 		current.Panel.AddChild( notice );
+
+		return notice;
 	}
 
 	protected override void OnUpdate()
