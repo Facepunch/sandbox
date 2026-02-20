@@ -21,10 +21,19 @@ public class Weld : BaseConstraintToolMode
 			if ( !select.IsValid() ) return;
 
 			var go = Point1.GameObject.Network.RootGameObject ?? Point1.GameObject;
-
 			var local = GetEasyModePlacement( Point1, select );
 
-			DebugOverlay.GameObject( go, transform: local, color: Color.White.WithAlpha( 0.3f ) );
+			var builder = new LinkedGameObjectBuilder();
+			builder.AddConnected( go );
+
+			foreach ( var obj in builder.Objects )
+			{
+				var previewTransform = obj == go
+					? local
+					: local.ToWorld( go.WorldTransform.ToLocal( obj.WorldTransform ) );
+
+				DebugOverlay.GameObject( obj, transform: previewTransform, color: Color.White.WithAlpha( 0.3f ) );
+			}
 		}
 	}
 
