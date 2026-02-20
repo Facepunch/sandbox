@@ -1,7 +1,7 @@
 {
   "RootObject": {
     "__guid": "3c948bf4-5353-443a-bb65-8f28584fed1b",
-    "__version": 1,
+    "__version": 2,
     "Flags": 0,
     "Name": "camera",
     "Position": "0,0,0",
@@ -10,7 +10,7 @@
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 2,
-    "NetworkInterpolation": true,
+    "NetworkFlags": 0,
     "NetworkOrphaned": 0,
     "NetworkTransmit": true,
     "OwnerTransfer": 1,
@@ -19,6 +19,7 @@
         "__type": "CameraWeapon",
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
+        "Flags": 0,
         "AmmoResource": null,
         "CameraShoot": "weapons/camera/sounds/camera.shoot.sound",
         "CanCancelReload": true,
@@ -42,7 +43,8 @@
           "compiled": null
         },
         "DisplayName": "Camera",
-        "HoldType": "Punch",
+        "HoldHandPose": 1,
+        "HoldType": "HoldItem",
         "IncrementalReloading": false,
         "InventoryOrder": 10,
         "InventorySlot": 4,
@@ -53,63 +55,20 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
+        "ParentBone": "hold_R",
         "ReloadTime": 2.5,
         "StartingAmmo": 0,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 0,
         "ViewModelPrefab": null,
-        "WorldModelPrefab": null
+        "WorldModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/camera/camera_wm.prefab"
+        }
       }
     ],
-    "Children": [
-      {
-        "__guid": "2f190aea-2086-4bc4-b298-d7a980288908",
-        "__version": 1,
-        "Flags": 0,
-        "Name": "Cube",
-        "Position": "0,0,0",
-        "Rotation": "0,0,0,1",
-        "Scale": "0.1,0.1,0.1",
-        "Tags": "",
-        "Enabled": false,
-        "NetworkMode": 2,
-        "NetworkInterpolation": true,
-        "NetworkOrphaned": 0,
-        "NetworkTransmit": true,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "Sandbox.ModelRenderer",
-            "__guid": "ec0099bd-8e1b-4468-a41a-c67148a83fcf",
-            "__enabled": true,
-            "BodyGroups": 18446744073709551615,
-            "CreateAttachments": false,
-            "LodOverride": null,
-            "MaterialGroup": null,
-            "MaterialOverride": null,
-            "Materials": null,
-            "Model": "models/dev/box.vmdl",
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": false,
-              "AfterUILayer": false
-            },
-            "RenderType": "On",
-            "Tint": "1,1,1,1"
-          }
-        ],
-        "Children": []
-      }
-    ],
+    "Children": [],
     "__properties": {
       "NetworkInterpolation": true,
       "TimeScale": 1,
@@ -119,7 +78,7 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
