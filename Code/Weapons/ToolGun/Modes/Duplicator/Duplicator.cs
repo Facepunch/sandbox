@@ -252,6 +252,7 @@ public partial class Duplicator : ToolMode
 	public static async Task FromWorkshop( Storage.QueryItem item )
 	{
 		var notice = Notices.AddNotice( "downloading", Color.Yellow, $"Installing {item.Title}..", 0 );
+		notice?.AddClass( "progress" );
 
 		var installed = await item.Install();
 

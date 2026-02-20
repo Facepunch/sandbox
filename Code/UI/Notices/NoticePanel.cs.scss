@@ -13,11 +13,51 @@ NoticePanel
 	align-items: center;
 	text-shadow: 2px 2px 4px #000a;
 	text-stroke: 4px #333;
+	overflow: hidden;
 
 	.icon
 	{
 		font-size: 24px;
 		font-family: "Material Icons";
+	}
+
+	&.progress::after
+	{
+		content: "";
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		height: 3px;
+		width: 100%;
+		background-color: #08f;
+		animation: progress-sweep 2s ease-in-out infinite;
+	}
+}
+
+@keyframes progress-sweep
+{
+	0%
+	{
+		transform: translateX( -100% );
+		opacity: 1;
+	}
+
+	50%
+	{
+		transform: translateX( 0% );
+		opacity: 1;
+	}
+
+	85%
+	{
+		transform: translateX( 100% );
+		opacity: 1;
+	}
+
+	100%
+	{
+		transform: translateX( 100% );
+		opacity: 0;
 	}
 }
 
