@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Sandbox.UI;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 
 [Icon( "✌️" )]
@@ -250,10 +251,14 @@ public partial class Duplicator : ToolMode
 
 	public static async Task FromWorkshop( Storage.QueryItem item )
 	{
+		var notice = Notices.AddNotice( "downloading", Color.Yellow, $"Installing {item.Title}..", 0 );
+
 		var installed = await item.Install();
+
+		notice?.Dismiss();
+
 		if ( installed == null ) return;
 
 		FromStorage( installed );
 	}
-
 }
