@@ -1,4 +1,4 @@
-public sealed partial class GameManager : GameObjectSystem<GameManager>, Component.INetworkListener, ISceneStartup
+public sealed partial class GameManager : GameObjectSystem<GameManager>, Component.INetworkListener, ISceneStartup, IScenePhysicsEvents
 {
 	public GameManager( Scene scene ) : base( scene )
 	{
@@ -441,5 +441,10 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		// c.GameObject.Network.Refresh( c );
 
 		c.GameObject.Network?.Refresh();
+	}
+
+	void IScenePhysicsEvents.OnOutOfBounds( Rigidbody body )
+	{
+		body.DestroyGameObject();
 	}
 }
