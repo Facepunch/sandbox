@@ -207,7 +207,7 @@ public partial class Duplicator : ToolMode
 		var undo = Player.Undo.Create();
 		undo.Name = "Duplication";
 
-		SceneUtility.RunInBatchGroup( () =>
+		using ( Scene.BatchGroup() )
 		{
 			foreach ( var entry in jsonObject["Objects"] as JsonArray )
 			{
@@ -228,7 +228,7 @@ public partial class Duplicator : ToolMode
 					undo.Add( go );
 				}
 			}
-		} );
+		}
 	}
 
 	public static void FromStorage( Storage.Entry item )
