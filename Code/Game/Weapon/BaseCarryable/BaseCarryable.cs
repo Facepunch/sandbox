@@ -191,7 +191,7 @@ public partial class BaseCarryable : Component, IKillIcon
 			DestroyViewModel();
 		}
 
-		GameObject.NetworkInterpolation = false;
+		GameObject.Network.Interpolation = false;
 	}
 
 	/// <summary>

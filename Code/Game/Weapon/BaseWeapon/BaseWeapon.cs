@@ -104,7 +104,7 @@ public partial class BaseWeapon : BaseCarryable
 			DestroyViewModel();
 		}
 
-		GameObject.NetworkInterpolation = false;
+		GameObject.Network.Interpolation = false;
 
 		if ( !player.IsLocalPlayer )
 			return;
