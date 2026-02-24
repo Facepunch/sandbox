@@ -29,6 +29,8 @@ public class Remover : ToolMode
 	[Property]
 	public Vector4 ScreenRect { get; set; } = new Vector4( 10, 10, 90, 90 );
 
+	public override ToolHint Hint => new( "#tool.hint.remover.description", "#tool.hint.remover.remove" );
+
 	bool CanDestroy( GameObject go )
 	{
 		if ( !go.IsValid() ) return false;

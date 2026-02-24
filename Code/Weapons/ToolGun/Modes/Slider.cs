@@ -4,6 +4,15 @@
 [Group( "Constraints" )]
 public class Slider : BaseConstraintToolMode
 {
+	public override ToolHint Hint
+	{
+		get
+		{
+			if ( Stage == 1 ) return new ToolHint( "#tool.hint.slider.stage1", "#tool.hint.slider.finish" );
+			return new ToolHint( "#tool.hint.slider.stage0", "#tool.hint.slider.source" );
+		}
+	}
+
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
 		if ( point1.GameObject == point2.GameObject )

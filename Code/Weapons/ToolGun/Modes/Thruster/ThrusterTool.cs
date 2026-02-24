@@ -10,6 +10,8 @@ public class ThrusterTool : ToolMode
 	[Property, ResourceSelect( Extension = "tdef", AllowPackages = true ), Title( "Thruster" )]
 	public string Definition { get; set; } = "entities/thruster/basic.tdef";
 
+	public override ToolHint Hint => new( "#tool.hint.thrustertool.description", "#tool.hint.thrustertool.place", "#tool.hint.thrustertool.toggle_axis" );
+
 	Vector3 _axis = Vector3.Right;
 
 	public override void OnControl()

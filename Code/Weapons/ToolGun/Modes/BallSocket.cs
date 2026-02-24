@@ -7,6 +7,15 @@ public class BallSocket : BaseConstraintToolMode
 	[Property, Sync]
 	public bool EnableCollision { get; set; } = false;
 
+	public override ToolHint Hint
+	{
+		get
+		{
+			if ( Stage == 1 ) return new ToolHint( "#tool.hint.ballsocket.stage1", "#tool.hint.ballsocket.finish" );
+			return new ToolHint( "#tool.hint.ballsocket.stage0", "#tool.hint.ballsocket.source" );
+		}
+	}
+
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
 		if ( point1.GameObject == point2.GameObject )

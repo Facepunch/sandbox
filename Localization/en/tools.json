@@ -6,5 +6,58 @@
     "tool.hint.weld.stage0": "Welds two objects together",
     "tool.hint.weld.stage1": "Select the second object to weld",
     "tool.hint.weld.source": "Select source",
-    "tool.hint.weld.finish": "Finish"
+    "tool.hint.weld.finish": "Finish",
+
+    "tool.hint.balloon.description": "Places a poppable balloon",
+    "tool.hint.balloon.place_rope": "Place (rope)",
+    "tool.hint.balloon.place": "Place",
+
+    "tool.hint.thrustertool.description": "Attaches a thruster to an object",
+    "tool.hint.thrustertool.place": "Place",
+    "tool.hint.thrustertool.toggle_axis": "Toggle axis",
+
+    "tool.hint.wheeltool.description": "Attaches a wheel to an object",
+    "tool.hint.wheeltool.place": "Place",
+    "tool.hint.wheeltool.toggle_axis": "Toggle axis",
+
+    "tool.hint.rope.stage0": "Connects two objects with a rope",
+    "tool.hint.rope.stage1": "Select the second object",
+    "tool.hint.rope.source": "Select source",
+    "tool.hint.rope.finish": "Finish",
+
+    "tool.hint.ballsocket.stage0": "Connects two objects with a ball socket",
+    "tool.hint.ballsocket.stage1": "Select the second object",
+    "tool.hint.ballsocket.source": "Select source",
+    "tool.hint.ballsocket.finish": "Finish",
+
+    "tool.hint.slider.stage0": "Connects two objects with a sliding joint",
+    "tool.hint.slider.stage1": "Select the second object",
+    "tool.hint.slider.source": "Select source",
+    "tool.hint.slider.finish": "Finish",
+
+    "tool.hint.remover.description": "Removes objects from the world",
+    "tool.hint.remover.remove": "Remove",
+
+    "tool.hint.resizer.description": "Resizes an object",
+    "tool.hint.resizer.grow": "Grow",
+    "tool.hint.resizer.shrink": "Shrink",
+
+    "tool.hint.decaltool.description": "Sprays decals onto surfaces",
+    "tool.hint.decaltool.place": "Place",
+    "tool.hint.decaltool.paint": "Paint",
+
+    "tool.hint.nocollide.stage0": "Disables collision between two objects",
+    "tool.hint.nocollide.stage1": "Select the second object",
+    "tool.hint.nocollide.source": "Select source",
+    "tool.hint.nocollide.finish": "Finish",
+
+    "tool.hint.mass.description": "Sets the mass of an object",
+    "tool.hint.mass.set": "Set mass",
+    "tool.hint.mass.copy": "Copy mass",
+    "tool.hint.mass.reset": "Reset mass",
+
+    "tool.hint.hydraulictool.stage0": "Connects two objects with a hydraulic piston",
+    "tool.hint.hydraulictool.stage1": "Select the second object",
+    "tool.hint.hydraulictool.source": "Select source",
+    "tool.hint.hydraulictool.finish": "Finish"
 }

@@ -15,6 +15,15 @@ public class Rope : BaseConstraintToolMode
 	[Property]
 	public float Radius { get; set; } = 1f;
 
+	public override ToolHint Hint
+	{
+		get
+		{
+			if ( Stage == 1 ) return new ToolHint( "#tool.hint.rope.stage1", "#tool.hint.rope.finish" );
+			return new ToolHint( "#tool.hint.rope.stage0", "#tool.hint.rope.source" );
+		}
+	}
+
 	public override bool CanConstraintToSelf => true;
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )

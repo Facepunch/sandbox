@@ -5,6 +5,15 @@
 [Group( "Building" )]
 public class HydraulicTool : BaseConstraintToolMode
 {
+	public override ToolHint Hint
+	{
+		get
+		{
+			if ( Stage == 1 ) return new ToolHint( "#tool.hint.hydraulictool.stage1", "#tool.hint.hydraulictool.finish" );
+			return new ToolHint( "#tool.hint.hydraulictool.stage0", "#tool.hint.hydraulictool.source" );
+		}
+	}
+
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
 		DebugOverlay.Line( point1.WorldPosition(), point2.WorldPosition(), Color.Red, 5.0f );

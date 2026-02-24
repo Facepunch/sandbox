@@ -4,6 +4,7 @@
 [Group( "Tools" )]
 public class Resizer : ToolMode
 {
+	public override ToolHint Hint => new( "#tool.hint.resizer.description", "#tool.hint.resizer.grow", "#tool.hint.resizer.shrink" );
 
 	TimeSince timeSinceAction = 0;
 

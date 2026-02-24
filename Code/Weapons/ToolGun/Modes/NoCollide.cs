@@ -5,6 +5,15 @@
 [Group( "Tools" )]
 public class NoCollide : BaseConstraintToolMode
 {
+	public override ToolHint Hint
+	{
+		get
+		{
+			if ( Stage == 1 ) return new ToolHint( "#tool.hint.nocollide.stage1", "#tool.hint.nocollide.finish" );
+			return new ToolHint( "#tool.hint.nocollide.stage0", "#tool.hint.nocollide.source" );
+		}
+	}
+
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
 		var go = new GameObject( point1.GameObject, false, "no collide" );
