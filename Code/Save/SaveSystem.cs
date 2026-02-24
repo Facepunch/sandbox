@@ -145,6 +145,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 		var saveData = new JsonObject
 		{
 			["Version"] = CurrentSaveVersion,
+			["SceneId"] = Scene.Id.ToString(),
 			["SceneSources"] = sceneSources,
 			["SceneProperties"] = primarySceneFile is not null ? SerializeScenePropertyDiffs( Scene, primarySceneFile ) : null,
 			["Metadata"] = JsonSerializer.SerializeToNode( _metadata ),
@@ -277,7 +278,12 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 
 		savedPatch ??= new Json.Patch();
 
-		var baseline = BuildCompositeBaselineFromFiles( sceneFiles, sceneFiles[0].Id );
+		// Use the saved scene ID for the baseline root so the patch applies correctly
+		var savedSceneId = Guid.TryParse( saveRoot["SceneId"]?.GetValue<string>(), out var parsedId )
+			? parsedId
+			: sceneFiles[0].Id;
+
+		var baseline = BuildCompositeBaselineFromFiles( sceneFiles, savedSceneId );
 		if ( baseline is null )
 		{
 			Log.Warning( "SaveSystem: Failed to build baseline from scene sources." );
