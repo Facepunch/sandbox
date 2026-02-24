@@ -1,10 +1,9 @@
 ToolInfoPanel
 {
 	position: absolute;
-	left: 2vw;
-	right: 0;
-	top: 2vw;
-	justify-content: flex-start;
+	right: 2vw;
+	bottom: 2vw;
+	justify-content: flex-end;
 	pointer-events: none;
 	opacity: 0;
 	transition: opacity 0.15s ease;
@@ -17,12 +16,12 @@ ToolInfoPanel
 	.panel
 	{
 		flex-direction: column;
-		align-items: flex-start;
+		align-items: flex-end;
 		gap: 4px;
 		font-family: Poppins;
 		text-shadow: 1px 1px 5px #000b;
 		padding: 16px;
-		background-image: linear-gradient( to right, rgba( 0, 0, 0, 0.5 ), rgba( 0, 0, 0, 0 ) );
+		background-image: linear-gradient( to left, rgba( 0, 0, 0, 0.5 ), rgba( 0, 0, 0, 0 ) );
 		border-radius: 8px;
 	}
 
@@ -52,7 +51,7 @@ ToolInfoPanel
 
 	.action
 	{
-		flex-direction: row;
+		flex-direction: row-reverse;
 		align-items: center;
 		gap: 10px;
 	}
@@ -67,6 +66,5 @@ ToolInfoPanel
 		font-size: 16px;
 		font-weight: 400;
 		color: #cdf;
-		width: 180px;
 	}
 }
