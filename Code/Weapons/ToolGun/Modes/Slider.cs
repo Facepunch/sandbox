@@ -8,9 +8,16 @@ public class Slider : BaseConstraintToolMode
 	{
 		get
 		{
-			if ( Stage == 1 ) return new ToolHint( "#tool.hint.slider.stage1", "#tool.hint.slider.finish" );
-			return new ToolHint( "#tool.hint.slider.stage0", "#tool.hint.slider.source" );
+			if ( Stage == 1 ) return new ToolHint( "#tool.hint.slider.stage1", "#tool.hint.slider.finish", ReloadAction: "#tool.hint.slider.remove" );
+			return new ToolHint( "#tool.hint.slider.stage0", "#tool.hint.slider.source", ReloadAction: "#tool.hint.slider.remove" );
 		}
+	}
+
+	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
+	{
+		foreach ( var joint in linked.GetComponentsInChildren<SliderJoint>( true ) )
+			if ( linked == target || joint.Body?.Root == target )
+				yield return joint.GameObject;
 	}
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )

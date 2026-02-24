@@ -9,8 +9,18 @@ public class HydraulicTool : BaseConstraintToolMode
 	{
 		get
 		{
-			if ( Stage == 1 ) return new ToolHint( "#tool.hint.hydraulictool.stage1", "#tool.hint.hydraulictool.finish" );
-			return new ToolHint( "#tool.hint.hydraulictool.stage0", "#tool.hint.hydraulictool.source" );
+			if ( Stage == 1 ) return new ToolHint( "#tool.hint.hydraulictool.stage1", "#tool.hint.hydraulictool.finish", ReloadAction: "#tool.hint.hydraulictool.remove" );
+			return new ToolHint( "#tool.hint.hydraulictool.stage0", "#tool.hint.hydraulictool.source", ReloadAction: "#tool.hint.hydraulictool.remove" );
+		}
+	}
+
+	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
+	{
+		foreach ( var cleanup in linked.GetComponentsInChildren<ConstraintCleanup>( true ) )
+		{
+			if ( linked != target && cleanup.Attachment?.Root != target ) continue;
+			if ( cleanup.GameObject.GetComponentInChildren<HydraulicEntity>() is not null )
+				yield return cleanup.GameObject;
 		}
 	}
 

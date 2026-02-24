@@ -11,9 +11,16 @@ public class BallSocket : BaseConstraintToolMode
 	{
 		get
 		{
-			if ( Stage == 1 ) return new ToolHint( "#tool.hint.ballsocket.stage1", "#tool.hint.ballsocket.finish" );
-			return new ToolHint( "#tool.hint.ballsocket.stage0", "#tool.hint.ballsocket.source" );
+			if ( Stage == 1 ) return new ToolHint( "#tool.hint.ballsocket.stage1", "#tool.hint.ballsocket.finish", ReloadAction: "#tool.hint.ballsocket.remove" );
+			return new ToolHint( "#tool.hint.ballsocket.stage0", "#tool.hint.ballsocket.source", ReloadAction: "#tool.hint.ballsocket.remove" );
 		}
+	}
+
+	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
+	{
+		foreach ( var joint in linked.GetComponentsInChildren<BallJoint>( true ) )
+			if ( linked == target || joint.Body?.Root == target )
+				yield return joint.GameObject;
 	}
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )

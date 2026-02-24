@@ -14,8 +14,8 @@ public class Weld : BaseConstraintToolMode
 	{
 		get
 		{
-			if ( Stage == 1 ) return new ToolHint( "#tool.hint.weld.stage1", "#tool.hint.weld.finish" );
-			return new ToolHint( "#tool.hint.weld.stage0", "#tool.hint.weld.source" );
+			if ( Stage == 1 ) return new ToolHint( "#tool.hint.weld.stage1", "#tool.hint.weld.finish", ReloadAction: "#tool.hint.weld.remove" );
+			return new ToolHint( "#tool.hint.weld.stage0", "#tool.hint.weld.source", ReloadAction: "#tool.hint.weld.remove" );
 		}
 	}
 
@@ -45,6 +45,13 @@ public class Weld : BaseConstraintToolMode
 		}
 	}
 
+
+	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
+	{
+		foreach ( var joint in linked.GetComponentsInChildren<FixedJoint>( true ) )
+			if ( linked == target || joint.Body?.Root == target )
+				yield return joint.GameObject;
+	}
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{

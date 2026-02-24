@@ -19,12 +19,23 @@ public class Rope : BaseConstraintToolMode
 	{
 		get
 		{
-			if ( Stage == 1 ) return new ToolHint( "#tool.hint.rope.stage1", "#tool.hint.rope.finish" );
-			return new ToolHint( "#tool.hint.rope.stage0", "#tool.hint.rope.source" );
+			if ( Stage == 1 ) return new ToolHint( "#tool.hint.rope.stage1", "#tool.hint.rope.finish", ReloadAction: "#tool.hint.rope.remove" );
+			return new ToolHint( "#tool.hint.rope.stage0", "#tool.hint.rope.source", ReloadAction: "#tool.hint.rope.remove" );
 		}
 	}
 
 	public override bool CanConstraintToSelf => true;
+
+	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
+	{
+		foreach ( var cleanup in linked.GetComponentsInChildren<ConstraintCleanup>( true ) )
+		{
+			if ( linked != target && cleanup.Attachment?.Root != target ) continue;
+			var go = cleanup.GameObject;
+			if ( go.GetComponent<SpringJoint>() is not null || go.GetComponent<VerletRope>() is not null )
+				yield return go;
+		}
+	}
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{

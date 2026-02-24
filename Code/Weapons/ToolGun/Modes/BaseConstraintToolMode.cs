@@ -17,12 +17,18 @@
 			return;
 		}
 
-		IsValidState = true;
-
 		var select = TraceSelect();
-
 		if ( !select.IsValid() )
 			return;
+
+		if ( Input.Pressed( "reload" ) )
+		{
+			var go = select.GameObject.Network.RootGameObject ?? select.GameObject;
+			RemoveConstraints( go );
+			ShootEffects( select );
+		}
+
+		IsValidState = true;
 
 		if ( Stage == 0 )
 		{
@@ -83,7 +89,7 @@
 		return true;
 	}
 
-	[Rpc.Host]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void Create( SelectionPoint point1, SelectionPoint point2 )
 	{
 		if ( !UpdateValidity( point1, point2 ) )
@@ -94,6 +100,28 @@
 
 		CreateConstraint( point1, point2 );
 	}
+
+	[Rpc.Host( NetFlags.OwnerOnly )]
+	private void RemoveConstraints( GameObject go )
+	{
+		var builder = new LinkedGameObjectBuilder();
+		builder.AddConnected( go );
+
+		var toRemove = new List<GameObject>();
+		foreach ( var linked in builder.Objects )
+			toRemove.AddRange( FindConstraints( linked, go ) );
+
+		foreach ( var host in toRemove )
+			host.Destroy();
+	}
+
+	/// <summary>
+	/// Lets tools define what constraints should be removed when removing constraints from a game object.
+	/// </summary>
+	/// <param name="linked"></param>
+	/// <param name="target"></param>
+	/// <returns></returns>
+	protected virtual IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target ) => [];
 
 	protected abstract void CreateConstraint( SelectionPoint point1, SelectionPoint point2 );
 }

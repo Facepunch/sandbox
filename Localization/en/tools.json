@@ -7,6 +7,7 @@
     "tool.hint.weld.stage1": "Select the second object to weld",
     "tool.hint.weld.source": "Select source",
     "tool.hint.weld.finish": "Finish",
+    "tool.hint.weld.remove": "Unweld",
 
     "tool.hint.balloon.description": "Places a poppable balloon",
     "tool.hint.balloon.place_rope": "Place (rope)",
@@ -24,16 +25,19 @@
     "tool.hint.rope.stage1": "Select the second object",
     "tool.hint.rope.source": "Select source",
     "tool.hint.rope.finish": "Finish",
+    "tool.hint.rope.remove": "Remove",
 
     "tool.hint.ballsocket.stage0": "Connects two objects with a ball socket",
     "tool.hint.ballsocket.stage1": "Select the second object",
     "tool.hint.ballsocket.source": "Select source",
     "tool.hint.ballsocket.finish": "Finish",
+    "tool.hint.ballsocket.remove": "Remove",
 
     "tool.hint.slider.stage0": "Connects two objects with a sliding joint",
     "tool.hint.slider.stage1": "Select the second object",
     "tool.hint.slider.source": "Select source",
     "tool.hint.slider.finish": "Finish",
+    "tool.hint.slider.remove": "Remove",
 
     "tool.hint.remover.description": "Removes objects from the world",
     "tool.hint.remover.remove": "Remove",
@@ -59,5 +63,6 @@
     "tool.hint.hydraulictool.stage0": "Connects two objects with a hydraulic piston",
     "tool.hint.hydraulictool.stage1": "Select the second object",
     "tool.hint.hydraulictool.source": "Select source",
-    "tool.hint.hydraulictool.finish": "Finish"
+    "tool.hint.hydraulictool.finish": "Finish",
+    "tool.hint.hydraulictool.remove": "Remove"
 }
