@@ -55,7 +55,7 @@
     }
 
     ToolHint Info => CurrentMode?.Hint ?? default;
-    string ToolName => TypeLibrary.GetType( CurrentMode?.GetType() )?.Name ?? "";
+    string ToolName => TypeLibrary.GetType( CurrentMode?.GetType() )?.Title ?? "";
     string ToolIcon => TypeLibrary.GetType( CurrentMode?.GetType() )?.Icon ?? "";
     bool HasAnyAction => !string.IsNullOrEmpty( Info.PrimaryAction )
                       || !string.IsNullOrEmpty( Info.SecondaryAction )
