@@ -1,0 +1,131 @@
+Vitals
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	font-family: Poppins;
+	color: white;
+
+	.vitals
+	{
+		position: absolute;
+		bottom: 6%;
+		left: 3%;
+		flex-direction: column-reverse;
+		gap: 8px;
+	}
+
+	.stat
+	{
+		flex-direction: row;
+		align-items: center;
+		gap: 12px;
+
+		.icon
+		{
+			width: 32px;
+			height: 32px;
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: center;
+			flex-shrink: 0;
+		}
+
+		.right
+		{
+			flex-direction: column;
+			min-width: 180px;
+		}
+
+		.bar
+		{
+			height: 4px;
+			background-color: rgba( white, 0.15 );
+			border-radius: 2px;
+			overflow: hidden;
+
+			.fill
+			{
+				height: 100%;
+				border-radius: 2px;
+				transition: width 0.2s ease;
+			}
+		}
+
+		&.armour
+		{
+			width: 128px;
+		}
+
+		&.health
+		{
+			min-width: 200px;
+		}
+
+		.value
+		{
+			font-size: 28px;
+			font-weight: 700;
+			text-shadow: 1px 1px 6px black;
+		}
+
+		&.health .bar .fill
+		{
+			background-color: #4c4;
+		}
+
+		&.armour .bar .fill
+		{
+			background-color: #48f;
+		}
+	}
+
+	.ammo
+	{
+		position: absolute;
+		bottom: 6%;
+		right: 3%;
+		flex-direction: column;
+		align-items: flex-end;
+
+		.weapon-name
+		{
+			font-size: 20px;
+			font-weight: 700;
+			opacity: 0.5;
+			text-shadow: 1px 1px 5px black;
+			text-transform: uppercase;
+		}
+
+		.count
+		{
+			flex-direction: row;
+			align-items: baseline;
+			gap: 6px;
+		}
+
+		.clip
+		{
+			font-size: 48px;
+			height: 60px;
+			font-weight: 700;
+			text-shadow: 1px 1px 6px black;
+		}
+
+		.separator
+		{
+			font-size: 24px;
+			font-weight: 300;
+			opacity: 0.4;
+		}
+
+		.reserve
+		{
+			font-size: 24px;
+			font-weight: 500;
+			opacity: 0.6;
+			text-shadow: 1px 1px 4px black;
+		}
+	}
+}

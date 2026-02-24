@@ -88,7 +88,6 @@ public partial class BaseWeapon : BaseCarryable
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )
 	{
 		DrawCrosshair( painter, crosshair );
-		DrawAmmo( painter, Screen.Size * 0.9f );
 	}
 
 	public override void OnPlayerUpdate( Player player )
@@ -203,25 +202,6 @@ public partial class BaseWeapon : BaseCarryable
 		hud.DrawLine( center + Vector2.Up * 32, center + Vector2.Up * 15, 3, color );
 		hud.DrawLine( center - Vector2.Up * 32, center - Vector2.Up * 15, 3, color );
 	}
-
-	Texture ammoIcon = Texture.Load( $"ui/ammo_icon.png" );
-
-	public virtual void DrawAmmo( HudPainter hud, Vector2 bottomright )
-	{
-		if ( AmmoResource is null )
-			return;
-
-		var color = Color.Red;
-
-		var owner = Owner;
-		if ( owner is null ) return;
-
-		var str = $"{ClipContents} / {owner.GetAmmoCount( AmmoResource )}";
-		if ( !UsesClips ) str = $"{owner.GetAmmoCount( AmmoResource )}";
-
-		hud.DrawHudElement( str, bottomright, ammoIcon, 32f, TextFlag.RightCenter );
-	}
-
 	protected Color CrosshairCanShoot => Color.White;
 	protected Color CrosshairNoShoot => Color.Red;
 }

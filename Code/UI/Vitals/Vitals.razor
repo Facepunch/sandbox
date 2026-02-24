@@ -1,0 +1,64 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+@if ( !Player.IsValid() || Player.WantsHideHud ) 
+    return;
+
+<root>
+    <div class="vitals">
+        @if ( Player.Armour > 0 )
+        {
+            <div class="stat armour">
+                <Image class="icon" Texture=@ArmourIcon />
+                <div class="right">
+                    <label class="value">@Player.Armour.CeilToInt()</label>
+                    <div class="bar">
+                        <div class="fill" style="width: @((int)(Player.Armour / Player.MaxArmour * 100))%"></div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="stat health">
+            <Image class="icon" Texture=@HealthIcon />
+            <div class="right">
+                <label class="value">@Player.Health.CeilToInt()</label>
+                <div class="bar">
+                    <div class="fill" style="width: @((int)(Player.Health / Player.MaxHealth * 100))%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if ( Weapon.IsValid() && Weapon.UsesAmmo )
+    {
+        <div class="ammo">
+            <label class="weapon-name">@Weapon.DisplayName</label>
+            <div class="count">
+                <label class="clip">@(Weapon.UsesClips ? Weapon.ClipContents : Player.GetAmmoCount( Weapon.AmmoResource ))</label>
+                @if ( Weapon.UsesClips )
+                {
+                    <label class="separator">/</label>
+                    <label class="reserve">@Player.GetAmmoCount( Weapon.AmmoResource )</label>
+                }
+            </div>
+        </div>
+    }
+</root>
+
+@code
+{
+    [Property] public Texture HealthIcon { get; set; }
+    [Property] public Texture ArmourIcon { get; set; }
+
+    Player Player => Player.FindLocalPlayer();
+    BaseWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseWeapon;
+
+    protected override int BuildHash()
+    {
+        if ( !Player.IsValid() || Player.WantsHideHud ) return 0;
+
+        return System.HashCode.Combine( Player.Health, Player.Armour, Weapon?.ClipContents, !Weapon.IsValid() ? 0 : Player.GetAmmoCount( Weapon.AmmoResource ) );
+    }
+}

@@ -196,6 +196,69 @@
           "Children": []
         },
         {
+          "__guid": "305ce650-6442-44cf-b1b5-aa441f73705b",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "Vitals",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Sandbox.Vitals",
+              "__guid": "ec513cb5-7e44-4efc-b71a-f1353f4a8443",
+              "__enabled": true,
+              "Flags": 0,
+              "ArmourIcon": {
+                "$compiler": "texture",
+                "$source": "svgsource",
+                "data": {
+                  "Size": "256,256",
+                  "Source": "\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"1200pt\" height=\"1200pt\" version=\"1.1\" viewBox=\"0 0 1200 1200\" xmlns=\"http://www.w3.org/2000/svg\">\n <path d=\"m928.69 228.61-323.9-60.141c-3.2344-0.60938-6.375-0.60938-9.6094 0l-323.86 60.141c-12.469 2.2969-21.469 13.078-21.469 25.781v322.55c0 196.78 133.78 374.76 340.78 453.37 3 1.0781 6.1406 1.6875 9.375 1.6875 3.2344 0 6.375-0.60938 9.375-1.6875 207-78.609 340.78-256.55 340.78-453.37v-322.55c0-12.703-9-23.531-21.469-25.781z\"/>\n</svg>\n",
+                  "Colorize": true,
+                  "TargetColor": "1,1,1,1",
+                  "Scale": 1.2976744,
+                  "Offset": "0,0",
+                  "Rotate": 0,
+                  "FlipVertical": false,
+                  "FlipHorizontal": false
+                },
+                "compiled": null
+              },
+              "HealthIcon": {
+                "$compiler": "texture",
+                "$source": "svgsource",
+                "data": {
+                  "Size": "256,256",
+                  "Source": "\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"1200pt\" height=\"1200pt\" version=\"1.1\" viewBox=\"0 0 1200 1200\" xmlns=\"http://www.w3.org/2000/svg\">\n <path d=\"m474.98 200.02c-6.6562-0.046875-13.078 2.625-17.766 7.3125-4.7344 4.7344-7.3594 11.109-7.3125 17.766v224.81h-224.81c-6.6562 0-13.078 2.625-17.766 7.3125-4.7344 4.7344-7.3594 11.156-7.3594 17.812v249.89c0 6.6562 2.625 13.078 7.3594 17.766 4.6875 4.7344 11.109 7.3594 17.766 7.3125h224.81v200.02c-0.046875 6.6562 2.5781 13.078 7.3125 17.766 4.6875 4.7344 11.109 7.3594 17.766 7.3125h249.89c6.6562 0.046874 13.078-2.5781 17.766-7.3125 4.7344-4.6875 7.3594-11.109 7.3594-17.766v-200.02h225.1c6.6562 0.046874 13.031-2.5781 17.766-7.3125 4.6875-4.6875 7.3594-11.109 7.3125-17.766v-249.89c0.046875-6.6562-2.625-13.078-7.3125-17.812-4.7344-4.6875-11.109-7.3125-17.766-7.3125h-225.1v-224.81c0-6.6562-2.625-13.031-7.3594-17.766-4.6875-4.6875-11.109-7.3594-17.766-7.3125z\"/>\n</svg>\n",
+                  "Colorize": true,
+                  "TargetColor": "1,1,1,1",
+                  "Scale": 1.4186046,
+                  "Offset": "0,0",
+                  "Rotate": 0,
+                  "FlipVertical": false,
+                  "FlipHorizontal": false
+                },
+                "compiled": null
+              },
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          ],
+          "Children": []
+        },
+        {
           "__guid": "e3f5abac-7509-4728-851f-3a54863d8229",
           "__version": 2,
           "Flags": 0,

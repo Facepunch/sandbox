@@ -21,11 +21,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	[Sync( SyncFlags.FromHost )] public PlayerData PlayerData { get; set; }
 
-	[Header( "Icons" )]
-	[Property] public Texture HealthIcon { get; set; }
-	[Property] public Texture ArmourIcon { get; set; }
-
-
 	public Transform EyeTransform
 	{
 		get
@@ -246,15 +241,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		GetComponent<PlayerInventory>()?.OnControl();
 
 		Scene.Get<Inventory>()?.HandleInput();
-
-		if ( Scene.Camera.RenderExcludeTags.Contains( "ui" ) )
-			return;
-
-		if ( !WantsHideHud )
-		{
-			var hud = Scene.Camera.Hud;
-			DrawVitals( hud, Screen.Size * new Vector2( 0.1f, 0.9f ) );
-		}
 	}
 
 	[ConCmd( "sbdm.dev.sethp", ConVarFlags.Cheat )]
@@ -439,16 +425,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		if ( Controller.ThirdPerson || !player.IsLocalPlayer ) return;
 
 		new Punch( new Vector3( -20, 0, 0 ), 0.5f, 2.0f, 1.0f );
-	}
-
-	public void DrawVitals( HudPainter hud, Vector2 bottomleft )
-	{
-		hud.DrawHudElement( $"{Health.CeilToInt()}", bottomleft, HealthIcon, 30f );
-
-		if ( Armour > 0f )
-		{
-			hud.DrawHudElement( $"{Armour.CeilToInt()}", bottomleft - new Vector2( 0, 64f * Hud.Scale ), ArmourIcon, 30f );
-		}
 	}
 
 	public T GetWeapon<T>() where T : BaseCarryable
