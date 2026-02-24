@@ -10,6 +10,14 @@ public class Weld : BaseConstraintToolMode
 	[Property, Sync]
 	public bool Rigid { get; set; } = false;
 
+	public override ToolHint Hint
+	{
+		get
+		{
+			if ( Stage == 1 ) return new ToolHint( "#tool.hint.weld.stage1", "#tool.hint.weld.finish" );
+			return new ToolHint( "#tool.hint.weld.stage0", "#tool.hint.weld.source" );
+		}
+	}
 
 	public override void OnControl()
 	{

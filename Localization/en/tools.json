@@ -1,0 +1,10 @@
+{
+    "tool.hint.duplicator.description": "Used to copy, paste and save whole contraptions",
+    "tool.hint.duplicator.place": "Place",
+    "tool.hint.duplicator.copy": "Copy",
+
+    "tool.hint.weld.stage0": "Welds two objects together",
+    "tool.hint.weld.stage1": "Select the second object to weld",
+    "tool.hint.weld.source": "Select source",
+    "tool.hint.weld.finish": "Finish"
+}

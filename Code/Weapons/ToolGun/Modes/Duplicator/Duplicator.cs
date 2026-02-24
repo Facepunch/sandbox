@@ -26,6 +26,8 @@ public partial class Duplicator : ToolMode
 
 	LinkedGameObjectBuilder builder = new();
 
+	public override ToolHint Hint => new ToolHint( "#tool.hint.duplicator.description", dupe is not null ? "#tool.hint.duplicator.place" : null, "#tool.hint.duplicator.copy" );
+
 	public override void OnControl()
 	{
 		base.OnControl();

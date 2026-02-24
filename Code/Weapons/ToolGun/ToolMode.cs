@@ -1,5 +1,10 @@
 ﻿using Sandbox.Rendering;
 
+/// <summary>
+/// Used for hints in the UI, describes how to use a tool mode.
+/// </summary>
+public record struct ToolHint( string Description, string PrimaryAction, string SecondaryAction = null, string ReloadAction = null );
+
 public abstract partial class ToolMode : Component
 {
 	public Toolgun Toolgun => GetComponent<Toolgun>();
@@ -10,11 +15,23 @@ public abstract partial class ToolMode : Component
 	/// </summary>
 	public bool IsValidState { get; protected set; } = true;
 
+	/// <summary>
+	/// Current tool info that we'll show on the HUD
+	/// </summary>
+	public virtual ToolHint Hint { get; }
+
+	public TypeDescription TypeDescription { get; protected set; }
+
+	protected override void OnStart()
+	{
+		TypeDescription = TypeLibrary.GetType( GetType() );
+	}
+
 	public virtual void OnControl() { }
 
 	public virtual void DrawScreen( Rect rect, HudPainter paint )
 	{
-		var t = $"{TypeLibrary.GetType( GetType() ).Icon} {GetType().Name}";
+		var t = $"{TypeDescription.Icon} {TypeDescription.Title}";
 
 		var text = new TextRendering.Scope( t, Color.White, 64 );
 		text.LineHeight = 0.75f;

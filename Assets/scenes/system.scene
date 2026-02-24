@@ -230,7 +230,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/446f82161774c1e.vtex"
               },
               "ExplosionIcon": {
                 "$compiler": "texture",
@@ -246,7 +246,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/518a1f211cbd3e6b.vtex"
               },
               "FallIcon": {
                 "$compiler": "texture",
@@ -262,7 +262,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/d9151d4f46d3f9f2.vtex"
               },
               "HeadshotIcon": {
                 "$compiler": "texture",
@@ -278,7 +278,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": true
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/2ef92c96449c07ac.vtex"
               },
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
@@ -300,8 +300,39 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/83c263c6e0f8ced2.vtex"
               }
+            }
+          ],
+          "Children": []
+        },
+        {
+          "__guid": "22522db6-d19d-4b96-9cbb-22d76110f335",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "Tool Info",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Sandbox.ToolInfoPanel",
+              "__guid": "1e8c196e-8b93-410c-8701-639ff286baa8",
+              "__enabled": true,
+              "Flags": 0,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
             }
           ],
           "Children": []
@@ -532,8 +563,7 @@
       "AgentMaxSlope": 40,
       "ExcludedBodies": "",
       "IncludedBodies": ""
-    },
-    "GameObjectSystems": []
+    }
   },
   "ResourceVersion": 3,
   "Title": null,

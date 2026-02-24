@@ -1,0 +1,70 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+@if ( !HasAnyAction )
+    return;
+
+<root>
+	<div class="panel">
+
+		<div class="name">@ToolIcon @ToolName</div>
+
+		@if ( !string.IsNullOrEmpty( Info.Description ) )
+		{
+			<div class="description">@Info.Description</div>
+		}
+
+		<div class="divider"></div>
+
+		@if ( !string.IsNullOrEmpty( Info.PrimaryAction ) )
+		{
+			<div class="action">
+				<InputHint Action="attack1" class="key" />
+				<span class="text">@Info.PrimaryAction</span>
+			</div>
+		}
+		@if ( !string.IsNullOrEmpty( Info.SecondaryAction ) )
+		{
+			<div class="action">
+				<InputHint Action="attack2" class="key" />
+				<span class="text">@Info.SecondaryAction</span>
+			</div>
+		}
+		@if ( !string.IsNullOrEmpty( Info.ReloadAction ) )
+		{
+			<div class="action">
+				<InputHint Action="reload" class="key" />
+				<span class="text">@Info.ReloadAction</span>
+			</div>
+		}
+
+	</div>
+</root>
+
+@code
+{
+    ToolMode CurrentMode
+    {
+        get
+        {
+            var inv = Player.FindLocalPlayer()?.GetComponent<PlayerInventory>();
+            return ( inv?.ActiveWeapon as Toolgun )?.GetCurrentMode();
+        }
+    }
+
+    ToolHint Info => CurrentMode?.Hint ?? default;
+    string ToolName => TypeLibrary.GetType( CurrentMode?.GetType() )?.Name ?? "";
+    string ToolIcon => TypeLibrary.GetType( CurrentMode?.GetType() )?.Icon ?? "";
+    bool HasAnyAction => !string.IsNullOrEmpty( Info.PrimaryAction )
+                      || !string.IsNullOrEmpty( Info.SecondaryAction )
+                      || !string.IsNullOrEmpty( Info.ReloadAction );
+
+    protected override void OnUpdate()
+    {
+        SetClass( "visible", CurrentMode.IsValid() );
+    }
+
+	protected override int BuildHash() => System.HashCode.Combine( CurrentMode?.GetType(), Info );
+}
