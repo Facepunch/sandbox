@@ -8,17 +8,16 @@ InventorySlot
 
 InventorySlot .index
 {
-    background-color: #a501;
-    backdrop-filter: blur( 10px ) contrast( 0.8 ) brightness( 0.7 );
-    aspect-ratio: 1;
-    height: 48px;
-    width: 48px;
-    justify-content: center;
+    background-color: rgba( 0, 0, 0, 0.5 );
+    backdrop-filter: blur( 10px );
+    height: 24px;
+    justify-content: flex-start;
+    padding: 16px;
     align-items: center;
     font-weight: 650;
     font-family: Poppins;
     border-radius: 4px;
-    color: #feaa;
+    color: #cdf;
 }
 
 InventorySlot.active
@@ -27,8 +26,8 @@ InventorySlot.active
 
     > .index
     {
-        background-color: #f702;
-        color: #fea;
+        background-color: rgba( 0, 0, 0, 0.7 );
+        color: #5e94ff;
     }
 }
 

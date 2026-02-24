@@ -8,7 +8,7 @@ InventoryWeapon
     height: 48px;
     align-items: center;
     justify-content: center;
-    background-color: #a501;
+    background-color: #06a1;
     backdrop-filter: blur( 10px ) contrast( 0.8 ) brightness( 0.7 );
     transition: all 0.1s ease-in;
     box-shadow: 0px 0px 150px #f800;
@@ -29,10 +29,12 @@ InventoryWeapon
 
 .active InventoryWeapon
 {
-    background-color: #ff770005;
-    color: #f806;
+    background-color: #007aff05;
+    color: #cdf;
+    font-weight: 600;
     width: 100%;
-    height: 96px;
+    height: 128px;
+    border: 0.25px solid transparent;
 
     label
     {
@@ -42,9 +44,11 @@ InventoryWeapon
 
 .active InventoryWeapon.active
 {
-    background-color: #f702;
-    color: #fea;
-    text-shadow: 0px 0px 10px #f50;
+    background-color: rgba( 0, 0, 0, 0.5 );
+    color: #cdf;
+    text-shadow: 0px 0px 10px #cdf;
+    border: 0.25px solid rgba( black, 0.25 );
+    box-shadow: 1px 1px 15px rgba( black, 0.5 );
 }
 
 InventoryWeapon .icon
@@ -59,17 +63,17 @@ InventoryWeapon .icon
     background-repeat: no-repeat;
     width: 100%;
     height: 100%;
-    background-tint: #f704;
+    background-tint: rgba( white, 0.9 );
     mix-blend-mode: lighten;
 }
 
 InventoryWeapon.selected
 {
     color: #fc5;
-    box-shadow: 0px 0px 50px #f802;
-    background-color: #f704;
-    text-shadow: 0px 0px 10px #f50;
-    transform: scale( 2 );
+    box-shadow: 0px 0px 50px #0005ff22;
+    background-color: #cdf;
+    text-shadow: 0px 0px 10px #0005ff22;
+    transform: translateY( -16px ) scale( 1.2 );
     transition: all 0.2s ease-in;
 
     label
@@ -81,8 +85,7 @@ InventoryWeapon.selected
 .active InventoryWeapon.active .icon, InventoryWeapon.selected .icon
 {
     opacity: 1;
-    background-tint: #fc5;
-
+    background-tint: #5e94ff;
 }
 
 InventoryWeapon
