@@ -93,6 +93,16 @@ public partial class Toolgun : BaseCarryable
 		newMode.Enabled = true;
 		GameObject.Enabled = true;
 		Network.Refresh( GameObject );
+
+		using ( Rpc.FilterInclude( Rpc.Caller ) )
+		{
+			BroadcastSwitchToolMode();
+		}
 	}
 
+	[Rpc.Broadcast( NetFlags.HostOnly )]
+	private void BroadcastSwitchToolMode()
+	{
+		SwitchToolMode();
+	}
 }

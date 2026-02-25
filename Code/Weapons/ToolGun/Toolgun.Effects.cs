@@ -21,4 +21,11 @@ public partial class Toolgun : BaseCarryable
 		var coil = ViewModel.GetAllObjects( true ).FirstOrDefault( x => x.Name == "coil" );
 		coil.WorldRotation *= Rotation.From( 0, 0, _coilSpin );
 	}
+
+	bool ping = false;
+	public void SwitchToolMode()
+	{
+		ping = !ping;
+		WeaponModel?.Renderer?.Set( "firing_mode", ping ? 1 : 0 );
+	}
 }
