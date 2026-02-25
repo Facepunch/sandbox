@@ -5,14 +5,16 @@ Scoreboard
 	align-items: center;
 	font-family: Poppins;
 	font-size: 18px;
-	color: #fff;
 	opacity: 0;
 	transform: translateY( -32px ) scale( 1.02 );
 	transition: all 0.1s ease-in;
+	background-color: rgba( 0, 0, 0, 0.5 );
+	backdrop-filter: blur( 10px );
 	margin: auto;
 	width: 100%;
 	height: 100%;
 	margin: auto;
+	z-index: 999;
 	gap: 16px;
 
 	.voting
@@ -28,34 +30,44 @@ Scoreboard
 	.title
 	{
 		width: 100%;
-		height: 48px;
-		justify-content: space-between;
 		align-items: center;
-		flex-direction: row;
-		padding: 0px 16px;
+		flex-direction: column;
+		padding: 0px 32px;
 
 		label
 		{
-			font-size: 24px;
+			font-size: 32px;
 			font-weight: 600;
 			opacity: 1;
-			color: white;
+			height: 40px;
+			color: #cdf;
 			text-shadow: 1px 1px 5px black;
 		}
 
 		> .small
 		{
-			font-size: 16px;
+			font-size: 18px;
 		}
 	}
 
 	.avatar
 	{
 		margin-left: 4px;
-		width: 24px;
-		border-radius: 10px;
-		height: 24px;
-		box-shadow: 1px 1px 10px rgba( black, 0.5 );
+		width: 28px;
+		border-radius: 50%;
+		height: 28px;
+		box-shadow: 0px 0px 10px rgba( #cdf, 0.2 );
+	}
+
+	.avatar-spacer
+	{
+		margin-left: 4px;
+		width: 28px;
+	}
+
+	.mute-spacer
+	{
+		width: 36px;
 	}
 
 	.table
@@ -63,14 +75,11 @@ Scoreboard
 		overflow: hidden;
 		flex-direction: column;
 		width: 600px;
-		background-color: #0c202faa;
 		color: #cdf;
 		border-radius: 2px;
 		min-height: 512px;
-		min-width: 700px;
-		backdrop-filter: blur( 3px );
-		box-shadow: 1px 1px 10px rgba( black, 0.5 );
-		border-radius: 10px;
+		max-height: 1024px;
+		min-width: 768px;
 
 		.center label
 		{
@@ -90,21 +99,22 @@ Scoreboard
 			width: 100%;
 			white-space: nowrap;
 			align-items: center;
-			cursor: pointer;
 			border-radius: 8px;
 			padding: 4px 8px;
 			gap: 8px;
 
 			> .name
 			{
+				font-weight: 600;
 				flex-grow: 1;
 			}
 
 			> .stat
 			{
 				width: 100px;
-				justify-content: flex-end;
+				justify-content: center;
 				text-transform: lowercase;
+				font-weight: 600;
 			}
 		}
 
@@ -118,24 +128,63 @@ Scoreboard
 				font-size: 16px;
 				font-weight: 600;
 				opacity: 0.2;
+				height: 20px;
+			}
+		}
+
+		.mute-btn
+		{
+			width: 36px;
+			justify-content: center;
+			align-items: center;
+			cursor: pointer;
+			opacity: 0.3;
+			transition: opacity 0.15s ease;
+			font-size: 20px;
+
+			&:hover
+			{
+				opacity: 0.8;
+			}
+
+			&.muted
+			{
+				opacity: 0.6;
+				color: #e55;
+
+				&:hover
+				{
+					opacity: 1;
+				}
 			}
 		}
 
 		.player
 		{
-			background-color: #1a34483e;
-			height: 40px;
+			height: 50px;
+			background-color: rgba( #0c202fcc, 0.7 );
+			border: 0.25px solid rgba( black, 0.1 );
+			text-shadow: 0px 0px 5px rgba( black, 0.75 );
+			transition: all 0.1s ease;
 
-			&:nth-child( even )
+			&.me
 			{
-				background-color: #2447603e;
+				/*background-image: linear-gradient( to right, rgba( black, 0.5 ), rgba( black, 0 ));*/
 			}
-		}
 
-		.me
-		{
-			color: #fff;
-			cursor: default;
+			&.friend
+			{
+				.avatar
+				{
+					box-shadow: 0px 0px 15px rgba( #70cf4f, 0.2 );
+				}
+			}
+
+			&:hover
+			{
+				border: 1px solid rgba( black, 0.1 );
+				background-color: rgba( #194769cc, 0.4 );
+			}
 		}
 	}
 
@@ -144,5 +193,6 @@ Scoreboard
 		opacity: 1.0;
 		transform: scale( 1 );
 		transition: all 0.1s ease-out;
+		pointer-events: all;
 	}
 }

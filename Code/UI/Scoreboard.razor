@@ -6,29 +6,49 @@
     <div class="body">
         <div class="title">
             <label>@Networking.ServerName</label>
-            <label class="small">@(Connection.All.Count) / @Networking.MaxPlayers</label>
+
+            @if ( !string.IsNullOrEmpty( MapTitle ) )
+            {
+                <label class="small">Playing on @(MapTitle)</label>
+            }
         </div>
 
         <div class="table">
             <div class="col">
                 <div class="header row">
+                    <div class="avatar-spacer"></div>
                     <div class="name"></div>
                     <div class="stat">Kills</div>
                     <div class="stat">Deaths</div>
                     <div class="stat">Ping</div>
+                    <div class="mute-spacer"></div>
                 </div>
 
                 @foreach ( var entry in Scene.GetAll<PlayerData>().OrderByDescending( x => x.Kills ).ThenBy( x => x.DisplayName ) )
                 {
                     string specialClass = "";
                     if ( entry.IsMe ) specialClass = "me";
+                    if ( new Friend( entry.Connection.SteamId ).IsFriend ) specialClass += " friend";
+
+                    var steamId = entry.Connection.SteamId;
+                    bool isMuted = SandboxVoice.IsMuted( steamId );
 
                     <div class="row player @specialClass">
-                        <img class="avatar" src="avatar:@entry.Connection.SteamId" />
+                        <img class="avatar" src="avatar:@steamId" />
                         <div class="name">@entry.DisplayName</div>
                         <div class="stat">@entry.Kills</div>
                         <div class="stat">@entry.Deaths</div>
                         <div class="stat">@(entry.Ping.CeilToInt())</div>
+                        @if ( !entry.IsMe )
+                        {
+                            <div class="mute-btn @(isMuted ? "muted" : "")" onclick="@( () => ToggleMute( steamId ) )">
+                                <i>@(isMuted ? "volume_off" : "volume_up")</i>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mute-spacer"></div>
+                        }
                     </div>
                 }
             </div>
@@ -39,6 +59,30 @@
 @code
 {
     bool IsVisible => HasClass( "visible" );
+
+    string MapTitle = null;
+
+    protected override void OnTreeFirstBuilt()
+    {
+        base.OnTreeFirstBuilt();
+        FetchMap();
+    }
+
+    async void FetchMap()
+    {
+        var ident = Networking.MapName;
+
+        var pkg = await Package.FetchAsync( ident, false );
+        if ( pkg is not null )
+        {
+            MapTitle = pkg.Title;
+        }
+    }
+
+    void ToggleMute( ulong steamId )
+    {
+        SandboxVoice.Mute( steamId );
+    }
 
 	string GetTime( Connection c )
 	{
@@ -52,7 +96,7 @@
 
 	protected override void OnUpdate()
 	{
-		SetClass( "visible", Input.Down( "score" ) );
+		SetClass( "visible", Input.Down( "Score" ) );
 	}
 
     /// <summary>
