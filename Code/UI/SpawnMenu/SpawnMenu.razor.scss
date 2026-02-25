@@ -1,4 +1,3 @@
-
 SpawnMenu
 {
     width: 100%;
@@ -102,6 +101,7 @@ SpawnMenuHost.open SpawnMenu
     opacity: 1;
     border-right: 1px solid #0004;
     gap: 0.4rem;
+    align-items: center;
 }
 
 .tabs > *:hover
@@ -127,20 +127,23 @@ SpawnMenuHost.open SpawnMenu
 }
 
 
-.container > .spawnmenuleft > .body
+.container > .spawnmenuleft > .body,
+.container > .spawnmenuright > .body
 {
     position: relative;
 }
 
 
-.container > .spawnmenuleft > .body > *
+.container > .spawnmenuleft > .body > *,
+.container > .spawnmenuright > .body > *
 {
     position: absolute;
     height: 100%;
     width: 100%;
 }
 
-.container > .spawnmenuleft > .body > .hidden
+.container > .spawnmenuleft > .body > .hidden,
+.container > .spawnmenuright > .body > .hidden
 {
     opacity: 0;
     pointer-events: none;
@@ -148,7 +151,8 @@ SpawnMenuHost.open SpawnMenu
     transform: translateY( 20px );
 }
 
-.container > .spawnmenuleft > .body > .active
+.container > .spawnmenuleft > .body > .active,
+.container > .spawnmenuright > .body > .active
 {
     opacity: 1;
     transition: all 0.1s linear;
@@ -170,6 +174,96 @@ SpawnMenuHost.open SpawnMenu
 {
     background-color: #13161a88;
     border-radius: 8px;
+}
+
+.spawnmenuright .body
+{
+    .tab
+    {
+        flex-grow: 1;
+        flex-direction: row;
+
+        > .left
+        {
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-direction: column;
+            width: 180px;
+            padding: 8px;
+
+            .list
+            {
+                flex-direction: column;
+                background-color: #2225;
+                padding: 0.5rem;
+                border-radius: 6px;
+                height: 100%;
+            }
+        }
+
+        > .body
+        {
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 8px;
+            margin: 8px;
+            overflow-y: scroll;
+        }
+
+        ControlSheet .body
+        {
+            padding: 0;
+            margin: 0;
+        }
+
+        ControlSheet .controlgroup
+        {
+            padding: 0;
+
+            > .body
+            {
+                padding: 0;
+            }
+        }
+
+        ControlSheetGroup
+        {
+            > .body
+            {
+                padding: 0;
+                margin: 0;
+            }
+        }
+
+        controlsheetrow
+        {
+            width: 100%;
+            background-color: #53698111;
+            padding: 8px;
+            max-height: auto;
+
+            &:hover
+            {
+                background-color: #53698122;
+
+                > .left
+                {
+                    color: #fff;
+                }
+            }
+
+            > .left
+            {
+                width: 150px;
+                overflow: hidden;
+            }
+
+            > .right, > .left
+            {
+                flex-shrink: 0;
+            }
+        }
+    }
 }
 
 VirtualGrid

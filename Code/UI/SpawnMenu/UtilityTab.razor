@@ -1,0 +1,39 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+@implements IUtilityTab
+@attribute [Icon("🌍")]
+@attribute [Title("World")]
+@attribute [Order(0)]
+
+<root class="tab">
+    <div class="left">
+        <VerticalMenu class="menuinner">
+            <Options>
+                @foreach ( var group in Game.TypeLibrary.GetTypes<UtilityFunction>().GroupBy( x => x.Group ).OrderBy( x => x.Min( t => t.Order ) ) )
+                {
+                    @if ( !string.IsNullOrWhiteSpace( group.Key ) )
+                    {
+                        <h2>@group.Key</h2>
+                    }
+
+                    @foreach ( var type in group.OrderBy( x => x.Order ).ThenBy( x => x.Title ) )
+                    {
+                        if ( type.IsAbstract ) continue;
+
+                        var instance = type.Create<UtilityFunction>();
+                        if ( instance is null || !instance.IsVisible() ) continue;
+
+                        <MenuOption Text="@type.Title" Icon="@type.Icon" @onclick="@(() => instance.Execute())"></MenuOption>
+                    }
+                }
+            </Options>
+        </VerticalMenu>
+    </div>
+</root>
+
+@code
+{
+
+}

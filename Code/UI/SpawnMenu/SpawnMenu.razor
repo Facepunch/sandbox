@@ -38,17 +38,22 @@
 
             <div class="tabs">
 
-                <div class="active">Tools</div>
-                <div>Options</div>
+                @foreach (var t in utilityTabs)
+                {
+                    var type = Game.TypeLibrary.GetType(t.GetType());
+
+                    var c = activeUtilityTab == t ? "active" : "";
+
+                    <div class="@c" @onclick=@(() => SwitchUtilityTab(t))>
+                        <span>@type.Icon</span>
+                        <span>@type.Title</span>
+                    </div>
+                }
 
             </div>
 
-            <div class="body">
-
-                <ToolsList></ToolsList>
-
+            <div class="body" @ref="UtilityContainer">
             </div>
-
 
         </div>
 
@@ -61,7 +66,11 @@
     Panel activeTab;
     Panel TabContainer = default;
 
+    Panel activeUtilityTab;
+    Panel UtilityContainer = default;
+
     List<Panel> tabs = new List<Panel>();
+    List<Panel> utilityTabs = new List<Panel>();
 
     public void BuildTabs()
     {
@@ -79,11 +88,31 @@
         SwitchTab(tabs.FirstOrDefault());
     }
 
+    public void BuildUtilityTabs()
+    {
+        foreach (var p in Game.TypeLibrary.GetTypes<IUtilityTab>().OrderBy(x => x.Order).ThenBy(x => x.Title))
+        {
+            if (p.IsAbstract) continue;
+
+            var panel = p.Create<Panel>();
+            UtilityContainer.AddChild(panel);
+
+            utilityTabs.Add(panel);
+        }
+
+        SwitchUtilityTab(utilityTabs.FirstOrDefault());
+    }
+
     protected override void OnAfterTreeRender(bool firstTime)
     {
         if (firstTime && TabContainer.IsValid())
         {
             BuildTabs();
+        }
+
+        if (firstTime && UtilityContainer.IsValid())
+        {
+            BuildUtilityTabs();
         }
     }
 
@@ -93,6 +122,18 @@
         StateHasChanged();
 
         foreach (var t in tabs)
+        {
+            t.SetClass("active", t == tab);
+            t.SetClass("hidden", t != tab);
+        }
+    }
+
+    void SwitchUtilityTab(Panel tab)
+    {
+        activeUtilityTab = tab;
+        StateHasChanged();
+
+        foreach (var t in utilityTabs)
         {
             t.SetClass("active", t == tab);
             t.SetClass("hidden", t != tab);

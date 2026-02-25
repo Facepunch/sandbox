@@ -360,7 +360,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		return await Cloud.Load<ScriptedEntity>( spawn.Path, true );
 	}
 
-
 	private static void SpawnModel( Model model, Transform spawnTransform, Player player )
 	{
 		Log.Info( $"[{player}] Spawning Model {model.Name}" );
@@ -375,6 +374,8 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		var prop = go.AddComponent<Prop>();
 		prop.Model = model;
+
+		Ownable.Set( go, player.Network.Owner );
 
 		if ( (model.Physics?.Parts?.Count ?? 0) == 0 )
 		{
@@ -411,12 +412,13 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		go.Tags.Add( "removable" );
 		go.WorldTransform = spawnTransform;
 
+		Ownable.Set( go, player.Network.Owner );
+
 		go.NetworkSpawn( true, null );
 
 		var undo = player.Undo.Create();
 		undo.Name = $"Spawn {entity.Title}";
 		undo.Add( go );
-
 	}
 
 	/// <summary>

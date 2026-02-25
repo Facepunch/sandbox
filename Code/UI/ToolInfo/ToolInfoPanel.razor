@@ -18,28 +18,29 @@
 
 		<div class="divider"></div>
 
-		@if ( !string.IsNullOrEmpty( Info.PrimaryAction ) )
-		{
-			<div class="action">
-				<InputHint Action="attack1" class="key" />
-				<span class="text">@Info.PrimaryAction</span>
-			</div>
-		}
-		@if ( !string.IsNullOrEmpty( Info.SecondaryAction ) )
-		{
-			<div class="action">
-				<InputHint Action="attack2" class="key" />
-				<span class="text">@Info.SecondaryAction</span>
-			</div>
-		}
-		@if ( !string.IsNullOrEmpty( Info.ReloadAction ) )
-		{
-			<div class="action">
-				<InputHint Action="reload" class="key" />
-				<span class="text">@Info.ReloadAction</span>
-			</div>
-		}
-
+        <div class="actions">
+            @if (!string.IsNullOrEmpty(Info.PrimaryAction))
+            {
+                <div class="action">
+                    <InputHint Action="attack1" class="key" />
+                    <span class="text">@Info.PrimaryAction</span>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Info.SecondaryAction))
+            {
+                <div class="action">
+                    <InputHint Action="attack2" class="key" />
+                    <span class="text">@Info.SecondaryAction</span>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Info.ReloadAction))
+            {
+                <div class="action">
+                    <InputHint Action="reload" class="key" />
+                    <span class="text">@Info.ReloadAction</span>
+                </div>
+            }
+        </div>
 	</div>
 </root>
 
@@ -54,6 +55,15 @@
         }
     }
 
+    bool IsInventoryOpen
+    {
+        get
+        {
+            var inv = Scene.GetAllComponents<Sandbox.UI.Inventory.Inventory>().FirstOrDefault();
+            return inv is not null && !inv.Panel.HasClass( "hidden" );
+        }
+    }
+
     ToolHint Info => CurrentMode?.Hint ?? default;
     string ToolName => TypeLibrary.GetType( CurrentMode?.GetType() )?.Title ?? "";
     string ToolIcon => TypeLibrary.GetType( CurrentMode?.GetType() )?.Icon ?? "";
@@ -63,8 +73,8 @@
 
     protected override void OnUpdate()
     {
-        SetClass( "visible", CurrentMode.IsValid() );
+        SetClass( "visible", CurrentMode.IsValid() && !IsInventoryOpen );
     }
 
-	protected override int BuildHash() => System.HashCode.Combine( CurrentMode?.GetType(), Info );
+	protected override int BuildHash() => System.HashCode.Combine( CurrentMode?.GetType(), Info, IsInventoryOpen );
 }

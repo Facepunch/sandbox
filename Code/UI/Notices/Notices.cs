@@ -51,6 +51,25 @@ public class Notices : PanelComponent
 		return notice;
 	}
 
+	/// <summary>
+	/// Send a notice to a specific connection. Must be called from the host.
+	/// </summary>
+	public static void SendNotice( Connection target, string icon, Color iconColor, string text, float seconds = 5 )
+	{
+		Assert.True( Networking.IsHost, "Must not be the host" );
+
+		using ( Rpc.FilterInclude( target ) )
+		{
+			RpcAddNotice( icon, iconColor, text, seconds );
+		}
+	}
+
+	[Rpc.Broadcast]
+	private static void RpcAddNotice( string icon, Color iconColor, string text, float seconds )
+	{
+		AddNotice( icon, iconColor, text, seconds );
+	}
+
 	protected override void OnUpdate()
 	{
 		base.OnUpdate();

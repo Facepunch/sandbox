@@ -7,7 +7,7 @@ Scoreboard
 	font-size: 18px;
 	color: #fff;
 	opacity: 0;
-	transform: scale( 0.8 );
+	transform: translateY( -32px ) scale( 1.02 );
 	transition: all 0.1s ease-in;
 	margin: auto;
 	width: 100%;
@@ -20,11 +20,15 @@ Scoreboard
 		width: 20%;
 	}
 
+	.body
+	{
+		flex-direction: column;
+	}
+
 	.title
 	{
 		width: 100%;
 		height: 48px;
-		background-color: rgba( black, 0.25 );
 		justify-content: space-between;
 		align-items: center;
 		flex-direction: row;
@@ -32,8 +36,11 @@ Scoreboard
 
 		label
 		{
+			font-size: 24px;
 			font-weight: 600;
-			opacity: 0.5;
+			opacity: 1;
+			color: white;
+			text-shadow: 1px 1px 5px black;
 		}
 
 		> .small
@@ -59,8 +66,8 @@ Scoreboard
 		background-color: #0c202faa;
 		color: #cdf;
 		border-radius: 2px;
-		min-height: 600px;
-		min-width: 800px;
+		min-height: 512px;
+		min-width: 700px;
 		backdrop-filter: blur( 3px );
 		box-shadow: 1px 1px 10px rgba( black, 0.5 );
 		border-radius: 10px;

@@ -1,9 +1,9 @@
 ToolInfoPanel
 {
 	position: absolute;
-	right: 2vw;
-	bottom: 2vw;
-	justify-content: flex-end;
+	left: 2vw;
+	top: 2vw;
+	justify-content: flex-start;
 	pointer-events: none;
 	opacity: 0;
 	transition: opacity 0.15s ease;
@@ -16,13 +16,17 @@ ToolInfoPanel
 	.panel
 	{
 		flex-direction: column;
-		align-items: flex-end;
+		align-items: flex-start;
 		gap: 4px;
 		font-family: Poppins;
 		text-shadow: 1px 1px 5px #000b;
 		padding: 16px;
-		background-image: linear-gradient( to left, rgba( 0, 0, 0, 0.5 ), rgba( 0, 0, 0, 0 ) );
+		background-image: linear-gradient( to right, rgba( 0, 0, 0, 0.5 ), rgba( 0, 0, 0, 0 ) );
 		border-radius: 8px;
+	}
+
+	.actions {
+		gap: 16px;
 	}
 
 	.name
@@ -51,7 +55,7 @@ ToolInfoPanel
 
 	.action
 	{
-		flex-direction: row-reverse;
+		flex-direction: row;
 		align-items: center;
 		gap: 10px;
 	}

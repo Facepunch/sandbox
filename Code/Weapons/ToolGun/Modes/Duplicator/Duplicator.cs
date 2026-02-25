@@ -225,6 +225,8 @@ public partial class Duplicator : ToolMode
 					var go = new GameObject( false );
 					go.Deserialize( obj, new GameObject.DeserializeOptions { TransformOverride = world } );
 
+					Ownable.Set( go, Rpc.Caller );
+
 					go.NetworkSpawn( true, null );
 
 					undo.Add( go );

@@ -3,33 +3,35 @@
 @inherits PanelComponent
 
 <root>
-    <div class="table">
+    <div class="body">
         <div class="title">
             <label>@Networking.ServerName</label>
             <label class="small">@(Connection.All.Count) / @Networking.MaxPlayers</label>
         </div>
 
-        <div class="col">
-            <div class="header row">
-                <div class="name"></div>
-                <div class="stat">Kills</div>
-                <div class="stat">Deaths</div>
-                <div class="stat">Ping</div>
-            </div>
-
-            @foreach ( var entry in Scene.GetAll<PlayerData>().OrderByDescending( x => x.Kills ).ThenBy( x => x.DisplayName ) )
-            {
-                string specialClass = "";
-                if ( entry.IsMe ) specialClass = "me";
-
-                <div class="row player @specialClass">
-                    <img class="avatar" src="avatar:@entry.Connection.SteamId" />
-                    <div class="name">@entry.DisplayName</div>
-                    <div class="stat">@entry.Kills</div>
-                    <div class="stat">@entry.Deaths</div>
-                    <div class="stat">@(entry.Ping.CeilToInt())</div>
+        <div class="table">
+            <div class="col">
+                <div class="header row">
+                    <div class="name"></div>
+                    <div class="stat">Kills</div>
+                    <div class="stat">Deaths</div>
+                    <div class="stat">Ping</div>
                 </div>
-            }
+
+                @foreach ( var entry in Scene.GetAll<PlayerData>().OrderByDescending( x => x.Kills ).ThenBy( x => x.DisplayName ) )
+                {
+                    string specialClass = "";
+                    if ( entry.IsMe ) specialClass = "me";
+
+                    <div class="row player @specialClass">
+                        <img class="avatar" src="avatar:@entry.Connection.SteamId" />
+                        <div class="name">@entry.DisplayName</div>
+                        <div class="stat">@entry.Kills</div>
+                        <div class="stat">@entry.Deaths</div>
+                        <div class="stat">@(entry.Ping.CeilToInt())</div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 </root>
