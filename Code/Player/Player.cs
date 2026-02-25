@@ -41,6 +41,10 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	{
 		get
 		{
+			var freeCam = Scene.Get<FreeCamGameObjectSystem>();
+			if ( freeCam.IsActive )
+				return true;
+
 			var weapon = GetComponent<PlayerInventory>()?.ActiveWeapon;
 			if ( weapon.IsValid() && weapon.WantsHideHud )
 				return true;

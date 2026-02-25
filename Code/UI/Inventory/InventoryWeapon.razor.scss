@@ -21,15 +21,15 @@ InventoryWeapon
     {
         transition: opacity 0.1s ease-in;
         opacity: 1;
-        mix-blend-mode: lighten;
         height: 0px;
+        mix-blend-mode: lighten;
     }
 }
 
 .active InventoryWeapon
 {
     background-color: rgba( 0, 0, 0, 0.3 );
-    color: rgba( white, 0.5 );
+    color: rgba( #5e94ff, 0.75 );
     font-weight: 600;
     width: 100%;
     height: 128px;
@@ -62,8 +62,8 @@ InventoryWeapon .icon
     background-repeat: no-repeat;
     width: 100%;
     height: 100%;
-    background-tint: rgba( white, 0.1 );
     mix-blend-mode: lighten;
+    background-tint: rgba( #5e94ff, 0.25 );
 }
 
 InventoryWeapon.selected
