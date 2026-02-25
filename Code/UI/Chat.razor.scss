@@ -1,7 +1,7 @@
 Chat
 {
 	position: absolute;
-	left: 100px;
+	left: 64px;
 	bottom: 20%;
 	width: 600px;
 	justify-content: center;
@@ -27,8 +27,8 @@ Chat
 		justify-content: flex-end;
 		align-items: stretch;
 		gap: 5px;
-		background-color: #333a;
-		border-radius: 5px;
+		background-color: rgba( #0c202fcc, 0.7 );
+		border-radius: 8px;
 		backdrop-filter: blur( 10px );
 
 		.chat_entry
@@ -36,9 +36,8 @@ Chat
 			padding: 6px;
 			gap: 8px;
 			border-radius: 2px;
-			text-shadow: 2px 2px 0px #000d, 1px 1px 0px #000d;
+			text-shadow: 0px 0px 5px rgba( black, 0.75 ), 0px 0px 5px rgba( black, 0.75 );
 			align-items: center;
-
 
 			.avatar
 			{
@@ -46,18 +45,21 @@ Chat
 				height: 24px;
 				background-position: center;
 				background-size: cover;
-				border-radius: 100px;
+				border-radius: 100%;
+				box-shadow: 0px 0px 10px rgba( #cdf, 0.2 );
 			}
 
 			.author
 			{
-				color: #2d95ce;
+				color: linear-gradient( to right, #cdf, #8ea3ce );
 				white-space: nowrap;
 				flex-shrink: 0;
 			}
 
 			.message
 			{
+				font-weight: 400;
+				font-size: 18px;
 				color: #fff;
 			}
 		}
@@ -78,9 +80,11 @@ Chat
 	{
 		.input
 		{
-			background-image: linear-gradient( to right, rgba( black, 0.7 ), rgba( black, 0.4 ) );
+			background-color: rgba( #0c202fcc, 0.5 );
 			backdrop-filter: blur( 3px );
-			border-radius: 2px;
+			border-radius: 8px;
+			font-weight: 400;
+			font-size: 18px;
 		}
 	}
 }

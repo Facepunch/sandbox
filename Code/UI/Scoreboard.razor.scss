@@ -40,7 +40,7 @@ Scoreboard
 			font-weight: 600;
 			opacity: 1;
 			height: 40px;
-			color: #cdf;
+			color: linear-gradient( to right, #cdf, #8ea3ce );
 			text-shadow: 1px 1px 5px black;
 		}
 
@@ -77,7 +77,7 @@ Scoreboard
 		width: 600px;
 		color: #cdf;
 		border-radius: 2px;
-		min-height: 512px;
+		min-height: 256px;
 		max-height: 1024px;
 		min-width: 768px;
 

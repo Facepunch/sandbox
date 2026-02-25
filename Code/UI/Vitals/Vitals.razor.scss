@@ -5,13 +5,13 @@ Vitals
 	height: 100%;
 	pointer-events: none;
 	font-family: Poppins;
-	color: white;
+	color: linear-gradient( 45deg, #cdf, #cdf, #8ea3ce );
 
 	.vitals
 	{
 		position: absolute;
-		bottom: 6%;
-		left: 3%;
+		bottom: 64px;
+		left: 64px;
 		flex-direction: column-reverse;
 		gap: 8px;
 	}
@@ -30,6 +30,8 @@ Vitals
 			background-repeat: no-repeat;
 			background-position: center;
 			flex-shrink: 0;
+			margin-top: 8px;
+			background-tint: #cdf;
 		}
 
 		.right
@@ -43,6 +45,7 @@ Vitals
 			height: 8px;
 			background-color: rgba( white, 0.15 );
 			border-radius: 2px;
+			box-shadow: 0px 0px 10px rgba( black, 0.5 );
 			overflow: hidden;
 
 			.fill
@@ -65,14 +68,16 @@ Vitals
 
 		.value
 		{
-			font-size: 28px;
+			font-size: 23px;
+			height: 32px;
 			font-weight: 700;
 			text-shadow: 1px 1px 6px black;
 		}
 
 		&.health .bar .fill
 		{
-			background-color: #4c4;
+			background-image: linear-gradient( to right, #cdf, #8ea3ce );
+			box-shadow: 0px 0px 10px black;
 		}
 
 		&.armour .bar .fill
@@ -84,45 +89,29 @@ Vitals
 	.ammo
 	{
 		position: absolute;
-		bottom: 6%;
-		right: 3%;
+		bottom: 64px;
+		right: 64px;
 		flex-direction: column;
 		align-items: flex-end;
-
-		.weapon-name
-		{
-			font-size: 20px;
-			font-weight: 700;
-			opacity: 0.5;
-			text-shadow: 1px 1px 5px black;
-			text-transform: uppercase;
-		}
 
 		.count
 		{
 			flex-direction: row;
 			align-items: baseline;
-			gap: 6px;
+			gap: 16px;
 		}
 
 		.clip
 		{
-			font-size: 48px;
-			height: 60px;
+			font-size: 32px;
+			height: 44px;
 			font-weight: 700;
 			text-shadow: 1px 1px 6px black;
 		}
 
-		.separator
-		{
-			font-size: 24px;
-			font-weight: 300;
-			opacity: 0.4;
-		}
-
 		.reserve
 		{
-			font-size: 24px;
+			font-size: 26px;
 			font-weight: 500;
 			opacity: 0.6;
 			text-shadow: 1px 1px 4px black;

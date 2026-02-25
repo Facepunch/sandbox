@@ -13,9 +13,9 @@
             <div class="stat armour">
                 <Image class="icon" Texture=@ArmourIcon />
                 <div class="right">
-                    <label class="value">@Player.Armour.CeilToInt()</label>
+                    <label class="value">@(ArmourPercent)%</label>
                     <div class="bar">
-                        <div class="fill" style="width: @((int)(Player.Armour / Player.MaxArmour * 100))%"></div>
+                        <div class="fill" style="width: @(ArmourPercent)%"></div>
                     </div>
                 </div>
             </div>
@@ -23,9 +23,9 @@
         <div class="stat health">
             <Image class="icon" Texture=@HealthIcon />
             <div class="right">
-                <label class="value">@Player.Health.CeilToInt()</label>
+                <label class="value">@(HealthPercent)%</label>
                 <div class="bar">
-                    <div class="fill" style="width: @((int)(Player.Health / Player.MaxHealth * 100))%"></div>
+                    <div class="fill" style="width: @(HealthPercent)%"></div>
                 </div>
             </div>
         </div>
@@ -34,12 +34,10 @@
     @if ( Weapon.IsValid() && Weapon.UsesAmmo )
     {
         <div class="ammo">
-            <label class="weapon-name">@Weapon.DisplayName</label>
             <div class="count">
                 <label class="clip">@(Weapon.UsesClips ? Weapon.ClipContents : Player.GetAmmoCount( Weapon.AmmoResource ))</label>
                 @if ( Weapon.UsesClips )
                 {
-                    <label class="separator">/</label>
                     <label class="reserve">@Player.GetAmmoCount( Weapon.AmmoResource )</label>
                 }
             </div>
@@ -54,6 +52,9 @@
 
     Player Player => Player.FindLocalPlayer();
     BaseWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseWeapon;
+
+    int HealthPercent => (int)(Player.Health / Player.MaxHealth * 100);
+    int ArmourPercent => (int)(Player.Armour / Player.MaxArmour * 100);
 
     protected override int BuildHash()
     {
