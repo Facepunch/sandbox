@@ -157,8 +157,6 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 				return true;
 			}
-
-			return false;
 		}
 
 		// Reject if the target slot is already occupied
