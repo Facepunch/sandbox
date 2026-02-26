@@ -11,6 +11,7 @@ public class DuplicatorSpawner : ISpawner
 	public string Data => Json;
 	public BBox Bounds => Dupe?.Bounds ?? default;
 	public bool IsReady => Dupe is not null && _packagesReady;
+	public Task<bool> Loading { get; }
 
 	public DuplicationData Dupe { get; }
 
@@ -23,7 +24,7 @@ public class DuplicatorSpawner : ISpawner
 		Dupe = dupe;
 		Json = json;
 		DisplayName = name ?? "Duplication";
-		_ = InstallPackages();
+		Loading = InstallPackages();
 	}
 
 	/// <summary>
@@ -35,12 +36,12 @@ public class DuplicatorSpawner : ISpawner
 		return new DuplicatorSpawner( dupe, json, name );
 	}
 
-	private async Task InstallPackages()
+	private async Task<bool> InstallPackages()
 	{
 		if ( Dupe?.Packages is null || Dupe.Packages.Count == 0 )
 		{
 			_packagesReady = true;
-			return;
+			return true;
 		}
 
 		foreach ( var pkg in Dupe.Packages )
@@ -52,6 +53,7 @@ public class DuplicatorSpawner : ISpawner
 		}
 
 		_packagesReady = true;
+		return true;
 	}
 
 	public void DrawPreview( Transform transform, Material overrideMaterial )

@@ -13,17 +13,17 @@ public partial class SpawnerWeapon : BaseCarryable
 	/// <see cref="OnPayloadDataChanged"/> reconstructs the <see cref="ISpawner"/> locally.
 	/// </summary>
 	[Sync( SyncFlags.FromHost ), Change( nameof( OnPayloadDataChanged ) )]
-	public string PayloadData { get; set; }
+	public string SpawnerData { get; set; }
 
 	/// <summary>
-	/// The locally reconstructed payload, built from <see cref="PayloadData"/>.
+	/// The local spawner, built from <see cref="SpawnerData"/>.
 	/// </summary>
-	public ISpawner Payload { get; private set; }
+	public ISpawner Spawner { get; private set; }
 
 	/// <summary>
 	/// Override the inventory icon with the payload's cloud thumbnail.
 	/// </summary>
-	public override string InventoryIconOverride => Payload?.Icon is not null ? $"thumb:{Payload.Icon}" : null;
+	public override string InventoryIconOverride => Spawner?.Icon is not null ? $"thumb:{Spawner.Icon}" : null;
 
 	/// <summary>
 	/// Whether the current aim position is a valid placement target.
@@ -41,18 +41,19 @@ public partial class SpawnerWeapon : BaseCarryable
 		_previewMaterialInvalid = Material.Load( "materials/effects/duplicator_override_other.vmat" );
 
 		// Default test payload
-		if ( Payload is null )
+		if ( Spawner is null )
 		{
-			SetPayload( new PropSpawner( "facepunch.post_box" ) );
+			// SetSpawner( new PropSpawner( "facepunch.post_box" ) );
+			SetSpawner( new EntitySpawner( "weapons/mp5/mp5.sent" ) );
 		}
 	}
 
 	/// <summary>
-	/// Set what this spawner should spawn. Serializes the payload and syncs to all clients via <see cref="PayloadData"/>.
+	/// Set what this spawner should spawn. Serializes the payload and syncs to all clients via <see cref="SpawnerData"/>.
 	/// </summary>
-	public void SetPayload( ISpawner payload )
+	public void SetSpawner( ISpawner payload )
 	{
-		Payload = payload;
+		Spawner = payload;
 		SyncPayload( SerializeSpawner( payload ) );
 	}
 
@@ -61,22 +62,22 @@ public partial class SpawnerWeapon : BaseCarryable
 	/// </summary>
 	public void ClearPayload()
 	{
-		SetPayload( null );
+		SetSpawner( null );
 	}
 
 	[Rpc.Host]
 	private void SyncPayload( string data )
 	{
-		PayloadData = data;
+		SpawnerData = data;
 	}
 
 	/// <summary>
-	/// Called on every client when <see cref="PayloadData"/> changes.
+	/// Called on every client when <see cref="SpawnerData"/> changes.
 	/// Reconstructs the <see cref="ISpawner"/> locally so each client can render the preview.
 	/// </summary>
 	private void OnPayloadDataChanged()
 	{
-		Payload = DeserializeSpawner( PayloadData );
+		Spawner = DeserializeSpawner( SpawnerData );
 	}
 
 	/// <summary>
@@ -118,13 +119,13 @@ public partial class SpawnerWeapon : BaseCarryable
 	{
 		base.OnControl( player );
 
-		if ( Payload is null )
+		if ( Spawner is null )
 			return;
 
 		var placement = GetPlacementInfo( player );
 		_isValidPlacement = placement.Hit;
 
-		if ( _isValidPlacement && Payload.IsReady && Input.Pressed( "attack1" ) )
+		if ( _isValidPlacement && Spawner.IsReady && Input.Pressed( "attack1" ) )
 		{
 			var transform = GetSpawnTransform( placement, player );
 			DoSpawn( transform );
@@ -154,7 +155,7 @@ public partial class SpawnerWeapon : BaseCarryable
 	{
 		base.OnUpdate();
 
-		if ( Payload is null ) return;
+		if ( Spawner is null ) return;
 		if ( !Owner.IsValid() ) return;
 
 		// Draw preview on all clients, so everyone can see what's being placed
@@ -173,9 +174,9 @@ public partial class SpawnerWeapon : BaseCarryable
 		// Use a different material for other players' previews, same as the Duplicator
 		var material = IsProxy
 			? _previewMaterialInvalid
-			: (_isValidPlacement && Payload.IsReady) ? _previewMaterial : _previewMaterialInvalid;
+			: (_isValidPlacement && Spawner.IsReady) ? _previewMaterial : _previewMaterialInvalid;
 
-		Payload.DrawPreview( transform, material );
+		Spawner.DrawPreview( transform, material );
 	}
 
 	private SceneTraceResult GetPlacementInfo( Player player )
@@ -197,9 +198,9 @@ public partial class SpawnerWeapon : BaseCarryable
 		var position = trace.EndPosition;
 
 		// Offset by bounds so the object sits on the surface
-		if ( Payload is not null )
+		if ( Spawner is not null )
 		{
-			position += up * -Payload.Bounds.Mins.z;
+			position += up * -Spawner.Bounds.Mins.z;
 		}
 
 		return new Transform( position, facingAngle );
@@ -208,17 +209,17 @@ public partial class SpawnerWeapon : BaseCarryable
 	[Rpc.Host]
 	private async void DoSpawn( Transform transform )
 	{
-		if ( Payload is null ) return;
+		if ( Spawner is null ) return;
 
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null ) return;
 
-		var objects = await Payload.Spawn( transform, player );
+		var objects = await Spawner.Spawn( transform, player );
 
 		if ( objects is { Count: > 0 } )
 		{
 			var undo = player.Undo.Create();
-			undo.Name = $"Spawn {Payload.DisplayName}";
+			undo.Name = $"Spawn {Spawner.DisplayName}";
 
 			foreach ( var go in objects )
 			{
@@ -229,7 +230,7 @@ public partial class SpawnerWeapon : BaseCarryable
 
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )
 	{
-		if ( Payload is null )
+		if ( Spawner is null )
 		{
 			// Idle crosshair
 			painter.SetBlendMode( BlendMode.Normal );
@@ -237,16 +238,16 @@ public partial class SpawnerWeapon : BaseCarryable
 			return;
 		}
 
-		var color = (_isValidPlacement && Payload.IsReady) ? Color.White : new Color( 0.9f, 0.3f, 0.2f );
+		var color = (_isValidPlacement && Spawner.IsReady) ? Color.White : new Color( 0.9f, 0.3f, 0.2f );
 
 		painter.SetBlendMode( BlendMode.Normal );
 		painter.DrawCircle( crosshair, 5, color.Darken( 0.3f ) );
 		painter.DrawCircle( crosshair, 3, color );
 
 		// Draw payload name near crosshair
-		if ( !string.IsNullOrEmpty( Payload.DisplayName ) )
+		if ( !string.IsNullOrEmpty( Spawner.DisplayName ) )
 		{
-			var text = new TextRendering.Scope( Payload.DisplayName, Color.White, 18 );
+			var text = new TextRendering.Scope( Spawner.DisplayName, Color.White, 18 );
 			text.FontName = "Poppins";
 			text.FontWeight = 600;
 

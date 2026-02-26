@@ -25,6 +25,11 @@ public interface ISpawner
 	bool IsReady { get; }
 
 	/// <summary>
+	/// A task that completes with true when loading succeeds, or false if it fails.
+	/// </summary>
+	Task<bool> Loading { get; }
+
+	/// <summary>
 	/// The raw data needed to reconstruct this spawner (e.g. a cloud ident, or JSON).
 	/// </summary>
 	string Data { get; }

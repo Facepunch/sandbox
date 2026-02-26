@@ -85,11 +85,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	}
 
 	/// <summary>
-	/// In the editor, spawn the player where they're looking
-	/// </summary>
-	public static Transform EditorSpawnLocation { get; set; }
-
-	/// <summary>
 	/// Find the most appropriate place to respawn
 	/// </summary>
 	Transform FindSpawnLocation()
@@ -101,51 +96,10 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		if ( spawnPoints.Length == 0 )
 		{
-			if ( Application.IsEditor && !EditorSpawnLocation.Position.IsNearlyZero() )
-			{
-				return EditorSpawnLocation;
-			}
-
 			return Transform.Zero;
 		}
 
-		var players = Scene.GetAll<Player>();
-
-		if ( !players.Any() )
-		{
-			return Random.Shared.FromArray( spawnPoints ).Transform.World;
-		}
-
-		//
-		// Find spawnpoint furthest away from any players
-		// TODO: in the future we may want a different logic, as spawning far away is not necessarily good.
-		// But good enough for now and also reduces chances of players from spawning on top of  or inside each other.
-		//
-		SpawnPoint spawnPointFurthestAway = null;
-		float spawnPointFurthestAwayDistanceSqr = float.MinValue;
-
-		foreach ( var spawnPoint in spawnPoints )
-		{
-			float closestPlayerDistanceToSpawnpointSqr = float.MaxValue;
-
-			foreach ( var player in players )
-			{
-				float playerDistanceToSpawnPointSqr = (spawnPoint.Transform.World.Position - player.Transform.World.Position).LengthSquared;
-
-				if ( playerDistanceToSpawnPointSqr < closestPlayerDistanceToSpawnpointSqr )
-				{
-					closestPlayerDistanceToSpawnpointSqr = playerDistanceToSpawnPointSqr;
-				}
-			}
-
-			if ( closestPlayerDistanceToSpawnpointSqr > spawnPointFurthestAwayDistanceSqr )
-			{
-				spawnPointFurthestAwayDistanceSqr = closestPlayerDistanceToSpawnpointSqr;
-				spawnPointFurthestAway = spawnPoint;
-			}
-		}
-
-		return spawnPointFurthestAway.WorldTransform;
+		return Random.Shared.FromArray( spawnPoints ).Transform.World;
 	}
 
 	[Rpc.Broadcast]
@@ -241,7 +195,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 			.WithoutTags( "player" )
 			.Run();
 
-
 		var up = trace.Normal;
 		var backward = -eyes.Forward;
 
@@ -251,172 +204,86 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		var spawnTransform = new Transform( trace.EndPosition, facingAngle );
 
-		using var spawnInfo = new SpawnConfig();
-		spawnInfo.Location = new Transform( trace.EndPosition, facingAngle );
-		spawnInfo.Path = path_or_ident;
-
 		// TODO - can this user spawn this package?
 
-		// we're a model
-		if ( await FindModelPath( spawnInfo ) is Model model )
+		// Try as a model
+		if ( await FindModel( path_or_ident ) is not null )
 		{
-			SpawnModel( model, spawnTransform, player );
-			return;
+			var spawner = new PropSpawner( path_or_ident );
+			if ( await spawner.Loading )
+			{
+				await SpawnAndUndo( spawner, spawnTransform, player );
+				return;
+			}
 		}
 
-		// we're a model
-		if ( await FindEntityPath( spawnInfo ) is ScriptedEntity entity )
+		// Try as an entity
+		if ( await FindEntity( path_or_ident ) is not null )
 		{
-			SpawnEntity( entity, spawnTransform, player );
-			return;
+			var spawner = new EntitySpawner( path_or_ident );
+			if ( await spawner.Loading )
+			{
+				await SpawnAndUndo( spawner, spawnTransform, player );
+				return;
+			}
 		}
 
 		Log.Warning( $"Couldn't resolve '{path_or_ident}'" );
-
 	}
 
-	class SpawnConfig : IDisposable
+	/// <summary>
+	/// Spawn using any <see cref="ISpawner"/> and register undo.
+	/// </summary>
+	private static async Task SpawnAndUndo( ISpawner spawner, Transform transform, Player player )
 	{
-		public SpawningProgress Placeholder;
-		public Transform Location;
-		public string Path;
+		var objects = await spawner.Spawn( transform, player );
 
-		public void Dispose()
+		if ( objects is { Count: > 0 } )
 		{
-			Placeholder?.GameObject?.Destroy();
-		}
+			var undo = player.Undo.Create();
+			undo.Name = $"Spawn {spawner.DisplayName}";
 
-		public void CreatePlaceholder()
-		{
-			if ( Placeholder is not null )
-				return;
-
-			const string placeholderPath = "/prefabs/engine/spawn-progress.prefab";
-
-			var go = GameObject.Clone( placeholderPath );
-			go.WorldTransform = Location.WithScale( 1 );
-
-			go.NetworkSpawn( true, null );
-			Placeholder = go.GetComponent<SpawningProgress>();
-		}
-
-		internal void UpdatePlaceholder( Package package )
-		{
-			var mins = package.GetMeta<Vector3>( "RenderMins", -1 );
-			var maxs = package.GetMeta<Vector3>( "RenderMaxs", -1 );
-
-			Placeholder.SpawnBounds = new BBox( mins, maxs );
+			foreach ( var go in objects )
+			{
+				undo.Add( go );
+			}
 		}
 	}
 
-	static async Task<Model> FindModelPath( SpawnConfig spawn )
+	/// <summary>
+	/// Try to resolve a path as a model. Returns null if it's not a model.
+	/// </summary>
+	static async Task<Model> FindModel( string path )
 	{
-		if ( spawn.Path.EndsWith( ".vmdl" ) )
-		{
-			var se = await ResourceLibrary.LoadAsync<Model>( spawn.Path );
-			if ( se is not null ) return se;
-		}
+		if ( path.EndsWith( ".vmdl" ) )
+			return await ResourceLibrary.LoadAsync<Model>( path );
 
-		Package package = default;
+		if ( Package.TryGetCached( path, out var package, false ) )
+			return await Cloud.Load<Model>( path );
 
-		// Already downloaded, cool
-		if ( Package.TryGetCached( spawn.Path, out package, false ) )
-		{
-			return await Cloud.Load<Model>( spawn.Path );
-		}
-
-		spawn.CreatePlaceholder();
-
-		package = await Package.FetchAsync( spawn.Path, false );
+		package = await Package.FetchAsync( path, false );
 		if ( package is null || package.TypeName != "model" )
 			return null;
 
-		spawn.UpdatePlaceholder( package );
-
-		return await Cloud.Load<Model>( spawn.Path );
+		return await Cloud.Load<Model>( path );
 	}
 
-	static async Task<ScriptedEntity> FindEntityPath( SpawnConfig spawn )
+	/// <summary>
+	/// Try to resolve a path as a scripted entity. Returns null if it's not an entity.
+	/// </summary>
+	static async Task<ScriptedEntity> FindEntity( string path )
 	{
-		var se = await ResourceLibrary.LoadAsync<ScriptedEntity>( spawn.Path );
+		var se = await ResourceLibrary.LoadAsync<ScriptedEntity>( path );
 		if ( se is not null ) return se;
 
-		Package package = default;
+		if ( Package.TryGetCached( path, out var package, false ) )
+			return await Cloud.Load<ScriptedEntity>( path, true );
 
-		// Already downloaded, cool
-		if ( Package.TryGetCached( spawn.Path, out package, false ) )
-		{
-			return await Cloud.Load<ScriptedEntity>( spawn.Path, true );
-		}
-
-		spawn.CreatePlaceholder();
-
-		package = await Package.FetchAsync( spawn.Path, false );
+		package = await Package.FetchAsync( path, false );
 		if ( package is null || package.TypeName != "sent" )
 			return null;
 
-		spawn.UpdatePlaceholder( package );
-
-		return await Cloud.Load<ScriptedEntity>( spawn.Path, true );
-	}
-
-	private static void SpawnModel( Model model, Transform spawnTransform, Player player )
-	{
-		Log.Info( $"[{player}] Spawning Model {model.Name}" );
-
-		var depth = -model.Bounds.Mins.z;
-
-		spawnTransform.Position += spawnTransform.Up * depth;
-
-		var go = new GameObject( false, "prop" );
-		go.Tags.Add( "removable" );
-		go.WorldTransform = spawnTransform;
-
-		var prop = go.AddComponent<Prop>();
-		prop.Model = model;
-
-		Ownable.Set( go, player.Network.Owner );
-
-		if ( (model.Physics?.Parts?.Count ?? 0) == 0 )
-		{
-			Log.Info( "No physics - adding a cube" );
-
-			var collider = go.AddComponent<BoxCollider>();
-			collider.Scale = model.Bounds.Size;
-			collider.Center = model.Bounds.Center;
-
-
-			go.AddComponent<Rigidbody>();
-		}
-
-		go.NetworkSpawn( true, null );
-
-		var undo = player.Undo.Create();
-		undo.Name = "Spawn Model";
-		undo.Add( go );
-
-	}
-
-	private static void SpawnEntity( ScriptedEntity entity, Transform spawnTransform, Player player )
-	{
-		Log.Info( $"[{player}] Spawning Entity {entity.Title}" );
-
-		var prefabFile = entity.Prefab;
-		var bounds = SceneUtility.GetPrefabScene( prefabFile ).GetLocalBounds();
-
-		var depth = -bounds.Mins.z;
-		spawnTransform.Position += spawnTransform.Up * depth;
-
-		var go = GameObject.Clone( prefabFile, new CloneConfig { Transform = spawnTransform, StartEnabled = false } );
-		go.Tags.Add( "removable" );
-
-		Ownable.Set( go, player.Network.Owner );
-
-		go.NetworkSpawn( true, null );
-
-		var undo = player.Undo.Create();
-		undo.Name = $"Spawn {entity.Title}";
-		undo.Add( go );
+		return await Cloud.Load<ScriptedEntity>( path, true );
 	}
 
 	/// <summary>

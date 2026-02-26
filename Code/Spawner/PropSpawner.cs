@@ -8,6 +8,7 @@ public class PropSpawner : ISpawner
 	public string Data => Path;
 	public BBox Bounds => Model?.Bounds ?? default;
 	public bool IsReady => Model is not null && !Model.IsError;
+	public Task<bool> Loading { get; }
 
 	public Model Model { get; private set; }
 	public string Path { get; }
@@ -16,16 +17,26 @@ public class PropSpawner : ISpawner
 	{
 		Path = path;
 		DisplayName = System.IO.Path.GetFileNameWithoutExtension( path );
-		_ = LoadAsync();
+		Loading = LoadAsync();
 	}
 
-	private async Task LoadAsync()
+	private async Task<bool> LoadAsync()
 	{
+		// Try local/installed first, then fall back to cloud
+		if ( Path.EndsWith( ".vmdl" ) )
+		{
+			Model = await ResourceLibrary.LoadAsync<Model>( Path );
+			if ( Model is not null ) return true;
+		}
+
 		Model = await Cloud.Load<Model>( Path );
+
 		if ( Model is not null )
 		{
 			DisplayName = Model.Name ?? DisplayName;
 		}
+
+		return IsReady;
 	}
 
 	public void DrawPreview( Transform transform, Material overrideMaterial )
