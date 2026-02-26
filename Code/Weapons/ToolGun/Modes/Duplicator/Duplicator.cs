@@ -14,19 +14,10 @@ public partial class Duplicator : ToolMode
 	[Sync( SyncFlags.FromHost ), Change( nameof( JsonChanged ) )]
 	public string CopiedJson { get; set; }
 
-	/// <summary>
-	/// This is created in JsonChanged.
-	/// </summary>
-	DuplicationData dupe;
-
-	/// <summary>
-	/// Have all packaged finished loading.
-	/// </summary>
-	bool packagesReady = false;
-
+	DuplicatorSpawner spawner;
 	LinkedGameObjectBuilder builder = new();
 
-	public override ToolHint Hint => new ToolHint( "#tool.hint.duplicator.description", dupe is not null ? "#tool.hint.duplicator.place" : null, "#tool.hint.duplicator.copy" );
+	public override ToolHint Hint => new ToolHint( "#tool.hint.duplicator.description", spawner is not null ? "#tool.hint.duplicator.place" : null, "#tool.hint.duplicator.copy" );
 
 	public override void OnControl()
 	{
@@ -35,7 +26,7 @@ public partial class Duplicator : ToolMode
 		var select = TraceSelect();
 		IsValidState = IsValidTarget( select );
 
-		if ( dupe is not null && packagesReady && Input.Pressed( "attack1" ) )
+		if ( spawner is { IsReady: true } && Input.Pressed( "attack1" ) )
 		{
 			if ( !IsValidPlacementTarget( select ) )
 			{
@@ -44,7 +35,7 @@ public partial class Duplicator : ToolMode
 			}
 
 			var tx = new Transform();
-			tx.Position = select.WorldPosition() + Vector3.Down * dupe.Bounds.Mins.z;
+			tx.Position = select.WorldPosition() + Vector3.Down * spawner.Bounds.Mins.z;
 
 			var relative = Player.EyeTransform.Rotation.Angles();
 			tx.Rotation = new Angles( 0, relative.yaw, 0 );
@@ -119,64 +110,30 @@ public partial class Duplicator : ToolMode
 
 	void JsonChanged()
 	{
-		dupe = null;
-		packagesReady = false;
+		spawner = null;
 
 		if ( string.IsNullOrWhiteSpace( CopiedJson ) )
 			return;
 
-		dupe = Json.Deserialize<DuplicationData>( CopiedJson );
-
-		_ = InstallPackages( dupe );
-	}
-
-	async Task InstallPackages( DuplicationData data )
-	{
-		if ( data?.Packages is null || data.Packages.Count == 0 )
-			return;
-
-		foreach ( var pkg in data.Packages )
-		{
-			if ( Cloud.IsInstalled( pkg ) )
-				continue;
-
-			await Cloud.Load( pkg );
-		}
-
-		packagesReady = true;
+		spawner = DuplicatorSpawner.FromJson( CopiedJson );
 	}
 
 	void DrawPreview()
 	{
-		if ( dupe is null ) return;
+		if ( spawner is null ) return;
 
 		var select = TraceSelect();
 		if ( !IsValidPlacementTarget( select ) ) return;
 
 		var tx = new Transform();
 
-		tx.Position = select.WorldPosition() + Vector3.Down * dupe.Bounds.Mins.z;
+		tx.Position = select.WorldPosition() + Vector3.Down * spawner.Bounds.Mins.z;
 
 		var relative = Player.EyeTransform.Rotation.Angles();
 		tx.Rotation = new Angles( 0, relative.yaw, 0 );
 
 		var overlayMaterial = IsProxy ? Material.Load( "materials/effects/duplicator_override_other.vmat" ) : Material.Load( "materials/effects/duplicator_override.vmat" );
-		foreach ( var model in dupe.PreviewModels )
-		{
-			if ( model.Model.IsError )
-			{
-				var bounds = model.Bounds;
-				if ( bounds.Size.IsNearlyZero() ) continue;
-
-				var transform = tx.ToWorld( model.Transform );
-				transform = new Transform( transform.PointToWorld( bounds.Center ), transform.Rotation, transform.Scale * (bounds.Size / 50) );
-				DebugOverlay.Model( Model.Cube, transform: transform, overlay: false, materialOveride: overlayMaterial );
-			}
-			else
-			{
-				DebugOverlay.Model( model.Model, transform: tx.ToWorld( model.Transform ), overlay: false, materialOveride: overlayMaterial, localBoneTransforms: model.Bones );
-			}
-		}
+		spawner.DrawPreview( tx, overlayMaterial );
 	}
 
 
@@ -197,40 +154,24 @@ public partial class Duplicator : ToolMode
 	}
 
 	[Rpc.Host]
-	public void Duplicate( Transform dest )
+	public async void Duplicate( Transform dest )
 	{
-		if ( dupe is null )
+		if ( spawner is null )
 			return;
 
-		var jsonObject = Json.ToNode( dupe ) as JsonObject;
+		var player = Player.FindForConnection( Rpc.Caller );
+		if ( player is null ) return;
 
-		SceneUtility.MakeIdGuidsUnique( jsonObject );
+		var objects = await spawner.Spawn( dest, player );
 
-		var undo = Player.Undo.Create();
-		undo.Name = "Duplication";
-
-		using ( Scene.BatchGroup() )
+		if ( objects is { Count: > 0 } )
 		{
-			foreach ( var entry in jsonObject["Objects"] as JsonArray )
+			var undo = player.Undo.Create();
+			undo.Name = "Duplication";
+
+			foreach ( var go in objects )
 			{
-				if ( entry is JsonObject obj )
-				{
-					var pos = entry["Position"]?.Deserialize<Vector3>() ?? default;
-					var rot = entry["Rotation"]?.Deserialize<Rotation>() ?? Rotation.Identity;
-					var scl = entry["Scale"]?.Deserialize<Vector3>() ?? Vector3.One;
-
-					var world = dest.ToWorld( new Transform( pos, rot ) );
-					world.Scale = scl;
-
-					var go = new GameObject( false );
-					go.Deserialize( obj, new GameObject.DeserializeOptions { TransformOverride = world } );
-
-					Ownable.Set( go, Rpc.Caller );
-
-					go.NetworkSpawn( true, null );
-
-					undo.Add( go );
-				}
+				undo.Add( go );
 			}
 		}
 	}

@@ -48,7 +48,15 @@
 
         if ( hasWeapon && IconPanel is not null )
         {
-            IconPanel.Style.SetBackgroundImage( weapon.DisplayIcon );
+            var iconOverride = weapon.InventoryIconOverride;
+            if ( !string.IsNullOrEmpty( iconOverride ) )
+            {
+                IconPanel.Style.SetBackgroundImage( iconOverride );
+            }
+            else
+            {
+                IconPanel.Style.SetBackgroundImage( weapon.DisplayIcon );
+            }
         }
     }
 

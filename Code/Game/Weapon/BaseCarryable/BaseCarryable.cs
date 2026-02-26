@@ -40,6 +40,11 @@ public partial class BaseCarryable : Component, IKillIcon
 	public GameObject WorldModel { get; protected set; }
 
 	/// <summary>
+	/// Used for overriding the display icon
+	/// </summary>
+	public virtual string InventoryIconOverride => null;
+
+	/// <summary>
 	/// Wether this weapon should be avoided when determining an item to swap to
 	/// </summary>
 	public virtual bool ShouldAvoid => false;
