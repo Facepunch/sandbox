@@ -14,7 +14,7 @@ Scoreboard
 	width: 100%;
 	height: 100%;
 	margin: auto;
-	z-index: 999;
+	z-index: 9199;
 	gap: 16px;
 
 	.voting
@@ -40,13 +40,23 @@ Scoreboard
 			font-weight: 600;
 			opacity: 1;
 			height: 40px;
-			color: linear-gradient( to right, #cdf, #8ea3ce );
 			text-shadow: 1px 1px 5px black;
+		}
+
+		.big
+		{
+			font-size: 40px;
+			font-weight: 900;
+			color: white;
+			height: 58px;
+			border-bottom: 5px solid #3277ea;
+			margin-bottom: 16px;
 		}
 
 		> .small
 		{
 			font-size: 18px;
+			color: linear-gradient( to right, #cdf, #8ea3ce );
 		}
 	}
 
