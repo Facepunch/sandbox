@@ -8,7 +8,6 @@
 @attribute [Order( 500 )]
 
 <root>
-
     <div class="save-menu">
 
         <div class="save-input">
@@ -32,7 +31,6 @@
         </div>
 
     </div>
-
 </root>
 
 @code
@@ -94,7 +92,7 @@
 
     void LoadSave( string fileName )
     {
-		SaveSystem.Current.Load( $"{SavesPath}/{fileName}" );
+		_ = SaveSystem.Current.Load( $"{SavesPath}/{fileName}" );
     }
 
     void DeleteSave( string fileName )
