@@ -53,7 +53,7 @@ public partial class SpawnerWeapon : BaseCarryable
 	public void SetPayload( ISpawner payload )
 	{
 		Payload = payload;
-		SyncPayload( payload?.Serialize() );
+		SyncPayload( SerializeSpawner( payload ) );
 	}
 
 	/// <summary>
@@ -76,7 +76,42 @@ public partial class SpawnerWeapon : BaseCarryable
 	/// </summary>
 	private void OnPayloadDataChanged()
 	{
-		Payload = ISpawner.Deserialize( PayloadData );
+		Payload = DeserializeSpawner( PayloadData );
+	}
+
+	/// <summary>
+	/// Serialize a spawner for networking to <c>type:data</c>
+	/// </summary>
+	private static string SerializeSpawner( ISpawner spawner ) => spawner switch
+	{
+		PropSpawner => $"prop:{spawner.Data}",
+		EntitySpawner => $"entity:{spawner.Data}",
+		DuplicatorSpawner => $"dupe:{spawner.Data}",
+		_ => null
+	};
+
+	/// <summary>
+	/// Reconstruct an <see cref="ISpawner"/> from <c>type:data</c>
+	/// </summary>
+	private static ISpawner DeserializeSpawner( string data )
+	{
+		if ( string.IsNullOrWhiteSpace( data ) )
+			return null;
+
+		var colonIndex = data.IndexOf( ':' );
+		if ( colonIndex < 0 )
+			return null;
+
+		var type = data[..colonIndex];
+		var value = data[(colonIndex + 1)..];
+
+		return type switch
+		{
+			"prop" => new PropSpawner( value ),
+			"entity" => new EntitySpawner( value ),
+			"dupe" => DuplicatorSpawner.FromJson( value ),
+			_ => null
+		};
 	}
 
 	public override void OnControl( Player player )

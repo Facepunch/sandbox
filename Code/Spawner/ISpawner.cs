@@ -25,10 +25,9 @@ public interface ISpawner
 	bool IsReady { get; }
 
 	/// <summary>
-	/// Serialize this payload to a string that can be synced over the network.
-	/// Format is <c>type:data</c>, e.g. <c>prop:facepunch.post_box</c>.
+	/// The raw data needed to reconstruct this spawner (e.g. a cloud ident, or JSON).
 	/// </summary>
-	string Serialize();
+	string Data { get; }
 
 	/// <summary>
 	/// Draw a ghost preview at the given world transform.
@@ -40,28 +39,4 @@ public interface ISpawner
 	/// Returns the root GameObject(s) that were spawned so they can be added to undo.
 	/// </summary>
 	Task<List<GameObject>> Spawn( Transform transform, Player player );
-
-	/// <summary>
-	/// Reconstruct an <see cref="ISpawner"/> from a serialized string.
-	/// </summary>
-	static ISpawner Deserialize( string data )
-	{
-		if ( string.IsNullOrWhiteSpace( data ) )
-			return null;
-
-		var colonIndex = data.IndexOf( ':' );
-		if ( colonIndex < 0 )
-			return null;
-
-		var type = data[..colonIndex];
-		var value = data[(colonIndex + 1)..];
-
-		return type switch
-		{
-			"prop" => new PropSpawner( value ),
-			"entity" => new EntitySpawner( value ),
-			"dupe" => DuplicatorSpawner.FromJson( value ),
-			_ => null
-		};
-	}
 }

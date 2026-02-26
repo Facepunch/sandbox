@@ -8,6 +8,7 @@ public class DuplicatorSpawner : ISpawner
 {
 	public string DisplayName { get; private set; } = "Duplication";
 	public string Icon => null;
+	public string Data => Json;
 	public BBox Bounds => Dupe?.Bounds ?? default;
 	public bool IsReady => Dupe is not null && _packagesReady;
 
@@ -33,8 +34,6 @@ public class DuplicatorSpawner : ISpawner
 		var dupe = Sandbox.Json.Deserialize<DuplicationData>( json );
 		return new DuplicatorSpawner( dupe, json, name );
 	}
-
-	public string Serialize() => $"dupe:{Json}";
 
 	private async Task InstallPackages()
 	{

@@ -5,6 +5,7 @@ public class PropSpawner : ISpawner
 {
 	public string DisplayName { get; private set; }
 	public string Icon => Path;
+	public string Data => Path;
 	public BBox Bounds => Model?.Bounds ?? default;
 	public bool IsReady => Model is not null && !Model.IsError;
 
@@ -26,8 +27,6 @@ public class PropSpawner : ISpawner
 			DisplayName = Model.Name ?? DisplayName;
 		}
 	}
-
-	public string Serialize() => $"prop:{Path}";
 
 	public void DrawPreview( Transform transform, Material overrideMaterial )
 	{
@@ -57,7 +56,7 @@ public class PropSpawner : ISpawner
 			collider.Center = Model.Bounds.Center;
 			go.AddComponent<Rigidbody>();
 		}
-		
+
 		go.NetworkSpawn( true, null );
 
 		return Task.FromResult( new List<GameObject> { go } );
