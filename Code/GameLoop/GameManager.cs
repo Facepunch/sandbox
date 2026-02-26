@@ -310,6 +310,48 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		c.GameObject.Network?.Refresh();
 	}
 
+	[Rpc.Host]
+	public static void GiveSpawnerWeaponAt( string type, string path, int slot, string data = null, string icon = null, string title = null )
+	{
+		var player = Player.FindForConnection( Rpc.Caller );
+		if ( player is null ) return;
+
+		var inventory = player.GetComponent<PlayerInventory>();
+		if ( !inventory.IsValid() ) return;
+
+		if ( slot < 0 || slot >= inventory.MaxSlots ) return;
+
+		ISpawner s = type switch
+		{
+			"prop" => new PropSpawner( path ),
+			"entity" => new EntitySpawner( path ),
+			"dupe" when data is not null => DuplicatorSpawner.FromJson( data, title, icon ),
+			_ => null
+		};
+
+		if ( s is null ) return;
+
+		// If there's already a spawner weapon in this slot, just update
+		if ( inventory.GetSlot( slot ) is SpawnerWeapon existingSpawner )
+		{
+			existingSpawner.SetSpawner( s );
+			inventory.SwitchWeapon( existingSpawner );
+			return;
+		}
+
+		// Slot is occupied by something else — don't replace it
+		if ( inventory.GetSlot( slot ).IsValid() ) return;
+
+		Log.Info( $"What" );
+
+		inventory.Pickup( "weapons/spawner/spawner.prefab", slot, false );
+		var spawner = inventory.GetSlot( slot ) as SpawnerWeapon;
+		if ( !spawner.IsValid() ) return;
+
+		spawner.SetSpawner( s );
+		inventory.SwitchWeapon( spawner );
+	}
+
 	void IScenePhysicsEvents.OnOutOfBounds( Rigidbody body )
 	{
 		body.DestroyGameObject();

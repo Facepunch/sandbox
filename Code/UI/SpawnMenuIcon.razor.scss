@@ -24,7 +24,8 @@ SpawnMenuIcon
 		overflow: hidden;
 	}
 
-	&:hover
+	&:hover,
+	&.drag-over
 	{
 		border: 1px solid #08f;
 

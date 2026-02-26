@@ -19,12 +19,38 @@
 
 @code
 {
-	public Storage.QueryItem Item { get; set; }
+    public Storage.QueryItem Item { get; set; }
 
-	protected override void OnParametersSet()
-	{
-		Style.SetBackgroundImage( Item.Preview );
+    public override bool WantsDrag => true;
+
+    protected override void OnParametersSet()
+    {
+        Style.SetBackgroundImage( Item.Preview );
+    }
+
+    protected override async void OnDragStart( DragEvent e )
+    {
+        var data = new DragData
+        {
+            Type = "dupe",
+            Icon = Item.Preview,
+            Title = Item.Title,
+            Source = this
+        };
+
+        DragHandler.StartDragging( data );
+
+		var installed = await Item.Install();
+		if ( installed is null ) return;
+
+		data.Data = installed.Files.ReadAllText( "/dupe.json" );
 	}
-	
 
+    protected override void OnDragEnd(DragEvent e)
+    {
+        if ( DragHandler.IsDragging )
+        {
+            DragHandler.StopDragging();
+        }
+    }
 }

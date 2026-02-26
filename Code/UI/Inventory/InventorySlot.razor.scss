@@ -7,6 +7,11 @@ InventorySlot
     border-radius: 4px;
     transition: all 0.1s ease;
     position: relative;
+
+    &.droppable
+    {
+        pointer-events: all;
+    }
 }
 
 InventorySlot .index
@@ -18,6 +23,7 @@ InventorySlot .index
     font-weight: 650;
     font-family: Poppins;
     color: rgba( #cdf, 0.5 );
+    pointer-events: none;
 }
 
 InventorySlot .icon
@@ -32,6 +38,7 @@ InventorySlot .icon
     background-repeat: no-repeat;
     mix-blend-mode: lighten;
     background-tint: rgba( #5e94ff, 0.25 );
+    pointer-events: none;
 }
 
 InventorySlot .name
@@ -45,6 +52,7 @@ InventorySlot .name
     font-family: Poppins;
     color: rgba( #cdf, 0.6 );
     text-align: center;
+    pointer-events: none;
 }
 
 InventorySlot.empty
@@ -55,6 +63,18 @@ InventorySlot.empty
 InventorySlot:not( .empty )
 {
     background-color: rgba( 0, 0, 0, 0.7 );
+}
+
+InventorySlot.drag-hover
+{
+    background-color: rgba( #5e94ff, 0.15 );
+    border: 1px solid rgba( #5e94ff, 0.5 );
+    box-shadow: 0px 0px 16px rgba( #5e94ff, 0.3 );
+
+    .index
+    {
+        color: #5e94ff;
+    }
 }
 
 InventorySlot.active
@@ -99,16 +119,5 @@ InventorySlot.selected
     .name
     {
         color: #5e94ff;
-        text-shadow: 0px 0px 8px rgba( #5e94ff, 0.4 );
     }
-}
-
-InventorySlot:not( .switchable ) .icon
-{
-    background-tint: rgba( white, 0.15 );
-}
-
-InventorySlot:not( .switchable ) .name
-{
-    color: rgba( white, 0.3 );
 }

@@ -3,13 +3,13 @@
 @inherits Panel
 
 <root>
-    <div class="index">@(Index+1)</div>
+    <div class="index">@(Index + 1)</div>
 
     @{
         var weapon = GetWeapon();
     }
 
-    @if ( weapon.IsValid() )
+    @if (weapon.IsValid())
     {
         <div class="icon" @ref="IconPanel"></div>
         <div class="name">@weapon.DisplayName</div>
@@ -26,11 +26,42 @@
 
     Panel IconPanel { get; set; }
 
+    public override bool WantsDrag => true;
+
+    protected override void OnDragStart( DragEvent e )
+    {
+        var weapon = GetWeapon();
+        if ( !weapon.IsValid() ) return;
+
+        var icon = weapon.InventoryIconOverride ?? weapon.DisplayIcon?.ResourcePath;
+
+        DragHandler.StartDragging( new DragData
+        {
+            Source = this,
+            Icon = icon,
+            Title = weapon.DisplayName
+        } );
+    }
+
+    protected override void OnDragEnd( DragEvent e )
+    {
+        DragHandler.StopDragging();
+        base.OnDragEnd( e );
+
+        Inventory.Drop(GetWeapon());
+    }
+
     BaseCarryable GetWeapon()
     {
         if (!Inventory.IsValid()) return null;
 
         return Inventory.GetSlot(Index);
+    }
+
+    bool IsSpawnMenuOpen()
+    {
+        var host = Game.ActiveScene.Get<SpawnMenuHost>();
+        return host?.Panel?.HasClass("open") ?? false;
     }
 
     public override void Tick()
@@ -40,25 +71,48 @@
         var weapon = GetWeapon();
         var hasWeapon = weapon.IsValid();
 
+        var spawnMenuOpen = IsSpawnMenuOpen();
+        SetClass("droppable", spawnMenuOpen);
+
         SetClass("active", Hovered || Active);
         SetClass("empty", !hasWeapon);
         SetClass("selected", Active && hasWeapon);
         SetClass("hovered", Hovered && hasWeapon);
         SetClass("switchable", hasWeapon && weapon.CanSwitch());
 
-        if ( hasWeapon && IconPanel is not null )
+        if (hasWeapon && IconPanel is not null)
         {
             var iconOverride = weapon.InventoryIconOverride;
-            if ( !string.IsNullOrEmpty( iconOverride ) )
+            if (!string.IsNullOrEmpty(iconOverride))
             {
-                IconPanel.Style.SetBackgroundImage( iconOverride );
+                IconPanel.Style.SetBackgroundImage(iconOverride);
             }
             else
             {
-                IconPanel.Style.SetBackgroundImage( weapon.DisplayIcon );
+                IconPanel.Style.SetBackgroundImage(weapon.DisplayIcon);
             }
         }
     }
 
-    protected override int BuildHash() => HashCode.Combine( GetWeapon(), Hovered, Active );
+    protected override void OnDragEnter(PanelEvent e)
+    {
+        AddClass("drag-hover");
+    }
+
+    protected override void OnDragLeave(PanelEvent e)
+    {
+        RemoveClass("drag-hover");
+    }
+
+    protected override void OnDrop( PanelEvent e )
+    {
+        RemoveClass( "drag-hover" );
+
+        var data = e.Target.UserData as DragData;
+        if ( data is null ) return;
+
+        GameManager.GiveSpawnerWeaponAt( data.Type, data.Path, Index, data.Data as string, data.Icon, data.Title );
+    }
+
+    protected override int BuildHash() => HashCode.Combine(GetWeapon(), Hovered, Active);
 }

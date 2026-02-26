@@ -7,11 +7,12 @@ using System.Text.Json.Nodes;
 public class DuplicatorSpawner : ISpawner
 {
 	public string DisplayName { get; private set; } = "Duplication";
-	public string Icon => null;
-	public string Data => Json;
+	public string Icon { get; init; }
 	public BBox Bounds => Dupe?.Bounds ?? default;
 	public bool IsReady => Dupe is not null && _packagesReady;
 	public Task<bool> Loading { get; }
+
+	public string Data => Sandbox.Json.Serialize( new DupeInfo( Icon, Json ) );
 
 	public DuplicationData Dupe { get; }
 
@@ -19,22 +20,37 @@ public class DuplicatorSpawner : ISpawner
 
 	private bool _packagesReady;
 
-	public DuplicatorSpawner( DuplicationData dupe, string json, string name = null )
+	public DuplicatorSpawner( DuplicationData dupe, string json, string name = null, string icon = null )
 	{
 		Dupe = dupe;
 		Json = json;
+		Icon = icon;
 		DisplayName = name ?? "Duplication";
 		Loading = InstallPackages();
 	}
 
 	/// <summary>
-	/// Create from raw JSON (e.g. from a storage entry).
+	/// Create from raw dupe JSON (e.g. from a storage entry). No icon.
 	/// </summary>
-	public static DuplicatorSpawner FromJson( string json, string name = null )
+	public static DuplicatorSpawner FromJson( string json, string name = null, string icon = null )
 	{
 		var dupe = Sandbox.Json.Deserialize<DuplicationData>( json );
-		return new DuplicatorSpawner( dupe, json, name );
+		return new DuplicatorSpawner( dupe, json, name, icon );
 	}
+
+	/// <summary>
+	/// Creates a duplicator spawner from the serialized data string. This is what gets synced to clients, so it includes the icon and raw JSON.
+	/// </summary>
+	/// <param name="data"></param>
+	/// <returns></returns>
+	public static DuplicatorSpawner FromData( string data )
+	{
+		var payload = Sandbox.Json.Deserialize<DupeInfo>( data );
+		var dupe = Sandbox.Json.Deserialize<DuplicationData>( payload.Json );
+		return new DuplicatorSpawner( dupe, payload.Json, icon: payload.Icon );
+	}
+
+	private record DupeInfo( string Icon, string Json );
 
 	private async Task<bool> InstallPackages()
 	{

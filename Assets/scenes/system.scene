@@ -58,14 +58,12 @@
               "__guid": "914de9bf-f622-410e-9e7d-d4f931dbaf6c",
               "__enabled": true,
               "Flags": 0,
-              "CancelSound": "sounds/ui/ui.weapon.close.sound",
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
               "OnComponentEnabled": null,
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
               "OnComponentUpdate": null,
-              "SelectSound": "sounds/ui/ui.weapon.select.sound",
               "SwitchSound": "sounds/ui/ui.weapon.switch.sound"
             }
           ],
@@ -248,6 +246,37 @@
                 },
                 "compiled": null
               },
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          ],
+          "Children": []
+        },
+        {
+          "__guid": "897024e9-d858-446b-8f90-c35c8f5421b9",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "Drag Handler",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Sandbox.DragHandler",
+              "__guid": "912c2e25-f998-4041-a59d-a48f20749936",
+              "__enabled": true,
+              "Flags": 0,
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
               "OnComponentEnabled": null,

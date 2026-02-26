@@ -23,7 +23,12 @@ public partial class SpawnerWeapon : BaseCarryable
 	/// <summary>
 	/// Override the inventory icon with the payload's cloud thumbnail.
 	/// </summary>
-	public override string InventoryIconOverride => Spawner?.Icon is not null ? $"thumb:{Spawner.Icon}" : null;
+	public override string InventoryIconOverride => Spawner?.Icon switch
+	{
+		null => null,
+		var icon when icon.StartsWith( "http", StringComparison.OrdinalIgnoreCase ) => icon,
+		var icon => $"thumb:{icon}"
+	};
 
 	/// <summary>
 	/// Whether the current aim position is a valid placement target.
@@ -39,13 +44,6 @@ public partial class SpawnerWeapon : BaseCarryable
 
 		_previewMaterial = Material.Load( "materials/effects/duplicator_override.vmat" );
 		_previewMaterialInvalid = Material.Load( "materials/effects/duplicator_override_other.vmat" );
-
-		// Default test payload
-		if ( Spawner is null )
-		{
-			// SetSpawner( new PropSpawner( "facepunch.post_box" ) );
-			SetSpawner( new EntitySpawner( "weapons/mp5/mp5.sent" ) );
-		}
 	}
 
 	/// <summary>
@@ -79,7 +77,6 @@ public partial class SpawnerWeapon : BaseCarryable
 	{
 		Spawner = DeserializeSpawner( SpawnerData );
 	}
-
 	/// <summary>
 	/// Serialize a spawner for networking to <c>type:data</c>
 	/// </summary>
@@ -110,7 +107,7 @@ public partial class SpawnerWeapon : BaseCarryable
 		{
 			"prop" => new PropSpawner( value ),
 			"entity" => new EntitySpawner( value ),
-			"dupe" => DuplicatorSpawner.FromJson( value ),
+			"dupe" => DuplicatorSpawner.FromData( value ),
 			_ => null
 		};
 	}
