@@ -402,7 +402,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		Log.Info( $"[{player}] Spawning Entity {entity.Title}" );
 
 		var prefabFile = entity.Prefab;
-		//var bounds = prefabFile.GetScene().GetLocalBounds();
 		var bounds = SceneUtility.GetPrefabScene( prefabFile ).GetLocalBounds();
 
 		var depth = -bounds.Mins.z;
@@ -410,7 +409,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		var go = GameObject.Clone( prefabFile, new CloneConfig { Transform = spawnTransform, StartEnabled = false } );
 		go.Tags.Add( "removable" );
-		go.WorldTransform = spawnTransform;
 
 		Ownable.Set( go, player.Network.Owner );
 

@@ -20,6 +20,7 @@
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
+        "CanDropInCoffin": false,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "svgsource",
@@ -38,8 +39,7 @@
         },
         "DisplayName": "Tool Gun",
         "HoldType": "Pistol",
-        "InventoryOrder": 2,
-        "InventorySlot": 0,
+        "ItemPrefab": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,

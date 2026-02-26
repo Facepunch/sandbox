@@ -3,6 +3,9 @@
 @inherits PanelComponent
 @namespace Sandbox
 
+@if ( Player.IsValid() && Player.WantsHideHud )
+    return;
+
 @if ( !HasAnyAction )
     return;
 
@@ -50,19 +53,12 @@
     {
         get
         {
-            var inv = Player.FindLocalPlayer()?.GetComponent<PlayerInventory>();
+            var inv = Player?.GetComponent<PlayerInventory>();
             return ( inv?.ActiveWeapon as Toolgun )?.GetCurrentMode();
         }
     }
 
-    bool IsInventoryOpen
-    {
-        get
-        {
-            var inv = Scene.GetAllComponents<Sandbox.UI.Inventory.Inventory>().FirstOrDefault();
-            return inv is not null && !inv.Panel.HasClass( "hidden" );
-        }
-    }
+    Player Player => Player.FindLocalPlayer();
 
     ToolHint Info => CurrentMode?.Hint ?? default;
     string ToolName => TypeLibrary.GetType( CurrentMode?.GetType() )?.Title ?? "";
@@ -73,8 +69,8 @@
 
     protected override void OnUpdate()
     {
-        SetClass( "visible", CurrentMode.IsValid() && !IsInventoryOpen );
+        SetClass( "visible", CurrentMode.IsValid() );
     }
 
-	protected override int BuildHash() => System.HashCode.Combine( CurrentMode?.GetType(), Info, IsInventoryOpen );
+	protected override int BuildHash() => System.HashCode.Combine( CurrentMode?.GetType(), Info, Player?.WantsHideHud );
 }

@@ -177,12 +177,17 @@
         "__guid": "7a0edd28-8894-48d5-8ba4-ba5aadaef5be",
         "__enabled": true,
         "Flags": 0,
+        "MaxSlots": 6,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
-        "OnComponentUpdate": null
+        "OnComponentUpdate": null,
+        "WeaponCratePrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/player/weapon_crate.prefab"
+        }
       },
       {
         "__type": "PlayerStats",

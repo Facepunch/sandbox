@@ -1,7 +1,7 @@
 /// <summary>
 /// A weapon, or weapons, or ammo, that can be picked up
 /// </summary>
-public abstract class BasePickup : Component, Component.ITriggerListener
+public abstract class BasePickup : Component, Component.ITriggerListener, Component.ICollisionListener
 {
 	/// <summary>
 	/// The pickup's collider, it is required
@@ -39,6 +39,30 @@ public abstract class BasePickup : Component, Component.ITriggerListener
 		if ( GameObject.IsDestroyed ) return;
 
 		if ( !other.Components.TryGet( out Player player ) )
+			return;
+
+		if ( !player.Components.TryGet( out PlayerInventory inventory ) )
+			return;
+
+		if ( !CanPickup( player, inventory ) )
+			return;
+
+		if ( !OnPickup( player, inventory ) )
+			return;
+
+		PlayPickupEffects( player );
+		DestroyGameObject();
+	}
+
+	/// <summary>
+	/// Called when a gameobject enters the trigger.
+	/// </summary>
+	void ICollisionListener.OnCollisionStart( Collision collision )
+	{
+		if ( !Networking.IsHost ) return;
+		if ( GameObject.IsDestroyed ) return;
+
+		if ( !collision.Other.GameObject.Root.Components.TryGet( out Player player ) )
 			return;
 
 		if ( !player.Components.TryGet( out PlayerInventory inventory ) )

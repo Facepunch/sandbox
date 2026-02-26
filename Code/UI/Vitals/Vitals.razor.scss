@@ -1,3 +1,5 @@
+@import "/UI/Theme.scss";
+
 Vitals
 {
 	position: absolute;
@@ -20,11 +22,13 @@ Vitals
 	{
 		flex-direction: row;
 		align-items: center;
-		gap: 12px;
+		gap: 16px;
+		padding: 16px;
+		padding-top: 11px;
 
 		.icon
 		{
-			width: 32px;
+			width: 28px;
 			height: 32px;
 			background-size: contain;
 			background-repeat: no-repeat;

@@ -182,6 +182,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			inventory.SwitchWeapon( null );
 		}
 
+
 		if ( d.Tags.HasAny( DamageTags.Crush, DamageTags.Explosion, DamageTags.GibAlways ) )
 		{
 			Gib( d.Position, d.Origin );
@@ -198,7 +199,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		GameObject.Destroy();
 	}
 
-	[Rpc.Owner]
+	[Rpc.Host]
 	public void EquipBestWeapon()
 	{
 		var inventory = GetComponent<PlayerInventory>();
@@ -216,8 +217,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	void OnControl()
 	{
-		Scene.Get<Inventory>()?.HandleInputOpen();
-
 		if ( Input.Pressed( "die" ) )
 		{
 			KillSelf();
@@ -398,16 +397,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		new Punch( new Vector3( 0.3f * distance, Random.Shared.Float( -1, 1 ), Random.Shared.Float( -1, 1 ) ), 1.0f, 1.5f, 0.7f );
 	}
 
-	bool noPickupNotices = false;
-	public IDisposable NoNoticeScope()
-	{
-		noPickupNotices = true;
-		return new Sandbox.Utility.DisposeAction( () => noPickupNotices = false );
-	}
-
 	public void ShowNotice( string message )
 	{
-		if ( noPickupNotices ) return;
 		NotifyNotice( message );
 	}
 

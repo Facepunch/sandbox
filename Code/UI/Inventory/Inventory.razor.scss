@@ -1,17 +1,13 @@
+@import "/UI/Theme.scss";
 
 Inventory
 {
     position: absolute;
-    left: 64px;
-    top: 2vh;
-    justify-content: flex-start;
+    bottom: $deadzone-y;
+    left: 0;
+    width: 100%;
+    justify-content: center;
     font-size: 18px;
     color: #cdf;
-    gap: 8px;
-    transition: all 0.2s linear;
-}
-
-Inventory.hidden
-{
-    opacity: 0;
+    gap: 4px;
 }

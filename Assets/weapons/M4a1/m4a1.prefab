@@ -40,14 +40,16 @@
             "FlipVertical": false,
             "FlipHorizontal": false
           },
-          "compiled": null
+          "compiled": "textures/generated/svgsource/1fb14243678b42ab.vtex"
         },
         "DisplayName": "M4A1",
         "HoldType": "Rifle",
         "IncrementalReloading": false,
-        "InventoryOrder": 1,
-        "InventorySlot": 3,
         "IsSelfAmmo": false,
+        "ItemPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/m4a1/item_m4a1.prefab"
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -82,7 +84,7 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,

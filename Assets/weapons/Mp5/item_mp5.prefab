@@ -6,7 +6,7 @@
     "Name": "item_mp5",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
-    "Scale": "1,1,1",
+    "Scale": "2,2,2",
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 1,
@@ -15,32 +15,6 @@
     "NetworkTransmit": true,
     "OwnerTransfer": 1,
     "Components": [
-      {
-        "__type": "Sandbox.BoxCollider",
-        "__guid": "c91d9757-b4fa-4f39-b388-ec6129287749",
-        "__enabled": true,
-        "Flags": 0,
-        "Center": "2.142889,4.165474,16",
-        "ColliderFlags": 0,
-        "Elasticity": null,
-        "Friction": null,
-        "IsTrigger": true,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "OnObjectTriggerEnter": null,
-        "OnObjectTriggerExit": null,
-        "OnTriggerEnter": null,
-        "OnTriggerExit": null,
-        "RollingResistance": null,
-        "Scale": "50.9895,40.33095,32",
-        "Static": false,
-        "Surface": null,
-        "SurfaceVelocity": "0,0,0"
-      },
       {
         "__type": "InventoryPickup",
         "__guid": "68f31dea-403a-4788-8c4b-7416c88f28ed",
@@ -58,17 +32,74 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "PickupSound": null,
-        "RespawnTimer": 5,
-        "ShouldRespawn": false
+        "PickupSound": null
+      },
+      {
+        "__type": "Sandbox.Rigidbody",
+        "__guid": "558f08b2-be5c-411e-990a-9984fbea59ea",
+        "__enabled": true,
+        "Flags": 0,
+        "AngularDamping": 0,
+        "EnableImpactDamage": true,
+        "EnhancedCcd": false,
+        "Gravity": true,
+        "GravityScale": 1,
+        "ImpactDamage": 0,
+        "LinearDamping": 0,
+        "Locking": {
+          "X": false,
+          "Y": false,
+          "Z": false,
+          "Pitch": false,
+          "Yaw": false,
+          "Roll": false
+        },
+        "MassCenterOverride": "0,0,0",
+        "MassOverride": 0,
+        "MinImpactDamageSpeed": 500,
+        "MotionEnabled": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideMassCenter": false,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
+      },
+      {
+        "__type": "Sandbox.ModelCollider",
+        "__guid": "c18b0492-c63f-4428-b2c8-10a5cf3a6852",
+        "__enabled": true,
+        "Flags": 0,
+        "ColliderFlags": 0,
+        "Elasticity": null,
+        "Friction": null,
+        "IsTrigger": false,
+        "Model": "models/weapons/sbox_smg_mp5/w_mp5.vmdl",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnObjectTriggerEnter": null,
+        "OnObjectTriggerExit": null,
+        "OnTriggerEnter": null,
+        "OnTriggerExit": null,
+        "RollingResistance": null,
+        "Static": false,
+        "Surface": null,
+        "SurfaceVelocity": "0,0,0"
       }
     ],
     "Children": [
       {
-        "__guid": "16c7ba4f-1743-433b-904f-8f0aed4e72bc",
+        "__guid": "be9e7dca-62e0-4fdb-ae3c-a198732868dd",
         "__version": 2,
         "Flags": 0,
-        "Name": "Trigger",
+        "Name": "Model",
         "Position": "0,0,0",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
@@ -79,54 +110,54 @@
         "NetworkOrphaned": 0,
         "NetworkTransmit": true,
         "OwnerTransfer": 1,
-        "Components": [],
+        "Components": [
+          {
+            "__type": "Sandbox.SkinnedModelRenderer",
+            "__guid": "942e53ac-f5c0-4f50-9f2a-1d45ec9b6269",
+            "__enabled": true,
+            "Flags": 0,
+            "AnimationGraph": null,
+            "BodyGroups": 3,
+            "BoneMergeTarget": null,
+            "CreateAttachments": true,
+            "CreateBoneObjects": false,
+            "LodOverride": null,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
+            "Model": "models/weapons/sbox_smg_mp5/w_mp5.vmdl",
+            "Morphs": {},
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Parameters": {
+              "bools": {},
+              "ints": {},
+              "floats": {},
+              "vectors": {},
+              "rotations": {}
+            },
+            "PlaybackRate": 1,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Sequence": {
+              "Name": null,
+              "Looping": true,
+              "Blending": false
+            },
+            "Tint": "1,1,1,1",
+            "UseAnimGraph": true
+          }
+        ],
         "Children": []
-      },
-      {
-        "__guid": "cd9c3647-96c1-47f2-b7c2-babdec3c149e",
-        "__version": 2,
-        "__Prefab": "weapons/mp5/mp5_wm.prefab",
-        "__PrefabInstancePatch": {
-          "AddedObjects": [],
-          "RemovedObjects": [],
-          "PropertyOverrides": [
-            {
-              "Target": {
-                "Type": "GameObject",
-                "IdValue": "628ec5b7-a64d-490e-a218-1cdfc17b67df"
-              },
-              "Property": "Name",
-              "Value": "mp5_wm (1)"
-            },
-            {
-              "Target": {
-                "Type": "GameObject",
-                "IdValue": "628ec5b7-a64d-490e-a218-1cdfc17b67df"
-              },
-              "Property": "Rotation",
-              "Value": "0.7071068,0,0,0.7071068"
-            },
-            {
-              "Target": {
-                "Type": "GameObject",
-                "IdValue": "628ec5b7-a64d-490e-a218-1cdfc17b67df"
-              },
-              "Property": "NetworkMode",
-              "Value": 2
-            }
-          ],
-          "MovedObjects": []
-        },
-        "__PrefabIdToInstanceId": {
-          "628ec5b7-a64d-490e-a218-1cdfc17b67df": "cd9c3647-96c1-47f2-b7c2-babdec3c149e",
-          "765ebd37-c91f-4058-8815-f4b7df6f24b0": "ed81f612-a846-4189-8fe7-5c9a243e4092",
-          "0645b412-29e7-4af0-ab22-6dbf084daa4d": "509eeb51-bdf2-42e9-9432-d9a4e418a57a",
-          "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65": "e783ca43-f875-46ad-af83-d34975a246aa",
-          "4f949ccb-cd38-4eff-a75f-e06754d3ddc1": "78b9147c-84c7-4295-93cb-94da5996cbd6",
-          "8e571825-7366-47b8-a226-d8c9ae8b083f": "2f3d6375-b5d6-4188-a5c3-3c66f3faaa0f",
-          "ed6466c4-e28c-4e9b-8446-ffa3f096176d": "d640af1d-a3e8-406b-916c-fa72048028d7",
-          "88302757-22b9-44b5-9561-6acad55a74a7": "855074b0-2ded-4099-a288-0f0dba969424"
-        }
       }
     ],
     "__properties": {
@@ -138,7 +169,7 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
@@ -154,6 +185,8 @@
   "MenuPath": "Deathmatch/Items/MP5",
   "MenuIcon": null,
   "DontBreakAsTemplate": true,
-  "__references": [],
+  "__references": [
+    "facepunch.w_mp5#33703"
+  ],
   "__version": 2
 }

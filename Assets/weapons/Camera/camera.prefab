@@ -43,12 +43,10 @@
           "compiled": null
         },
         "DisplayName": "Camera",
-        "HoldHandPose": 1,
         "HoldType": "HoldItem",
         "IncrementalReloading": false,
-        "InventoryOrder": 10,
-        "InventorySlot": 4,
         "IsSelfAmmo": false,
+        "ItemPrefab": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,

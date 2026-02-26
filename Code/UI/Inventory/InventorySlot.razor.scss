@@ -1,38 +1,114 @@
 InventorySlot
 {
-    flex-direction: column;
-    gap: 8px;
-    width: 64px;
+    width: 96px;
+    height: 96px;
+    background-color: rgba( 0, 0, 0, 0.3 );
+    backdrop-filter: blur( 10px );
+    border-radius: 4px;
     transition: all 0.1s ease;
+    position: relative;
 }
 
 InventorySlot .index
 {
-    background-color: rgba( 0, 0, 0, 0.5 );
-    backdrop-filter: blur( 10px );
-    height: 24px;
-    justify-content: flex-start;
-    padding: 16px;
-    align-items: center;
+    position: absolute;
+    top: 4px;
+    left: 6px;
+    font-size: 12px;
     font-weight: 650;
     font-family: Poppins;
-    border-radius: 4px;
-    color: #cdf;
+    color: rgba( #cdf, 0.5 );
+}
+
+InventorySlot .icon
+{
+    position: absolute;
+    top: 16px;
+    left: 4px;
+    right: 4px;
+    bottom: 18px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    mix-blend-mode: lighten;
+    background-tint: rgba( #5e94ff, 0.25 );
+}
+
+InventorySlot .name
+{
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    right: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: Poppins;
+    color: rgba( #cdf, 0.6 );
+    text-align: center;
+}
+
+InventorySlot.empty
+{
+    opacity: 1;
+}
+
+InventorySlot:not( .empty )
+{
+    background-color: rgba( 0, 0, 0, 0.7 );
 }
 
 InventorySlot.active
 {
-    width: 180px;
+    opacity: 1;
+    background-color: rgba( 0, 0, 0, 0.9 );
+    border: 0.5px solid rgba( #5e94ff, 0.3 );
 
-    > .index
+    .index
     {
-        background-color: rgba( 0, 0, 0, 0.7 );
+        color: #5e94ff;
+    }
+
+    .icon
+    {
+        background-tint: #5e94ff;
+    }
+
+    .name
+    {
         color: #5e94ff;
     }
 }
 
-InventorySlot > .list
+InventorySlot.selected
 {
-    flex-direction: column;
-    gap: 4px;
+    opacity: 1;
+    background-color: rgba( #0d1a30, 0.7 );
+    border: 0.5px solid rgba( #5e94ff, 0.5 );
+    box-shadow: 0px 0px 12px rgba( #5e94ff, 0.2 );
+
+    .index
+    {
+        color: #5e94ff;
+    }
+
+    .icon
+    {
+        background-tint: #5e94ff;
+    }
+
+    .name
+    {
+        color: #5e94ff;
+        text-shadow: 0px 0px 8px rgba( #5e94ff, 0.4 );
+    }
+}
+
+InventorySlot:not( .switchable ) .icon
+{
+    background-tint: rgba( white, 0.15 );
+}
+
+InventorySlot:not( .switchable ) .name
+{
+    color: rgba( white, 0.3 );
 }

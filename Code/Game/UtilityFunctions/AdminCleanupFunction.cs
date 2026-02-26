@@ -29,8 +29,7 @@ public class AdminCleanupFunction : UtilityFunction
 	{
 		if ( !Rpc.Caller.IsHost ) return;
 
-		var removable = Game.ActiveScene.GetAllObjects( true )
-			.Where( go => go.Tags.Contains( "removable" ) );
+		var removable = Game.ActiveScene.GetAll<Ownable>();
 
 		var count = 0;
 		foreach ( var go in removable.ToArray() )

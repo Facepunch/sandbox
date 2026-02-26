@@ -1,36 +1,25 @@
 {
   "RootObject": {
     "__guid": "c76715d5-0102-49d9-b64e-bb0940ea25a7",
+    "__version": 2,
     "Flags": 0,
     "Name": "item_glock",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "2,2,2",
+    "Tags": "",
     "Enabled": true,
     "NetworkMode": 1,
+    "NetworkFlags": 0,
     "NetworkOrphaned": 1,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
     "Components": [
-      {
-        "__type": "Sandbox.BoxCollider",
-        "__guid": "e8492ff7-3a55-496a-a4c4-54a72842d8d2",
-        "Center": "0,0,16",
-        "Friction": null,
-        "IsTrigger": true,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "OnObjectTriggerEnter": null,
-        "OnObjectTriggerExit": null,
-        "OnTriggerEnter": null,
-        "OnTriggerExit": null,
-        "Scale": "32,32,32",
-        "Static": false,
-        "Surface": null,
-        "SurfaceVelocity": "0,0,0"
-      },
       {
         "__type": "InventoryPickup",
         "__guid": "e7966944-bb48-449f-9154-0254b47cd07e",
+        "__enabled": true,
+        "Flags": 0,
         "Items": [
           {
             "_type": "gameobject",
@@ -43,94 +32,144 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "PickupSound": "sounds/weapons/gun_pickup.sound",
-        "RespawnTimer": 5,
-        "ShouldRespawn": true
+        "PickupSound": null
+      },
+      {
+        "__type": "Sandbox.ModelCollider",
+        "__guid": "9e33f2a0-8ce0-4bf3-bd32-3469a1628627",
+        "__enabled": true,
+        "Flags": 0,
+        "ColliderFlags": 0,
+        "Elasticity": null,
+        "Friction": null,
+        "IsTrigger": false,
+        "Model": "models/weapons/sbox_pistol_usp/w_usp.vmdl",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnObjectTriggerEnter": null,
+        "OnObjectTriggerExit": null,
+        "OnTriggerEnter": null,
+        "OnTriggerExit": null,
+        "RollingResistance": null,
+        "Static": false,
+        "Surface": null,
+        "SurfaceVelocity": "0,0,0"
+      },
+      {
+        "__type": "Sandbox.Rigidbody",
+        "__guid": "2a84405e-f4db-4117-a46a-72baed362953",
+        "__enabled": true,
+        "Flags": 0,
+        "AngularDamping": 0,
+        "EnableImpactDamage": true,
+        "EnhancedCcd": false,
+        "Gravity": true,
+        "GravityScale": 1,
+        "ImpactDamage": 0,
+        "LinearDamping": 0,
+        "Locking": {
+          "X": false,
+          "Y": false,
+          "Z": false,
+          "Pitch": false,
+          "Yaw": false,
+          "Roll": false
+        },
+        "MassCenterOverride": "0,0,0",
+        "MassOverride": 0,
+        "MinImpactDamageSpeed": 500,
+        "MotionEnabled": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideMassCenter": false,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
       }
     ],
     "Children": [
       {
-        "__guid": "84905bb8-7391-45d3-917f-c939da0dcffe",
+        "__guid": "94379920-fa28-490c-9368-7b51db488816",
+        "__version": 2,
         "Flags": 0,
-        "Name": "Trigger",
-        "Enabled": true
-      },
-      {
-        "__guid": "8a35171b-c868-4298-a01a-a6326db7da77",
-        "Flags": 0,
-        "Name": "glock_wm",
-        "Position": "-3.688232,0.00009155273,1.450956",
-        "Rotation": "0.7071068,0,0,0.7071068",
+        "Name": "Model",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
         "Enabled": true,
-        "Children": [
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
           {
-            "__guid": "7f213ded-3b46-4ff0-a20c-1095c70bc991",
+            "__type": "Sandbox.SkinnedModelRenderer",
+            "__guid": "5e966471-2824-479b-8b91-c2d173d46e22",
+            "__enabled": true,
             "Flags": 0,
-            "Name": "w_usp",
-            "Position": "3.418695,-0.6192533,-5.397455",
-            "Scale": "2,2,2",
-            "Enabled": true,
-            "Components": [
-              {
-                "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "700842bf-186f-4ac3-909c-4be5079c6985",
-                "AnimationGraph": null,
-                "BodyGroups": 9493,
-                "BoneMergeTarget": null,
-                "CreateAttachments": false,
-                "CreateBoneObjects": false,
-                "MaterialGroup": null,
-                "MaterialOverride": null,
-                "Model": "models/weapons/sbox_pistol_usp/w_usp.vmdl",
-                "Morphs": {},
-                "OnComponentDestroy": null,
-                "OnComponentDisabled": null,
-                "OnComponentEnabled": null,
-                "OnComponentFixedUpdate": null,
-                "OnComponentStart": null,
-                "OnComponentUpdate": null,
-                "Parameters": {
-                  "bools": {},
-                  "ints": {},
-                  "floats": {},
-                  "vectors": {},
-                  "rotations": {}
-                },
-                "PlaybackRate": 1,
-                "RenderOptions": {
-                  "GameLayer": true,
-                  "OverlayLayer": false,
-                  "BloomLayer": false,
-                  "AfterUILayer": false
-                },
-                "RenderType": "On",
-                "Sequence": {
-                  "Name": null
-                },
-                "Tint": "1,1,1,1",
-                "UseAnimGraph": false
-              }
-            ]
+            "AnimationGraph": null,
+            "BodyGroups": 75,
+            "BoneMergeTarget": null,
+            "CreateAttachments": false,
+            "CreateBoneObjects": false,
+            "LodOverride": null,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
+            "Model": "models/weapons/sbox_pistol_usp/w_usp.vmdl",
+            "Morphs": {},
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Parameters": {
+              "bools": {},
+              "ints": {},
+              "floats": {},
+              "vectors": {},
+              "rotations": {}
+            },
+            "PlaybackRate": 1,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Sequence": {
+              "Name": null,
+              "Looping": true,
+              "Blending": false
+            },
+            "Tint": "1,1,1,1",
+            "UseAnimGraph": true
           }
-        ]
+        ],
+        "Children": []
       }
     ],
-    "__variables": [],
     "__properties": {
-      "FixedUpdateFrequency": 50,
-      "MaxFixedUpdates": 5,
-      "NetworkFrequency": 30,
       "NetworkInterpolation": true,
-      "PhysicsSubSteps": 1,
-      "ThreadedAnimation": true,
       "TimeScale": 1,
-      "UseFixedUpdate": true,
+      "WantsSystemScene": true,
       "Metadata": {},
       "NavMesh": {
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
@@ -138,15 +177,16 @@
         "ExcludedBodies": "",
         "IncludedBodies": ""
       }
-    }
+    },
+    "__variables": []
   },
+  "ResourceVersion": 2,
   "ShowInMenu": true,
   "MenuPath": "Deathmatch/Items/Glock",
   "MenuIcon": null,
   "DontBreakAsTemplate": true,
-  "ResourceVersion": 1,
   "__references": [
     "facepunch.w_usp#77979"
   ],
-  "__version": 1
+  "__version": 2
 }

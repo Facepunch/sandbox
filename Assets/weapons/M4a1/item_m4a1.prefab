@@ -6,7 +6,7 @@
     "Name": "item_m4a1",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
-    "Scale": "1,1,1",
+    "Scale": "2,2,2",
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 1,
@@ -15,32 +15,6 @@
     "NetworkTransmit": true,
     "OwnerTransfer": 1,
     "Components": [
-      {
-        "__type": "Sandbox.BoxCollider",
-        "__guid": "c91d9757-b4fa-4f39-b388-ec6129287749",
-        "__enabled": true,
-        "Flags": 0,
-        "Center": "2.142889,4.165474,16",
-        "ColliderFlags": 0,
-        "Elasticity": null,
-        "Friction": null,
-        "IsTrigger": true,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "OnObjectTriggerEnter": null,
-        "OnObjectTriggerExit": null,
-        "OnTriggerEnter": null,
-        "OnTriggerExit": null,
-        "RollingResistance": null,
-        "Scale": "50.9895,40.33095,32",
-        "Static": false,
-        "Surface": null,
-        "SurfaceVelocity": "0,0,0"
-      },
       {
         "__type": "InventoryPickup",
         "__guid": "68f31dea-403a-4788-8c4b-7416c88f28ed",
@@ -59,14 +33,73 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "PickupSound": null
+      },
+      {
+        "__type": "Sandbox.Rigidbody",
+        "__guid": "0fe8c7ca-9ef3-4636-838b-6ccbd0aafe5a",
+        "__enabled": true,
+        "Flags": 0,
+        "AngularDamping": 0,
+        "EnableImpactDamage": true,
+        "EnhancedCcd": false,
+        "Gravity": true,
+        "GravityScale": 1,
+        "ImpactDamage": 0,
+        "LinearDamping": 0,
+        "Locking": {
+          "X": false,
+          "Y": false,
+          "Z": false,
+          "Pitch": false,
+          "Yaw": false,
+          "Roll": false
+        },
+        "MassCenterOverride": "0,0,0",
+        "MassOverride": 0,
+        "MinImpactDamageSpeed": 500,
+        "MotionEnabled": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideMassCenter": false,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
+      },
+      {
+        "__type": "Sandbox.ModelCollider",
+        "__guid": "c9105dcf-c921-4a2b-a33c-83f53d63733f",
+        "__enabled": true,
+        "Flags": 0,
+        "ColliderFlags": 0,
+        "Elasticity": null,
+        "Friction": null,
+        "IsTrigger": false,
+        "Model": "models/weapons/sbox_assault_m4a1/w_m4a1.vmdl",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnObjectTriggerEnter": null,
+        "OnObjectTriggerExit": null,
+        "OnTriggerEnter": null,
+        "OnTriggerExit": null,
+        "RollingResistance": null,
+        "Static": false,
+        "Surface": null,
+        "SurfaceVelocity": "0,0,0"
       }
     ],
     "Children": [
       {
-        "__guid": "16c7ba4f-1743-433b-904f-8f0aed4e72bc",
+        "__guid": "4be29fd2-2873-4a88-9cf8-d90c47d6ae69",
         "__version": 2,
         "Flags": 0,
-        "Name": "Trigger",
+        "Name": "model",
         "Position": "0,0,0",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
@@ -77,46 +110,91 @@
         "NetworkOrphaned": 0,
         "NetworkTransmit": true,
         "OwnerTransfer": 1,
-        "Components": [],
-        "Children": []
-      },
-      {
-        "__guid": "b36d2c07-efd6-4582-9892-b5445d0fd75d",
-        "__version": 2,
-        "__Prefab": "weapons/m4a1/m4a1_wm.prefab",
-        "__PrefabInstancePatch": {
-          "AddedObjects": [],
-          "RemovedObjects": [],
-          "PropertyOverrides": [
-            {
-              "Target": {
-                "Type": "GameObject",
-                "IdValue": "628ec5b7-a64d-490e-a218-1cdfc17b67df"
-              },
-              "Property": "Position",
-              "Value": "-0.00000002980232,-0.0000003539026,2.218851"
+        "Components": [
+          {
+            "__type": "Sandbox.SkinnedModelRenderer",
+            "__guid": "a6f0f3ba-fb40-4b37-9371-1cb99eab79ca",
+            "__enabled": true,
+            "Flags": 0,
+            "AnimationGraph": null,
+            "BodyGroups": 427,
+            "BoneMergeTarget": null,
+            "CreateAttachments": true,
+            "CreateBoneObjects": false,
+            "LodOverride": null,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
+            "Model": "models/weapons/sbox_assault_m4a1/w_m4a1.vmdl",
+            "Morphs": {},
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Parameters": {
+              "bools": {},
+              "ints": {},
+              "floats": {},
+              "vectors": {},
+              "rotations": {}
             },
-            {
-              "Target": {
-                "Type": "GameObject",
-                "IdValue": "628ec5b7-a64d-490e-a218-1cdfc17b67df"
-              },
-              "Property": "Rotation",
-              "Value": "-0.7010573,0.09229595,-0.09229595,0.7010574"
-            }
-          ],
-          "MovedObjects": []
-        },
-        "__PrefabIdToInstanceId": {
-          "628ec5b7-a64d-490e-a218-1cdfc17b67df": "b36d2c07-efd6-4582-9892-b5445d0fd75d",
-          "765ebd37-c91f-4058-8815-f4b7df6f24b0": "964d82d4-a95e-4b3c-8e13-aedf26690b8a",
-          "0645b412-29e7-4af0-ab22-6dbf084daa4d": "74530019-51b5-4d67-90b8-1544ecfd64f9",
-          "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65": "f3e5a1d7-2a8b-421d-85ed-e1161a45fb7b",
-          "4f949ccb-cd38-4eff-a75f-e06754d3ddc1": "2cf55e7b-363d-42b7-ac45-5f60d548588e",
-          "8e571825-7366-47b8-a226-d8c9ae8b083f": "f7bed734-3139-44ea-aa13-c7f9d5006ef1",
-          "ed6466c4-e28c-4e9b-8446-ffa3f096176d": "5df42379-bb7f-47b7-8b9b-f11171af1b20",
-          "88302757-22b9-44b5-9561-6acad55a74a7": "52edc4ce-bfbb-4885-b04d-9781f766fb8f"
-        }
+            "PlaybackRate": 1,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Sequence": {
+              "Name": null,
+              "Looping": true,
+              "Blending": false
+            },
+            "Tint": "1,1,1,1",
+            "UseAnimGraph": true
+          }
+        ],
+        "Children": [
+          {
+            "__guid": "86b6afbb-343b-4872-8d1c-4e8dde2cb3c6",
+            "__version": 2,
+            "Flags": 8,
+            "Name": "muzzle",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
+          },
+          {
+            "__guid": "8a1e774b-6ebd-4976-b5f3-bdd26a5aa7dd",
+            "__version": 2,
+            "Flags": 8,
+            "Name": "eject",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
+          }
+        ]
       }
     ],
     "__properties": {
@@ -128,7 +206,7 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
@@ -144,6 +222,8 @@
   "MenuPath": "Deathmatch/Items/MP5",
   "MenuIcon": null,
   "DontBreakAsTemplate": true,
-  "__references": [],
+  "__references": [
+    "facepunch.w_m4a1#154378"
+  ],
   "__version": 2
 }

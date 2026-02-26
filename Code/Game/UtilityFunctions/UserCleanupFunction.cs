@@ -21,7 +21,7 @@ public class UserCleanupFunction : UtilityFunction
 		var caller = Rpc.Caller;
 
 		var removable = Game.ActiveScene.GetAllComponents<Ownable>()
-			.Where( o => o.Owner == caller && o.Tags.Contains( "removable" ) );
+			.Where( o => o.Owner == caller );
 
 		var count = 0;
 		foreach ( var ownable in removable.ToArray() )

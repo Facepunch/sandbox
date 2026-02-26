@@ -34,6 +34,7 @@
         },
         "ButtonInSound": "weapons/physgun/sounds/physgun.button.in.1.sound",
         "ButtonOutSound": "weapons/physgun/sounds/physgun.button.out.1.sound",
+        "CanDropInCoffin": false,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "svgsource",
@@ -64,8 +65,7 @@
           "prefab": "weapons/physgun/effects/grab.prefab"
         },
         "HoldType": "Physgun",
-        "InventoryOrder": 1,
-        "InventorySlot": 0,
+        "ItemPrefab": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
