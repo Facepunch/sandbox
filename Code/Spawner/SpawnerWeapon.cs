@@ -240,16 +240,5 @@ public partial class SpawnerWeapon : BaseCarryable
 		painter.SetBlendMode( BlendMode.Normal );
 		painter.DrawCircle( crosshair, 5, color.Darken( 0.3f ) );
 		painter.DrawCircle( crosshair, 3, color );
-
-		// Draw payload name near crosshair
-		if ( !string.IsNullOrEmpty( Spawner.DisplayName ) )
-		{
-			var text = new TextRendering.Scope( Spawner.DisplayName, Color.White, 18 );
-			text.FontName = "Poppins";
-			text.FontWeight = 600;
-
-			var textRect = new Rect( crosshair.x - 100, crosshair.y + 16, 200, 30 );
-			painter.DrawText( text, textRect, TextFlag.Center );
-		}
 	}
 }
