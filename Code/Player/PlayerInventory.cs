@@ -239,7 +239,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		// If this is the active weapon, holster first
 		if ( ActiveWeapon == weapon )
 		{
-			SwitchWeapon( null );
+			SwitchWeapon( null, true );
 		}
 
 		// Spawn the item prefab in the world

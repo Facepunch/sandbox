@@ -1,6 +1,6 @@
 ﻿namespace Sandbox;
 
-public interface IToolInfo
+public interface IToolInfo : IValid
 {
 	string Name { get; }
 	string Description { get; }

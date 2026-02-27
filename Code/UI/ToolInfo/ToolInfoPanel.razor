@@ -54,7 +54,11 @@
 		get
 		{
 			var inv = Player?.GetComponent<PlayerInventory>();
-			if ( inv?.ActiveWeapon?.GetComponentInChildren<IToolInfo>() is { } toolInfo )
+			
+			if ( !inv.IsValid() || !inv.ActiveWeapon.IsValid() )
+				return null;
+			
+			if ( inv.ActiveWeapon.GetComponentInChildren<IToolInfo>() is { IsValid: true } toolInfo )
 				return toolInfo;
 
 			return inv?.ActiveWeapon as IToolInfo;
