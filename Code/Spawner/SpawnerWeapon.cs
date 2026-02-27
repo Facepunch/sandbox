@@ -40,6 +40,26 @@ public partial class SpawnerWeapon : BaseCarryable, IToolInfo
 	private string _name;
 	private string _description;
 
+	/// <summary>
+	/// True while the player is holding Use to rotate the preview.
+	/// </summary>
+	private bool _isRotating;
+
+	/// <summary>
+	/// Accumulated rotation offset applied to the spawn preview.
+	/// </summary>
+	private Rotation _rotationOffset = Rotation.Identity;
+
+	public override void OnCameraMove( Player player, ref Angles angles )
+	{
+		base.OnCameraMove( player, ref angles );
+
+		if ( _isRotating )
+		{
+			angles = default;
+		}
+	}
+
 	protected override void OnStart()
 	{
 		base.OnStart();
@@ -121,6 +141,15 @@ public partial class SpawnerWeapon : BaseCarryable, IToolInfo
 		if ( Spawner is null )
 			return;
 
+		// Hold Use (E) + move mouse to rotate the preview, cancelling camera movement
+		_isRotating = Input.Down( "use" );
+		if ( _isRotating )
+		{
+			var look = Input.AnalogLook with { pitch = 0 } * 1;
+			_rotationOffset = Rotation.From( look ) * _rotationOffset;
+			Input.Clear( "use" );
+		}
+
 		var placement = GetPlacementInfo( player );
 		_isValidPlacement = placement.Hit;
 
@@ -128,6 +157,7 @@ public partial class SpawnerWeapon : BaseCarryable, IToolInfo
 		{
 			var transform = GetSpawnTransform( placement, player );
 			DoSpawn( transform );
+			_rotationOffset = Rotation.Identity;
 		}
 
 		if ( Input.Pressed( "attack2" ) )
@@ -202,7 +232,7 @@ public partial class SpawnerWeapon : BaseCarryable, IToolInfo
 			position += up * -Spawner.Bounds.Mins.z;
 		}
 
-		return new Transform( position, facingAngle );
+		return new Transform( position, facingAngle * _rotationOffset );
 	}
 
 	[Rpc.Host]
