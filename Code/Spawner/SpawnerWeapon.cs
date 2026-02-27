@@ -49,7 +49,11 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 	/// Accumulated rotation offset applied to the spawn preview.
 	/// </summary>
 	private Rotation _rotationOffset = Rotation.Identity;
-
+	
+	private Rotation _snapRotation = Rotation.Identity;
+	private Rotation _spinRotation = Rotation.Identity;
+	private bool _isSnapping;
+	
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
 		base.OnCameraMove( player, ref angles );
@@ -145,18 +149,41 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 		if ( Spawner is null )
 			return;
 
-		// Hold Use (E) + move mouse to rotate the preview, cancelling camera movement
 		_isRotating = Input.Down( "use" );
 		SetIsUsingJoystick( _isRotating );
-		
+
+		var isSnapping = Input.Down( "run" );
+		if ( !isSnapping && _isSnapping ) _spinRotation = _snapRotation;
+		_isSnapping = isSnapping;
+
 		if ( _isRotating )
 		{
 			var look = Input.AnalogLook with { pitch = 0 } * 1;
-			_rotationOffset = Rotation.From( look ) * _rotationOffset;
+
+			if ( _isSnapping )
+			{
+				if ( MathF.Abs( look.yaw ) > MathF.Abs( look.pitch ) ) look.pitch = 0;
+				else look.yaw = 0;
+			}
+
+			_spinRotation = Rotation.From( look ) * _spinRotation;
 			Input.Clear( "use" );
-			
+
+			if ( _isSnapping )
+			{
+				var snapped = _spinRotation.Angles();
+				_rotationOffset = snapped.SnapToGrid( 45f );
+			}
+			else
+			{
+				_rotationOffset = _spinRotation;
+			}
+
+			_snapRotation = _rotationOffset;
+
 			UpdateJoystick( new Angles( look.yaw, look.pitch, 0 ) );
 		}
+
 
 		var placement = GetPlacementInfo( player );
 		_isValidPlacement = placement.Hit;
