@@ -6,7 +6,7 @@ using Sandbox.Rendering;
 /// The spawn menu (or any other system) sets the payload, and this weapon handles
 /// aiming, previewing, and placement.
 /// </summary>
-public partial class SpawnerWeapon : BaseCarryable, IToolInfo
+public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 {
 	/// <summary>
 	/// Synced payload descriptor. When this changes on any client,
@@ -138,16 +138,24 @@ public partial class SpawnerWeapon : BaseCarryable, IToolInfo
 	{
 		base.OnControl( player );
 
+		UpdateViewmodelScreen();
+		ApplyCoilSpin();
+		
+		
 		if ( Spawner is null )
 			return;
 
 		// Hold Use (E) + move mouse to rotate the preview, cancelling camera movement
 		_isRotating = Input.Down( "use" );
+		SetIsUsingJoystick( _isRotating );
+		
 		if ( _isRotating )
 		{
 			var look = Input.AnalogLook with { pitch = 0 } * 1;
 			_rotationOffset = Rotation.From( look ) * _rotationOffset;
 			Input.Clear( "use" );
+			
+			UpdateJoystick( new Angles( look.yaw, look.pitch, 0 ) );
 		}
 
 		var placement = GetPlacementInfo( player );
@@ -273,6 +281,23 @@ public partial class SpawnerWeapon : BaseCarryable, IToolInfo
 		painter.DrawCircle( crosshair, 5, color.Darken( 0.3f ) );
 		painter.DrawCircle( crosshair, 3, color );
 	}
+	
+	protected override void DrawScreenContent( Rect rect, HudPainter paint )
+	{
+		var icon = Texture.Load( this.InventoryIconOverride );
+		if ( icon is not null )
+		{
+			var size = rect.Height;
+			var iconRect = new Rect(
+				rect.Center.x - size * 0.5f,
+				rect.Center.y - size * 0.5f,
+				size,
+				size
+			);
+			paint.DrawTexture( icon, iconRect );
+		}
+	}
+
 
 	string IToolInfo.Name => "Spawner";
 	string IToolInfo.Description => $"Placing {Spawner.DisplayName}";

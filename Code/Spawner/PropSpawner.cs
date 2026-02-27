@@ -16,7 +16,7 @@ public class PropSpawner : ISpawner
 	public PropSpawner( string path )
 	{
 		Path = path;
-		DisplayName = System.IO.Path.GetFileNameWithoutExtension( path );
+		DisplayName = null;
 		Loading = LoadAsync();
 	}
 
@@ -26,14 +26,18 @@ public class PropSpawner : ISpawner
 		if ( Path.EndsWith( ".vmdl" ) )
 		{
 			Model = await ResourceLibrary.LoadAsync<Model>( Path );
-			if ( Model is not null ) return true;
+			if ( Model is not null )
+			{
+				DisplayName = Model.ResourceName;
+				return true;
+			}
 		}
 
 		Model = await Cloud.Load<Model>( Path );
 
 		if ( Model is not null )
 		{
-			DisplayName = Model.Name ?? DisplayName;
+			DisplayName = Model.ResourceName ?? DisplayName;
 		}
 
 		return IsReady;

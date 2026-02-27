@@ -47,8 +47,14 @@
         "OnComponentUpdate": null,
         "ParentBone": "hold_r",
         "Value": 2,
-        "ViewModelPrefab": null,
-        "WorldModelPrefab": null
+        "ViewModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/toolgun/toolgun_vm.prefab"
+        },
+        "WorldModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/toolgun/toolgun_wm.prefab"
+        }
       }
     ],
     "Children": [],
