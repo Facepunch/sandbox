@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 using Sandbox.UI;
 
 [Hide]
@@ -11,7 +11,9 @@ public class WheelTool : ToolMode
 	[Property, ResourceSelect( Extension = "wdef", AllowPackages = true ), Title( "Wheel" )]
 	public string Definition { get; set; } = "entities/wheel/basic.wdef";
 
-	public override ToolHint Hint => new( "#tool.hint.wheeltool.description", "#tool.hint.wheeltool.place", "#tool.hint.wheeltool.toggle_axis" );
+	public override string Description => "#tool.hint.wheeltool.description";
+	public override string PrimaryAction => "#tool.hint.wheeltool.place";
+	public override string SecondaryAction => "#tool.hint.wheeltool.toggle_axis";
 
 	Vector3 _axis = Vector3.Right;
 

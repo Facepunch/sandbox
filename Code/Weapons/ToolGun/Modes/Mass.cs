@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 [Icon( "🍔" )]
 [ClassName( "mass" )]
 [Group( "Tools" )]
@@ -7,7 +7,10 @@ public class Mass : ToolMode
 	[Sync, Property, Title( "Mass (kg)" ), Range( 1, 1000 )]
 	public float Value { get; set; } = 100.0f;
 
-	public override ToolHint Hint => new( "#tool.hint.mass.description", "#tool.hint.mass.set", "#tool.hint.mass.copy", "#tool.hint.mass.reset" );
+	public override string Description => "#tool.hint.mass.description";
+	public override string PrimaryAction => "#tool.hint.mass.set";
+	public override string SecondaryAction => "#tool.hint.mass.copy";
+	public override string ReloadAction => "#tool.hint.mass.reset";
 
 	public override void OnControl()
 	{

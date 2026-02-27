@@ -1,5 +1,4 @@
-﻿
-[Icon( "🌀" )]
+﻿[Icon( "🌀" )]
 [ClassName( "elastic" )]
 [Group( "Constraints" )]
 public class Elastic : BaseConstraintToolMode
@@ -14,6 +13,10 @@ public class Elastic : BaseConstraintToolMode
 
 	[Property, Sync]
 	public bool StretchOnly { get; set; } = false;
+
+	public override string Description => Stage == 1 ? "#tool.hint.elastic.stage1" : "#tool.hint.elastic.stage0";
+	public override string PrimaryAction => Stage == 1 ? "#tool.hint.elastic.finish" : "#tool.hint.elastic.source";
+	public override string ReloadAction => "#tool.hint.elastic.remove";
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{

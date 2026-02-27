@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 [Icon( "🐍" )]
 [ClassName( "rope" )]
 [Group( "Constraints" )]
@@ -15,14 +15,9 @@ public class Rope : BaseConstraintToolMode
 	[Property]
 	public float Radius { get; set; } = 1f;
 
-	public override ToolHint Hint
-	{
-		get
-		{
-			if ( Stage == 1 ) return new ToolHint( "#tool.hint.rope.stage1", "#tool.hint.rope.finish", ReloadAction: "#tool.hint.rope.remove" );
-			return new ToolHint( "#tool.hint.rope.stage0", "#tool.hint.rope.source", ReloadAction: "#tool.hint.rope.remove" );
-		}
-	}
+	public override string Description => Stage == 1 ? "#tool.hint.rope.stage1" : "#tool.hint.rope.stage0";
+	public override string PrimaryAction => Stage == 1 ? "#tool.hint.rope.finish" : "#tool.hint.rope.source";
+	public override string ReloadAction => "#tool.hint.rope.remove";
 
 	public override bool CanConstraintToSelf => true;
 

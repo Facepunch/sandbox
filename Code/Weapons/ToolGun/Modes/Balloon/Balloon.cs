@@ -22,7 +22,9 @@ public class Balloon : ToolMode
 	[Property, Sync]
 	public Color Tint { get; set; } = Color.White;
 
-	public override ToolHint Hint => new( "#tool.hint.balloon.description", "#tool.hint.balloon.place_rope", "#tool.hint.balloon.place" );
+	public override string Description => "#tool.hint.balloon.description";
+	public override string PrimaryAction => "#tool.hint.balloon.place_rope";
+	public override string SecondaryAction => "#tool.hint.balloon.place";
 
 	public override void OnControl()
 	{

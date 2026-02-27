@@ -7,14 +7,9 @@ public class BallSocket : BaseConstraintToolMode
 	[Property, Sync]
 	public bool EnableCollision { get; set; } = false;
 
-	public override ToolHint Hint
-	{
-		get
-		{
-			if ( Stage == 1 ) return new ToolHint( "#tool.hint.ballsocket.stage1", "#tool.hint.ballsocket.finish", ReloadAction: "#tool.hint.ballsocket.remove" );
-			return new ToolHint( "#tool.hint.ballsocket.stage0", "#tool.hint.ballsocket.source", ReloadAction: "#tool.hint.ballsocket.remove" );
-		}
-	}
+	public override string Description => Stage == 1 ? "#tool.hint.ballsocket.stage1" : "#tool.hint.ballsocket.stage0";
+	public override string PrimaryAction => Stage == 1 ? "#tool.hint.ballsocket.finish" : "#tool.hint.ballsocket.source";
+	public override string ReloadAction => "#tool.hint.ballsocket.remove";
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
 	{

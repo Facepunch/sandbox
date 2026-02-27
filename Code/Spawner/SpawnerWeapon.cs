@@ -6,7 +6,7 @@ using Sandbox.Rendering;
 /// The spawn menu (or any other system) sets the payload, and this weapon handles
 /// aiming, previewing, and placement.
 /// </summary>
-public partial class SpawnerWeapon : BaseCarryable
+public partial class SpawnerWeapon : BaseCarryable, IToolInfo
 {
 	/// <summary>
 	/// Synced payload descriptor. When this changes on any client,
@@ -37,6 +37,8 @@ public partial class SpawnerWeapon : BaseCarryable
 
 	private Material _previewMaterial;
 	private Material _previewMaterialInvalid;
+	private string _name;
+	private string _description;
 
 	protected override void OnStart()
 	{
@@ -241,4 +243,9 @@ public partial class SpawnerWeapon : BaseCarryable
 		painter.DrawCircle( crosshair, 5, color.Darken( 0.3f ) );
 		painter.DrawCircle( crosshair, 3, color );
 	}
+
+	string IToolInfo.Name => "Spawner";
+	string IToolInfo.Description => $"Placing {Spawner.DisplayName}";
+	string IToolInfo.PrimaryAction => "Spawn";
+	string IToolInfo.SecondaryAction => "Clear";
 }

@@ -12,6 +12,7 @@
     "tool.hint.balloon.description": "Places a poppable balloon",
     "tool.hint.balloon.place_rope": "Place (rope)",
     "tool.hint.balloon.place": "Place",
+    
 
     "tool.hint.thrustertool.description": "Attaches a thruster to an object",
     "tool.hint.thrustertool.place": "Place",
@@ -26,6 +27,12 @@
     "tool.hint.rope.source": "Select source",
     "tool.hint.rope.finish": "Finish",
     "tool.hint.rope.remove": "Remove",
+
+    "tool.hint.elastic.stage0": "Connects two objects with an elastic",
+    "tool.hint.elastic.stage1": "Select the second object",
+    "tool.hint.elastic.source": "Select source",
+    "tool.hint.elastic.finish": "Finish",
+    "tool.hint.elastic.remove": "Remove",
 
     "tool.hint.ballsocket.stage0": "Connects two objects with a ball socket",
     "tool.hint.ballsocket.stage1": "Select the second object",

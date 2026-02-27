@@ -1,18 +1,13 @@
-﻿[Hide]
+﻿﻿[Hide]
 [Title( "Hydraulic" )]
 [Icon( "⚙️" )]
 [ClassName( "HydraulicTool" )]
 [Group( "Building" )]
 public class HydraulicTool : BaseConstraintToolMode
 {
-	public override ToolHint Hint
-	{
-		get
-		{
-			if ( Stage == 1 ) return new ToolHint( "#tool.hint.hydraulictool.stage1", "#tool.hint.hydraulictool.finish", ReloadAction: "#tool.hint.hydraulictool.remove" );
-			return new ToolHint( "#tool.hint.hydraulictool.stage0", "#tool.hint.hydraulictool.source", ReloadAction: "#tool.hint.hydraulictool.remove" );
-		}
-	}
+	public override string Description => Stage == 1 ? "#tool.hint.hydraulictool.stage1" : "#tool.hint.hydraulictool.stage0";
+	public override string PrimaryAction => Stage == 1 ? "#tool.hint.hydraulictool.finish" : "#tool.hint.hydraulictool.source";
+	public override string ReloadAction => "#tool.hint.hydraulictool.remove";
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
 	{

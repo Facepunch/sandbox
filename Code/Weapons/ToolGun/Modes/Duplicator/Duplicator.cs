@@ -1,4 +1,4 @@
-﻿using Sandbox.UI;
+﻿﻿using Sandbox.UI;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -17,7 +17,9 @@ public partial class Duplicator : ToolMode
 	DuplicatorSpawner spawner;
 	LinkedGameObjectBuilder builder = new();
 
-	public override ToolHint Hint => new ToolHint( "#tool.hint.duplicator.description", spawner is not null ? "#tool.hint.duplicator.place" : null, "#tool.hint.duplicator.copy" );
+	public override string Description => "#tool.hint.duplicator.description";
+	public override string PrimaryAction => spawner is not null ? "#tool.hint.duplicator.place" : null;
+	public override string SecondaryAction => "#tool.hint.duplicator.copy";
 
 	public override void OnControl()
 	{

@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 using Sandbox.UI;
 
 [Title( "Decal" )]
@@ -10,7 +10,9 @@ public class DecalTool : ToolMode
 	[Property, ResourceSelect( Extension = "decal", AllowPackages = true ), Title( "Decal" )]
 	public string Decal { get; set; }
 
-	public override ToolHint Hint => new( "#tool.hint.decaltool.description", "#tool.hint.decaltool.place", "#tool.hint.decaltool.paint" );
+	public override string Description => "#tool.hint.decaltool.description";
+	public override string PrimaryAction => "#tool.hint.decaltool.place";
+	public override string SecondaryAction => "#tool.hint.decaltool.paint";
 
 	TimeSince timeSinceShoot = 0;
 

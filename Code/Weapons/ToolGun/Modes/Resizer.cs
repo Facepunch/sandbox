@@ -1,10 +1,12 @@
-﻿
+﻿﻿
 [Icon( "🍄" )]
 [ClassName( "resizer" )]
 [Group( "Tools" )]
 public class Resizer : ToolMode
 {
-	public override ToolHint Hint => new( "#tool.hint.resizer.description", "#tool.hint.resizer.grow", "#tool.hint.resizer.shrink" );
+	public override string Description => "#tool.hint.resizer.description";
+	public override string PrimaryAction => "#tool.hint.resizer.grow";
+	public override string SecondaryAction => "#tool.hint.resizer.shrink";
 
 	TimeSince timeSinceAction = 0;
 

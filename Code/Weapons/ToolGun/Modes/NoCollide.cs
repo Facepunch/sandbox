@@ -1,18 +1,12 @@
-﻿
+﻿﻿
 [Icon( "⛔" )]
 [Title( "No Collide" )]
 [ClassName( "nocollide" )]
 [Group( "Tools" )]
 public class NoCollide : BaseConstraintToolMode
 {
-	public override ToolHint Hint
-	{
-		get
-		{
-			if ( Stage == 1 ) return new ToolHint( "#tool.hint.nocollide.stage1", "#tool.hint.nocollide.finish" );
-			return new ToolHint( "#tool.hint.nocollide.stage0", "#tool.hint.nocollide.source" );
-		}
-	}
+	public override string Description => Stage == 1 ? "#tool.hint.nocollide.stage1" : "#tool.hint.nocollide.stage0";
+	public override string PrimaryAction => Stage == 1 ? "#tool.hint.nocollide.finish" : "#tool.hint.nocollide.source";
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{

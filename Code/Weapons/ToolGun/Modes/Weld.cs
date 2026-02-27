@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 [Icon( "🥽" )]
 [ClassName( "weld" )]
 [Group( "Constraints" )]
@@ -10,14 +10,9 @@ public class Weld : BaseConstraintToolMode
 	[Property, Sync]
 	public bool Rigid { get; set; } = false;
 
-	public override ToolHint Hint
-	{
-		get
-		{
-			if ( Stage == 1 ) return new ToolHint( "#tool.hint.weld.stage1", "#tool.hint.weld.finish", ReloadAction: "#tool.hint.weld.remove" );
-			return new ToolHint( "#tool.hint.weld.stage0", "#tool.hint.weld.source", ReloadAction: "#tool.hint.weld.remove" );
-		}
-	}
+	public override string Description => Stage == 1 ? "#tool.hint.weld.stage1" : "#tool.hint.weld.stage0";
+	public override string PrimaryAction => Stage == 1 ? "#tool.hint.weld.finish" : "#tool.hint.weld.source";
+	public override string ReloadAction => "#tool.hint.weld.remove";
 
 	public override void OnControl()
 	{
