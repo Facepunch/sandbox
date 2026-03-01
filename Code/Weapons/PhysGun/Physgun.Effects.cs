@@ -311,7 +311,7 @@ public partial class Physgun : ScreenWeapon
 		var so = renderer.SceneObject;
 		so.Attributes.Set( "GraphData", _graphTexture );
 
-		so.Attributes.Set( "Grid", new Vector4( 8f, 6f, 0.3f, 0f ) );
+		so.Attributes.Set( "Grid", new Vector4( 16f, 16f, 0.1f, 1.0f ) );
 		so.Attributes.Set( "GraphInfo", new Vector4( GraphSamples, 0f, 0f, 0f ) );
 		so.Attributes.Set( "Ch1Color", new Vector4( 0f, 1f, 1f, 1f ) );
 		so.Attributes.Set( "Ch2Color", new Vector4( 1f, 1f, 0f, 1f ) );

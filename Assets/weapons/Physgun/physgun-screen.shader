@@ -42,7 +42,7 @@ PS
 	Texture2D g_tSelfIllumMask < Attribute( "Emissive" ); >;
 	Texture2D g_tGraphData < Attribute( "GraphData" ); >;
 
-	float4 g_vGrid < Attribute( "Grid" ); Default4( 8, 6, 0.3, 0 ); >;
+	float4 g_vGrid < Attribute( "Grid" ); Default4( 8, 5, 0.1, 0 ); >;
 	float4 g_vGraphInfo < Attribute( "GraphInfo" ); Default4( 128, 0, 0, 0 ); >;
 
 	float4 g_vCh1Color < Attribute( "Ch1Color" ); Default4( 0, 1, 1, 1 ); >;
@@ -105,38 +105,77 @@ PS
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		Material m = Material::From( i );
-		float4 color = ShadingModelStandard::Shade( i, m );
-		color.rgb *= 0.05;
 
 		float2 uv = i.vTextureCoords.xy;
 		float sampleCount = g_vGraphInfo.x;
+		float3 lcd = float3( 0, 0, 0 );
 
-				// Dot grid overlay
+		// Dot grid overlay
 		float gridVal = DrawGrid( uv, g_vGrid.x, g_vGrid.y, g_vGrid.z );
-		color.rgb += float3( gridVal * 0.05, gridVal * 0.05, gridVal * 0.05 );
-
-		// LCD pixel grid
-		float2 lcdGrid = float2( 4, 1 ) * 16;
-		float2 pixUv = uv + ( 0.5 / lcdGrid );
-		float2 pxMod = 1 - distance( fmod( pixUv * lcdGrid + 0.5, 1 ), 0.5 );
+		lcd += float3( gridVal * 0.05, gridVal * 0.05, gridVal * 0.05 );
 
 		// Plot channels
 		float ch1 = DrawChannel( uv, 0, g_vBand1.x, g_vBand1.y, sampleCount );
-		color.rgb += g_vCh1Color.rgb * g_vCh1Color.a * ch1;
+		lcd += g_vCh1Color.rgb * g_vCh1Color.a * ch1;
 
 		float ch2 = DrawChannel( uv, 1, g_vBand2.x, g_vBand2.y, sampleCount );
-		color.rgb += g_vCh2Color.rgb * g_vCh2Color.a * ch2;
+		lcd += g_vCh2Color.rgb * g_vCh2Color.a * ch2;
 
 		float ch3 = DrawChannel( uv, 2, g_vBand3.x, g_vBand3.y, sampleCount );
-		color.rgb += g_vCh3Color.rgb * g_vCh3Color.a * ch3;
+		lcd += g_vCh3Color.rgb * g_vCh3Color.a * ch3;
 
 		// Painted overlay from render target
 		float3 overlay = g_tSelfIllumMask.SampleLevel( g_sPointClamp, uv, 0 ).rgb;
-		color.rgb += overlay * 1.0;
-		
-		// LCD round pixel
-		color.rgb *= saturate( pxMod.x - 0.01 );
+		lcd += overlay * 1.0;
 
-		return color;
+		// Save pre-LCD color for distance blending
+		float3 rawLcd = lcd;
+
+		float2 lcdRes = float2( 64, 48 );
+		float2 cellUv = frac( uv * lcdRes );
+
+		// Each pixel cell has 3 vertical RGB sub-pixel columns
+		float subX = cellUv.x * 3.0;
+		float subLocal = frac( subX );
+		float subIdx = floor( subX );
+
+		// Rounded shape with visible gaps between columns and rows
+		float subMask = smoothstep( 0.0, 0.2, subLocal ) * smoothstep( 1.0, 0.8, subLocal );
+		float rowMask = smoothstep( 0.0, 0.15, cellUv.y ) * smoothstep( 1.0, 0.85, cellUv.y );
+		float shape = subMask * rowMask;
+
+		// Tint each sub-pixel strip to its primary color, slight bleed to neighbors
+		float3 subColor;
+		subColor.r = ( subIdx == 0 ) ? 1.0 : 0.06;
+		subColor.g = ( subIdx == 1 ) ? 1.0 : 0.06;
+		subColor.b = ( subIdx == 2 ) ? 1.0 : 0.06;
+
+		// Apply LCD
+		lcd *= subColor * shape * 2.8;
+
+		// Faint backlight bleed visible in the gaps
+		lcd += 0.002;
+
+		// Fade out grid at distance
+		float2 cellScreenSize = fwidth( uv * lcdRes );
+		float lcdFade = 1.0 - saturate( max( cellScreenSize.x, cellScreenSize.y ) * 2.0 );
+		lcd = lerp( rawLcd, lcd, lcdFade );
+
+		float3 viewDir = normalize( g_vCameraPositionWs.xyz - ( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) );
+		float NdotV = saturate( dot( normalize( i.vNormalWs ), viewDir ) );
+
+		// Sharp falloff
+		float angleDim = pow( NdotV, 5.0 );
+
+		// At extreme angles, colors wash out toward a dim bluish backlight tint
+		float3 washout = float3( 0.008, 0.008, 0.012 );
+		lcd = lerp( washout, lcd, angleDim );
+
+		m.Albedo = float3( 0.01, 0.01, 0.01 );
+		m.Emission = lcd;
+		m.Roughness = 0.05;
+		m.Metalness = 0.0;
+
+		return ShadingModelStandard::Shade( i, m );
 	}
 }
