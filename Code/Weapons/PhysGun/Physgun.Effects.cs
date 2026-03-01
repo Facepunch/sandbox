@@ -141,13 +141,13 @@ public partial class Physgun : ScreenWeapon
 		}
 	}
 
-	private const int GraphSamples = 256;
+	private const int GraphSamples = 128;
 	private float[] _graph1 = new float[GraphSamples];
 	private float[] _graph2 = new float[GraphSamples];
 	private float[] _graph3 = new float[GraphSamples];
 	private int _graphCursor;
 	private float _graphTimer;
-	private const float GraphInterval = 0.01f;
+	private const float GraphInterval = 0.02f;
 
 	private float _plotValue1;
 	private float _plotValue2;
@@ -162,21 +162,26 @@ public partial class Physgun : ScreenWeapon
 
 		var w = rect.Width;
 		var h = rect.Height;
+		var padX = w * 0.05f;
+		var padY = h * 0.15f;
 
-		var rowHeight = h * 0.25f;
-		var padding = w * 0.03f;
+		var barWidthFraction = 0.55f;
+		var barHeightFraction = 0.1f;
 
-		var row1Y = rect.Top + h * 0.125f;
-		var barW = w * 0.55f;
-		var barH = h * 0.1f;
-		var barX = rect.Left + padding * 2f;
-		var barY = row1Y + (rowHeight - barH) * 0.2f;
+		var barW = w * barWidthFraction;
+		var barH = h * barHeightFraction;
+		var barX = rect.Left + padX;
+		var barY = rect.Top + padY;
+
 		var borderColor = new Color( 0.5f, 0.5f, 0.5f );
 
-		var fillWidth = (barW - w * 0.03f) * MathF.Max( _plotValue1, _plotValue2 );
+		// Fill bar
+		var fillFraction = MathF.Max( _plotValue1, _plotValue2 );
+		var normalized = ((fillFraction - 0.1f) / (0.8f - 0.1f)).Clamp( 0f, 1f );
+		var fillWidth = barW * normalized;
 		if ( fillWidth > 0f )
 		{
-			paint.DrawRect( new Rect( barX + w * 0.02f, barY + h * 0.02f, fillWidth, barH - h * 0.03f ), new Color( 1, 1, 1, 0.8f ) );
+			paint.DrawRect( new Rect( barX, barY, fillWidth, barH ), new Color( 1, 1, 1, 0.8f ) );
 		}
 
 		// Bar outline
@@ -185,29 +190,34 @@ public partial class Physgun : ScreenWeapon
 		paint.DrawLine( new Vector2( barX, barY ), new Vector2( barX, barY + barH ), 1f, borderColor );
 		paint.DrawLine( new Vector2( barX + barW, barY ), new Vector2( barX + barW, barY + barH ), 1f, borderColor );
 
-		var percentLabel = new TextRendering.Scope( "100", Color.White, h * 0.135f );
+		// Percentage label
+		var percent = (int)(normalized * 100f);
+		var percentLabel = new TextRendering.Scope( $"{percent}", Color.White, h * 0.135f );
 		percentLabel.FontName = "Consolas";
 		percentLabel.TextColor = Color.White;
 		percentLabel.FontWeight = 100;
 		percentLabel.FilterMode = FilterMode.Point;
-		paint.DrawText( percentLabel, new Rect( rect.Left + barW + padding * 4f, barY * 0.6f, w * 0.4f - padding * 2f, rowHeight ), TextFlag.LeftCenter );
+		paint.DrawText( percentLabel, new Rect( barX + barW + padX, barY, w - barW - padX * 3f, barH ), TextFlag.LeftCenter );
 
-		var row2Y = row1Y + rowHeight + h * -0.1f;
+		// Channel / voltage row
+		var rowY = barY + barH + padY;
 
 		var ch2 = new TextRendering.Scope( "Ch2", Color.White, h * 0.14f );
 		ch2.FontName = "Consolas";
 		ch2.TextColor = new Color( 0f, 1f, 0f );
 		ch2.FontWeight = 400;
 		ch2.FilterMode = FilterMode.Point;
-		paint.DrawText( ch2, new Rect( rect.Left + padding, row2Y, w * 0.45f, rowHeight ), TextFlag.LeftCenter );
+		paint.DrawText( ch2, new Rect( barX, rowY, w * 0.45f, 0 ), TextFlag.LeftCenter );
 
 		var voltage = new TextRendering.Scope( "731v", Color.White, h * 0.14f );
 		voltage.FontName = "Consolas";
 		voltage.TextColor = new Color( 0f, 1f, 0f );
 		voltage.FontWeight = 400;
 		voltage.FilterMode = FilterMode.Point;
-		paint.DrawText( voltage, new Rect( rect.Left + padding + w * 0.45f, row2Y, w * 0.45f, rowHeight ), TextFlag.LeftCenter );
+		paint.DrawText( voltage, new Rect( barX + w * 0.45f, rowY, w * 0.45f, 0 ), TextFlag.LeftCenter );
 	}
+
+	private TimeSince _lastGraphUpdate;
 
 	private void UpdateScreenGraph()
 	{
@@ -231,6 +241,11 @@ public partial class Physgun : ScreenWeapon
 			_graph3[_graphCursor % GraphSamples] = _plotValue3;
 			_graphCursor++;
 		}
+
+		if ( _lastGraphUpdate < ScreenRefreshInterval )
+			return;
+
+		_lastGraphUpdate = 0;
 
 		var count = Math.Min( _graphCursor, GraphSamples );
 		for ( var i = 0; i < GraphSamples; i++ )
