@@ -11,4 +11,11 @@ Inventory
     color: #cdf;
     gap: 4px;
     z-index: 1050;
+    transition: all 0.05s linear;
+
+    &.spawnmenu-open
+    {
+        opacity: 0.75;
+        transform: translateY( 32px );
+    }
 }

@@ -33,10 +33,18 @@
         StateHasChanged();
     }
 
+    bool IsSpawnMenuOpen()
+    {
+	    var host = Game.ActiveScene.Get<SpawnMenuHost>();
+	    return host?.Panel?.HasClass("open") ?? false;
+    }
+
     protected override void OnUpdate()
     {
         inventory = Game.ActiveScene.GetAllComponents<PlayerInventory>().Where(x => x.Network.IsOwner).FirstOrDefault();
         activeSlot = inventory?.ActiveWeapon?.InventorySlot ?? -1;
+
+        Panel.SetClass( "spawnmenu-open", IsSpawnMenuOpen() );
     }
 
     public void HandleInput()
