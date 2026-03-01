@@ -7,6 +7,7 @@ public partial class ScreenWeapon : BaseCarryable
 	private float _coilSpin;
 	private float _joystickX;
 	private float _joystickY;
+	private TimeSince _lastScreenUpdate;
 
 	/// <summary>
 	/// Override to match a different model's screen material.
@@ -19,6 +20,11 @@ public partial class ScreenWeapon : BaseCarryable
 	protected virtual string ScreenMaterialPath => "weapons/toolgun/toolgun-screen.vmat";
 
 	protected virtual Vector2Int ScreenTextureSize => new( 512, 128 );
+
+	/// <summary>
+	/// Minimum time in seconds between screen redraws
+	/// </summary>
+	protected virtual float ScreenRefreshInterval => 0f;
 
 	/// <summary>
 	/// Add energy to the coil spin (e.g. on fire).
@@ -66,6 +72,11 @@ public partial class ScreenWeapon : BaseCarryable
 	/// </summary>
 	protected void UpdateViewmodelScreen()
 	{
+		if ( ScreenRefreshInterval > 0f && _lastScreenUpdate < ScreenRefreshInterval )
+			return;
+
+		_lastScreenUpdate = 0;
+
 		if ( !ViewModel.IsValid() ) return;
 
 		var modelRenderer = ViewModel.GetComponentInChildren<SkinnedModelRenderer>();
