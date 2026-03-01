@@ -7,9 +7,9 @@
         <div class="title">
             <label class="big">sandbox</label>
 
-            @if ( !string.IsNullOrEmpty( MapTitle ) )
+            @if ( !string.IsNullOrEmpty( _mapTitle ) )
             {
-                <label class="small">Playing on @(MapTitle)</label>
+                <label class="small">Playing on @(_mapTitle)</label>
             }
         </div>
 
@@ -58,9 +58,7 @@
 
 @code
 {
-    bool IsVisible => HasClass( "visible" );
-
-    string MapTitle = null;
+    string _mapTitle = null;
 
     protected override void OnTreeFirstBuilt()
     {
@@ -75,7 +73,7 @@
         var pkg = await Package.FetchAsync( ident, false );
         if ( pkg is not null )
         {
-            MapTitle = pkg.Title;
+            _mapTitle = pkg.Title;
         }
     }
 
@@ -84,20 +82,16 @@
         SandboxVoice.Mute( steamId );
     }
 
-	string GetTime( Connection c )
-	{
-		TimeSpan time = DateTime.UtcNow - c.ConnectionTime;
+    protected override void OnUpdate()
+    {
+	    var host = Game.ActiveScene.Get<SpawnMenuHost>();
+	    if ( host?.Panel?.HasClass( "open" ) ?? false )
+	    {
+		    Input.Clear( "Score" );
+	    }
 
-		if ( time.TotalMinutes < 60 )
-			return time.ToString( "mm\\m\\ s\\s" );
-
-		return time.ToString( "hh\\h\\ \\m\\m" );
-	}
-
-	protected override void OnUpdate()
-	{
-		SetClass( "visible", Input.Down( "Score" ) );
-	}
+	    SetClass( "visible", Input.Down( "Score" ) );
+    }
 
     /// <summary>
     /// update every second
