@@ -9,9 +9,14 @@ public partial class Physgun : ScreenWeapon
 	[Property] public GameObject UnFreezeEffectPrefab { get; set; }
 	[Property] public GameObject GrabEffectPrefab { get; set; }
 
+	[Property, Group( "Screen" )] public float PowerMinDistance { get; set; } = 64f;
+	[Property, Group( "Screen" )] public float PowerMaxDistance { get; set; } = 512f;
+	[Property, Group( "Screen" )] public float PowerMinFraction { get; set; } = 0.5f;
+	[Property, Group( "Screen" )] public float PowerMaxFraction { get; set; } = 1f;
+
 	protected override string ScreenMaterialName => "v_physgun_display";
 	protected override string ScreenMaterialPath => "weapons/physgun/physgun-screen.vmat";
-	protected override float ScreenRefreshInterval => 0.05f;
+	protected override float ScreenRefreshInterval => 0.1f;
 	protected override Vector2Int ScreenTextureSize => new Vector2Int( 80, 80 );
 
 	Vector3.SpringDamped middleSpring = new Vector3.SpringDamped( 0, 0 );
@@ -217,6 +222,8 @@ public partial class Physgun : ScreenWeapon
 		paint.DrawText( voltage, new Rect( barX + w * 0.45f, rowY, w * 0.45f, 0 ), TextFlag.LeftCenter );
 	}
 
+	private float _spinIntensity;
+
 	private TimeSince _lastGraphUpdate;
 
 	private void UpdateScreenGraph()
@@ -225,9 +232,30 @@ public partial class Physgun : ScreenWeapon
 		var active2 = Input.Down( "attack2" ) && !_preventReselect || _state.Pulling;
 		var active3 = _isSpinning;
 
-		var target1 = active1 ? 0.8f + Random.Shared.Float( -0.05f, 0.05f ) : 0.1f + Random.Shared.Float( -0.02f, 0.02f );
+		var distancePower = 1f;
+		if ( active1 )
+		{
+			var range = PowerMaxDistance - PowerMinDistance;
+			var fraction = PowerMaxFraction - PowerMinFraction;
+			distancePower = ((_state.GrabDistance - PowerMinDistance) / range * fraction + PowerMinFraction).Clamp( PowerMinFraction, PowerMaxFraction );
+		}
+
+		// Track rotation intensity from analog look input
+		if ( active3 )
+		{
+			var look = Input.AnalogLook;
+			var rotationMagnitude = MathF.Sqrt( look.pitch * look.pitch + look.yaw * look.yaw + look.roll * look.roll );
+			var rotationPower = (rotationMagnitude / 5f).Clamp( 0f, 1f );
+			_spinIntensity = _spinIntensity.LerpTo( 0.2f + rotationPower * 0.6f, Time.Delta * 15f );
+		}
+		else
+		{
+			_spinIntensity = _spinIntensity.LerpTo( 0f, Time.Delta * 10f );
+		}
+
+		var target1 = active1 ? (0.8f * distancePower) + Random.Shared.Float( -0.05f, 0.05f ) : 0.1f + Random.Shared.Float( -0.02f, 0.02f );
 		var target2 = active2 ? 0.8f + Random.Shared.Float( -0.05f, 0.05f ) : 0.1f + Random.Shared.Float( -0.02f, 0.02f );
-		var target3 = active3 ? 0.8f + Random.Shared.Float( -0.3f, 0.3f ) : 0.1f + Random.Shared.Float( -0.02f, 0.02f );
+		var target3 = active3 ? _spinIntensity + Random.Shared.Float( -0.03f, 0.03f ) : 0.1f + Random.Shared.Float( -0.02f, 0.02f );
 		_plotValue1 = _plotValue1.LerpTo( target1, Time.Delta * 10f );
 		_plotValue2 = _plotValue2.LerpTo( target2, Time.Delta * 10f );
 		_plotValue3 = _plotValue3.LerpTo( target3, Time.Delta * 10f );
