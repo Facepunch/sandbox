@@ -1,12 +1,19 @@
 ﻿using Sandbox.Physics;
+using Sandbox.Rendering;
 
-public partial class Physgun : BaseCarryable
+public partial class Physgun
 {
 	[Property, RequireComponent] public HighlightOutline BeamHighlight { get; set; }
 
 	[Property, Group( "Sound" )] SoundEvent ReleasedSound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent ButtonInSound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent ButtonOutSound { get; set; }
+
+	protected override string ScreenMaterialName => "v_physgun_display";
+	protected override string ScreenMaterialPath => "weapons/physgun/physgun-screen.vmat";
+
+	protected override Vector2Int ScreenTextureSize => new Vector2Int( 80, 80 );
+
 
 	public struct GrabState
 	{
@@ -41,8 +48,7 @@ public partial class Physgun : BaseCarryable
 		public readonly Rigidbody Body => GameObject?.GetComponent<Rigidbody>();
 	}
 
-	[Sync]
-	public GrabState _state { get; set; } = default;
+	[Sync] public GrabState _state { get; set; } = default;
 
 	public GrabState _stateHovered { get; set; } = default;
 
@@ -93,9 +99,149 @@ public partial class Physgun : BaseCarryable
 		}
 	}
 
+	private const int GraphSamples = 256;
+	private float[] _graph1 = new float[GraphSamples];
+	private float[] _graph2 = new float[GraphSamples];
+	private float[] _graph3 = new float[GraphSamples];
+	private int _graphCursor;
+	private float _graphTimer;
+	private const float GraphInterval = 0.01f;
+
+	private float _plotValue1;
+	private float _plotValue2;
+	private float _plotValue3;
+
+	private Texture _graphTexture;
+	private byte[] _graphPixels = new byte[GraphSamples * 4]; // RGBA8
+
+	protected override void DrawScreenContent( Rect rect, HudPainter paint )
+	{
+		paint.SetBlendMode( BlendMode.Lighten );
+
+		var w = rect.Width;
+		var h = rect.Height;
+
+		var rowHeight = h * 0.25f;
+		var padding = w * 0.03f;
+
+		var row1Y = rect.Top + h * 0.125f;
+		var barW = w * 0.55f;
+		var barH = h * 0.1f;
+		var barX = rect.Left + padding * 2f;
+		var barY = row1Y + (rowHeight - barH) * 0.2f;
+		var borderColor = new Color( 0.5f, 0.5f, 0.5f );
+
+		var fillWidth = (barW - w * 0.03f) * MathF.Max( _plotValue1, _plotValue2 );
+		if ( fillWidth > 0f )
+		{
+			paint.DrawRect( new Rect( barX + w * 0.02f, barY + h * 0.02f, fillWidth, barH - h * 0.03f ), new Color( 1, 1, 1, 0.8f ) );
+		}
+
+		// Bar outline
+		paint.DrawLine( new Vector2( barX, barY ), new Vector2( barX + barW, barY ), 1f, borderColor );
+		paint.DrawLine( new Vector2( barX, barY + barH ), new Vector2( barX + barW, barY + barH ), 1f, borderColor );
+		paint.DrawLine( new Vector2( barX, barY ), new Vector2( barX, barY + barH ), 1f, borderColor );
+		paint.DrawLine( new Vector2( barX + barW, barY ), new Vector2( barX + barW, barY + barH ), 1f, borderColor );
+
+		var percentLabel = new TextRendering.Scope( "100", Color.White, h * 0.135f );
+		percentLabel.FontName = "Consolas";
+		percentLabel.TextColor = Color.White;
+		percentLabel.FontWeight = 100;
+		percentLabel.FilterMode = FilterMode.Point;
+		paint.DrawText( percentLabel, new Rect( rect.Left + barW + padding * 4f, barY * 0.6f, w * 0.4f - padding * 2f, rowHeight ), TextFlag.LeftCenter );
+
+		var row2Y = row1Y + rowHeight + h * -0.1f;
+
+		var ch2 = new TextRendering.Scope( "Ch2", Color.White, h * 0.14f );
+		ch2.FontName = "Consolas";
+		ch2.TextColor = new Color( 0f, 1f, 0f );
+		ch2.FontWeight = 400;
+		ch2.FilterMode = FilterMode.Point;
+		paint.DrawText( ch2, new Rect( rect.Left + padding, row2Y, w * 0.45f, rowHeight ), TextFlag.LeftCenter );
+
+		var voltage = new TextRendering.Scope( "731v", Color.White, h * 0.14f );
+		voltage.FontName = "Consolas";
+		voltage.TextColor = new Color( 0f, 1f, 0f );
+		voltage.FontWeight = 400;
+		voltage.FilterMode = FilterMode.Point;
+		paint.DrawText( voltage, new Rect( rect.Left + padding + w * 0.45f, row2Y, w * 0.45f, rowHeight ), TextFlag.LeftCenter );
+	}
+
+	private void UpdateScreenGraph()
+	{
+		var active1 = _state.Active && !_state.Pulling;
+		var active2 = Input.Down( "attack2" ) && !_preventReselect || _state.Pulling;
+		var active3 = _isSpinning;
+
+		var target1 = active1 ? 0.8f + Random.Shared.Float( -0.05f, 0.05f ) : 0.1f + Random.Shared.Float( -0.02f, 0.02f );
+		var target2 = active2 ? 0.8f + Random.Shared.Float( -0.05f, 0.05f ) : 0.1f + Random.Shared.Float( -0.02f, 0.02f );
+		var target3 = active3 ? 0.8f + Random.Shared.Float( -0.3f, 0.3f ) : 0.1f + Random.Shared.Float( -0.02f, 0.02f );
+		_plotValue1 = _plotValue1.LerpTo( target1, Time.Delta * 10f );
+		_plotValue2 = _plotValue2.LerpTo( target2, Time.Delta * 10f );
+		_plotValue3 = _plotValue3.LerpTo( target3, Time.Delta * 10f );
+
+		_graphTimer += Time.Delta;
+		while ( _graphTimer >= GraphInterval )
+		{
+			_graphTimer -= GraphInterval;
+			_graph1[_graphCursor % GraphSamples] = _plotValue1;
+			_graph2[_graphCursor % GraphSamples] = _plotValue2;
+			_graph3[_graphCursor % GraphSamples] = _plotValue3;
+			_graphCursor++;
+		}
+
+		var count = Math.Min( _graphCursor, GraphSamples );
+		for ( var i = 0; i < GraphSamples; i++ )
+		{
+			float r, g, b;
+			if ( i < count )
+			{
+				var idx = (_graphCursor - 1 - i + GraphSamples) % GraphSamples;
+				r = _graph1[idx];
+				g = _graph2[idx];
+				b = _graph3[idx];
+			}
+			else
+			{
+				r = 0.1f;
+				g = 0.1f;
+				b = 0.1f;
+			}
+
+			var offset = i * 4;
+			_graphPixels[offset + 0] = (byte)(r * 255f);
+			_graphPixels[offset + 1] = (byte)(g * 255f);
+			_graphPixels[offset + 2] = (byte)(b * 255f);
+			_graphPixels[offset + 3] = 255;
+		}
+
+		_graphTexture ??= Texture.Create( GraphSamples, 1 ).WithDynamicUsage().Finish();
+		_graphTexture.Update( _graphPixels );
+
+		if ( !ViewModel.IsValid() ) return;
+
+		var renderer = ViewModel.GetComponentInChildren<SkinnedModelRenderer>();
+		if ( !renderer.IsValid() ) return;
+
+		var so = renderer.SceneObject;
+		so.Attributes.Set( "GraphData", _graphTexture );
+
+		so.Attributes.Set( "Grid", new Vector4( 8f, 6f, 0.3f, 0f ) );
+		so.Attributes.Set( "GraphInfo", new Vector4( GraphSamples, 0f, 0f, 0f ) );
+		so.Attributes.Set( "Ch1Color", new Vector4( 0f, 1f, 1f, 1f ) );
+		so.Attributes.Set( "Ch2Color", new Vector4( 1f, 1f, 0f, 1f ) );
+		so.Attributes.Set( "Ch3Color", new Vector4( 1f, 0f, 0f, 0.5f ) );
+		so.Attributes.Set( "Band1", new Vector4( 0.5f, 0.3f, 0f, 0f ) );
+		so.Attributes.Set( "Band2", new Vector4( 0.48f, 0.28f, 0f, 0f ) );
+		so.Attributes.Set( "Band3", new Vector4( 0.52f, 0.32f, 0f, 0f ) );
+	}
+
 	public override void OnControl( Player player )
 	{
 		base.OnControl( player );
+
+		UpdateViewmodelScreen();
+		UpdateScreenGraph();
 
 		if ( Scene.TimeScale == 0 )
 			return;
@@ -192,7 +338,9 @@ public partial class Physgun : BaseCarryable
 
 				if ( _isSnapping )
 				{
-					var eyeRotation = _state.Pulling ? player.EyeTransform.Rotation : Rotation.FromYaw( player.Controller.EyeAngles.yaw );
+					var eyeRotation = _state.Pulling
+						? player.EyeTransform.Rotation
+						: Rotation.FromYaw( player.Controller.EyeAngles.yaw );
 
 					// convert rotation to worldspace
 					spinRotation = eyeRotation * spinRotation;
@@ -242,11 +390,7 @@ public partial class Physgun : BaseCarryable
 
 			if ( distance <= PullDistance )
 			{
-				_state = sh with
-				{
-					Active = true,
-					Pulling = true,
-				};
+				_state = sh with { Active = true, Pulling = true, };
 			}
 		}
 
@@ -340,16 +484,14 @@ public partial class Physgun : BaseCarryable
 			return;
 		}
 
-		_body ??= new PhysicsBody( Scene.PhysicsWorld )
-		{
-			BodyType = PhysicsBodyType.Keyframed,
-			AutoSleep = false
-		};
+		_body ??= new PhysicsBody( Scene.PhysicsWorld ) { BodyType = PhysicsBodyType.Keyframed, AutoSleep = false };
 
 		var eyeTransform = Owner.EyeTransform;
 		var grabDistance = ClampGrabDistance( _state.Body, _state.EndPoint, eyeTransform, _state.GrabDistance );
 		var targetPosition = eyeTransform.Position + eyeTransform.Rotation.Forward * grabDistance;
-		var targetRotation = _state.Pulling ? eyeTransform.Rotation * _state.GrabOffset : Rotation.FromYaw( Owner.Controller.EyeAngles.yaw ) * _state.GrabOffset;
+		var targetRotation = _state.Pulling
+			? eyeTransform.Rotation * _state.GrabOffset
+			: Rotation.FromYaw( Owner.Controller.EyeAngles.yaw ) * _state.GrabOffset;
 		_body.Transform = new Transform( targetPosition, targetRotation );
 
 		if ( _joint is null )
@@ -391,8 +533,8 @@ public partial class Physgun : BaseCarryable
 		state = default;
 
 		var tr = Scene.Trace.Ray( aim.Position, aim.Position + aim.Forward * 1000 )
-				.IgnoreGameObjectHierarchy( GameObject.Root )
-				.Run();
+			.IgnoreGameObjectHierarchy( GameObject.Root )
+			.Run();
 
 		state.LocalOffset = tr.EndPosition;
 		state.LocalNormal = tr.Normal;

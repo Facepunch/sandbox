@@ -1,6 +1,6 @@
 ﻿using Sandbox.Rendering;
 
-public partial class Physgun : BaseCarryable
+public partial class Physgun : ScreenWeapon
 {
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )
 	{

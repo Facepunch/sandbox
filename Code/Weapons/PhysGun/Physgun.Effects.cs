@@ -1,6 +1,6 @@
 ﻿using Sandbox.Utility;
 
-public partial class Physgun : BaseCarryable
+public partial class Physgun : ScreenWeapon
 {
 	[Property] public LineRenderer BeamRenderer { get; set; }
 	[Property] public GameObject EndPointEffectPrefab { get; set; }

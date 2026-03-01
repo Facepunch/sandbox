@@ -1,0 +1,9 @@
+// THIS FILE IS AUTO-GENERATED
+
+Layer0
+{
+	shader "weapons/physgun/physgun-screen.shader"
+
+	//---- Fog ----
+	g_bFogEnabled "1"
+}
