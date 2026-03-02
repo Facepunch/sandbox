@@ -20,7 +20,7 @@
         "__guid": "2991cab1-d97e-411c-aee6-2053c42c6516",
         "__enabled": true,
         "Flags": 0,
-        "Acceleration": 120,
+        "Acceleration": 250,
         "AllowDefaultArea": true,
         "AllowedAreas": [],
         "AutoTraverseLinks": true,

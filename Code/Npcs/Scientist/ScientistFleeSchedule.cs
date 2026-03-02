@@ -36,6 +36,9 @@ public class ScientistFleeSchedule : ScheduleBase
 		// Sprint speed scales with panic (200–350)
 		Npc.Navigation.WishSpeed = 200f + 150f * PanicLevel;
 
+		// Don't stare at the player — look where we're running
+		Npc.Animation.ClearLookTarget();
+
 		// Scream immediately — but only if not already mid-speech
 		if ( Npc.Speech.CanSpeak )
 		{
