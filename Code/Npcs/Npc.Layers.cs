@@ -27,6 +27,11 @@ public partial class Npc : Component
 	public AnimationLayer Animation { get; }
 
 	/// <summary>
+	/// Speech layer - handles talking, lipsync, etc..
+	/// </summary>
+	public SpeechLayer Speech { get; }
+
+	/// <summary>
 	/// Creates, initializes, and adds a new layer of the specified type to the collection of layers. Generally called
 	/// in the constructor of the NPC.
 	/// </summary>

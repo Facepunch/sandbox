@@ -13,6 +13,7 @@ public partial class Npc : Component
 		Senses = AddLayer<SensesLayer>();
 		Navigation = AddLayer<NavigationLayer>();
 		Animation = AddLayer<AnimationLayer>();
+		Speech = AddLayer<SpeechLayer>();
 	}
 
 	protected override void OnStart()
