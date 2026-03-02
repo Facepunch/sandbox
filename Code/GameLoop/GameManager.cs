@@ -342,8 +342,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		// Slot is occupied by something else — don't replace it
 		if ( inventory.GetSlot( slot ).IsValid() ) return;
 
-		Log.Info( $"What" );
-
 		inventory.Pickup( "weapons/spawner/spawner.prefab", slot, false );
 		var spawner = inventory.GetSlot( slot ) as SpawnerWeapon;
 		if ( !spawner.IsValid() ) return;
