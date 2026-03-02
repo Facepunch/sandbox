@@ -28,6 +28,12 @@ public class SensesLayer : BaseNpcLayer
 		}
 	}
 
+	public override string GetDebugString()
+	{
+		if ( VisibleTargets.Count == 0 && AudibleTargets.Count == 0 ) return null;
+		return $"Senses: {VisibleTargets.Count} visible, {AudibleTargets.Count} audible";
+	}
+
 	/// <summary>
 	/// Scan for objects of interest
 	/// </summary>

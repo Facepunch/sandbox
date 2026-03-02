@@ -11,6 +11,16 @@ public partial class Npc : Component
 
 		var str = $"{ActiveSchedule?.GetDebugString()}";
 
+		// Collect debug output from all layers
+		foreach ( var layer in _layers )
+		{
+			var layerDebug = layer.GetDebugString();
+			if ( !string.IsNullOrEmpty( layerDebug ) )
+			{
+				str += $"\n{layerDebug}";
+			}
+		}
+
 		var text = TextRendering.Scope.Default;
 		text.Text = str;
 		text.FontSize = 13;
@@ -19,8 +29,6 @@ public partial class Npc : Component
 		text.TextColor = Color.Yellow;
 		text.Outline = new TextRendering.Outline { Color = Color.Black, Size = 4, Enabled = true };
 		text.FilterMode = Rendering.FilterMode.Point;
-
-
 
 		DebugOverlay.ScreenText( pos, text, TextFlag.LeftBottom );
 	}

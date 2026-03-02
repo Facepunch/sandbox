@@ -41,4 +41,9 @@ public abstract class BaseNpcLayer
 	/// Reset the layer state
 	/// </summary>
 	public virtual void Reset() { }
+
+	/// <summary>
+	/// Optional debug string for the overlay. Return null to skip.
+	/// </summary>
+	public virtual string GetDebugString() => null;
 }
