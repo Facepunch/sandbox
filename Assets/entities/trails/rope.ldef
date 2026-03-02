@@ -1,0 +1,11 @@
+{
+  "Title": "Rope",
+  "Description": "It's Rope.",
+  "Material": "entities/trails/line_rope.vmat",
+  "WorldSpace": true,
+  "UnitsPerTexture": 32,
+  "Opaque": false,
+  "BlendMode": "Normal",
+  "__references": [],
+  "__version": 0
+}

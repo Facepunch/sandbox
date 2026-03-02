@@ -1,0 +1,11 @@
+{
+  "Title": "Electric Beam",
+  "Description": "It's an Electric Beam.",
+  "Material": "entities/trails/line_electricbeam.vmat",
+  "WorldSpace": true,
+  "UnitsPerTexture": 32,
+  "Opaque": false,
+  "BlendMode": "Lighten",
+  "__references": [],
+  "__version": 0
+}

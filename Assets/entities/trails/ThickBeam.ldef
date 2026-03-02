@@ -1,0 +1,11 @@
+{
+  "Title": "Thick Beam",
+  "Description": "Chunky Beam.",
+  "Material": "entities/trails/line_thickbeam.vmat",
+  "WorldSpace": true,
+  "UnitsPerTexture": 32,
+  "Opaque": false,
+  "BlendMode": "Lighten",
+  "__references": [],
+  "__version": 0
+}

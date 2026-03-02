@@ -1,0 +1,11 @@
+{
+  "Title": "Basic",
+  "Description": "Basic Line.",
+  "Material": null,
+  "WorldSpace": true,
+  "UnitsPerTexture": 32,
+  "Opaque": false,
+  "BlendMode": "Normal",
+  "__references": [],
+  "__version": 0
+}
