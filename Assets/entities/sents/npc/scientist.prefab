@@ -58,7 +58,7 @@
           "go": "20ebc983-bcde-4769-9dda-e8b4ae45a063",
           "component_type": "SkinnedModelRenderer"
         },
-        "ShowDebugOverlay": true
+        "ShowDebugOverlay": false
       },
       {
         "__type": "Sandbox.BoxCollider",
@@ -1979,7 +1979,7 @@
             ]
           },
           {
-            "__guid": "cae97bf2-c85b-4764-8f09-f1353203d6c7",
+            "__guid": "c868212d-8a9d-4fb3-be4d-e757295ce302",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - blue_shirt",
@@ -1996,7 +1996,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "1e11edf7-0cf0-4aca-aaeb-7761e20b657e",
+                "__guid": "ef9d0a59-470d-43f1-b711-c7a3d0bc80cf",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2048,7 +2048,7 @@
             "Children": []
           },
           {
-            "__guid": "57473048-c38c-45df-a45f-a0e0081bc045",
+            "__guid": "595dfb3a-acaa-4ea1-a0c9-d5108044f307",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - labcoat",
@@ -2065,7 +2065,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "42c23d37-94dd-4a31-bbe1-7e632500a6ec",
+                "__guid": "7a98f977-ec7d-40bb-b5dd-fa464a23465b",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2117,7 +2117,7 @@
             "Children": []
           },
           {
-            "__guid": "032db9c3-97c3-4c2e-9d06-85d20800aea0",
+            "__guid": "adf22e1b-6375-471d-94fd-08aa29519a2c",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - hair_baldingbrown",
@@ -2134,7 +2134,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "b527dae0-a5d0-4596-928b-fa9ad10cd31d",
+                "__guid": "b5cce703-002c-4f01-aff2-64975fa5546b",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2186,7 +2186,7 @@
             "Children": []
           },
           {
-            "__guid": "9b2c0903-5833-461d-901e-2fc606dd7b11",
+            "__guid": "d860b7c0-bce8-43ae-aaac-304553c08127",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - loose_trousers",
@@ -2203,7 +2203,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "e96dd472-33b5-45c6-9638-daf3cdb0c325",
+                "__guid": "8bdb1249-c628-4382-b364-83dbc429e0bc",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2255,7 +2255,7 @@
             "Children": []
           },
           {
-            "__guid": "12fea30c-1891-4950-9408-fc602b35f509",
+            "__guid": "51a0461b-b0c7-422e-b37a-da2e1b01d7cc",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - black_boots",
@@ -2272,7 +2272,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "1af80fe3-7af7-44ea-90d0-dbdb0b14fcd2",
+                "__guid": "0d5a2b0d-33f1-4e09-bf9f-003e2d9061ac",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2324,7 +2324,7 @@
             "Children": []
           },
           {
-            "__guid": "410ad2cc-e74f-494e-83dc-6a08a7dc3bd4",
+            "__guid": "9a835394-bacd-4952-8903-5a90195762dc",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - moustache",
@@ -2341,7 +2341,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "0f923204-d3d0-4a81-8818-1c2bb6b23040",
+                "__guid": "ea7fe346-1d89-4452-8915-26f04d4dc8c2",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2393,7 +2393,7 @@
             "Children": []
           },
           {
-            "__guid": "5e01b742-e770-40c7-88d2-4c47c33c2ed4",
+            "__guid": "18fb4146-d13b-4919-9825-01f67fa825e9",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - eyebrows_bushy",
@@ -2410,7 +2410,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "ed049111-19a2-4d88-b315-0c85483e402b",
+                "__guid": "ef2c8a89-c492-4bd5-94b0-db5755f177dd",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,

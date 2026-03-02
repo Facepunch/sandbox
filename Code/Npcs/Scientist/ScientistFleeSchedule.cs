@@ -36,9 +36,12 @@ public class ScientistFleeSchedule : ScheduleBase
 		// Sprint speed scales with panic (200–350)
 		Npc.Navigation.WishSpeed = 200f + 150f * PanicLevel;
 
-		// Scream immediately — fires as the NPC starts running, not sequentially
-		var line = PanicLines[Game.Random.Int( 0, PanicLines.Length - 1 )];
-		Npc.Speech.Say( line, 2f );
+		// Scream immediately — but only if not already mid-speech
+		if ( Npc.Speech.CanSpeak )
+		{
+			var line = PanicLines[Game.Random.Int( 0, PanicLines.Length - 1 )];
+			Npc.Speech.Say( line, 2f );
+		}
 
 		// Flee direction — away from the attacker with some randomness
 		var awayDir = (GameObject.WorldPosition - Source.WorldPosition).WithZ( 0 ).Normal;
