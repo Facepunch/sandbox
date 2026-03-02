@@ -5,9 +5,11 @@
 
     "tool.hint.weld.stage0": "Welds two objects together",
     "tool.hint.weld.stage1": "Select the second object to weld",
+    "tool.hint.weld.stage2": "Rotate the object",
     "tool.hint.weld.source": "Select source",
     "tool.hint.weld.finish": "Finish",
     "tool.hint.weld.remove": "Unweld",
+    "tool.hint.weld.confirm": "Confirm",
 
     "tool.hint.balloon.description": "Places a poppable balloon",
     "tool.hint.balloon.place_rope": "Place (rope)",
