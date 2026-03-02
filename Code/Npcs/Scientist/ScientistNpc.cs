@@ -136,16 +136,31 @@ public class ScientistNpc : Npc, Component.IDamageable
 
 		if ( Health < 1 )
 		{
-			CreateRagdoll();
+			var attackerVelocity = GetAttackerVelocity( damage.Attacker );
+			CreateRagdoll( attackerVelocity );
 			GameObject.Destroy();
 		}
+	}
+
+	/// <summary>
+	/// Resolve the attacker's current velocity from whatever movement source it has.
+	/// </summary>
+	private Vector3 GetAttackerVelocity( GameObject attacker )
+	{
+		if ( !attacker.IsValid() )
+			return Vector3.Zero;
+
+		if ( attacker.GetComponent<Rigidbody>() is { } rb )
+			return rb.Velocity;
+
+		return Vector3.Zero;
 	}
 
 	/// <summary>
 	/// Should this be a nice helper?
 	/// </summary>
 	[Rpc.Broadcast( NetFlags.HostOnly )]
-	void CreateRagdoll()
+	void CreateRagdoll( Vector3 velocity )
 	{
 		if ( !Renderer.IsValid() )
 			return;
@@ -175,5 +190,14 @@ public class ScientistNpc : Npc, Component.IDamageable
 		physics.Model = mainBody.Model;
 		physics.Renderer = mainBody;
 		physics.CopyBonesFrom( Renderer, true );
+
+		// todo: better way?
+		if ( velocity.LengthSquared > 0f )
+		{
+			foreach ( var body in physics.Bodies )
+			{
+				body.Component.Velocity = velocity;
+			}
+		}
 	}
 }
