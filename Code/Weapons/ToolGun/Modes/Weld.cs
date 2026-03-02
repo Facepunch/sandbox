@@ -1,4 +1,4 @@
-﻿﻿
+﻿
 [Icon( "🥽" )]
 [ClassName( "weld" )]
 [Group( "Constraints" )]
@@ -10,36 +10,170 @@ public class Weld : BaseConstraintToolMode
 	[Property, Sync]
 	public bool Rigid { get; set; } = false;
 
-	public override string Description => Stage == 1 ? "#tool.hint.weld.stage1" : "#tool.hint.weld.stage0";
-	public override string PrimaryAction => Stage == 1 ? "#tool.hint.weld.finish" : "#tool.hint.weld.source";
+	Rotation _easyModeRotation = Rotation.Identity;
+	Rotation _rawRotation = Rotation.Identity;
+	bool _isSnapping;
+
+	public override bool AbsorbMouseInput => EasyMode && Stage == 2;
+
+	public override string Description => Stage switch
+	{
+		2 => "#tool.hint.weld.stage2",
+		1 => "#tool.hint.weld.stage1",
+		_ => "#tool.hint.weld.stage0"
+	};
+
+	public override string PrimaryAction => Stage switch
+	{
+		2 => "#tool.hint.weld.confirm",
+		1 => "#tool.hint.weld.finish",
+		_ => "#tool.hint.weld.source"
+	};
+
 	public override string ReloadAction => "#tool.hint.weld.remove";
 
 	public override void OnControl()
 	{
+		if ( EasyMode && Stage == 2 )
+		{
+			RotateStage();
+			return;
+		}
+
+		if ( EasyMode && Stage == 1 && Input.Pressed( "attack1" ) )
+		{
+			if ( TryEnterRotateStage() )
+				return;
+		}
+
 		base.OnControl();
 
 		if ( EasyMode && Stage == 1 && IsValidState )
 		{
 			var select = TraceSelect();
-			if ( !select.IsValid() ) return;
-
-			var go = Point1.GameObject.Network.RootGameObject ?? Point1.GameObject;
-			var local = GetEasyModePlacement( Point1, select );
-
-			var builder = new LinkedGameObjectBuilder();
-			builder.AddConnected( go );
-
-			foreach ( var obj in builder.Objects )
-			{
-				var previewTransform = obj == go
-					? local
-					: local.ToWorld( go.WorldTransform.ToLocal( obj.WorldTransform ) );
-
-				DebugOverlay.GameObject( obj, transform: previewTransform, color: Color.White.WithAlpha( 0.3f ) );
-			}
+			if ( select.IsValid() )
+				DrawEasyModePreview( GetEasyModePlacement( Point1, select ) );
 		}
 	}
 
+	/// <summary>
+	/// Stage 2: mouse controls rotation, shift snaps to 15° grid, attack1 confirms, attack2 cancels.
+	/// </summary>
+	void RotateStage()
+	{
+		if ( Input.Down( "attack2" ) || !Point1.IsValid() || !Point2.IsValid() )
+		{
+			ResetRotation();
+			Stage = 0;
+			return;
+		}
+
+		UpdateRotationInput();
+
+		DrawEasyModePreview( GetRotatedPlacement( Point1, Point2, _easyModeRotation ) );
+
+		if ( Input.Pressed( "attack1" ) )
+		{
+			CreateRotatedWeld( Point1, Point2, _easyModeRotation );
+			ShootEffects( Point2 );
+			ResetRotation();
+			Stage = 0;
+		}
+	}
+
+	/// <summary>
+	/// Intercept the Stage 1 click to enter rotation stage instead of finalizing.
+	/// </summary>
+	bool TryEnterRotateStage()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() || !Point1.GameObject.IsValid() || select.GameObject == Point1.GameObject )
+			return false;
+
+		Point2 = select;
+		ResetRotation();
+		Stage = 2;
+		ShootEffects( select );
+		return true;
+	}
+
+	/// <summary>
+	/// Accumulate mouse yaw into rotation, with optional shift-to-snap.
+	/// </summary>
+	void UpdateRotationInput()
+	{
+		var isSnapping = Input.Down( "run" );
+		if ( !isSnapping && _isSnapping ) _rawRotation = _easyModeRotation;
+		_isSnapping = isSnapping;
+
+		var look = Input.AnalogLook with { pitch = 0 };
+		_rawRotation = Rotation.From( look ) * _rawRotation;
+
+		_easyModeRotation = _isSnapping
+			? _rawRotation.Angles().SnapToGrid( 15f )
+			: _rawRotation;
+	}
+
+	void ResetRotation()
+	{
+		_easyModeRotation = Rotation.Identity;
+		_rawRotation = Rotation.Identity;
+		_isSnapping = false;
+	}
+
+	/// <summary>
+	/// Draw a ghost preview of the source object and all its connected objects at the given placement.
+	/// </summary>
+	void DrawEasyModePreview( Transform placement )
+	{
+		var go = Point1.GameObject.Network.RootGameObject ?? Point1.GameObject;
+
+		var builder = new LinkedGameObjectBuilder();
+		builder.AddConnected( go );
+
+		foreach ( var obj in builder.Objects )
+		{
+			var previewTransform = obj == go
+				? placement
+				: placement.ToWorld( go.WorldTransform.ToLocal( obj.WorldTransform ) );
+
+			DebugOverlay.GameObject( obj, transform: previewTransform, color: Color.White.WithAlpha( 0.3f ) );
+		}
+	}
+
+	Transform GetRotatedPlacement( SelectionPoint a, SelectionPoint b, Rotation rotation )
+	{
+		var placement = GetEasyModePlacement( a, b );
+
+		var contactPoint = b.WorldPosition();
+		var surfaceNormal = b.WorldTransform().Rotation.Forward;
+		var axisRotation = Rotation.FromAxis( surfaceNormal, rotation.Angles().yaw );
+
+		placement.Position = contactPoint + axisRotation * (placement.Position - contactPoint);
+		placement.Rotation = axisRotation * placement.Rotation;
+
+		return placement;
+	}
+
+	[Rpc.Host( NetFlags.OwnerOnly )]
+	private void CreateRotatedWeld( SelectionPoint point1, SelectionPoint point2, Rotation rotation )
+	{
+		if ( !point1.GameObject.IsValid() || !point2.GameObject.IsValid() )
+		{
+			Log.Warning( "Tried to create invalid constraint" );
+			return;
+		}
+
+		if ( point1.GameObject == point2.GameObject )
+		{
+			Log.Warning( "Tried to create invalid constraint" );
+			return;
+		}
+
+		_easyModeRotation = rotation;
+		CreateConstraint( point1, point2 );
+		_easyModeRotation = Rotation.Identity;
+	}
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
 	{
@@ -52,7 +186,7 @@ public class Weld : BaseConstraintToolMode
 	{
 		if ( EasyMode )
 		{
-			var local = GetEasyModePlacement( point1, point2 );
+			var local = GetRotatedPlacement( point1, point2, _easyModeRotation );
 			var moving = point1.GameObject.Network.RootGameObject ?? point1.GameObject;
 			moving.WorldTransform = local;
 		}

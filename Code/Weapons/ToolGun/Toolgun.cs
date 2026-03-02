@@ -5,12 +5,12 @@ public partial class Toolgun : ScreenWeapon
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
 		base.OnCameraMove( player, ref angles );
-	}
 
-	protected override void OnAwake()
-	{
-		if ( IsProxy )
-			return;
+		var currentMode = GetCurrentMode();
+		if ( currentMode is { AbsorbMouseInput: true } )
+		{
+			angles = default;
+		}
 	}
 
 	public void CreateToolComponents()
