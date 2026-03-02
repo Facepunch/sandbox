@@ -53,7 +53,7 @@ public partial class ScreenWeapon : BaseCarryable
 	/// <summary>
 	/// Updates joystick_x and joystick_y on the viewmodel based on a per-frame look delta.
 	/// </summary>
-	protected void UpdateJoystick( Angles lookDelta )
+	public void UpdateJoystick( Angles lookDelta )
 	{
 		_joystickX = _joystickX.LerpTo( lookDelta.yaw.Clamp( -1f, 1f ), Time.Delta * 10f );
 		_joystickY = _joystickY.LerpTo( lookDelta.pitch.Clamp( -1f, 1f ), Time.Delta * 10f );
@@ -62,7 +62,7 @@ public partial class ScreenWeapon : BaseCarryable
 		WeaponModel?.Renderer?.Set( "joystick_y", _joystickY );
 	}
 
-	protected void SetIsUsingJoystick( bool isUsing )
+	public void SetIsUsingJoystick( bool isUsing )
 	{
 		WeaponModel?.Renderer?.Set( "b_joystick", isUsing );
 	}

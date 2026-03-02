@@ -34,11 +34,14 @@ public class Weld : BaseConstraintToolMode
 
 	public override void OnControl()
 	{
+		Toolgun.SetIsUsingJoystick( EasyMode && Stage == 2 );
+
 		if ( EasyMode && Stage == 2 )
 		{
 			RotateStage();
 			return;
 		}
+
 
 		if ( EasyMode && Stage == 1 && Input.Pressed( "attack1" ) )
 		{
@@ -112,6 +115,8 @@ public class Weld : BaseConstraintToolMode
 		_easyModeRotation = _isSnapping
 			? _rawRotation.Angles().SnapToGrid( 15f )
 			: _rawRotation;
+
+		Toolgun.UpdateJoystick( new Angles( look.yaw, look.pitch, 0 ) );
 	}
 
 	void ResetRotation()
