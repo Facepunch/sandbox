@@ -1,27 +1,33 @@
 namespace Sandbox.Npcs.Layers;
 
 /// <summary>
-/// Manages NPC speech state and renders speech text above their head.
+/// Manages NPC speech state, plays sound files, and renders subtitle text above their head.
 /// </summary>
 public class SpeechLayer : BaseNpcLayer
 {
 	/// <summary>
-	/// The message currently being spoken, if any.
+	/// The subtitle text currently being shown, if any.
 	/// </summary>
 	public string CurrentSpeech { get; private set; }
 
 	/// <summary>
 	/// Whether the NPC is currently speaking.
 	/// </summary>
-	public bool IsSpeaking => !string.IsNullOrEmpty( CurrentSpeech );
+	public bool IsSpeaking => CurrentSpeech is not null;
 
 	/// <summary>
 	/// Minimum seconds between speeches.
 	/// </summary>
 	public float Cooldown { get; set; } = 8f;
 
-	private TimeUntil _speechEnd;
+	/// <summary>
+	/// A generic fallback sound (e.g. a grunt or mumble) played when we're talking without a specific sound.
+	/// </summary>
+	public SoundEvent FallbackSound { get; set; }
+
+	private SoundHandle _soundHandle;
 	private TimeSince _lastSpoke;
+	private TimeUntil _subtitleEnd;
 
 	/// <summary>
 	/// Whether the cooldown has elapsed and the NPC can speak again.
@@ -29,25 +35,105 @@ public class SpeechLayer : BaseNpcLayer
 	public bool CanSpeak => _lastSpoke > Cooldown;
 
 	/// <summary>
-	/// Say something for a given duration.
+	/// Play a sound event and show its subtitle (if one exists) above the NPC.
+	/// </summary>
+	public void Say( SoundEvent sound, float duration = 0f )
+	{
+		Say( sound, null, duration );
+	}
+
+	/// <summary>
+	/// Play a sound event with an explicit subtitle override.
+	/// </summary>
+	public void Say( SoundEvent sound, string subtitle, float duration = 0f )
+	{
+		if ( sound is null ) return;
+
+		// Stop any existing speech
+		Stop();
+
+		// Resolve the next sound file from the event
+		var soundFile = Game.Random.FromList( sound.Sounds );
+;		if ( !soundFile.IsValid() ) return;
+
+		// Play using the event's volume and pitch
+		_soundHandle = Sound.PlayFile( soundFile, sound.Volume.GetValue(), sound.Pitch.GetValue() );
+
+		if ( _soundHandle.IsValid() )
+		{
+			_soundHandle.Parent = Npc.GameObject;
+		}
+
+		// Use the explicit subtitle, or fall back to the extension on the resolved sound file
+		if ( !string.IsNullOrEmpty( subtitle ) )
+		{
+			CurrentSpeech = subtitle;
+		}
+		else
+		{
+			var ext = SubtitleExtension.FindForResourceOrDefault( soundFile );
+			CurrentSpeech = ext?.Text;
+		}
+
+		_subtitleEnd = duration;
+		_lastSpoke = 0;
+	}
+
+	/// <summary>
+	/// Say a string message using the fallback sound, with the string shown as a subtitle.
 	/// </summary>
 	public void Say( string message, float duration = 3f )
 	{
 		if ( string.IsNullOrEmpty( message ) ) return;
 
-		CurrentSpeech = message;
-		_speechEnd = duration;
-		_lastSpoke = 0;
+		if ( FallbackSound is not null )
+		{
+			Say( FallbackSound, message, duration );
+		}
+		else
+		{
+			// No fallback sound — just show the subtitle for the duration
+			Stop();
+			CurrentSpeech = message;
+			_subtitleEnd = duration;
+			_lastSpoke = 0;
+		}
+	}
+
+	/// <summary>
+	/// Stop any current speech and sound.
+	/// </summary>
+	public void Stop()
+	{
+		if ( _soundHandle.IsValid() )
+		{
+			_soundHandle.Stop();
+		}
+
+		CurrentSpeech = null;
+	}
+
+	/// <summary>
+	/// Whether the sound has finished and the subtitle duration has elapsed.
+	/// </summary>
+	private bool IsFinished
+	{
+		get
+		{
+			var soundDone = !_soundHandle.IsValid() || _soundHandle.IsStopped;
+			return soundDone && _subtitleEnd;
+		}
 	}
 
 	protected override void OnUpdate()
 	{
-		if ( IsSpeaking && _speechEnd )
+		// Clear subtitle once both the sound and duration are done
+		if ( CurrentSpeech is not null && IsFinished )
 		{
 			CurrentSpeech = null;
 		}
 
-		if ( IsSpeaking )
+		if ( CurrentSpeech is not null )
 		{
 			DrawSpeech();
 		}
@@ -77,6 +163,6 @@ public class SpeechLayer : BaseNpcLayer
 
 	public override void Reset()
 	{
-		CurrentSpeech = null;
+		Stop();
 	}
 }

@@ -3,14 +3,20 @@
 namespace Sandbox.Npcs.Tasks;
 
 /// <summary>
-/// Task that triggers speech via the SpeechLayer. Waits for the speech duration before completing.
+/// Task that plays speech via the SpeechLayer. Waits for the speech to finish before completing.
+/// Accepts either a SoundEvent or a plain string (which uses the fallback sound).
 /// </summary>
 public class Say : TaskBase
 {
+	public SoundEvent Sound { get; set; }
 	public string Message { get; set; }
 	public float Duration { get; set; }
 
-	private TimeUntil _endTime;
+	public Say( SoundEvent sound, float duration = 0f )
+	{
+		Sound = sound;
+		Duration = duration;
+	}
 
 	public Say( string message, float duration = 3f )
 	{
@@ -20,14 +26,20 @@ public class Say : TaskBase
 
 	protected override void OnStart()
 	{
-		var speech = Npc.Layers.OfType<SpeechLayer>().FirstOrDefault();
-		speech?.Say( Message, Duration );
+		var speech = Npc.Speech;
 
-		_endTime = Duration;
+		if ( Sound is not null )
+		{
+			speech.Say( Sound, Duration );
+		}
+		else if ( !string.IsNullOrEmpty( Message ) )
+		{
+			speech.Say( Message, Duration );
+		}
 	}
 
 	protected override TaskStatus OnUpdate()
 	{
-		return _endTime ? TaskStatus.Success : TaskStatus.Running;
+		return Npc.Speech.IsSpeaking ? TaskStatus.Running : TaskStatus.Success;
 	}
 }
