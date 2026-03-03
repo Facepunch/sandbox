@@ -4,20 +4,10 @@ public class Mp5Weapon : BaseBulletWeapon
 {
 	[Property] public float TimeBetweenShots { get; set; } = 0.1f;
 	[Property] public float Damage { get; set; } = 12.0f;
-	[Property] public GameObject ProjectilePrefab { get; set; }
 
 	protected TimeSince TimeSinceShoot = 0;
 
 	protected override float GetPrimaryFireRate() => TimeBetweenShots;
-
-	public override bool CanPrimaryAttack()
-	{
-		if ( !HasAmmo() ) return false;
-		if ( IsReloading() ) return false;
-		if ( TimeUntilNextShotAllowed > 0 ) return false;
-
-		return true;
-	}
 
 	public override void PrimaryAttack()
 	{
@@ -55,16 +45,13 @@ public class Mp5Weapon : BaseBulletWeapon
 		TraceAttack( TraceAttackInfo.From( tr, Damage ) );
 		TimeSinceShoot = 0;
 
-		if ( !Owner.IsValid() )
-		{
-			return;
-		}
+		if ( !Owner.IsValid() ) return;
 
 		Owner.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.1f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
 
 		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
 		{
-			new Sandbox.CameraNoise.Recoil( 1.0f, 1 );
+			_ = new Sandbox.CameraNoise.Recoil( 1.0f, 1 );
 		}
 	}
 

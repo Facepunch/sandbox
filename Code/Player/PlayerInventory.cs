@@ -317,14 +317,6 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		return Weapons.OrderByDescending( x => x.Value ).FirstOrDefault();
 	}
 
-	public BaseCarryable GetBestWeaponHolstered()
-	{
-		return Weapons.Where( x => !x.ShouldAvoid )
-			.OrderByDescending( x => x.Value )
-			.Where( x => x != ActiveWeapon )
-			.FirstOrDefault();
-	}
-
 	public void SwitchWeapon( BaseCarryable weapon, bool allowHolster = false )
 	{
 		if ( !Networking.IsHost )
@@ -404,35 +396,22 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 	void IPlayerEvent.OnDied( IPlayerEvent.DiedParams args )
 	{
-		if ( ActiveWeapon.IsValid() )
-			ActiveWeapon.OnPlayerDeath( args );
-	}
-
-	void IPlayerEvent.OnPickup( BaseCarryable item )
-	{
-		if ( item is BaseWeapon weapon && weapon.IsSelfAmmo )
-		{
-			Player.ShowNotice( $"{weapon.AmmoResource.AmmoType} x {weapon.StartingAmmo}" );
-		}
-		else
-		{
-			Player.ShowNotice( item.DisplayName );
-		}
+		if ( !ActiveWeapon.IsValid() ) return;
+		
+		ActiveWeapon.OnPlayerDeath( args );
 	}
 
 	void IPlayerEvent.OnCameraMove( ref Angles angles )
 	{
-		if ( ActiveWeapon.IsValid() )
-		{
-			ActiveWeapon.OnCameraMove( Player, ref angles );
-		}
+		if ( !ActiveWeapon.IsValid() ) return;
+		
+		ActiveWeapon.OnCameraMove( Player, ref angles );
 	}
 
 	void IPlayerEvent.OnCameraPostSetup( Sandbox.CameraComponent camera )
 	{
-		if ( ActiveWeapon.IsValid() )
-		{
-			ActiveWeapon.OnCameraSetup( Player, camera );
-		}
+		if ( !ActiveWeapon.IsValid() ) return;
+
+		ActiveWeapon.OnCameraSetup( Player, camera );
 	}
 }

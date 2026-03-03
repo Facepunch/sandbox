@@ -6,16 +6,6 @@
 	{
 		base.OnUpdate();
 
-		/*
-		var text = TextRendering.Scope.Default;
-		text.Text = "Spawning Mate";
-		text.FontName = "Poppins";
-		text.FontWeight = 600;
-		text.FontSize = 16;
-
-		DebugOverlay.Text( WorldPosition + Vector3.Up * 30, text );
-		*/
-
 		if ( SpawnBounds.HasValue )
 		{
 			for ( int i = 0; i < 8; i++ )

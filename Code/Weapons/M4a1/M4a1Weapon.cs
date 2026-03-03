@@ -9,15 +9,6 @@ public class M4a1Weapon : BaseBulletWeapon
 
 	protected override float GetPrimaryFireRate() => TimeBetweenShots;
 
-	public override bool CanPrimaryAttack()
-	{
-		if ( !HasAmmo() ) return false;
-		if ( IsReloading() ) return false;
-		if ( TimeUntilNextShotAllowed > 0 ) return false;
-
-		return true;
-	}
-
 	public override void PrimaryAttack()
 	{
 		ShootBullet();

@@ -7,7 +7,7 @@ using Sandbox.UI.Inventory;
 /// </summary>
 public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents
 {
-	public static Player FindLocalPlayer() => Game.ActiveScene.GetAllComponents<Player>().Where( x => x.IsLocalPlayer ).FirstOrDefault();
+	public static Player FindLocalPlayer() => Game.ActiveScene.GetAll<Player>().FirstOrDefault( x => x.IsLocalPlayer );
 	public static T FindLocalWeapon<T>() where T : BaseCarryable => FindLocalPlayer()?.GetComponentInChildren<T>( true );
 	public static T FindLocalToolMode<T>() where T : ToolMode => FindLocalPlayer()?.GetComponentInChildren<T>( true );
 
@@ -29,6 +29,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			return Controller.EyeTransform;
 		}
 	}
+
 	public bool IsLocalPlayer => !IsProxy;
 	public Guid PlayerId => PlayerData.PlayerId;
 	public long SteamId => PlayerData.SteamId;
@@ -213,7 +214,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		OnControl();
 	}
 
-	RealTimeSince timeSinceJumpPressed;
+	private RealTimeSince _timeSinceJumpPressed;
 
 	void OnControl()
 	{
@@ -225,7 +226,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 		if ( Input.Pressed( "jump" ) )
 		{
-			if ( timeSinceJumpPressed < 0.3f )
+			if ( _timeSinceJumpPressed < 0.3f )
 			{
 				if ( GetComponent<NoclipMoveMode>( true ) is { } noclip )
 				{
@@ -233,7 +234,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 				}
 			}
 
-			timeSinceJumpPressed = 0;
+			_timeSinceJumpPressed = 0;
 		}
 
 		if ( Input.Pressed( "undo" ) )
@@ -397,20 +398,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		new Punch( new Vector3( 0.3f * distance, Random.Shared.Float( -1, 1 ), Random.Shared.Float( -1, 1 ) ), 1.0f, 1.5f, 0.7f );
 	}
 
-	public void ShowNotice( string message )
-	{
-		NotifyNotice( message );
-	}
-
-	[Rpc.Owner]
-	public void NotifyNotice( string message )
-	{
-		if ( !IsLocalPlayer ) return;
-
-		Log.Info( $"you picked up {message}" );
-		//Scene.RunEvent<Sandbox.UI.Notices>( x => x.Display( message ) );
-	}
-
 	void PlayerController.IEvents.OnJumped()
 	{
 		IPlayerEvent.PostToGameObject( GameObject, x => x.OnJump() );
@@ -434,7 +421,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 		GetComponent<PlayerInventory>().SwitchWeapon( weapon );
 	}
-
 
 	public override void OnParentDestroy()
 	{

@@ -5,33 +5,16 @@ public sealed class PlayerDamageIndicators : Component, IPlayerEvent
 	float RadialDistanceFromCenter => 128f;
 	float RadialIndicatorLifetime => 2f;
 
-	TimeSince timeSinceHurt = 10f;
 	List<(Vector3 WorldPos, TimeSince Lifetime)> radialIndicators = new();
 
 	[Property] public Texture RadialDamageIcon { get; set; }
-
-	protected override void OnDisabled()
-	{
-
-	}
-
-	protected override void OnDestroy()
-	{
-
-	}
 
 	protected override void OnPreRender()
 	{
 		if ( !Player.IsLocalPlayer ) return;
 		if ( Scene.Camera is null ) return;
 
-		UpdateVignette();
 		UpdateRadialIndicators();
-	}
-
-	void UpdateVignette()
-	{
-
 	}
 
 	void UpdateRadialIndicators()
@@ -75,11 +58,8 @@ public sealed class PlayerDamageIndicators : Component, IPlayerEvent
 
 	void IPlayerEvent.OnDamage( IPlayerEvent.DamageParams args )
 	{
-		timeSinceHurt = 0f;
-
-		if ( args.Attacker.IsValid() )
-		{
-			radialIndicators.Add( (args.Attacker.WorldPosition, 0f) );
-		}
+		if ( !args.Attacker.IsValid() ) return;
+		
+		radialIndicators.Add( (args.Attacker.WorldPosition, 0f) );
 	}
 }

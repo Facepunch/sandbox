@@ -19,14 +19,6 @@ public sealed partial class Player
 		{
 			count = resource.MaxAmount - GetAmmoCount( resource );
 		}
-
-		if ( count <= 0 )
-			return;
-
-		var amountGained = AddAmmoCount( resource, count );
-
-		if ( notice && amountGained > 0 )
-			ShowNotice( $"{resource.AmmoType} x {amountGained}" );
 	}
 
 	public int SetAmmoCount( AmmoResource resource, int count )

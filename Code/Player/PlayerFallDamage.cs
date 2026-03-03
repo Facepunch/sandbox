@@ -25,8 +25,6 @@ public class PlayerFallDamage : Component, IPlayerEvent
 	/// </summary>
 	[Property] public SoundEvent FallSound { get; set; }
 
-	int landCount = 0;
-
 	[Rpc.Owner]
 	private void PlayFallSound()
 	{
@@ -35,11 +33,6 @@ public class PlayerFallDamage : Component, IPlayerEvent
 
 	void IPlayerEvent.OnLand( float distance, Vector3 velocity )
 	{
-		landCount++;
-
-		if ( landCount < 1 )
-			return;
-
 		var fallSpeed = Math.Abs( velocity.z );
 
 		if ( fallSpeed <= MaxSafeFallSpeed )
