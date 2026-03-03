@@ -1,4 +1,4 @@
-﻿﻿[Hide]
+﻿[Hide]
 [Title( "Hydraulic" )]
 [Icon( "⚙️" )]
 [ClassName( "HydraulicTool" )]
@@ -43,6 +43,27 @@ public class HydraulicTool : BaseConstraintToolMode
 
 		var len = (point1.WorldPosition() - point2.WorldPosition()).Length;
 
+		// End caps
+		var capA = new GameObject( go1, true, "hydraulic_cap_a" );
+		capA.LocalPosition = Vector3.Zero;
+		capA.WorldRotation = Rotation.LookAt( line ) * Rotation.FromPitch( -90f );
+		capA.AddComponent<ModelRenderer>().Model = Model.Load( "hydraulics/tool_hydraulic.vmdl" );
+
+		var capB = new GameObject( go2, true, "hydraulic_cap_b" );
+		capB.LocalPosition = Vector3.Zero;
+		capB.WorldRotation = Rotation.LookAt( -line ) * Rotation.FromPitch( -90f );
+		capB.AddComponent<ModelRenderer>().Model = Model.Load( "hydraulics/tool_hydraulic.vmdl" );
+
+		// Shaft, using line renderer
+		var lineRenderer = go1.AddComponent<LineRenderer>();
+		lineRenderer.Points = [go1, go2];
+		lineRenderer.Face = SceneLineObject.FaceMode.Cylinder;
+		lineRenderer.Texturing = lineRenderer.Texturing with { Material = Material.Load( "hydraulics/metal_tile_01.vmat" ), WorldSpace = true, UnitsPerTexture = 32 };
+		lineRenderer.Lighting = true;
+		lineRenderer.CastShadows = true;
+		lineRenderer.Width = 2f;
+		lineRenderer.Color = Color.White;
+
 		SliderJoint joint = default;
 
 		var jointGo = new GameObject( go1, true, "hydraulic" );
@@ -51,7 +72,6 @@ public class HydraulicTool : BaseConstraintToolMode
 		{
 			joint = jointGo.AddComponent<SliderJoint>();
 			joint.Attachment = Joint.AttachmentMode.Auto;
-			//	joint.AnchorBody = go1;
 			joint.Body = go2;
 			joint.MinLength = len;
 			joint.MaxLength = len;
@@ -68,9 +88,6 @@ public class HydraulicTool : BaseConstraintToolMode
 		entity.Joint = joint;
 
 		var capsule = jointGo.AddComponent<CapsuleCollider>();
-		var renderer = jointGo.AddComponent<SkinnedModelRenderer>();
-		renderer.Model = Model.Load( "hydraulics/hydraulics_blockout.vmdl" );
-		renderer.CreateBoneObjects = true;
 
 		go2.NetworkSpawn( true, null );
 		go1.NetworkSpawn( true, null );
@@ -84,4 +101,3 @@ public class HydraulicTool : BaseConstraintToolMode
 	}
 
 }
-
