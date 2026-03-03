@@ -224,12 +224,7 @@ public class HydraulicTool : BaseConstraintToolMode
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Hydraulic (Ball Joints)";
-		undo.Add( goA );
-		undo.Add( goB );
-		undo.Add( ballAnchor );
-		undo.Add( ballTarget );
-		undo.Add( sliderA );
-		undo.Add( sliderB );
+		undo.Add( goA, goB, ballAnchor, ballTarget, sliderA, sliderB );
 	}
 }
 
