@@ -58,7 +58,7 @@ public class HydraulicTool : BaseConstraintToolMode
 		var lineRenderer = go1.AddComponent<LineRenderer>();
 		lineRenderer.Points = [go1, go2];
 		lineRenderer.Face = SceneLineObject.FaceMode.Cylinder;
-		lineRenderer.Texturing = lineRenderer.Texturing with { Material = Material.Load( "hydraulics/metal_tile_01.vmat" ), WorldSpace = true, UnitsPerTexture = 32 };
+		lineRenderer.Texturing = lineRenderer.Texturing with { Material = Material.Load( "hydraulics/metal_tile_line.vmat" ), WorldSpace = true, UnitsPerTexture = 32 };
 		lineRenderer.Lighting = true;
 		lineRenderer.CastShadows = true;
 		lineRenderer.Width = 2f;
