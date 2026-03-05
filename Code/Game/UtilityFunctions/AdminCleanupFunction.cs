@@ -30,7 +30,5 @@ public class AdminCleanupFunction : UtilityFunction
 		if ( !Rpc.Caller.IsHost ) return;
 
 		CleanupSystem.Current.Cleanup();
-		
-		Notices.SendNotice( Rpc.Caller, "cleaning_services", Color.Green, $"Cleaned up objects" );
 	}
 }

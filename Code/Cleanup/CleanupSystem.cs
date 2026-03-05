@@ -1,5 +1,10 @@
 namespace Sandbox;
 
+public interface ICleanupEvents
+{
+	public void OnCleanup( int removedObjects, int restoredObjects );
+}
+
 /// <summary>
 /// A system that tracks the baseline scene state and allows resetting the map to its original state.
 /// Removes all spawned props and restores destroyed map objects while leaving players untouched.
@@ -209,7 +214,15 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 			}
 		}
 
-		Log.Info( $"CleanupSystem: Cleanup complete. Removed {removedCount} spawned objects, restored {restoredCount} destroyed objects." );
+		BroadcastCleanup( removedCount, restoredCount );
+	}
+
+	[Rpc.Broadcast( NetFlags.HostOnly )]
+	private static void BroadcastCleanup( int removedObjects, int restoredObjects )
+	{
+		Game.ActiveScene?.RunEvent<ICleanupEvents>( x => x.OnCleanup( removedObjects, restoredObjects ) );
+
+		Log.Info( $"Cleanup complete. Removed {removedObjects} spawned objects, restored {restoredObjects} destroyed objects." );
 	}
 
 	/// <summary>

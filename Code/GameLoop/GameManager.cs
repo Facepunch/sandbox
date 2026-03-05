@@ -1,4 +1,6 @@
-public sealed partial class GameManager : GameObjectSystem<GameManager>, Component.INetworkListener, ISceneStartup, IScenePhysicsEvents
+using Sandbox.UI;
+
+public sealed partial class GameManager : GameObjectSystem<GameManager>, Component.INetworkListener, ISceneStartup, IScenePhysicsEvents, ICleanupEvents
 {
 	public GameManager( Scene scene ) : base( scene )
 	{
@@ -353,5 +355,10 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	void IScenePhysicsEvents.OnOutOfBounds( Rigidbody body )
 	{
 		body.DestroyGameObject();
+	}
+
+	public void OnCleanup( int removedObjects, int restoredObjects )
+	{
+		Notices.AddNotice( "cleaning_services", Color.Green, $"Cleanup! Removed {removedObjects} objects, restored {restoredObjects} objects." );
 	}
 }
