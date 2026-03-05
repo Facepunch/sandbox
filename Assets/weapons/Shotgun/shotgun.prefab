@@ -1,0 +1,102 @@
+{
+  "RootObject": {
+    "__guid": "a1b2c3d4-1111-4aaa-b111-111111111111",
+    "__version": 2,
+    "Flags": 0,
+    "Name": "shotgun",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
+    "Tags": "",
+    "Enabled": true,
+    "NetworkMode": 2,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
+    "Components": [
+      {
+        "__type": "ShotgunWeapon",
+        "__guid": "a1b2c3d4-2222-4aaa-b222-222222222222",
+        "__enabled": true,
+        "Flags": 0,
+        "AmmoResource": "weapons/ammo/9mm.ammo",
+        "Bullet": {
+          "Damage": 8,
+          "BulletRadius": 1,
+          "AimConeBase": "3,3",
+          "AimConeSpread": "2,2",
+          "AimConeRecovery": 0.8,
+          "RecoilPitch": "-1.5,-0.8",
+          "RecoilYaw": "-0.5,0.5",
+          "CameraRecoilStrength": 2,
+          "CameraRecoilFrequency": 1,
+          "Range": 2048
+        },
+        "CanCancelReload": true,
+        "ClipContents": 6,
+        "ClipMaxSize": 6,
+        "DeployTime": 0.5,
+        "DisplayIcon": null,
+        "DisplayName": "Shotgun",
+        "HoldType": "Shotgun",
+        "IncrementalReloading": true,
+        "IsSelfAmmo": false,
+        "ItemPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/shotgun/item_shotgun.prefab"
+        },
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "ParentBone": "hold_r",
+        "PelletCount": 8,
+        "PrimaryFireRate": 0.8,
+        "ReloadTime": 0.5,
+        "ShootSound": "weapons/shotgun/sounds/shotgun_shoot.sound",
+        "StartingAmmo": 6,
+        "UsesAmmo": true,
+        "UsesClips": true,
+        "Value": 10,
+        "ViewModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/shotgun/shotgun_vm.prefab"
+        },
+        "WorldModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/shotgun/shotgun_wm.prefab"
+        }
+      }
+    ],
+    "Children": [],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": ""
+      }
+    },
+    "__variables": []
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "__references": [],
+  "__version": 2
+}
