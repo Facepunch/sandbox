@@ -39,6 +39,14 @@ PS
 {
     #include "common/pixel.hlsl"
 
+	CreateInputTexture2D( TextureColor, Srgb, 8, "", "_color", "Material,10/10", Default4( 1.0, 1.0, 1.0, 1.0 ) );
+	CreateInputTexture2D( TextureRoughness, Linear, 8, "", "_rough", "Material,10/20", Default( 0.5 ) );
+
+	Texture2D g_tColorMap < Channel( RGBA, Box( TextureColor ), Srgb ); SrgbRead( true ); OutputFormat( BC7 ); >;
+	Texture2D g_tRoughnessMap < Channel( RGBA, Box( TextureRoughness ), Linear ); SrgbRead( false ); OutputFormat( BC7 ); >;
+
+	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
+
 	Texture2D g_tSelfIllumMask < Attribute( "Emissive" ); >;
 	Texture2D g_tGraphData < Attribute( "GraphData" ); >;
 
@@ -171,9 +179,9 @@ PS
 		float3 washout = float3( 0.008, 0.008, 0.012 );
 		lcd = lerp( washout, lcd, angleDim );
 
-		m.Albedo = float3( 0.01, 0.01, 0.01 );
+		m.Albedo = Tex2DS( g_tColorMap, g_sSampler0, i.vTextureCoords.xy ).rgb;
 		m.Emission = lcd;
-		m.Roughness = 0.05;
+		m.Roughness = Tex2DS( g_tRoughnessMap, g_sSampler0, i.vTextureCoords.xy ).r;
 		m.Metalness = 0.0;
 
 		return ShadingModelStandard::Shade( i, m );
