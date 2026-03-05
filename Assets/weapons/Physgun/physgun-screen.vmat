@@ -8,6 +8,7 @@ Layer0
 	g_bFogEnabled "1"
 
 	//---- Material ----
+	g_flEmissionPower "0.500"
 	TextureColor "materials/default/default_bloom.tga"
 	TextureRoughness "materials/default/default_bloom.tga"
 }

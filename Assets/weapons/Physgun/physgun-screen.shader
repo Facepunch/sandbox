@@ -47,6 +47,8 @@ PS
 
 	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 
+	float g_flEmissionPower < UiGroup( "Material,10/30" ); Default1( 1.0 ); Range1( 0, 10 ); >;
+
 	Texture2D g_tSelfIllumMask < Attribute( "Emissive" ); >;
 	Texture2D g_tGraphData < Attribute( "GraphData" ); >;
 
@@ -180,7 +182,7 @@ PS
 		lcd = lerp( washout, lcd, angleDim );
 
 		m.Albedo = Tex2DS( g_tColorMap, g_sSampler0, i.vTextureCoords.xy ).rgb;
-		m.Emission = lcd;
+		m.Emission = lcd * g_flEmissionPower;
 		m.Roughness = Tex2DS( g_tRoughnessMap, g_sSampler0, i.vTextureCoords.xy ).r;
 		m.Metalness = 0.0;
 
