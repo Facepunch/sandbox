@@ -254,6 +254,13 @@ public partial class Physgun : ScreenWeapon
 		}
 
 		var target1 = active1 ? (0.8f * distancePower) + Random.Shared.Float( -0.05f, 0.05f ) : 0.1f + Random.Shared.Float( -0.02f, 0.02f );
+
+		// Held object velocity increases graph power on channel 1
+		if ( active1 && _state.Body.IsValid() )
+		{
+			var velocityPower = (_state.Body.Velocity.Length / 500f).Clamp( 0f, 0.5f );
+			target1 += velocityPower;
+		}
 		var target2 = active2 ? 0.8f + Random.Shared.Float( -0.05f, 0.05f ) : 0.1f + Random.Shared.Float( -0.02f, 0.02f );
 		var target3 = active3 ? _spinIntensity + Random.Shared.Float( -0.03f, 0.03f ) : 0.1f + Random.Shared.Float( -0.02f, 0.02f );
 		_plotValue1 = _plotValue1.LerpTo( target1, Time.Delta * 10f );
