@@ -1,0 +1,139 @@
+{
+  "RootObject": {
+    "__guid": "a1b2c3d4-1111-4aaa-b111-111111111111",
+    "__version": 2,
+    "Flags": 0,
+    "Name": "sniper",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
+    "Tags": "",
+    "Enabled": true,
+    "NetworkMode": 1,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 1,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
+    "Components": [
+      {
+        "__type": "SniperWeapon",
+        "__guid": "a1b2c3d4-1112-4aaa-b112-111111111112",
+        "__enabled": true,
+        "Flags": 0,
+        "AmmoResource": "ammotype/9mm.ammo",
+        "Bullet": {
+          "Damage": 100,
+          "BulletRadius": 1,
+          "AimConeBase": "0.1,0.1",
+          "AimConeSpread": "1,1",
+          "AimConeRecovery": 0.5,
+          "RecoilPitch": "-1.5,-0.8",
+          "RecoilYaw": "-0.3,0.3",
+          "CameraRecoilStrength": 10,
+          "CameraRecoilFrequency": 0.8,
+          "Range": 8192
+        },
+        "CanCancelReload": false,
+        "ClipContents": 5,
+        "ClipMaxSize": 5,
+        "DeployTime": 0.8,
+        "DisplayIcon": {
+          "$compiler": "texture",
+          "$source": "imagefile",
+          "data": {
+            "FilePath": "ui/weapons/m700_01.png",
+            "MaxSize": 4096,
+            "ConvertHeightToNormals": false,
+            "NormalScale": 1,
+            "Rotate": 0,
+            "FlipVertical": false,
+            "FlipHorizontal": false,
+            "Cropping": {
+              "Left": 0,
+              "Top": 0,
+              "Right": 0,
+              "Bottom": 0
+            },
+            "Padding": {
+              "Left": 0,
+              "Top": 0,
+              "Right": 0,
+              "Bottom": 0
+            },
+            "InvertColor": false,
+            "Tint": "1,1,1,1",
+            "Blur": 0,
+            "Sharpen": 0,
+            "Brightness": 1,
+            "Contrast": 1,
+            "Saturation": 1,
+            "Hue": 0,
+            "Colorize": false,
+            "TargetColor": "1,1,1,1",
+            "CacheToDisk": true
+          },
+          "compiled": null
+        },
+        "DisplayName": "Sniper",
+        "HoldType": "Rifle",
+        "IncrementalReloading": false,
+        "IsSelfAmmo": false,
+        "ItemPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/sniper/item_sniper.prefab"
+        },
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "ParentBone": "hold_r",
+        "PrimaryFireRate": 1.2,
+        "ReloadTime": 2.5,
+        "ScopedFov": 20,
+        "ScopeSensitivity": 0.3,
+        "ShootSound": "weapons/sniper/sounds/m700_shot.sound",
+        "StartingAmmo": 0,
+        "UsesAmmo": true,
+        "UsesClips": true,
+        "Value": 5,
+        "ViewModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/sniper/sniper_vm.prefab"
+        },
+        "WorldModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/sniper/sniper_wm.prefab"
+        }
+      }
+    ],
+    "Children": [],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": ""
+      }
+    },
+    "__variables": []
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "__references": [],
+  "__version": 2
+}
