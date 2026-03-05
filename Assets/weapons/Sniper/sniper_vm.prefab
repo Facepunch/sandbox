@@ -30,7 +30,10 @@
         "InertiaScale": "2,2",
         "IsIncremental": false,
         "IsThrowable": false,
-        "MuzzleEffect": null,
+        "MuzzleEffect": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapon_effects/rifle_muzzleflash.prefab"
+        },
         "MuzzleTransform": {
           "_type": "gameobject",
           "go": "a1b2c3d4-2224-4aaa-b224-222222222224"
@@ -167,7 +170,7 @@
                     "Flags": 0,
                     "Name": "silencer",
                     "Position": "6.013762,-0.0000001724518,1.795536",
-                    "Rotation": "0.00000000000001687539,-0.0000001192092,-0.000000000000004440892,1",
+                    "Rotation": "0,0,0,1",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -185,7 +188,7 @@
                     "Flags": 0,
                     "Name": "slide",
                     "Position": "1.32287,0.000000210464,1.630533",
-                    "Rotation": "0.00000000000001687539,-0.0000001192092,-0.000000000000004440892,1",
+                    "Rotation": "0,0,0,1",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -1821,7 +1824,8 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.v_first_person_arms_human#122024",
+    "facepunch.rifle_muzzleflash#76090",
+    "facepunch.v_first_person_arms_human#142949",
     "facepunch.v_m700#150537"
   ],
   "__version": 2

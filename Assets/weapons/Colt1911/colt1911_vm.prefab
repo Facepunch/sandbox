@@ -30,7 +30,10 @@
         "InertiaScale": "2,2",
         "IsIncremental": false,
         "IsThrowable": false,
-        "MuzzleEffect": null,
+        "MuzzleEffect": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
+        },
         "MuzzleTransform": {
           "_type": "gameobject",
           "go": "3cc4707a-7e77-4e49-8ec7-97e86df43579"
@@ -1808,8 +1811,9 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
+    "facepunch.pistol_muzzleflash#76089",
     "facepunch.v_1911#152525",
-    "facepunch.v_first_person_arms_human#122024"
+    "facepunch.v_first_person_arms_human#142949"
   ],
   "__version": 2
 }

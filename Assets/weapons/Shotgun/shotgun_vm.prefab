@@ -32,7 +32,7 @@
         "IsThrowable": false,
         "MuzzleEffect": {
           "_type": "gameobject",
-          "prefab": "prefabs/weapon_effects/rifle_muzzleflash.prefab"
+          "prefab": "prefabs/weapon_effects/shotgun_muzzleflash.prefab"
         },
         "MuzzleTransform": {
           "_type": "gameobject",
@@ -158,7 +158,7 @@
                     "Flags": 0,
                     "Name": "forearm",
                     "Position": "9.051657,0.000002539877,2.272008",
-                    "Rotation": "0.00000000000007194245,-0.0000001192093,-0.0000000000000008881784,1",
+                    "Rotation": "0,0,0,1",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -176,7 +176,7 @@
                     "Flags": 0,
                     "Name": "cocking_lever",
                     "Position": "10.12399,0.000003429857,3.379919",
-                    "Rotation": "0.00000000000007194245,-0.0000001192093,-0.0000000000000008881784,1",
+                    "Rotation": "0,0,0,1",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -266,7 +266,7 @@
                     "Flags": 0,
                     "Name": "mode_selector",
                     "Position": "0.9871847,0.000000568554,0.7490511",
-                    "Rotation": "0.00000000000007194245,-0.0000001192093,-0.0000000000000008881784,1",
+                    "Rotation": "0,0,0,1",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -1847,8 +1847,8 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.rifle_muzzleflash#76090",
-    "facepunch.v_first_person_arms_human#122024",
+    "facepunch.shotgun_muzzleflash#76091",
+    "facepunch.v_first_person_arms_human#142949",
     "facepunch.v_spaghellim4#150536"
   ],
   "__version": 2
