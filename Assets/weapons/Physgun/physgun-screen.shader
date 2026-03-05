@@ -40,10 +40,14 @@ PS
     #include "common/pixel.hlsl"
 
 	CreateInputTexture2D( TextureColor, Srgb, 8, "", "_color", "Material,10/10", Default4( 1.0, 1.0, 1.0, 1.0 ) );
+	CreateInputTexture2D( TextureNormal, Linear, 8, "NormalizeNormals", "_normal", "Material,10/15", Default3( 0.5, 0.5, 1.0 ) );
 	CreateInputTexture2D( TextureRoughness, Linear, 8, "", "_rough", "Material,10/20", Default( 0.5 ) );
+	CreateInputTexture2D( TextureEmission, Srgb, 8, "", "_emit", "Material,10/25", Default4( 0.0, 0.0, 0.0, 0.0 ) );
 
 	Texture2D g_tColorMap < Channel( RGBA, Box( TextureColor ), Srgb ); SrgbRead( true ); OutputFormat( BC7 ); >;
+	Texture2D g_tNormalMap < Channel( RGB, Box( TextureNormal ), Linear ); SrgbRead( false ); OutputFormat( BC7 ); >;
 	Texture2D g_tRoughnessMap < Channel( RGBA, Box( TextureRoughness ), Linear ); SrgbRead( false ); OutputFormat( BC7 ); >;
+	Texture2D g_tEmissionMap < Channel( RGBA, Box( TextureEmission ), Srgb ); SrgbRead( true ); OutputFormat( BC7 ); >;
 
 	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 
@@ -182,7 +186,8 @@ PS
 		lcd = lerp( washout, lcd, angleDim );
 
 		m.Albedo = Tex2DS( g_tColorMap, g_sSampler0, i.vTextureCoords.xy ).rgb;
-		m.Emission = lcd * g_flEmissionPower;
+		m.Normal = TransformNormal( DecodeNormal( Tex2DS( g_tNormalMap, g_sSampler0, i.vTextureCoords.xy ).rgb ), i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
+		m.Emission = Tex2DS( g_tEmissionMap, g_sSampler0, i.vTextureCoords.xy ).rgb + lcd * g_flEmissionPower;
 		m.Roughness = Tex2DS( g_tRoughnessMap, g_sSampler0, i.vTextureCoords.xy ).r;
 		m.Metalness = 0.0;
 
