@@ -29,15 +29,8 @@ public class AdminCleanupFunction : UtilityFunction
 	{
 		if ( !Rpc.Caller.IsHost ) return;
 
-		var removable = Game.ActiveScene.GetAll<Ownable>();
-
-		var count = 0;
-		foreach ( var go in removable.ToArray() )
-		{
-			go.Destroy();
-			count++;
-		}
-
-		Notices.SendNotice( Rpc.Caller, "cleaning_services", Color.Green, $"Cleaned up {count} objects" );
+		CleanupSystem.Current.Cleanup();
+		
+		Notices.SendNotice( Rpc.Caller, "cleaning_services", Color.Green, $"Cleaned up objects" );
 	}
 }
