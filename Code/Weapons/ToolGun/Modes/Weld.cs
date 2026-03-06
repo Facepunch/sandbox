@@ -1,4 +1,4 @@
-﻿
+
 [Icon( "🥽" )]
 [ClassName( "weld" )]
 [Group( "Constraints" )]
@@ -13,6 +13,9 @@ public class Weld : BaseConstraintToolMode
 	Rotation _easyModeRotation = Rotation.Identity;
 	Rotation _rawRotation = Rotation.Identity;
 	bool _isSnapping;
+
+	SnapGrid _snapGrid;
+	Vector3? _lockedSnapTarget;
 
 	public override bool AbsorbMouseInput => EasyMode && Stage == 2;
 
@@ -32,16 +35,58 @@ public class Weld : BaseConstraintToolMode
 
 	public override string ReloadAction => "#tool.hint.weld.remove";
 
+	protected override void OnDisabled()
+	{
+		_snapGrid?.Destroy();
+		_snapGrid = null;
+	}
+
+	public override void OnCameraMove( Player player, ref Angles angles )
+	{
+		if ( Stage == 2 || _snapGrid == null )
+			return;
+
+		if ( Input.Pressed( "use" ) )
+			_lockedSnapTarget = _snapGrid.LastSnapWorldPos;
+
+		if ( !Input.Down( "use" ) || _lockedSnapTarget == null )
+			return;
+
+		var eyePos = player.EyeTransform.Position;
+		var desiredAngles = Rotation.LookAt( _lockedSnapTarget.Value - eyePos ).Angles();
+		var currentAngles = player.Controller.EyeAngles;
+
+		// Replace the mouse delta with the delta needed to reach the snap target
+		angles = desiredAngles - currentAngles;
+
+		if ( Input.Released( "use" ) )
+			_lockedSnapTarget = null;
+	}
+
+	/// <summary>
+	/// Overrides a SelectionPoint's local position to the nearest snap grid corner
+	/// </summary>
+	SelectionPoint SnapSelectionPoint( SelectionPoint select )
+	{
+		if ( !select.IsValid() || _snapGrid == null ) return select;
+
+		var snapPos = _snapGrid.LastSnapWorldPos;
+		var snappedLocal = select.GameObject.WorldTransform.ToLocal( new Transform( snapPos, select.LocalTransform.Rotation ) );
+		select.LocalTransform = snappedLocal;
+
+		return select;
+	}
+
 	public override void OnControl()
 	{
 		Toolgun.SetIsUsingJoystick( EasyMode && Stage == 2 );
 
 		if ( EasyMode && Stage == 2 )
 		{
+			_snapGrid?.Hide();
 			RotateStage();
 			return;
 		}
-
 
 		if ( EasyMode && Stage == 1 && Input.Pressed( "attack1" ) )
 		{
@@ -49,11 +94,30 @@ public class Weld : BaseConstraintToolMode
 				return;
 		}
 
+		// SnapGrid
+		{
+			var preview = TraceSelect();
+			if ( preview.IsValid() )
+			{
+				_snapGrid ??= new SnapGrid();
+				_snapGrid.Update( Scene.SceneWorld, preview.GameObject, preview.WorldPosition(), preview.WorldTransform().Rotation.Forward );
+			}
+			else
+			{
+				_snapGrid?.Hide();
+			}
+		}
+
+		int stageBefore = Stage;
 		base.OnControl();
+
+		if ( stageBefore == 0 && Stage == 1 && Point1.IsValid() && Input.Down( "use" ) )
+			Point1 = SnapSelectionPoint( Point1 );
 
 		if ( EasyMode && Stage == 1 && IsValidState )
 		{
 			var select = TraceSelect();
+			select = Input.Down( "use" ) ? SnapSelectionPoint( select ) : select;
 			if ( select.IsValid() )
 				DrawEasyModePreview( GetEasyModePlacement( Point1, select ) );
 		}
@@ -90,6 +154,7 @@ public class Weld : BaseConstraintToolMode
 	bool TryEnterRotateStage()
 	{
 		var select = TraceSelect();
+		select = SnapSelectionPoint( select );
 		if ( !select.IsValid() || !Point1.GameObject.IsValid() || select.GameObject == Point1.GameObject )
 			return false;
 
