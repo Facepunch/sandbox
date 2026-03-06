@@ -1,5 +1,5 @@
 ﻿[Alias( "Button" ), EditorHandle( Icon = "touch_app" )]
-public sealed class Button : Component, Component.IPressable
+public sealed class Button : BaseDooComponent, Component.IPressable
 {
 	/// <summary>
 	/// The button's behavior mode.
@@ -62,6 +62,9 @@ public sealed class Button : Component, Component.IPressable
 
 	[Sync] private TimeSince LastUse { get; set; }
 	[Sync] private bool _isOn { get; set; }
+
+	[Doo.ArgumentHint<GameObject>( "user" )]
+	[Property] public Doo OnPressed { get; set; }
 
 	/// <summary>
 	/// True if the button is currently on
@@ -207,6 +210,8 @@ public sealed class Button : Component, Component.IPressable
 	{
 		if ( IsAnimating )
 			return;
+
+		Run( OnPressed, c => c.SetArgument( "user", presser ) );
 
 		switch ( Mode )
 		{

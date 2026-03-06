@@ -1,0 +1,64 @@
+using System;
+using System.Text.Json.Serialization;
+
+public partial class Doo
+{
+	[Icon( "terminal" )]
+	public class InvokeBlock : Block
+	{
+		[JsonIgnore]
+		public override Color EditorColor => "#506C33";
+
+		[JsonInclude]
+		public InvokeType InvokeType { get; set; }
+
+		[JsonInclude]
+		[JsonIgnore( Condition = JsonIgnoreCondition.WhenWritingNull )]
+		public Component TargetComponent { get; set; }
+
+		[JsonInclude]
+		public string Member { get; set; }
+
+		[JsonInclude]
+		[JsonIgnore( Condition = JsonIgnoreCondition.WhenWritingNull )]
+		public List<Expression> Arguments { get; set; }
+
+		public override string GetNodeString()
+		{
+			if ( Member == null ) return "(empty)";
+
+			string targetName = null;
+
+			if ( InvokeType == InvokeType.Member )
+			{
+				targetName = TargetComponent?.GameObject?.Name;
+				if ( targetName == null ) return "(empty)";
+			}
+
+			var md = Doo.Helpers.FindMethod( Member );
+			if ( md == null )
+			{
+				return $"Couldn't Find {Member}";
+			}
+
+			var funcName = md.Name;
+
+			var attr = md.GetCustomAttribute<Doo.StaticMethodAttribute>();
+			if ( attr != null ) funcName = attr.Path;
+
+			var args = string.Join( ", ", Arguments?.Select( a => a.GetDebugText() ) ?? Array.Empty<string>() );
+			if ( args.Length > 1 ) args = $" {args} ";
+
+			var funcTitle = $"{funcName}({args})";
+
+			if ( targetName != null )
+			{
+				return $"[{targetName}].{funcTitle}";
+			}
+			else
+			{
+				return funcTitle;
+			}
+		}
+	}
+}
