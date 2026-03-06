@@ -48,6 +48,8 @@ public abstract partial class ToolMode : Component, IToolInfo
 		TypeDescription = TypeLibrary.GetType( GetType() );
 	}
 
+	public virtual void OnCameraMove( Player player, ref Angles angles ) { }
+
 	public virtual void OnControl() { }
 
 	public virtual void DrawScreen( Rect rect, HudPainter paint )

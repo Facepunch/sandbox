@@ -11,6 +11,8 @@ public partial class Toolgun : ScreenWeapon
 		{
 			angles = default;
 		}
+
+		currentMode?.OnCameraMove( player, ref angles );
 	}
 
 	public void CreateToolComponents()
