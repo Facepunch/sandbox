@@ -23,6 +23,7 @@
 				[
 					{
 						_class = "RenderMeshFile"
+						name = "lod0"
 						filename = "hydraulics/sandbox_hydraulics.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
@@ -37,6 +38,91 @@
 							exception_list = 
 							[
 								"hook",
+								"hook_LOD0",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "lod1"
+						filename = "hydraulics/sandbox_hydraulics.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = "base"
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"hook",
+								"hook_LOD1",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "lod2"
+						filename = "hydraulics/sandbox_hydraulics.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = "base"
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"hook",
+								"hook_LOD2",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "lod3"
+						filename = "hydraulics/sandbox_hydraulics.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = "base"
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"hook",
+								"hook_LOD3",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "lod4"
+						filename = "hydraulics/sandbox_hydraulics.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = "base"
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"hook",
+								"hook_LOD4",
 							]
 						}
 					},
@@ -180,6 +266,52 @@
 						radius = 1.2
 						point0 = [ -4.832113, -4.838517, 3.434978 ]
 						point1 = [ -4.832113, -4.838517, 2.402697 ]
+					},
+				]
+			},
+			{
+				_class = "LODGroupList"
+				children = 
+				[
+					{
+						_class = "LODGroup"
+						switch_threshold = 0.0
+						meshes = 
+						[
+							"lod0",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 5.0
+						meshes = 
+						[
+							"lod1",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 12.0
+						meshes = 
+						[
+							"lod2",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 50.0
+						meshes = 
+						[
+							"lod3",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 90.0
+						meshes = 
+						[
+							"lod4",
+						]
 					},
 				]
 			},

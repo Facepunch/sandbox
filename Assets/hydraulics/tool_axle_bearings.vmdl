@@ -29,7 +29,7 @@
 				[
 					{
 						_class = "RenderMeshFile"
-						name = "bearings"
+						name = "lod0"
 						filename = "hydraulics/sandbox_hydraulics.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
@@ -44,6 +44,91 @@
 							exception_list = 
 							[
 								"axle_bearings",
+								"axle_bearings_LOD0",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "lod1"
+						filename = "hydraulics/sandbox_hydraulics.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = "base"
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"axle_bearings",
+								"axle_bearings_LOD1",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "lod2"
+						filename = "hydraulics/sandbox_hydraulics.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = "base"
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"axle_bearings",
+								"axle_bearings_LOD2",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "lod3"
+						filename = "hydraulics/sandbox_hydraulics.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = "base"
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"axle_bearings",
+								"axle_bearings_LOD3",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "lod4"
+						filename = "hydraulics/sandbox_hydraulics.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = "base"
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"axle_bearings",
+								"axle_bearings_LOD4",
 							]
 						}
 					},
@@ -61,6 +146,52 @@
 						radius = 4.55
 						point0 = [ 0.0, 0.0, 6.386928 ]
 						point1 = [ 0.0, 0.0, 8.299925 ]
+					},
+				]
+			},
+			{
+				_class = "LODGroupList"
+				children = 
+				[
+					{
+						_class = "LODGroup"
+						switch_threshold = 0.0
+						meshes = 
+						[
+							"lod0",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 4.0
+						meshes = 
+						[
+							"lod1",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 10.0
+						meshes = 
+						[
+							"lod2",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 35.0
+						meshes = 
+						[
+							"lod3",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 90.0
+						meshes = 
+						[
+							"lod4",
+						]
 					},
 				]
 			},

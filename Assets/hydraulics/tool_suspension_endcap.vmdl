@@ -23,6 +23,7 @@
 				[
 					{
 						_class = "RenderMeshFile"
+						name = "LOD0"
 						filename = "hydraulics/sandbox_hydraulics.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
@@ -37,6 +38,49 @@
 							exception_list = 
 							[
 								"suspension_endcap",
+								"suspension_endcap_LOD0",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "LOD1"
+						filename = "hydraulics/sandbox_hydraulics.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = "base"
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"suspension_endcap",
+								"suspension_endcap_LOD1",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "LOD2"
+						filename = "hydraulics/sandbox_hydraulics.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = "base"
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"suspension_endcap",
+								"suspension_endcap_LOD2",
 							]
 						}
 					},
@@ -54,6 +98,36 @@
 						radius = 3.3
 						point0 = [ 0.0, 0.0, 1.20072 ]
 						point1 = [ 0.0, 0.0, -0.042704 ]
+					},
+				]
+			},
+			{
+				_class = "LODGroupList"
+				children = 
+				[
+					{
+						_class = "LODGroup"
+						switch_threshold = 0.0
+						meshes = 
+						[
+							"lod0",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 5.0
+						meshes = 
+						[
+							"lod1",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 20.0
+						meshes = 
+						[
+							"lod2",
+						]
 					},
 				]
 			},
