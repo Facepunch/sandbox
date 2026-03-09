@@ -7,9 +7,21 @@
 
     <div class="inner" onclick:preventDefault=@true>
         
-        <h2>@Title</h2>
+        <div class="popup-header">
+            <h2>@Title</h2>
+            @if (AllowPackages)
+            {
+                <div class="sort-buttons">
+                    @foreach ( var mode in Enum.GetValues<PackageSortMode>() )
+                    {
+                        var m = mode;
+                        <div class="sort-button @(SortMode == m ? "active" : "")" @onclick=@(() => SetSort(m))>@m.ToString()</div>
+                    }
+                </div>
+            }
+        </div>
 
-        <VirtualGrid Items=@(_allItems) ItemSize=@(new Vector2( 180, 200 )) class="grid">
+        <VirtualGrid Items=@(_filteredItems) ItemSize=@(new Vector2( 180, 200 )) class="grid">
             <Item Context="item">
                 @if (item is Resource res)
                 {
@@ -62,14 +74,28 @@
     public bool AllowPackages { get; set; }
     public Action<string> OnSelectedFile;
 
-    readonly List<object> _allItems = new();
+    PackageSortMode SortMode { get; set; } = PackageSortMode.Popular;
+
+    void SetSort( PackageSortMode mode )
+    {
+        if ( SortMode == mode ) return;
+        SortMode = mode;
+        if ( AllowPackages )
+            _ = LoadCloudPackages();
+    }
+
+    readonly List<Resource> _localResources = new();
+    readonly List<Package> _cloudPackages = new();
+    List<object> _filteredItems = new();
 
     protected override void OnParametersSet()
     {
-        _allItems.Clear();
+        _localResources.Clear();
+        _cloudPackages.Clear();
 
-        var resources = ResourceLibrary.GetAll<Resource>().Where(Filter);
-        _allItems.AddRange(resources);
+        _localResources.AddRange( ResourceLibrary.GetAll<Resource>().Where( FilterExtension ) );
+
+        RebuildFilteredItems();
 
         if ( AllowPackages )
         {
@@ -77,18 +103,31 @@
         }
     }
 
-    async Task LoadCloudPackages()
+    void RebuildFilteredItems()
     {
-        var result = await Package.FindAsync( $"type:{Extension}" );
-
-        if ( result?.Packages?.Any() ?? false )
-        {
-            _allItems.AddRange( result.Packages );
-            StateHasChanged();
-        }
+        var items = new List<object>();
+        items.AddRange( _localResources );
+        items.AddRange( _cloudPackages );
+        _filteredItems = items;
     }
 
-    bool Filter(Resource res)
+    async Task LoadCloudPackages()
+    {
+        var query = $"sort:{SortMode.ToIdentifier()} type:{Extension}";
+
+        var result = await Package.FindAsync( query );
+
+        _cloudPackages.Clear();
+        if ( result?.Packages != null )
+        {
+            _cloudPackages.AddRange( result.Packages );
+        }
+
+        RebuildFilteredItems();
+        StateHasChanged();
+    }
+
+    bool FilterExtension(Resource res)
     {
         if (res == null) return false;
         if (string.IsNullOrEmpty(Extension)) return true;
