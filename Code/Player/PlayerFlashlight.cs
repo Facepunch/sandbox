@@ -1,7 +1,3 @@
-/// <summary>
-/// A Half-Life-style flashlight that the player can toggle with the Flashlight input action (F).
-/// Add this component to a child GameObject of the player; attach a SpotLight to the same object.
-/// </summary>
 public sealed class PlayerFlashlight : Component
 {
 	[Property, RequireComponent] public SpotLight Light { get; set; }
