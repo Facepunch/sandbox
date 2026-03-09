@@ -28,6 +28,25 @@
         Style.SetBackgroundImage( Item.Preview );
     }
 
+    protected override void OnMouseDown( MousePanelEvent e )
+    {
+        if ( e.MouseButton == MouseButtons.Right )
+        {
+            var menu = MenuPanel.Open( this );
+
+            SpawnlistData.PopulateContextMenu( menu, new SpawnlistItem
+            {
+                Ident = SpawnlistItem.MakeIdent( "dupe", Item.Id.ToString(), "workshop" ),
+                Title = Item.Title,
+                Icon = Item.Preview,
+            } );
+
+            return;
+        }
+
+        base.OnMouseDown( e );
+    }
+
     protected override async void OnDragStart( DragEvent e )
     {
         var data = new DragData

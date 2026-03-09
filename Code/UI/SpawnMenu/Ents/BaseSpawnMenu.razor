@@ -22,7 +22,7 @@
 						}
 						else
 						{
-							<MenuOption Icon="@p.Icon" Value="@p" Text="@p.Name" onclick="@( () => SwitchOption( p ) )"></MenuOption>
+							<MenuOption Icon="@p.Icon" Value="@p" Text="@p.Name" onclick="@( () => OnOptionClick( p ) )" @onmousedown="@( (PanelEvent e) => OnOptionMouseDown( p, e ) )"></MenuOption>
 						}
 					}
 				</Options>

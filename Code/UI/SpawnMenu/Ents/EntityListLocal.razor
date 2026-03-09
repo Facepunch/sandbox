@@ -8,7 +8,7 @@
     <Item Context="item">
         @if (item is ScriptedEntity entry)
         {
-            <SpawnMenuIcon Type="entity" Title=@entry.Title Path=@entry.ResourcePath></SpawnMenuIcon>
+            <SpawnMenuIcon Ident=@($"entity:{entry.ResourcePath}") Title=@entry.Title></SpawnMenuIcon>
         }
     </Item>
 </VirtualGrid>

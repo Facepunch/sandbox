@@ -14,7 +14,7 @@
             <Item Context="item">
                 @if (item is Entry entry)
                 {
-                    <SpawnMenuIcon Type="prop" Path="@entry.Ident"></SpawnMenuIcon>
+                    <SpawnMenuIcon Ident=@($"prop:{entry.Ident}")></SpawnMenuIcon>
                 }
             </Item>
         </VirtualGrid>
@@ -44,6 +44,6 @@
 
     void Spawn( string ident )
     {
-        GameManager.Spawn( ident );
+        GameManager.Spawn( $"prop:{ident}" );
     }
 }

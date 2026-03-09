@@ -164,19 +164,22 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	}
 
 	[ConCmd( "spawn" )]
-	private static void SpawnCommand( string path_or_ident )
+	private static void SpawnCommand( string ident )
 	{
-		Spawn( path_or_ident );
+		Spawn( ident );
 	}
 
+	/// <summary>
+	/// Spawn from a string identifier (e.g. "prop:path", "entity:path", "dupe.local:id", "dupe.workshop:id").
+	/// </summary>
 	[Rpc.Broadcast]
-	public static async void Spawn( string path_or_ident )
+	public static async void Spawn( string ident )
 	{
 		// if we're the person calling this, then we don't do anything but add the spawn stat
 		if ( Rpc.Caller == Connection.Local )
 		{
 			var data = new Dictionary<string, object>();
-			data["ident"] = path_or_ident;
+			data["ident"] = ident;
 			Sandbox.Services.Stats.Increment( "spawn", 1, data );
 
 			Sound.Play( "sounds/ui/ui.spawn.sound" );
@@ -189,7 +192,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null ) return;
 
-		// store off their eye transform
 		var eyes = player.EyeTransform;
 
 		var trace = Game.SceneTrace.Ray( eyes.Position, eyes.Position + eyes.Forward * 200 )
@@ -208,34 +210,55 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		// TODO - can this user spawn this package?
 
-		// Try as a model
-		if ( await FindModel( path_or_ident ) is not null )
+		var (type, path, source) = SpawnlistItem.ParseIdent( ident );
+
+		ISpawner spawner = type switch
 		{
-			var spawner = new PropSpawner( path_or_ident );
-			if ( await spawner.Loading )
-			{
-				await SpawnAndUndo( spawner, spawnTransform, player );
-				return;
-			}
+			"prop" or "mount" => new PropSpawner( path ),
+			"entity" => new EntitySpawner( path ),
+			"dupe" => await FindDupe( path, source ),
+			_ => null
+		};
+
+		if ( spawner is not null && await spawner.Loading )
+		{
+			await SpawnAndUndo( spawner, spawnTransform, player );
+			return;
 		}
 
-		// Try as an entity
-		if ( await FindEntity( path_or_ident ) is not null )
-		{
-			var spawner = new EntitySpawner( path_or_ident );
-			if ( await spawner.Loading )
-			{
-				await SpawnAndUndo( spawner, spawnTransform, player );
-				return;
-			}
-		}
-
-		Log.Warning( $"Couldn't resolve '{path_or_ident}'" );
+		Log.Warning( $"Couldn't resolve '{ident}'" );
 	}
 
 	/// <summary>
-	/// Spawn using any <see cref="ISpawner"/> and register undo.
+	/// Resolve a dupe ident to a <see cref="DuplicatorSpawner"/>, this sucks a bit but okay, the DuplicatorSpawner should handle this
 	/// </summary>
+	private static async Task<DuplicatorSpawner> FindDupe( string id, string source )
+	{
+		if ( !ulong.TryParse( id, out var fileId ) )
+			return null;
+
+		if ( source == "workshop" )
+		{
+			var query = new Storage.Query { FileIds = [fileId] };
+
+			var result = await query.Run();
+			var item = result.Items?.FirstOrDefault();
+			if ( item is null ) return null;
+
+			var installed = await item.Install();
+			if ( installed is null ) return null;
+
+			var json = await installed.Files.ReadAllTextAsync( "/dupe.json" );
+			return DuplicatorSpawner.FromJson( json, item.Title );
+		}
+
+		var entry = Storage.GetAll( "dupe" ).FirstOrDefault( x => x.Id.ToString() == fileId.ToString() );
+		if ( entry is null ) return null;
+
+		var dupeJson = await entry.Files.ReadAllTextAsync( "/dupe.json" );
+		return DuplicatorSpawner.FromJson( dupeJson, entry.GetMeta<string>( "name" ) );
+	}
+
 	private static async Task SpawnAndUndo( ISpawner spawner, Transform transform, Player player )
 	{
 		var objects = await spawner.Spawn( transform, player );
@@ -250,42 +273,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 				undo.Add( go );
 			}
 		}
-	}
-
-	/// <summary>
-	/// Try to resolve a path as a model. Returns null if it's not a model.
-	/// </summary>
-	static async Task<Model> FindModel( string path )
-	{
-		if ( path.EndsWith( ".vmdl" ) )
-			return await ResourceLibrary.LoadAsync<Model>( path );
-
-		if ( Package.TryGetCached( path, out var package, false ) )
-			return await Cloud.Load<Model>( path );
-
-		package = await Package.FetchAsync( path, false );
-		if ( package is null || package.TypeName != "model" )
-			return null;
-
-		return await Cloud.Load<Model>( path );
-	}
-
-	/// <summary>
-	/// Try to resolve a path as a scripted entity. Returns null if it's not an entity.
-	/// </summary>
-	static async Task<ScriptedEntity> FindEntity( string path )
-	{
-		var se = await ResourceLibrary.LoadAsync<ScriptedEntity>( path );
-		if ( se is not null ) return se;
-
-		if ( Package.TryGetCached( path, out var package, false ) )
-			return await Cloud.Load<ScriptedEntity>( path, true );
-
-		package = await Package.FetchAsync( path, false );
-		if ( package is null || package.TypeName != "sent" )
-			return null;
-
-		return await Cloud.Load<ScriptedEntity>( path, true );
 	}
 
 	/// <summary>

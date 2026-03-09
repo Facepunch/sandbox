@@ -1,0 +1,78 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<SpawnMenuContent>
+
+    <Body>
+        <VirtualList Items=@Items ItemHeight=@(48) OnLastCell="@(() => { _ = QueryNext(); })">
+            <Item Context="context">
+                @if (context is Storage.QueryItem item)
+                {
+                    <div class="spawnlist-row" onclick=@( () => _ = OnInstall( item ) )>
+                        <div class="avatar" style="background-image: url('@item.Owner.Avatar');"></div>
+                        <div class="info">
+                            <div class="name">@item.Title</div>
+                            <div class="author">By @item.Owner.Name</div>
+                        </div>
+                        <div class="item-count">@item.KeyValues.GetValueOrDefault( "item_count", "0" ) items</div>
+                    </div>
+                }
+            </Item>
+        </VirtualList>
+    </Body>
+
+</SpawnMenuContent>
+
+@code
+{
+    public Storage.SortOrder SortOrder { get; set; } = Storage.SortOrder.RankedByVote;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Items.Clear();
+        LastResult = null;
+        await QueryNext();
+    }
+
+    List<Storage.QueryItem> Items = new();
+    Storage.QueryResult LastResult;
+
+    async Task QueryNext()
+    {
+        if ( LastResult != null )
+        {
+            if ( !LastResult.HasMoreResults() )
+                return;
+
+            LastResult = await LastResult.GetNextResults();
+            if ( LastResult.Items == null ) return;
+
+            Items.AddRange( LastResult.Items );
+            StateHasChanged();
+            return;
+        }
+
+        var query = new Storage.Query();
+        query.KeyValues["package"] = "facepunch.sandbox";
+        query.KeyValues["type"] = "spawnlist";
+        query.SortOrder = SortOrder;
+
+        LastResult = await query.Run();
+        if ( LastResult.Items == null ) return;
+
+        Items.AddRange( LastResult.Items );
+        StateHasChanged();
+    }
+
+    async Task OnInstall( Storage.QueryItem item )
+    {
+        var entry = await item.Install();
+        if ( entry is null ) return;
+
+        // After installing, the spawnlist is now local — refresh the parent
+        var page = Ancestors.OfType<SpawnlistsPage>().FirstOrDefault();
+        page?.RefreshList();
+    }
+}

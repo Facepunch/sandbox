@@ -29,7 +29,7 @@
     <Item Context="item">
         @if (item is Package entry)
         {
-            <SpawnMenuIcon Type="prop" Path="@entry.FullIdent" Title="@entry.Title"></SpawnMenuIcon>
+            <SpawnMenuIcon Ident=@($"prop:{entry.FullIdent}") Title="@entry.Title"></SpawnMenuIcon>
         }
     </Item>
 </VirtualGrid>

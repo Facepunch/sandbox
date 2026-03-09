@@ -1,0 +1,113 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+@{
+    var data = GetData();
+}
+
+<SpawnMenuContent>
+
+    <Header>
+        <SpawnMenuToolbar>
+            <Left>
+	            <h2>@data.Name</h2>
+            </Left>
+            <Right>
+                @{
+                    var workshopId = Entry.GetMeta( "_workshopId", 0u );
+                    var isPublished = workshopId > 0;
+                }
+                @if ( isPublished )
+                {
+                    <Button Icon="link" Text="Copy Url" @onclick=@( () => Clipboard.SetText( $"https://steamcommunity.com/sharedfiles/filedetails/?id={workshopId}" ) ) />
+                    <Button Icon="sync" Text="Sync" @onclick=@( () => OnPublish() ) />
+                }
+                else
+                {
+                    <Button Icon="cloud_upload" Text="Publish" @onclick=@( () => OnPublish() ) />
+                }
+                <Button Icon="delete" Text="Delete" @onclick=@( () => OnDelete() ) />
+            </Right>
+        </SpawnMenuToolbar>
+    </Header>
+
+    <Body>
+        @if ( data.Items.Count == 0 )
+        {
+            <div class="empty-state">
+                <p>This spawnlist is empty.</p>
+                <p>Right-click items in other tabs to add them here.</p>
+            </div>
+        }
+        else
+        {
+            <VirtualGrid Items=@data.Items ItemSize=@(120)>
+                <Item Context="item">
+                    @if ( item is SpawnlistItem spawnItem )
+                    {
+                        <SpawnMenuIcon Ident="@spawnItem.Ident" Title="@spawnItem.Title" Icon="@spawnItem.Icon" />
+                    }
+                </Item>
+            </VirtualGrid>
+        }
+    </Body>
+
+</SpawnMenuContent>
+
+@code
+{
+    public Storage.Entry Entry { get; set; }
+
+    SpawnlistData _cachedData;
+    RealTimeSince _lastRefresh;
+
+    SpawnlistData GetData()
+    {
+        if ( _cachedData == null )
+            RefreshCache();
+
+        return _cachedData;
+    }
+
+    public void RefreshCache()
+    {
+        _cachedData = SpawnlistData.Load( Entry );
+        _lastRefresh = 0;
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        // Periodically check for changes from other tabs
+        if ( _lastRefresh > 1f )
+        {
+            var fresh = SpawnlistData.Load( Entry );
+            if ( fresh.Items.Count != _cachedData?.Items?.Count )
+            {
+                _cachedData = fresh;
+                StateHasChanged();
+            }
+            _lastRefresh = 0;
+        }
+    }
+
+    protected override int BuildHash() => HashCode.Combine( _cachedData?.Items?.Count );
+
+    void OnPublish()
+    {
+        if ( Entry is null ) return;
+        SpawnlistData.Publish( Entry );
+    }
+
+    void OnDelete()
+    {
+        if ( Entry is null ) return;
+        SpawnlistData.Delete( Entry );
+
+        var page = Ancestors.OfType<SpawnlistsPage>().FirstOrDefault();
+        page?.RefreshList();
+    }
+}

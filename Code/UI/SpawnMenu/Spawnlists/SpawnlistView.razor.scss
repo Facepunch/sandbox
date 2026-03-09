@@ -1,0 +1,55 @@
+SpawnlistView
+{
+	.empty-state
+	{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		width: 100%;
+		opacity: 0.5;
+		gap: 4px;
+
+		p
+		{
+			font-size: 14px;
+		}
+	}
+
+	h2
+	{
+		font-size: 16px;
+		font-weight: 600;
+		margin: 0;
+	}
+}
+
+button
+{
+	color: white;
+	background-color: #08f1;
+	border-radius: 4px;
+	cursor: pointer;
+	padding: 4px 8px;
+	align-items: center;
+	font-weight: 400;
+	gap: 0.5rem;
+
+	label
+	{
+		font-size: 14px;
+	}
+
+	&:hover
+	{
+		background-color: #08f6;
+		sound-in: ui.button.over;
+	}
+
+	&.disabled
+	{
+		pointer-events: none;
+		opacity: 0.2;
+	}
+}

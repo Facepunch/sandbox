@@ -29,7 +29,7 @@
             <Item Context="item">
                 @if (item is Package entry)
                 {
-                    <SpawnMenuIcon Type="@entry.TypeName" Title=@entry.Title Path=@entry.FullIdent></SpawnMenuIcon>
+                    <SpawnMenuIcon Ident=@($"{entry.TypeName}:{entry.FullIdent}") Title=@entry.Title></SpawnMenuIcon>
                 }
             </Item>
         </VirtualGrid>
@@ -43,7 +43,7 @@
 
     void Spawn( Package package )
     {
-        GameManager.Spawn( package.FullIdent );
+        GameManager.Spawn( $"entity:{package.FullIdent}" );
     }
 
     protected override void OnParametersSet()

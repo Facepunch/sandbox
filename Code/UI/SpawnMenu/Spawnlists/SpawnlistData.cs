@@ -1,0 +1,142 @@
+namespace Sandbox;
+
+using Sandbox.UI;
+using System.Text.Json.Serialization;
+
+/// <summary>
+/// A spawnlist item -- lots of cleanup needed, docs, etc
+/// </summary>
+public class SpawnlistItem
+{
+	[JsonPropertyName( "ident" )]
+	public string Ident { get; set; }
+
+	[JsonPropertyName( "title" )]
+	public string Title { get; set; }
+
+	[JsonPropertyName( "icon" )]
+	public string Icon { get; set; }
+
+	public static string MakeIdent( string type, string path, string source = "local" )
+	{
+		// TODO: hate this special case
+		if ( type == "dupe" )
+			return $"dupe.{source}:{path}";
+
+		return $"{type}:{path}";
+	}
+
+	public static (string Type, string Path, string Source) ParseIdent( string ident )
+	{
+		if ( string.IsNullOrEmpty( ident ) )
+			return (null, null, "local");
+
+		var colonIndex = ident.IndexOf( ':' );
+		if ( colonIndex < 0 )
+			return (ident, ident, "local");
+
+		var prefix = ident[..colonIndex];
+		var data = ident[(colonIndex + 1)..];
+
+		// TODO: hate this special case
+		if ( prefix.StartsWith( "dupe." ) )
+		{
+			var source = prefix["dupe.".Length..];
+			return ("dupe", data, source);
+		}
+
+		return (prefix, data, "local");
+	}
+}
+
+public class SpawnlistData
+{
+	[JsonPropertyName( "name" )]
+	public string Name { get; set; } = "Untitled";
+
+	[JsonPropertyName( "description" )]
+	public string Description { get; set; } = "";
+
+	[JsonPropertyName( "items" )]
+	public List<SpawnlistItem> Items { get; set; } = new();
+
+	public static SpawnlistData Create( string name )
+	{
+		var data = new SpawnlistData { Name = name };
+		var entry = Storage.CreateEntry( "spawnlist" );
+		entry.SetMeta( "name", name );
+		Save( entry, data );
+		return data;
+	}
+
+	public static void Save( Storage.Entry entry, SpawnlistData data )
+	{
+		entry.Files.WriteJson( "/spawnlist.json", data );
+		entry.SetMeta( "name", data.Name );
+		entry.SetMeta( "item_count", data.Items.Count.ToString() );
+	}
+
+	public static SpawnlistData Load( Storage.Entry entry )
+	{
+		if ( !entry.Files.FileExists( "/spawnlist.json" ) )
+			return new SpawnlistData { Name = entry.GetMeta<string>( "name" ) ?? "Untitled" };
+
+		return entry.Files.ReadJson<SpawnlistData>( "/spawnlist.json" )
+			?? new SpawnlistData { Name = "Untitled" };
+	}
+
+	public static IEnumerable<Storage.Entry> GetAll()
+	{
+		return Storage.GetAll( "spawnlist" ).OrderByDescending( x => x.Created );
+	}
+
+	public static void Delete( Storage.Entry entry )
+	{
+		entry.Delete();
+	}
+
+	public static void Publish( Storage.Entry entry )
+	{
+		entry.Publish();
+	}
+
+	public static void AddItem( Storage.Entry entry, SpawnlistItem item )
+	{
+		var data = Load( entry );
+		data.Items.Add( item );
+		Save( entry, data );
+	}
+
+	public static void RemoveItem( Storage.Entry entry, int index )
+	{
+		var data = Load( entry );
+		if ( index >= 0 && index < data.Items.Count )
+		{
+			data.Items.RemoveAt( index );
+			Save( entry, data );
+		}
+	}
+
+	public static void PopulateContextMenu( MenuPanel menu, SpawnlistItem item, Storage.Entry skipEntry = null )
+	{
+		foreach ( var entry in GetAll() )
+		{
+			if ( skipEntry is not null && entry.Id == skipEntry.Id )
+				continue;
+
+			var data = Load( entry );
+			var capturedEntry = entry;
+			menu.AddOption( "📋", $"Add to {data.Name}", () => AddItem( capturedEntry, item ) );
+		}
+
+		menu.AddSpacer();
+
+		menu.AddOption( "➕", "Create New Spawnlist", () =>
+		{
+			Create( item.Title ?? "New Spawnlist" );
+			var entry = GetAll().FirstOrDefault();
+			if ( entry is not null )
+				AddItem( entry, item );
+		} );
+	}
+}

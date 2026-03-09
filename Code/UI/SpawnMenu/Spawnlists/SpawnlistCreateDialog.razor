@@ -1,0 +1,33 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<div class="spawnlist-create-dialog">
+    <h3>Create Spawnlist</h3>
+    <p>Give your new spawnlist a name.</p>
+    <TextEntry Placeholder="Spawnlist name..." Value:bind=@Name />
+    <Button Text="Create" Icon="add" class="primary" Disabled=@( string.IsNullOrWhiteSpace( Name ) ) @onclick=@OnCreate />
+</div>
+
+@code
+{
+    SpawnlistsPage ParentPage;
+
+    public SpawnlistCreateDialog( SpawnlistsPage parentPage )
+    {
+        ParentPage = parentPage;
+    }
+
+    string Name { get; set; } = "";
+
+    void OnCreate()
+    {
+        if ( string.IsNullOrWhiteSpace( Name ) ) return;
+
+        SpawnlistData.Create( Name.Trim() );
+        Name = "";
+
+        ParentPage?.RefreshList();
+    }
+}

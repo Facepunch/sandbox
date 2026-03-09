@@ -1,0 +1,60 @@
+.spawnlist-create-dialog
+{
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 48px;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	width: 100%;
+
+	h3
+	{
+		font-size: 20px;
+		font-weight: 600;
+		margin: 0;
+	}
+
+	p
+	{
+		font-size: 14px;
+		opacity: 0.5;
+		margin: 0;
+	}
+
+	TextEntry
+	{
+		background-color: #0004;
+		border-radius: 5px;
+		min-width: 300px;
+		padding: 8px 12px;
+		font-size: 14px;
+	}
+
+	button.primary
+	{
+		color: white;
+		border: 1px solid #08f;
+		padding: 8px 16px;
+		border-radius: 4px;
+		cursor: pointer;
+		font-weight: 600;
+		min-width: 300px;
+		gap: 0.5rem;
+		justify-content: center;
+		align-items: center;
+
+		&:hover
+		{
+			background-color: #08f2;
+			sound-in: ui.button.over;
+		}
+
+		&.disabled
+		{
+			pointer-events: none;
+			opacity: 0.2;
+		}
+	}
+}
