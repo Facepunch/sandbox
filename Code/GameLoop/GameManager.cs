@@ -215,7 +215,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		ISpawner spawner = type switch
 		{
 			"prop" or "mount" => new PropSpawner( path ),
-			"entity" => new EntitySpawner( path ),
+			"entity" or "sent" => new EntitySpawner( path ),
 			"dupe" => await FindDupe( path, source ),
 			_ => null
 		};
@@ -333,7 +333,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		ISpawner s = type switch
 		{
 			"prop" or "mount" => new PropSpawner( path ),
-			"entity" => new EntitySpawner( path ),
+			"entity" or "sent" => new EntitySpawner( path ),
 			"dupe" when data is not null => DuplicatorSpawner.FromJson( data, title, icon ),
 			_ => null
 		};
