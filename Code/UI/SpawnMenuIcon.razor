@@ -40,16 +40,23 @@
         Style.SetBackgroundImage(Icon);
     }
 
-    protected override void OnDragStart( DragEvent e )
+    protected override async void OnDragStart( DragEvent e )
     {
-        DragHandler.StartDragging( new DragData
+        var dragData = new DragData
         {
             Type = Type,
             Path = Path,
             Icon = Icon ?? $"thumb:{Path}",
             Title = Title,
             Source = this
-        } );
+        };
+
+        DragHandler.StartDragging( dragData );
+
+        if ( Type == "dupe" )
+        {
+            dragData.Data = await LoadDupeJson( Path, Source );
+        }
     }
 
     protected override void OnDragEnd( DragEvent e )
@@ -91,5 +98,27 @@
         }, spawnlistView?.Entry );
 
         e.StopPropagation();
+    }
+
+    async Task<string> LoadDupeJson( string id, string source )
+    {
+        if ( !ulong.TryParse( id, out var fileId ) )
+            return null;
+
+        if ( source == "workshop" )
+        {
+            var query = new Storage.Query { FileIds = [fileId] };
+            var result = await query.Run();
+            var item = result.Items?.FirstOrDefault();
+            if ( item is null ) return null;
+
+            var installed = await item.Install();
+            return installed?.Files.ReadAllText( "/dupe.json" );
+        }
+
+        var entry = Storage.GetAll( "dupe" ).FirstOrDefault( x => x.Id.ToString() == fileId.ToString() );
+        if ( entry is null ) return null;
+
+        return await entry.Files.ReadAllTextAsync( "/dupe.json" );
     }
 }
