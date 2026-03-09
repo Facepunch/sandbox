@@ -4,7 +4,7 @@ public sealed class PlayerFlashlight : Component
 
 	[Property, Group( "Sound" )] public SoundEvent ToggleOnSound { get; set; }
 	[Property, Group( "Sound" )] public SoundEvent ToggleOffSound { get; set; }
-	[Sync, Change( nameof(OnIsOnChanged) )] public bool IsOn { get; set; } = false;
+	[Sync, Change( nameof( UpdateLight ) )] public bool IsOn { get; set; } = false;
 
 	private Player _player;
 	private Transform _localOffset;
@@ -43,11 +43,10 @@ public sealed class PlayerFlashlight : Component
 			Sound.Play( sound, WorldPosition );
 	}
 
-	private void OnIsOnChanged() => UpdateLight();
-
 	private void UpdateLight()
 	{
-		if ( Light.IsValid() )
-			Light.Enabled = IsOn;
+		if ( !Light.IsValid() ) return;
+		
+		Light.Enabled = IsOn;
 	}
 }
