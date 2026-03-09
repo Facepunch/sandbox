@@ -9,6 +9,8 @@ public partial class Physgun
 	[Property, Group( "Sound" )] SoundEvent ButtonInSound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent ButtonOutSound { get; set; }
 
+	[Property] public float Range { get; set; } = 8196f;
+
 	public struct GrabState
 	{
 		public bool Active { get; set; }
@@ -389,7 +391,7 @@ public partial class Physgun
 	{
 		state = default;
 
-		var tr = Scene.Trace.Ray( aim.Position, aim.Position + aim.Forward * 1000 )
+		var tr = Scene.Trace.Ray( aim.Position, aim.Position + aim.Forward * Range )
 			.IgnoreGameObjectHierarchy( GameObject.Root )
 			.Run();
 
