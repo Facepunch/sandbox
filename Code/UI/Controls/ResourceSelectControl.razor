@@ -30,11 +30,6 @@
     TypeDescription ResourceType;
     AssetTypeAttribute ResourceAttribute;
 
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-    }
-
     public override void Rebuild()
     {
         base.Rebuild();
@@ -84,11 +79,17 @@
     {
         base.OnClick(e);
 
+        var allowPackages = false;
+
+        // TODO: this doesn't seem to work in queries?
+		// if (Property.TryGetAttribute<ResourceSelectAttribute>(out var attr))
+		//     allowPackages = attr.AllowPackages;
+
         var popup = new ResourceSelectPopup();
         popup.Extension = ResourceAttribute?.Extension;
         popup.CurrentValue = Property.As.String;
+        popup.AllowPackages = allowPackages;
         popup.Parent = FindPopupPanel();
-
         popup.OnSelectedFile = SelectFile;
     }
 }

@@ -9,7 +9,7 @@
         
         <h2>@Title</h2>
 
-        <VirtualGrid Items=@(_localResources) ItemSize=@(new Vector2( 180, 200 )) class="grid">
+        <VirtualGrid Items=@(_allItems) ItemSize=@(new Vector2( 180, 200 )) class="grid">
             <Item Context="item">
                 @if (item is Resource res)
                 {
@@ -34,6 +34,19 @@
                         
                     </div>
                 }
+                else if ( item is Package pkg )
+                {
+                    bool selected = pkg.FullIdent.Equals(CurrentValue, StringComparison.OrdinalIgnoreCase);
+                    string itemClass = selected ? "item active" : "item";
+
+                    <div class="@itemClass" @onclick=@(() => { SelectPackage(pkg); })>
+
+                        <div class="icon" style="background-image: url( @pkg.Thumb )"></div>
+                        <div class="title">@pkg.Title</div>
+                        <div class="desc">@pkg.Org.Title</div>
+                        
+                    </div>
+                }
             </Item>
         </VirtualGrid>
 
@@ -46,17 +59,33 @@
     public string Title { get; set; } = "Select Resource";
     public string Extension { get; set; } = "vmdl";
     public string CurrentValue { get; set; }
+    public bool AllowPackages { get; set; }
     public Action<string> OnSelectedFile;
 
-    readonly List<Resource> _localResources = new();
+    readonly List<object> _allItems = new();
 
     protected override void OnParametersSet()
     {
-        _localResources.Clear();
+        _allItems.Clear();
 
         var resources = ResourceLibrary.GetAll<Resource>().Where(Filter);
+        _allItems.AddRange(resources);
 
-        _localResources.AddRange(resources);
+        if ( AllowPackages )
+        {
+            _ = LoadCloudPackages();
+        }
+    }
+
+    async Task LoadCloudPackages()
+    {
+        var result = await Package.FindAsync( $"type:{Extension}" );
+
+        if ( result?.Packages?.Any() ?? false )
+        {
+            _allItems.AddRange( result.Packages );
+            StateHasChanged();
+        }
     }
 
     bool Filter(Resource res)
@@ -81,6 +110,12 @@
     void SelectResource(Resource res)
     {
         OnSelectedFile?.Invoke(res.ResourcePath);
+        Delete();
+    }
+
+    void SelectPackage(Package pkg)
+    {
+        OnSelectedFile?.Invoke(pkg.FullIdent);
         Delete();
     }
 

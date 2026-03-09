@@ -31,6 +31,30 @@
 
     <div class="body">
         <ControlSheet Target="@Properties"></ControlSheet>
+
+        @if (Renderers.Count > 0)
+        {
+            var accessor = Renderers[0].Materials;
+            @for (int i = 0; i < accessor.Count; i++)
+            {
+                var index = i;
+                var hasOverride = accessor.HasOverride( index );
+                var mat = hasOverride ? accessor.GetOverride( index ) : accessor.GetOriginal( index );
+                var name = mat?.ResourceName ?? "Default";
+
+                <div class="material-row @(hasOverride ? "overridden" : "")">
+                    <label>Material @(index + 1)</label>
+                    <div class="material-button" @onclick=@(() => PickMaterial(index))>
+                        <div class="material-preview" style="background-image: url( thumb:@(mat?.ResourcePath) )"></div>
+                        <label>@name</label>
+                    </div>
+                    @if (hasOverride)
+                    {
+                        <div class="material-revert" @onclick=@(() => RevertMaterial(index))>✕</div>
+                    }
+                </div>
+            }
+        }
     </div>
 
 </root>
@@ -41,10 +65,12 @@
     public List<GameObject> Target { get; set; }
 
     List<SerializedProperty> Properties = new();
+    List<ModelRenderer> Renderers = new();
 
     protected override void OnParametersSet()
     {
         Properties = new();
+        Renderers = new();
 
         @foreach (var c in Target.SelectMany( x => x.Components.GetAll() ).Distinct().GroupBy( x => x is Collider ? typeof(Collider) : x.GetType() ) )
         {
@@ -91,9 +117,11 @@
             if (!prop.HasAttribute<ClientEditableAttribute>()) continue;
             Properties.Add(so.GetProperty(prop.Name));
         }
-        
+
         if (firstComponent is ModelRenderer mr)
         {
+            Renderers.AddRange(components.OfType<ModelRenderer>());
+
             var prop = mr.GetComponent<Prop>();
             if (prop is not null)
             {
@@ -127,6 +155,35 @@
             {
                 GameManager.ChangeProperty(component, prop.Name, prop.GetValue<object>());
             }
+        }
+    }
+
+    void PickMaterial( int index )
+    {
+        var accessor = Renderers[0].Materials;
+        var mat = accessor.HasOverride( index ) ? accessor.GetOverride( index ) : accessor.GetOriginal( index );
+
+        var popup = new ResourceSelectPopup();
+        popup.Extension = "material";
+        popup.CurrentValue = mat?.ResourcePath;
+        popup.AllowPackages = true;
+        popup.Parent = FindPopupPanel();
+        popup.OnSelectedFile = ( path ) => SetMaterialOverride( index, path );
+    }
+
+    void SetMaterialOverride( int index, string path )
+    {
+        foreach ( var renderer in Renderers )
+        {
+            GameManager.ChangeMaterialOverride( renderer, index, path );
+        }
+    }
+
+    void RevertMaterial( int index )
+    {
+        foreach ( var renderer in Renderers )
+        {
+            GameManager.ChangeMaterialOverride( renderer, index, null );
         }
     }
 }

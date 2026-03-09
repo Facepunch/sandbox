@@ -300,6 +300,26 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	}
 
 	[Rpc.Host]
+	public static async void ChangeMaterialOverride( ModelRenderer renderer, int materialIndex, string materialPath )
+	{
+		if ( !renderer.IsValid() ) return;
+
+		Material material = null;
+
+		if ( !string.IsNullOrEmpty( materialPath ) )
+		{
+			material = Material.Load( materialPath );
+			material ??= await Cloud.Load<Material>( materialPath );
+		}
+
+		if ( !renderer.IsValid() ) return;
+
+		renderer.Materials.SetOverride( materialIndex, material );
+
+		renderer.GameObject.Network?.Refresh();
+	}
+
+	[Rpc.Host]
 	public static void GiveSpawnerWeaponAt( string type, string path, int slot, string data = null, string icon = null, string title = null )
 	{
 		var player = Player.FindForConnection( Rpc.Caller );
