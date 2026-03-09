@@ -169,7 +169,7 @@
             "TargetColor": "0,1,0,1",
             "CacheToDisk": true
           },
-          "compiled": "textures/generated/imagefile/df06905f3db7ee89.vtex"
+          "compiled": null
         }
       },
       {
@@ -183,11 +183,7 @@
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "WeaponCratePrefab": {
-          "_type": "gameobject",
-          "prefab": "prefabs/player/weapon_crate.prefab"
-        }
+        "OnComponentUpdate": null
       },
       {
         "__type": "PlayerStats",
@@ -3019,6 +3015,66 @@
             "Static": false,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
+          }
+        ],
+        "Children": []
+      },
+      {
+        "__guid": "3241975f-6bb3-48f2-8438-c3fba0f46ea7",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "FlashLight",
+        "Position": "16,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "light_spot,light",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "PlayerFlashlight",
+            "__guid": "0000897c-f685-40d2-bdcd-88b5663c0e09",
+            "__enabled": true,
+            "Flags": 0,
+            "Light": {
+              "_type": "component",
+              "component_id": "b94699a4-3f31-4f22-9393-324e3cb589d6",
+              "go": "3241975f-6bb3-48f2-8438-c3fba0f46ea7",
+              "component_type": "SpotLight"
+            },
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "ToggleOffSound": "sounds/flashlight/flashlight-off.sound",
+            "ToggleOnSound": "sounds/flashlight/flashlight-on.sound"
+          },
+          {
+            "__type": "Sandbox.SpotLight",
+            "__guid": "b94699a4-3f31-4f22-9393-324e3cb589d6",
+            "__enabled": true,
+            "Flags": 0,
+            "Attenuation": 0.75581396,
+            "ConeInner": 15,
+            "ConeOuter": 45,
+            "Cookie": "textures/lightcookies/lightcookies_01.vtex",
+            "FogMode": "Enabled",
+            "FogStrength": 1,
+            "LightColor": "1,0.96549,0.91373,1",
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Radius": 500,
+            "Shadows": true
           }
         ],
         "Children": []
