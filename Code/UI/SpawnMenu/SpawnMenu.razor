@@ -85,7 +85,7 @@
             tabs.Add(panel);
         }
 
-        SwitchTab(tabs.FirstOrDefault());
+        SwitchTab( RestoreTab( tabs, "spawnmenu.tab" ) );
     }
 
     public void BuildUtilityTabs()
@@ -100,7 +100,18 @@
             utilityTabs.Add(panel);
         }
 
-        SwitchUtilityTab(utilityTabs.FirstOrDefault());
+        SwitchUtilityTab( RestoreTab( utilityTabs, "spawnmenu.utilitytab" ) );
+    }
+
+    Panel RestoreTab( List<Panel> panels, string cookieKey )
+    {
+        var saved = Game.Cookies.Get<string>( cookieKey, null );
+        if ( !string.IsNullOrEmpty( saved ) )
+        {
+            var match = panels.FirstOrDefault( p => p.GetType().Name == saved );
+            if ( match is not null ) return match;
+        }
+        return panels.FirstOrDefault();
     }
 
     protected override void OnAfterTreeRender(bool firstTime)
@@ -119,6 +130,7 @@
     void SwitchTab(Panel tab)
     {
         activeTab = tab;
+        Game.Cookies.Set( "spawnmenu.tab", tab?.GetType().Name );
         StateHasChanged();
 
         foreach (var t in tabs)
@@ -131,6 +143,7 @@
     void SwitchUtilityTab(Panel tab)
     {
         activeUtilityTab = tab;
+        Game.Cookies.Set( "spawnmenu.utilitytab", tab?.GetType().Name );
         StateHasChanged();
 
         foreach (var t in utilityTabs)
