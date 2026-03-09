@@ -1,0 +1,105 @@
+public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
+{
+	private readonly Dictionary<string, GameObject> _active = new();
+	private readonly HashSet<string> _enabled = new();
+
+	public string SelectedPath { get; private set; }
+
+	public IReadOnlyList<Component> GetSelectedComponents() =>
+		SelectedPath != null && _active.TryGetValue( SelectedPath, out var go )
+			? go.Components.GetAll<Component>().ToList()
+			: Array.Empty<Component>();
+
+	public PostProcessManager( Scene scene ) : base( scene ) { }
+
+	public bool IsEnabled( string resourcePath ) => _enabled.Contains( resourcePath );
+
+	private void SetEnabled( string resourcePath, bool enabled )
+	{
+		if ( !_active.TryGetValue( resourcePath, out var go ) ) return;
+		go.Enabled = enabled;
+	}
+
+	private void SpawnGo( string resourcePath, bool startEnabled )
+	{
+		var resource = ResourceLibrary.Get<PostProcessResource>( resourcePath );
+		if ( resource?.Prefab is null ) return;
+
+		var camera = Scene.Camera?.GameObject;
+		if ( camera is null ) return;
+
+		var go = GameObject.Clone( resource.Prefab, new CloneConfig { StartEnabled = startEnabled, Parent = camera } );
+		_active[resourcePath] = go;
+	}
+
+	public void Select( string resourcePath )
+	{
+		SelectedPath = resourcePath;
+		if ( !_active.ContainsKey( resourcePath ) )
+			SpawnGo( resourcePath, startEnabled: false );
+	}
+
+	private string _previewPath;
+
+	public void Preview( string resourcePath )
+	{
+		if ( _previewPath == resourcePath ) return;
+		Unpreview();
+
+		_previewPath = resourcePath;
+		if ( IsEnabled( resourcePath ) ) return;
+
+		if ( !_active.ContainsKey( resourcePath ) )
+			SpawnGo( resourcePath, startEnabled: true );
+		else
+			SetEnabled( resourcePath, true );
+	}
+
+	public void Unpreview()
+	{
+		if ( _previewPath is null ) return;
+
+		if ( !IsEnabled( _previewPath ) )
+			SetEnabled( _previewPath, false );
+
+		_previewPath = null;
+	}
+
+	public void Deselect()
+	{
+		SelectedPath = null;
+	}
+
+	public void Toggle( string resourcePath )
+	{
+		SelectedPath = resourcePath;
+
+		if ( IsEnabled( resourcePath ) )
+		{
+			_enabled.Remove( resourcePath );
+			SetEnabled( resourcePath, false );
+			return;
+		}
+
+		_enabled.Add( resourcePath );
+
+		if ( !_active.ContainsKey( resourcePath ) )
+			SpawnGo( resourcePath, startEnabled: true );
+		else
+			SetEnabled( resourcePath, true );
+	}
+
+	public void Remove( string resourcePath )
+	{
+		if ( _active.TryGetValue( resourcePath, out var go ) )
+		{
+			go.Destroy();
+			_active.Remove( resourcePath );
+		}
+
+		_enabled.Remove( resourcePath );
+
+		if ( SelectedPath == resourcePath )
+			SelectedPath = null;
+	}
+}

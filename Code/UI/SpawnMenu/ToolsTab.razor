@@ -30,7 +30,18 @@
 	</div>
 
     <div class="body menuinner">
-		<ControlSheet PropertyFilter="@FilterProperties" Target="@GetCurrentMode()"></ControlSheet>
+        @if ( PostProcessManager?.GetSelectedComponents().Count > 0 )
+        {
+            @foreach ( var component in PostProcessManager.GetSelectedComponents() )
+            {
+                <h2>@(Game.TypeLibrary.GetType( component.GetType() )?.Title ?? component.GetType().Name)</h2>
+                <ControlSheet Target="@component" PropertyFilter="@FilterProperties"></ControlSheet>
+            }
+        }
+        else
+        {
+            <ControlSheet PropertyFilter="@FilterProperties" Target="@GetCurrentMode()"></ControlSheet>
+        }
 	</div>
 
 </root>
@@ -38,8 +49,9 @@
 @code
 {
     ToolMode CurrentMode => Player.FindLocalPlayer()?.GetWeapon<Toolgun>()?.GetCurrentMode();
+    PostProcessManager PostProcessManager => Game.ActiveScene.GetSystem<PostProcessManager>();
 
-    protected override int BuildHash() => HashCode.Combine(CurrentMode);
+    protected override int BuildHash() => HashCode.Combine(CurrentMode, PostProcessManager?.SelectedPath, PostProcessManager?.GetSelectedComponents().Count);
 
 	bool IsActiveMode( TypeDescription t )
 	{
@@ -56,6 +68,7 @@
 		var toolgun = localPlayer?.GetWeapon<Toolgun>();
 		if (!toolgun.IsValid()) return;
 
+		PostProcessManager?.Deselect();
 		localPlayer.SwitchWeapon<Toolgun>();
 		toolgun.SetToolMode(t.ClassName);
 	}
