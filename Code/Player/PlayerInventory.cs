@@ -60,8 +60,6 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		Pickup( "weapons/glock/glock.prefab", false );
 		Pickup( "weapons/camera/camera.prefab", 5, false );
 
-		Player.GiveAmmo( ResourceLibrary.Get<AmmoResource>( "ammotype/9mm.ammo" ), 128, false );
-
 		var toolgun = GetComponentInChildren<Toolgun>( true );
 		toolgun?.CreateToolComponents();
 	}
@@ -141,16 +139,13 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		var existing = Weapons.Where( x => x.GameObject.Name == prefab.Name ).FirstOrDefault();
 		if ( existing.IsValid() )
 		{
-			if ( baseCarry is BaseWeapon baseWeapon && baseWeapon.UsesAmmo )
+			if ( existing is BaseWeapon existingWeapon && baseCarry is BaseWeapon pickupWeapon && existingWeapon.UsesAmmo )
 			{
-				var ammo = baseWeapon.AmmoResource;
-				if ( !ammo.IsValid() )
+				if ( existingWeapon.ReserveAmmo >= existingWeapon.MaxReserveAmmo )
 					return false;
 
-				if ( Player.GetAmmoCount( ammo ) >= ammo.MaxAmount )
-					return false;
-
-				Player.GiveAmmo( ammo, baseWeapon.UsesClips ? baseWeapon.ClipContents : baseWeapon.StartingAmmo, notice );
+				var ammoToGive = pickupWeapon.UsesClips ? pickupWeapon.ClipContents : pickupWeapon.StartingAmmo;
+				existingWeapon.AddReserveAmmo( ammoToGive );
 
 				if ( notice )
 					OnClientPickup( existing, true );
@@ -186,18 +181,13 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		var existing = Weapons.Where( x => x.GetType() == item.GetType() ).FirstOrDefault();
 		if ( existing.IsValid() )
 		{
-			// We already have this weapon type
-			if ( item is BaseWeapon baseWeapon && baseWeapon.UsesAmmo )
+			if ( existing is BaseWeapon existingWeapon && item is BaseWeapon pickupWeapon && existingWeapon.UsesAmmo )
 			{
-				var ammo = baseWeapon.AmmoResource;
-				if ( !ammo.IsValid() )
-					return;
-
-				if ( Player.GetAmmoCount( ammo ) >= ammo.MaxAmount )
-					return;
-
-				Player.GiveAmmo( baseWeapon.AmmoResource, baseWeapon.ClipContents, includeNotices );
-				OnClientPickup( existing, true );
+				if ( existingWeapon.ReserveAmmo < existingWeapon.MaxReserveAmmo )
+				{
+					existingWeapon.AddReserveAmmo( pickupWeapon.ClipContents );
+					OnClientPickup( existing, true );
+				}
 			}
 
 			item.DestroyGameObject();
@@ -301,10 +291,8 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 		if ( item is BaseWeapon weapon && weapon.UsesAmmo )
 		{
-			var ammo = weapon.AmmoResource;
-			if ( ammo.IsValid() && Player.GetAmmoCount( ammo ) < 1 )
+			if ( !weapon.HasAmmo() && !weapon.CanReload() )
 			{
-				// don't autoswitch to a weapon we've got no ammo for
 				return false;
 			}
 		}

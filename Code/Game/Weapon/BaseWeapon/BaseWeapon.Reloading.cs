@@ -22,10 +22,7 @@ public partial class BaseWeapon
 		if ( !UsesClips ) return false;
 		if ( ClipContents >= ClipMaxSize ) return false;
 		if ( isReloading ) return false;
-
-		var owner = Owner;
-		if ( !owner.IsValid() || owner.GetAmmoCount( AmmoResource ) <= 0 )
-			return false;
+		if ( ReserveAmmo <= 0 ) return false;
 
 		return true;
 	}
@@ -85,21 +82,14 @@ public partial class BaseWeapon
 			{
 				await Task.DelaySeconds( ReloadTime, ct );
 
-				var owner = Owner;
-				if ( owner.IsValid() )
-				{
-					var needed = IncrementalReloading ? 1 : (ClipMaxSize - ClipContents);
-					var available = owner.SubtractAmmoCount( AmmoResource, needed );
+				var needed = IncrementalReloading ? 1 : (ClipMaxSize - ClipContents);
+				var available = Math.Min( needed, ReserveAmmo );
 
-					if ( available <= 0 )
-						break;
+				if ( available <= 0 )
+					break;
 
-					ClipContents += available;
-				}
-				else
-				{
-					ClipContents = ClipMaxSize;
-				}
+				ReserveAmmo -= available;
+				ClipContents += available;
 
 				ViewModel?.RunEvent<ViewModel>( x => x.OnIncrementalReload() );
 

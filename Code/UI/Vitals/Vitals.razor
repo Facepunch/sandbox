@@ -35,10 +35,10 @@
     {
         <div class="ammo">
             <div class="count">
-                <label class="clip">@(Weapon.UsesClips ? Weapon.ClipContents : Player.GetAmmoCount( Weapon.AmmoResource ))</label>
+                <label class="clip">@(Weapon.UsesClips ? Weapon.ClipContents : Weapon.ReserveAmmo)</label>
                 @if ( Weapon.UsesClips )
                 {
-                    <label class="reserve">@Player.GetAmmoCount( Weapon.AmmoResource )</label>
+                    <label class="reserve">@Weapon.ReserveAmmo</label>
                 }
             </div>
         </div>
@@ -60,6 +60,6 @@
     {
         if ( !Player.IsValid() || Player.WantsHideHud ) return 0;
 
-        return System.HashCode.Combine( Player.Health, Player.Armour, Weapon?.ClipContents, !Weapon.IsValid() ? 0 : Player.GetAmmoCount( Weapon.AmmoResource ) );
+        return System.HashCode.Combine( Player.Health, Player.Armour, Weapon?.ClipContents, Weapon?.ReserveAmmo );
     }
 }

@@ -1,28 +1,42 @@
 /// <summary>
-/// A pickup that gives the player ammo.
+/// A pickup that gives the player reserve ammo for a matching weapon.
 /// </summary>
 public sealed class AmmoPickup : BasePickup
 {
 	/// <summary>
-	/// Which ammo <see cref="AmmoResource"/> we give the player
+	/// The weapon prefab this ammo is for.
 	/// </summary>
-	[Property, Group( "Ammo" )] public AmmoResource AmmoResource { get; set; }
+	[Property, Group( "Ammo" )] public GameObject WeaponPrefab { get; set; }
 
 	/// <summary>
-	/// The quantity of ammo
+	/// The quantity of ammo to give.
 	/// </summary>
 	[Property, Group( "Ammo" )] public int AmmoAmount { get; set; }
 
 	public override bool CanPickup( Player player, PlayerInventory inventory )
 	{
-		return player.GetAmmoCount( AmmoResource ) < AmmoResource.MaxAmount;
+		if ( !WeaponPrefab.IsValid() ) return false;
+
+		var weaponType = WeaponPrefab.GetComponent<BaseWeapon>( true )?.GetType();
+		if ( weaponType is null ) return false;
+
+		var existing = inventory.Weapons.OfType<BaseWeapon>().FirstOrDefault( x => x.GetType() == weaponType );
+		if ( !existing.IsValid() ) return false;
+
+		return existing.ReserveAmmo < existing.MaxReserveAmmo;
 	}
 
 	protected override bool OnPickup( Player player, PlayerInventory inventory )
 	{
-		player.GiveAmmo( AmmoResource, AmmoAmount, true );
-		player.PlayerData.AddStat( $"pickup.ammo.{AmmoResource.AmmoType}" );
+		if ( !WeaponPrefab.IsValid() ) return false;
 
+		var weaponType = WeaponPrefab.GetComponent<BaseWeapon>( true )?.GetType();
+		if ( weaponType is null ) return false;
+
+		var existing = inventory.Weapons.OfType<BaseWeapon>().FirstOrDefault( x => x.GetType() == weaponType );
+		if ( !existing.IsValid() ) return false;
+
+		existing.AddReserveAmmo( AmmoAmount );
 		return true;
 	}
 }

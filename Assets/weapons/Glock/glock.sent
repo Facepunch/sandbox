@@ -1,0 +1,8 @@
+{
+  "Prefab": "weapons/glock/item_glock.prefab",
+  "Title": "USP",
+  "Description": null,
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}

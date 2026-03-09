@@ -78,10 +78,9 @@ public partial class BaseWeapon : BaseCarryable
 	{
 		base.OnAdded( player );
 
-		if ( AmmoResource is not null && StartingAmmo > 0 )
+		if ( UsesAmmo && StartingAmmo > 0 )
 		{
-			// When this weapon gets added to a player's inventory, give player some ammo
-			player.GiveAmmo( AmmoResource, StartingAmmo, false );
+			ReserveAmmo = Math.Min( StartingAmmo, MaxReserveAmmo );
 		}
 	}
 
