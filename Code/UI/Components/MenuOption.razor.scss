@@ -12,6 +12,11 @@ MenuOption
 	width: 24px;
 }
 
+Label
+{
+    text-overflow: ellipsis;
+}
+
 MenuOption:hover
 {
 	color: white;
