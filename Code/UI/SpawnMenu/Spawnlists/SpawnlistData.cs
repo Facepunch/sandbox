@@ -97,7 +97,8 @@ public class SpawnlistData
 
 	public static void Publish( Storage.Entry entry )
 	{
-		entry.Publish();
+		var options = new Modals.WorkshopPublishOptions { Title = "My Spawnlist" };
+		entry.Publish( options );
 	}
 
 	public static void AddItem( Storage.Entry entry, SpawnlistItem item )

@@ -37,8 +37,6 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 
 	private Material _previewMaterial;
 	private Material _previewMaterialInvalid;
-	private string _name;
-	private string _description;
 
 	/// <summary>
 	/// True while the player is holding Use to rotate the preview.
