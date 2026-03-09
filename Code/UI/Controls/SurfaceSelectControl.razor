@@ -1,0 +1,62 @@
+@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits BaseControl
+@attribute [CustomEditor(typeof(Surface))]
+
+<root>
+
+    @if ( Title == null )
+    {
+        <div class="title">None Selected</div>
+    }
+    else
+    {
+        <div class="title">@Title</div>
+    }
+
+</root>
+
+@code
+{
+    string Title;
+
+    public override void Rebuild()
+    {
+        base.Rebuild();
+        OnValueChanged();
+    }
+
+    public void OnValueChanged()
+    {
+        var surface = Property.GetValue<Surface>();
+
+        if ( surface == null || !surface.IsValid() )
+        {
+            Title = null;
+            return;
+        }
+
+        Title = surface.ResourceName;
+    }
+
+    void SelectFile( string filePath )
+    {
+        var surface = ResourceLibrary.Get<Surface>( filePath );
+        Property.SetValue( surface );
+        OnValueChanged();
+    }
+
+    protected override void OnClick( MousePanelEvent e )
+    {
+        base.OnClick( e );
+
+        var surface = Property.GetValue<Surface>();
+
+        var popup = new ResourceSelectPopup();
+        popup.Extension = "surface";
+        popup.CurrentValue = surface?.ResourcePath;
+        popup.Parent = FindPopupPanel();
+        popup.OnSelectedFile = SelectFile;
+    }
+}

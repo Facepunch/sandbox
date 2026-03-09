@@ -46,7 +46,7 @@
     {
         Properties = new();
 
-        @foreach (var c in Target.SelectMany( x => x.Components.GetAll() ).Distinct().GroupBy( x => x.GetType() ) )
+        @foreach (var c in Target.SelectMany( x => x.Components.GetAll() ).Distinct().GroupBy( x => x is Collider ? typeof(Collider) : x.GetType() ) )
         {
             CollectProperties(c.ToArray());
         }
@@ -55,6 +55,7 @@
     bool HasEditableProperties( Type type, PropertyDescription[] properties )
     {
         if (type.IsAssignableTo(typeof(ModelRenderer))) return true;
+        if (type.IsAssignableTo(typeof(Collider))) return true;
 
         foreach ( var prop in properties )
         {
@@ -107,6 +108,11 @@
             }
 
             Properties.Add( so.GetProperty( nameof( ModelRenderer.RenderType ) ) );
+        }
+
+        if (firstComponent is Collider)
+        {
+            Properties.Add( so.GetProperty( nameof( Collider.Surface ) ) );
         }
     }
 
