@@ -1,0 +1,133 @@
+{
+  "RootObject": {
+    "__guid": "0eaf45e1-44b7-44dd-8b4f-252eba51a334",
+    "__version": 2,
+    "Flags": 0,
+    "Name": "grenade",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
+    "Tags": "",
+    "Enabled": true,
+    "NetworkMode": 1,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 1,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
+    "Components": [
+      {
+        "__type": "HandGrenadeWeapon",
+        "__guid": "ab522638-2fd4-40a8-b165-36922f5ec630",
+        "__enabled": true,
+        "Flags": 0,
+        "CanCancelReload": false,
+        "ChargeType": "PullPin",
+        "ClipContents": 17,
+        "ClipMaxSize": 17,
+        "DeployTime": 0.5,
+        "DisplayIcon": {
+          "$compiler": "texture",
+          "$source": "imagefile",
+          "data": {
+            "FilePath": "ui/weapons/usp_01.png",
+            "MaxSize": 4096,
+            "ConvertHeightToNormals": false,
+            "NormalScale": 1,
+            "Rotate": 0,
+            "FlipVertical": false,
+            "FlipHorizontal": false,
+            "Cropping": {
+              "Left": 0,
+              "Top": 0,
+              "Right": 0,
+              "Bottom": 0
+            },
+            "Padding": {
+              "Left": 0,
+              "Top": 0,
+              "Right": 0,
+              "Bottom": 0
+            },
+            "InvertColor": false,
+            "Tint": "1,1,1,1",
+            "Blur": 0,
+            "Sharpen": 0,
+            "Brightness": 1,
+            "Contrast": 1,
+            "Saturation": 1,
+            "Hue": 0,
+            "Colorize": false,
+            "TargetColor": "1,1,1,1",
+            "CacheToDisk": true
+          },
+          "compiled": null
+        },
+        "DisplayName": "Grenade",
+        "Force": 1,
+        "HoldType": "HoldItem",
+        "IncrementalReloading": false,
+        "ItemPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/grenade/item_grenade.prefab"
+        },
+        "Lifetime": 3,
+        "MaxDamage": 125,
+        "MaxReserveAmmo": 1,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "ParentBone": "hold_r",
+        "Prefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/grenade/thrown_grenade.prefab"
+        },
+        "Radius": 512,
+        "ReloadTime": 1.5,
+        "ReserveAmmo": 1,
+        "StartingAmmo": 1,
+        "ThrowPower": 1200,
+        "UsesAmmo": true,
+        "UsesClips": false,
+        "Value": 2,
+        "ViewModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/grenade/grenade_vm.prefab"
+        },
+        "WorldModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/grenade/grenade_wm.prefab"
+        }
+      }
+    ],
+    "Children": [],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": ""
+      }
+    },
+    "__variables": []
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "__references": [],
+  "__version": 2
+}
