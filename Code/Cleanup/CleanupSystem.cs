@@ -69,7 +69,7 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 		_baselineObjectIds.Clear();
 		_baselineObjectData.Clear();
 
-		foreach ( var go in Scene.Children )
+		foreach ( var go in Scene.Children?.ToArray() ?? [] )
 		{
 			CaptureObjectRecursive( go );
 		}
@@ -97,7 +97,7 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 			_baselineObjectData[go.Id] = serialized.ToJsonString();
 		}
 
-		foreach ( var child in go.Children )
+		foreach ( var child in go.Children?.ToArray() ?? [] )
 		{
 			CaptureObjectRecursive( child );
 		}
