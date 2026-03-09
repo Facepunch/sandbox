@@ -57,7 +57,7 @@
         "BodyMass": 500,
         "BodyRadius": 16,
         "BrakePower": 0.2,
-        "CameraOffset": "256,0,12",
+        "CameraOffset": "64,34.81001,-4",
         "ColliderObject": {
           "_type": "gameobject",
           "go": "3dc9b5dd-44a4-4ac8-a4cb-2a632afbc3f3"

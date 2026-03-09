@@ -37,7 +37,7 @@
         "OnTriggerExit": null,
         "RollingResistance": null,
         "Static": false,
-        "Surface": null,
+        "Surface": "surface/bouncy_metal.surface",
         "SurfaceVelocity": "0,0,0"
       },
       {
