@@ -26,6 +26,7 @@
 
     public override void Tick()
     {
+        _selected.RemoveAll( x => !x.IsValid() );
         UpdateHighlights();
         UpdateCursor();
     }
