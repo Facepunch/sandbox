@@ -47,6 +47,10 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 	{
 		// Wait for next frame to ensure all objects are spawned
 		await Task.Yield();
+
+		// Could be null if the scene was unloaded before this runs
+		if ( !Scene.IsValid() ) return;
+
 		CaptureBaseline();
 
 		var sceneFile = options.GetSceneFile();
