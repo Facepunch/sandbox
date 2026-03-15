@@ -5,7 +5,7 @@
   "Ident": "sandbox",
   "Schema": 1,
   "IncludeSourceFiles": false,
-  "Resources": null,
+  "Resources": "/UI/*\n/UI/weapons/*",
   "PackageReferences": [],
   "EditorReferences": null,
   "Mounts": [],
