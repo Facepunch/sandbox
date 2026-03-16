@@ -19,6 +19,7 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 	protected override void OnUpdateAnimatorState( SkinnedModelRenderer renderer )
 	{
 		renderer.Set( "b_noclip", true );
+		renderer.Set( "duck", 0f );
 	}
 
 	public override int Score( PlayerController controller )
@@ -49,6 +50,17 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 		Controller.Renderer.Set( "b_noclip", false );
 	}
 
+	public override Transform CalculateEyeTransform()
+	{
+		var transform = base.CalculateEyeTransform();
+
+		// Undo the camera lowering that IsDucking causes
+		if ( Controller.IsDucking )
+			transform.Position += Vector3.Up * (Controller.BodyHeight - Controller.DuckedHeight);
+
+		return transform;
+	}
+
 	public override Vector3 UpdateMove( Rotation eyes, Vector3 input )
 	{
 		// don't normalize, because analog input might want to go slow
@@ -64,6 +76,9 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 
 		// if we're running, use run speed, if not use walk speed
 		var velocity = run ? RunSpeed * 2.0f : RunSpeed;
+
+		// Slow down when the walk modifier (Alt) is held
+		if ( Input.Down( "walk" ) ) velocity = WalkSpeed;
 
 		if ( direction.IsNearlyZero( 0.1f ) )
 		{
