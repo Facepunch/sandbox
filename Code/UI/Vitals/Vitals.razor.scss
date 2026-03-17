@@ -10,16 +10,16 @@ Vitals
 	.vitals
 	{
 		position: absolute;
-		bottom: 64px;
-		left: 64px;
-		flex-direction: column-reverse;
-		gap: 8px;
+		bottom: $deadzone-y;
+		left: $deadzone-x;
+		flex-direction: row;
+		gap: $deadzone-x;
 	}
 
 	.ammo
 	{
 		position: absolute;
-		bottom: 64px;
-		right: 64px;
+		bottom: $deadzone-y;
+		right: $deadzone-x;
 	}
 }
