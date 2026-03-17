@@ -174,8 +174,9 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		if ( t == typeof( string ) ) return o?.ToString() ?? "";
 		if ( t == typeof( double ) ) return ToFloat( o );
 		if ( t == typeof( float ) ) return ToFloat( o );
+		if ( t == typeof( GameObject ) ) return ToGameObject( o );
 
-		return null;
+		return o;
 	}
 
 	static bool ToBool( object o )
@@ -185,5 +186,14 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		if ( o is string s ) return s.ToBool();
 		if ( o is float f ) return f != 0.0f;
 		return o != null;
+	}
+
+	static GameObject ToGameObject( object o )
+	{
+		if ( o == null ) return null;
+		if ( o is GameObject go ) return go;
+		if ( o is Component c ) return c?.GameObject;
+
+		return null;
 	}
 }

@@ -29,13 +29,15 @@ public partial class Doo
 		[Doo.StaticMethod( "GameObject.Destroy" )]
 		public static void GameObjectDestroy( GameObject go )
 		{
-			go?.Destroy();
+			if ( !go.IsValid() ) return;
+			go.Destroy();
 		}
 
 		[Doo.StaticMethod( "GameObject.CloneInPlace" )]
 		public static GameObject GameObjectCloneInPlace( GameObject go )
 		{
-			return go?.Clone();
+			if ( !go.IsValid() ) return null;
+			return go.Clone( go.WorldTransform );
 		}
 
 		[Doo.StaticMethod( "GameObject.Clone" )]

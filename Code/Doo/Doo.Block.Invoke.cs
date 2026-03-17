@@ -46,7 +46,7 @@ public partial class Doo
 			var attr = md.GetCustomAttribute<Doo.StaticMethodAttribute>();
 			if ( attr != null ) funcName = attr.Path;
 
-			var args = string.Join( ", ", Arguments?.Select( a => a.GetDebugText() ) ?? Array.Empty<string>() );
+			var args = string.Join( ", ", Arguments?.Select( a => a?.GetDebugText() ) ?? Array.Empty<string>() );
 			if ( args.Length > 1 ) args = $" {args} ";
 
 			var funcTitle = $"{funcName}({args})";
