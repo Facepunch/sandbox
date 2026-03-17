@@ -39,27 +39,58 @@ public class InvokeBlock : InspectorWidget
 	{
 		Layout.Clear( true );
 
+		var invokeType = _invokeType.GetValue<Doo.InvokeType>();
+		var hasComponent = _targetComponent.GetValue<Component>() != null;
+
 		var method = _memberProperty.GetCustomizable();
 		method.SetDisplayName( "Method" );
 
-		var cs = new ControlSheet();
-		cs.AddRow( _invokeType );
+		{
+			var type = _invokeType.GetCustomizable();
+			type.AddAttribute( new WideModeAttribute() { HasLabel = false } );
 
-		if ( _invokeType.GetValue<Doo.InvokeType>() == Doo.InvokeType.Member )
+			var header = new ControlSheet();
+			Layout.Add( header );
+			header.AddRow( type );
+		}
+
+		Layout.AddSpacingCell( 16 );
+
+		var cs = new ControlSheet();
+		Layout.Add( cs );
+
+		if ( invokeType == Doo.InvokeType.Member )
 		{
 			cs.AddRow( _targetComponent );
-			var methodSelect = cs.AddControl<ComponentMethodSelector>( method );
-			methodSelect.TargetComponent = _targetComponent.GetValue<Component>();
+
+			if ( hasComponent )
+			{
+				var methodSelect = cs.AddControl<ComponentMethodSelector>( method );
+				methodSelect.TargetComponent = _targetComponent.GetValue<Component>();
+			}
 		}
 		else
 		{
 			var methodSelect = cs.AddControl<MethodSelector>( method );
 		}
 
-		Layout.Add( cs );
+		// member invoke and no component
+		if ( invokeType == Doo.InvokeType.Member && !hasComponent ) return;
 
 		var methodDesc = Doo.Helpers.FindMethod( _memberProperty.As.String );
 		if ( methodDesc == null ) return;
+
+		// member invoke and not found on component!
+		if ( invokeType == Doo.InvokeType.Member )
+		{
+			var target = _targetComponent.GetValue<Component>();
+			if ( target == null ) return;
+
+			if ( !methodDesc.DeclaringType.TargetType.IsAssignableFrom( target.GetType() ) )
+				return;
+
+			return;
+		}
 
 		List<SerializedProperty> arguments = [];
 
@@ -98,162 +129,6 @@ public class InvokeBlock : InspectorWidget
 				//	Layout.Add( new ParameterControlWidget( paramProp, param ) );
 			}
 		}
-	}
-}
-
-public class ComponentMethodSelector : MethodSelector
-{
-	public Component TargetComponent { get; set; }
-
-	public ComponentMethodSelector( SerializedProperty p ) : base( p )
-	{
-
-	}
-
-	protected override void BuildMethods( AdvancedDropdownItem root )
-	{
-		if ( TargetComponent is null )
-			return;
-
-		var t = TypeLibrary.GetType( TargetComponent.GetType().FullName );
-
-		var members = t.Members.Where( ShouldShow ).ToArray();
-
-		foreach ( var group in members.GroupBy( x => x.DeclaringType?.Name ).OrderBy( x => x.Key ) )
-		{
-			var category = root.Add( group.Key );
-
-			foreach ( var m in group.OrderBy( x => x.Name ) )
-			{
-				if ( m is PropertyDescription pd )
-				{
-					/*
-					category.Add( new AdvancedDropdownItem
-					{
-						Title = "Get " + m.Name,
-						Description = m.Name,
-						Value = pd,
-						Icon = "keyboard_double_arrow_left"
-					} );
-
-					category.Add( new AdvancedDropdownItem
-					{
-						Title = "Set " + m.Name,
-						Description = m.Name,
-						Value = pd,
-						Icon = "keyboard_double_arrow_right"
-					} );
-					*/
-				}
-				else
-				{
-					category.Add( new AdvancedDropdownItem
-					{
-						Title = m.Name,
-						Description = m.Name,
-						Value = m
-					} );
-				}
-			}
-		}
-	}
-
-	private bool ShouldShow( MemberDescription description )
-	{
-		if ( description is not MethodDescription && description is not PropertyDescription ) return false;
-		if ( !description.IsPublic ) return false;
-		if ( description.DeclaringType == null ) return false;
-
-		if ( description is PropertyDescription pd )
-		{
-			if ( pd.PropertyType == typeof( Action ) ) return false;
-
-		}
-
-		return true;
-	}
-}
-
-public class MethodSelector : ControlWidget
-{
-	public MethodSelector( SerializedProperty p ) : base( p )
-	{
-		Layout = Layout.Row();
-		Layout.AddStretchCell();
-
-		{
-			var icon = Layout.Add( new IconButton( "folder_open" ) );
-			icon.Background = Color.Transparent;
-			icon.OnClick = OpenSelector;
-		}
-	}
-
-	public void OpenSelector()
-	{
-		var popup = new AdvancedDropdownPopup( this );
-		popup.Dropdown.RootTitle = "Method";
-		popup.Dropdown.SearchPlaceholderText = "Find Methods";
-		popup.Dropdown.OnBuildItems = BuildMethods;
-
-		popup.Dropdown.OnSelect = ( value ) =>
-		{
-			if ( value is MethodDescription md )
-			{
-				SerializedProperty.SetValue( $"{md.TypeDescription.FullName}.{md.Name}" );
-			}
-		};
-		popup.Dropdown.Rebuild();
-		popup.OpenAtCursor();
-	}
-
-
-	protected virtual void BuildMethods( AdvancedDropdownItem root )
-	{
-		var methods = TypeLibrary.GetMethodsWithAttribute<Doo.StaticMethodAttribute>( true );
-
-		foreach ( var group in methods.GroupBy( x => x.Attribute.CategoryName ).OrderBy( x => x.Key ) )
-		{
-			var category = root.Add( group.Key );
-
-			foreach ( var m in group.OrderBy( x => x.Attribute.Path ) )
-			{
-				category.Add( new AdvancedDropdownItem
-				{
-					Title = m.Attribute.Path,
-					Description = m.Method.TypeDescription?.FullName,
-					Value = m.Method
-				} );
-			}
-		}
-	}
-
-	protected override void PaintControl()
-	{
-		var methodpath = SerializedProperty.GetValue<string>()?.ToString();
-		if ( string.IsNullOrWhiteSpace( methodpath ) )
-		{
-			Paint.SetPen( Theme.Text.WithAlpha( 0.5f ) );
-			Paint.DrawText( LocalRect.Shrink( 8, 0 ), "No Method Selected", TextFlag.LeftCenter );
-			return;
-		}
-
-		var methodDesc = Doo.Helpers.FindMethod( methodpath );
-		if ( methodDesc == null )
-		{
-			Paint.SetPen( Theme.Text.WithAlpha( 0.5f ) );
-			Paint.DrawText( LocalRect.Shrink( 8, 0 ), $"Missing: {methodpath}", TextFlag.LeftCenter );
-			return;
-		}
-
-		if ( methodDesc.GetCustomAttribute<Doo.StaticMethodAttribute>() is Doo.StaticMethodAttribute attr )
-		{
-			Paint.SetPen( Theme.Text );
-			Paint.DrawText( LocalRect.Shrink( 8, 0 ), attr.Path, TextFlag.LeftCenter );
-			return;
-		}
-
-		Paint.SetPen( Theme.Text );
-		Paint.DrawText( LocalRect.Shrink( 8, 0 ), methodDesc.ToString(), TextFlag.LeftCenter );
 	}
 }
 

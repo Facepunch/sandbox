@@ -25,5 +25,23 @@ public partial class Doo
 		{
 			Log.Error( text );
 		}
+
+		[Doo.StaticMethod( "GameObject.Destroy" )]
+		public static void GameObjectDestroy( GameObject go )
+		{
+			go?.Destroy();
+		}
+
+		[Doo.StaticMethod( "GameObject.CloneInPlace" )]
+		public static GameObject GameObjectCloneInPlace( GameObject go )
+		{
+			return go?.Clone();
+		}
+
+		[Doo.StaticMethod( "GameObject.Clone" )]
+		public static GameObject GameObjectClone( GameObject go, Vector3 position, Rotation angles, Vector3 scale )
+		{
+			return go?.Clone( position, angles, scale );
+		}
 	}
 }

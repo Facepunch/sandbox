@@ -5,9 +5,11 @@ public partial class Doo
 	public enum InvokeType : byte
 	{
 		[Icon( "public" )]
+		[Title( "Static Global" )]
 		Static,
 
 		[Icon( "inventory" )]
+		[Title( "Component" )]
 		Member,
 	}
 
