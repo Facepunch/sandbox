@@ -36,8 +36,5 @@ public partial class Doo
 				b.CollectArguments( arguments );
 			}
 		}
-
-		[JsonIgnore]
-		public virtual Color EditorColor => "#35547A";
 	}
 }

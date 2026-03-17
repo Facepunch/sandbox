@@ -1,14 +1,14 @@
-using System;
 using System.Text.Json.Serialization;
 
 public partial class Doo
 {
-	[Icon( "terminal" )]
+	/// <summary>
+	/// Call a global method or a method on a component.
+	/// </summary>
+	[Icon( "🏃‍", "#506C33", "white" )]
+	[Title( "Invoke" )]
 	public class InvokeBlock : Block
 	{
-		[JsonIgnore]
-		public override Color EditorColor => "#506C33";
-
 		[JsonInclude]
 		public InvokeType InvokeType { get; set; }
 

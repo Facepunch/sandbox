@@ -2,12 +2,13 @@ using System.Text.Json.Serialization;
 
 public partial class Doo
 {
-	[Icon( "timer" )]
+	/// <summary>
+	/// Wait for a number of seconds
+	/// </summary>
+	[Icon( "✋", "#5C4837", "#fff" )]
+	[Title( "Delay" )]
 	public class DelayBlock : Block
 	{
-		[JsonIgnore]
-		public override Color EditorColor => "#5C4837";
-
 		[JsonInclude]
 		public Expression Seconds { get; set; }
 

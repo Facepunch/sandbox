@@ -42,7 +42,8 @@ public class BlockTreeNode : TreeNode<Doo.Block>
 
 		Paint.ClearPen();
 
-		var bgColor = Value.EditorColor;
+		var bgColor = TypeLibrary.GetType( Value.GetType() ).GetAttribute<IconAttribute>()?.BackgroundColor ?? Color.White;
+		var fgColor = TypeLibrary.GetType( Value.GetType() ).GetAttribute<IconAttribute>()?.ForegroundColor ?? Color.White;
 
 		if ( isBlock && item.IsOpen )
 		{
@@ -72,7 +73,7 @@ public class BlockTreeNode : TreeNode<Doo.Block>
 		var r = item.Rect;
 		r.Left += 4;
 
-		Paint.Pen = item.Selected ? Color.White : bgColor.Lighten( 0.8f );
+		Paint.Pen = item.Selected ? fgColor : fgColor.WithAlphaMultiplied( 0.5f );
 		Paint.DrawIcon( r, _displayInfo.Icon ?? "people", 11, TextFlag.LeftCenter );
 
 		r.Left += 18;
@@ -80,7 +81,7 @@ public class BlockTreeNode : TreeNode<Doo.Block>
 
 		var text = Value.GetNodeString();
 
-		Paint.Pen = item.Selected ? Color.White : bgColor.Lighten( 0.8f );
+		Paint.Pen = item.Selected ? fgColor : fgColor.WithAlphaMultiplied( 0.5f );
 		Paint.DrawText( r, text, TextFlag.LeftCenter );
 
 		if ( item.Dropping )

@@ -24,10 +24,10 @@ public class DooToolbox : Widget
 	{
 		Layout.Clear( true );
 
-		Layout.Add( new ToolboxItem<Doo.SetBlock>() );
 		Layout.Add( new ToolboxItem<Doo.InvokeBlock>() );
+		Layout.Add( new ToolboxItem<Doo.SetBlock>() );
 		Layout.Add( new ToolboxItem<Doo.DelayBlock>() );
-		Layout.Add( new ToolboxItem<Doo.ReturnBlock>() );
+		//Layout.Add( new ToolboxItem<Doo.ReturnBlock>() );
 	}
 }
 
@@ -43,11 +43,11 @@ public class ToolboxItem<T> : Widget where T : Doo.Block, new()
 	public ToolboxItem() : base( null )
 	{
 		BlockType = TypeLibrary.GetType( typeof( T ) );
-		ToolTip = BlockType.Name;
+		ToolTip = $"<strong>{BlockType.Title}</strong><br>{BlockType.Description}";
 		BlockIcon = BlockType.Icon;
 
 		var b = new T();
-		BlockColor = b.EditorColor;
+		BlockColor = BlockType.GetAttribute<IconAttribute>()?.BackgroundColor ?? Color.White;
 
 		FixedSize = Theme.RowHeight * 1.5f;
 		Cursor = CursorShape.Finger;

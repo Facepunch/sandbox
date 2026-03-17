@@ -2,12 +2,13 @@ using System.Text.Json.Serialization;
 
 public partial class Doo
 {
-	[Icon( "trending_flat" )]
+	/// <summary>
+	/// Set a variable to a value.
+	/// </summary>
+	[Icon( "📥", "#6b336c", "white" )]
+	[Title( "Set Variable" )]
 	public class SetBlock : Block
 	{
-		[JsonIgnore]
-		public override Color EditorColor => "#6b336c";
-
 		[JsonInclude]
 		public string VariableName { get; set; }
 
