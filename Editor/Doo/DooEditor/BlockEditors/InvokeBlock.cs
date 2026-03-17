@@ -121,7 +121,7 @@ public class InvokeBlock : InspectorWidget
 
 				var csp = prop.GetCustomizable();
 				csp.SetDisplayName( $"{param.Name.ToTitleCase()}" );
-				csp.AddAttribute( new Doo.TypeHintAttribute( param.ParameterType ) );
+				csp.AddAttribute( new TypeHintAttribute( param.ParameterType ) );
 
 				cs.AddRow( csp );
 				i++;

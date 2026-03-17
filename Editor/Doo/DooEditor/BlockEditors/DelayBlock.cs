@@ -20,7 +20,7 @@ public class DelayBlock : InspectorWidget
 	{
 		var prop = Target.GetProperty( nameof( Doo.DelayBlock.Seconds ) ).GetCustomizable();
 		prop.SetDisplayName( "Delay Seconds" );
-		prop.AddAttribute( new Doo.TypeHintAttribute( typeof( float ) ) );
+		prop.AddAttribute( new TypeHintAttribute( typeof( float ) ) );
 
 		var cs = new ControlSheet();
 		cs.AddRow( prop );
