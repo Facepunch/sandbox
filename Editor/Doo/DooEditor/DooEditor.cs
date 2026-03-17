@@ -49,21 +49,26 @@ public class DooEditor : PopupWidget
 		Layout.Add( Toolbox );
 		Layout.Margin = 4;
 
-		BlockTree = new BlockTree( Target );
-		BlockTree.Margin = new UI.Margin( 0, 16, 8, 16 );
-		BlockTree.ContentMargins = 2;
+		BlockTree = new BlockTree( Target )
+		{
+			Margin = new UI.Margin( 0, 16, 8, 16 ),
+			ContentMargins = 2
+		};
 		Inspector = new DooInspector( this );
+		Inspector.FixedWidth = 400;
 
-		_rightColumn = Layout.AddColumn();
+		_rightColumn = Layout.AddRow();
+
+		var contentColumn = _rightColumn.AddColumn();
 
 		var args = CreateArgumentHeader();
 		if ( args != null )
 		{
-			_rightColumn.Add( args );
+			contentColumn.Add( args );
 		}
 
-		_rightColumn.Add( BlockTree, 1 );
-		_rightColumn.AddStretchCell();
+		contentColumn.Add( BlockTree, 1 );
+
 		_rightColumn.Add( Inspector );
 	}
 
