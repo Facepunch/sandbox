@@ -50,7 +50,6 @@ public class DooExpressionControlWidget : ControlWidget
 	{
 		var expr = SerializedProperty.GetValue<Doo.Expression>();
 
-
 		if ( targetType != null )
 		{
 			bool active = expr is Doo.LiteralExpression ex && ex.LiteralValue.Type == targetType;
@@ -82,8 +81,11 @@ public class DooExpressionControlWidget : ControlWidget
 		{
 			var o = menu.AddOption( "Select Type...", "post_add", () =>
 			{
-				SerializedProperty.SetValue( new Doo.LiteralExpression() { LiteralValue = "value" } );
-				BuildContent();
+				VariantControlWidget.OpenTypeSelector( this, targetType, t =>
+				{
+					SerializedProperty.SetValue( new Doo.LiteralExpression() { LiteralValue = new Variant( null, t ) } );
+					BuildContent();
+				} );
 			} );
 
 			o.Checkable = true;
