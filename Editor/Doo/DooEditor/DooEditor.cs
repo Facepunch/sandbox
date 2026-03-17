@@ -9,7 +9,7 @@ public class DooEditor : PopupWidget
 	{
 		var window = new DooEditor( EditorWindow, so, title );
 		window.WindowFlags = WindowFlags.Tool | WindowFlags.Customized | WindowFlags.CloseButton;
-		window.OpenAtCursor();
+		window.OpenAtCursor( true, new Vector2( -600, -250 ) );
 		window.WindowTitle = $"{so.ParentProperty?.Name} - Doo Editor";
 		return window;
 	}

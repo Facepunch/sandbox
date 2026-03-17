@@ -26,8 +26,24 @@ public class DooInspector : Widget
 		RebuildContent();
 	}
 
+	[EditorEvent.Frame]
+	public void UpdateSelection()
+	{
+		var tree = GetAncestor<DooEditor>()?.BlockTree;
+		if ( !tree.IsValid() ) return;
+
+		var selection = tree.Selection.FirstOrDefault();
+		SetTarget( selection as Doo.Block );
+	}
+
+	Doo.Block _target;
+
 	public void SetTarget( Doo.Block target ) // todo support multi-select
 	{
+		if ( _target == target )
+			return;
+
+		_target = target;
 		Target = target?.GetSerialized();
 		RebuildContent();
 	}

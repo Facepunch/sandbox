@@ -14,9 +14,6 @@ public class BlockTree : TreeView
 		BodyDropTarget = DragDropTarget.Closest;
 
 		BuildNodes();
-
-		Selection.OnItemAdded += ( x ) => UpdateSelection();
-		Selection.OnItemRemoved += ( x ) => UpdateSelection();
 	}
 
 	[EditorEvent.Frame]
@@ -76,17 +73,4 @@ public class BlockTree : TreeView
 			Open( root );
 		}
 	}
-
-	protected void UpdateSelection()
-	{
-		if ( Selection.FirstOrDefault() is Doo.Block block )
-		{
-			GetAncestor<DooEditor>()?.Inspector.SetTarget( block );
-		}
-		else
-		{
-			GetAncestor<DooEditor>()?.Inspector.SetTarget( null );
-		}
-	}
-
 }
