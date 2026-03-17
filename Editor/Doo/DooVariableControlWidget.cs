@@ -1,12 +1,18 @@
-namespace Sandbox;
+﻿namespace Sandbox;
 
 public class DooVariableControlWidget : StringControlWidget
 {
 	public DooVariableControlWidget( SerializedProperty property ) : base( property )
 	{
 		Layout = Layout.Row();
-		Layout.Add( LineEdit );
-		Layout.Add( new IconButton( "arrow_drop_down" ) { Background = Color.Transparent, OnClick = OpenMenu } );
+		Layout.Margin = new UI.Margin( 2, 0, 0, 0 );
+		Layout.Add( new IconButton( "electric_bolt" ) { OnClick = OpenMenu, ToolTip = "Variable", Background = Theme.Green.WithAlpha( 0.2f ), Foreground = Theme.Green, IconSize = 15, FixedSize = Theme.RowHeight - 4 } );
+		Layout.Add( LineEdit, 1 );
+	}
+
+	protected override void DoLayout()
+	{
+		// nothing
 	}
 
 	void OpenMenu()
