@@ -1,2 +1,8 @@
 $deadzone-x: 2vw;
 $deadzone-y: 2vw;
+
+// Shared accent colour — used by both Menu and HUD
+$color-accent: #5e94ff;
+
+@import "/UI/Menu.scss";
+@import "/UI/Hud.scss";

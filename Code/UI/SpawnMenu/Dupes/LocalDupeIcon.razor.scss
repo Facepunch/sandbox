@@ -1,19 +1,34 @@
+@import "/UI/Theme.scss";
+
 LocalDupeIcon
 {
     width: 100%;
     height: 100%;
     position: relative;
-    justify-content: center;
     overflow: hidden;
+    border-radius: $hud-radius-sm;
+    border: 1px solid transparent;
     background-position: center;
     background-size: contain;
     cursor: pointer;
 
+    &:hover
+    {
+        border-color: rgba($color-accent, 0.2);
+    }
+
     .name
     {
         position: absolute;
-        bottom: 10px;
-        align-items: center;
-        justify-content: center;
+        bottom: 0px;
+        left: 0px;
+        background-color: #0005;
+        border-radius: 10px;
+        padding: 0.5rem 1rem;
+        margin: 0.5rem;
+        font-family: Poppins;
+        font-size: 1rem;
+        font-weight: 600;
+        max-width: 90%;
     }
 }

@@ -1,10 +1,10 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @inherits Panel
 @namespace Sandbox
 
 <root>
-    <div class="iconsize islandbg">
+    <div class="menu-icon-toggle-group">
         <IconPanel class=@( Size == 60 ? "active" : "" ) Text="view_compact" @onclick=@( () => ChangeSize( 60 ) )></IconPanel>
         <IconPanel class=@( Size == 120 ? "active" : "" ) Text="view_module" @onclick=@( () => ChangeSize( 120 ) )></IconPanel>
         <IconPanel class=@( Size == 200 ? "active" : "" ) Text="grid_view" @onclick=@( () => ChangeSize( 200 ) )></IconPanel>
@@ -14,12 +14,13 @@
 
 @code
 {
-	public int Size { get; set;  } = 120;
+	public int Size { get; set; } = 120;
 
-	protected override int BuildHash() => HashCode.Combine(Size);
+	protected override int BuildHash() => HashCode.Combine( Size );
 
 	void ChangeSize( int size )
 	{
 		Size = size;
 	}
 }
+

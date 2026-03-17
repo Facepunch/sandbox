@@ -12,23 +12,25 @@
     <Header>
         <SpawnMenuToolbar>
             <Left>
-	            <h2>@data.Name</h2>
+                <h2>@data.Name</h2>
             </Left>
             <Right>
                 @{
                     var workshopId = Entry.GetMeta( "_workshopId", 0u );
                     var isPublished = workshopId > 0;
                 }
-                @if ( isPublished )
-                {
-                    <Button Icon="link" Text="Copy Url" @onclick=@( () => Clipboard.SetText( $"https://steamcommunity.com/sharedfiles/filedetails/?id={workshopId}" ) ) />
-                    <Button Icon="sync" Text="Sync" @onclick=@( () => OnPublish() ) />
-                }
-                else
-                {
-                    <Button Icon="cloud_upload" Text="Publish" @onclick=@( () => OnPublish() ) />
-                }
-                <Button Icon="delete" Text="Delete" @onclick=@( () => OnDelete() ) />
+                <div class="menu-icon-toggle-group">
+                    @if ( isPublished )
+                    {
+                        <IconPanel Text="link" @onclick=@( () => Clipboard.SetText( $"https://steamcommunity.com/sharedfiles/filedetails/?id={workshopId}" ) ) />
+                        <IconPanel Text="sync" @onclick=@( () => OnPublish() ) />
+                    }
+                    else
+                    {
+                        <IconPanel Text="cloud_upload" @onclick=@( () => OnPublish() ) />
+                    }
+                    <IconPanel Text="delete" @onclick=@( () => OnDelete() ) />
+                </div>
             </Right>
         </SpawnMenuToolbar>
     </Header>
@@ -111,3 +113,4 @@
         page?.RefreshList();
     }
 }
+

@@ -214,6 +214,43 @@
               "__guid": "ec513cb5-7e44-4efc-b71a-f1353f4a8443",
               "__enabled": true,
               "Flags": 0,
+              "AmmoIcon": {
+                "$compiler": "texture",
+                "$source": "imagefile",
+                "data": {
+                  "FilePath": "ui/bullet.png",
+                  "MaxSize": 4096,
+                  "ConvertHeightToNormals": false,
+                  "NormalScale": 1,
+                  "Rotate": 0,
+                  "FlipVertical": false,
+                  "FlipHorizontal": false,
+                  "Cropping": {
+                    "Left": 0,
+                    "Top": 0,
+                    "Right": 0,
+                    "Bottom": 0
+                  },
+                  "Padding": {
+                    "Left": 0,
+                    "Top": 0,
+                    "Right": 0,
+                    "Bottom": 0
+                  },
+                  "InvertColor": false,
+                  "Tint": "1,1,1,1",
+                  "Blur": 0,
+                  "Sharpen": 0,
+                  "Brightness": 1,
+                  "Contrast": 1,
+                  "Saturation": 1,
+                  "Hue": 0,
+                  "Colorize": false,
+                  "TargetColor": "1,1,1,1",
+                  "CacheToDisk": true
+                },
+                "compiled": null
+              },
               "ArmourIcon": {
                 "$compiler": "texture",
                 "$source": "svgsource",
@@ -610,7 +647,6 @@
           "__guid": "bcb99eb5-8b38-4d97-b54c-547da06c3032",
           "__enabled": true,
           "Flags": 0,
-          "Denoise": true,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -654,7 +690,15 @@
       "AgentStepSize": 18,
       "AgentMaxSlope": 40,
       "ExcludedBodies": "",
-      "IncludedBodies": ""
+      "IncludedBodies": "",
+      "CustomBounds": false
+    },
+    "GameObjectSystems": {
+      "Sandbox.Clutter.ClutterGridSystem": {
+        "Storage": {
+          "$blob": "c8b681d5-2e79-4d2e-86ad-9f08d474a24d"
+        }
+      }
     }
   },
   "ResourceVersion": 3,

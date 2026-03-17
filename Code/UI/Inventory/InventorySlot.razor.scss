@@ -1,10 +1,11 @@
+@import "/UI/Theme.scss";
+
 InventorySlot
 {
     width: 96px;
     height: 96px;
-    background-color: rgba( 0, 0, 0, 0.3 );
-    backdrop-filter: blur( 10px );
-    border-radius: 4px;
+    background-color: $hud-element-bg-subtle;
+    border-radius: $hud-radius;
     transition: all 0.1s ease;
     position: relative;
 
@@ -22,7 +23,7 @@ InventorySlot .index
     font-size: 12px;
     font-weight: 650;
     font-family: Poppins;
-    color: rgba( #cdf, 0.5 );
+    color: rgba( white, 0.5 );
     pointer-events: none;
 }
 
@@ -37,7 +38,7 @@ InventorySlot .icon
     background-size: contain;
     background-repeat: no-repeat;
     mix-blend-mode: lighten;
-    background-tint: rgba( #5e94ff, 0.25 );
+    background-tint: rgba( $hud-color, 0.6 );
     pointer-events: none;
 }
 
@@ -50,7 +51,7 @@ InventorySlot .name
     font-size: 12px;
     font-weight: 600;
     font-family: Poppins;
-    color: rgba( #cdf, 0.6 );
+    color: rgba( white, 0.6 );
     text-align: center;
     pointer-events: none;
 }
@@ -62,62 +63,62 @@ InventorySlot.empty
 
 InventorySlot:not( .empty )
 {
-    background-color: rgba( 0, 0, 0, 0.7 );
+    background-color: $hud-element-bg;
 }
 
 InventorySlot.drag-hover
 {
-    background-color: rgba( #5e94ff, 0.15 );
-    border: 1px solid rgba( #5e94ff, 0.5 );
-    box-shadow: 0px 0px 16px rgba( #5e94ff, 0.3 );
+    background-color: rgba( $hud-color, 0.15 );
+    border: 1px solid rgba( $hud-color, 0.5 );
+    box-shadow: 0px 0px 16px rgba( $hud-color, 0.3 );
 
     .index
     {
-        color: #5e94ff;
+        color: $hud-color;
     }
 }
 
 InventorySlot.active
 {
     opacity: 1;
-    background-color: rgba( 0, 0, 0, 0.9 );
-    border: 0.5px solid rgba( #5e94ff, 0.3 );
+    background-color: $hud-element-bg;
+    border: 0.5px solid rgba( $hud-color, 0.3 );
 
     .index
     {
-        color: #5e94ff;
+        color: $hud-color;
     }
 
     .icon
     {
-        background-tint: #5e94ff;
+        background-tint: $hud-color;
     }
 
     .name
     {
-        color: #5e94ff;
+        color: $hud-color;
     }
 }
 
 InventorySlot.selected
 {
     opacity: 1;
-    background-color: rgba( #0d1a30, 0.7 );
-    border: 0.5px solid rgba( #5e94ff, 0.5 );
-    box-shadow: 0px 0px 12px rgba( #5e94ff, 0.2 );
+    background-color: $hud-element-bg-deep;
+    border: 0.5px solid rgba( $hud-color, 0.5 );
+    box-shadow: 0px 0px 12px rgba( $hud-color, 0.2 );
 
     .index
     {
-        color: #5e94ff;
+        color: $hud-color;
     }
 
     .icon
     {
-        background-tint: #5e94ff;
+        background-tint: $hud-color;
     }
 
     .name
     {
-        color: #5e94ff;
+        color: $hud-color;
     }
 }

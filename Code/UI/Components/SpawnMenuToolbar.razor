@@ -1,9 +1,9 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @inherits Panel
 @namespace Sandbox
 
-<root>
+<root class="menu-header-bar">
 
     @if ( Left != null )
     {
@@ -12,7 +12,7 @@
 
     <div class="body">@Body</div>
 
-	@if ( Right != null )
+@if ( Right != null )
     {
         <div class="right">@Right</div>
     }
@@ -27,3 +27,4 @@
     [Parameter] public RenderFragment Right { get; set; }
 
 }
+

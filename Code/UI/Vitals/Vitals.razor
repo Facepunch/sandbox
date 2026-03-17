@@ -10,37 +10,26 @@
     <div class="vitals">
         @if ( Player.Armour > 0 )
         {
-            <div class="stat armour">
+            <div class="stat armour hud-panel">
                 <Image class="icon" Texture=@ArmourIcon />
-                <div class="right">
-                    <label class="value">@(ArmourPercent)%</label>
-                    <div class="bar">
-                        <div class="fill" style="width: @(ArmourPercent)%"></div>
-                    </div>
-                </div>
+                <label class="value">@(ArmourPercent)%</label>
             </div>
         }
-        <div class="stat health">
+        <div class="stat health hud-panel">
             <Image class="icon" Texture=@HealthIcon />
-            <div class="right">
-                <label class="value">@(HealthPercent)%</label>
-                <div class="bar">
-                    <div class="fill" style="width: @(HealthPercent)%"></div>
-                </div>
-            </div>
+            <label class="value">@(HealthPercent)%</label>
         </div>
     </div>
 
     @if ( Weapon.IsValid() && Weapon.UsesAmmo )
     {
-        <div class="ammo">
-            <div class="count">
-                <label class="clip">@(Weapon.UsesClips ? Weapon.ClipContents : Weapon.ReserveAmmo)</label>
-                @if ( Weapon.UsesClips )
-                {
-                    <label class="reserve">@Weapon.ReserveAmmo</label>
-                }
-            </div>
+        <div class="ammo hud-panel">
+            <label class="clip">@(Weapon.UsesClips ? Weapon.ClipContents : Weapon.ReserveAmmo)</label>
+            @if ( Weapon.UsesClips )
+            {
+                <label class="reserve">@Weapon.ReserveAmmo</label>
+            }
+            <Image class="icon" Texture=@AmmoIcon />
         </div>
     }
 </root>
@@ -49,6 +38,7 @@
 {
     [Property] public Texture HealthIcon { get; set; }
     [Property] public Texture ArmourIcon { get; set; }
+    [Property] public Texture AmmoIcon { get; set; }
 
     Player Player => Player.FindLocalPlayer();
     BaseWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseWeapon;

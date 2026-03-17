@@ -1,3 +1,4 @@
+@import "/UI/Theme.scss";
 
 WorkshopIcon
 {
@@ -6,8 +7,16 @@ WorkshopIcon
     width: 100%;
     height: 100%;
     position: relative;
+    border-radius: $hud-radius-sm;
+    overflow: hidden;
+    border: 1px solid transparent;
     font-family: Poppins;
     font-size: 1rem;
+
+    &:hover
+    {
+        border-color: rgba($color-accent, 0.2);
+    }
 }
 
 .title, .author
@@ -33,7 +42,7 @@ WorkshopIcon
     bottom: 0px;
     right: 0px;
     align-items: center;
-    gap: 0,.5rem;
+    gap: 0.5rem;
 
     .avatar
     {

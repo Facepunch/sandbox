@@ -1,3 +1,5 @@
+@import "/UI/Theme.scss";
+
 VirtualList
 {
 	width: 100%;
@@ -23,13 +25,13 @@ VirtualList
 
 	&:hover
 	{
-		background-color: #7773;
+		background-color: $menu-row-hover;
 		sound-in: ui.button.over;
 	}
 
 	&:active
 	{
-		background-color: #08f;
+		background-color: $menu-accent;
 	}
 
 	.avatar

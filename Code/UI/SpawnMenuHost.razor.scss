@@ -1,3 +1,5 @@
+@import "/UI/Theme.scss";
+
 SpawnMenuHost
 {
 	position: absolute;
@@ -5,7 +7,7 @@ SpawnMenuHost
 	left: 0;
 	right: 0;
 	bottom: 0;
-	color: #cdf;
+	color: $menu-color;
 	justify-content: center;
 	font-family: Poppins;
 	font-size: 14px;
@@ -26,6 +28,4 @@ SpawnMenuHost.open
 	pointer-events: all;
 	transition: opacity 0.1s linear;
 }
-
-
 

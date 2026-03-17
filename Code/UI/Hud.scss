@@ -1,0 +1,61 @@
+// Background colours
+$hud-bg: #0c202fcc;
+$hud-bg-panel: #13161a88;
+$hud-element-bg: #0006;
+$hud-element-bg-deep: #000a;
+$hud-element-bg-subtle: #0003;
+
+// Text / tint
+$hud-text: #fff;
+$hud-text-muted: #fffa;
+$hud-color: $color-accent;
+
+// Rounding
+$hud-radius: 8px;
+$hud-radius-sm: 4px;
+$hud-radius-pill: 20px;
+
+// Shared base for all HUD stat panels (health, armour, ammo, etc.)
+$hud-icon-size: 24px;
+$hud-icon-height: 28px;
+$hud-value-size: 22px;
+$hud-value-weight: 700;
+
+.hud-panel
+{
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 16px;
+	background-color: $hud-element-bg;
+	border-radius: $hud-radius;
+	font-family: Poppins;
+	pointer-events: none;
+
+	Image, .icon
+	{
+		width: $hud-icon-size;
+		height: $hud-icon-height;
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+		flex-shrink: 0;
+		background-tint: $hud-color;
+	}
+
+	// Primary value label — health %, clip count, etc.
+	.value, .clip
+	{
+		font-size: $hud-value-size;
+		font-weight: $hud-value-weight;
+		color: $hud-text;
+	}
+
+	// Secondary / muted value — reserve ammo, etc.
+	.reserve
+	{
+		font-size: $hud-value-size;
+		font-weight: $hud-value-weight;
+		color: $hud-text-muted;
+	}
+}

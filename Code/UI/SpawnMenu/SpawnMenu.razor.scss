@@ -1,8 +1,10 @@
+@import "/UI/Theme.scss";
+
 SpawnMenu
 {
     width: 100%;
     height: 100%;
-    color: #cdf;
+    color: $menu-color;
     justify-content: center;
     font-family: Poppins;
     font-size: 14px;
@@ -97,31 +99,31 @@ SpawnMenuHost.open SpawnMenu
     cursor: pointer;
     color: #D1D7E3AA;
     border-radius: 8px 8px 0 0;
-    background-color: #0c202faa;
+    background-color: $menu-panel-bg-tab;
     opacity: 1;
-    border-right: 1px solid #0004;
+    border-right: 1px solid $menu-surface-soft;
     gap: 0.4rem;
     align-items: center;
 }
 
 .tabs > *:hover
 {
-    color: #cdf;
+    color: $menu-color;
     sound-in: ui.hover;
 }
 
 .tabs > *:active
 {
-    color: #fff;
+    color: $menu-text-strong;
     sound-in: ui.select;
 }
 
 .tabs > *.active
 {
     opacity: 1;
-    color: #fff;
+    color: $menu-text-strong;
     cursor: pointer;
-    background-color: #0c202fcc;
+    background-color: $menu-panel-bg;
     pointer-events: none;
     backdrop-filter: blur( 8px );
 }
@@ -164,7 +166,7 @@ SpawnMenuHost.open SpawnMenu
 {
     > .body
     {
-        background-color: #0c202fcc;
+        background-color: $menu-panel-bg;
         backdrop-filter: blur( 2px );
     }
 }
@@ -172,7 +174,7 @@ SpawnMenuHost.open SpawnMenu
 
 .menuinner
 {
-    background-color: #13161a88;
+    background-color: $menu-inner-bg;
     border-radius: 8px;
 }
 
@@ -275,16 +277,19 @@ VirtualGrid
     .cell
     {
         background-color: #7771;
+        border-radius: $hud-radius-sm;
+        border: 1px solid transparent;
         cursor: pointer;
 
         &:hover
         {
-            background-color: #7773;
+            background-color: $menu-accent-soft;
+            border-color: rgba($color-accent, 0.4);
         }
 
         &:active
         {
-            background-color: #08f;
+            background-color: $menu-accent;
             padding: 2px;
         }
     }

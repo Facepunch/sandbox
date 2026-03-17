@@ -1,0 +1,160 @@
+$menu-color: #cdf;
+$menu-color-muted: #8ad;
+$menu-text: #fffa;
+$menu-text-strong: #fff;
+$menu-surface-soft: #0004;
+$menu-surface-strong: #0008;
+$menu-accent: $color-accent;
+$menu-accent-soft: rgba($color-accent, 0.13);
+$menu-accent-hover: rgba($color-accent, 0.4);
+$menu-row-hover: #7773;
+$menu-panel-bg: #0c202fcc;
+$menu-panel-bg-tab: #0c202faa;
+$menu-inner-bg: #13161a88;
+$menu-disabled-opacity: 0.25;
+
+.menu-header-bar
+{
+	border-radius: 8px 8px 0 0;
+	z-index: 100;
+	font-size: 1.2rem;
+	font-family: Poppins;
+	font-weight: 600;
+}
+
+.menu-input
+{
+	background-color: $menu-surface-soft;
+	border-radius: 5px;
+	padding: 2px 10px;
+}
+
+.menu-segmented-group
+{
+	background-color: $menu-surface-strong;
+	border-radius: 20px;
+	overflow: hidden;
+}
+
+.menu-mode-button
+{
+	color: $menu-text;
+	font-family: Poppins;
+	font-size: 1rem;
+	font-weight: 600;
+	padding: 1rem;
+	cursor: pointer;
+	pointer-events: all;
+	gap: 0.5rem;
+	justify-content: center;
+	align-items: center;
+
+	.icon
+	{
+		font-size: 1.5rem;
+	}
+
+	.title
+	{
+		font-size: 1.1rem;
+		font-weight: 700;
+	}
+
+	&:hover
+	{
+		color: $menu-text-strong;
+	}
+
+	&.active
+	{
+		background-color: $menu-accent;
+		color: $menu-text-strong;
+	}
+}
+
+.menu-icon-toggle-group
+{
+	background-color: $menu-surface-soft;
+	border-radius: 4px;
+	gap: 0.5rem;
+	padding: 2px 4px;
+	align-items: center;
+
+	IconPanel
+	{
+		width: 20px;
+		height: 20px;
+		opacity: 0.35;
+
+		&:hover
+		{
+			opacity: 0.7;
+		}
+
+		&.active
+		{
+			opacity: 1;
+		}
+	}
+}
+
+.menu-action
+{
+	color: $menu-text-strong;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	cursor: pointer;
+	padding: 6px 10px;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	font-weight: 600;
+
+	label, .title
+	{
+		font-size: 14px;
+	}
+
+	IconPanel, .icon
+	{
+		font-size: 1.2rem;
+	}
+
+	&.disabled
+	{
+		pointer-events: none;
+		opacity: $menu-disabled-opacity;
+	}
+
+	&.soft
+	{
+		background-color: $menu-accent-soft;
+
+		&:hover
+		{
+			background-color: $menu-accent-hover;
+			sound-in: ui.button.over;
+		}
+	}
+
+	&.primary
+	{
+		border-color: $menu-accent;
+
+		&:hover
+		{
+			background-color: $menu-accent-soft;
+			sound-in: ui.button.over;
+		}
+	}
+
+	&.wide
+	{
+		width: 100%;
+	}
+}
+
+.menu-filter-input
+{
+	width: 200px;
+}

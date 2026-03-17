@@ -6,8 +6,6 @@ Vitals
 	width: 100%;
 	height: 100%;
 	pointer-events: none;
-	font-family: Poppins;
-	color: linear-gradient( 45deg, #cdf, #cdf, #8ea3ce );
 
 	.vitals
 	{
@@ -18,107 +16,10 @@ Vitals
 		gap: 8px;
 	}
 
-	.stat
-	{
-		flex-direction: row;
-		align-items: center;
-		gap: 16px;
-		padding: 16px;
-		padding-top: 11px;
-
-		.icon
-		{
-			width: 28px;
-			height: 32px;
-			background-size: contain;
-			background-repeat: no-repeat;
-			background-position: center;
-			flex-shrink: 0;
-			margin-top: 8px;
-			background-tint: #cdf;
-		}
-
-		.right
-		{
-			flex-direction: column;
-			min-width: 180px;
-		}
-
-		.bar
-		{
-			height: 8px;
-			background-color: rgba( white, 0.15 );
-			border-radius: 2px;
-			box-shadow: 0px 0px 10px rgba( black, 0.5 );
-			overflow: hidden;
-
-			.fill
-			{
-				height: 100%;
-				border-radius: 2px;
-				transition: width 0.2s ease;
-			}
-		}
-
-		&.armour
-		{
-			width: 128px;
-		}
-
-		&.health
-		{
-			min-width: 200px;
-		}
-
-		.value
-		{
-			font-size: 23px;
-			height: 32px;
-			font-weight: 700;
-			text-shadow: 1px 1px 6px black;
-		}
-
-		&.health .bar .fill
-		{
-			background-image: linear-gradient( to right, #cdf, #8ea3ce );
-			box-shadow: 0px 0px 10px black;
-		}
-
-		&.armour .bar .fill
-		{
-			background-color: #48f;
-		}
-	}
-
 	.ammo
 	{
 		position: absolute;
 		bottom: 64px;
 		right: 64px;
-		flex-direction: column;
-		align-items: flex-end;
-
-		.count
-		{
-			flex-direction: row;
-			align-items: baseline;
-			gap: 16px;
-		}
-
-		.clip
-		{
-			font-size: 32px;
-			height: 44px;
-			font-weight: 700;
-			text-shadow: 1px 1px 6px black;
-		}
-
-		.reserve
-		{
-			font-size: 26px;
-			font-weight: 500;
-			opacity: 0.6;
-			text-shadow: 1px 1px 4px black;
-		}
 	}
 }

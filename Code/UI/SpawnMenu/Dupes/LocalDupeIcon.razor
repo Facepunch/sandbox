@@ -5,7 +5,7 @@
 @namespace Sandbox
 
 <root>
-
+    <div class="name">@(Content.GetMeta<string>( "name" ) ?? "Dupe")</div>
 </root>
 
 @code
