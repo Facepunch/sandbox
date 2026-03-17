@@ -50,21 +50,25 @@ public class DooExpressionControlWidget : ControlWidget
 	{
 		var expr = SerializedProperty.GetValue<Doo.Expression>();
 
-		// Literal submenu with value type options
+
+		if ( targetType != null )
 		{
-			var o = menu.AddOption( "Literal", "abc", () =>
+			bool active = expr is Doo.LiteralExpression ex && ex.LiteralValue.Type == targetType;
+
+			var o = menu.AddOption( $"{targetType.Name}", "type_specimen", () =>
 			{
-				SerializedProperty.SetValue( new Doo.LiteralExpression() { LiteralValue = "value" } );
+				if ( active ) return;
+				SerializedProperty.SetValue( new Doo.LiteralExpression() { LiteralValue = new Variant( null, targetType ) } );
 				BuildContent();
 			} );
 
 			o.Checkable = true;
-			o.Checked = expr is Doo.VariableExpression;
+			o.Checked = active;
 		}
 
 		// Variable option
 		{
-			var o = menu.AddOption( "Variable", "abc", () =>
+			var o = menu.AddOption( "Variable", "subscript", () =>
 			{
 				SerializedProperty.SetValue( new Doo.VariableExpression() { VariableName = "x" } );
 				BuildContent();
@@ -74,39 +78,20 @@ public class DooExpressionControlWidget : ControlWidget
 			o.Checked = expr is Doo.VariableExpression;
 		}
 
-	}
-
-	void ShowExpressionTypeMenu()
-	{
-		var menu = new ContextMenu();
-
-		var expr = SerializedProperty.GetValue<Doo.Expression>();
-
 		// Literal submenu with value type options
 		{
-			var o = menu.AddOption( "Literal", "abc", () =>
+			var o = menu.AddOption( "Select Type...", "post_add", () =>
 			{
 				SerializedProperty.SetValue( new Doo.LiteralExpression() { LiteralValue = "value" } );
 				BuildContent();
 			} );
 
 			o.Checkable = true;
-			o.Checked = expr is Doo.VariableExpression;
+			o.Checked = false;
 		}
 
-		// Variable option
-		{
-			var o = menu.AddOption( "Variable", "abc", () =>
-			{
-				SerializedProperty.SetValue( new Doo.VariableExpression() { VariableName = "x" } );
-				BuildContent();
-			} );
+		menu.AddSeparator();
 
-			o.Checkable = true;
-			o.Checked = expr is Doo.VariableExpression;
-		}
-
-		menu.OpenNextTo( this, WidgetAnchor.BottomEnd with { AdjustSize = true, ConstrainToScreen = true } );
 	}
 
 	Doo.Expression _old;
