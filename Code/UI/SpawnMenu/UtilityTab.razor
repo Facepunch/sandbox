@@ -25,15 +25,61 @@
                         var instance = type.Create<UtilityFunction>();
                         if ( instance is null || !instance.IsVisible() ) continue;
 
-                        <MenuOption Text="@type.Title" Icon="@type.Icon" @onclick="@(() => instance.Execute())"></MenuOption>
+                        <MenuOption Text="@type.Title" Icon="@type.Icon"
+                            class=@( SelectedFunctionType == type ? "active" : "" )
+                            @onclick="@(() => OnSelect( type, instance ))">
+                        </MenuOption>
                     }
                 }
             </Options>
         </VerticalMenu>
     </div>
+
+    <div class="body menuinner" @ref="PageContainer"></div>
 </root>
 
 @code
 {
+    TypeDescription SelectedFunctionType { get; set; }
+    Panel PageContainer;
+    List<UtilityPage> ActivePages = new();
 
+    void OnSelect( TypeDescription type, UtilityFunction instance )
+    {
+        var pages = GetPages( type );
+
+        if ( pages.Count > 0 )
+        {
+            SelectedFunctionType = type;
+
+            foreach ( var p in ActivePages ) p.Delete();
+            ActivePages.Clear();
+
+            foreach ( var pageType in pages )
+            {
+                var page = pageType.Create<UtilityPage>();
+                PageContainer.AddChild( page );
+                ActivePages.Add( page );
+            }
+        }
+        else
+        {
+            SelectedFunctionType = null;
+            foreach ( var p in ActivePages ) p.Delete();
+            ActivePages.Clear();
+            instance.Execute();
+        }
+
+        StateHasChanged();
+    }
+
+    List<TypeDescription> GetPages( TypeDescription functionType )
+    {
+        return Game.TypeLibrary.GetTypes<UtilityPage>()
+            .Where( t => !t.IsAbstract )
+            .Where( t => t.GetAttribute<UtilityOfAttribute>()?.FunctionType == functionType.TargetType )
+            .OrderBy( t => t.Order )
+            .ThenBy( t => t.Title )
+            .ToList();
+    }
 }

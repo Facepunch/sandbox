@@ -2,6 +2,7 @@
   "Prefab": "entities/sents/lights/bulblight.prefab",
   "Title": "Bulb Light",
   "Description": "A light that emits radiantly",
+  "Category": "World",
   "IncludeCode": false,
   "__references": [],
   "__version": 0

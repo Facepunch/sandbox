@@ -13,6 +13,13 @@ public class ScriptedEntity : GameResource, IDefinitionResource
 	public string Description { get; set; }
 
 	/// <summary>
+	/// Used to group this entity under a named category in the spawn menu (e.g. "Chair", "Weapon", "Npc", "World").
+	/// Leave blank to place it under "Other".
+	/// </summary>
+	[Property]
+	public string Category { get; set; }
+
+	/// <summary>
 	/// If this entity uses code then you should enable this so the code is included when publishing.
 	/// </summary>
 	[Property]

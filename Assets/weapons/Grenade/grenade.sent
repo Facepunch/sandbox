@@ -2,6 +2,7 @@
   "Prefab": "weapons/grenade/item_grenade.prefab",
   "Title": "Grenade",
   "Description": null,
+  "Category": "Weapon",
   "IncludeCode": false,
   "__references": [],
   "__version": 0

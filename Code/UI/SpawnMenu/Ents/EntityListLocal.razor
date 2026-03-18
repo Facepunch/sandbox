@@ -15,14 +15,19 @@
 
 @code
 {
+    public string Category { get; set; }
+
     List<ScriptedEntity> Entities = [];
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
-        Entities = ResourceLibrary.GetAll<ScriptedEntity>().ToList();
+        var all = ResourceLibrary.GetAll<ScriptedEntity>();
 
-
+        Entities = (Category is null
+            ? all
+            : all.Where( e => (string.IsNullOrWhiteSpace( e.Category ) ? "Other" : e.Category) == Category )
+        ).ToList();
     }
 }

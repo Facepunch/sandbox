@@ -33,4 +33,10 @@ public class DragData
 	public Panel Source { get; set; }
 
 	public object Data { get; set; }
+
+	/// <summary>
+	/// Set to true when a drop target has already handled this drag (e.g. slot-to-slot swap),
+	/// so the source panel's OnDragEnd can skip secondary actions like dropping to the world.
+	/// </summary>
+	public bool Handled { get; set; }
 }

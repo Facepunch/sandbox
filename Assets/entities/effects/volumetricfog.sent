@@ -2,6 +2,7 @@
   "Prefab": "entities/effects/volumetricfog.prefab",
   "Title": "Volumetric Fog",
   "Description": "Forces volmetric fog on globally",
+  "Category": "World",
   "IncludeCode": false,
   "__references": [],
   "__version": 0

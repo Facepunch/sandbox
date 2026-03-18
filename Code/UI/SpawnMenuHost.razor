@@ -67,6 +67,18 @@
                 }
             }
         }
+        else if ( state )
+        {
+            // menu stays open — switch modes if the other key is pressed
+            if (Input.Pressed("inspectmenu"))
+            {
+                SwitchMode("ContextMenuHost", false);
+            }
+            else if (Input.Pressed("spawnmenu"))
+            {
+                SwitchMode(_lastMode, false);
+            }
+        }
 
 
 

@@ -100,6 +100,22 @@ InventorySlot.active
     }
 }
 
+InventorySlot.hovered
+{
+    background-color: $hud-element-bg;
+    border: 0.5px solid rgba( $hud-color, 0.2 );
+
+    .icon
+    {
+        background-tint: rgba( $hud-color, 0.8 );
+    }
+
+    .name
+    {
+        color: rgba( white, 0.9 );
+    }
+}
+
 InventorySlot.selected
 {
     opacity: 1;

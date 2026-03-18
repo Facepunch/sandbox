@@ -26,6 +26,8 @@
 
     Panel IconPanel { get; set; }
 
+    static InventorySlot _hoveredDragSlot;
+
     public override bool WantsDrag => true;
 
     protected override void OnDragStart( DragEvent e )
@@ -45,10 +47,32 @@
 
     protected override void OnDragEnd( DragEvent e )
     {
+        var data = DragHandler.Current;
         DragHandler.StopDragging();
         base.OnDragEnd( e );
 
-        Inventory.Drop(GetWeapon());
+        // OnDrop on the target already handled the swap.
+        if ( data?.Handled == true )
+        {
+            if ( data.Source is not null ) data.Source.UserData = null;
+            return;
+        }
+
+        // Mouse is hovering over a different slot — OnDrop will fire and handle the swap.
+        // Don't clear UserData yet so OnDrop can still retrieve it via e.Target.UserData.
+        if ( _hoveredDragSlot is not null && _hoveredDragSlot != this )
+            return;
+
+        // No slot handled it — clean up.
+        if ( data?.Source is not null ) data.Source.UserData = null;
+
+        // If the mouse is still over this slot the user dragged back to the source — no-op.
+        var mousePos = Mouse.Position * ScaleFromScreen;
+        if ( Box.RectOuter.IsInside( mousePos ) ) return;
+
+        var weapon = GetWeapon();
+        if ( !Inventory.Drop( weapon ) && weapon.IsValid() )
+            weapon.DestroyGameObject();
     }
 
     BaseCarryable GetWeapon()
@@ -97,19 +121,36 @@
     protected override void OnDragEnter(PanelEvent e)
     {
         AddClass("drag-hover");
+        _hoveredDragSlot = this;
     }
 
     protected override void OnDragLeave(PanelEvent e)
     {
         RemoveClass("drag-hover");
+        if ( _hoveredDragSlot == this ) _hoveredDragSlot = null;
     }
 
     protected override void OnDrop( PanelEvent e )
     {
         RemoveClass( "drag-hover" );
+        _hoveredDragSlot = null;
 
-        var data = e.Target.UserData as DragData;
+        // Use DragHandler.Current first; fall back to UserData for the case where
+        // OnDragEnd fired first and cleared Current (but preserved UserData).
+        var data = DragHandler.Current ?? e.Target.UserData as DragData;
+
+        // Clean up UserData now that the drop is being processed.
+        if ( data?.Source is not null ) data.Source.UserData = null;
+
         if ( data is null ) return;
+
+        // Hotbar-to-hotbar: move or swap the dragged slot with this slot.
+        if ( data.Source is InventorySlot sourceSlot && sourceSlot.Inventory == Inventory )
+        {
+            data.Handled = true;
+            Inventory.MoveSlot( sourceSlot.Index, Index );
+            return;
+        }
 
         GameManager.GiveSpawnerWeaponAt( data.Type, data.Path, Index, data.Data as string, data.Icon, data.Title );
     }

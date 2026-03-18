@@ -8,7 +8,17 @@ public class EntityPage : BaseSpawnMenu
 	protected override void Rebuild()
 	{
 		AddHeader( "You" );
-		AddOption( "📂", "Installed", () => new EntityListLocal() { } );
+
+		var categories = ResourceLibrary.GetAll<ScriptedEntity>()
+			.Select( e => string.IsNullOrWhiteSpace( e.Category ) ? "Other" : e.Category )
+			.Distinct()
+			.OrderBy( c => c == "Other" ? "\xFF" : c ); // sort Other last
+
+		foreach ( var category in categories )
+		{
+			var cat = category; // capture for lambda
+			AddOption( "📂", cat, () => new EntityListLocal { Category = cat } );
+		}
 
 		AddHeader( "Workshop" );
 		AddOption( "\U0001f9e0", "All", () => new EntityListCloud() { Query = "" } );

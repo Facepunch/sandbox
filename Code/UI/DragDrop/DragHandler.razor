@@ -7,8 +7,12 @@
 
 	@if ( Current is not null )
 	{
-		<div class="dragging" @ref="DragVisual">
-			<div class="drag-icon" style="background-image: url(@Current.Icon)"></div>
+		var iconStyle = string.IsNullOrEmpty( Current.Icon ) ? "" : $"background-image: url({Current.Icon})";
+		<div class="dragging" style="@iconStyle" @ref="DragVisual">
+			@if ( string.IsNullOrEmpty( Current.Icon ) )
+			{
+				<div class="drag-title">@Current.Title</div>
+			}
 		</div>
 	}
 

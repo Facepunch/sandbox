@@ -2,6 +2,7 @@
   "Prefab": "weapons/toolgun/item_toolgun.prefab",
   "Title": "Tool Gun",
   "Description": "You're a tool.",
+  "Category": "Weapon",
   "IncludeCode": false,
   "__references": [],
   "__version": 0

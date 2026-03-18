@@ -2,6 +2,7 @@
   "Prefab": "entities/sents/chairs/ladder.prefab",
   "Title": "Ladder",
   "Description": "",
+  "Category": "Chair",
   "IncludeCode": false,
   "__references": [],
   "__version": 0

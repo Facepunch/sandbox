@@ -2,6 +2,7 @@
   "Prefab": "weapons/colt1911/item_colt1911.prefab",
   "Title": "1911",
   "Description": "Semi-automatic .45 ACP pistol",
+  "Category": "Weapon",
   "IncludeCode": false,
   "__references": [],
   "__version": 0

@@ -57,11 +57,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 	{
 		Pickup( "weapons/physgun/physgun.prefab", false );
 		Pickup( "weapons/toolgun/toolgun.prefab", false );
-		Pickup( "weapons/glock/glock.prefab", false );
-		Pickup( "weapons/camera/camera.prefab", 5, false );
-
-		var toolgun = GetComponentInChildren<Toolgun>( true );
-		toolgun?.CreateToolComponents();
+		Pickup( "weapons/camera/camera.prefab", 8, false );
 	}
 
 	public bool Pickup( string prefabName, bool notice = true )
@@ -298,6 +294,39 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		}
 
 		return item.Value > ActiveWeapon.Value;
+	}
+
+	/// <summary>
+	/// Moves the item in <paramref name="fromSlot"/> to <paramref name="toSlot"/>.
+	/// If both slots are occupied the items are swapped; if <paramref name="toSlot"/> is
+	/// empty the item is simply relocated.
+	/// </summary>
+	public void MoveSlot( int fromSlot, int toSlot )
+	{
+		if ( !Networking.IsHost )
+		{
+			HostMoveSlot( fromSlot, toSlot );
+			return;
+		}
+
+		if ( fromSlot == toSlot ) return;
+		if ( fromSlot < 0 || fromSlot >= MaxSlots ) return;
+		if ( toSlot < 0 || toSlot >= MaxSlots ) return;
+
+		var fromWeapon = GetSlot( fromSlot );
+		if ( !fromWeapon.IsValid() ) return;
+
+		var toWeapon = GetSlot( toSlot );
+
+		fromWeapon.InventorySlot = toSlot;
+		if ( toWeapon.IsValid() )
+			toWeapon.InventorySlot = fromSlot;
+	}
+
+	[Rpc.Host]
+	private void HostMoveSlot( int fromSlot, int toSlot )
+	{
+		MoveSlot( fromSlot, toSlot );
 	}
 
 	public BaseCarryable GetBestWeapon()

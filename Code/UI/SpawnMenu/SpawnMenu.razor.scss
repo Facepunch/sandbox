@@ -234,14 +234,21 @@ SpawnMenuHost.open SpawnMenu
             {
                 padding: 0;
                 margin: 0;
+                gap: 2px;
             }
         }
 
-        controlsheetrow
+        .page
+        {
+            gap: 2px;
+        }
+
+        controlsheetrow, .control-row
         {
             width: 100%;
             background-color: #53698111;
             padding: 8px;
+            border-radius: 4px;
             max-height: auto;
 
             &:hover
@@ -258,6 +265,7 @@ SpawnMenuHost.open SpawnMenu
             {
                 width: 150px;
                 overflow: hidden;
+                flex-shrink: 0;
             }
 
             > .right, > .left

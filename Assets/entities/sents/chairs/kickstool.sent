@@ -2,6 +2,7 @@
   "Prefab": "entities/sents/chairs/kickstool.prefab",
   "Title": "Kick Stool",
   "Description": "For those hard-to-reach places",
+  "Category": "Chair",
   "IncludeCode": false,
   "__references": [],
   "__version": 0

@@ -2,6 +2,7 @@
   "Prefab": "entities/sents/chairs/plastic-chair.prefab",
   "Title": "Plastic Chair",
   "Description": "A chair you can sit on. It's made out of plastic.",
+  "Category": "Chair",
   "IncludeCode": false,
   "__references": [],
   "__version": 0

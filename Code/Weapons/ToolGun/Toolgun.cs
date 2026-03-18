@@ -15,6 +15,14 @@ public partial class Toolgun : ScreenWeapon
 		currentMode?.OnCameraMove( player, ref angles );
 	}
 
+	public override void OnAdded( Player player )
+	{
+		base.OnAdded( player );
+
+		if ( Networking.IsHost )
+			CreateToolComponents();
+	}
+
 	public void CreateToolComponents()
 	{
 		if ( !Networking.IsHost )

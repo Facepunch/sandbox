@@ -1,22 +1,17 @@
-﻿using Sandbox;
+using Sandbox;
 using Sandbox.UI;
 
 /// <summary>
-/// Cleans up all props and entities spawned by the local player.
+/// Opens cleanup pages in the utility tab right panel.
 /// </summary>
-[Icon( "🧼" )]
-[Title( "Clean Up" )]
-[Group( "User" )]
+[Icon( "🧹" )]
+[Title( "Cleanup" )]
+[Group( "World" )]
 [Order( 0 )]
-public class UserCleanupFunction : UtilityFunction
+public class CleanupFunction : UtilityFunction
 {
-	public override void Execute()
-	{
-		CleanUp();
-	}
-
 	[Rpc.Host]
-	private static void CleanUp()
+	internal static void CleanUpMine()
 	{
 		var caller = Rpc.Caller;
 
@@ -31,5 +26,13 @@ public class UserCleanupFunction : UtilityFunction
 		}
 
 		Notices.SendNotice( caller, "cleaning_services", Color.Green, $"Cleaned up {count} objects" );
+	}
+
+	[Rpc.Host]
+	internal static void CleanUpAll()
+	{
+		if ( !Rpc.Caller.IsHost ) return;
+
+		CleanupSystem.Current.Cleanup();
 	}
 }
