@@ -177,7 +177,7 @@
         "__guid": "7a0edd28-8894-48d5-8ba4-ba5aadaef5be",
         "__enabled": true,
         "Flags": 0,
-        "MaxSlots": 6,
+        "MaxSlots": 9,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -3095,7 +3095,8 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "CustomBounds": false
       }
     },
     "__variables": []
