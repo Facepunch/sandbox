@@ -7,7 +7,7 @@ public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
 
 	public IReadOnlyList<Component> GetSelectedComponents() =>
 		SelectedPath != null && _active.TryGetValue( SelectedPath, out var go )
-			? go.Components.GetAll<Component>().ToList()
+			? go.GetComponentsInChildren<Component>( true ).ToList()
 			: Array.Empty<Component>();
 
 	public PostProcessManager( Scene scene ) : base( scene ) { }
@@ -28,8 +28,12 @@ public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
 		var camera = Scene.Camera?.GameObject;
 		if ( camera is null ) return;
 
-		var go = GameObject.Clone( resource.Prefab, new CloneConfig { StartEnabled = startEnabled, Parent = camera } );
+		// Spawn enabled so components initialize, then disable if not wanted
+		var go = GameObject.Clone( resource.Prefab, new CloneConfig { StartEnabled = true, Parent = camera } );
 		_active[resourcePath] = go;
+
+		if ( !startEnabled )
+			go.Enabled = false;
 	}
 
 	public void Select( string resourcePath )

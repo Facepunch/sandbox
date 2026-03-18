@@ -1,3 +1,4 @@
+@import "/UI/Theme.scss";
 
 Inspector
 {
@@ -8,8 +9,8 @@ Inspector
 	> .window
 	{
 		position: absolute;
-		right: 6vw;
-		bottom: 10vh;
+		right: $deadzone-x;
+		bottom: $deadzone-y;
 		background-color: #222222ee;
 		border: 1px solid #444;
 		padding: 1rem;

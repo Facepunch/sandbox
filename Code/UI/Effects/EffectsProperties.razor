@@ -1,0 +1,99 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<root>
+    @if ( _selected is not null )
+    {
+        <div class="header">
+            <h2>
+                <span>🎨</span>
+                <span>@_selected.Title</span>
+            </h2>
+        </div>
+
+        @if ( _properties.Count > 0 )
+        {
+            <ControlSheet Target="@_properties" />
+        }
+        else
+        {
+            <div class="empty-state">No editable properties.</div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">Select an effect to edit its properties.</div>
+    }
+</root>
+
+@code
+{
+    PostProcessManager _manager;
+    PostProcessResource _selected;
+    List<SerializedProperty> _properties = new();
+
+    public override void Tick()
+    {
+        if ( _manager is null )
+            _manager = Game.ActiveScene.GetSystem<PostProcessManager>();
+
+        var selectedPath = _manager?.SelectedPath;
+        var resource = selectedPath != null
+            ? ResourceLibrary.Get<PostProcessResource>( selectedPath )
+            : null;
+
+        if ( resource != _selected )
+        {
+            _selected = resource;
+            RebuildProperties();
+        }
+
+        if ( _selected is not null )
+            StateHasChanged();
+    }
+
+    void RebuildProperties()
+    {
+        var props = new List<SerializedProperty>();
+
+        if ( _manager is not null )
+        {
+            foreach ( var component in _manager.GetSelectedComponents() )
+            {
+                var so = TypeLibrary.GetSerializedObject( component );
+                so.OnPropertyChanged = OnPropertyChanged;
+
+                foreach ( var prop in so.Where( FilterProperties ) )
+                {
+                    props.Add( prop );
+                }
+            }
+        }
+
+        _properties = props;
+    }
+
+    static bool FilterProperties( SerializedProperty o )
+    {
+        if ( o.PropertyType is null ) return false;
+        if ( o.PropertyType.IsAssignableTo( typeof(Delegate) ) ) return false;
+
+        if ( o.IsMethod ) return true;
+        if ( !o.HasAttribute<PropertyAttribute>() ) return false;
+
+        return true;
+    }
+
+    void OnPropertyChanged( SerializedProperty prop )
+    {
+        foreach ( var target in prop.Parent.Targets )
+        {
+            if ( target is Component component )
+                GameManager.ChangeProperty( component, prop.Name, prop.GetValue<object>() );
+        }
+    }
+
+    protected override int BuildHash() => HashCode.Combine( _manager?.SelectedPath );
+}
