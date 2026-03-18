@@ -4,17 +4,15 @@ NoticePanel
 {
 	position: absolute;
 	backdrop-filter: blur( 4px ) brightness( 0.4 );
-	padding: 0.5rem 1.5rem;
+	padding: 0.75rem 1.5rem;
 	border-radius: 10px;
 	font-family: $body-font;
 	font-weight: 600;
-	font-size: 22px;
-	color: #fff;
+	font-size: 18px;
+	color: $color-text;
 	gap: 10px;
 	justify-content: center;
 	align-items: center;
-	text-shadow: 2px 2px 4px #000a;
-	text-stroke: 4px #333;
 	overflow: hidden;
 
 	.icon

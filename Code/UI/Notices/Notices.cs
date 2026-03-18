@@ -2,11 +2,6 @@
 
 public class Notices : PanelComponent
 {
-	protected override void OnEnabled()
-	{
-		base.OnEnabled();
-	}
-
 	public static Notices Current => Game.ActiveScene.Get<Notices>();
 
 	public static NoticePanel AddNotice( string text, float seconds = 5 )

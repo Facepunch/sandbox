@@ -139,7 +139,7 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 		[Rpc.Broadcast]
 		public static void UndoNotice( string title )
 		{
-			Notices.AddNotice( "cached", "#4af", $"Undo {title}".Trim(), 4 );
+			Notices.AddNotice( "cached", "#3273eb", $"Undo {title}".Trim(), 5 );
 			Sound.Play( "sounds/ui/ui.undo.sound" );
 		}
 	}
