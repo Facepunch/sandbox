@@ -20,7 +20,6 @@
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
-        "AmmoResource": null,
         "CameraShoot": "weapons/camera/sounds/camera.shoot.sound",
         "CanCancelReload": true,
         "ClipContents": 20,
@@ -45,8 +44,11 @@
         "DisplayName": "Camera",
         "HoldType": "HoldItem",
         "IncrementalReloading": false,
-        "IsSelfAmmo": false,
-        "ItemPrefab": null,
+        "ItemPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/camera/item_camera.prefab"
+        },
+        "MaxReserveAmmo": 120,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -55,6 +57,7 @@
         "OnComponentUpdate": null,
         "ParentBone": "hold_R",
         "ReloadTime": 2.5,
+        "ReserveAmmo": 0,
         "StartingAmmo": 0,
         "UsesAmmo": true,
         "UsesClips": true,
@@ -82,7 +85,8 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "CustomBounds": false
       }
     },
     "__variables": []

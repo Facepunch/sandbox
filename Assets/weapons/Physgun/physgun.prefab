@@ -34,7 +34,6 @@
         },
         "ButtonInSound": "weapons/physgun/sounds/physgun.button.in.1.sound",
         "ButtonOutSound": "weapons/physgun/sounds/physgun.button.out.1.sound",
-        "CanDropInCoffin": false,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "svgsource",
@@ -65,7 +64,10 @@
           "prefab": "weapons/physgun/effects/grab.prefab"
         },
         "HoldType": "Physgun",
-        "ItemPrefab": null,
+        "ItemPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/physgun/item_physgun.prefab"
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -73,6 +75,11 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "ParentBone": "hold_r",
+        "PowerMaxDistance": 512,
+        "PowerMaxFraction": 1,
+        "PowerMinDistance": 64,
+        "PowerMinFraction": 0.5,
+        "Range": 8196,
         "ReleasedSound": "weapons/physgun/sounds/physgun.shoot.end.sound",
         "UnFreezeEffectPrefab": {
           "_type": "gameobject",
@@ -428,7 +435,8 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "CustomBounds": false
       }
     },
     "__variables": []

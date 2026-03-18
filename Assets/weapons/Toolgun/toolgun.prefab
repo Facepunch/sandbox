@@ -20,7 +20,6 @@
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
-        "CanDropInCoffin": false,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "svgsource",
@@ -39,7 +38,10 @@
         },
         "DisplayName": "Tool Gun",
         "HoldType": "Pistol",
-        "ItemPrefab": null,
+        "ItemPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/toolgun/item_toolgun.prefab"
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -82,7 +84,8 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "CustomBounds": false
       }
     },
     "__variables": []
