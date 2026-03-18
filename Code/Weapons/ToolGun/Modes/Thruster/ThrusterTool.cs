@@ -14,7 +14,7 @@ public class ThrusterTool : ToolMode
 	public override string PrimaryAction => "#tool.hint.thrustertool.place";
 	public override string SecondaryAction => "#tool.hint.thrustertool.toggle_axis";
 
-	Vector3 _axis = Vector3.Right;
+	Vector3 _axis = Vector3.Up;
 
 	public override void OnControl()
 	{
@@ -30,8 +30,12 @@ public class ThrusterTool : ToolMode
 			_axis = _axis == Vector3.Right ? Vector3.Up : Vector3.Right;
 		}
 
+		// _axis == Vector3.Up -> thrust perpendicular to the surface (normal)
+		// _axis == Vector3.Right -> thrust along the surface (90° pitch from normal)
+		var axisOffset = _axis == Vector3.Up ? new Angles( 0, 0, 0 ) : new Angles( 90, 0, 0 );
+
 		var placementTrans = new Transform( pos.Position );
-		placementTrans.Rotation = pos.Rotation * new Angles( 90, 0, 0 );
+		placementTrans.Rotation = pos.Rotation * axisOffset;
 
 		var thrusterDef = ResourceLibrary.Get<ThrusterDefinition>( Definition );
 		if ( thrusterDef == null ) return;

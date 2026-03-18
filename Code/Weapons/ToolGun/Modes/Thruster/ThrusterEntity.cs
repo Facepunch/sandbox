@@ -4,7 +4,7 @@ public class ThrusterEntity : Component, IPlayerControllable
 	[Property, Range( 0, 1 )]
 	public GameObject OnEffect { get; set; }
 
-	[Property, Range( 0, 1 )]
+	[Property, ClientEditable, Range( 0, 1 )]
 	public float Power { get; set; } = 0.5f;
 
 	/// <summary>
@@ -12,6 +12,11 @@ public class ThrusterEntity : Component, IPlayerControllable
 	/// </summary>
 	[Property, Sync, ClientEditable]
 	public ClientInput Activate { get; set; }
+
+	/// <summary>
+	/// Current thrust output, 0-1. Updated every control frame.
+	/// </summary>
+	public float ThrustAmount { get; private set; }
 
 	protected override void OnEnabled()
 	{
@@ -55,6 +60,7 @@ public class ThrusterEntity : Component, IPlayerControllable
 	public void OnControl()
 	{
 		var analog = Activate.GetAnalog();
+		ThrustAmount = analog;
 
 		AddThrust( analog );
 		SetActiveState( analog > 0.1f );

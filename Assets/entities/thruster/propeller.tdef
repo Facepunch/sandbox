@@ -1,0 +1,7 @@
+{
+  "Prefab": "entities/thruster/propeller.prefab",
+  "Title": "Propeller",
+  "Description": "It's not a ceiling fan, I promise.",
+  "__references": [],
+  "__version": 0
+}
