@@ -1,9 +1,11 @@
+@import "/UI/Theme.scss";
+
 Scoreboard
 {
 	position: absolute;
 	justify-content: center;
 	align-items: center;
-	font-family: Poppins;
+	font-family: $body-font;
 	font-size: 18px;
 	opacity: 0;
 	transform: translateY( -32px ) scale( 1.02 );
@@ -49,7 +51,7 @@ Scoreboard
 			font-weight: 900;
 			color: white;
 			height: 58px;
-			border-bottom: 5px solid #3277ea;
+			border-bottom: 5px solid $color-accent;
 			margin-bottom: 16px;
 		}
 

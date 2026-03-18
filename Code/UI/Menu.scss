@@ -1,4 +1,4 @@
-$menu-color: #cdf;
+$menu-color:#cdf;
 $menu-color-muted: #8ad;
 $menu-text: #fffa;
 $menu-text-strong: #fff;
@@ -17,8 +17,7 @@ $menu-disabled-opacity: 0.25;
 {
 	border-radius: 8px 8px 0 0;
 	z-index: 100;
-	font-size: 1.2rem;
-	font-family: Poppins;
+	font-family: $title-font;
 	font-weight: 600;
 }
 
@@ -39,10 +38,10 @@ $menu-disabled-opacity: 0.25;
 .menu-mode-button
 {
 	color: $menu-text;
-	font-family: Poppins;
 	font-size: 1rem;
 	font-weight: 600;
 	padding: 1rem;
+	font-family: $subtitle-font;
 	cursor: pointer;
 	pointer-events: all;
 	gap: 0.5rem;

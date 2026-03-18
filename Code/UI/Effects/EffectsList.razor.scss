@@ -22,7 +22,7 @@ EffectsList
             flex-grow: 1;
             font-size: 14px;
             font-weight: 600;
-            font-family: Poppins;
+            font-family: $body-font;
             color: rgba( white, 0.4 );
             padding: 8px 8px;
             text-align: center;
@@ -52,16 +52,14 @@ EffectsList
             border-radius: 4px;
             padding: 5px 8px;
             font-size: 12px;
-            font-family: Poppins;
+            font-family: $body-font;
             color: white;
         }
     }
 
     .group-header
     {
-        font-size: 10px;
-        font-weight: 700;
-        font-family: Poppins;
+        font-family: $subtitle-font;
         text-transform: uppercase;
         letter-spacing: 1px;
         color: rgba( white, 0.35 );
@@ -73,9 +71,7 @@ EffectsList
 
     .empty-state
     {
-        font-size: 12px;
-        font-family: Poppins;
-        color: rgba( white, 0.3 );
+        font-family: $subtitle-font;
         padding: 16px 12px;
         text-align: center;
     }
@@ -115,7 +111,7 @@ EffectsList
             flex-grow: 1;
             font-size: 13px;
             font-weight: 500;
-            font-family: Poppins;
+            font-family: $body-font;
             color: rgba( white, 0.75 );
             margin: 0 8px;
         }
@@ -132,7 +128,7 @@ EffectsList
                 flex-grow: 0;
                 font-size: 13px;
                 font-weight: 500;
-                font-family: Poppins;
+                font-family: $body-font;
                 color: rgba( white, 0.75 );
                 margin: 0;
             }
@@ -142,7 +138,7 @@ EffectsList
                 flex-direction: row;
                 align-items: center;
                 font-size: 10px;
-                font-family: Poppins;
+                font-family: $body-font;
                 color: rgba( white, 0.35 );
                 margin-top: 2px;
 

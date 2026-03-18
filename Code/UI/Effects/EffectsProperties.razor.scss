@@ -15,7 +15,7 @@ EffectsProperties
     {
         font-size: 14px;
         font-weight: 700;
-        font-family: Poppins;
+        font-family: $title-font;
         color: white;
         padding-bottom: 6px;
     }
@@ -27,17 +27,13 @@ EffectsProperties
         justify-content: center;
         font-size: 1.4rem;
         font-weight: 700;
-        font-family: Poppins;
-        color: white;
-        padding-bottom: 0.5rem;
+        font-family: $title-font;
         margin-bottom: 0.25rem;
     }
 
     .empty-state
     {
-        font-size: 12px;
-        font-family: Poppins;
-        color: rgba( white, 0.3 );
+        font-family: $subtitle-font;
         padding: 16px 12px;
         text-align: center;
     }

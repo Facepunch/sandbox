@@ -4,7 +4,7 @@ $hud-element-bg: #0006;
 $hud-element-bg-deep: #000a;
 $hud-element-bg-subtle: #0003;
 
-$hud-text: #fff;
+$hud-text: #fafaff;
 $hud-text-muted: #fffa;
 $hud-color: $color-accent;
 
@@ -25,7 +25,7 @@ $hud-value-weight: 700;
 	padding: 22px 22px;
 	background-color: $hud-element-bg;
 	border-radius: $hud-radius;
-	font-family: Poppins;
+	font-family: $title-font;
 	pointer-events: none;
 
 	Image, .icon

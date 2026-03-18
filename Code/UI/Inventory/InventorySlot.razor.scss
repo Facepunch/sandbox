@@ -22,8 +22,9 @@ InventorySlot .index
     left: 6px;
     font-size: 12px;
     font-weight: 650;
-    font-family: Poppins;
+    opacity: 0.5;
     color: rgba( white, 0.5 );
+    font-family: $subtitle-font;
     pointer-events: none;
 }
 
@@ -50,7 +51,7 @@ InventorySlot .name
     right: 4px;
     font-size: 12px;
     font-weight: 600;
-    font-family: Poppins;
+    font-family: $subtitle-font;
     color: rgba( white, 0.6 );
     text-align: center;
     pointer-events: none;
@@ -96,7 +97,7 @@ InventorySlot.active
 
     .name
     {
-        color: $hud-color;
+        color: rgba( white, 0.6 );
     }
 }
 
@@ -135,6 +136,6 @@ InventorySlot.selected
 
     .name
     {
-        color: $hud-color;
+        color: white;
     }
 }

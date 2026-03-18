@@ -1,3 +1,5 @@
+@import "/UI/Theme.scss";
+
 ResourceSelectPopup
 {
 	position: absolute;
@@ -11,7 +13,7 @@ ResourceSelectPopup
 	justify-content: center;
 	align-items: center;
 	pointer-events: all;
-	font-family: Poppins;
+	font-family: $body-font;
 
 	.inner
 	{

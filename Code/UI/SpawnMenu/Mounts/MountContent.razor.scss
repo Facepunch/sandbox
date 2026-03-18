@@ -1,3 +1,5 @@
+@import "/UI/Theme.scss";
+
 MountContent
 {
 	
@@ -27,7 +29,7 @@ MountContent > .body
 	justify-content: space-evenly;
 	align-items: center;
 	cursor: pointer;
-	font-family: Poppins;
+	font-family: $body-font;
 	white-space: nowrap;
 	overflow: hidden;
 

@@ -1,3 +1,5 @@
+@import "/UI/Theme.scss";
+
 ContextMenuHost
 {
 	position: absolute;
@@ -5,7 +7,7 @@ ContextMenuHost
 	height: 100%;
 	color: #cdf;
 	justify-content: center;
-	font-family: Poppins;
+	font-family: $body-font;
 	font-size: 14px;
 	font-weight: 600;
 	z-index: 500;

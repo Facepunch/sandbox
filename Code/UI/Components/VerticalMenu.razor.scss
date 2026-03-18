@@ -1,7 +1,9 @@
+@import "/UI/Theme.scss";
+
 VerticalMenu
 {
 	flex-direction: column;
-	font-family: Poppins;
+	font-family: $body-font;
 	font-weight: 600;
 	font-size: 14px;
 	flex-grow: 1;

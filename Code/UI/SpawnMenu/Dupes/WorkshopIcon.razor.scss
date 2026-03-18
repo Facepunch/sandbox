@@ -10,7 +10,7 @@ WorkshopIcon
     border-radius: $hud-radius-sm;
     overflow: hidden;
     border: 1px solid transparent;
-    font-family: Poppins;
+    font-family: $body-font;
     font-size: 1rem;
 
     &:hover

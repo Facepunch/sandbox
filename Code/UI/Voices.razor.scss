@@ -1,3 +1,5 @@
+@import "/UI/Theme.scss";
+
 Voices
 {
     position: absolute;
@@ -26,7 +28,7 @@ Voices
 
     label
     {
-        font-family: Poppins;
+        font-family: $body-font;
         color: #f806;
         font-size: 16px;
         text-shadow: 0px 0px 10px #f50;

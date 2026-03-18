@@ -20,13 +20,14 @@ ToolInfoPanel
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 4px;
-		font-family: Poppins;
+		font-family: $title-font;
 		padding: 16px;
 		background-color: $hud-element-bg;
 		border-radius: $hud-radius;
 	}
 
-	.actions {
+	.actions
+	{
 		gap: 16px;
 	}
 
@@ -40,9 +41,10 @@ ToolInfoPanel
 
 	.description
 	{
-		font-size: 18px;
+		font-size: 16px;
 		font-weight: 400;
-		color: white;
+		font-family: $subtitle-font;
+		color: $hud-text;
 		margin-bottom: 4px;
 	}
 
@@ -69,7 +71,7 @@ ToolInfoPanel
 	.text
 	{
 		font-size: 16px;
-		font-weight: 600;
+		font-weight: 500;
 		color: $hud-text;
 	}
 }

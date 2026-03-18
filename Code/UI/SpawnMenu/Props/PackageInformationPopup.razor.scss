@@ -1,9 +1,11 @@
+@import "/UI/Theme.scss";
+
 PackageInformationPopup
 {
 	width: 300px;
 	flex-direction: column;
 	padding: 1rem;
-	font-family: poppins;
+	font-family: $body-font;
 	font-size: 12px;
 
 	.title

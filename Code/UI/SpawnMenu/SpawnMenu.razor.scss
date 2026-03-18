@@ -6,7 +6,7 @@ SpawnMenu
     height: 100%;
     color: $menu-color;
     justify-content: center;
-    font-family: Poppins;
+    font-family: $body-font;
     font-size: 14px;
     font-weight: 600;
     z-index: 1000;
@@ -87,7 +87,7 @@ SpawnMenuHost.open SpawnMenu
     font-size: 14px;
     color: white;
     font-weight: 650;
-    font-family: Poppins;
+    font-family: $subtitle-font;
     margin-left: 8px;
     z-index: 10;
     flex-shrink: 0;

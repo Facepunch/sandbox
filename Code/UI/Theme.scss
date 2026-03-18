@@ -1,7 +1,12 @@
 $deadzone-x: 2vw;
 $deadzone-y: 2vw;
 
-$color-accent: #5e94ff;
+$color-accent: #3273eb;
+$color-text: #fafaff;
+
+$title-font: "Poppins";
+$body-font: "Inter";
+$subtitle-font: "Poppins";
 
 @import "/UI/Menu.scss";
 @import "/UI/Hud.scss";
