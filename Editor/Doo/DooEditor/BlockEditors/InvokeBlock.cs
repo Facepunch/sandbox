@@ -110,9 +110,10 @@ public class InvokeBlock : InspectorWidget
 				return;
 			}
 
-			var headerLo = Layout.Column();
-			headerLo.Add( new Label.Header( "Parameters" ) );
-			cs.AddLayout( headerLo );
+			Layout.Add( new Label.Header( $"Parameters" ) );
+
+			cs = new ControlSheet();
+			Layout.Add( cs );
 
 			int i = 0;
 			foreach ( var param in methodDesc.Parameters )
@@ -128,6 +129,16 @@ public class InvokeBlock : InspectorWidget
 				//	var paramProp = Target.GetProperty( nameof( Doo.Block.Parameters ) ).ElementAt( param.Index );
 				//	Layout.Add( new ParameterControlWidget( paramProp, param ) );
 			}
+		}
+
+		if ( methodDesc.ReturnType != typeof( void ) )
+		{
+			Layout.Add( new Label.Header( $"Return Value ({methodDesc.ReturnType.Name})" ) );
+
+			cs = new ControlSheet();
+			Layout.Add( cs );
+
+			cs.AddControl<DooVariableControlWidget>( Target.GetProperty( nameof( Doo.InvokeBlock.ReturnVariable ) ) );
 		}
 	}
 }

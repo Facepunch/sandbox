@@ -168,9 +168,14 @@ public class DooEngine : GameObjectSystem<DooEngine>
 
 		}
 
-		m.Invoke( targetInstance, args );
+		var returnedValue = m.InvokeWithReturn<object>( targetInstance, args );
 
 		ArrayPool<object>.Shared.Return( args, clearArray: true );
+
+		if ( m.ReturnType != typeof( void ) && !string.IsNullOrEmpty( b.ReturnVariable ) )
+		{
+			SetVariable( ctx, b.ReturnVariable, returnedValue );
+		}
 
 		return true;
 	}

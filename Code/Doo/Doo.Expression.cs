@@ -21,6 +21,14 @@ public partial class Doo
 
 		public override Variant Evaluate() => default;
 		public override string GetDebugText() => $"{VariableName}";
+
+		public override void CollectArguments( HashSet<string> arguments )
+		{
+			if ( !string.IsNullOrWhiteSpace( VariableName ) )
+			{
+				arguments.Add( VariableName );
+			}
+		}
 	}
 
 	[JsonDerivedType( typeof( LiteralExpression ), "lit" )]
@@ -29,5 +37,6 @@ public partial class Doo
 	{
 		public virtual Variant Evaluate() => default;
 		public virtual string GetDebugText() => "";
+		public virtual void CollectArguments( HashSet<string> arguments ) { }
 	}
 }
