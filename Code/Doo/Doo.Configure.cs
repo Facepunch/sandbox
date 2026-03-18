@@ -3,20 +3,16 @@ public partial class Doo
 {
 	public readonly struct Configure
 	{
-		private readonly DooEngine _engine;
-		private readonly Component _component;
-		private readonly Doo _doo;
+		private readonly RunContext _context;
 
-		public Configure( DooEngine dooEngine, Component myComponent, Doo doo )
+		internal Configure( RunContext context )
 		{
-			this._engine = dooEngine;
-			this._component = myComponent;
-			this._doo = doo;
+			this._context = context;
 		}
 
 		public void SetArgument( string name, object value )
 		{
-			_engine.SetGlobalVariable( name, value );
+			_context.Engine.SetGlobalVariable( name, value );
 		}
 	}
 }

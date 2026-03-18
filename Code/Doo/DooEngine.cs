@@ -2,37 +2,48 @@ using System.Buffers;
 using System.Runtime.CompilerServices;
 using static Doo;
 
-public partial class Doo
-{
-	internal class RunContext
-	{
-		public Doo Doo;
-		public Component SourceComponent;
-	}
-}
-
 public class DooEngine : GameObjectSystem<DooEngine>
 {
+	Stack<RunContext> _contextStack = new();
+
 	public DooEngine( Scene scene ) : base( scene )
 	{
 
+	}
+
+	RunContext GetContext()
+	{
+		return _contextStack.TryPop( out var pctx ) ? pctx : new RunContext();
 	}
 
 	internal void Run( Component myComponent, Doo doo, Action<Doo.Configure> c )
 	{
 		if ( doo == null ) return;
 
-		var ctx = new RunContext();
+		var ctx = GetContext();
+		ctx.Engine = this;
 		ctx.Doo = doo;
 		ctx.SourceComponent = myComponent;
 
-		if ( c != null )
+		try
 		{
-			var config = new Doo.Configure( this, myComponent, doo );
-			c( config );
-		}
+			if ( c != null )
+			{
+				var config = new Doo.Configure( ctx );
+				c( config );
+			}
 
-		_ = RunBody( ctx, doo.Body );
+			_ = RunBody( ctx, doo.Body );
+		}
+		finally
+		{
+			ctx.Clear();
+
+			if ( _contextStack.Count < 16 )
+			{
+				_contextStack.Push( ctx );
+			}
+		}
 	}
 
 	async Task RunBody( RunContext ctx, List<Doo.Block> b )
@@ -50,9 +61,8 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		switch ( b )
 		{
 			case Doo.SetBlock s:
-				SetVariable( ctx, s.VariableName, Eval( s.Value ) );
+				SetVariable( ctx, s.VariableName, Eval( ctx, s.Value ) );
 				break;
-
 
 			case Doo.DelayBlock d:
 				await RunBlock_Delay( ctx, d );
@@ -74,29 +84,47 @@ public class DooEngine : GameObjectSystem<DooEngine>
 
 	Dictionary<string, object> _globals = new( StringComparer.OrdinalIgnoreCase );
 
+	static bool IsGlobalVariable( string name ) => name.Length > 2 && name[0] == 'g' && name[1] == '_';
+
 	void SetVariable( RunContext ctx, string name, object value )
 	{
 		if ( string.IsNullOrWhiteSpace( name ) ) return;
-		_globals[name] = value;
+
+		if ( IsGlobalVariable( name ) )
+		{
+			_globals[name] = value;
+			return;
+		}
+
+		ctx.LocalVariables[name] = value;
 	}
 
 	public void SetGlobalVariable( string name, object value )
 	{
 		if ( string.IsNullOrWhiteSpace( name ) ) return;
+
 		_globals[name] = value;
 	}
 
-	public object GetVariable( string name )
+	internal object GetVariable( RunContext ctx, string name )
 	{
-		if ( _globals.TryGetValue( name, out var value ) )
-			return value;
+		if ( IsGlobalVariable( name ) )
+		{
+			if ( _globals.TryGetValue( name, out var globalValue ) )
+				return globalValue;
+
+			return default;
+		}
+
+		if ( ctx.LocalVariables.TryGetValue( name, out var localValue ) )
+			return localValue;
 
 		return null;
 	}
 
 	private async Task RunBlock_Delay( RunContext ctx, Doo.DelayBlock b )
 	{
-		double seconds = ToFloat( Eval( b.Seconds ) );
+		double seconds = ToFloat( Eval( ctx, b.Seconds ) );
 		if ( seconds < 0 ) seconds = 0;
 
 		await Task.Delay( TimeSpan.FromSeconds( seconds ) );
@@ -135,7 +163,7 @@ public class DooEngine : GameObjectSystem<DooEngine>
 			if ( b.Arguments == null || i >= b.Arguments.Count )
 				continue;
 
-			var value = Eval( b.Arguments[i] );
+			var value = Eval( ctx, b.Arguments[i] );
 			args[i] = ToType( value, m.Parameters[i].ParameterType );
 
 		}
@@ -148,12 +176,12 @@ public class DooEngine : GameObjectSystem<DooEngine>
 	}
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	private object Eval( Doo.Expression e )
+	private object Eval( RunContext ctx, Expression e )
 	{
-		if ( e == null ) return null;
+		if ( e == null ) return default;
 
-		if ( e is Doo.LiteralExpression le ) return le.LiteralValue.Value;
-		if ( e is Doo.VariableExpression ve ) return GetVariable( ve.VariableName );
+		if ( e is LiteralExpression le ) return le.LiteralValue.Value;
+		if ( e is VariableExpression ve ) return GetVariable( ctx, ve.VariableName );
 
 		return null;
 	}
