@@ -235,6 +235,8 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 	[ConCmd( "cleanup" )]
 	public static void CleanupCommand()
 	{
+		if ( !Networking.IsHost ) return;
+
 		if ( Current is null )
 		{
 			Log.Warning( "CleanupSystem: No active cleanup system." );
