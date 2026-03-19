@@ -1,78 +1,47 @@
 @import "/UI/Theme.scss";
 
-ResourceSelectPopup
+ResourceSelectPopup .popup .inner
 {
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	bottom: 0px;
-	right: 0px;
-	background-color: #000d;
-	backdrop-filter: blur( 5px );
-	z-index: 10000;
-	justify-content: center;
-	align-items: center;
-	pointer-events: all;
-	font-family: $body-font;
+	width: 800px;
+	height: 800px;
 
-	.inner
+	.popup-header h2
 	{
-		padding: 8px;
-		width: 800px;
-		height: 800px;
-		flex-direction: column;
+		flex-grow: 1;
+	}
 
-		.popup-header
+	.sort-buttons
+	{
+		flex-shrink: 0;
+		flex-direction: row;
+		gap: 2px;
+		border-radius: 6px;
+		overflow: hidden;
+
+		.sort-button
 		{
-			flex-direction: row;
-			flex-shrink: 0;
-			align-items: center;
-			gap: 0.5rem;
-			margin-bottom: 0.5rem;
+			font-size: 1.1rem;
+			padding: 0.4rem 0.8rem;
+			color: rgba( white, 0.5 );
+			background-color: rgba( white, 0.05 );
+			cursor: pointer;
 
-			h2
+			&:hover
 			{
-				color: #eee;
-				font-size: 3rem;
-				font-weight: 700;
-				flex-grow: 1;
+				color: white;
+				background-color: rgba( white, 0.12 );
 			}
 
-			.sort-buttons
+			&.active
 			{
-				flex-shrink: 0;
-				flex-direction: row;
-				gap: 2px;
-				border-radius: 6px;
-				overflow: hidden;
-
-				.sort-button
-				{
-					font-size: 1.1rem;
-					padding: 0.4rem 0.8rem;
-					color: rgba( white, 0.5 );
-					background-color: rgba( white, 0.05 );
-					cursor: pointer;
-
-					&:hover
-					{
-						color: white;
-						background-color: rgba( white, 0.12 );
-					}
-
-					&.active
-					{
-						color: white;
-						background-color: #08f5;
-					}
-				}
+				color: white;
+				background-color: #08f5;
 			}
 		}
 	}
 }
 
-
-ResourceSelectPopup .inner .grid
+ResourceSelectPopup .popup .inner .grid
 {
 	width: 100%;
 	flex-grow: 1;
@@ -82,7 +51,7 @@ ResourceSelectPopup .inner .grid
 	border-radius: 10px;
 }
 
-ResourceSelectPopup .inner .grid .item
+ResourceSelectPopup .popup .inner .grid .item
 {
 	width: 100%;
 	height: 100%;
