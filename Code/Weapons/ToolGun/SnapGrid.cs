@@ -131,19 +131,33 @@ public sealed class SnapGrid
 
 			if ( obbValid )
 			{
-				// Use the OBB axis most parallel to the face plane as the reference so grid lines
-				// run along the object's edges on every face, including the top.
-				var a0 = obbRotation * new Vector3( 1, 0, 0 );
-				var a1 = obbRotation * new Vector3( 0, 1, 0 );
-				var a2 = obbRotation * new Vector3( 0, 0, 1 );
-				var d0 = MathF.Abs( Vector3.Dot( a0, faceNormal ) );
-				var d1 = MathF.Abs( Vector3.Dot( a1, faceNormal ) );
-				var d2 = MathF.Abs( Vector3.Dot( a2, faceNormal ) );
-				var refAxis = d0 <= d1 && d0 <= d2 ? a0 : d1 <= d2 ? a1 : a2;
+				// Align the grid so its "up" direction matches the object's world-space up
+				// projected onto the face plane. This orients grid lines with the object's
+				// natural rotation on every face, including tilted surfaces.
+				var objUp = obbRotation * Vector3.Up;
+				var dotUp = Vector3.Dot( objUp, faceNormal );
 
-				// Project chosen OBB axis onto the face plane for a grid-aligned right direction.
-				_cachedRight = (refAxis - faceNormal * Vector3.Dot( refAxis, faceNormal )).Normal;
-				_cachedUp = Vector3.Cross( _cachedRight, faceNormal ).Normal;
+				if ( MathF.Abs( dotUp ) < 0.99f )
+				{
+					// Project the object's up onto the face plane and use it as the grid up.
+					_cachedUp    = (objUp - faceNormal * dotUp).Normal;
+					_cachedRight = Vector3.Cross( faceNormal, _cachedUp ).Normal;
+				}
+				else
+				{
+					// Degenerate: object's up is nearly parallel to the face normal
+					// (e.g., hovering the top/bottom face of an upright object).
+					// Fall back to the OBB axis most parallel to the face plane.
+					var a0 = obbRotation * new Vector3( 1, 0, 0 );
+					var a1 = obbRotation * new Vector3( 0, 1, 0 );
+					var a2 = obbRotation * new Vector3( 0, 0, 1 );
+					var d0 = MathF.Abs( Vector3.Dot( a0, faceNormal ) );
+					var d1 = MathF.Abs( Vector3.Dot( a1, faceNormal ) );
+					var d2 = MathF.Abs( Vector3.Dot( a2, faceNormal ) );
+					var refAxis = d0 <= d1 && d0 <= d2 ? a0 : d1 <= d2 ? a1 : a2;
+					_cachedRight = (refAxis - faceNormal * Vector3.Dot( refAxis, faceNormal )).Normal;
+					_cachedUp    = Vector3.Cross( _cachedRight, faceNormal ).Normal;
+				}
 
 				_cachedOrigin = ProjectOntoPlane( obbCenter, aimWorldPos, faceNormal );
 				_cachedHalfExtents = ProjectedHalfExtents( obbHalfExtents, obbRotation, _cachedRight, _cachedUp );
