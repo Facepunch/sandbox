@@ -7,6 +7,14 @@
 	public virtual bool CanConstraintToSelf => false;
 	public override bool UseSnapGrid => true;
 
+	protected override void OnDisabled()
+	{
+		base.OnDisabled();
+		Stage = 0;
+		Point1 = default;
+		Point2 = default;
+	}
+
 	public override void OnControl()
 	{
 		base.OnControl();

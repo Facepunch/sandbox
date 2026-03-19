@@ -148,6 +148,12 @@ public class Weld : BaseConstraintToolMode
 		_isSnapping = false;
 	}
 
+	protected override void OnDisabled()
+	{
+		base.OnDisabled();
+		ResetRotation();
+	}
+
 	/// <summary>
 	/// Draw a ghost preview of the source object and all its connected objects at the given placement.
 	/// </summary>
