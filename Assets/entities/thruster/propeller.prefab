@@ -58,6 +58,7 @@
           "IsEnabled": false,
           "Action": null
         },
+        "Invert": true,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,

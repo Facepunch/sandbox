@@ -7,6 +7,9 @@ public class ThrusterEntity : Component, IPlayerControllable
 	[Property, ClientEditable, Range( 0, 1 )]
 	public float Power { get; set; } = 0.5f;
 
+	[Property, ClientEditable]
+	public bool Invert { get; set; } = false;
+
 	/// <summary>
 	/// While the client input is active we'll apply thrust
 	/// </summary>
@@ -32,7 +35,7 @@ public class ThrusterEntity : Component, IPlayerControllable
 		var body = GetComponent<Rigidbody>();
 		if ( body == null ) return;
 
-		body.ApplyImpulse( WorldRotation.Up * -10000 * amount * Power );
+		body.ApplyImpulse( WorldRotation.Up * -10000 * amount * Power * (Invert ? -1f : 1f) );
 	}
 
 	bool _state;
