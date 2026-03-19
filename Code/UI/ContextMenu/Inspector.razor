@@ -7,11 +7,15 @@
 
 	<div class="canvas" @ref=_canvas></div>
 
-    @if (_selected.Any())
+	@if (_selected.Any())
 	{
 		<div class="window" @onmousedown="@WindowPress">
             <GameObjectInspector Target=@_selected></GameObjectInspector>
 		</div>
+	}
+	else
+	{
+		<div class="window empty-state" @onmousedown="@WindowPress">Click on an object to inspect it.</div>
 	}
 
 </root>

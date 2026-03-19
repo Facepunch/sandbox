@@ -20,6 +20,13 @@ Inspector
 		pointer-events: all;
 		backdrop-filter: blur( 10px );
 		z-index: 200;
+
+		&.empty-state
+		{
+			font-family: $subtitle-font;
+			text-align: center;
+			pointer-events: none;
+		}
 	}
 
 	> .canvas
