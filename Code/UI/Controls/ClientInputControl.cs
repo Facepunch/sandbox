@@ -1,12 +1,10 @@
-﻿
+
 namespace Sandbox.UI;
 
 [CustomEditor( typeof( ClientInput ) )]
 public partial class ClientInputControl : BaseControl
 {
 	DropDown _bindButton;
-
-	SerializedObject _so;
 
 	public override bool SupportsMultiEdit => true;
 
@@ -29,15 +27,23 @@ public partial class ClientInputControl : BaseControl
 	{
 		if ( Property == null ) return;
 
-		Property.TryGetAsObject( out _so );
-
-		_bindButton.Value = _so.GetProperty( nameof( ClientInput.Action ) ).GetValue<string>();
+		_bindButton.Value = Property.GetValue<ClientInput>().Action;
 	}
 
 	void OnBindChanged( string value )
 	{
-		if ( _so == null ) return;
-		_so.GetProperty( nameof( ClientInput.Action ) ).SetValue( value );
+		var current = Property.GetValue<ClientInput>();
+		current.Action = value;
+		Property.SetValue( current );
+		
+		// tony: when setting Action in current, and setting the value, the property changed event doesn't show the updated action
+		// not too sure why
+
+		foreach ( var target in Property.Parent?.Targets ?? Enumerable.Empty<object>() )
+		{
+			if ( target is Component component )
+				GameManager.ChangeProperty( component, Property.Name, current );
+		}
 	}
 
 }
