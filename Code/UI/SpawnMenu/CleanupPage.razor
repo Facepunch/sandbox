@@ -8,13 +8,13 @@
 @attribute [UtilityOf( typeof(CleanupFunction) )]
 
 <root class="page" style="flex-direction: column;">
-    <div class="control-row" @onclick="CleanUpMine">
+    <div class="control-row" @onclick=@(() =>CleanUpMine() )>
         <label class="left">🧼 Clean Up Mine</label>
     </div>
 
     @if ( Connection.Local.IsHost )
     {
-        <div class="control-row" @onclick="CleanUpAll">
+        <div class="control-row" @onclick=@(() =>CleanUpAll() )>
             <label class="left">🧹 Clean Up All</label>
         </div>
     }
