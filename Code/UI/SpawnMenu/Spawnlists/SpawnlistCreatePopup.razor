@@ -26,6 +26,8 @@
 
     public SpawnlistCreatePopup() { }
 
+    public Action OnCreated { get; set; }
+
     string Name { get; set; } = "";
 
     void OnCreate()
@@ -35,6 +37,8 @@
         SpawnlistData.Create( Name.Trim() );
 
         Notices.AddNotice( "list_alt", Color.Cyan, $"Created spawnlist '{Name}'" );
+
+        OnCreated?.Invoke();
 
         Delete();
     }
