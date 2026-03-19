@@ -63,6 +63,26 @@ public class SpawnlistsPage : BaseSpawnMenu
 	void OnSpawnlistRightClick( Storage.Entry entry )
 	{
 		var menu = MenuPanel.Open( this );
+
+		menu.AddOption( "edit", "Rename", () =>
+		{
+			var data = SpawnlistData.Load( entry );
+			var popup = new StringQueryPopup
+			{
+				Title = "Rename Spawnlist",
+				Prompt = "Enter a new name for your spawnlist.",
+				Placeholder = "Spawnlist name...",
+				ConfirmLabel = "Rename",
+				InitialValue = data.Name,
+				OnConfirm = newName =>
+				{
+					SpawnlistData.Rename( entry, newName );
+					RefreshList();
+				}
+			};
+			popup.Parent = FindPopupPanel();
+		} );
+
 		menu.AddOption( "delete", "Delete", () =>
 		{
 			SpawnlistData.Delete( entry );

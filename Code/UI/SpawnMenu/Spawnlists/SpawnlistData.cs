@@ -90,6 +90,13 @@ public class SpawnlistData
 		return Storage.GetAll( "spawnlist" ).OrderByDescending( x => x.Created );
 	}
 
+	public static void Rename( Storage.Entry entry, string newName )
+	{
+		var data = Load( entry );
+		data.Name = newName;
+		Save( entry, data );
+	}
+
 	public static void Delete( Storage.Entry entry )
 	{
 		entry.Delete();
