@@ -4,7 +4,8 @@
 	public virtual void ShootEffects( SelectionPoint target )
 	{
 		var player = Toolgun.Owner;
-		if ( player is null ) return;
+		if ( !player.IsValid() ) return;
+
 		if ( !target.IsValid() )
 		{
 			Log.Warning( "ShootEffects: Unknown object" );
@@ -14,7 +15,6 @@
 		Toolgun.SpinCoil();
 
 		var muzzle = Toolgun.MuzzleTransform;
-
 
 		if ( Toolgun.SuccessImpactEffect is GameObject impactPrefab )
 		{
