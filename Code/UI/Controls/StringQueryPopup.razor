@@ -1,0 +1,71 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<root>
+
+    <div class="inner" onclick:preventDefault=@true>
+        <div class="popup-header">
+            <h2>@Title</h2>
+        </div>
+
+        @if ( !string.IsNullOrEmpty( Prompt ) )
+        {
+            <h3>@Prompt</h3>
+        }
+
+        <TextEntry class="menu-input" Placeholder=@Placeholder Value:bind=@Value />
+
+        <span class="grow">
+            <Button Text=@ConfirmLabel Icon="check" class="menu-action primary" Disabled=@(string.IsNullOrWhiteSpace( Value )) @onclick=@OnConfirmClick />
+            <Button Text="Cancel" Icon="close" class="menu-action primary" @onclick=@(() => Delete()) />
+        </span>
+    </div>
+
+</root>
+
+@code
+{
+    /// <summary>Title shown at the top of the popup.</summary>
+    public string Title { get; set; } = "Enter Value";
+
+    /// <summary>Optional subtitle/prompt below the title.</summary>
+    public string Prompt { get; set; }
+
+    /// <summary>Placeholder text for the text entry.</summary>
+    public string Placeholder { get; set; } = "Enter a value...";
+
+    /// <summary>Label for the confirm button.</summary>
+    public string ConfirmLabel { get; set; } = "Confirm";
+
+    /// <summary>Pre-filled value in the text entry.</summary>
+    public string InitialValue { get; set; } = "";
+
+    /// <summary>Called with the trimmed string when the user confirms.</summary>
+    public Action<string> OnConfirm { get; set; }
+
+    string Value { get; set; }
+
+    protected override void OnAfterTreeRender( bool firstTime )
+    {
+        if ( firstTime )
+            Value = InitialValue;
+    }
+
+    void OnConfirmClick()
+    {
+        if ( string.IsNullOrWhiteSpace( Value ) ) return;
+        OnConfirm?.Invoke( Value.Trim() );
+        Delete();
+    }
+
+    protected override void OnMouseDown( MousePanelEvent e )
+    {
+        base.OnMouseDown( e );
+
+        // Click on the backdrop (not the inner panel) dismisses the popup
+        if ( e.Target == this )
+            Delete();
+    }
+}
