@@ -10,8 +10,8 @@ public class Weld : BaseConstraintToolMode
 	[Property, Sync]
 	public bool Rigid { get; set; } = false;
 
-	Rotation _easyModeRotation = Rotation.Identity;
-	Rotation _rawRotation = Rotation.Identity;
+	float _easyModeAngle = 0f;
+	float _rawAngle = 0f;
 	bool _isSnapping;
 
 	public override bool AbsorbMouseInput => EasyMode && Stage == 2;
@@ -40,8 +40,10 @@ public class Weld : BaseConstraintToolMode
 		if ( !select.IsValid() || SnapGrid == null ) return select;
 
 		var snapPos = SnapGrid.LastSnapWorldPos;
-		var snappedLocal = select.GameObject.WorldTransform.ToLocal( new Transform( snapPos, select.LocalTransform.Rotation ) );
-		select.LocalTransform = snappedLocal;
+		var snappedLocalPos = select.GameObject.WorldTransform.ToLocal( new Transform( snapPos ) ).Position;
+		var lt = select.LocalTransform;
+		lt.Position = snappedLocalPos;
+		select.LocalTransform = lt;
 
 		return select;
 	}
@@ -66,7 +68,7 @@ public class Weld : BaseConstraintToolMode
 		int stageBefore = Stage;
 		base.OnControl();
 
-		if ( stageBefore == 0 && Stage == 1 && Point1.IsValid() && Input.Down( "use" ) )
+		if ( stageBefore == 0&& Stage == 1 && Point1.IsValid() && Input.Down( "use" ) )
 			Point1 = SnapSelectionPoint( Point1 );
 
 		if ( EasyMode && Stage == 1 && IsValidState )
@@ -92,11 +94,11 @@ public class Weld : BaseConstraintToolMode
 
 		UpdateRotationInput();
 
-		DrawEasyModePreview( GetRotatedPlacement( Point1, Point2, _easyModeRotation ) );
+		DrawEasyModePreview( GetRotatedPlacement( Point1, Point2, _easyModeAngle ) );
 
 		if ( Input.Pressed( "attack1" ) )
 		{
-			CreateRotatedWeld( Point1, Point2, _easyModeRotation );
+			CreateRotatedWeld( Point1, Point2, _easyModeAngle );
 			ShootEffects( Point2 );
 			ResetRotation();
 			Stage = 0;
@@ -126,23 +128,23 @@ public class Weld : BaseConstraintToolMode
 	void UpdateRotationInput()
 	{
 		var isSnapping = Input.Down( "run" );
-		if ( !isSnapping && _isSnapping ) _rawRotation = _easyModeRotation;
+		if ( !isSnapping && _isSnapping ) _rawAngle = _easyModeAngle;
 		_isSnapping = isSnapping;
 
-		var look = Input.AnalogLook with { pitch = 0 };
-		_rawRotation = Rotation.From( look ) * _rawRotation;
+		var delta = Input.AnalogLook.yaw;
+		_rawAngle += delta;
 
-		_easyModeRotation = _isSnapping
-			? _rawRotation.Angles().SnapToGrid( 15f )
-			: _rawRotation;
+		_easyModeAngle = _isSnapping
+			? MathF.Round( _rawAngle / 15f ) * 15f
+			: _rawAngle;
 
-		Toolgun.UpdateJoystick( new Angles( look.yaw, look.pitch, 0 ) );
+		Toolgun.UpdateJoystick( new Angles( delta, 0, 0 ) );
 	}
 
 	void ResetRotation()
 	{
-		_easyModeRotation = Rotation.Identity;
-		_rawRotation = Rotation.Identity;
+		_easyModeAngle = 0f;
+		_rawAngle = 0f;
 		_isSnapping = false;
 	}
 
@@ -166,13 +168,13 @@ public class Weld : BaseConstraintToolMode
 		}
 	}
 
-	Transform GetRotatedPlacement( SelectionPoint a, SelectionPoint b, Rotation rotation )
+	Transform GetRotatedPlacement( SelectionPoint a, SelectionPoint b, float angle )
 	{
 		var placement = GetEasyModePlacement( a, b );
 
 		var contactPoint = b.WorldPosition();
-		var surfaceNormal = b.WorldTransform().Rotation.Forward;
-		var axisRotation = Rotation.FromAxis( surfaceNormal, rotation.Angles().yaw );
+		// Use the inward normal (-Forward) as rotation axis so the spin direction is natural.
+		var axisRotation = Rotation.FromAxis( -b.WorldTransform().Rotation.Forward, angle );
 
 		placement.Position = contactPoint + axisRotation * (placement.Position - contactPoint);
 		placement.Rotation = axisRotation * placement.Rotation;
@@ -181,7 +183,7 @@ public class Weld : BaseConstraintToolMode
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	private void CreateRotatedWeld( SelectionPoint point1, SelectionPoint point2, Rotation rotation )
+	private void CreateRotatedWeld( SelectionPoint point1, SelectionPoint point2, float angle )
 	{
 		if ( !point1.GameObject.IsValid() || !point2.GameObject.IsValid() )
 		{
@@ -195,9 +197,9 @@ public class Weld : BaseConstraintToolMode
 			return;
 		}
 
-		_easyModeRotation = rotation;
+		_easyModeAngle = angle;
 		CreateConstraint( point1, point2 );
-		_easyModeRotation = Rotation.Identity;
+		_easyModeAngle = 0f;
 	}
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
@@ -207,11 +209,12 @@ public class Weld : BaseConstraintToolMode
 				yield return joint.GameObject;
 	}
 
+
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
 		if ( EasyMode )
 		{
-			var local = GetRotatedPlacement( point1, point2, _easyModeRotation );
+			var local = GetRotatedPlacement( point1, point2, _easyModeAngle );
 			var moving = point1.GameObject.Network.RootGameObject ?? point1.GameObject;
 			moving.WorldTransform = local;
 		}
