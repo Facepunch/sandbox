@@ -5,7 +5,14 @@ public sealed class SnapGrid
 {
 	public float CellSize { get; set; }
 	public float MaskRadius { get; set; }
+
+	/// <summary>
+	/// Fallback half-extent used when the hovered object has no usable bounds.
+	/// </summary>
 	public float GridSize { get; set; }
+
+	[ConVar( "snap_grid_no_fade", ConVarFlags.Cheat )]
+	private static bool NoFade { get; set; } = false;
 
 	public SnapGrid( float cellSize = 4f, float maskRadius = 64f, float gridSize = 48f )
 	{
@@ -27,19 +34,11 @@ public sealed class SnapGrid
 
 		public void Write( Vector3 faceOrigin, Vector3 faceRight, Vector3 faceUp, Vector2 faceHalfExtents, Vector3 aimPos, float maskRadius, float cellSize )
 		{
-			// slightly larger than the visible mask
-			var halfW = MathF.Min( faceHalfExtents.x, maskRadius + cellSize );
-			var halfH = MathF.Min( faceHalfExtents.y, maskRadius + cellSize );
+			var halfW = faceHalfExtents.x;
+			var halfH = faceHalfExtents.y;
 
-			var aimOffset = aimPos - faceOrigin;
-			var cx = Vector3.Dot( aimOffset, faceRight );
-			var cy = Vector3.Dot( aimOffset, faceUp );
-
-			// Clamp quad center so the quad stays within the face.
-			cx = Math.Clamp( cx, -faceHalfExtents.x + halfW, faceHalfExtents.x - halfW );
-			cy = Math.Clamp( cy, -faceHalfExtents.y + halfH, faceHalfExtents.y - halfH );
-
-			var quadCenter = faceOrigin + faceRight * cx + faceUp * cy;
+			// The quad is always centred at the projected bounds centre.
+			var quadCenter = faceOrigin;
 
 			var v00 = quadCenter - faceRight * halfW - faceUp * halfH;
 			var v10 = quadCenter + faceRight * halfW - faceUp * halfH;
@@ -70,6 +69,8 @@ public sealed class SnapGrid
 	private Vector3 _cachedNormal;
 	private Vector3 _cachedRight;
 	private Vector3 _cachedUp;
+	private Vector2 _cachedHalfExtents;
+	private GameObject _cachedObject;
 	private bool _hasPlane;
 
 	/// <summary>
@@ -92,13 +93,13 @@ public sealed class SnapGrid
 		var u = Vector3.Dot( offset, faceRightWs );
 		var v = Vector3.Dot( offset, faceUpWs );
 
-		// Snap to visual grid corners (half-cell offset)
-		var cx = (int)MathF.Round( u / cellSize - 0.5f );
-		var cy = (int)MathF.Round( v / cellSize - 0.5f );
+		// Snap to grid corners at integer multiples of cellSize; origin (bounds centre) is always snappable.
+		var cx = (int)MathF.Round( u / cellSize );
+		var cy = (int)MathF.Round( v / cellSize );
 
 		var snapPos = faceOriginWs
-			+ faceRightWs * ((cx + 0.5f) * cellSize)
-			+ faceUpWs * ((cy + 0.5f) * cellSize);
+			+ faceRightWs * (cx * cellSize)
+			+ faceUpWs * (cy * cellSize);
 
 		return (cx, cy, snapPos);
 	}
@@ -115,37 +116,74 @@ public sealed class SnapGrid
 			_sceneObj = new SnapGridSceneObject( world ) { Material = _material };
 		}
 
-		// Only recalculate the plane when the surface normal changes
+		// Only recalculate the plane when the surface normal or hovered object changes
 		var faceNormal = hitNormalWorld.Normal;
 		var holdingUse = Input.Down( "use" );
-		var planeChanged = !_hasPlane || (!holdingUse && Vector3.Dot( faceNormal, _cachedNormal ) < 0.999f);
+		var objectChanged = hoveredObject != _cachedObject;
+		var planeChanged = !_hasPlane || (objectChanged) || (!holdingUse && Vector3.Dot( faceNormal, _cachedNormal ) < 0.999f);
 
 		if ( planeChanged )
 		{
-			var refAxis = MathF.Abs( Vector3.Dot( faceNormal, Vector3.Up ) ) > 0.9f
-				? Vector3.Forward
-				: Vector3.Up;
-			_cachedRight = Vector3.Cross( faceNormal, refAxis ).Normal;
-			_cachedUp = Vector3.Cross( _cachedRight, faceNormal ).Normal;
 			_cachedNormal = faceNormal;
-			_cachedOrigin = aimWorldPos;
+			_cachedObject = hoveredObject;
+
+			var (obbCenter, obbHalfExtents, obbRotation, obbValid) = GetObjectOBB( hoveredObject );
+
+			if ( obbValid )
+			{
+				// Use the OBB axis most parallel to the face plane as the reference so grid lines
+				// run along the object's edges on every face, including the top.
+				var a0 = obbRotation * new Vector3( 1, 0, 0 );
+				var a1 = obbRotation * new Vector3( 0, 1, 0 );
+				var a2 = obbRotation * new Vector3( 0, 0, 1 );
+				var d0 = MathF.Abs( Vector3.Dot( a0, faceNormal ) );
+				var d1 = MathF.Abs( Vector3.Dot( a1, faceNormal ) );
+				var d2 = MathF.Abs( Vector3.Dot( a2, faceNormal ) );
+				var refAxis = d0 <= d1 && d0 <= d2 ? a0 : d1 <= d2 ? a1 : a2;
+
+				// Project chosen OBB axis onto the face plane for a grid-aligned right direction.
+				_cachedRight = (refAxis - faceNormal * Vector3.Dot( refAxis, faceNormal )).Normal;
+				_cachedUp = Vector3.Cross( _cachedRight, faceNormal ).Normal;
+
+				_cachedOrigin = ProjectOntoPlane( obbCenter, aimWorldPos, faceNormal );
+				_cachedHalfExtents = ProjectedHalfExtents( obbHalfExtents, obbRotation, _cachedRight, _cachedUp );
+			}
+			else
+			{
+				// Fallback: generic tangent for world geometry.
+				var refAxis = MathF.Abs( Vector3.Dot( faceNormal, Vector3.Up ) ) > 0.9f
+					? Vector3.Forward
+					: Vector3.Up;
+				_cachedRight = Vector3.Cross( faceNormal, refAxis ).Normal;
+				_cachedUp = Vector3.Cross( _cachedRight, faceNormal ).Normal;
+				_cachedOrigin = aimWorldPos;
+				_cachedHalfExtents = new Vector2( GridSize, GridSize );
+			}
+
 			_hasPlane = true;
 		}
 
-		var halfExtents = new Vector2( GridSize, GridSize );
+		var halfExtents = _cachedHalfExtents;
+
+		// Scale down cell size so at least one cell fits within the object's face.
+		var cellSize = CellSize;
+		var minHalf = MathF.Min( halfExtents.x, halfExtents.y );
+		while ( minHalf < cellSize && cellSize > 0.1f )
+			cellSize *= 0.5f;
 
 		// Compute the nearest snap corner
-		var (cx, cy, snapPos) = ComputeSnap( _cachedOrigin, _cachedRight, _cachedUp, CellSize, aimWorldPos );
+		var (cx, cy, snapPos) = ComputeSnap( _cachedOrigin, _cachedRight, _cachedUp, cellSize, aimWorldPos );
 		LastSnapWorldPos = snapPos;
 
-		_sceneObj.Write( _cachedOrigin, _cachedRight, _cachedUp, halfExtents, aimWorldPos, MaskRadius, CellSize );
+		_sceneObj.Write( _cachedOrigin, _cachedRight, _cachedUp, halfExtents, aimWorldPos, MaskRadius, cellSize );
 
 		_sceneObj.Attributes.Set( "GridOrigin", _cachedOrigin );
 		_sceneObj.Attributes.Set( "GridRight", _cachedRight );
 		_sceneObj.Attributes.Set( "GridUp", _cachedUp );
 		_sceneObj.Attributes.Set( "AimPoint", aimWorldPos );
-		_sceneObj.Attributes.Set( "MaskRadius", MaskRadius );
-		_sceneObj.Attributes.Set( "CellSize", CellSize );
+		_sceneObj.Attributes.Set( "MaskRadius", NoFade ? float.MaxValue : MaskRadius );
+		_sceneObj.Attributes.Set( "HalfExtents", halfExtents );
+		_sceneObj.Attributes.Set( "CellSize", cellSize );
 		_sceneObj.Attributes.Set( "SnapCornerX", (float)cx );
 		_sceneObj.Attributes.Set( "SnapCornerY", (float)cy );
 	}
@@ -158,6 +196,90 @@ public sealed class SnapGrid
 		if ( _sceneObj != null && _sceneObj.IsValid() )
 			_sceneObj.RenderingEnabled = false;
 		_hasPlane = false;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Helpers
+
+	/// <summary>
+	/// Returns the OBB (oriented bounding box) of <paramref name="go"/> in world space.
+	/// Prefers model-local bounds (tight, rotation-aware) over collider world AABB.
+	/// </summary>
+	private static (Vector3 Center, Vector3 HalfExtents, Rotation Rotation, bool Valid) GetObjectOBB( GameObject go )
+	{
+		var worldTx = go.WorldTransform;
+		var rot = worldTx.Rotation;
+		var scale = worldTx.Scale;
+
+		// Try model-local bounds first — these are tight and unaffected by world rotation.
+		BBox? localBox = null;
+		var mr = go.GetComponentInChildren<ModelRenderer>( false );
+		if ( mr != null && mr.Model != null )
+			localBox = mr.Model.Bounds;
+
+		if ( localBox == null )
+		{
+			var smr = go.GetComponentInChildren<SkinnedModelRenderer>( false );
+			if ( smr != null && smr.Model != null )
+				localBox = smr.Model.Bounds;
+		}
+
+		if ( localBox != null )
+		{
+			var lb = localBox.Value;
+			if ( lb.Size.Length > 0.1f )
+			{
+				var center = worldTx.PointToWorld( lb.Center );
+				var halfExtents = lb.Size * 0.5f * scale;
+				return (center, halfExtents, rot, true);
+			}
+		}
+
+		// Fallback: world AABB from colliders, treated as an identity-rotation OBB.
+		var colliders = go.GetComponentsInChildren<Collider>( false, true ).ToArray();
+		if ( colliders.Length > 0 )
+		{
+			var box = colliders[0].GetWorldBounds();
+			for ( int i = 1; i < colliders.Length; i++ )
+				box = box.AddBBox( colliders[i].GetWorldBounds() );
+
+			if ( box.Size.Length > 0.1f )
+				return (box.Center, box.Size * 0.5f, Rotation.Identity, true);
+		}
+
+		return (Vector3.Zero, Vector3.Zero, Rotation.Identity, false);
+	}
+
+	/// <summary>
+	/// Projects <paramref name="point"/> onto the plane defined by <paramref name="planePoint"/> and <paramref name="normal"/>.
+	/// </summary>
+	private static Vector3 ProjectOntoPlane( Vector3 point, Vector3 planePoint, Vector3 normal )
+	{
+		return point - normal * Vector3.Dot( point - planePoint, normal );
+	}
+
+	/// <summary>
+	/// Returns the half-extents of an OBB projected along <paramref name="right"/> and <paramref name="up"/>.
+	/// Uses the OBB support function, which correctly handles rotated objects.
+	/// </summary>
+	private static Vector2 ProjectedHalfExtents( Vector3 obbHalfExtents, Rotation obbRotation, Vector3 right, Vector3 up )
+	{
+		// Explicitly rotate the three local unit axes into world space to avoid
+		// ambiguity with named helpers (Right/Up/Forward vary by coordinate convention).
+		var ax = obbRotation * new Vector3( 1, 0, 0 );
+		var ay = obbRotation * new Vector3( 0, 1, 0 );
+		var az = obbRotation * new Vector3( 0, 0, 1 );
+		var e = obbHalfExtents;
+
+		var halfRight = MathF.Abs( e.x * Vector3.Dot( ax, right ) )
+					  + MathF.Abs( e.y * Vector3.Dot( ay, right ) )
+					  + MathF.Abs( e.z * Vector3.Dot( az, right ) );
+
+		var halfUp = MathF.Abs( e.x * Vector3.Dot( ax, up ) )
+				   + MathF.Abs( e.y * Vector3.Dot( ay, up ) )
+				   + MathF.Abs( e.z * Vector3.Dot( az, up ) );
+
+		return new Vector2( halfRight, halfUp );
 	}
 
 	/// <summary>

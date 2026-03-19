@@ -249,7 +249,7 @@
                   "TargetColor": "1,1,1,1",
                   "CacheToDisk": true
                 },
-                "compiled": null
+                "compiled": "textures/generated/imagefile/fc6ab29c7c446f4.vtex"
               },
               "ArmourIcon": {
                 "$compiler": "texture",
@@ -265,7 +265,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/74df76e844d64c97.vtex"
               },
               "HealthIcon": {
                 "$compiler": "texture",
@@ -281,7 +281,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/b62fb7af3ae97c5f.vtex"
               },
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
@@ -496,6 +496,37 @@
             }
           ],
           "Children": []
+        },
+        {
+          "__guid": "2afbe68d-fede-401c-9340-c442199842d7",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "Voices",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Facepunch.UI.Voices",
+              "__guid": "2480b1ea-7599-4943-9208-086e85b62baa",
+              "__enabled": true,
+              "Flags": 0,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          ],
+          "Children": []
         }
       ]
     },
@@ -696,7 +727,7 @@
     "GameObjectSystems": {
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
-          "$blob": "c8b681d5-2e79-4d2e-86ad-9f08d474a24d"
+          "$blob": "6c837e7c-98ac-4862-a31e-e03a05e4ac91"
         }
       }
     }

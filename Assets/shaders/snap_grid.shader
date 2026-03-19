@@ -79,6 +79,8 @@ PS
 	float4 GridColor < Attribute( "GridColor" ); Default4( 1.0, 1.0, 1.0, 0.5 ); >;
 	float4 CornerColor < Attribute( "CornerColor" ); Default4( 0.2, 0.6, 1.0, 1.0 ); >;
 
+	float2 HalfExtents < Attribute( "HalfExtents" ); Default2( 48.0, 48.0 ); >;
+
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		float3 p = i.vPositionWs;
@@ -89,15 +91,22 @@ PS
 		float2 cellUv = facePos / CellSize;
 
 		float2 deriv = max( abs( ddx( cellUv ) ), abs( ddy( cellUv ) ) );
-		float2 wrapped = abs( frac( cellUv - 0.5 ) - 0.5 );
+		float2 wrapped = abs( frac( cellUv ) - 0.5 );
 		float2 lw = 1.0 * deriv;
 		float2 cov = saturate( ( wrapped - ( 0.5 - lw ) ) / max( lw, 0.0001 ) );
 		float grid = max( cov.x, cov.y );
 
-		float dist = length( p - AimPoint );
-		float mask = 1.0 - saturate( ( dist - MaskRadius * 0.75 ) / ( MaskRadius * 0.25 ) );
+		// Rectangular fade: grid eases in from the bounds edge over half a cell.
+		float2 edgeDist = HalfExtents - abs( facePos );
+		float edgeFade = saturate( min( edgeDist.x, edgeDist.y ) / max( CellSize * 0.5, 0.001 ) );
 
-		float2 cornerFace = float2( SnapCornerX + 0.5, SnapCornerY + 0.5 ) * CellSize;
+		float dist = length( p - AimPoint );
+		float gridFade = 1.0 - saturate( dist / ( MaskRadius * 0.3 ) );
+		grid *= gridFade;
+
+		float mask = edgeFade;
+
+		float2 cornerFace = float2( SnapCornerX, SnapCornerY ) * CellSize;
 		float2 localUv = facePos - cornerFace;
 
 		float2 facePosDdx = ddx( facePos );
@@ -113,9 +122,6 @@ PS
 		float cornerDist = length( localUv );
 		float crossFade = 1.0 - saturate( cornerDist / ( CellSize * 1.0 ) );
 		float cross = crossMask * crossFade;
-
-		float gridFade = 1.0 - saturate( dist / ( MaskRadius * 0.3 ) );
-		grid *= gridFade;
 
 		float4 col = GridColor * grid;
 		col = lerp( col, CornerColor, cross );
