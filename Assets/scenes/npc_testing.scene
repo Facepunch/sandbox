@@ -1516,6 +1516,18 @@
                   }
                 ],
                 "ReturnVariable": "microwave"
+              },
+              {
+                "$type": "ivk",
+                "InvokeType": "Static",
+                "Member": "Doo+Methods.LogInfo",
+                "Arguments": [
+                  {
+                    "$type": "var",
+                    "VariableName": "microwave"
+                  }
+                ],
+                "ReturnVariable": null
               }
             ]
           },
@@ -1558,7 +1570,7 @@
     "GameObjectSystems": {
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
-          "$blob": "ec1f24a8-216c-4559-9500-e85c2e25c60a"
+          "$blob": "579753ff-a94d-4086-94ec-d59ed70f356d"
         }
       }
     }

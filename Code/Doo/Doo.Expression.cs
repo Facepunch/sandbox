@@ -9,7 +9,14 @@ public partial class Doo
 		public Variant LiteralValue { get; set; }
 
 		public override Variant Evaluate() => LiteralValue;
-		public override string GetDebugText() => LiteralValue.ToString();
+		public override string GetDebugText()
+		{
+			if ( LiteralValue.Type == typeof( string ) ) return $"\"{LiteralValue}\"";
+			if ( LiteralValue.Value is bool b ) return b ? "true" : "false";
+			if ( LiteralValue.Value is GameObject go ) return $"[{go?.Name ?? "null"}]";
+
+			return LiteralValue.ToString();
+		}
 	}
 
 	[Icon( "abc" )]
