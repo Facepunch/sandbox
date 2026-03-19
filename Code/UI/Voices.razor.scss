@@ -5,32 +5,34 @@ Voices
     position: absolute;
     right: 128px;
     bottom: 256px;
-    padding: 16px;
-    gap: 8px;
+    gap: 6px;
     flex-direction: column;
-    border-radius: 2px;
+    align-items: flex-end;
 
     .item-row
     {
-        gap: 8px;
+        gap: 10px;
         align-items: center;
-        padding: 12px 24px;
+        padding: 8px 14px 8px 12px;
         justify-content: flex-end;
+        background-color: $hud-element-bg;
+        border-radius: $hud-radius-sm;
     }
 
     img
     {
-        width: 28px;
-        height: 28px;
+        width: $hud-icon-size;
+        height: $hud-icon-size;
         border-radius: 100px;
-        margin-left: 32px;
+        flex-shrink: 0;
     }
 
     label
     {
-        font-family: $body-font;
-        color: #f806;
-        font-size: 16px;
-        text-shadow: 0px 0px 10px #f50;
+        font-family: $title-font;
+        color: $hud-text;
+        font-size: 15px;
+        font-weight: 600;
+        text-shadow: 0px 0px 8px $color-accent;
     }
 }
