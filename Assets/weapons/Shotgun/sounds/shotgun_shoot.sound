@@ -1,6 +1,6 @@
 {
   "UI": false,
-  "Volume": "1",
+  "Volume": "0.5",
   "Pitch": "1",
   "Decibels": 70,
   "SelectionMode": "Random",
@@ -13,7 +13,7 @@
   "Transmission": true,
   "OcclusionRadius": 64,
   "DistanceAttenuation": true,
-  "Distance": 8192,
+  "Distance": 4096,
   "Falloff": [
     {
       "x": 0,
