@@ -4,7 +4,7 @@
 
 <root>
 
-    @if ( !string.IsNullOrWhiteSpace( Title ) )
+    @if ( !string.IsNullOrWhiteSpace( Title ) && !HideText )
     {
         <div class="title">@Title</div>
     }
@@ -16,6 +16,7 @@
     [Parameter] public string Ident { get; set; }
     [Parameter] public string Icon { get; set; }
     [Parameter] public string Title { get; set; }
+    [Parameter] public bool HideText { get; set; }
 
     string Type;
     string Path;
@@ -38,6 +39,11 @@
         }
 
         Style.SetBackgroundImage(Icon);
+    }
+
+    protected override int BuildHash()
+    {
+        return HashCode.Combine( Ident, Icon, Title, HideText );
     }
 
     protected override async void OnDragStart( DragEvent e )

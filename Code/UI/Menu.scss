@@ -76,14 +76,17 @@ $menu-disabled-opacity: 0.25;
 	background-color: $menu-surface-soft;
 	border-radius: 4px;
 	gap: 0.5rem;
-	padding: 2px 4px;
+	padding: 4px 4px;
+	padding-left: 8px;
 	align-items: center;
 
 	IconPanel
 	{
 		width: 20px;
-		height: 20px;
+		aspect-ratio: 1;
 		opacity: 0.35;
+		align-items: center;
+		cursor: pointer;
 
 		&:hover
 		{

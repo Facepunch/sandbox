@@ -22,14 +22,14 @@
                 <div class="menu-icon-toggle-group">
                     @if ( isPublished )
                     {
-                        <IconPanel Text="link" @onclick=@( () => Clipboard.SetText( $"https://steamcommunity.com/sharedfiles/filedetails/?id={workshopId}" ) ) />
-                        <IconPanel Text="sync" @onclick=@( () => OnPublish() ) />
+                        <IconPanel Tooltip="Copy Url" Text="link" @onclick=@( () => Clipboard.SetText( $"https://steamcommunity.com/sharedfiles/filedetails/?id={workshopId}" ) ) />
+                        <IconPanel Tooltip="Sync" Text="sync" @onclick=@( () => OnPublish() ) />
                     }
                     else
                     {
-                        <IconPanel Text="cloud_upload" @onclick=@( () => OnPublish() ) />
+                        <IconPanel Tooltip="Publish" Text="cloud_upload" @onclick=@( () => OnPublish() ) />
                     }
-                    <IconPanel Text="delete" @onclick=@( () => OnDelete() ) />
+                    <IconPanel Tooltip="Delete" Text="delete" @onclick=@( () => OnDelete() ) />
                 </div>
             </Right>
         </SpawnMenuToolbar>
