@@ -31,16 +31,18 @@ public sealed class PlayerFlashlight : Component
 	private void Toggle()
 	{
 		BroadcastToggle( !IsOn );
+
+		var sound = IsOn ? ToggleOnSound : ToggleOffSound;
+		if ( sound.IsValid() )
+		{
+			Sound.Play( sound, WorldPosition );
+		}
 	}
 
 	[Rpc.Broadcast]
 	private void BroadcastToggle( bool value )
 	{
 		IsOn = value;
-
-		var sound = IsOn ? ToggleOnSound : ToggleOffSound;
-		if ( sound is not null )
-			Sound.Play( sound, WorldPosition );
 	}
 
 	private void UpdateLight()
