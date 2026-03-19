@@ -27,6 +27,7 @@ public class DooToolbox : Widget
 		Layout.Add( new ToolboxItem<Doo.InvokeBlock>() );
 		Layout.Add( new ToolboxItem<Doo.SetBlock>() );
 		Layout.Add( new ToolboxItem<Doo.DelayBlock>() );
+		Layout.Add( new ToolboxItem<Doo.ForBlock>() );
 		//Layout.Add( new ToolboxItem<Doo.ReturnBlock>() );
 	}
 }

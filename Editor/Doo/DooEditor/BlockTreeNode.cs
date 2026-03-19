@@ -14,11 +14,11 @@ public class BlockTreeNode : TreeNode<Doo.Block>
 		_displayInfo = DisplayInfo.ForType( block.GetType() );
 	}
 
-	public override bool HasChildren => Value?.Body?.Count > 0;
+	public override bool HasChildren => Value?.HasBody() ?? false;
 
 	protected override void BuildChildren()
 	{
-		if ( HasChildren )
+		if ( HasChildren && Value.Body != null )
 		{
 			SetChildren( Value.Body, x => new BlockTreeNode( _doo, x ) );
 		}
@@ -30,14 +30,9 @@ public class BlockTreeNode : TreeNode<Doo.Block>
 
 	public override int ValueHash => HashCode.Combine( Value, Value?.Body?.Count );
 
-	public bool IsControlBlock()
-	{
-		return false;
-	}
-
 	public override void OnPaint( VirtualWidget item )
 	{
-		bool isBlock = IsControlBlock();
+		bool isBlock = Value.HasBody();
 		var rect = item.Rect;
 
 		Paint.ClearPen();
@@ -174,7 +169,7 @@ public class BlockTreeNode : TreeNode<Doo.Block>
 		{
 			_doo.InsertAfter( Value, block );
 		}
-		else if ( IsControlBlock() )
+		else if ( Value.HasBody() )
 		{
 			_doo.AddChild( Value, block );
 		}

@@ -72,6 +72,10 @@ public class DooEngine : GameObjectSystem<DooEngine>
 				//	_stop = true;
 				break;
 
+			case Doo.ForBlock forblock:
+				await RunBlock_For( ctx, forblock );
+				break;
+
 			case Doo.InvokeBlock i:
 				bool flowControl = RunBlock_Invoke( ctx, i );
 				if ( !flowControl )
@@ -128,6 +132,23 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		if ( seconds < 0 ) seconds = 0;
 
 		await Task.Delay( TimeSpan.FromSeconds( seconds ) );
+	}
+
+	private async Task RunBlock_For( RunContext ctx, Doo.ForBlock b )
+	{
+		double start = ToFloat( Eval( ctx, b.StartValue ) );
+		double end = ToFloat( Eval( ctx, b.EndValue ) );
+		double jump = ToFloat( Eval( ctx, b.JumpValue ) );
+
+		for ( double i = start; i < end; i += jump )
+		{
+			SetVariable( ctx, b.VariableName, i );
+
+			if ( b.Body != null )
+			{
+				await RunBody( ctx, b.Body );
+			}
+		}
 	}
 
 	private bool RunBlock_Invoke( RunContext ctx, Doo.InvokeBlock b )

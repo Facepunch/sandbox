@@ -7,6 +7,7 @@ public partial class Doo
 	[JsonDerivedType( typeof( SetBlock ), "set" )]
 	[JsonDerivedType( typeof( InvokeBlock ), "ivk" )]
 	[JsonDerivedType( typeof( ReturnBlock ), "ret" )]
+	[JsonDerivedType( typeof( ForBlock ), "for" )]
 	public partial class Block
 	{
 		[JsonIgnore( Condition = JsonIgnoreCondition.WhenWritingNull )]
@@ -16,6 +17,11 @@ public partial class Doo
 		{
 			return "unhandled block";
 		}
+
+		/// <summary>
+		/// Returns true if this can have child nodes
+		/// </summary>
+		public virtual bool HasBody() => false;
 
 		/// <summary>
 		/// Reset this block to some sensible defaults. This is called when 

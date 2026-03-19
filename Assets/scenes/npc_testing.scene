@@ -1486,48 +1486,97 @@
           "OnPressed": {
             "body": [
               {
-                "$type": "ivk",
-                "InvokeType": "Static",
-                "Member": "Doo+Methods.GameObjectClone",
-                "Arguments": [
+                "$type": "for",
+                "VariableName": "i",
+                "StartValue": {
+                  "$type": "lit",
+                  "LiteralValue": {
+                    "t": "System.Int32",
+                    "v": 0
+                  }
+                },
+                "EndValue": {
+                  "$type": "lit",
+                  "LiteralValue": {
+                    "t": "System.Int32",
+                    "v": 100
+                  }
+                },
+                "JumpValue": {
+                  "$type": "lit",
+                  "LiteralValue": {
+                    "t": "System.Int32",
+                    "v": 1
+                  }
+                },
+                "Body": [
                   {
-                    "$type": "lit",
-                    "LiteralValue": {
-                      "t": "Sandbox.GameObject",
-                      "v": {
-                        "_type": "gameobject",
-                        "go": "972c1427-2e0f-4678-a72d-06226bb288a2"
+                    "$type": "ivk",
+                    "InvokeType": "Static",
+                    "TargetComponent": {
+                      "_type": "component",
+                      "component_id": "4c73c05f-d42e-431b-b7b9-e43df04fcec0",
+                      "go": "972c1427-2e0f-4678-a72d-06226bb288a2",
+                      "component_type": "Prop"
+                    },
+                    "Member": "Doo+Methods.GameObjectClone",
+                    "Arguments": [
+                      {
+                        "$type": "lit",
+                        "LiteralValue": {
+                          "t": "Sandbox.GameObject",
+                          "v": {
+                            "_type": "gameobject",
+                            "go": "972c1427-2e0f-4678-a72d-06226bb288a2"
+                          }
+                        }
+                      },
+                      {
+                        "$type": "lit",
+                        "LiteralValue": {
+                          "t": "System.Boolean",
+                          "v": true
+                        }
+                      },
+                      {
+                        "$type": "lit",
+                        "LiteralValue": {
+                          "t": "System.Boolean",
+                          "v": true
+                        }
+                      }
+                    ],
+                    "ReturnVariable": "microwave"
+                  },
+                  {
+                    "$type": "del",
+                    "Seconds": {
+                      "$type": "lit",
+                      "LiteralValue": {
+                        "t": "System.Single",
+                        "v": 0.1
                       }
                     }
                   },
                   {
-                    "$type": "lit",
-                    "LiteralValue": {
-                      "t": "System.Boolean",
-                      "v": true
-                    }
-                  },
-                  {
-                    "$type": "lit",
-                    "LiteralValue": {
-                      "t": "System.Boolean",
-                      "v": true
-                    }
+                    "$type": "ivk",
+                    "InvokeType": "Static",
+                    "TargetComponent": {
+                      "_type": "component",
+                      "component_id": "408bb2ac-8306-401d-80fa-5693437f0b51",
+                      "go": "e43bdd6c-9327-4d1e-aa8f-8f974c3dec6e",
+                      "component_type": "Prop"
+                    },
+                    "Member": "Doo+Methods.LogInfo",
+                    "Arguments": [
+                      {
+                        "$type": "var",
+                        "VariableName": "microwave"
+                      }
+                    ],
+                    "ReturnVariable": null
                   }
-                ],
-                "ReturnVariable": "microwave"
-              },
-              {
-                "$type": "ivk",
-                "InvokeType": "Static",
-                "Member": "Doo+Methods.LogInfo",
-                "Arguments": [
-                  {
-                    "$type": "var",
-                    "VariableName": "microwave"
-                  }
-                ],
-                "ReturnVariable": null
+                ]
               }
             ]
           },
@@ -1570,7 +1619,7 @@
     "GameObjectSystems": {
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
-          "$blob": "579753ff-a94d-4086-94ec-d59ed70f356d"
+          "$blob": "417a85ca-c240-4140-ae04-27b4662a1ccc"
         }
       }
     }

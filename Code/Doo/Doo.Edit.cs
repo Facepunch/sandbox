@@ -24,11 +24,8 @@ public partial class Doo
 			}
 
 			// Search in nested blocks
-			//	if ( RemoveFromList( list[i].Body, value ) )
-			//		return true;
-
-			//	if ( RemoveFromList( list[i].Else, value ) )
-			//		return true;
+			if ( RemoveFromList( list[i].Body, value ) )
+				return true;
 		}
 
 		return false;
@@ -72,11 +69,8 @@ public partial class Doo
 			}
 
 			// Search in nested blocks
-			//	if ( InsertRelative( list[i].Body, target, blockToInsert, offset ) )
-			//		return true;
-
-			//	if ( InsertRelative( list[i].Else, target, blockToInsert, offset ) )
-			//		return true;
+			if ( InsertRelative( list[i].Body, target, blockToInsert, offset ) )
+				return true;
 		}
 
 		return false;
@@ -90,7 +84,7 @@ public partial class Doo
 		// Remove from current location first
 		DeleteBlock( blockToInsert );
 
-		//	parent.Body ??= new List<Block>();
-		//	parent.Body.Add( blockToInsert );
+		parent.Body ??= new List<Block>();
+		parent.Body.Add( blockToInsert );
 	}
 }
