@@ -25,15 +25,19 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	{
 		get
 		{
-			Assert.True( Controller.IsValid(), $"Player {DisplayName}'s PlayerController is invalid (IsValid: {this.IsValid()}, IsLocalPlayer: {IsLocalPlayer}, IsHost: {Networking.IsHost}, IsActive: {PlayerData?.Connection?.IsActive})" );
+			if ( !Controller.IsValid() )
+			{
+				Log.Warning( $"Invalid Controller for {this.GameObject}" );
+				return default;
+			}
 			return Controller.EyeTransform;
 		}
 	}
 
 	public bool IsLocalPlayer => !IsProxy;
-	public Guid PlayerId => PlayerData.PlayerId;
-	public long SteamId => PlayerData.SteamId;
-	public string DisplayName => PlayerData.DisplayName;
+	public Guid PlayerId => PlayerData.IsValid() ? PlayerData.PlayerId : Guid.Empty;
+	public long SteamId => PlayerData.IsValid() ? PlayerData.SteamId : 0;
+	public string DisplayName => PlayerData.IsValid() ? PlayerData.DisplayName : "Unknown";
 
 	/// <summary>
 	/// True if the player wants the HUD not to draw right now
