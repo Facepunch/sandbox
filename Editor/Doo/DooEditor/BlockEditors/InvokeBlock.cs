@@ -101,8 +101,17 @@ public class InvokeBlock : InspectorWidget
 				while ( sc.Count() > 0 )
 					sc.RemoveAt( 0 );
 
-				for ( int a = 0; a < methodDesc.Parameters.Length; a++ )
-					sc.Add( null );
+				foreach ( var param in methodDesc.Parameters )
+				{
+					if ( param.HasDefaultValue )
+					{
+						sc.Add( new Doo.LiteralExpression() { LiteralValue = new( param.RawDefaultValue, param.ParameterType ) } );
+					}
+					else
+					{
+						sc.Add( new Doo.LiteralExpression() { LiteralValue = new( null, param.ParameterType ) } );
+					}
+				}
 			}
 
 			if ( methodDesc.Parameters.Length == 0 )
@@ -115,10 +124,11 @@ public class InvokeBlock : InspectorWidget
 			cs = new ControlSheet();
 			Layout.Add( cs );
 
+			var array = obj.ToArray();
 			int i = 0;
 			foreach ( var param in methodDesc.Parameters )
 			{
-				var prop = obj.ToArray()[i];
+				var prop = array[i];
 
 				var csp = prop.GetCustomizable();
 				csp.SetDisplayName( $"{param.Name.ToTitleCase()}" );
@@ -126,8 +136,6 @@ public class InvokeBlock : InspectorWidget
 
 				cs.AddRow( csp );
 				i++;
-				//	var paramProp = Target.GetProperty( nameof( Doo.Block.Parameters ) ).ElementAt( param.Index );
-				//	Layout.Add( new ParameterControlWidget( paramProp, param ) );
 			}
 		}
 

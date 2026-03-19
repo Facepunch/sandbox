@@ -43,8 +43,7 @@ public class DooExpressionControlWidget : ControlWidget
 		BuildContent();
 	}
 
-	protected override void PaintUnder() { }
-	protected override void PaintControl() { }
+	protected override void OnPaint() { }
 
 	public override void OnLabelContextMenu( ContextMenu menu )
 	{

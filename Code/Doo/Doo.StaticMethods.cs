@@ -33,15 +33,23 @@ public partial class Doo
 			gameObject.Destroy();
 		}
 
-		[Doo.StaticMethod( "GameObject.CloneInPlace" )]
-		public static GameObject GameObjectCloneInPlace( [Description( "The gameobject you want to clone" )] GameObject gameObject )
+		[Doo.StaticMethod( "GameObject.Clone" )]
+		public static GameObject GameObjectClone( [Description( "The gameobject you want to clone" )] GameObject gameObject, bool enabled = true, bool networked = true )
 		{
 			if ( !gameObject.IsValid() ) return null;
-			return gameObject.Clone( gameObject.WorldTransform );
+
+			var go = gameObject.Clone( gameObject.WorldTransform, startEnabled: enabled );
+
+			if ( networked )
+			{
+				go.NetworkSpawn( enabled, null );
+			}
+
+			return go;
 		}
 
-		[Doo.StaticMethod( "GameObject.Clone" )]
-		public static GameObject GameObjectClone( [Description( "The gameobject you want to clone" )] GameObject gameObject, Vector3 position, Rotation angles, Vector3 scale )
+		[Doo.StaticMethod( "GameObject.CloneEx" )]
+		public static GameObject GameObjectCloneEx( [Description( "The gameobject you want to clone" )] GameObject gameObject, Vector3 position, Rotation angles, Vector3 scale )
 		{
 			return gameObject?.Clone( position, angles, scale );
 		}
