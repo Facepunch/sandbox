@@ -297,9 +297,7 @@
                   }
                 ],
                 "alpha": []
-              },
-              "ConstantA": "0.98515,0.92604,0,1",
-              "ConstantB": "1,0.22,0,1"
+              }
             },
             "InitialVelocity": {
               "X": 0,
@@ -364,28 +362,28 @@
               "Type": "Curve",
               "Evaluation": "Life",
               "CurveA": {
-                "rangex": "-0.00000005960464,1",
-                "rangey": "2.999999,9.771719",
+                "rangex": "-0.00000005960464,0.9999999",
+                "rangey": "2.999999,10",
                 "frames": [
                   {
                     "x": 0,
-                    "y": 0.20264024,
+                    "y": 0,
                     "in": -0,
                     "out": -0,
                     "mode": "Mirrored"
                   },
                   {
-                    "x": 0.61603767,
-                    "y": 0.9972389,
-                    "in": 0,
-                    "out": 0,
+                    "x": 0.7035376,
+                    "y": 1,
+                    "in": -0.9951335,
+                    "out": 0.9951335,
                     "mode": "Mirrored"
                   },
                   {
                     "x": 1,
                     "y": 0,
-                    "in": 24.666672,
-                    "out": -24.666672,
+                    "in": 5.314308,
+                    "out": -5.314308,
                     "mode": "Mirrored"
                   }
                 ]
@@ -404,6 +402,7 @@
             "SequenceSpeed": 1,
             "SequenceTime": 1,
             "SheetSequence": false,
+            "SnapToFrame": false,
             "StartDelay": 0,
             "StartVelocity": {
               "Type": "Range",
@@ -432,7 +431,7 @@
             "BlurAmount": 1,
             "BlurOpacity": 1,
             "BlurSpacing": 1,
-            "DepthFeather": 0,
+            "DepthFeather": 5.0156736,
             "FaceVelocity": true,
             "FogStrength": 1,
             "LeadingTrail": true,
@@ -453,7 +452,7 @@
               "AfterUILayer": false
             },
             "RotationOffset": 0,
-            "Scale": 1.0262172,
+            "Scale": 1.6865203,
             "Shadows": false,
             "SortMode": "Unsorted",
             "Sprite": {
@@ -631,15 +630,15 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
-      },
-      "GameObjectSystems": []
+        "IncludedBodies": "",
+        "CustomBounds": false
+      }
     },
     "__variables": []
   },
