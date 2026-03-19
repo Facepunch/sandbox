@@ -13,8 +13,6 @@ public class SpawnlistsPage : BaseSpawnMenu
 
 	protected override void Rebuild()
 	{
-		AddOption( "➕", "Create New", () => new SpawnlistCreateDialog( this ) );
-
 		AddHeader( "You" );
 
 		var localEntries = SpawnlistData.GetAll().ToList();
@@ -55,6 +53,11 @@ public class SpawnlistsPage : BaseSpawnMenu
 		AddHeader( "Workshop" );
 		AddOption( "🎖️", "Popular", () => new SpawnlistWorkshop { SortOrder = Storage.SortOrder.RankedByVote } );
 		AddOption( "🐣", "Newest", () => new SpawnlistWorkshop { SortOrder = Storage.SortOrder.RankedByPublicationDate } );
+	}
+
+	protected override void OnMenuFooter( Panel footer )
+	{
+		footer.AddChild<SpawnlistFooter>();
 	}
 
 	void OnSpawnlistRightClick( Storage.Entry entry )

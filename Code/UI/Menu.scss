@@ -97,6 +97,19 @@ $menu-disabled-opacity: 0.25;
 	}
 }
 
+span
+{
+	&.grow
+	{
+		gap: 8px;
+
+		> *
+		{
+			flex-grow: 1;
+		}
+	}
+}
+
 .menu-action
 {
 	color: $menu-text-strong;
@@ -156,4 +169,10 @@ $menu-disabled-opacity: 0.25;
 .menu-filter-input
 {
 	width: 200px;
+}
+
+TextEntry 
+{
+	color: $color-text;
+	font-family: $body-font;
 }

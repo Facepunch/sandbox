@@ -1,0 +1,42 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<root>
+
+    <div class="inner">
+        <div class="popup-header">
+            <h2>Create a Spawnlist</h2>
+        </div>
+
+        <h3>Give your new spawnlist a name.</h3>
+
+        <TextEntry class="menu-input" Placeholder="Spawnlist name..." Value:bind=@Name />
+
+        <span class="grow">
+            <Button Text="Create" Icon="add" class="menu-action primary" Disabled=@(string.IsNullOrWhiteSpace(Name)) @onclick=@OnCreate />
+            <Button Text="Cancel" Icon="close" class="menu-action primary" @onclick=@(() => Delete() ) />
+        </span>
+    </div>
+</root>
+
+@code
+{
+
+    public SpawnlistCreatePopup() { }
+
+    string Name { get; set; } = "";
+
+    void OnCreate()
+    {
+        if ( string.IsNullOrWhiteSpace( Name ) ) return;
+
+        SpawnlistData.Create( Name.Trim() );
+
+        Notices.AddNotice( "list_alt", Color.Cyan, $"Created spawnlist '{Name}'" );
+
+        Delete();
+    }
+}
+

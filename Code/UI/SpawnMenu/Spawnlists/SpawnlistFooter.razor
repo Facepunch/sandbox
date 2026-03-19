@@ -1,0 +1,12 @@
+@using Sandbox;
+@using Sandbox.UI;
+@using Sandbox.Mounting;
+@inherits Panel
+@namespace Sandbox
+
+<root>
+
+<Button class="menu-action primary wide" Icon="➕" Text="New Spawnlist" Disabled=@( !CanCreate() ) @onclick=@CreatePopup></Button>
+
+</root>
+
