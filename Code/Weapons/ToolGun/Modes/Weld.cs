@@ -14,9 +14,6 @@ public class Weld : BaseConstraintToolMode
 	Rotation _rawRotation = Rotation.Identity;
 	bool _isSnapping;
 
-	SnapGrid _snapGrid;
-	Vector3? _lockedSnapTarget;
-
 	public override bool AbsorbMouseInput => EasyMode && Stage == 2;
 
 	public override string Description => Stage switch
@@ -35,42 +32,14 @@ public class Weld : BaseConstraintToolMode
 
 	public override string ReloadAction => "#tool.hint.weld.remove";
 
-	protected override void OnDisabled()
-	{
-		_snapGrid?.Destroy();
-		_snapGrid = null;
-	}
-
-	public override void OnCameraMove( Player player, ref Angles angles )
-	{
-		if ( Stage == 2 || _snapGrid == null )
-			return;
-
-		if ( Input.Pressed( "use" ) )
-			_lockedSnapTarget = _snapGrid.LastSnapWorldPos;
-
-		if ( !Input.Down( "use" ) || _lockedSnapTarget == null )
-			return;
-
-		var eyePos = player.EyeTransform.Position;
-		var desiredAngles = Rotation.LookAt( _lockedSnapTarget.Value - eyePos ).Angles();
-		var currentAngles = player.Controller.EyeAngles;
-
-		// Replace the mouse delta with the delta needed to reach the snap target
-		angles = desiredAngles - currentAngles;
-
-		if ( Input.Released( "use" ) )
-			_lockedSnapTarget = null;
-	}
-
 	/// <summary>
 	/// Overrides a SelectionPoint's local position to the nearest snap grid corner
 	/// </summary>
 	SelectionPoint SnapSelectionPoint( SelectionPoint select )
 	{
-		if ( !select.IsValid() || _snapGrid == null ) return select;
+		if ( !select.IsValid() || SnapGrid == null ) return select;
 
-		var snapPos = _snapGrid.LastSnapWorldPos;
+		var snapPos = SnapGrid.LastSnapWorldPos;
 		var snappedLocal = select.GameObject.WorldTransform.ToLocal( new Transform( snapPos, select.LocalTransform.Rotation ) );
 		select.LocalTransform = snappedLocal;
 
@@ -83,7 +52,7 @@ public class Weld : BaseConstraintToolMode
 
 		if ( EasyMode && Stage == 2 )
 		{
-			_snapGrid?.Hide();
+			SnapGrid?.Hide();
 			RotateStage();
 			return;
 		}
@@ -92,20 +61,6 @@ public class Weld : BaseConstraintToolMode
 		{
 			if ( TryEnterRotateStage() )
 				return;
-		}
-
-		// SnapGrid
-		{
-			var preview = TraceSelect();
-			if ( preview.IsValid() )
-			{
-				_snapGrid ??= new SnapGrid();
-				_snapGrid.Update( Scene.SceneWorld, preview.GameObject, preview.WorldPosition(), preview.WorldTransform().Rotation.Forward );
-			}
-			else
-			{
-				_snapGrid?.Hide();
-			}
 		}
 
 		int stageBefore = Stage;

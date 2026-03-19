@@ -8,6 +8,7 @@ using Sandbox.UI;
 [Group( "Building" )]
 public class WheelTool : ToolMode
 {
+	public override bool UseSnapGrid => true;
 	[Property, ResourceSelect( Extension = "wdef", AllowPackages = true ), Title( "Wheel" )]
 	public string Definition { get; set; } = "entities/wheel/basic.wdef";
 

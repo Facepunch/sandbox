@@ -5,6 +5,7 @@
 	protected int Stage = 0;
 
 	public virtual bool CanConstraintToSelf => false;
+	public override bool UseSnapGrid => true;
 
 	public override void OnControl()
 	{

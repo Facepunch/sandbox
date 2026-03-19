@@ -7,6 +7,7 @@
 [Group( "Building" )]
 public class ThrusterTool : ToolMode
 {
+	public override bool UseSnapGrid => true;
 	[Property, ResourceSelect( Extension = "tdef", AllowPackages = true ), Title( "Thruster" )]
 	public string Definition { get; set; } = "entities/thruster/basic.tdef";
 

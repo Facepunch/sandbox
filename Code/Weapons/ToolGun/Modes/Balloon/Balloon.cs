@@ -5,6 +5,7 @@
 [Group( "Building" )]
 public class Balloon : ToolMode
 {
+	public override bool UseSnapGrid => true;
 	[Property, ResourceSelect( Extension = "bdef", AllowPackages = true ), Title( "Balloon" )]
 	public string Definition { get; set; } = "entities/balloon/basic.bdef";
 
