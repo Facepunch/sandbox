@@ -79,7 +79,7 @@ public abstract class BasePickup : Component, Component.ITriggerListener, Compon
 	}
 
 	[Rpc.Broadcast]
-	private void PlayPickupEffects( Player player )
+	protected void PlayPickupEffects( Player player )
 	{
 		if ( Application.IsDedicatedServer ) return;
 

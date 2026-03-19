@@ -16,15 +16,24 @@ public sealed class InventoryPickup : BasePickup, Component.IPressable
 
 	public bool Press( IPressable.Event e )
 	{
-		var player = e.Source.GameObject.Root.Components.Get<Player>();
-		if ( !player.IsValid() ) return false;
+		DoPickup( e.Source.GameObject );
+		return true;
+	}
+
+	[Rpc.Host]
+	private void DoPickup( GameObject presserObject )
+	{
+		// Already got deleted, or something 
+		if ( !presserObject.IsValid() ) return;
+
+		var player = presserObject.Root.GetComponent<Player>();
+		if ( !player.IsValid() ) return;
+
 		if ( OnPickup( player, player.GetComponent<PlayerInventory>() ) )
 		{
+			PlayPickupEffects( player );
 			GameObject.Destroy();
-			return true;
 		}
-
-		return false;
 	}
 
 	protected override bool OnPickup( Player player, PlayerInventory inventory )
@@ -40,8 +49,6 @@ public sealed class InventoryPickup : BasePickup, Component.IPressable
 				player.PlayerData.AddStat( $"pickup.inventory.{prefab.Name}" );
 			}
 		}
-
-		Log.Info( $"on pickup, {consumed}" );
 
 		return consumed;
 	}
