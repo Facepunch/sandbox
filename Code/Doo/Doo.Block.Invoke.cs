@@ -23,6 +23,13 @@ public partial class Doo
 		[JsonIgnore( Condition = JsonIgnoreCondition.WhenWritingNull )]
 		public List<Expression> Arguments { get; set; }
 
+		/// <summary>
+		/// Variable name to set to the returned value. Leave empty to ignore the return value.
+		/// </summary>
+		[JsonInclude]
+		[Title( "Variable" )]
+		public string ReturnVariable { get; set; }
+
 		public override string GetNodeString()
 		{
 			if ( Member == null ) return "(empty)";
@@ -46,18 +53,34 @@ public partial class Doo
 			var attr = md.GetCustomAttribute<Doo.StaticMethodAttribute>();
 			if ( attr != null ) funcName = attr.Path;
 
-			var args = string.Join( ", ", Arguments?.Select( a => a.GetDebugText() ) ?? Array.Empty<string>() );
+			var args = string.Join( ", ", Arguments?.Select( a => a?.GetDebugText() ) ?? Array.Empty<string>() );
 			if ( args.Length > 1 ) args = $" {args} ";
 
 			var funcTitle = $"{funcName}({args})";
+			var returnValue = "";
+
+			if ( md.ReturnType != typeof( void ) && !string.IsNullOrWhiteSpace( ReturnVariable ) )
+			{
+				returnValue = $"{ReturnVariable} = ";
+			}
 
 			if ( targetName != null )
 			{
-				return $"[{targetName}].{funcTitle}";
+				return $"{returnValue}[{targetName}].{funcTitle}";
 			}
 			else
 			{
-				return funcTitle;
+				return $"{returnValue}{funcTitle}";
+			}
+		}
+
+		public override void CollectArguments( HashSet<string> arguments )
+		{
+			base.CollectArguments( arguments );
+
+			if ( !string.IsNullOrWhiteSpace( ReturnVariable ) )
+			{
+				arguments.Add( ReturnVariable );
 			}
 		}
 	}

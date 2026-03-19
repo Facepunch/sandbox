@@ -1,5 +1,3 @@
-using System;
-
 public partial class Doo
 {
 	[AttributeUsage( AttributeTargets.Method )]
@@ -15,19 +13,6 @@ public partial class Doo
 
 			var paths = Path.Split( '.' );
 			CategoryName = paths.FirstOrDefault();
-		}
-	}
-
-	/// <summary>
-	/// Hint that this type is expected to be this. This is used internally for
-	/// the editor UX to hint that a type of a Value should be a specific type.
-	/// </summary>
-	public sealed class TypeHintAttribute : System.Attribute
-	{
-		public Type Hint { get; set; }
-		public TypeHintAttribute( Type hint )
-		{
-			Hint = hint;
 		}
 	}
 

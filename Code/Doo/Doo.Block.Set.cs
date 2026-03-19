@@ -30,8 +30,10 @@ public partial class Doo
 		{
 			base.CollectArguments( arguments );
 
-			if ( VariableName == null ) return;
-			arguments.Add( VariableName );
+			if ( !string.IsNullOrWhiteSpace( VariableName ) )
+			{
+				arguments.Add( VariableName );
+			}
 		}
 	}
 }

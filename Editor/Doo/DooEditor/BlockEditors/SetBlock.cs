@@ -27,6 +27,8 @@ public class SetBlock : InspectorWidget
 	{
 		Layout.Clear( true );
 
+		Layout.Add( new InformationBox( "Variable starting with \"g_\" are global. Everything else is local to the execution." ) );
+
 		var cs = new ControlSheet();
 		cs.AddControl<DooVariableControlWidget>( _nameProperty );
 		cs.AddRow( _valueProperty );

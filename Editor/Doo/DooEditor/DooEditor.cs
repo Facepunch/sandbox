@@ -52,7 +52,8 @@ public class DooEditor : PopupWidget
 		BlockTree = new BlockTree( Target )
 		{
 			Margin = new UI.Margin( 0, 16, 8, 16 ),
-			ContentMargins = 2
+			ContentMargins = 2,
+			MinimumWidth = 400
 		};
 		Inspector = new DooInspector( this );
 		Inspector.FixedWidth = 400;

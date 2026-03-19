@@ -27,21 +27,23 @@ public partial class Doo
 		}
 
 		[Doo.StaticMethod( "GameObject.Destroy" )]
-		public static void GameObjectDestroy( GameObject go )
+		public static void GameObjectDestroy( GameObject gameObject )
 		{
-			go?.Destroy();
+			if ( !gameObject.IsValid() ) return;
+			gameObject.Destroy();
 		}
 
 		[Doo.StaticMethod( "GameObject.CloneInPlace" )]
-		public static GameObject GameObjectCloneInPlace( GameObject go )
+		public static GameObject GameObjectCloneInPlace( [Description( "The gameobject you want to clone" )] GameObject gameObject )
 		{
-			return go?.Clone();
+			if ( !gameObject.IsValid() ) return null;
+			return gameObject.Clone( gameObject.WorldTransform );
 		}
 
 		[Doo.StaticMethod( "GameObject.Clone" )]
-		public static GameObject GameObjectClone( GameObject go, Vector3 position, Rotation angles, Vector3 scale )
+		public static GameObject GameObjectClone( [Description( "The gameobject you want to clone" )] GameObject gameObject, Vector3 position, Rotation angles, Vector3 scale )
 		{
-			return go?.Clone( position, angles, scale );
+			return gameObject?.Clone( position, angles, scale );
 		}
 	}
 }

@@ -11,7 +11,7 @@ public class DooExpressionControlWidget : ControlWidget
 {
 	Layout ContentLayout;
 
-	IconButton _expressionTypeButton;
+	readonly System.Type targetType;
 
 	public DooExpressionControlWidget( SerializedProperty property ) : base( property )
 	{
@@ -19,23 +19,20 @@ public class DooExpressionControlWidget : ControlWidget
 		Layout.Spacing = 4;
 		Layout.Margin = 0;
 
-		if ( property.GetValue<Doo.Expression>() == null )
+		if ( property.TryGetAttribute<TypeHintAttribute>( out var typeHint ) )
 		{
-			property.SetValue( new Doo.LiteralExpression() );
+			targetType = typeHint.HintedType;
 		}
 
-		_expressionTypeButton = Layout.Add( new IconButton.WithCornerIcon( "category" )
+		if ( property.GetValue<Doo.Expression>() == null )
 		{
-			OnClick = ShowExpressionTypeMenu,
-			Background = Theme.ControlBackground,
-			Foreground = Theme.Pink,
-			IconSize = 18,
-			CornerIconSize = 13,
-			CornerIconOffset = 2
-		} );
-		_expressionTypeButton.Enabled = SerializedProperty.IsEditable;
-		_expressionTypeButton.FixedSize = Theme.RowHeight;
-		_expressionTypeButton.ToolTip = "Expression Type";
+			property.SetValue( new Doo.LiteralExpression() { LiteralValue = new Variant( default, targetType ) } );
+		}
+
+		if ( targetType != null && property.GetValue<Doo.LiteralExpression>() is { } expression && expression.LiteralValue.Type == null )
+		{
+			expression.LiteralValue = new Variant( default, targetType );
+		}
 
 		property.OnChanged += _ => BuildContent();
 
@@ -49,27 +46,28 @@ public class DooExpressionControlWidget : ControlWidget
 	protected override void PaintUnder() { }
 	protected override void PaintControl() { }
 
-	void ShowExpressionTypeMenu()
+	public override void OnLabelContextMenu( ContextMenu menu )
 	{
-		var menu = new ContextMenu();
-
 		var expr = SerializedProperty.GetValue<Doo.Expression>();
 
-		// Literal submenu with value type options
+		if ( targetType != null )
 		{
-			var o = menu.AddOption( "Literal", "abc", () =>
+			bool active = expr is Doo.LiteralExpression ex && ex.LiteralValue.Type == targetType;
+
+			var o = menu.AddOption( $"{targetType.Name}", "type_specimen", () =>
 			{
-				SerializedProperty.SetValue( new Doo.LiteralExpression() { LiteralValue = "value" } );
+				if ( active ) return;
+				SerializedProperty.SetValue( new Doo.LiteralExpression() { LiteralValue = new Variant( null, targetType ) } );
 				BuildContent();
 			} );
 
 			o.Checkable = true;
-			o.Checked = expr is Doo.VariableExpression;
+			o.Checked = active;
 		}
 
 		// Variable option
 		{
-			var o = menu.AddOption( "Variable", "abc", () =>
+			var o = menu.AddOption( "Variable", "subscript", () =>
 			{
 				SerializedProperty.SetValue( new Doo.VariableExpression() { VariableName = "x" } );
 				BuildContent();
@@ -79,7 +77,23 @@ public class DooExpressionControlWidget : ControlWidget
 			o.Checked = expr is Doo.VariableExpression;
 		}
 
-		menu.OpenNextTo( _expressionTypeButton, WidgetAnchor.BottomEnd with { AdjustSize = true, ConstrainToScreen = true } );
+		// Literal submenu with value type options
+		{
+			var o = menu.AddOption( "Select Type...", "post_add", () =>
+			{
+				VariantControlWidget.OpenTypeSelector( this, targetType, t =>
+				{
+					SerializedProperty.SetValue( new Doo.LiteralExpression() { LiteralValue = new Variant( null, t ) } );
+					BuildContent();
+				} );
+			} );
+
+			o.Checkable = true;
+			o.Checked = false;
+		}
+
+		menu.AddSeparator();
+
 	}
 
 	Doo.Expression _old;
@@ -99,16 +113,12 @@ public class DooExpressionControlWidget : ControlWidget
 
 		if ( expr is Doo.LiteralExpression )
 		{
-			_expressionTypeButton.Icon = "tag";
-
 			var literalProp = so.GetProperty( nameof( Doo.LiteralExpression.LiteralValue ) );
 			Assert.NotNull( literalProp );
 			ContentLayout.Add( ControlWidget.Create( literalProp ) );
 		}
 		else if ( expr is Doo.VariableExpression )
 		{
-			_expressionTypeButton.Icon = "abc";
-
 			var nameProp = so.GetProperty( nameof( Doo.VariableExpression.VariableName ) );
 			Assert.NotNull( nameProp );
 			ContentLayout.Add( new DooVariableControlWidget( nameProp ) );
