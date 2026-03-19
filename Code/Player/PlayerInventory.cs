@@ -213,7 +213,11 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 	/// </summary>
 	public bool Drop( BaseCarryable weapon )
 	{
-		Assert.True( Networking.IsHost, "Must be serverside to drop" );
+		if ( !Networking.IsHost )
+		{
+			HostDrop( weapon );
+			return true;
+		}
 
 		if ( !weapon.IsValid() ) return false;
 		if ( weapon.Owner != Player ) return false;
@@ -404,6 +408,12 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 	{
 		if ( !ActiveWeapon.IsValid() ) return;
 		Drop( ActiveWeapon );
+	}
+
+	[Rpc.Host]
+	private void HostDrop( BaseCarryable weapon )
+	{
+		Drop( weapon );
 	}
 
 	void IPlayerEvent.OnSpawned()
