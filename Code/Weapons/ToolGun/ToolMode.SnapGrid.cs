@@ -14,7 +14,7 @@ public abstract partial class ToolMode
 
 	private Vector3? _lockedSnapTarget;
 
-	protected override void OnDisabled()
+	private void DisableSnapGrid()
 	{
 		SnapGrid?.Destroy();
 		SnapGrid = null;

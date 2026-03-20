@@ -48,6 +48,24 @@ public abstract partial class ToolMode : Component, IToolInfo
 		TypeDescription = TypeLibrary.GetType( GetType() );
 	}
 
+	protected override void OnEnabled()
+	{
+		if ( Network.IsOwner )
+		{
+			this.LoadCookies();
+		}
+	}
+
+	protected override void OnDisabled()
+	{
+		DisableSnapGrid();
+
+		if ( Network.IsOwner )
+		{
+			this.SaveCookies();
+		}
+	}
+
 	public virtual void DrawScreen( Rect rect, HudPainter paint )
 	{
 		var t = $"{TypeDescription.Icon} {TypeDescription.Title}";
