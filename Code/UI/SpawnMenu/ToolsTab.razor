@@ -73,6 +73,14 @@
 		toolgun.SetToolMode(t.ClassName);
 	}
 
+	protected override void OnVisibilityChanged()
+	{
+		if ( !IsVisible )
+		{
+			GetCurrentMode()?.SaveCookies();
+		}
+	}
+
 	ToolMode GetCurrentMode()
 	{
 		var localPlayer = Player.FindLocalPlayer();

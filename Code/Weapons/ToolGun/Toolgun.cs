@@ -92,12 +92,9 @@ public partial class Toolgun : ScreenWeapon
 		if ( newMode == currentMode )
 			return;
 
-		if ( currentMode != null )
-		{
-			currentMode.Enabled = false;
-		}
-
+		currentMode?.Enabled = false;
 		newMode.Enabled = true;
+
 		GameObject.Enabled = true;
 		Network.Refresh( GameObject );
 
