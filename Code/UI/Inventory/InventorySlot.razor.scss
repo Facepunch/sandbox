@@ -70,7 +70,7 @@ InventorySlot:not( .empty )
 InventorySlot.drag-hover
 {
     background-color: rgba( $hud-color, 0.15 );
-    border: 1px solid rgba( $hud-color, 0.5 );
+    outline: 1px solid rgba( $hud-color, 0.5 );
     box-shadow: 0px 0px 16px rgba( $hud-color, 0.3 );
 
     .index
@@ -83,7 +83,7 @@ InventorySlot.active
 {
     opacity: 1;
     background-color: $hud-element-bg;
-    border: 0.5px solid rgba( $hud-color, 0.3 );
+    outline: 0.5px solid rgba( $hud-color, 0.3 );
 
     .index
     {
@@ -104,7 +104,7 @@ InventorySlot.active
 InventorySlot.hovered
 {
     background-color: $hud-element-bg;
-    border: 0.5px solid rgba( $hud-color, 0.2 );
+    outline: 0.5px solid rgba( $hud-color, 0.2 );
 
     .icon
     {
@@ -121,7 +121,7 @@ InventorySlot.selected
 {
     opacity: 1;
     background-color: $hud-element-bg-deep;
-    border: 0.5px solid rgba( $hud-color, 0.5 );
+    outline: 0.5px solid rgba( $hud-color, 0.5 );
     box-shadow: 0px 0px 12px rgba( $hud-color, 0.2 );
 
     .index
