@@ -32,7 +32,7 @@ public static class CookieSourceExtensions
 
 	private static string GetCookieName( PropertyDescription property, string prefix )
 	{
-		var name = property.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ?? property.Name.ToLower();
+		var name = property.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ?? property.Name.ToLowerInvariant();
 
 		return !string.IsNullOrEmpty( prefix ) ? $"{prefix}.{name}" : name;
 	}
