@@ -92,12 +92,15 @@ public partial class Toolgun : ScreenWeapon
 		if ( newMode == currentMode )
 			return;
 
-		if ( currentMode != null )
+		if ( Network.IsOwner )
 		{
-			currentMode.Enabled = false;
+			currentMode?.SaveCookies();
+			newMode.LoadCookies();
 		}
 
+		currentMode?.Enabled = false;
 		newMode.Enabled = true;
+
 		GameObject.Enabled = true;
 		Network.Refresh( GameObject );
 
