@@ -10,17 +10,17 @@ public class Balloon : ToolMode
 	public string Definition { get; set; } = "entities/balloon/basic.bdef";
 
 	[Range( 0, 500 )]
-	[Property, Sync, Cookie]
+	[Property, Sync]
 	public float Length { get; set; } = 50.0f;
 
 	[Range( -10, 10 )]
-	[Property, Sync, Cookie]
+	[Property, Sync]
 	public float Force { get; set; } = 1.0f;
 
-	[Property, Sync, Cookie]
+	[Property, Sync]
 	public bool Rigid { get; set; } = false;
 
-	[Property, Sync, Cookie]
+	[Property, Sync]
 	public Color Tint { get; set; } = Color.White;
 
 	public override string Description => "#tool.hint.balloon.description";

@@ -1,10 +1,5 @@
 ﻿using System.Text.Json;
-
-[AttributeUsage( AttributeTargets.Property )]
-public sealed class CookieAttribute : Attribute
-{
-	public string Name { get; init; }
-}
+using System.Text.Json.Serialization;
 
 public interface ICookieSource
 {
@@ -18,7 +13,8 @@ public static class CookieSourceExtensions
 		// TODO: maybe we want to support static properties too?
 
 		if ( property.IsStatic ) return false;
-		if ( !property.HasAttribute<CookieAttribute>() ) return false;
+		if ( !property.HasAttribute<PropertyAttribute>() ) return false;
+		if ( property.HasAttribute<JsonIgnoreAttribute>() ) return false;
 		if ( !property.CanWrite || !property.CanRead ) return false;
 
 		return true;
@@ -26,7 +22,7 @@ public static class CookieSourceExtensions
 
 	private static string GetCookieName( PropertyDescription property, string prefix )
 	{
-		var name = property.GetCustomAttribute<CookieAttribute>()?.Name ?? property.Name;
+		var name = property.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ?? property.Name.ToLower();
 
 		return !string.IsNullOrEmpty( prefix ) ? $"{prefix}.{name}" : name;
 	}
