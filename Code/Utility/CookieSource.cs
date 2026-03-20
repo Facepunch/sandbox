@@ -1,11 +1,21 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
+/// <summary>
+/// We want to save the properties of this instance as cookies.
+/// </summary>
 public interface ICookieSource
 {
+	/// <summary>
+	/// Prefix to put before the names of any cookies, without a trailing period.
+	/// For example: <c>"tool.balloon"</c>
+	/// </summary>
 	string CookiePrefix { get; }
 }
 
+/// <summary>
+/// Extension methods for <see cref="ICookieSource"/>.
+/// </summary>
 public static class CookieSourceExtensions
 {
 	private static bool IsCookieProperty( PropertyDescription property )
@@ -40,6 +50,10 @@ public static class CookieSourceExtensions
 				.Select( x => (GetCookieName( x, prefix ), x) );
 		}
 
+		/// <summary>
+		/// Saves any instance properties with a <see cref="PropertyAttribute"/>, excluding any
+		/// with <see cref="JsonIgnoreAttribute"/>, into <see cref="Game.Cookies"/>.
+		/// </summary>
 		public void SaveCookies()
 		{
 			foreach ( var (cookieName, property) in source.GetCookieProperties() )
@@ -57,6 +71,10 @@ public static class CookieSourceExtensions
 			}
 		}
 
+		/// <summary>
+		/// Loads any instance properties with a <see cref="PropertyAttribute"/>, excluding any
+		/// with <see cref="JsonIgnoreAttribute"/>, from <see cref="Game.Cookies"/>.
+		/// </summary>
 		public void LoadCookies()
 		{
 			foreach ( var (cookieName, property) in source.GetCookieProperties() )
