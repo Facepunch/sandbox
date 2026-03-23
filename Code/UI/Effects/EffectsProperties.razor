@@ -58,6 +58,9 @@
     {
         var props = new List<SerializedProperty>();
 
+        var enabledProp = TypeLibrary.CreateProperty("Enabled", () => _manager.IsEnabled(_selected.ResourcePath), v => _manager.Set(_selected.ResourcePath, v));
+        props.Add(enabledProp);
+
         if ( _manager is not null )
         {
             foreach ( var component in _manager.GetSelectedComponents() )

@@ -3,26 +3,28 @@
 EffectsHost
 {
     position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
+    top: $deadzone-y;
+    right: $deadzone-x;
+    left: $deadzone-x;
+    bottom: 150px;
+    width: auto;
+    height: auto;
     pointer-events: none;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 2rem;
+    z-index: 10000000;
 
     EffectsList
     {
-        position: absolute;
-        bottom: $deadzone-y;
-        left: $deadzone-x;
-        width: 300px;
+        width: 250px;
+        min-height: 500px;
         pointer-events: all;
     }
 
     EffectsProperties
     {
-        position: absolute;
-        bottom: $deadzone-y;
-        right: $deadzone-x;
         width: 500px;
         pointer-events: all;
     }

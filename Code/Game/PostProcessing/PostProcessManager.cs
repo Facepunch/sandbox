@@ -17,7 +17,11 @@ public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
 	private void SetEnabled( string resourcePath, bool enabled )
 	{
 		if ( !_active.TryGetValue( resourcePath, out var go ) ) return;
+
 		go.Enabled = enabled;
+
+		if ( enabled ) _enabled.Add( resourcePath );
+		else _enabled.Remove( resourcePath );
 	}
 
 	private void SpawnGo( string resourcePath, bool startEnabled )
@@ -91,6 +95,14 @@ public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
 			SpawnGo( resourcePath, startEnabled: true );
 		else
 			SetEnabled( resourcePath, true );
+	}
+
+
+	public void Set( string resourcePath, bool state )
+	{
+		if ( state == IsEnabled( resourcePath ) ) return;
+
+		SetEnabled( resourcePath, state );
 	}
 
 	public void Remove( string resourcePath )
