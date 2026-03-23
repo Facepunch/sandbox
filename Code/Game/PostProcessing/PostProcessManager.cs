@@ -5,10 +5,15 @@ public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
 
 	public string SelectedPath { get; private set; }
 
-	public IReadOnlyList<Component> GetSelectedComponents() =>
-		SelectedPath != null && _active.TryGetValue( SelectedPath, out var go )
-			? go.GetComponentsInChildren<Component>( true ).ToList()
-			: Array.Empty<Component>();
+	public IReadOnlyList<Component> GetSelectedComponents()
+	{
+		if ( SelectedPath == null ) return [];
+
+		if ( !_active.TryGetValue( SelectedPath, out var go ) || !go.IsValid() )
+			return [];
+
+		return [.. go.GetComponentsInChildren<Component>( true )];
+	}
 
 	public PostProcessManager( Scene scene ) : base( scene ) { }
 
