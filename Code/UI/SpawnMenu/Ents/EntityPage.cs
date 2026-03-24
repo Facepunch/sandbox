@@ -5,9 +5,18 @@
 [Title( "Entity" ), Order( 2000 ), Icon( "🧠" )]
 public class EntityPage : BaseSpawnMenu
 {
+	static Dictionary<string, string> CategoryIcons = new()
+	{
+		{ "Chair", "🪑" },
+		{ "Weapon", "🔫" },
+		{ "Npc", "🤖" },
+		{ "Vehicle", "🚕" },
+		{ "World", "🌍" },
+	};
+
 	protected override void Rebuild()
 	{
-		AddHeader( "You" );
+		AddHeader( "Local" );
 
 		var categories = ResourceLibrary.GetAll<ScriptedEntity>()
 			.Select( e => string.IsNullOrWhiteSpace( e.Category ) ? "Other" : e.Category )
@@ -17,7 +26,8 @@ public class EntityPage : BaseSpawnMenu
 		foreach ( var category in categories )
 		{
 			var cat = category; // capture for lambda
-			AddOption( "📂", cat, () => new EntityListLocal { Category = cat } );
+			var icon = CategoryIcons.GetValueOrDefault( cat, "📦" );
+			AddOption( icon, cat, () => new EntityListLocal { Category = cat } );
 		}
 
 		AddHeader( "Workshop" );
