@@ -8,7 +8,7 @@
     <Body>
         <VirtualList Items=@Items ItemHeight=@(48) OnLastCell="@(() => { _ = QueryNext(); })">
             <Item Context="context">
-                @if (context is Storage.QueryItem item)
+                @if (context is Storage.QueryItem item && GetItemCount( item ) > 0)
                 {
                     <div class="spawnlist-row" onclick=@( () => _ = OnInstall( item ) )>
                         <div class="avatar" style="background-image: url('@item.Owner.Avatar');"></div>
@@ -16,7 +16,8 @@
                             <div class="name">@item.Title</div>
                             <div class="author">By @item.Owner.Name</div>
                         </div>
-                        <div class="item-count">@item.KeyValues.GetValueOrDefault( "item_count", "0" ) items</div>
+
+                        <div class="item-count">@GetItemCount( item ) items</div>
                     </div>
                 }
             </Item>
@@ -72,5 +73,17 @@
         if ( page is null ) return;
 
         await page.Collection.InstallAsync( item );
+    }
+
+    int GetItemCount( Storage.QueryItem item )
+    {
+        try
+        {
+            var doc = Json.ParseToJsonObject( item.Metadata );
+            return int.Parse( doc["Meta"]["item_count"]?.ToString()?.Trim( '"' ) ?? "0" );
+        }
+        catch { }
+
+        return 0;
     }
 }
