@@ -2,7 +2,7 @@
 @using Sandbox.UI;
 @inherits PanelComponent
 
-@if (Player.IsValid() && !Player.IsLocalPlayer )
+@if (Player.IsValid() && !Player.IsLocalPlayer && !(Player.FindLocalPlayer()?.WantsHideHud ?? false))
 {
 	<root>
 
@@ -44,5 +44,5 @@
     /// <summary>
     /// Rebuild if the owner connection changes
     /// </summary>
-    protected override int BuildHash() => System.HashCode.Combine(Network.Owner, IsVoicePlaying);
+    protected override int BuildHash() => System.HashCode.Combine(Network.Owner, IsVoicePlaying, Player.FindLocalPlayer()?.WantsHideHud ?? false);
 }
