@@ -8,46 +8,39 @@ namespace Sandbox;
 [Title( "Spawnlists" ), Order( 1000 ), Icon( "📋" )]
 public class SpawnlistsPage : BaseSpawnMenu
 {
-	bool _queried;
-	List<Storage.Entry> _cloudEntries = new();
+	public SpawnlistCollection Collection { get; } = new();
+
+	public SpawnlistsPage()
+	{
+		Collection.Changed += OnParametersSet;
+		Collection.Installed += name =>
+		{
+			OnParametersSet();
+			SelectOption( name );
+		};
+		Collection.Uninstalled += () =>
+		{
+			DeselectOption();
+			OnParametersSet();
+		};
+		Collection.Refresh();
+	}
 
 	protected override void Rebuild()
 	{
 		AddHeader( "You" );
 
-		var localEntries = SpawnlistData.GetAll().ToList();
-		var seenWorkshopIds = new HashSet<string>();
-
-		// Local (editable) spawnlists first, tracking their workshop IDs
-		foreach ( var entry in localEntries.Where( e => !e.Files.IsReadOnly ) )
+		foreach ( var entry in Collection.Entries )
 		{
-			var data = SpawnlistData.Load( entry );
-			var workshopId = entry.GetMeta( "_workshopId", 0ul );
-			if ( workshopId > 0 ) seenWorkshopIds.Add( workshopId.ToString() );
-			var capturedEntry = entry;
-			var icon = workshopId > 0 ? "🌧️" : "📁";
-			AddOption( icon, $"{data.Name}", () => new SpawnlistView { Entry = capturedEntry },
-				() => OnSpawnlistRightClick( capturedEntry ) );
+			var captured = entry;
+			AddOption( entry.Icon, entry.Name,
+				() => new SpawnlistView { Entry = captured.StorageEntry },
+				entry.IsEditable
+					? () => OnEditableRightClick( captured )
+					: () => OnInstalledRightClick( captured ) );
 		}
 
-		// Cloud entries that were installed from the workshop
-		foreach ( var entry in _cloudEntries )
-		{
-			var workshopId = entry.GetMeta( "_workshopId", 0ul );
-			if ( workshopId > 0 && !seenWorkshopIds.Add( workshopId.ToString() ) )
-				continue;
-
-			var data = SpawnlistData.Load( entry );
-			var capturedEntry = entry;
-			AddOption( "☁️", $"{data.Name}", () => new SpawnlistView { Entry = capturedEntry } );
-		}
-
-		// Fetch user's own cloud spawnlists
-		if ( !_queried )
-		{
-			_queried = true;
-			_ = FetchCloudSpawnlists();
-		}
+		AddSkeletons( Collection.PendingCount );
 
 		AddGrow();
 		AddHeader( "Workshop" );
@@ -60,13 +53,16 @@ public class SpawnlistsPage : BaseSpawnMenu
 		footer.AddChild<SpawnlistFooter>();
 	}
 
-	void OnSpawnlistRightClick( Storage.Entry entry )
+	/// <summary>Refresh after external changes (create, etc.).</summary>
+	public void RefreshList() => Collection.Refresh();
+
+	void OnEditableRightClick( SpawnlistCollection.Entry entry )
 	{
 		var menu = MenuPanel.Open( this );
 
 		menu.AddOption( "edit", "Rename", () =>
 		{
-			var data = SpawnlistData.Load( entry );
+			var data = SpawnlistData.Load( entry.StorageEntry );
 			var popup = new StringQueryPopup
 			{
 				Title = "Rename Spawnlist",
@@ -76,68 +72,20 @@ public class SpawnlistsPage : BaseSpawnMenu
 				InitialValue = data.Name,
 				OnConfirm = newName =>
 				{
-					SpawnlistData.Rename( entry, newName );
-					RefreshList();
+					SpawnlistData.Rename( entry.StorageEntry, newName );
+					Collection.Refresh();
 				}
 			};
 			popup.Parent = FindPopupPanel();
 		} );
 
-		menu.AddOption( "delete", "Delete", () =>
-		{
-			SpawnlistData.Delete( entry );
-			RefreshList();
-		} );
+		menu.AddOption( "delete", "Delete", () => Collection.Delete( entry.StorageEntry ) );
 	}
 
-	/// <summary>
-	/// Query the cloud for the current user's published spawnlists
-	/// and install them so they appear in the sidebar.
-	/// </summary>
-	async Task FetchCloudSpawnlists()
+	void OnInstalledRightClick( SpawnlistCollection.Entry entry )
 	{
-		var query = new Storage.Query();
-		query.KeyValues["package"] = "facepunch.sandbox";
-		query.KeyValues["type"] = "spawnlist";
-
-		// Directed search for current user
-		query.Author = Game.SteamId;
-
-		var result = await query.Run();
-		if ( result?.Items == null ) return;
-
-		var localWorkshopIds = SpawnlistData.GetAll()
-			.Select( e => e.GetMeta( "_workshopId", 0ul ) )
-			.Where( id => id > 0 )
-			.Select( id => id.ToString() )
-			.ToHashSet();
-
-		bool anyNew = false;
-
-		foreach ( var item in result.Items )
-		{
-			if ( localWorkshopIds.Contains( item.Id.ToString() ) )
-				continue;
-
-			var installed = await item.Install();
-			if ( installed == null ) continue;
-
-			installed.SetMeta( "_workshopId", item.Id );
-			_cloudEntries.Add( installed );
-			anyNew = true;
-		}
-
-		if ( anyNew )
-			OnParametersSet();
-	}
-
-	/// <summary>
-	/// Call this to refresh the sidebar after creating or deleting a spawnlist.
-	/// </summary>
-	public void RefreshList()
-	{
-		_queried = false;
-		_cloudEntries.Clear();
-		OnParametersSet();
+		var menu = MenuPanel.Open( this );
+		menu.AddOption( "delete", "Remove", () => Collection.Uninstall( entry.WorkshopId ) );
 	}
 }
+

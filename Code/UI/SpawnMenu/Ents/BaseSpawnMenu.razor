@@ -6,30 +6,34 @@
 
 <SpawnMenuPage>
     <Left>
-		<div class="menuinner">
+        <div class="menuinner">
 
-			<VerticalMenu Value="@activeOption">
-				<Options>
-					@foreach (var p in options)
-					{
-						if ( p.Type == "header" )
-						{
-							<h1>@p.Name</h1>
-						}
-						else if ( p.Type == "grow" )
-						{
-							<div class="grow"></div>
-						}
-						else
-						{
-							<MenuOption Icon="@p.Icon" Value="@p" Text="@p.Name" onclick="@( () => OnOptionClick( p ) )" @onmousedown="@( (PanelEvent e) => OnOptionMouseDown( p, e ) )"></MenuOption>
-						}
-					}
-				</Options>
-			</VerticalMenu>
+            <VerticalMenu Value="@activeOption">
+                <Options>
+                    @foreach (var p in options)
+                    {
+                        if (p.Type == "header")
+                        {
+                            <h1>@p.Name</h1>
+                        }
+                        else if (p.Type == "grow")
+                        {
+                            <div class="grow"></div>
+                        }
+                        else if (p.Type == "skeleton")
+                        {
+                            <SpawnlistSkeleton></SpawnlistSkeleton>
+                        }
+                        else
+                        {
+                            <MenuOption Icon="@p.Icon" Value="@p" Text="@p.Name" onclick="@( () => OnOptionClick( p ) )" @onmousedown="@( (PanelEvent e) => OnOptionMouseDown( p, e ) )"></MenuOption>
+                        }
+                    }
+                </Options>
+            </VerticalMenu>
 
-			<div class="menu-footer" @ref=MenuFooter></div>
-		</div>
+            <div class="menu-footer" @ref=MenuFooter></div>
+        </div>
     </Left>
 
     <Body>

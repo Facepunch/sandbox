@@ -68,11 +68,9 @@
 
     async Task OnInstall( Storage.QueryItem item )
     {
-        var entry = await item.Install();
-        if ( entry is null ) return;
-
-        // After installing, the spawnlist is now local — refresh the parent
         var page = Ancestors.OfType<SpawnlistsPage>().FirstOrDefault();
-        page?.RefreshList();
+        if ( page is null ) return;
+
+        await page.Collection.InstallAsync( item );
     }
 }

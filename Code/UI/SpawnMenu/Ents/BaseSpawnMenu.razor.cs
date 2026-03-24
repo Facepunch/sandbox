@@ -172,6 +172,28 @@ public partial class BaseSpawnMenu : Panel
 		StateHasChanged();
 	}
 
+	public void SelectOption( string name )
+	{
+		var option = options.FirstOrDefault( o => o.Name == name && (o.PanelCreator != null || o.Panel != null) );
+		if ( option != null ) SwitchOption( option );
+	}
+
+	public void DeselectOption()
+	{
+		activeOption?.Panel?.SetClass( "hidden", true );
+		activeOption = null;
+		StateHasChanged();
+	}
+
+	public void AddSkeletons( int count )
+	{
+		for ( int i = 0; i < count; i++ )
+		{
+			options.Add( new SpawnMenuOption { Type = "skeleton" } );
+		}
+		StateHasChanged();
+	}
+
 	class SpawnMenuOption
 	{
 		public string Type { get; set; } = "option";

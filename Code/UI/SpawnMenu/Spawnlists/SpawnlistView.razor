@@ -29,7 +29,14 @@
                     {
                         <IconPanel Tooltip="Publish" Text="cloud_upload" @onclick=@( () => OnPublish() ) />
                     }
-                    <IconPanel Tooltip="Delete" Text="delete" @onclick=@( () => OnDelete() ) />
+                    @if ( !Entry.Files.IsReadOnly )
+                    {
+                        <IconPanel Tooltip="Delete" Text="delete" @onclick=@( () => OnDelete() ) />
+                    }
+                    else
+                    {
+                        <IconPanel Tooltip="Remove" Text="delete" @onclick=@( () => OnUninstall() ) />
+                    }
                 </div>
             </Right>
         </SpawnMenuToolbar>
@@ -107,10 +114,16 @@
     void OnDelete()
     {
         if ( Entry is null ) return;
-        SpawnlistData.Delete( Entry );
-
         var page = Ancestors.OfType<SpawnlistsPage>().FirstOrDefault();
-        page?.RefreshList();
+        page?.Collection.Delete( Entry );
+    }
+
+    void OnUninstall()
+    {
+        if ( Entry is null ) return;
+        var workshopId = Entry.GetMeta( "_workshopId", 0ul );
+        var page = Ancestors.OfType<SpawnlistsPage>().FirstOrDefault();
+        page?.Collection.Uninstall( workshopId );
     }
 }
 

@@ -16,5 +16,10 @@ public partial class SpawnlistFooter : Panel
 		popup.Parent = FindPopupPanel();
 		popup.OnCreated = () => Ancestors.OfType<SpawnlistsPage>().FirstOrDefault()?.RefreshList();
 	}
+
+	void Refresh()
+	{
+		Ancestors.OfType<SpawnlistsPage>().FirstOrDefault()?.RefreshList();
+	}
 }
 
