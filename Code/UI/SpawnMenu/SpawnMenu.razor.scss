@@ -99,7 +99,7 @@ SpawnMenuHost.open SpawnMenu
     cursor: pointer;
     color: #D1D7E3AA;
     border-radius: 8px 8px 0 0;
-    background-color: $menu-panel-bg-tab;
+    background-color: #0c202faa;
     opacity: 1;
     border-right: 1px solid $menu-surface-soft;
     gap: 0.4rem;
@@ -174,7 +174,7 @@ SpawnMenuHost.open SpawnMenu
 
 .menuinner
 {
-    background-color: $menu-inner-bg;
+    background-color: #13161a88;
     border-radius: 8px;
 }
 

@@ -4,7 +4,7 @@ InventorySlot
 {
     width: 96px;
     height: 96px;
-    background-color: $hud-element-bg-subtle;
+    background-color: #0003;
     border-radius: $hud-radius;
     transition: all 0.1s ease;
     position: relative;
@@ -39,7 +39,7 @@ InventorySlot .icon
     background-size: contain;
     background-repeat: no-repeat;
     mix-blend-mode: lighten;
-    background-tint: rgba( $hud-color, 0.6 );
+    background-tint: rgba( $color-accent, 0.6 );
     pointer-events: none;
 }
 
@@ -70,13 +70,13 @@ InventorySlot:not( .empty )
 
 InventorySlot.drag-hover
 {
-    background-color: rgba( $hud-color, 0.15 );
-    outline: 1px solid rgba( $hud-color, 0.5 );
-    box-shadow: 0px 0px 16px rgba( $hud-color, 0.3 );
+    background-color: rgba( $color-accent, 0.15 );
+    outline: 1px solid rgba( $color-accent, 0.5 );
+    box-shadow: 0px 0px 16px rgba( $color-accent, 0.3 );
 
     .index
     {
-        color: $hud-color;
+        color: $color-accent;
     }
 }
 
@@ -84,16 +84,16 @@ InventorySlot.active
 {
     opacity: 1;
     background-color: $hud-element-bg;
-    outline: 0.5px solid rgba( $hud-color, 0.3 );
+    outline: 0.5px solid rgba( $color-accent, 0.3 );
 
     .index
     {
-        color: $hud-color;
+        color: $color-accent;
     }
 
     .icon
     {
-        background-tint: $hud-color;
+        background-tint: $color-accent;
     }
 
     .name
@@ -105,11 +105,11 @@ InventorySlot.active
 InventorySlot.hovered
 {
     background-color: $hud-element-bg;
-    outline: 0.5px solid rgba( $hud-color, 0.2 );
+    outline: 0.5px solid rgba( $color-accent, 0.2 );
 
     .icon
     {
-        background-tint: rgba( $hud-color, 0.8 );
+        background-tint: rgba( $color-accent, 0.8 );
     }
 
     .name
@@ -121,17 +121,17 @@ InventorySlot.hovered
 InventorySlot.selected
 {
     opacity: 1;
-    background-color: rgba( $hud-color, 0.8 );
-    box-shadow: 0px 0px 12px rgba( $hud-color, 0.2 );
+    background-color: rgba( $color-accent, 0.8 );
+    box-shadow: 0px 0px 12px rgba( $color-accent, 0.2 );
 
     .index
     {
-        color: $hud-color;
+        color: $color-accent;
     }
 
     .icon
     {
-        background-tint: $hud-color;
+        background-tint: $color-accent;
         top: 8px;
         left: 2px;
         right: 2px;

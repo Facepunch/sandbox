@@ -35,7 +35,7 @@ ToolInfoPanel
 	{
 		font-size: 32px;
 		font-weight: 700;
-		color: $hud-color;
+		color: $color-accent;
 		margin-bottom: 2px;
 	}
 
@@ -52,7 +52,7 @@ ToolInfoPanel
 	{
 		width: 100%;
 		height: 1px;
-		background-color: rgba($hud-color, 0.15);
+		background-color: rgba($color-accent, 0.15);
 		margin-bottom: 4px;
 	}
 

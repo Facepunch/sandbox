@@ -1,17 +1,10 @@
 $menu-color:#cdf;
-$menu-color-muted: #8ad;
 $menu-text: #fffa;
 $menu-text-strong: #fff;
 $menu-surface-soft: #0004;
-$menu-surface-strong: #0008;
 $menu-accent: $color-accent;
 $menu-accent-soft: rgba($color-accent, 0.13);
-$menu-accent-hover: rgba($color-accent, 0.4);
-$menu-row-hover: #7773;
 $menu-panel-bg: #0c202fcc;
-$menu-panel-bg-tab: #0c202faa;
-$menu-inner-bg: #13161a88;
-$menu-disabled-opacity: 0.25;
 
 .menu-header-bar
 {
@@ -30,7 +23,7 @@ $menu-disabled-opacity: 0.25;
 
 .menu-segmented-group
 {
-	background-color: $menu-surface-strong;
+	background-color: #0008;
 	border-radius: 20px;
 	overflow: hidden;
 }
@@ -138,7 +131,7 @@ span
 	&.disabled
 	{
 		pointer-events: none;
-		opacity: $menu-disabled-opacity;
+		opacity: 0.25;
 	}
 
 	&.soft
@@ -147,7 +140,7 @@ span
 
 		&:hover
 		{
-			background-color: $menu-accent-hover;
+			background-color: rgba($color-accent, 0.4);
 			sound-in: ui.button.over;
 		}
 	}

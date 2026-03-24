@@ -36,8 +36,8 @@ EffectsList
 
 			&.active
 			{
-				color: $hud-color;
-				border-bottom: 2px solid $hud-color;
+				color: $color-accent;
+				border-bottom: 2px solid $color-accent;
 			}
 		}
 	}
@@ -180,12 +180,12 @@ EffectsList
 
 			&.on
 			{
-				border-color: $hud-color;
-				background-color: rgba( $hud-color, 0.2 );
+				border-color: $color-accent;
+				background-color: rgba( $color-accent, 0.2 );
 
 				.checkmark
 				{
-					color: $hud-color;
+					color: $color-accent;
 				}
 			}
 
@@ -202,7 +202,7 @@ EffectsList
 
 			&:hover
 			{
-				border-color: rgba( $hud-color, 0.8 );
+				border-color: rgba( $color-accent, 0.8 );
 			}
 		}
 
@@ -223,21 +223,21 @@ EffectsList
 
 		&.selected
 		{
-			background-color: rgba( $hud-color, 0.1 );
+			background-color: rgba( $color-accent, 0.1 );
 
 			.name
 			{
-				color: $hud-color;
+				color: $color-accent;
 			}
 
 			.info .name
 			{
-				color: $hud-color;
+				color: $color-accent;
 			}
 
 			.thumb
 			{
-				border: 1px solid rgba( $hud-color, 0.4 );
+				border: 1px solid rgba( $color-accent, 0.4 );
 			}
 		}
 	}

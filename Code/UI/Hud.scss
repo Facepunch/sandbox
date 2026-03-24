@@ -1,21 +1,9 @@
-$hud-bg: #0c202fcc;
-$hud-bg-panel: #13161a88;
 $hud-element-bg: #0006;
-$hud-element-bg-deep: #000a;
-$hud-element-bg-subtle: #0003;
-
 $hud-text: #fafaff;
-$hud-text-muted: #fffa;
-$hud-color: $color-accent;
 
 $hud-radius: 8px;
 $hud-radius-sm: 4px;
-$hud-radius-pill: 20px;
-
 $hud-icon-size: 30px;
-$hud-icon-height: 36px;
-$hud-value-size: 29px;
-$hud-value-weight: 700;
 
 .hud-panel
 {
@@ -31,25 +19,25 @@ $hud-value-weight: 700;
 	Image, .icon
 	{
 		width: $hud-icon-size;
-		height: $hud-icon-height;
+		height: 36px;
 		background-size: contain;
 		background-repeat: no-repeat;
 		background-position: center;
 		flex-shrink: 0;
-		background-tint: $hud-color;
+		background-tint: $color-accent;
 	}
 
 	.value
 	{
-		font-size: $hud-value-size;
-		font-weight: $hud-value-weight;
+		font-size: 29px;
+		font-weight: 700;
 		color: $hud-text;
 	}
 
 	.alternate
 	{
-		font-size: $hud-value-size;
-		font-weight: $hud-value-weight;
-		color: $hud-text-muted;
+		font-size: 29px;
+		font-weight: 700;
+		color: #fffa;
 	}
 }
