@@ -190,19 +190,25 @@ public class SpawnlistCollection
 			}
 		}
 
-		var cookieIds = new SavedSpawnlists().Installed;
-		foreach ( var workshopId in cookieIds )
+		var missingIds = new SavedSpawnlists().Installed
+			.Where( id => !_cloudEntries.ContainsKey( id ) )
+			.ToList();
+
+		if ( missingIds.Count > 0 )
 		{
-			if ( _cloudEntries.ContainsKey( workshopId ) ) continue;
+			var missingResult = await new Storage.Query { FileIds = missingIds }.Run();
+			if ( missingResult?.Items is not null )
+			{
+				foreach ( var item in missingResult.Items )
+				{
+					if ( _cloudEntries.ContainsKey( item.Id ) ) continue;
 
-			var itemResult = await new Storage.Query { FileIds = [workshopId] }.Run();
-			var item = itemResult?.Items?.FirstOrDefault();
-			if ( item == null ) continue;
+					var installed = await item.Install();
+					if ( installed == null ) continue;
 
-			var installed = await item.Install();
-			if ( installed == null ) continue;
-
-			_cloudEntries[workshopId] = installed;
+					_cloudEntries[item.Id] = installed;
+				}
+			}
 		}
 
 		_loading = false;
