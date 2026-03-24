@@ -11,8 +11,10 @@ public class LinkedGameObjectBuilder
 	{
 		if ( !obj.IsValid() ) return false;
 		if ( obj.Tags.Contains( "world" ) ) return false;
+		if ( obj.Tags.Contains( "player" ) ) return false;
 		if ( Objects.Contains( obj ) ) return false;
 		if ( obj.GetComponent<MapInstance>() is not null ) return false;
+		if ( HasDescendantWithTag( obj, "player" ) ) return false;
 
 		Objects.Add( obj );
 		return true;
@@ -56,6 +58,16 @@ public class LinkedGameObjectBuilder
 	public void RemoveDeletedObjects()
 	{
 		Objects.RemoveAll( x => !x.IsValid() || x.IsDestroyed );
+	}
+
+	static bool HasDescendantWithTag( GameObject obj, string tag )
+	{
+		foreach ( var child in obj.Children )
+		{
+			if ( child.Tags.Has( tag ) ) return true;
+			if ( HasDescendantWithTag( child, tag ) ) return true;
+		}
+		return false;
 	}
 
 	public void Clear()
