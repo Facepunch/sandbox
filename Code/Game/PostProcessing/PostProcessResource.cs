@@ -25,6 +25,9 @@ public class PostProcessResource : GameResource, IDefinitionResource
 	[Property]
 	public string Description { get; set; }
 
+	[Property]
+	public bool IncludeCode { get; set; } = true;
+
 	public override Bitmap RenderThumbnail( ThumbnailOptions options )
 	{
 		if ( Icon is null ) return default;
@@ -35,6 +38,23 @@ public class PostProcessResource : GameResource, IDefinitionResource
 	protected override Bitmap CreateAssetTypeIcon( int width, int height )
 	{
 		return CreateSimpleAssetTypeIcon( "🎨", width, height, "#35B851" );
+	}
+
+	public override void ConfigurePublishing( ResourcePublishContext context )
+	{
+		if ( Prefab is null )
+		{
+			context.SetPublishingDisabled( "Invalid: missing a prefab" );
+			return;
+		}
+
+		if ( Icon is null )
+		{
+			context.SetPublishingDisabled( "Invalid: missing an icon" );
+			return;
+		}
+
+		context.IncludeCode = IncludeCode;
 	}
 }
 

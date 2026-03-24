@@ -134,7 +134,7 @@
         _loadingWorkshop = true;
         StateHasChanged();
 
-        var query = string.IsNullOrEmpty( _filter ) ? "sort:popular" : $"sort:popular {_filter}";
+        var query = string.IsNullOrEmpty(_filter) ? "sort:newest" : $"sort:newest {_filter}";
         var result = await Package.FindAsync( query );
         _workshopPackages = result?.Packages.Where( p => p.TypeName == "spp" ).ToList() ?? new();
 
