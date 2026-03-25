@@ -6,6 +6,22 @@ GameObjectInspector
 width: 100%;
 }
 
+GameObjectInspector .object-info
+{
+    flex-direction: row;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+    font-size: 11px;
+    color: rgba( white, 0.45 );
+
+    span
+    {
+        gap: 0.3rem;
+        align-items: center;
+    }
+}
+
 GameObjectInspector .empty-state
 {
     text-align: center;

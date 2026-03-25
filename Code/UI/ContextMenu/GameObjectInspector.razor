@@ -14,6 +14,19 @@
             }
             else
             {
+                var totalMass = Target.SelectMany( go => go.GetComponentsInChildren<Rigidbody>() ).Sum( rb => rb.Mass );
+                var health = Target.Select( go => go.GetComponent<Prop>() ).FirstOrDefault( p => p.IsValid() );
+
+                <div class="object-info">
+                    @if ( totalMass > 0 )
+                    {
+                        <span>⚖️ @($"{totalMass:0.#} kg")</span>
+                    }
+                    @if ( health.IsValid() && health.Health != 0 )
+                    {
+                        <span>❤️ @($"{health.Health:0.#} HP")</span>
+                    }
+                </div>
                 <ControlSheet Target="@Properties"></ControlSheet>
 
                 @if (Renderers.Count > 0)
@@ -72,6 +85,18 @@
 
     List<SerializedProperty> Properties = new();
     List<ModelRenderer> Renderers = new();
+
+    protected override int BuildHash()
+    {
+        var hc = new HashCode();
+        foreach ( var go in Target ?? [] )
+        {
+            hc.Add( go );
+            hc.Add( go.GetComponent<Rigidbody>()?.Mass ?? 0f );
+            hc.Add( go.GetComponent<Prop>()?.Health ?? -1f );
+        }
+        return hc.ToHashCode();
+    }
 
     protected override void OnParametersSet()
     {

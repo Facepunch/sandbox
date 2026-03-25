@@ -6,8 +6,4 @@ using Sandbox.UI;
 /// </summary>
 public abstract class UtilityPage : Panel
 {
-	/// <summary>
-	/// Return false to hide this page from the option list.
-	/// </summary>
-	public virtual bool IsVisible() => true;
 }
