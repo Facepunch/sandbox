@@ -10,7 +10,7 @@
         <div class="background" @onmousedown=@Close @onclick=@Close></div>
     }
 
-    <div class="inner">
+    <div class="inner @( _submenuOpensLeft ? "opens-left" : "" )">
 
         @foreach ( var option in _options )
         {
@@ -31,7 +31,7 @@
 
                 @if ( opt.SubmenuBuilder != null )
                 {
-                    <div class="submenu-arrow">▶</div>
+                    <div class="submenu-arrow">@( _submenuOpensLeft ? "◀" : "▶" )</div>
                 }
 
             </div>
@@ -52,16 +52,33 @@
     MenuPanel _openSubmenu;
     MenuOption? _activeSubmenuOption;
     bool _isSubmenu;
+    bool _openLeft;
+    float _parentLeft;
+    bool _submenuOpensLeft;
     Rect _layoutRect;
+    Panel _source;
 
     public static MenuPanel Open( Panel source )
     {
         var root = source.FindRootPanel();
         var menu = root.AddChild<MenuPanel>();
+        menu._source = source;
         menu.Style.Left = root.MousePosition.x * root.ScaleFromScreen;
         menu.Style.Top = root.MousePosition.y * root.ScaleFromScreen;
         menu.PlaySound( "sounds/kenney/ui/ui.navigate.forward.sound" );
         return menu;
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if ( _isSubmenu ) return;
+        if ( !_source.IsValid() ) { Close(); return; }
+
+        // Walk the source ancestor chain — if any panel becomes invisible, close the menu
+        if ( _source.AncestorsAndSelf.Any( p => !p.IsVisible ) )
+            Close();
     }
 
     public void AddOption( string icon, string text, Action action )
@@ -96,11 +113,19 @@
 
         if ( option.SubmenuBuilder == null ) return;
 
+        const int minWidth = 200;
+        const int gap = 4;
+        const int padding = 10;
+
+        bool hasRoomRight = Box.Right + gap + minWidth < Screen.Width - padding;
+
         var root = FindRootPanel();
         var submenu = root.AddChild<MenuPanel>();
         submenu._isSubmenu = true;
-        submenu.Style.Left = Box.Right + 4;
-        submenu.Style.Top = root.MousePosition.y * root.ScaleFromScreen;
+        submenu._openLeft = !hasRoomRight;
+        submenu._parentLeft = Box.Left;
+        submenu.Style.Left = hasRoomRight ? Box.Right + gap : Box.Left - gap - minWidth;
+        submenu.Style.Top = root.MousePosition.y * root.ScaleFromScreen - gap;
 
         option.SubmenuBuilder( submenu );
         submenu.StateHasChanged();
@@ -135,6 +160,14 @@
     public override void OnLayout( ref Rect layoutRect )
     {
         const int padding = 10;
+        const int gap = 4;
+
+        if ( _openLeft )
+        {
+            var w = layoutRect.Width;
+            layoutRect.Right = _parentLeft - gap;
+            layoutRect.Left = layoutRect.Right - w;
+        }
 
         if ( layoutRect.Right > Screen.Width - padding )
         {
@@ -149,5 +182,6 @@
         }
 
         _layoutRect = layoutRect;
+        _submenuOpensLeft = !_isSubmenu && !( layoutRect.Right + 4 + 200 < Screen.Width - 10 );
     }
 }

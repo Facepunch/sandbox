@@ -133,24 +133,31 @@ public class SpawnlistData
 
 	public static void PopulateContextMenu( MenuPanel menu, SpawnlistItem item, Storage.Entry skipEntry = null )
 	{
-		foreach ( var entry in GetAll() )
+		var entries = GetAll()
+			.Where( e => skipEntry is null || e.Id != skipEntry.Id )
+			.ToList();
+
+		if ( entries.Count > 0 )
 		{
-			if ( skipEntry is not null && entry.Id == skipEntry.Id )
-				continue;
+			menu.AddSubmenu( "📋", "Add to Spawnlist", sub =>
+			{
+				foreach ( var entry in entries )
+				{
+					var data = Load( entry );
+					var capturedEntry = entry;
+					sub.AddOption( "📋", data.Name, () => AddItem( capturedEntry, item ) );
+				}
+			} );
 
-			var data = Load( entry );
-			var capturedEntry = entry;
-			menu.AddOption( "📋", $"Add to {data.Name}", () => AddItem( capturedEntry, item ) );
+			menu.AddSpacer();
 		}
-
-		menu.AddSpacer();
 
 		menu.AddOption( "➕", "Create New Spawnlist", () =>
 		{
 			Create( item.Title ?? "New Spawnlist" );
-			var entry = GetAll().FirstOrDefault();
-			if ( entry is not null )
-				AddItem( entry, item );
+			var created = GetAll().FirstOrDefault();
+			if ( created is not null )
+				AddItem( created, item );
 		} );
 	}
 }

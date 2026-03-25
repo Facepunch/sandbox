@@ -93,5 +93,22 @@ MenuPanel
 				sound-in: ui.select;
 			}
 		}
+
+		&.opens-left .option
+		{
+			flex-direction: row-reverse;
+
+			.text
+			{
+				text-align: right;
+				justify-content: flex-end;
+			}
+
+			.submenu-arrow
+			{
+				padding-left: 0;
+				padding-right: 8px;
+			}
+		}
 	}
 }
