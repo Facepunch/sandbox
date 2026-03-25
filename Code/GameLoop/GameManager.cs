@@ -344,7 +344,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	}
 
 	[Rpc.Host]
-	public static void GiveSpawnerWeaponAt( string type, string path, int slot, string data = null, string icon = null, string title = null, string mountIdent = null )
+	public static void GiveSpawnerWeaponAt( string type, string path, int slot, string data = null, string icon = null, string title = null )
 	{
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null ) return;
@@ -368,7 +368,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		if ( inventory.GetSlot( slot ) is SpawnerWeapon existingSpawner )
 		{
 			existingSpawner.SetSpawner( s );
-			existingSpawner.MountIdent = mountIdent;
 			inventory.SwitchWeapon( existingSpawner );
 			inventory.SaveLoadout();
 			return;
@@ -382,7 +381,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		if ( !spawner.IsValid() ) return;
 
 		spawner.SetSpawner( s );
-		spawner.MountIdent = mountIdent;
 		inventory.SwitchWeapon( spawner );
 		inventory.SaveLoadout();
 	}

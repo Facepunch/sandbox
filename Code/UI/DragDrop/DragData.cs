@@ -39,9 +39,4 @@ public class DragData
 	/// so the source panel's OnDragEnd can skip secondary actions like dropping to the world.
 	/// </summary>
 	public bool Handled { get; set; }
-
-	/// <summary>
-	/// For spawners that reference a mounted game asset, this is the ident of the mount it came from
-	/// </summary>
-	public string MountIdent { get; set; }
 }
