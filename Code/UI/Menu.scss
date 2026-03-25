@@ -17,15 +17,15 @@ $menu-panel-bg: #0c202fcc;
 .menu-input
 {
 	background-color: $menu-surface-soft;
-	border-radius: 5px;
+	border-radius: 8px;
 	padding: 2px 10px;
 }
 
 .menu-segmented-group
 {
 	background-color: #0008;
-	border-radius: 20px;
-	overflow: hidden;
+	border-radius: 8px;
+	overflow: visible;
 }
 
 .menu-mode-button
@@ -37,12 +37,16 @@ $menu-panel-bg: #0c202fcc;
 	font-family: $subtitle-font;
 	cursor: pointer;
 	pointer-events: all;
-	gap: 0.5rem;
 	justify-content: center;
 	align-items: center;
+	overflow: visible;
+	border-radius: 8px;
 
 	.icon
 	{
+		margin-left: -4px;
+		margin-top: -1.5px;
+		padding-right: 4px;
 		font-size: 1.5rem;
 	}
 
@@ -59,7 +63,8 @@ $menu-panel-bg: #0c202fcc;
 
 	&.active
 	{
-		background-color: $menu-accent;
+		outline: 1px solid $menu-accent;
+		background-color: rgba( $menu-accent, 0.2 );
 		color: $menu-text-strong;
 	}
 }
@@ -67,7 +72,7 @@ $menu-panel-bg: #0c202fcc;
 .menu-icon-toggle-group
 {
 	background-color: $menu-surface-soft;
-	border-radius: 4px;
+	border-radius: 8px;
 	gap: 0.5rem;
 	padding: 4px 4px;
 	padding-left: 8px;
