@@ -1,0 +1,153 @@
+@using System
+@using Sandbox.UI
+@namespace Sandbox
+@inherits Panel
+
+<root>
+
+    @if ( !_isSubmenu )
+    {
+        <div class="background" @onmousedown=@Close @onclick=@Close></div>
+    }
+
+    <div class="inner">
+
+        @foreach ( var option in _options )
+        {
+            if ( option.IsSpacer )
+            {
+                <div class="spacer"></div>
+                continue;
+            }
+
+            var opt = option;
+
+            <div class="option @( opt.SubmenuBuilder != null ? "has-submenu" : "" )"
+                 @onclick="@(() => OnOptionClick( opt ))"
+                 @onmouseover="@(() => OnOptionHover( opt ))">
+
+                <div class="icon">@opt.Icon</div>
+                <div class="text">@opt.Text</div>
+
+                @if ( opt.SubmenuBuilder != null )
+                {
+                    <div class="submenu-arrow">▶</div>
+                }
+
+            </div>
+        }
+
+    </div>
+
+</root>
+
+@code
+{
+    record MenuOption( string Icon, string Text, Action Action, Action<MenuPanel> SubmenuBuilder = null )
+    {
+        public bool IsSpacer => Icon == "__spacer__";
+    }
+
+    readonly List<MenuOption> _options = new();
+    MenuPanel _openSubmenu;
+    MenuOption? _activeSubmenuOption;
+    bool _isSubmenu;
+    Rect _layoutRect;
+
+    public static MenuPanel Open( Panel source )
+    {
+        var root = source.FindRootPanel();
+        var menu = root.AddChild<MenuPanel>();
+        menu.Style.Left = root.MousePosition.x * root.ScaleFromScreen;
+        menu.Style.Top = root.MousePosition.y * root.ScaleFromScreen;
+        menu.PlaySound( "sounds/kenney/ui/ui.navigate.forward.sound" );
+        return menu;
+    }
+
+    public void AddOption( string icon, string text, Action action )
+    {
+        _options.Add( new MenuOption( icon, text, action ) );
+    }
+
+    public void AddSubmenu( string icon, string text, Action<MenuPanel> builder )
+    {
+        _options.Add( new MenuOption( icon, text, null, builder ) );
+    }
+
+    public void AddSpacer()
+    {
+        _options.Add( new MenuOption( "__spacer__", "", null ) );
+    }
+
+    void OnOptionClick( MenuOption option )
+    {
+        if ( option.SubmenuBuilder != null )
+            OnOptionHover( option );
+        else
+            SelectOption( option );
+    }
+
+    void OnOptionHover( MenuOption option )
+    {
+        if ( _activeSubmenuOption == option ) return;
+        _activeSubmenuOption = option;
+
+        CloseSubmenu();
+
+        if ( option.SubmenuBuilder == null ) return;
+
+        var root = FindRootPanel();
+        var submenu = root.AddChild<MenuPanel>();
+        submenu._isSubmenu = true;
+        submenu.Style.Left = Box.Right + 4;
+        submenu.Style.Top = root.MousePosition.y * root.ScaleFromScreen;
+
+        option.SubmenuBuilder( submenu );
+        submenu.StateHasChanged();
+        _openSubmenu = submenu;
+    }
+
+    void CloseSubmenu()
+    {
+        if ( _openSubmenu == null ) return;
+        _openSubmenu.Delete( false );
+        _openSubmenu = null;
+    }
+
+    void SelectOption( MenuOption option )
+    {
+        CloseAll( this );
+        option.Action?.Invoke();
+    }
+
+    public void Close()
+    {
+        CloseAll( this );
+    }
+
+    static void CloseAll( Panel source )
+    {
+        var root = source.FindRootPanel();
+        foreach ( var menu in root.Children.OfType<MenuPanel>().ToList() )
+            menu.Delete( false );
+    }
+
+    public override void OnLayout( ref Rect layoutRect )
+    {
+        const int padding = 10;
+
+        if ( layoutRect.Right > Screen.Width - padding )
+        {
+            layoutRect.Left -= layoutRect.Right - ( Screen.Width - padding );
+            layoutRect.Right = Screen.Width - padding;
+        }
+
+        if ( layoutRect.Bottom > Screen.Height - padding )
+        {
+            layoutRect.Top -= layoutRect.Bottom - ( Screen.Height - padding );
+            layoutRect.Bottom = Screen.Height - padding;
+        }
+
+        _layoutRect = layoutRect;
+    }
+}

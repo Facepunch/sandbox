@@ -1,0 +1,97 @@
+@import "/UI/Theme.scss";
+
+MenuPanel
+{
+	position: absolute;
+	z-index: 10000;
+	pointer-events: all;
+	font-size: 12px;
+	font-family: $subtitle-font;
+	font-weight: 650;
+	flex-shrink: 0;
+
+	.background
+	{
+		position: absolute;
+		left: -5000px;
+		right: -5000px;
+		top: -5000px;
+		bottom: -5000px;
+	}
+
+	> .inner
+	{
+		min-width: 200px;
+		flex-direction: column;
+		border-radius: 10px;
+		box-shadow: 5px 5px 30px #000e;
+		background-color: $menu-panel-bg;
+		backdrop-filter: blur( 12px );
+		border: 1px solid rgba( white, 0.07 );
+		flex-shrink: 0;
+		padding: 4px;
+		gap: 1px;
+
+		.spacer
+		{
+			height: 1px;
+			background-color: rgba( white, 0.07 );
+			margin: 3px 6px;
+		}
+
+		.option
+		{
+			flex-direction: row;
+			color: $menu-text;
+			padding: 0 8px;
+			cursor: pointer;
+			flex-shrink: 0;
+			height: 32px;
+			border-radius: 6px;
+			align-items: center;
+			gap: 2px;
+			transition: background-color 0.06s ease;
+
+			.icon
+			{
+				width: 24px;
+				font-family: "Material Icons";
+				justify-content: center;
+				align-items: center;
+				flex-shrink: 0;
+				font-size: 1.1rem;
+				color: rgba( white, 0.5 );
+			}
+
+			.text
+			{
+				flex-grow: 1;
+				padding: 0 4px;
+			}
+
+			.submenu-arrow
+			{
+				flex-shrink: 0;
+				font-size: 0.7rem;
+				color: rgba( white, 0.35 );
+				padding-left: 8px;
+			}
+
+			&:hover
+			{
+				background-color: $menu-accent;
+				color: white;
+				sound-in: ui.hover;
+
+				.icon { color: white; }
+				.submenu-arrow { color: rgba( white, 0.7 ); }
+			}
+
+			&:active
+			{
+				background-color: rgba( $menu-accent, 0.7 );
+				sound-in: ui.select;
+			}
+		}
+	}
+}
