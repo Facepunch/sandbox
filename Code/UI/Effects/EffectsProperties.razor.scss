@@ -2,33 +2,26 @@
 
 EffectsProperties
 {
-    background-color: #222222ee;
-    border: 1px solid #444;
+    background-color: $menu-panel-bg;
+    backdrop-filter: blur( 2px );
     border-radius: 8px;
-    backdrop-filter: blur( 10px );
-    padding: 1rem;
     flex-direction: column;
-    max-height: 480px;
-    overflow-y: scroll;
+    overflow: hidden;
 
-    .effect-title
+    .header
     {
-        font-size: 14px;
-        font-weight: 700;
-        font-family: $title-font;
-        color: white;
-        padding-bottom: 6px;
-    }
+        padding: 10px 14px;
+        flex-shrink: 0;
 
-    .header h2
-    {
-        gap: 0.5rem;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-        font-weight: 700;
-        font-family: $title-font;
-        margin-bottom: 0.25rem;
+        h2
+        {
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 650;
+            font-family: $subtitle-font;
+            color: $menu-color;
+        }
     }
 
     .empty-state
@@ -36,10 +29,16 @@ EffectsProperties
         font-family: $subtitle-font;
         padding: 16px 12px;
         text-align: center;
+        color: $menu-text;
+        flex-grow: 1;
+        align-items: center;
+        justify-content: center;
     }
 
     ControlSheet
     {
         padding: 6px 0;
+        flex-grow: 1;
+        overflow-y: scroll;
     }
 }

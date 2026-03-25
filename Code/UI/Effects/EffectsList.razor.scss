@@ -2,51 +2,74 @@
 
 EffectsList
 {
-	background-color: #222222ee;
-	backdrop-filter: blur( 10px );
-	border-radius: 8px;
-	border: 1px solid #444;
 	flex-direction: column;
-	max-height: 480px;
-	min-height: 480px;
-	overflow-y: scroll;
 
 	.list-tabs
 	{
 		flex-direction: row;
-		border-bottom: 1px solid rgba( white, 0.06 );
+		margin-left: 8px;
 		flex-shrink: 0;
 
 		.list-tab
 		{
-			flex-grow: 1;
-			font-size: 1rem;
-			font-weight: 600;
-			font-family: $body-font;
-			color: rgba( white, 0.4 );
-			padding: 8px 8px;
-			text-align: center;
+			padding: 0.5rem 1rem;
 			cursor: pointer;
+			color: #D1D7E3AA;
+			border-radius: 8px 8px 0 0;
+			background-color: #0c202faa;
+			border-right: 1px solid $menu-surface-soft;
+			align-items: center;
+			font-family: $subtitle-font;
+			font-weight: 650;
+			font-size: 14px;
 			transition: color 0.1s ease;
 
 			&:hover
 			{
-				color: rgba( white, 0.7 );
+				color: $menu-color;
+				sound-in: ui.hover;
 			}
 
 			&.active
 			{
-				color: $color-accent;
-				border-bottom: 2px solid $color-accent;
+				color: $menu-text-strong;
+				background-color: $menu-panel-bg;
+				backdrop-filter: blur( 8px );
+				pointer-events: none;
 			}
 		}
+	}
+
+	.panel-body
+	{
+		background-color: $menu-panel-bg;
+		backdrop-filter: blur( 2px );
+		border-radius: 8px;
+		flex: 1 1 0;
+		min-height: 0;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.scroll-body
+	{
+		flex: 1 1 0;
+		min-height: 0;
+		flex-direction: column;
+		overflow-y: scroll;
+	}
+
+	.footer
+	{
+		flex-shrink: 0;
+		flex-direction: row;
+		padding: 6px 8px;
+		justify-content: flex-end;
 	}
 
 	.workshop-search
 	{
 		padding: 6px 8px;
-		border-bottom: 1px solid rgba( white, 0.06 );
-
 		.search-input
 		{
 			width: 100%;
@@ -78,6 +101,7 @@ EffectsList
 		font-family: $subtitle-font;
 		padding: 16px 12px;
 		text-align: center;
+		color: $menu-text;
 	}
 
 	.effect-row
@@ -117,7 +141,7 @@ EffectsList
 			font-size: 1rem;
 			font-weight: 500;
 			font-family: $body-font;
-			color: rgba( white, 0.75 );
+			color: $menu-text;
 			margin: 0 8px;
 		}
 
@@ -131,10 +155,6 @@ EffectsList
 			.name
 			{
 				flex-grow: 0;
-				font-size: 1rem;
-				font-weight: 500;
-				font-family: $body-font;
-				color: rgba( white, 0.75 );
 				margin: 0;
 			}
 
@@ -172,73 +192,38 @@ EffectsList
 			justify-content: center;
 			align-items: center;
 
-			.checkmark
-			{
-				font-size: 12px;
-				color: transparent;
-			}
+			.checkmark { font-size: 12px; color: transparent; }
 
 			&.on
 			{
 				border-color: $color-accent;
 				background-color: rgba( $color-accent, 0.2 );
-
-				.checkmark
-				{
-					color: $color-accent;
-				}
+				.checkmark { color: $color-accent; }
 			}
 
 			&.loading
 			{
 				opacity: 0.5;
 				pointer-events: none;
-
-				.checkmark
-				{
-					color: rgba( white, 0.5 );
-				}
+				.checkmark { color: rgba( white, 0.5 ); }
 			}
 
-			&:hover
-			{
-				border-color: rgba( $color-accent, 0.8 );
-			}
+			&:hover { border-color: rgba( $color-accent, 0.8 ); }
 		}
 
 		&:hover
 		{
-			background-color: rgba( white, 0.06 );
-
-			.name
-			{
-				color: white;
-			}
-
-			.info .name
-			{
-				color: white;
-			}
+			background-color: $menu-accent-soft;
+			.name { color: $menu-text-strong; }
+			.info .name { color: $menu-text-strong; }
 		}
 
 		&.selected
 		{
-			background-color: rgba( $color-accent, 0.1 );
-
-			.name
-			{
-				color: $color-accent;
-			}
-
-			.info .name
-			{
-				color: $color-accent;
-			}
-
-			.thumb
-			{
-				border: 1px solid rgba( $color-accent, 0.4 );
-			}
+			background-color: $menu-accent-soft;
+			.name { color: $menu-color; }
+			.info .name { color: $menu-color; }
+			.thumb { border: 1px solid rgba( $color-accent, 0.4 ); }
 		}
 	}
 }

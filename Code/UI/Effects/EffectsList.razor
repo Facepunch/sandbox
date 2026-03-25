@@ -9,85 +9,96 @@
         <div class="list-tab @( _tab == 1 ? "active" : "" )" @onclick="@(() => SwitchTab(1))">☁️ Workshop</div>
     </div>
 
-    @if ( _tab == 0 )
-    {
-        @foreach ( var group in _groups )
-        {
-            <div class="group-header">@group.Key.ToString()</div>
-
-            @foreach ( var entry in group )
+    <div class="panel-body">
+        <div class="scroll-body">
+            @if ( _tab == 0 )
             {
-                var path = entry.ResourcePath;
-                var enabled = _manager?.IsEnabled( path ) ?? false;
-                var selected = _manager?.SelectedPath == path;
+            @foreach ( var group in _groups )
+            {
+                <div class="group-header">@group.Key.ToString()</div>
 
-                <div class="effect-row @( selected ? "selected" : "" )"
-                     @onclick="@(() => OnClick( entry ))"
-                     @onmouseenter="@(() => _manager?.Preview( path ))"
-                     @onmouseleave="@(() => _manager?.Unpreview())">
+                @foreach ( var entry in group )
+                {
+                    var path = entry.ResourcePath;
+                    var enabled = _manager?.IsEnabled( path ) ?? false;
+                    var selected = _manager?.SelectedPath == path;
 
-                    <div class="thumb emoji">@GroupEmoji( entry.Group )</div>
-                    <div class="name">@entry.Title</div>
-                    <div class="toggle @( enabled ? "on" : "" )" @onclick:stopPropagation="true" @onclick="@(() => OnToggle( entry ))">
-                        <div class="checkmark">✓</div>
+                    <div class="effect-row @( selected ? "selected" : "" )"
+                         @onclick="@(() => OnClick( entry ))"
+                         @onmouseenter="@(() => _manager?.Preview( path ))"
+                         @onmouseleave="@(() => _manager?.Unpreview())">
+
+                        <div class="thumb emoji">@GroupEmoji( entry.Group )</div>
+                        <div class="name">@entry.Title</div>
+                        <div class="toggle @( enabled ? "on" : "" )" @onclick:stopPropagation="true" @onclick="@(() => OnToggle( entry ))">
+                            <div class="checkmark">✓</div>
+                        </div>
+
                     </div>
-
-                </div>
+                }
             }
-        }
 
-        @if ( !_groups.Any() )
-        {
-            <div class="empty-state">No installed effects.</div>
-        }
-    }
-    else
-    {
-        <div class="workshop-search">
-            <TextEntry class="search-input" placeholder="Search.." value="@_filter"/>
-        </div>
-
-        @if ( _loadingWorkshop )
-        {
-            <div class="empty-state">Loading...</div>
-        }
-        else if ( _workshopPackages.Count == 0 )
-        {
-            <div class="empty-state">No results.</div>
+            @if ( !_groups.Any() )
+            {
+                <div class="empty-state">No installed effects.</div>
+            }
         }
         else
         {
-            @foreach ( var pkg in _workshopPackages )
+            <div class="workshop-search">
+                <TextEntry class="search-input" placeholder="Search.." value="@_filter"/>
+            </div>
+
+            @if ( _loadingWorkshop )
             {
-                var mounted = _mountedResources.GetValueOrDefault( pkg.FullIdent );
-                var resourcePath = mounted?.ResourcePath;
-                var enabled = resourcePath != null && (_manager?.IsEnabled( resourcePath ) ?? false);
-                var selected = resourcePath != null && _manager?.SelectedPath == resourcePath;
-                var mounting = _mounting.Contains( pkg.FullIdent );
-                var thumbUrl = mounted?.Icon != null ? $"thumb:{mounted.Icon.ResourcePath}" : pkg.Thumb;
+                <div class="empty-state">Loading...</div>
+            }
+            else if ( _workshopPackages.Count == 0 )
+            {
+                <div class="empty-state">No results.</div>
+            }
+            else
+            {
+                @foreach ( var pkg in _workshopPackages )
+                {
+                    var mounted = _mountedResources.GetValueOrDefault( pkg.FullIdent );
+                    var resourcePath = mounted?.ResourcePath;
+                    var enabled = resourcePath != null && (_manager?.IsEnabled( resourcePath ) ?? false);
+                    var selected = resourcePath != null && _manager?.SelectedPath == resourcePath;
+                    var mounting = _mounting.Contains( pkg.FullIdent );
+                    var thumbUrl = mounted?.Icon != null ? $"thumb:{mounted.Icon.ResourcePath}" : pkg.Thumb;
 
-                <div class="effect-row @( selected ? "selected" : "" )"
-                     @onclick="@(() => OnWorkshopClick( pkg ))"
-                     @onmouseenter="@(() => { if ( resourcePath != null ) _manager?.Preview( resourcePath ); })"
-                     @onmouseleave="@(() => _manager?.Unpreview())">
+                    <div class="effect-row @( selected ? "selected" : "" )"
+                         @onclick="@(() => OnWorkshopClick( pkg ))"
+                         @onmouseenter="@(() => { if ( resourcePath != null ) _manager?.Preview( resourcePath ); })"
+                         @onmouseleave="@(() => _manager?.Unpreview())">
 
-                    <div class="thumb" style="background-image: url(@thumbUrl)"></div>
-                    <div class="info">
-                        <div class="name">@pkg.Title</div>
-                        <div class="author">
-                            <div class="author-avatar" style="background-image: url(@pkg.Org.Thumb)"></div>
-                            <span>@pkg.Org.Title</span>
+                        <div class="thumb" style="background-image: url(@thumbUrl)"></div>
+                        <div class="info">
+                            <div class="name">@pkg.Title</div>
+                            <div class="author">
+                                <div class="author-avatar" style="background-image: url(@pkg.Org.Thumb)"></div>
+                                <span>@pkg.Org.Title</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="toggle @( enabled ? "on" : "" ) @( mounting ? "loading" : "" )"
-                         @onclick:stopPropagation="true" @onclick="@(() => OnWorkshopToggle( pkg ))">
-                        <div class="checkmark">@( mounting ? "…" : "✓" )</div>
-                    </div>
+                        <div class="toggle @( enabled ? "on" : "" ) @( mounting ? "loading" : "" )"
+                             @onclick:stopPropagation="true" @onclick="@(() => OnWorkshopToggle( pkg ))">
+                            <div class="checkmark">@( mounting ? "…" : "✓" )</div>
+                        </div>
 
-                </div>
+                    </div>
+                }
             }
         }
+    </div>
+
+    @if ( _tab == 0 )
+    {
+        <div class="footer">
+            <Button class="menu-action primary" Text="Presets" Icon="📋" onclick=@OpenPresetsMenu></Button>
+        </div>
     }
+    </div>
 </root>
 
 @code
@@ -202,6 +213,139 @@
         PostProcessGroup.Textures => "🧱",
         _                         => "🔧",
     };
+
+    const string PresetsKey = "effects/presets";
+
+    record EffectState( string ResourcePath, Dictionary<string, object> Properties );
+    record EffectsPreset( string Name, List<EffectState> Effects );
+    record EffectsPresetList( List<EffectsPreset> Presets );
+
+    EffectsPresetList LoadPresetList() => LocalData.Get<EffectsPresetList>( PresetsKey, new EffectsPresetList( new() ) );
+
+    Dictionary<string, object> CaptureProperties( IReadOnlyList<Component> components )
+    {
+        var result = new Dictionary<string, object>();
+        foreach ( var component in components )
+        {
+            var so = TypeLibrary.GetSerializedObject( component );
+            foreach ( var prop in so.Where( p => !p.IsMethod
+                && p.PropertyType != null
+                && !p.PropertyType.IsAssignableTo( typeof( Delegate ) )
+                && p.HasAttribute<PropertyAttribute>() ) )
+            {
+                try
+                {
+                    var value = prop.GetValue<object>();
+                    if ( value is not null )
+                        result[prop.Name] = value;
+                }
+                catch { }
+            }
+        }
+        return result;
+    }
+
+    void ApplyProperties( string resourcePath, Dictionary<string, object> properties )
+    {
+        foreach ( var component in _manager.GetComponents( resourcePath ) )
+        {
+            var typeDesc = TypeLibrary.GetType( component.GetType() );
+            foreach ( var (name, value) in properties )
+            {
+                var propDesc = typeDesc?.GetProperty( name );
+                if ( propDesc is null ) continue;
+
+                try
+                {
+                    var resolved = value is System.Text.Json.JsonElement el
+                        ? Sandbox.Json.Deserialize( el.GetRawText(), propDesc.PropertyType )
+                        : value;
+                    if ( resolved is not null )
+                        propDesc.SetValue( component, resolved );
+                }
+                catch { }
+            }
+        }
+    }
+
+    void SaveNewPreset( string name )
+    {
+        if ( _manager is null ) return;
+
+        var effects = _groups.SelectMany( g => g )
+            .Where( r => _manager.IsEnabled( r.ResourcePath ) )
+            .Select( r => new EffectState( r.ResourcePath, CaptureProperties( _manager.GetComponents( r.ResourcePath ) ) ) )
+            .ToList();
+
+        var list = LoadPresetList();
+        list.Presets.RemoveAll( p => p.Name == name );
+        list.Presets.Add( new EffectsPreset( name, effects ) );
+        LocalData.Set( PresetsKey, list );
+        StateHasChanged();
+    }
+
+    void ApplyPreset( EffectsPreset preset )
+    {
+        if ( _manager is null ) return;
+
+        var presetPaths = preset.Effects.Select( e => e.ResourcePath ).ToHashSet();
+
+        foreach ( var group in _groups )
+            foreach ( var entry in group )
+                if ( !presetPaths.Contains( entry.ResourcePath ) && _manager.IsEnabled( entry.ResourcePath ) )
+                    _manager.Toggle( entry.ResourcePath );
+
+        foreach ( var effectState in preset.Effects )
+        {
+            if ( !_manager.IsEnabled( effectState.ResourcePath ) )
+                _manager.Toggle( effectState.ResourcePath );
+
+            ApplyProperties( effectState.ResourcePath, effectState.Properties );
+        }
+
+        StateHasChanged();
+    }
+
+    void DeletePreset( string name )
+    {
+        var list = LoadPresetList();
+        list.Presets.RemoveAll( p => p.Name == name );
+        if ( list.Presets.Count == 0 )
+            LocalData.Delete( PresetsKey );
+        else
+            LocalData.Set( PresetsKey, list );
+        StateHasChanged();
+    }
+
+    void OpenPresetsMenu()
+    {
+        var menu = MenuPanel.Open( this );
+
+        menu.AddOption( "save", "Save New Preset...", () =>
+        {
+            var popup = new StringQueryPopup
+            {
+                Title = "Save Preset",
+                Prompt = "Enter a name for this effects preset.",
+                Placeholder = "Preset name...",
+                ConfirmLabel = "Save",
+                OnConfirm = name => SaveNewPreset( name )
+            };
+            popup.Parent = FindPopupPanel();
+        } );
+
+        var list = LoadPresetList();
+        if ( list.Presets.Count > 0 )
+        {
+            menu.AddSpacer();
+            foreach ( var preset in list.Presets )
+            {
+                var captured = preset;
+                menu.AddOption( "auto_awesome", captured.Name, () => ApplyPreset( captured ) );
+                menu.AddOption( "delete", $"Delete '{captured.Name}'", () => DeletePreset( captured.Name ) );
+            }
+        }
+    }
 
     protected override int BuildHash() =>
         HashCode.Combine( _tab, _manager?.SelectedPath, _manager?.IsEnabled( _manager?.SelectedPath ?? "" ), _loadingWorkshop );
