@@ -1,7 +1,7 @@
 {
   "RootObject": {
     "__guid": "9e676451-bc11-4f17-95c0-4721143b928e",
-    "__version": 1,
+    "__version": 2,
     "Flags": 0,
     "Name": "basic",
     "Position": "0,0,0",
@@ -10,7 +10,7 @@
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 2,
-    "NetworkInterpolation": true,
+    "NetworkFlags": 0,
     "NetworkOrphaned": 0,
     "NetworkTransmit": true,
     "OwnerTransfer": 1,
@@ -19,6 +19,7 @@
         "__type": "Sandbox.ModelRenderer",
         "__guid": "12341f9b-07f3-420d-ba6f-42505eccdef7",
         "__enabled": true,
+        "Flags": 0,
         "BodyGroups": 18446744073709551615,
         "CreateAttachments": false,
         "LodOverride": null,
@@ -45,6 +46,7 @@
         "__type": "Sandbox.ModelCollider",
         "__guid": "3acd7709-1882-41b1-b534-dbcd585be78f",
         "__enabled": true,
+        "Flags": 0,
         "ColliderFlags": "IgnoreMass",
         "Elasticity": null,
         "Friction": null,
@@ -69,8 +71,10 @@
         "__type": "Sandbox.Rigidbody",
         "__guid": "02bfe960-e4ff-40de-8ee0-4af9ac595ba4",
         "__enabled": true,
+        "Flags": 0,
         "AngularDamping": 0,
         "EnableImpactDamage": true,
+        "EnhancedCcd": false,
         "Gravity": true,
         "GravityScale": 1,
         "ImpactDamage": 0,
@@ -84,7 +88,7 @@
           "Roll": false
         },
         "MassCenterOverride": "0,0,0",
-        "MassOverride": 0,
+        "MassOverride": 23,
         "MinImpactDamageSpeed": 500,
         "MotionEnabled": true,
         "OnComponentDestroy": null,
@@ -101,7 +105,12 @@
         "__type": "WheelEntity",
         "__guid": "714e06a2-0fa9-4918-b3ec-778318a10378",
         "__enabled": true,
-        "Activate": {
+        "Flags": 0,
+        "Break": {
+          "IsEnabled": false,
+          "Action": null
+        },
+        "Forward": {
           "IsEnabled": false,
           "Action": null
         },
@@ -111,12 +120,27 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "Power": 0.5
+        "Power": 0.5,
+        "Reverse": {
+          "IsEnabled": false,
+          "Action": null
+        },
+        "Reversed": false,
+        "Speed": 0.5,
+        "TurnLeft": {
+          "IsEnabled": false,
+          "Action": null
+        },
+        "TurnRight": {
+          "IsEnabled": false,
+          "Action": null
+        }
       },
       {
         "__type": "Sandbox.SphereCollider",
         "__guid": "fdb04f48-779e-494a-a98b-0d5021799786",
         "__enabled": true,
+        "Flags": 0,
         "Center": "0,0,0",
         "ColliderFlags": "IgnoreTraces",
         "Elasticity": null,
@@ -142,7 +166,7 @@
     "Children": [
       {
         "__guid": "773dfdde-22e7-4c61-9b1b-1c9baece56af",
-        "__version": 1,
+        "__version": 2,
         "Flags": 0,
         "Name": "axis",
         "Position": "0,7.322546,0",
@@ -151,7 +175,7 @@
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
-        "NetworkInterpolation": true,
+        "NetworkFlags": 0,
         "NetworkOrphaned": 0,
         "NetworkTransmit": true,
         "OwnerTransfer": 1,
@@ -160,6 +184,8 @@
             "__type": "Sandbox.WheelJoint",
             "__guid": "406d7600-9caf-46ab-9ee8-06fe34796c32",
             "__enabled": true,
+            "Flags": 0,
+            "AnchorBody": null,
             "Attachment": "Auto",
             "Body": null,
             "BreakForce": 0,
@@ -212,13 +238,14 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "CustomBounds": false
       }
     },
     "__variables": []
