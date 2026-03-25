@@ -17,7 +17,13 @@ public class ThrusterEntity : Component, IPlayerControllable
 	public ClientInput Activate { get; set; }
 
 	/// <summary>
-	/// Current thrust output, 0-1. Updated every control frame.
+	/// While this input is active we'll apply thrust in the opposite direction
+	/// </summary>
+	[Property, Sync, ClientEditable]
+	public ClientInput Reverse { get; set; }
+
+	/// <summary>
+	/// Current thrust output, -1 to 1. Updated every control frame.
 	/// </summary>
 	public float ThrustAmount { get; private set; }
 
@@ -62,10 +68,12 @@ public class ThrusterEntity : Component, IPlayerControllable
 
 	public void OnControl()
 	{
-		var analog = Activate.GetAnalog();
+		var forward = Activate.GetAnalog();
+		var backward = Reverse.GetAnalog();
+		var analog = forward - backward;
 		ThrustAmount = analog;
 
 		AddThrust( analog );
-		SetActiveState( analog > 0.1f );
+		SetActiveState( MathF.Abs( analog ) > 0.1f );
 	}
 }
