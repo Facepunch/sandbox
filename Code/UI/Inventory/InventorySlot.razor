@@ -152,7 +152,7 @@
             return;
         }
 
-        GameManager.GiveSpawnerWeaponAt( data.Type, data.Path, Index, data.Data as string, data.Icon, data.Title );
+        GameManager.GiveSpawnerWeaponAt( data.Type, data.Path, Index, data.Data as string, data.Icon, data.Title, data.MountIdent );
     }
 
     protected override int BuildHash() => HashCode.Combine(GetWeapon(), Hovered, Active);

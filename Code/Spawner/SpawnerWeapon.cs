@@ -21,6 +21,11 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 	public ISpawner Spawner { get; private set; }
 
 	/// <summary>
+	/// For spawners that reference a mounted game asset, this is the ident of the mount it came from
+	/// </summary>
+	public string MountIdent { get; set; }
+
+	/// <summary>
 	/// Override the inventory icon with the payload's cloud thumbnail.
 	/// </summary>
 	public override string InventoryIconOverride => Spawner?.Icon switch

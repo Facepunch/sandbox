@@ -55,7 +55,8 @@
             Path = Path,
             Icon = Icon ?? $"thumb:{Path}",
             Title = Title,
-            Source = this
+            Source = this,
+            MountIdent = MountIdent
         };
 
         DragHandler.StartDragging( dragData );

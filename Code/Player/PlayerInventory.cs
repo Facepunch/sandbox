@@ -477,8 +477,8 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 	{
 		public string PrefabPath { get; set; }
 		public int Slot { get; set; }
-
 		public string SpawnerDataPayload { get; set; }
+		public string MountIdent { get; set; }
 	}
 
 	private string SerializeLoadout()
@@ -490,7 +490,9 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 				PrefabPath = w.SourcePrefabPath,
 				Slot = w.InventorySlot,
 				// Preserve the spawner-specific payload (prop path, entity path, dupe JSON, etc.)
-				SpawnerDataPayload = (w as SpawnerWeapon)?.SpawnerData
+				SpawnerDataPayload = (w as SpawnerWeapon)?.SpawnerData,
+				// Preserve the mount ident so we can pre-mount on restore
+				MountIdent = (w as SpawnerWeapon)?.MountIdent
 			} )
 			.ToList();
 
@@ -521,21 +523,6 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		Game.Cookies.SetString( LoadoutCookieKey, loadoutJson );
 	}
 
-	private bool TryRestoreLoadout()
-	{
-		if ( Player.IsLocalPlayer )
-		{
-			if ( !Game.Cookies.TryGetString( LoadoutCookieKey, out var json ) || string.IsNullOrEmpty( json ) )
-				return false;
-
-			GiveLoadoutWeapons( json );
-			return true;
-		}
-
-		RequestClientLoadout();
-		return false;
-	}
-
 	[Rpc.Owner]
 	private void RequestClientLoadout()
 	{
@@ -543,12 +530,27 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			RestoreLoadoutFromClient( json );
 	}
 
+	private static async Task EnsureMountedAsync( string json )
+	{
+		var entries = Json.Deserialize<List<LoadoutEntry>>( json );
+		if ( entries is null ) return;
+
+		var mountIdents = entries
+			.Select( e => e.MountIdent )
+			.Where( id => !string.IsNullOrEmpty( id ) )
+			.Distinct();
+
+		foreach ( var ident in mountIdents )
+			await Sandbox.Mounting.Directory.Mount( ident );
+	}
+
 	[Rpc.Host]
-	private void RestoreLoadoutFromClient( string loadoutJson )
+	private async void RestoreLoadoutFromClient( string loadoutJson )
 	{
 		foreach ( var weapon in Weapons.ToList() )
 			weapon.DestroyGameObject();
 
+		await EnsureMountedAsync( loadoutJson );
 		GiveLoadoutWeapons( loadoutJson );
 	}
 
@@ -580,10 +582,26 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 	void IPlayerEvent.OnSpawned()
 	{
-		if ( !TryRestoreLoadout() )
+		_ = OnSpawnedAsync();
+	}
+
+	private async Task OnSpawnedAsync()
+	{
+		if ( Player.IsLocalPlayer )
 		{
-			GiveDefaultWeapons();
+			if ( Game.Cookies.TryGetString( LoadoutCookieKey, out var json ) && !string.IsNullOrEmpty( json ) )
+			{
+				await EnsureMountedAsync( json );
+				GiveLoadoutWeapons( json );
+				return;
+			}
 		}
+		else
+		{
+			RequestClientLoadout();
+		}
+
+		GiveDefaultWeapons();
 	}
 
 	void IPlayerEvent.OnDied( IPlayerEvent.DiedParams args )
