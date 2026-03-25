@@ -1,6 +1,6 @@
 {
   "UI": false,
-  "Volume": "1",
+  "Volume": "0.5",
   "Pitch": "0.98 1.02",
   "Decibels": 70,
   "SelectionMode": "Random",
@@ -14,7 +14,7 @@
   "Transmission": true,
   "OcclusionRadius": 64,
   "DistanceAttenuation": true,
-  "Distance": 7168,
+  "Distance": 4096,
   "Falloff": [
     {
       "x": 0,
@@ -45,6 +45,10 @@
       "mode": "Mirrored"
     }
   ],
+  "DefaultMixer": {
+    "Name": "unknown",
+    "Id": "00000000-0000-0000-0000-000000000000"
+  },
   "__references": [],
   "__version": 1
 }
