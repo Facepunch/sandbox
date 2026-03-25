@@ -17,6 +17,7 @@
     [Parameter] public string Icon { get; set; }
     [Parameter] public string Title { get; set; }
     [Parameter] public bool HideText { get; set; }
+    [Parameter] public string Metadata { get; set; }
 
     string Type;
     string Path;
@@ -72,7 +73,7 @@
 
     protected override void OnClick( MousePanelEvent e )
     {
-        GameManager.Spawn( Ident );
+        GameManager.Spawn( Ident, Metadata );
     }
 
     protected override void OnRightClick( MousePanelEvent e )

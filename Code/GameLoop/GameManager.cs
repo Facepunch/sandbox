@@ -171,9 +171,10 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 	/// <summary>
 	/// Spawn from a string identifier (e.g. "prop:path", "entity:path", "dupe.local:id", "dupe.workshop:id").
+	/// Optional metadata string is passed through to the spawner for type-specific use (e.g. mount bounds/title).
 	/// </summary>
 	[Rpc.Broadcast]
-	public static async void Spawn( string ident )
+	public static async void Spawn( string ident, string metadata = null )
 	{
 		// if we're the person calling this, then we don't do anything but add the spawn stat
 		if ( Rpc.Caller == Connection.Local )
@@ -214,7 +215,8 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		ISpawner spawner = type switch
 		{
-			"prop" or "mount" => new PropSpawner( path ),
+			"prop" => new PropSpawner( path ),
+			"mount" => new MountSpawner( path, metadata ),
 			"entity" or "sent" => new EntitySpawner( path ),
 			"dupe" => await FindDupe( path, source ),
 			_ => null
@@ -222,11 +224,12 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		if ( spawner is not null && await spawner.Loading )
 		{
+			Log.Info( $"[Spawn] Spawning '{ident}' type='{type}' spawner={spawner.GetType().Name} metadata={(metadata ?? "null")}" );
 			await SpawnAndUndo( spawner, spawnTransform, player );
 			return;
 		}
 
-		Log.Warning( $"Couldn't resolve '{ident}'" );
+		Log.Warning( $"[Spawn] Couldn't resolve '{ident}' — spawner={(spawner is null ? "null" : "not ready")}" );
 	}
 
 	/// <summary>

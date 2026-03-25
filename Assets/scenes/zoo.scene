@@ -5350,7 +5350,7 @@
               "IdValue": "9a36a5d3-e6b7-4330-a985-42b33685617d"
             },
             "Property": "Rotation",
-            "Value": "0,0,-0.7071068,0.7071068"
+            "Value": "0,0,0.7071061,-0.7071074"
           }
         ],
         "MovedObjects": []
@@ -5845,8 +5845,8 @@
         "c18b0492-c63f-4428-b2c8-10a5cf3a6852": "793f5ddf-d3f1-45bf-b69c-6fb4a64651bf",
         "be9e7dca-62e0-4fdb-ae3c-a198732868dd": "a615c4b4-aa91-4c07-a51a-e37c7816ee3a",
         "942e53ac-f5c0-4f50-9f2a-1d45ec9b6269": "fb5e2de8-852d-4917-952b-7bf60fce1172",
-        "907c3bcd-d6e3-4ee4-a541-6f593eef4f1f": "b56faa40-f407-4c8a-8be8-5e96d8203076",
-        "a687dcc4-0809-41a2-ab35-0369e1af56fe": "ee0dbe7b-2a75-43a4-bcbd-90481e4c16cb"
+        "2e6a0721-73b9-4d24-990b-efbf9392896d": "ccf12046-8977-4032-a86a-61307cd8cd0f",
+        "c18ebe79-856e-4418-adef-9560312dc0b4": "ed889209-41df-49e0-ab89-228956ef015a"
       }
     },
     {
@@ -6442,6 +6442,13 @@
         "$reference_type": "filereference",
         "path": "scenes/npc_testing_scene_data/navmesh/baked.navdata"
       }
+    },
+    "GameObjectSystems": {
+      "Sandbox.Clutter.ClutterGridSystem": {
+        "Storage": {
+          "$blob": "4dc5cb78-7ce5-463d-b877-ab016773ce13"
+        }
+      }
     }
   },
   "ResourceVersion": 3,
@@ -6449,7 +6456,7 @@
   "Description": null,
   "__references": [
     "facepunch.hoovera#143312",
-    "facepunch.oildrumexplosive#143819",
+    "facepunch.oildrumexplosive#166080",
     "facepunch.tv#143951",
     "facepunch.washingmachine#143526"
   ],
