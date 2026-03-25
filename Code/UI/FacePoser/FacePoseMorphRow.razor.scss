@@ -1,0 +1,44 @@
+﻿@import "/UI/Theme.scss";
+
+FacePoseMorphRow
+{
+    flex-direction: row;
+    align-items: center;
+    padding: 2px 6px;
+    min-height: 24px;
+    border-radius: 4px;
+
+    &:hover
+    {
+        background-color: rgba( 255, 255, 255, 0.04 );
+    }
+}
+
+FacePoseMorphRow .label
+{
+    width: 130px;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: rgba( 255, 255, 255, 0.35 );
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    &.active
+    {
+        color: rgba( 255, 255, 255, 0.9 );
+    }
+}
+
+FacePoseMorphRow .sliders
+{
+    flex-direction: row;
+    flex-grow: 1;
+    gap: 4px;
+}
+
+FacePoseMorphRow SliderControl
+{
+    flex-grow: 1;
+    height: 18px;
+}

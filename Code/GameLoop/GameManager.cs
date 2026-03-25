@@ -299,6 +299,50 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		c.GameObject.Network?.Refresh();
 	}
 
+	/// <summary>
+	/// Apply a debounced batch of morph changes to a <see cref="SkinnedModelRenderer"/>,
+	/// replicated to all clients. Only the morphs present in the batch are modified.
+	/// </summary>
+	[Rpc.Host]
+	public static void ApplyMorphBatch( SkinnedModelRenderer smr, string morphsJson )
+	{
+		if ( !smr.IsValid() ) return;
+
+		var morphs = Sandbox.Json.Deserialize<Dictionary<string, float>>( morphsJson );
+		if ( morphs is null ) return;
+
+		foreach ( var (name, val) in morphs )
+		{
+			smr.Morphs.Set( name, val );
+		}
+
+		smr.GameObject.GetOrAddComponent<MorphState>().Capture( smr );
+	}
+
+	/// <summary>
+	/// Apply a full morph preset (as json), and captures with <see cref="MorphState"/> which replicates changes to other clients
+	/// </summary>
+	[Rpc.Host]
+	public static void ApplyFacePosePreset( SkinnedModelRenderer smr, string morphsJson )
+	{
+		if ( !smr.IsValid() ) return;
+
+		var morphs = Json.Deserialize<Dictionary<string, float>>( morphsJson );
+		if ( morphs is null ) return;
+
+		foreach ( var name in smr.Morphs.Names )
+		{
+			smr.Morphs.Clear( name );
+		}
+
+		foreach ( var (name, val) in morphs )
+		{
+			smr.Morphs.Set( name, val );
+		}
+
+		smr.GameObject.GetOrAddComponent<MorphState>().Capture( smr );
+	}
+
 	[Rpc.Host]
 	public static async void ChangeMaterialOverride( ModelRenderer renderer, int materialIndex, string materialPath )
 	{

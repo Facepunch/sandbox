@@ -3,128 +3,113 @@ GameObjectInspector
 {
     flex-direction: column;
     overflow: hidden;
-	width: 100%;
+width: 100%;
 }
 
-GameObjectInspector > .header
+GameObjectInspector .empty-state
 {
-	flex-direction: column;
-	flex-shrink: 0;
-	padding-bottom: 0.25rem;
-	margin-bottom: 0.25rem;
-
-	h2
-	{
-		gap: 0.5rem;
-		align-items: center;
-	}
+    text-align: center;
+    color: rgba( white, 0.35 );
+    font-size: 12px;
+    padding: 1rem 0;
 }
 
-GameObjectInspector > .body
+GameObjectInspector controlsheetrow
 {
-	flex-direction: column;
-	flex-grow: 1;
-	flex-shrink: 1;
-	overflow-y: scroll;
-	gap: 2px;
+    flex-direction: row;
+    max-height: auto;
+    width: 100%;
 
-	controlsheetrow
-	{
-		flex-direction: row;
-		max-height: auto;
-		width: 100%;
+    > .right, > .left
+    {
+        flex-shrink: 0;
+    }
+}
 
-		> .right, > .left
-		{
-			flex-shrink: 0;
-		}
-	}
+GameObjectInspector .material-row
+{
+    flex-direction: row;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.15rem 0;
+    width: 100%;
 
-	.material-row
-	{
-		flex-direction: row;
-		align-items: center;
-		gap: 0.25rem;
-		padding: 0.15rem 0;
-		width: 100%;
+    > label
+    {
+        flex-shrink: 0;
+        font-size: 11px;
+        color: rgba( white, 0.5 );
+        width: 70px;
+    }
 
-		> label
-		{
-			flex-shrink: 0;
-			font-size: 11px;
-			color: rgba( white, 0.5 );
-			width: 70px;
-		}
+    .material-button
+    {
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.2rem 0.4rem;
+        background-color: rgba( white, 0.05 );
+        border-radius: 4px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        overflow: hidden;
 
-		.material-button
-		{
-			width: 100%;
-			flex-direction: row;
-			align-items: center;
-			gap: 0.4rem;
-			padding: 0.2rem 0.4rem;
-			background-color: rgba( white, 0.05 );
-			border-radius: 4px;
-			border: 1px solid transparent;
-			cursor: pointer;
-			overflow: hidden;
+        label
+        {
+            font-size: 11px;
+            color: rgba( white, 0.7 );
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
 
-			label
-			{
-				font-size: 11px;
-				color: rgba( white, 0.7 );
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				overflow: hidden;
-			}
+        .material-preview
+        {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            flex-shrink: 0;
+            background-size: cover;
+            background-position: center;
+            background-color: rgba( white, 0.1 );
+        }
 
-			.material-preview
-			{
-				width: 20px;
-				height: 20px;
-				border-radius: 3px;
-				flex-shrink: 0;
-				background-size: cover;
-				background-position: center;
-				background-color: rgba( white, 0.1 );
-			}
+        &:hover
+        {
+            background-color: rgba( white, 0.1 );
 
-			&:hover
-			{
-				background-color: rgba( white, 0.1 );
+            label
+            {
+                color: white;
+            }
+        }
+    }
 
-				label
-				{
-					color: white;
-				}
-			}
-		}
+    .material-revert
+    {
+        flex-shrink: 0;
+        font-size: 11px;
+        color: rgba( white, 0.3 );
+        cursor: pointer;
+        padding: 0.15rem 0.3rem;
+        border-radius: 3px;
 
-		.material-revert
-		{
-			flex-shrink: 0;
-			font-size: 11px;
-			color: rgba( white, 0.3 );
-			cursor: pointer;
-			padding: 0.15rem 0.3rem;
-			border-radius: 3px;
+        &:hover
+        {
+            color: white;
+            background-color: rgba( red, 0.3 );
+        }
+    }
 
-			&:hover
-			{
-				color: white;
-				background-color: rgba( red, 0.3 );
-			}
-		}
+    &.overridden .material-button
+    {
+        background-color: rgba( #4CAF50, 0.15 );
+        border: 1px solid rgba( #4CAF50, 0.3 );
 
-		&.overridden .material-button
-		{
-			background-color: rgba( #4CAF50, 0.15 );
-			border: 1px solid rgba( #4CAF50, 0.3 );
-
-			label
-			{
-				color: rgba( #4CAF50, 0.9 );
-			}
-		}
-	}
+        label
+        {
+            color: rgba( #4CAF50, 0.9 );
+        }
+    }
 }

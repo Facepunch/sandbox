@@ -1,0 +1,72 @@
+@using Sandbox;
+@using Sandbox.UI;
+@attribute [InspectorEditor(typeof(Dresser))]
+@inherits Panel
+@namespace Sandbox
+@implements IInspectorEditor
+
+<root>
+    <div class="body">
+        <Label>todo: add / remove clothing resources</Label>
+    </div>
+    <div class="footer">
+            <Button class="menu-action primary" Text="Randomize" Icon="🎲" onclick=@DoRandomize></Button>
+            <Button class="menu-action primary" Text="Clear" Icon="🧹" onclick=@DoClear></Button>
+    </div>
+</root>
+
+@code
+{
+    public string Title => "👗 Dresser";
+
+    public Dresser Target { get; private set; }
+
+    public bool TrySetTarget(List<GameObject> selection)
+    {
+        Dresser found = null;
+        foreach (var go in selection)
+        {
+            found = go.GetComponentInChildren<Dresser>();
+            if (found != null) break;
+        }
+
+        if (found == Target) return Target != null;
+
+        Target = found;
+        StateHasChanged();
+        return Target != null;
+    }
+
+    void DoRandomize() => TryBroadcastRandomize( Target.GameObject );
+    void DoClear() => TryBroadcastClear( Target.GameObject );
+
+    [Rpc.Host]
+    private static void TryBroadcastRandomize(GameObject go)
+    {
+        if ( !go.IsValid() ) return;
+
+        var dresser = go.GetComponentInChildren<Dresser>();
+        if ( dresser is null ) return;
+
+        dresser.Randomize();
+
+        // Refresh the object to update the clothing items for everyone
+        go.Network.Refresh();
+    }
+
+    [Rpc.Host]
+    private static async void TryBroadcastClear(GameObject go)
+    {
+        if ( !go.IsValid() ) return;
+
+        var dresser = go.GetComponentInChildren<Dresser>();
+        if ( dresser is null ) return;
+
+        dresser.Clothing.Clear();
+        dresser.Clear();
+        await dresser.Apply();
+
+        // Refresh the object to update the clothing items for everyone
+        go.Network.Refresh();
+    }
+}

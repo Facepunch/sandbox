@@ -1,0 +1,9 @@
+{
+  "Prefab": "entities/sents/citizen.prefab",
+  "Title": "Citizen",
+  "Description": "",
+  "Category": null,
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}

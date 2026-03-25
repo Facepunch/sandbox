@@ -1,0 +1,224 @@
+@using Sandbox;
+@using Sandbox.UI;
+@attribute [InspectorEditor(typeof(SkinnedModelRenderer))]
+@inherits Panel
+@namespace Sandbox
+@implements IInspectorEditor
+
+<root>
+    <div class="body">
+            @foreach (var group in Groups)
+            {
+                <div class="group-header">@group.Key</div>
+                @foreach (var row in group)
+                {
+                    <FacePoseMorphRow Target=@Target
+                                      NameA=@row.NameA
+                                      NameB=@row.NameB
+                                      Title=@row.Title
+                                      OnMorphChanged=@QueueMorphChange
+                                      class=@( IsRowActive( row ) ? "active" : "" )>
+                    </FacePoseMorphRow>
+                }
+            }
+    </div>
+
+    <div class="footer">
+            <Button class="menu-action primary" Text="Reset" Icon="🧹" onclick=@ClearAll></Button>
+            <Button class="menu-action primary" Text="Randomize" Icon="🎲" onclick=@Randomize></Button>
+            <Button class="menu-action primary" Text="Presets" Icon="📋" onclick=@OpenPresetsMenu></Button>
+    </div>
+</root>
+
+@code
+{
+    public string Title => "😶 Face Poser";
+
+    public SkinnedModelRenderer Target { get; private set; }
+
+    Dictionary<string, float> _pendingMorphs = new();
+    TimeSince _lastMorphEdit;
+
+    void QueueMorphChange( string name, float value )
+    {
+        _pendingMorphs[name] = value;
+        _lastMorphEdit = 0;
+    }
+
+    void FlushPendingMorphs()
+    {
+        if ( _pendingMorphs.Count == 0 || Target == null ) return;
+        if ( _lastMorphEdit < 0.2f ) return;
+
+        GameManager.ApplyMorphBatch( Target, Sandbox.Json.Serialize( _pendingMorphs ) );
+        _pendingMorphs.Clear();
+    }
+
+    public override void Tick()
+    {
+        FlushPendingMorphs();
+    }
+
+    public bool TrySetTarget(List<GameObject> selection)
+    {
+        SkinnedModelRenderer smr = null;
+        foreach (var go in selection)
+        {
+            var found = go.GetComponentInChildren<SkinnedModelRenderer>();
+            if (found?.Morphs?.Names?.Length > 0) { smr = found; break; }
+        }
+
+        if (smr == Target) return Target != null;
+
+        Target = smr;
+        StateHasChanged();
+        return Target != null;
+    }
+
+    record MorphRow(string NameA, string NameB, string Title);
+
+    IEnumerable<IGrouping<string, MorphRow>> Groups => BuildGroups();
+
+    List<MorphRow> BuildRows()
+    {
+        if (Target?.Morphs?.Names is not { Length: > 0 } names)
+            return new();
+
+        var unprocessed = names.ToList();
+        var rows = new List<MorphRow>();
+
+        foreach (var group in unprocessed.GroupBy(x => x[..^1]).ToArray())
+        {
+            if (group.Count() != 2) continue;
+
+            var lower = group.Select(x => x.ToLower());
+            if (!lower.Any(x => x.EndsWith('l')) || !lower.Any(x => x.EndsWith('r')))
+                continue;
+
+            unprocessed.RemoveAll(x => group.Contains(x));
+            var sorted = group.Order().ToArray();
+            rows.Add(new MorphRow(sorted[0], sorted[1], FormatTitle(group.Key)));
+        }
+
+        foreach (var name in unprocessed)
+            rows.Add(new MorphRow(name, null, FormatTitle(name)));
+
+        return rows;
+    }
+
+    IEnumerable<IGrouping<string, MorphRow>> BuildGroups() => BuildRows().GroupBy(r => GetGroup(r.Title)).OrderBy(g => g.Key);
+
+    bool IsRowActive(MorphRow row) => Target.IsValid() && (
+        (Target.SceneModel.Morphs.Get(row.NameA) > 0f) ||
+        (row.NameB != null && (Target.SceneModel.Morphs.Get(row.NameB) > 0f))
+    );
+
+    void ClearAll()
+    {
+        if (!Target.IsValid() || Target.Morphs?.Names == null) return;
+
+        _pendingMorphs.Clear();
+
+        foreach (var name in Target.Morphs.Names)
+            Target.SceneModel.Morphs.Reset(name);
+
+        var zeroed = Target.Morphs.Names.ToDictionary( n => n, _ => 0f );
+        GameManager.ApplyFacePosePreset( Target, Sandbox.Json.Serialize( zeroed ) );
+        StateHasChanged();
+    }
+
+    void Randomize()
+    {
+        if (!Target.IsValid() || Target.Morphs?.Names is not { Length: > 0 }) return;
+
+        _pendingMorphs.Clear();
+
+        var morphs = new Dictionary<string, float>();
+
+        foreach (var row in BuildRows())
+        {
+            if (row.NameB != null)
+            {
+                var strength = Random.Shared.Float(0, 1);
+                var side = Random.Shared.Float(-1, 1);
+                morphs[row.NameA] = strength * side.Remap(0, -1, 1, 0).Clamp(0, 1);
+                morphs[row.NameB] = strength * side.Remap(0, 1, 1, 0).Clamp(0, 1);
+            }
+            else
+            {
+                morphs[row.NameA] = Random.Shared.Float(0, 1);
+            }
+        }
+
+        foreach (var (name, val) in morphs)
+            Target.SceneModel.Morphs.Set(name, val);
+
+        GameManager.ApplyFacePosePreset( Target, Sandbox.Json.Serialize( morphs ) );
+        StateHasChanged();
+    }
+
+    string PresetCookieKey => $"facepose.{Target?.Model?.Name?.Replace( '/', '.' ) ?? "unknown"}";
+
+    bool HasSavedPreset => Target != null && Game.Cookies.TryGetString( PresetCookieKey, out _ );
+
+    void SavePreset()
+    {
+        if (!Target.IsValid() || Target.Morphs?.Names == null) return;
+
+        var morphs = Target.Morphs.Names.ToDictionary( n => n, n => Target.SceneModel.Morphs.Get( n ) );
+        Game.Cookies.Set( PresetCookieKey, morphs );
+        StateHasChanged();
+    }
+
+    void LoadPreset()
+    {
+        if (!Target.IsValid()) return;
+
+        var morphs = Game.Cookies.Get<Dictionary<string, float>>( PresetCookieKey, null );
+        if (morphs == null) return;
+
+        foreach (var (name, val) in morphs)
+            Target.SceneModel.Morphs.Set(name, val);
+
+        GameManager.ApplyFacePosePreset( Target, Sandbox.Json.Serialize( morphs ) );
+        StateHasChanged();
+    }
+
+    void OpenPresetsMenu()
+    {
+        var menu = MenuPanel.Open( this );
+        menu.AddOption( "save", "Save Preset", SavePreset );
+        menu.AddSpacer();
+        if ( HasSavedPreset )
+            menu.AddOption( "auto_awesome", "Load Preset", LoadPreset );
+    }
+
+    static string FormatTitle(string name)
+    {
+        name = name.Replace("lower", "Lower").Replace("upper", "Upper")
+        .Replace("raiser", "Raiser").Replace("inflate", "Inflate")
+        .Replace("bulge", "Bulge").Replace("suck", "Suck")
+        .Replace("thrust", "Thrust").Replace("sideways", "Sideways")
+        .Replace("depressor", "Depressor").Replace("corner", "Corner")
+        .Replace("puller", "Puller").Replace("pucker", "Pucker")
+        .Replace("wrinkle", "Wrinkle").Replace("jaw", "Jaw")
+        .Replace("mouth", "Mouth");
+        return name.ToTitleCase();
+    }
+
+    static string GetGroup(string title)
+    {
+        if (title.Contains("brow", StringComparison.OrdinalIgnoreCase)) return "Eyes";
+        if (title.Contains("eye", StringComparison.OrdinalIgnoreCase)) return "Eyes";
+        if (title.Contains("cheek", StringComparison.OrdinalIgnoreCase)) return "Face";
+        if (title.Contains("nose", StringComparison.OrdinalIgnoreCase)) return "Face";
+        if (title.Contains("nostril", StringComparison.OrdinalIgnoreCase)) return "Face";
+        if (title.Contains("chin", StringComparison.OrdinalIgnoreCase)) return "Face";
+        if (title.Contains("jaw", StringComparison.OrdinalIgnoreCase)) return "Mouth";
+        if (title.Contains("lip", StringComparison.OrdinalIgnoreCase)) return "Mouth";
+        if (title.Contains("mouth", StringComparison.OrdinalIgnoreCase)) return "Mouth";
+        return "Misc";
+    }
+
+    protected override int BuildHash() => HashCode.Combine(Target);
+}

@@ -1,5 +1,5 @@
 {
-  "Prefab": "weapons/physgun/physgun.prefab",
+  "Prefab": "weapons/physgun/item_physgun.prefab",
   "Title": "Physics Gun",
   "Description": "bzzzzt...",
   "Category": "Weapon",

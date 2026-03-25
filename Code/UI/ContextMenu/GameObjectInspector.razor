@@ -1,118 +1,129 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
-@namespace Sandbox
+@attribute [InspectorEditor(null)]
+@attribute [Order(100)]
 @inherits Panel
+@namespace Sandbox
+@implements IInspectorEditor
 
 <root>
-
-    <div class="header">
-        <h2>
-            <span>📦</span>
-
+    <div class="body">
             @if (Target == null || Target.Count == 0)
             {
-                
-            }
-            else if ( Target.Count == 1 )
-            {
-                <span>@Target[0].GetType().Name</span>
-            }
-            else if (Target.Count == 2)
-            {
-                <span>@Target[0].GetType().Name (and 1 other)</span>
+                <div class="empty-state">Click on an object to inspect it.</div>
             }
             else
             {
-                <span>@Target[0].GetType().Name (and @(Target.Count-1) others)</span>
-            }
+                <ControlSheet Target="@Properties"></ControlSheet>
 
-        </h2>
-    </div>
-
-    <div class="body">
-        <ControlSheet Target="@Properties"></ControlSheet>
-
-        @if (Renderers.Count > 0)
-        {
-            var accessor = Renderers[0].Materials;
-            @for (int i = 0; i < accessor.Count; i++)
-            {
-                var index = i;
-                var hasOverride = accessor.HasOverride( index );
-                var mat = hasOverride ? accessor.GetOverride( index ) : accessor.GetOriginal( index );
-                var name = mat?.ResourceName ?? "Default";
-
-                <div class="material-row @(hasOverride ? "overridden" : "")">
-                    <label>Material @(index + 1)</label>
-                    <div class="material-button" @onclick=@(() => PickMaterial(index))>
-                        <div class="material-preview" style="background-image: url( thumb:@(mat?.ResourcePath) )"></div>
-                        <label>@name</label>
-                    </div>
-                    @if (hasOverride)
+                @if (Renderers.Count > 0)
+                {
+                    var accessor = Renderers[0].Materials;
+                    @for (int i = 0; i < accessor.Count; i++)
                     {
-                        <div class="material-revert" @onclick=@(() => RevertMaterial(index))>✕</div>
-                    }
-                </div>
-            }
-        }
-    </div>
+                        var index = i;
+                        var hasOverride = accessor.HasOverride(index);
+                        var mat = hasOverride ? accessor.GetOverride(index) : accessor.GetOriginal(index);
+                        var name = mat?.ResourceName ?? "Default";
 
+                        <div class="material-row @(hasOverride ? "overridden" : "")">
+                            <label>Material @(index + 1)</label>
+                            <div class="material-button" @onclick=@(() => PickMaterial(index))>
+                                <div class="material-preview" style="background-image: url( thumb:@(mat?.ResourcePath) )"></div>
+                                <label>@name</label>
+                            </div>
+                            @if (hasOverride)
+                            {
+                                <div class="material-revert" @onclick=@(() => RevertMaterial(index))>x</div>
+                            }
+                        </div>
+                    }
+                }
+            }
+    </div>
 </root>
 
 @code
 {
-    [Parameter]
-    public List<GameObject> Target { get; set; }
+    public string Title => Target?.Count switch
+    {
+        null or < 2 => "📦 Object",
+        _ => $"📦 Object (+{Target.Count - 1})"
+    };
+
+    public List<GameObject> Target { get; private set; }
+
+    public bool TrySetTarget(List<GameObject> selection)
+    {
+        var newTarget = selection.Any() ? selection : null;
+
+        bool changed = newTarget?.Count != Target?.Count
+        || (newTarget != null && !newTarget.SequenceEqual(Target));
+
+        if (changed)
+        {
+            Target = newTarget;
+            RebuildFromTarget();
+            StateHasChanged();
+        }
+
+        return true;
+    }
 
     List<SerializedProperty> Properties = new();
     List<ModelRenderer> Renderers = new();
 
     protected override void OnParametersSet()
     {
+        base.OnParametersSet();
+        RebuildFromTarget();
+    }
+
+    void RebuildFromTarget()
+    {
         Properties = new();
         Renderers = new();
 
-        @foreach (var c in Target.SelectMany( x => x.Components.GetAll() ).Distinct().GroupBy( x => x is Collider ? typeof(Collider) : x.GetType() ) )
+        if (Target == null) return;
+
+        foreach (var c in Target.SelectMany(x => x.Components.GetAll()).Distinct().GroupBy(x => x is Collider ? typeof(Collider) : x.GetType()))
         {
             CollectProperties(c.ToArray());
         }
     }
 
-    bool HasEditableProperties( Type type, PropertyDescription[] properties )
+    bool HasEditableProperties(Type type, PropertyDescription[] properties)
     {
         if (type.IsAssignableTo(typeof(ModelRenderer))) return true;
         if (type.IsAssignableTo(typeof(Collider))) return true;
 
-        foreach ( var prop in properties )
+        foreach (var prop in properties)
         {
-            if (prop.HasAttribute<ClientEditableAttribute>()) 
+            if (prop.HasAttribute<ClientEditableAttribute>())
                 return true;
         }
 
         return false;
     }
 
-    void CollectProperties( Component[] components )
+    void CollectProperties(Component[] components)
     {
         var firstComponent = components.First();
 
         var tl = TypeLibrary.GetType(firstComponent.GetType());
         if (tl is null) return;
 
-        bool hasProperties = HasEditableProperties(firstComponent.GetType(), tl.Properties);
-        if (!hasProperties) return;
+        if (!HasEditableProperties(firstComponent.GetType(), tl.Properties)) return;
 
         var so = new MultiSerializedObject();
         so.OnPropertyChanged = PropertyChanged;
 
-        foreach( var component in components )
-        {
+        foreach (var component in components)
             so.Add(TypeLibrary.GetSerializedObject(component));
-        };
 
         so.Rebuild();
 
-        foreach ( var prop in tl.Properties )
+        foreach (var prop in tl.Properties)
         {
             if (!prop.HasAttribute<ClientEditableAttribute>()) continue;
             Properties.Add(so.GetProperty(prop.Name));
@@ -127,7 +138,6 @@
             {
                 var propso = TypeLibrary.GetSerializedObject(prop);
                 propso.OnPropertyChanged = PropertyChanged;
-
                 Properties.Add(propso.GetProperty(nameof(ModelRenderer.Tint)));
             }
             else
@@ -135,55 +145,44 @@
                 Properties.Add(so.GetProperty(nameof(ModelRenderer.Tint)));
             }
 
-            Properties.Add( so.GetProperty( nameof( ModelRenderer.RenderType ) ) );
+            Properties.Add(so.GetProperty(nameof(ModelRenderer.RenderType)));
         }
 
         if (firstComponent is Collider)
-        {
-            Properties.Add( so.GetProperty( nameof( Collider.Surface ) ) );
-        }
+            Properties.Add(so.GetProperty(nameof(Collider.Surface)));
     }
 
-    void PropertyChanged( SerializedProperty prop )
+    void PropertyChanged(SerializedProperty prop)
     {
-        // TODO - can we debounce?
-
-
-        foreach (var c in prop.Parent.Targets )
+        foreach (var c in prop.Parent.Targets)
         {
             if (c is Component component)
-            {
                 GameManager.ChangeProperty(component, prop.Name, prop.GetValue<object>());
-            }
         }
     }
 
-    void PickMaterial( int index )
+    void PickMaterial(int index)
     {
         var accessor = Renderers[0].Materials;
-        var mat = accessor.HasOverride( index ) ? accessor.GetOverride( index ) : accessor.GetOriginal( index );
+        var mat = accessor.HasOverride(index) ? accessor.GetOverride(index) : accessor.GetOriginal(index);
 
         var popup = new ResourceSelectPopup();
         popup.Extension = "material";
         popup.CurrentValue = mat?.ResourcePath;
         popup.AllowPackages = true;
         popup.Parent = FindPopupPanel();
-        popup.OnSelectedFile = ( path ) => SetMaterialOverride( index, path );
+        popup.OnSelectedFile = (path) => SetMaterialOverride(index, path);
     }
 
-    void SetMaterialOverride( int index, string path )
+    void SetMaterialOverride(int index, string path)
     {
-        foreach ( var renderer in Renderers )
-        {
-            GameManager.ChangeMaterialOverride( renderer, index, path );
-        }
+        foreach (var renderer in Renderers)
+            GameManager.ChangeMaterialOverride(renderer, index, path);
     }
 
-    void RevertMaterial( int index )
+    void RevertMaterial(int index)
     {
-        foreach ( var renderer in Renderers )
-        {
-            GameManager.ChangeMaterialOverride( renderer, index, null );
-        }
+        foreach (var renderer in Renderers)
+            GameManager.ChangeMaterialOverride(renderer, index, null);
     }
 }

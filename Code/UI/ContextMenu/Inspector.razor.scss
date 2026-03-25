@@ -2,43 +2,117 @@
 
 Inspector
 {
-	font-size: 1.3rem;
-	color: #ddd;
-	transition: all 0.2s linear;
+    font-size: 1.0rem;
+    color: #ddd;
+    transition: all 0.2s linear;
 
-	> .window
-	{
-		position: absolute;
-		right: $deadzone-x;
-		bottom: $deadzone-y;
-		background-color: #222222ee;
-		border: 1px solid #444;
-		padding: 1rem;
-		width: 500px;
-		max-height: 80vh;
-		border-radius: 8px;
-		pointer-events: all;
-		backdrop-filter: blur( 10px );
-		z-index: 200;
+    > .canvas
+    {
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        pointer-events: all;
+    }
+}
 
-		&.empty-state
-		{
-			font-family: $subtitle-font;
-			text-align: center;
-			pointer-events: none;
-		}
-	}
+Inspector .inspector-panel
+{
+    position: absolute;
+    right: $deadzone-x;
+    bottom: $deadzone-y;
+    width: 500px;
+    flex-direction: column;
+    pointer-events: none;
 
-	> .canvas
-	{
-		width: 100%;
-		height: 100%;
-		z-index: 0;
-		position: absolute;
-		top: 0px;
-		left: 0px;
-		pointer-events: all;
-	}
+    &.hidden
+    {
+        display: none;
+    }
+}
+
+Inspector .tab-bar
+{
+    flex-direction: row;
+    margin-left: 8px;
+    z-index: 10;
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 650;
+    font-family: $subtitle-font;
+    pointer-events: all;
+}
+
+Inspector .tab
+{
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    color: #D1D7E3AA;
+    border-radius: 8px 8px 0 0;
+    background-color: #0c202faa;
+    border-right: 1px solid $menu-surface-soft;
+    gap: 0.4rem;
+    align-items: center;
+    pointer-events: all;
+
+    &:hover
+    {
+        color: $menu-color;
+        sound-in: ui.hover;
+    }
+
+    &.active
+    {
+        color: $menu-text-strong;
+        background-color: $menu-panel-bg;
+        pointer-events: none;
+        backdrop-filter: blur( 8px );
+    }
+}
+
+Inspector .window-stack
+{
+    pointer-events: all;
+}
+
+Inspector .window-stack .window
+{
+    background-color: $menu-panel-bg;
+    backdrop-filter: blur( 8px );
+    border: 1px solid $menu-surface-soft;
+    padding: 1rem;
+    width: 500px;
+    border-radius: 8px;
+    pointer-events: all;
+    z-index: 200;
+
+    &.hidden
+    {
+        display: none;
+    }
+}
+
+Inspector .window-stack .window .body
+{
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: scroll;
+    gap: 2px;
+}
+
+Inspector .window-stack .window .footer
+{
+    flex-direction: row;
+    gap: 6px;
+    padding-top: 8px;
+    flex-shrink: 0;
+
+    Button
+    {
+        flex-grow: 1;
+    }
 }
 
 Inventory.hidden
