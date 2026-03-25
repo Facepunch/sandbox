@@ -341,8 +341,11 @@
             foreach ( var preset in list.Presets )
             {
                 var captured = preset;
-                menu.AddOption( "auto_awesome", captured.Name, () => ApplyPreset( captured ) );
-                menu.AddOption( "delete", $"Delete '{captured.Name}'", () => DeletePreset( captured.Name ) );
+                menu.AddSubmenu( "auto_awesome", captured.Name, sub =>
+                {
+                    sub.AddOption( "play_arrow", "Load", () => ApplyPreset( captured ) );
+                    sub.AddOption( "delete", "Delete", () => DeletePreset( captured.Name ) );
+                } );
             }
         }
     }
