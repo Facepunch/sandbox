@@ -69,6 +69,10 @@
     "tool.hint.mass.copy": "Copy mass",
     "tool.hint.mass.reset": "Reset mass",
 
+    "tool.hint.unbreakable.description": "Makes an object immune to damage",
+    "tool.hint.unbreakable.set": "Set Unbreakable",
+    "tool.hint.unbreakable.unset": "Reset",
+
     "tool.hint.hydraulictool.stage0": "Connects two objects with a hydraulic piston",
     "tool.hint.hydraulictool.stage1": "Select the second object",
     "tool.hint.hydraulictool.source": "Select source",
