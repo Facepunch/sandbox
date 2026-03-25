@@ -42,7 +42,7 @@ public class ThrusterTool : ToolMode
 
 		if ( Input.Pressed( "attack1" ) )
 		{
-			SpawnWheel( select, thrusterDef.Prefab, placementTrans );
+			Spawn( select, thrusterDef.Prefab, placementTrans );
 			ShootEffects( select );
 		}
 
@@ -51,7 +51,7 @@ public class ThrusterTool : ToolMode
 	}
 
 	[Rpc.Host]
-	public void SpawnWheel( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx )
+	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx )
 	{
 		if ( thrusterPrefab == null )
 			return;
@@ -60,12 +60,12 @@ public class ThrusterTool : ToolMode
 		go.Tags.Add( "removable" );
 		go.WorldTransform = tx;
 
-		var thuster = go.GetComponent<ThrusterEntity>();
-
 		if ( !point.GameObject.Tags.Contains( "world" ) )
 		{
+			var thruster = go.GetComponent<ThrusterEntity>();
+
 			// attach it
-			var joint = thuster.AddComponent<FixedJoint>();
+			var joint = thruster.AddComponent<FixedJoint>();
 			joint.Attachment = Joint.AttachmentMode.LocalFrames;
 			joint.LocalFrame2 = point.GameObject.WorldTransform.ToLocal( tx );
 			joint.LocalFrame1 = new Transform();
@@ -74,6 +74,8 @@ public class ThrusterTool : ToolMode
 			joint.Body = point.GameObject;
 			joint.EnableCollision = false;
 		}
+
+		ApplyPhysicsProperties( go );
 
 		go.NetworkSpawn( true, null );
 

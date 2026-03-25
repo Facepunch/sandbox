@@ -68,7 +68,7 @@ public class WheelTool : ToolMode
 		var we = wheelGo.GetOrAddComponent<WheelEntity>();
 		var joint = wheelGo.GetComponentInChildren<WheelJoint>( true );
 
-		if ( joint == null )
+		if ( joint is null )
 		{
 			var wheelAnchor = new GameObject( true, "anchor2" );
 			wheelAnchor.Parent = wheelGo;
@@ -82,6 +82,8 @@ public class WheelTool : ToolMode
 			joint.SuspensionLimits = new Vector2( -32, 32 );
 			joint.EnableCollision = false;
 		}
+
+		ApplyPhysicsProperties( wheelGo );
 
 		joint.Body = point.GameObject;
 
