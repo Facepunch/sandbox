@@ -51,6 +51,11 @@ public class SpawnlistItem
 
 public class SpawnlistData
 {
+	/// <summary>
+	/// Raised whenever a new spawnlist is created, so UI can refresh without needing a panel ancestor walk.
+	/// </summary>
+	public static event Action SpawnlistCreated;
+
 	[JsonPropertyName( "name" )]
 	public string Name { get; set; } = "Untitled";
 
@@ -66,6 +71,7 @@ public class SpawnlistData
 		var entry = Storage.CreateEntry( "spawnlist" );
 		entry.SetMeta( "name", name );
 		Save( entry, data );
+		SpawnlistCreated?.Invoke();
 		return data;
 	}
 

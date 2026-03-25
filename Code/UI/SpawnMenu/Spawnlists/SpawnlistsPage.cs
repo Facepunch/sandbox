@@ -23,6 +23,7 @@ public class SpawnlistsPage : BaseSpawnMenu
 			DeselectOption();
 			OnParametersSet();
 		};
+		SpawnlistData.SpawnlistCreated += Collection.Refresh;
 		Collection.Refresh();
 	}
 
