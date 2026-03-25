@@ -72,7 +72,11 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			return false;
 		}
 
-		return Pickup( prefab, notice );
+		var slot = FindEmptySlot();
+		if ( slot < 0 )
+			return false;
+
+		return Pickup( prefabName, slot, notice );
 	}
 
 	public bool HasWeapon( GameObject prefab )
@@ -117,7 +121,17 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			return false;
 		}
 
-		return Pickup( prefab, targetSlot, notice );
+		if ( !Pickup( prefab, targetSlot, notice ) )
+			return false;
+
+		// Tag the weapon with its source path so the loadout can be serialized properly
+		var weapon = GetSlot( targetSlot );
+		if ( weapon.IsValid() && string.IsNullOrEmpty( weapon.SourcePrefabPath ) )
+			weapon.SourcePrefabPath = prefabName;
+
+		SaveLoadout();
+
+		return true;
 	}
 
 	public bool Pickup( GameObject prefab, int targetSlot, bool notice = true )
@@ -259,6 +273,8 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			SwitchWeapon( best );
 		}
 
+		SaveLoadout();
+
 		return true;
 	}
 
@@ -325,6 +341,8 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		fromWeapon.InventorySlot = toSlot;
 		if ( toWeapon.IsValid() )
 			toWeapon.InventorySlot = fromSlot;
+
+		SaveLoadout();
 	}
 
 	[Rpc.Host]
@@ -416,22 +434,176 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		Drop( weapon );
 	}
 
+	/// <summary>
+	/// Removes a weapon from the inventory and destroys it without dropping it into the world.
+	/// </summary>
+	public void Remove( BaseCarryable weapon )
+	{
+		if ( !Networking.IsHost )
+		{
+			HostRemove( weapon );
+			return;
+		}
+
+		if ( !weapon.IsValid() ) return;
+		if ( weapon.Owner != Player ) return;
+
+		if ( ActiveWeapon == weapon )
+			SwitchWeapon( null, true );
+
+		weapon.DestroyGameObject();
+
+		var best = GetBestWeapon();
+		if ( best.IsValid() )
+			SwitchWeapon( best );
+
+		SaveLoadout();
+	}
+
+	[Rpc.Host]
+	private void HostRemove( BaseCarryable weapon )
+	{
+		Remove( weapon );
+	}
+
+	// Cookie key used to persist the player's loadout across sessions.
+	private const string LoadoutCookieKey = "player.loadout";
+	private bool _isRestoringLoadout;
+
+	/// <summary>
+	/// One entry in a serialized loadout: the prefab resource path and the slot it occupies.
+	/// </summary>
+	private struct LoadoutEntry
+	{
+		public string PrefabPath { get; set; }
+		public int Slot { get; set; }
+
+		public string SpawnerDataPayload { get; set; }
+	}
+
+	private string SerializeLoadout()
+	{
+		var entries = Weapons
+			.Where( w => !string.IsNullOrEmpty( w.SourcePrefabPath ) )
+			.Select( w => new LoadoutEntry
+			{
+				PrefabPath = w.SourcePrefabPath,
+				Slot = w.InventorySlot,
+				// Preserve the spawner-specific payload (prop path, entity path, dupe JSON, etc.)
+				SpawnerDataPayload = (w as SpawnerWeapon)?.SpawnerData
+			} )
+			.ToList();
+
+		return entries.Count > 0 ? Json.Serialize( entries ) : null;
+	}
+
+	/// <summary>
+	/// Saves the current loadout/hotbar.
+	/// </summary>
+	public void SaveLoadout()
+	{
+		if ( _isRestoringLoadout ) return; var json = SerializeLoadout();
+		if ( string.IsNullOrEmpty( json ) ) return;
+
+		if ( Player.IsLocalPlayer )
+		{
+			Game.Cookies.SetString( LoadoutCookieKey, json );
+		}
+		else
+		{
+			PushLoadoutToClient( json );
+		}
+	}
+
+	[Rpc.Owner]
+	private void PushLoadoutToClient( string loadoutJson )
+	{
+		Game.Cookies.SetString( LoadoutCookieKey, loadoutJson );
+	}
+
+	private bool TryRestoreLoadout()
+	{
+		if ( Player.IsLocalPlayer )
+		{
+			if ( !Game.Cookies.TryGetString( LoadoutCookieKey, out var json ) || string.IsNullOrEmpty( json ) )
+				return false;
+
+			GiveLoadoutWeapons( json );
+			return true;
+		}
+
+		RequestClientLoadout();
+		return false;
+	}
+
+	[Rpc.Owner]
+	private void RequestClientLoadout()
+	{
+		if ( Game.Cookies.TryGetString( LoadoutCookieKey, out var json ) && !string.IsNullOrEmpty( json ) )
+			RestoreLoadoutFromClient( json );
+	}
+
+	[Rpc.Host]
+	private void RestoreLoadoutFromClient( string loadoutJson )
+	{
+		foreach ( var weapon in Weapons.ToList() )
+			weapon.DestroyGameObject();
+
+		GiveLoadoutWeapons( loadoutJson );
+	}
+
+	private void GiveLoadoutWeapons( string json )
+	{
+		var entries = Json.Deserialize<List<LoadoutEntry>>( json );
+		if ( entries is null ) return;
+
+		_isRestoringLoadout = true;
+		try
+		{
+			foreach ( var entry in entries )
+			{
+				if ( !Pickup( entry.PrefabPath, entry.Slot, false ) )
+					continue;
+
+				// If this slot held a configured spawner, restore its payload.
+				if ( !string.IsNullOrEmpty( entry.SpawnerDataPayload ) && GetSlot( entry.Slot ) is SpawnerWeapon spawnerWeapon )
+				{
+					spawnerWeapon.RestoreSpawnerData( entry.SpawnerDataPayload );
+				}
+			}
+		}
+		finally
+		{
+			_isRestoringLoadout = false;
+		}
+	}
+
 	void IPlayerEvent.OnSpawned()
 	{
-		GiveDefaultWeapons();
+		if ( !TryRestoreLoadout() )
+		{
+			GiveDefaultWeapons();
+		}
 	}
 
 	void IPlayerEvent.OnDied( IPlayerEvent.DiedParams args )
 	{
-		if ( !ActiveWeapon.IsValid() ) return;
-		
-		ActiveWeapon.OnPlayerDeath( args );
+		if ( ActiveWeapon.IsValid() )
+		{
+			ActiveWeapon.OnPlayerDeath( args );
+		}
+
+		// Only the host has the full weapon list with SourcePrefabPath populated.
+		if ( Networking.IsHost )
+		{
+			SaveLoadout();
+		}
 	}
 
 	void IPlayerEvent.OnCameraMove( ref Angles angles )
 	{
 		if ( !ActiveWeapon.IsValid() ) return;
-		
+
 		ActiveWeapon.OnCameraMove( Player, ref angles );
 	}
 

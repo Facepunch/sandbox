@@ -36,6 +36,7 @@ public partial class BaseCarryable : Component, IKillIcon
 	/// </summary>
 	[Property, Feature( "Inventory" )] public GameObject ItemPrefab { get; set; }
 
+	public string SourcePrefabPath { get; set; }
 	public GameObject ViewModel { get; protected set; }
 	public GameObject WorldModel { get; protected set; }
 
