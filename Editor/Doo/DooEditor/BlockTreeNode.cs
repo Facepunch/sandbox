@@ -42,15 +42,22 @@ public class BlockTreeNode : TreeNode<Doo.Block>
 
 		if ( isBlock && item.IsOpen )
 		{
-			rect.Add( item.ChildrenRect );
+			var hasChildren = item.ChildrenRect.Height > 0;
+
+			if ( hasChildren )
+				rect.Add( item.ChildrenRect );
+
 			rect = rect.Grow( 0, 0, 0, 0 );
 
 			Paint.SetBrush( item.Selected ? bgColor : bgColor.WithAlpha( 0.7f ) );
 			Paint.DrawRect( rect, 4 );
 
-			rect = item.ChildrenRect.Grow( 4, 4, 8, 4 );
-			Paint.SetBrush( Theme.ControlBackground );
-			Paint.DrawRect( rect, 4 );
+			if ( hasChildren )
+			{
+				rect = item.ChildrenRect.Grow( 4, 4, 8, 4 );
+				Paint.SetBrush( Theme.ControlBackground );
+				Paint.DrawRect( rect, 4 );
+			}
 		}
 		else if ( isBlock )
 		{
