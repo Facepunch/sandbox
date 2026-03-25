@@ -15,7 +15,7 @@ public partial class Duplicator : ToolMode
 	public string CopiedJson { get; set; }
 
 	DuplicatorSpawner spawner;
-	LinkedGameObjectBuilder builder = new();
+	LinkedGameObjectBuilder builder = new() { RejectPlayers = true };
 
 	public override string Description => "#tool.hint.duplicator.description";
 	public override string PrimaryAction => spawner is not null ? "#tool.hint.duplicator.place" : null;
