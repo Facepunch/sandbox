@@ -4,7 +4,7 @@
     "__version": 2,
     "Flags": 0,
     "Name": "basic",
-    "Position": "2.332295,0,0",
+    "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
     "Tags": "",
@@ -58,6 +58,7 @@
           "IsEnabled": false,
           "Action": null
         },
+        "Invert": false,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -68,7 +69,11 @@
           "_type": "gameobject",
           "go": "c6f0b6b9-0db0-41de-a892-522bd1ee37e3"
         },
-        "Power": 0.5
+        "Power": 0.5,
+        "Reverse": {
+          "IsEnabled": false,
+          "Action": null
+        }
       }
     ],
     "Children": [
@@ -77,9 +82,9 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "0,0,7.431366",
+        "Position": "0,0,0",
         "Rotation": "0,0,0,1",
-        "Scale": "0.15,0.15,0.3",
+        "Scale": "2,2,2",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
@@ -97,9 +102,9 @@
             "CreateAttachments": false,
             "LodOverride": null,
             "MaterialGroup": null,
-            "MaterialOverride": "materials/shine.vmat",
+            "MaterialOverride": null,
             "Materials": null,
-            "Model": null,
+            "Model": "models/props/packaged_food/can_long.vmdl",
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -116,14 +121,16 @@
             "Tint": "0.66977,0.66977,0.66977,1"
           },
           {
-            "__type": "Sandbox.BoxCollider",
-            "__guid": "4a1aa819-3447-482f-95b2-7e0d28b03eaf",
+            "__type": "Sandbox.HullCollider",
+            "__guid": "ba5aa401-ad0a-45dd-9e03-6d347d007e43",
             "__enabled": true,
             "Flags": 0,
-            "Center": "0,0,0",
+            "BoxSize": "50,50,50",
+            "Center": "0,0,2.269999",
             "ColliderFlags": 0,
             "Elasticity": null,
             "Friction": null,
+            "Height": 4.310007,
             "IsTrigger": false,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -135,11 +142,15 @@
             "OnObjectTriggerExit": null,
             "OnTriggerEnter": null,
             "OnTriggerExit": null,
+            "Points": [],
+            "Radius": 1.62,
+            "Radius2": 0,
             "RollingResistance": null,
-            "Scale": "50,50,50",
+            "Slices": 16,
             "Static": false,
             "Surface": null,
-            "SurfaceVelocity": "0,0,0"
+            "SurfaceVelocity": "0,0,0",
+            "Type": "Cylinder"
           }
         ],
         "Children": []
@@ -180,14 +191,6 @@
                 {
                   "Target": {
                     "Type": "GameObject",
-                    "IdValue": "5be41b7d-9bb9-45d5-92a3-e59891b449ff"
-                  },
-                  "Property": "Tags",
-                  "Value": ""
-                },
-                {
-                  "Target": {
-                    "Type": "GameObject",
                     "IdValue": "ba1aec4e-e06e-4e71-848e-e4dc6b6d76ee"
                   },
                   "Property": "Tags",
@@ -214,10 +217,6 @@
             },
             "__PrefabIdToInstanceId": {
               "4ed3c797-7152-4b93-b23e-200847667cf2": "77bf329f-c45b-4828-bf5d-56e269c41397",
-              "5be41b7d-9bb9-45d5-92a3-e59891b449ff": "7a00cbdc-9de7-4f18-a263-023fba6ba8ae",
-              "2d53b2bd-3e3e-45f1-9bb2-b7858a42d942": "ee4b38c9-4de1-48c2-bc06-31cab12135f1",
-              "bd3aee3d-2f65-43e2-bd26-ebdbda016649": "550989e8-6393-450f-9595-d8da5ff55a00",
-              "50a153bf-95ae-468d-b362-ea8229834653": "ef505a06-00d2-4942-991f-2de3df4dc5cd",
               "ba1aec4e-e06e-4e71-848e-e4dc6b6d76ee": "863d632d-1dbe-41fe-ac7f-63305a716a7f",
               "87550c15-7a6a-4815-a86b-89f5061e195a": "f23605d4-b38c-456e-81c6-dcc2970ddc7a",
               "ea6b76ec-2d5d-4a79-913c-23600af808fe": "c9bc17e3-6807-4f16-b368-d77e7a738366",
@@ -333,7 +332,8 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "exorealms.76fccc8db731288a#41169"
+    "exorealms.76fccc8db731288a#41169",
+    "facepunch.can_long#143339"
   ],
   "__version": 2
 }
