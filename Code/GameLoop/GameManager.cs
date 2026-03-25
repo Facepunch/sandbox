@@ -307,16 +307,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	public static void ApplyMorphBatch( SkinnedModelRenderer smr, string morphsJson )
 	{
 		if ( !smr.IsValid() ) return;
-
-		var morphs = Sandbox.Json.Deserialize<Dictionary<string, float>>( morphsJson );
-		if ( morphs is null ) return;
-
-		foreach ( var (name, val) in morphs )
-		{
-			smr.Morphs.Set( name, val );
-		}
-
-		smr.GameObject.GetOrAddComponent<MorphState>().Capture( smr );
+		smr.GameObject.GetOrAddComponent<MorphState>().ApplyBatch( morphsJson );
 	}
 
 	/// <summary>
@@ -326,21 +317,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	public static void ApplyFacePosePreset( SkinnedModelRenderer smr, string morphsJson )
 	{
 		if ( !smr.IsValid() ) return;
-
-		var morphs = Json.Deserialize<Dictionary<string, float>>( morphsJson );
-		if ( morphs is null ) return;
-
-		foreach ( var name in smr.Morphs.Names )
-		{
-			smr.Morphs.Clear( name );
-		}
-
-		foreach ( var (name, val) in morphs )
-		{
-			smr.Morphs.Set( name, val );
-		}
-
-		smr.GameObject.GetOrAddComponent<MorphState>().Capture( smr );
+		smr.GameObject.GetOrAddComponent<MorphState>().ApplyPreset( morphsJson );
 	}
 
 	[Rpc.Host]

@@ -81,8 +81,8 @@
             var strength = LiveStrength();
             var valA = strength * value.Remap(0, -1, 1, 0).Clamp(0, 1);
             var valB = strength * value.Remap(0, 1, 1, 0).Clamp(0, 1);
-            Target.Morphs.Set(NameA, valA);
-            Target.Morphs.Set(NameB, valB);
+            Target.SceneModel.Morphs.Set(NameA, valA);
+            Target.SceneModel.Morphs.Set(NameB, valB);
             OnMorphChanged?.Invoke(NameA, valA);
             OnMorphChanged?.Invoke(NameB, valB);
         }
