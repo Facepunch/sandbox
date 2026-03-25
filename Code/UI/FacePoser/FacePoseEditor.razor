@@ -157,40 +157,75 @@
         StateHasChanged();
     }
 
-    string PresetCookieKey => $"facepose.{Target?.Model?.Name?.Replace( '/', '.' ) ?? "unknown"}";
+    record FacePosePreset( string Name, Dictionary<string, float> Morphs );
+    record FacePosePresetList( List<FacePosePreset> Presets );
 
-    bool HasSavedPreset => Target != null && Game.Cookies.TryGetString( PresetCookieKey, out _ );
+    string PresetKey => $"faceposer/{System.IO.Path.GetFileNameWithoutExtension( Target?.Model?.Name ?? "unknown" )}";
 
-    void SavePreset()
+    FacePosePresetList LoadPresetList() => LocalData.Get<FacePosePresetList>( PresetKey, new FacePosePresetList( new() ) );
+
+    void SaveNewPreset( string name )
     {
-        if (!Target.IsValid() || Target.Morphs?.Names == null) return;
+        if ( !Target.IsValid() || Target.Morphs?.Names == null ) return;
 
         var morphs = Target.Morphs.Names.ToDictionary( n => n, n => Target.SceneModel.Morphs.Get( n ) );
-        Game.Cookies.Set( PresetCookieKey, morphs );
+        var list = LoadPresetList();
+        list.Presets.RemoveAll( p => p.Name == name );
+        list.Presets.Add( new FacePosePreset( name, morphs ) );
+        LocalData.Set( PresetKey, list );
         StateHasChanged();
     }
 
-    void LoadPreset()
+    void ApplyPreset( FacePosePreset preset )
     {
-        if (!Target.IsValid()) return;
+        if ( !Target.IsValid() ) return;
 
-        var morphs = Game.Cookies.Get<Dictionary<string, float>>( PresetCookieKey, null );
-        if (morphs == null) return;
+        foreach ( var (name, val) in preset.Morphs )
+            Target.SceneModel.Morphs.Set( name, val );
 
-        foreach (var (name, val) in morphs)
-            Target.SceneModel.Morphs.Set(name, val);
+        GameManager.ApplyFacePosePreset( Target, Sandbox.Json.Serialize( preset.Morphs ) );
+        StateHasChanged();
+    }
 
-        GameManager.ApplyFacePosePreset( Target, Sandbox.Json.Serialize( morphs ) );
+    void DeletePreset( string name )
+    {
+        var list = LoadPresetList();
+        list.Presets.RemoveAll( p => p.Name == name );
+        if ( list.Presets.Count == 0 )
+            LocalData.Delete( PresetKey );
+        else
+            LocalData.Set( PresetKey, list );
         StateHasChanged();
     }
 
     void OpenPresetsMenu()
     {
         var menu = MenuPanel.Open( this );
-        menu.AddOption( "save", "Save Preset", SavePreset );
-        menu.AddSpacer();
-        if ( HasSavedPreset )
-            menu.AddOption( "auto_awesome", "Load Preset", LoadPreset );
+
+        menu.AddOption( "save", "Save New Preset...", () =>
+        {
+            var popup = new StringQueryPopup
+            {
+                Title = "Save Preset",
+                Prompt = "Enter a name for this preset.",
+                Placeholder = "Preset name...",
+                ConfirmLabel = "Save",
+                OnConfirm = name => SaveNewPreset( name )
+            };
+            popup.Parent = FindPopupPanel();
+        } );
+
+        var list = LoadPresetList();
+        if ( list.Presets.Count > 0 )
+        {
+            menu.AddSpacer();
+            foreach ( var preset in list.Presets )
+            {
+                var captured = preset;
+                menu.AddOption( "auto_awesome", captured.Name, () => ApplyPreset( captured ) );
+                menu.AddOption( "delete", $"Delete '{captured.Name}'", () => DeletePreset( captured.Name ) );
+            }
+        }
     }
 
     static string FormatTitle(string name)
