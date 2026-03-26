@@ -9,93 +9,56 @@
         <i>expand_less</i>
     </div>
 
-    @if ( _dropdownOpen )
-    {
-        <div class="presets-dropdown">
-
-            @{
-                var presets = PlayerInventory.GetLoadoutPresets();
-            }
-
-            @if ( presets.Count == 0 )
-            {
-                <div class="presets-empty">No saved hotbars</div>
-            }
-
-            @foreach ( var preset in presets )
-            {
-                var name = preset.Name;
-                var json = preset.LoadoutJson;
-                <div class="preset-item">
-                    <span class="preset-label" @onclick=@(() => OnLoadPreset( json ))>@name</span>
-                    <div class="preset-delete" @onclick=@(() => OnDeletePreset( name ))>
-                        <i>close</i>
-                    </div>
-                </div>
-            }
-
-            <div class="presets-separator"></div>
-
-            <div class="preset-save-new" @onclick=@OnSaveNew>
-                <i>add</i>
-                <span>Save As New Hotbar</span>
-            </div>
-
-        </div>
-    }
-
 </root>
 
 @code
 {
     public PlayerInventory Inventory { get; set; }
 
-    bool _dropdownOpen;
-
-    public override void Tick()
-    {
-        base.Tick();
-
-        // Close the dropdown if the spawn menu is closed
-        if ( _dropdownOpen )
-        {
-            var host = Game.ActiveScene.Get<SpawnMenuHost>();
-            if ( !(host?.Panel?.HasClass( "open" ) ?? false) )
-            {
-                CloseDropdown();
-            }
-        }
-    }
-
-    void CloseDropdown()
-    {
-        _dropdownOpen = false;
-        StateHasChanged();
-    }
-
     void OnToggleClick()
     {
-        _dropdownOpen = !_dropdownOpen;
-        StateHasChanged();
+        var menu = MenuPanel.Open( this );
+
+        var presets = PlayerInventory.GetLoadoutPresets();
+        foreach ( var preset in presets )
+        {
+            var name = preset.Name;
+            var json = preset.LoadoutJson;
+            menu.AddSubmenu( "bookmark", name, sub =>
+            {
+                sub.AddOption( "play_arrow", "Load", () => OnLoadPreset( json ) );
+                sub.AddOption( "save", "Overwrite with current", () => OnOverwritePreset( name ) );
+                sub.AddOption( "close", "Delete", () => OnDeletePreset( name ) );
+            } );
+        }
+
+        menu.AddSpacer();
+        menu.AddOption( "add", "Save As New Hotbar", OnSaveNew );
+        menu.StateHasChanged();
     }
 
     void OnLoadPreset( string json )
     {
         if ( !Inventory.IsValid() ) return;
         Inventory.SwitchToPreset( json );
-        CloseDropdown();
+    }
+
+    void OnOverwritePreset( string name )
+    {
+        if ( !Game.Cookies.TryGetString( PlayerInventory.LoadoutCookieKey, out var json )
+             || string.IsNullOrEmpty( json ) )
+            return;
+
+        PlayerInventory.SaveLoadoutPreset( name, json );
     }
 
     void OnDeletePreset( string name )
     {
         PlayerInventory.DeleteLoadoutPreset( name );
-        StateHasChanged();
     }
 
     void OnSaveNew()
     {
-        CloseDropdown();
-
         var popup = new StringQueryPopup
         {
             Title = "Save Hotbar",
@@ -108,8 +71,6 @@
 
     void OnSaveConfirmed( string name )
     {
-        // The active loadout is always kept up-to-date in the cookie by SaveLoadout(),
-        // so we can snapshot it here without any host round-trip.
         if ( !Game.Cookies.TryGetString( PlayerInventory.LoadoutCookieKey, out var json ) || string.IsNullOrEmpty( json ) )
             return;
 
