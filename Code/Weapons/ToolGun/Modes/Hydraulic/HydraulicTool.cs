@@ -41,11 +41,13 @@ public class HydraulicTool : BaseConstraintToolMode
 		go1.Parent = point1.GameObject;
 		go1.LocalTransform = point1.LocalTransform;
 		go1.WorldRotation = Rotation.LookAt( -line );
+		go1.Tags.Add( "constraint" );
 
 		var go2 = new GameObject( false, "hydraulic_b" );
 		go2.Parent = point2.GameObject;
 		go2.LocalTransform = point2.LocalTransform;
 		go2.WorldRotation = Rotation.LookAt( -line );
+		go2.Tags.Add( "constraint" );
 
 		var cleanup = go1.AddComponent<ConstraintCleanup>();
 		cleanup.Attachment = go2;
@@ -127,11 +129,13 @@ public class HydraulicTool : BaseConstraintToolMode
 		goA.Parent = point1.GameObject;
 		goA.LocalTransform = point1.LocalTransform;
 		goA.LocalRotation = Rotation.Identity;
+		goA.Tags.Add( "constraint" );
 
 		var goB = new GameObject( false, "bs_hydraulic_b" );
 		goB.Parent = point2.GameObject;
 		goB.LocalTransform = point2.LocalTransform;
 		goB.LocalRotation = Rotation.Identity;
+		goB.Tags.Add( "constraint" );
 
 		var cleanup = goA.AddComponent<ConstraintCleanup>();
 		cleanup.Attachment = goB;

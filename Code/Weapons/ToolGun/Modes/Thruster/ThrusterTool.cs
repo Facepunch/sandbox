@@ -58,6 +58,7 @@ public class ThrusterTool : ToolMode
 
 		var go = thrusterPrefab.GetScene().Clone();
 		go.Tags.Add( "removable" );
+		go.Tags.Add( "constraint" );
 		go.WorldTransform = tx;
 
 		if ( !point.GameObject.Tags.Contains( "world" ) )

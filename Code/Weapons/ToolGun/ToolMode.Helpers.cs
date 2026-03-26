@@ -58,6 +58,7 @@
 
 		var tr = Scene.Trace.Ray( player.EyeTransform.ForwardRay, 4096 )
 		.IgnoreGameObjectHierarchy( player.GameObject )
+		.WithoutTags( "constraint", "collision" )
 		.Run();
 
 		return new SelectionPoint

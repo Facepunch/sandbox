@@ -135,32 +135,6 @@
           "IsEnabled": false,
           "Action": null
         }
-      },
-      {
-        "__type": "Sandbox.SphereCollider",
-        "__guid": "fdb04f48-779e-494a-a98b-0d5021799786",
-        "__enabled": true,
-        "Flags": 0,
-        "Center": "0,0,0",
-        "ColliderFlags": "IgnoreTraces",
-        "Elasticity": null,
-        "Friction": null,
-        "IsTrigger": false,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "OnObjectTriggerEnter": null,
-        "OnObjectTriggerExit": null,
-        "OnTriggerEnter": null,
-        "OnTriggerExit": null,
-        "Radius": 14.5,
-        "RollingResistance": null,
-        "Static": false,
-        "Surface": null,
-        "SurfaceVelocity": "0,0,0"
       }
     ],
     "Children": [
@@ -227,6 +201,51 @@
           }
         ],
         "Children": []
+      },
+      {
+        "__guid": "75511e7e-93ca-4e4e-837f-371e34e369c8",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "Sphere Collider",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "collision",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.SphereCollider",
+            "__guid": "4a70c5b6-c04d-4e0b-ba5c-6348abc70e77",
+            "__enabled": true,
+            "Flags": 0,
+            "Center": "0,0,0",
+            "ColliderFlags": "IgnoreTraces",
+            "Elasticity": null,
+            "Friction": null,
+            "IsTrigger": false,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "OnObjectTriggerEnter": null,
+            "OnObjectTriggerExit": null,
+            "OnTriggerEnter": null,
+            "OnTriggerExit": null,
+            "Radius": 14.5,
+            "RollingResistance": null,
+            "Static": false,
+            "Surface": null,
+            "SurfaceVelocity": "0,0,0"
+          }
+        ],
+        "Children": []
       }
     ],
     "__properties": {
@@ -238,15 +257,15 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
-      },
-      "GameObjectSystems": []
+        "IncludedBodies": "",
+        "CustomBounds": false
+      }
     },
     "__variables": []
   },

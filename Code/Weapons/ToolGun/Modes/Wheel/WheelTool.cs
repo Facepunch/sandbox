@@ -63,6 +63,7 @@ public class WheelTool : ToolMode
 		var wheelGo = scene.Clone( new CloneConfig { StartEnabled = false } );
 		wheelGo.Name = "wheel";
 		wheelGo.Tags.Add( "removable" );
+		wheelGo.Tags.Add( "constraint" );
 		wheelGo.WorldTransform = tx;
 
 		var we = wheelGo.GetOrAddComponent<WheelEntity>();
