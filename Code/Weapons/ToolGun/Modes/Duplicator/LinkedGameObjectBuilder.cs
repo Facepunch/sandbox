@@ -57,6 +57,12 @@ public class LinkedGameObjectBuilder
 				AddConnected( joint.Object2 );
 			}
 		}
+
+		foreach ( var link in source.GetComponentsInChildren<ManualLink>() )
+		{
+			if ( link.Body.IsValid() )
+				AddConnected( link.Body );
+		}
 	}
 
 	public void RemoveDeletedObjects()

@@ -77,5 +77,11 @@
     "tool.hint.hydraulictool.stage1": "Select the second object",
     "tool.hint.hydraulictool.source": "Select source",
     "tool.hint.hydraulictool.finish": "Finish",
-    "tool.hint.hydraulictool.remove": "Remove"
+    "tool.hint.hydraulictool.remove": "Remove",
+
+    "tool.hint.linker.stage0": "Creates a link between two objects so they are treated as one contraption",
+    "tool.hint.linker.stage1": "Select the second object to link",
+    "tool.hint.linker.source": "Select source",
+    "tool.hint.linker.finish": "Finish",
+    "tool.hint.linker.remove": "Unlink"
 }
