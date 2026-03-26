@@ -20,80 +20,111 @@ SaveMenu
     width: 500px;
     max-height: 400px;
     flex-direction: column;
+}
 
-    .save-header
+.save-header
+{
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    flex-shrink: 0;
+
+    > span
     {
         font-size: 13px;
         font-weight: 700;
         color: rgba( white, 0.5 );
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        padding-bottom: 8px;
-        flex-shrink: 0;
     }
+}
 
-    .body
+.save-tabs
+{
+    flex-direction: row;
+    gap: 2px;
+    background-color: rgba( white, 0.05 );
+    border-radius: 6px;
+    padding: 2px;
+}
+
+.save-tab
+{
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba( white, 0.45 );
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover { color: rgba( white, 0.7 ); }
+
+    &.active
     {
-        flex-direction: column;
+        background-color: rgba( white, 0.1 );
+        color: white;
+    }
+}
+
+.body
+{
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: scroll;
+    gap: 4px;
+}
+
+.empty-state
+{
+    text-align: center;
+    color: rgba( white, 0.35 );
+    font-size: 12px;
+    padding: 1rem 0;
+}
+
+.footer
+{
+    flex-direction: row;
+    gap: 6px;
+    padding-top: 8px;
+    flex-shrink: 0;
+
+    TextEntry
+    {
         flex-grow: 1;
-        overflow-y: scroll;
-        gap: 4px;
+        padding: 6px 10px;
+        background-color: rgba( white, 0.05 );
+        border-radius: 6px;
+        font-size: 13px;
+        border: 1px solid rgba( white, 0.08 );
+
+        &:focus
+        {
+            border-color: $color-accent;
+            background-color: rgba( white, 0.08 );
+        }
     }
 
-    .empty-state
+    button
     {
-        text-align: center;
-        color: rgba( white, 0.35 );
-        font-size: 12px;
-        padding: 1rem 0;
-    }
-
-    .footer
-    {
-        flex-direction: row;
-        gap: 6px;
-        padding-top: 8px;
+        padding: 6px 14px;
+        background-color: $menu-accent-soft;
+        border: 1px solid $menu-accent;
+        border-radius: 6px;
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
         flex-shrink: 0;
 
-        TextEntry
+        &:hover
         {
-            flex-grow: 1;
-            padding: 6px 10px;
-            background-color: rgba( white, 0.05 );
-            border-radius: 6px;
-            font-size: 13px;
-            border: 1px solid rgba( white, 0.08 );
-
-            &:focus
-            {
-                border-color: $color-accent;
-                background-color: rgba( white, 0.08 );
-            }
+            background-color: rgba( $color-accent, 0.3 );
+            sound-in: ui.hover;
         }
 
-        button
-        {
-            padding: 6px 14px;
-            background-color: $menu-accent-soft;
-            border: 1px solid $menu-accent;
-            border-radius: 6px;
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            flex-shrink: 0;
-
-            &:hover
-            {
-                background-color: rgba( $color-accent, 0.3 );
-                sound-in: ui.hover;
-            }
-
-            &:active
-            {
-                background-color: $menu-accent;
-            }
-        }
+        &:active { background-color: $menu-accent; }
     }
 }
 
@@ -106,20 +137,16 @@ SaveMenu
     overflow: hidden;
     cursor: pointer;
     flex-shrink: 0;
-    gap: 10px;
 
     &:hover
     {
         background-color: rgba( white, 0.08 );
         sound-in: ui.hover;
-
         .save-name { color: white; }
+        .save-dots { color: rgba( white, 0.6 ); }
     }
 
-    &:active
-    {
-        background-color: rgba( white, 0.12 );
-    }
+    &:active { background-color: rgba( white, 0.12 ); }
 
     .save-thumb
     {
@@ -136,12 +163,9 @@ SaveMenu
         flex-direction: column;
         gap: 2px;
         flex-grow: 1;
-        padding: 8px 8px 8px 10px;
+        padding: 8px 8px 8px 0;
 
-        &--padded
-        {
-            padding: 8px 10px;
-        }
+        &--padded { padding: 8px 10px; }
     }
 
     .save-name
@@ -168,9 +192,5 @@ SaveMenu
         justify-content: center;
         letter-spacing: -2px;
     }
-
-    &:hover .save-dots
-    {
-        color: rgba( white, 0.6 );
-    }
 }
+

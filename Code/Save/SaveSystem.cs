@@ -24,6 +24,12 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 	/// </summary>
 	public bool HasLoadedSave => LoadedSavePath is not null;
 
+	/// <summary>
+	/// The resource path of the primary scene file currently loaded (e.g. "scenes/sandbox.scene").
+	/// Used to tag and filter saves per-map.
+	/// </summary>
+	public string MapIdent => _loadedScenes.Count > 0 ? _loadedScenes[0].ResourcePath : null;
+
 	public SaveSystem( Scene scene ) : base( scene )
 	{
 	}
@@ -116,48 +122,15 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 
 		Scene.RunEvent<ISaveEvents>( x => x.BeforeSave( path ) );
 
-		var baseline = BuildCompositeBaseline();
-		if ( baseline is null )
+		var saveData = BuildSaveJson();
+		if ( saveData is null )
 		{
-			Log.Warning( "SaveSystem: Failed to build baseline from loaded scene sources." );
+			Log.Warning( "SaveSystem: Failed to build save data." );
 			return false;
 		}
-
-		var current = BuildCurrentSceneJson( Scene );
-		if ( current is null )
-		{
-			Log.Warning( "SaveSystem: Failed to serialize current scene state." );
-			return false;
-		}
-
-		// Calculate the diff between baseline and current state
-		var patch = Json.CalculateDifferences( baseline, current, GameObject.DiffObjectDefinitions );
-		var sceneSources = new JsonArray();
-		foreach ( var entry in _loadedScenes )
-		{
-			sceneSources.Add( JsonValue.Create( entry.ResourcePath ) );
-		}
-
-		var primarySceneFile = GetPrimarySceneFile();
-		var networkOwnership = CollectNetworkOwnership( Scene );
-		var syncState = CollectSyncState( Scene );
-		var requiredPackages = CollectRequiredPackages( _loadedScenes, current );
-		var saveData = new JsonObject
-		{
-			["Version"] = CurrentSaveVersion,
-			["SceneId"] = Scene.Id.ToString(),
-			["SceneSources"] = sceneSources,
-			["SceneProperties"] = primarySceneFile is not null ? SerializeScenePropertyDiffs( Scene, primarySceneFile ) : null,
-			["Metadata"] = JsonSerializer.SerializeToNode( _metadata ),
-			["Patch"] = Json.ToNode( patch ),
-			["NetworkOwnership"] = networkOwnership,
-			["SyncState"] = syncState,
-			["RequiredPackages"] = requiredPackages,
-		};
 
 		try
 		{
-			// Make sure any parent directories exist first
 			var dir = Path.GetDirectoryName( path );
 			if ( !string.IsNullOrEmpty( dir ) )
 				FileSystem.Data.CreateDirectory( dir );
@@ -173,6 +146,89 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 
 		Scene.RunEvent<ISaveEvents>( x => x.AfterSave( path ) );
 		return true;
+	}
+
+	/// <summary>
+	/// Save the game's state into a <see cref="Storage.Entry"/>, so it can optionally be published to the Workshop.
+	/// </summary>
+	public bool SaveToEntry( Storage.Entry entry )
+	{
+		if ( !Networking.IsHost ) return false;
+
+		if ( !Scene.IsValid() )
+		{
+			Log.Warning( "SaveSystem: Cannot save — no valid scene." );
+			return false;
+		}
+
+		if ( _loadedScenes.Count == 0 )
+		{
+			Log.Warning( "SaveSystem: Cannot save — no tracked scene sources." );
+			return false;
+		}
+
+		var displayPath = $"entry:{entry.Id}";
+		Scene.RunEvent<ISaveEvents>( x => x.BeforeSave( displayPath ) );
+
+		var saveData = BuildSaveJson();
+		if ( saveData is null )
+		{
+			Log.Warning( "SaveSystem: Failed to build save data for entry." );
+			return false;
+		}
+
+		try
+		{
+			entry.Files.WriteAllText( "/content.sav", saveData.ToJsonString() );
+		}
+		catch ( Exception e )
+		{
+			Log.Warning( $"SaveSystem: Failed to write to storage entry {entry.Id}: {e.Message}" );
+			return false;
+		}
+
+		Scene.RunEvent<ISaveEvents>( x => x.AfterSave( displayPath ) );
+		return true;
+	}
+
+	/// <summary>
+	/// Load a save from a <see cref="Storage.Entry"/> (local or workshop-installed).
+	/// </summary>
+	public async Task<bool> LoadFromEntry( Storage.Entry entry )
+	{
+		if ( !Networking.IsHost ) return false;
+
+		if ( !Scene.IsValid() )
+		{
+			Log.Warning( "SaveSystem: Cannot load — no valid scene." );
+			return false;
+		}
+
+		if ( !entry.Files.FileExists( "/content.sav" ) )
+		{
+			Log.Warning( $"SaveSystem: Storage entry {entry.Id} has no /content.sav." );
+			return false;
+		}
+
+		JsonObject saveRoot;
+		try
+		{
+			var text = entry.Files.ReadAllText( "/content.sav" );
+			saveRoot = JsonNode.Parse( text )?.AsObject();
+		}
+		catch ( Exception e )
+		{
+			Log.Warning( $"SaveSystem: Failed to read save from entry {entry.Id}: {e.Message}" );
+			return false;
+		}
+
+		if ( saveRoot is null )
+		{
+			Log.Warning( $"SaveSystem: Save entry {entry.Id} is empty or invalid." );
+			return false;
+		}
+
+		return await InternalLoad( saveRoot, $"entry:{entry.Id}" );
 	}
 
 	/// <summary>
@@ -223,11 +279,16 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 			return false;
 		}
 
+		return await InternalLoad( saveRoot, path );
+	}
+
+	private async Task<bool> InternalLoad( JsonObject saveRoot, string displayPath )
+	{
 		// Validate that the save format version is compatible
 		var saveVersion = saveRoot["Version"]?.GetValue<int>() ?? 0;
 		if ( saveVersion > CurrentSaveVersion )
 		{
-			Log.Warning( $"SaveSystem: Save file '{path}' uses version {saveVersion}, but this build only supports up to version {CurrentSaveVersion}. The save may have been created with a newer version of the game." );
+			Log.Warning( $"SaveSystem: Save uses version {saveVersion}, but this build only supports up to version {CurrentSaveVersion}." );
 			return false;
 		}
 
@@ -244,7 +305,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 
 		if ( sceneSources.Count == 0 )
 		{
-			Log.Warning( $"SaveSystem: Save file '{path}' has no scene sources." );
+			Log.Warning( $"SaveSystem: Save '{displayPath}' has no scene sources." );
 			return false;
 		}
 
@@ -263,7 +324,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 
 		if ( sceneFiles.Count == 0 )
 		{
-			Log.Warning( $"SaveSystem: None of the scene sources from save '{path}' could be found." );
+			Log.Warning( $"SaveSystem: None of the scene sources from save '{displayPath}' could be found." );
 			return false;
 		}
 
@@ -273,7 +334,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 			await MountRequiredPackages( pkgArray );
 		}
 
-		Scene.RunEvent<ISaveEvents>( x => x.BeforeLoad( path ) );
+		Scene.RunEvent<ISaveEvents>( x => x.BeforeLoad( displayPath ) );
 
 		Json.Patch savedPatch = null;
 		if ( saveRoot["Patch"] is JsonObject patchNode )
@@ -308,7 +369,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 		if ( !Scene.Load( options ) )
 		{
 			_suppressSystemScene = false;
-			Log.Warning( $"SaveSystem: Failed to load patched scene from save '{path}'." );
+			Log.Warning( $"SaveSystem: Failed to load patched scene from save '{displayPath}'." );
 			return false;
 		}
 
@@ -328,7 +389,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 		_metadata = saveRoot["Metadata"] is JsonObject metaNode
 			? JsonSerializer.Deserialize<Dictionary<string, string>>( metaNode ) ?? new Dictionary<string, string>()
 			: new Dictionary<string, string>();
-		LoadedSavePath = path;
+		LoadedSavePath = displayPath;
 
 		// Restore [Sync] property values before network ownership so everything is populated BEFORE any ownership-change callbacks fire.
 		if ( saveRoot["SyncState"] is JsonObject syncNode )
@@ -341,8 +402,48 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 			RestoreNetworkOwnership( Scene, ownershipNode );
 		}
 
-		Scene.RunEvent<ISaveEvents>( x => x.AfterLoad( path ) );
+		Scene.RunEvent<ISaveEvents>( x => x.AfterLoad( displayPath ) );
 		return true;
+	}
+
+	private JsonObject BuildSaveJson()
+	{
+		var baseline = BuildCompositeBaseline();
+		if ( baseline is null )
+		{
+			Log.Warning( "SaveSystem: Failed to build baseline from loaded scene sources." );
+			return null;
+		}
+
+		var current = BuildCurrentSceneJson( Scene );
+		if ( current is null )
+		{
+			Log.Warning( "SaveSystem: Failed to serialize current scene state." );
+			return null;
+		}
+
+		var patch = Json.CalculateDifferences( baseline, current, GameObject.DiffObjectDefinitions );
+		var sceneSources = new JsonArray();
+		foreach ( var entry in _loadedScenes )
+			sceneSources.Add( JsonValue.Create( entry.ResourcePath ) );
+
+		var primarySceneFile = GetPrimarySceneFile();
+		var networkOwnership = CollectNetworkOwnership( Scene );
+		var syncState = CollectSyncState( Scene );
+		var requiredPackages = CollectRequiredPackages( _loadedScenes, current );
+
+		return new JsonObject
+		{
+			["Version"] = CurrentSaveVersion,
+			["SceneId"] = Scene.Id.ToString(),
+			["SceneSources"] = sceneSources,
+			["SceneProperties"] = primarySceneFile is not null ? SerializeScenePropertyDiffs( Scene, primarySceneFile ) : null,
+			["Metadata"] = JsonSerializer.SerializeToNode( _metadata ),
+			["Patch"] = Json.ToNode( patch ),
+			["NetworkOwnership"] = networkOwnership,
+			["SyncState"] = syncState,
+			["RequiredPackages"] = requiredPackages,
+		};
 	}
 
 	// Before we load any scene, we keep track of the source scene file so we can diff against it later when saving
