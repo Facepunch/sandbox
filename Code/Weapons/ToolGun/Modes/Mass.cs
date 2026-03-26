@@ -4,7 +4,7 @@
 [Group( "Tools" )]
 public class Mass : ToolMode
 {
-	[Sync, Property, Title( "Mass (kg)" ), Range( 1, 1000 )]
+	[Sync, Property, Title( "Mass (kg)" ), Range( 1, 250 ), Step( 0.5f )]
 	public float Value { get; set; } = 100.0f;
 
 	public override string Description => "#tool.hint.mass.description";
