@@ -66,7 +66,11 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "OnEffect": null,
-        "Power": 0.5
+        "Power": 0.5,
+        "Reverse": {
+          "IsEnabled": false,
+          "Action": null
+        }
       },
       {
         "__type": "Propeller",
@@ -133,15 +137,15 @@
             "Tint": "0.66977,0.66977,0.66977,1"
           },
           {
-            "__type": "Sandbox.BoxCollider",
-            "__guid": "4a1aa819-3447-482f-95b2-7e0d28b03eaf",
+            "__type": "Sandbox.ModelCollider",
+            "__guid": "121bf0fa-6c7e-474c-b036-029e25a95753",
             "__enabled": true,
             "Flags": 0,
-            "Center": "0,0,-6.477901",
             "ColliderFlags": 0,
             "Elasticity": null,
             "Friction": null,
             "IsTrigger": false,
+            "Model": "models/props/trim_sheets/ceiling_fixtures/ceilingfan_b.vmdl",
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -153,7 +157,6 @@
             "OnTriggerEnter": null,
             "OnTriggerExit": null,
             "RollingResistance": null,
-            "Scale": "50,50,13.24594",
             "Static": false,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
