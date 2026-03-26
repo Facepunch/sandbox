@@ -176,6 +176,16 @@ SpawnMenuHost.open SpawnMenu
 {
     background-color: #13161a88;
     border-radius: 8px;
+
+    h1, h2
+    {
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        opacity: 0.5;
+        font-weight: 800;
+        padding: 8px 4px 2px 4px;
+    }
 }
 
 .spawnmenuright .body
