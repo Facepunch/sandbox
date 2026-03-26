@@ -50,16 +50,9 @@ HotbarPresetsButton .preset-item
 {
     flex-direction: row;
     align-items: center;
-    padding: 8px 10px;
     border-radius: 4px;
-    cursor: pointer;
-    pointer-events: all;
+    padding-right: 4px;
     gap: 8px;
-
-    &:hover
-    {
-        background-color: #ffffff11;
-    }
 }
 
 HotbarPresetsButton .preset-label
@@ -68,6 +61,15 @@ HotbarPresetsButton .preset-label
     color: white;
     font-family: $subtitle-font;
     font-size: 14px;
+    padding: 8px 10px 8px 10px;
+    cursor: pointer;
+    pointer-events: all;
+    border-radius: 4px;
+
+    &:hover
+    {
+        background-color: #ffffff11;
+    }
 }
 
 HotbarPresetsButton .preset-delete

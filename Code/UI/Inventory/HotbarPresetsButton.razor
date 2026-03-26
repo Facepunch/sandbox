@@ -26,9 +26,9 @@
             {
                 var name = preset.Name;
                 var json = preset.LoadoutJson;
-                <div class="preset-item" @onclick=@(() => OnLoadPreset( json ))>
-                    <span class="preset-label">@name</span>
-                    <div class="preset-delete" onclick:stopPropagation=@true @onclick=@(() => OnDeletePreset( name ))>
+                <div class="preset-item">
+                    <span class="preset-label" @onclick=@(() => OnLoadPreset( json ))>@name</span>
+                    <div class="preset-delete" @onclick=@(() => OnDeletePreset( name ))>
                         <i>close</i>
                     </div>
                 </div>
