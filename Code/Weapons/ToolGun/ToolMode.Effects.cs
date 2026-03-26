@@ -3,6 +3,8 @@
 	[Rpc.Broadcast]
 	public virtual void ShootEffects( SelectionPoint target )
 	{
+		if ( !Toolgun.IsValid() ) return;
+
 		var player = Toolgun.Owner;
 		if ( !player.IsValid() ) return;
 
