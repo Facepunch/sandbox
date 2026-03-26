@@ -17,13 +17,62 @@ public partial class Duplicator : ToolMode
 	DuplicatorSpawner spawner;
 	LinkedGameObjectBuilder builder = new() { RejectPlayers = true };
 
+	Rotation _rotationOffset = Rotation.Identity;
+	Rotation _spinRotation = Rotation.Identity;
+	Rotation _snapRotation = Rotation.Identity;
+	bool _isSnapping;
+	bool _isRotating;
+
 	public override string Description => "#tool.hint.duplicator.description";
 	public override string PrimaryAction => spawner is not null ? "#tool.hint.duplicator.place" : null;
 	public override string SecondaryAction => "#tool.hint.duplicator.copy";
 
+	public override void OnCameraMove( Player player, ref Angles angles )
+	{
+		base.OnCameraMove( player, ref angles );
+
+		if ( _isRotating )
+			angles = default;
+	}
+
 	public override void OnControl()
 	{
 		base.OnControl();
+
+		_isRotating = spawner is not null && Input.Down( "use" );
+		Toolgun.SetIsUsingJoystick( _isRotating );
+
+		var isSnapping = Input.Down( "run" );
+		if ( !isSnapping && _isSnapping ) _spinRotation = _snapRotation;
+		_isSnapping = isSnapping;
+
+		if ( _isRotating )
+		{
+			var look = Input.AnalogLook with { pitch = 0 };
+
+			if ( _isSnapping )
+			{
+				if ( MathF.Abs( look.yaw ) > MathF.Abs( look.pitch ) ) look.pitch = 0;
+				else look.yaw = 0;
+			}
+
+			_spinRotation = Rotation.From( look ) * _spinRotation;
+			Input.Clear( "use" );
+
+			if ( _isSnapping )
+			{
+				var snapped = _spinRotation.Angles();
+				_rotationOffset = snapped.SnapToGrid( 45f );
+			}
+			else
+			{
+				_rotationOffset = _spinRotation;
+			}
+
+			_snapRotation = _rotationOffset;
+
+			Toolgun.UpdateJoystick( new Angles( look.yaw, look.pitch, 0 ) );
+		}
 
 		var select = TraceSelect();
 		IsValidState = IsValidTarget( select );
@@ -40,10 +89,12 @@ public partial class Duplicator : ToolMode
 			tx.Position = select.WorldPosition() + Vector3.Down * spawner.Bounds.Mins.z;
 
 			var relative = Player.EyeTransform.Rotation.Angles();
-			tx.Rotation = new Angles( 0, relative.yaw, 0 );
+			tx.Rotation = Rotation.From( new Angles( 0, relative.yaw, 0 ) ) * _rotationOffset;
 
 			Duplicate( tx );
 			ShootEffects( select );
+			_rotationOffset = Rotation.Identity;
+			_spinRotation = Rotation.Identity;
 			return;
 		}
 
@@ -132,7 +183,7 @@ public partial class Duplicator : ToolMode
 		tx.Position = select.WorldPosition() + Vector3.Down * spawner.Bounds.Mins.z;
 
 		var relative = Player.EyeTransform.Rotation.Angles();
-		tx.Rotation = new Angles( 0, relative.yaw, 0 );
+		tx.Rotation = Rotation.From( new Angles( 0, relative.yaw, 0 ) ) * _rotationOffset;
 
 		var overlayMaterial = IsProxy ? Material.Load( "materials/effects/duplicator_override_other.vmat" ) : Material.Load( "materials/effects/duplicator_override.vmat" );
 		spawner.DrawPreview( tx, overlayMaterial );
