@@ -21,7 +21,7 @@ public sealed partial class Player
 	/// <summary>
 	/// Kill yourself
 	/// </summary>
-	[ConCmd( "kill", ConVarFlags.Server )]
+	[ConCmd( "kill" )]
 	public static void KillSelf( Connection source )
 	{
 		var player = Player.FindForConnection( source );
