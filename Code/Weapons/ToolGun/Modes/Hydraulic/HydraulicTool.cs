@@ -109,6 +109,8 @@ public class HydraulicTool : BaseConstraintToolMode
 		undo.Add( go1 );
 		undo.Add( go2 );
 		undo.Add( jointGo );
+
+		TrackSpawn( go1, LimitCategory.Constraint );
 	}
 
 	private void CreateBallJointHydraulic( SelectionPoint point1, SelectionPoint point2 )
@@ -229,6 +231,8 @@ public class HydraulicTool : BaseConstraintToolMode
 		var undo = Player.Undo.Create();
 		undo.Name = "Hydraulic (Ball Joints)";
 		undo.Add( goA, goB, ballAnchor, ballTarget, sliderA, sliderB );
+
+		TrackSpawn( goA, LimitCategory.Constraint );
 	}
 }
 

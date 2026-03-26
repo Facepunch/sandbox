@@ -15,7 +15,7 @@ public class WheelTool : ToolMode
 
 	public override string Description => "#tool.hint.wheeltool.description";
 	public override string PrimaryAction => "#tool.hint.wheeltool.place";
-	public override string SecondaryAction => "#tool.hint.wheeltool.toggle_axis";
+	public override string ReloadAction => "#tool.hint.wheeltool.toggle_axis";
 
 	Vector3 _axis = Vector3.Right;
 
@@ -33,9 +33,9 @@ public class WheelTool : ToolMode
 		var modelBounds = scene.GetBounds();
 		var surfaceOffset = modelBounds.Size.y * 0.5f;
 
-		if ( Input.Pressed( "attack2" ) )
+		if ( Input.Pressed( "reload" ) )
 		{
-			_axis = _axis == Vector3.Right ? Vector3.Up : Vector3.Right;
+			_axis = _axis == Vector3.Right ? -Vector3.Right : Vector3.Right;
 		}
 
 		var placementTrans = new Transform( pos.Position + pos.Rotation.Forward * surfaceOffset );
@@ -53,13 +53,15 @@ public class WheelTool : ToolMode
 
 		var suspensionAxis = placementTrans.Forward * 20;
 		DebugOverlay.Line( new Line( placementTrans.Position - suspensionAxis, placementTrans.Position + suspensionAxis ), Color.Green );
-
 	}
 
 	[Rpc.Host]
 	public void SpawnWheel( SelectionPoint point, WheelDefinition def, Transform tx )
 	{
 		if ( def == null || def.Prefab?.GetScene() is not Scene scene ) return;
+
+		if ( IsOverLimit( LimitCategory.Wheel ) )
+			return;
 
 		var wheelGo = scene.Clone( new CloneConfig { StartEnabled = false } );
 		wheelGo.Name = "wheel";
@@ -90,6 +92,7 @@ public class WheelTool : ToolMode
 		joint.Body = point.GameObject;
 
 		wheelGo.NetworkSpawn( true, null );
+		TrackSpawn( wheelGo, LimitCategory.Wheel );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Wheel";

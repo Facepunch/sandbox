@@ -107,6 +107,9 @@
 			return;
 		}
 
+		if ( GameLimitsSystem.Current.IsOverLimit( Rpc.Caller, LimitCategory.Constraint ) )
+			return;
+
 		CreateConstraint( point1, point2 );
 	}
 

@@ -53,6 +53,19 @@ public abstract partial class ToolMode : Component, IToolInfo
 
 	public TypeDescription TypeDescription { get; protected set; }
 
+	/// <summary>
+	/// Returns <c>true</c> if the owning player is over the limit for <paramref name="category"/>,
+	/// sending them a rejection notice as a side-effect. Safe to call from host-only RPCs.
+	/// </summary>
+	protected bool IsOverLimit( string category, int count = 1 )
+		=> GameLimitsSystem.Current.IsOverLimit( Player.Network.Owner, category, count );
+
+	/// <summary>
+	/// Registers a spawned game object against the owning player's count for <paramref name="category"/>.
+	/// </summary>
+	protected void TrackSpawn( GameObject go, string category )
+		=> GameLimitsSystem.Current.Track( Player.Network.Owner, category, go );
+
 	protected override void OnStart()
 	{
 		TypeDescription = TypeLibrary.GetType( GetType() );

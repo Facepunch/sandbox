@@ -41,5 +41,7 @@ public class BallSocket : BaseConstraintToolMode
 		undo.Name = "Ballsocket";
 		undo.Add( go1 );
 		undo.Add( go2 );
+
+		TrackSpawn( go1, LimitCategory.Constraint );
 	}
 }

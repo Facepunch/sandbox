@@ -15,7 +15,7 @@ public class ThrusterTool : ToolMode
 
 	public override string Description => "#tool.hint.thrustertool.description";
 	public override string PrimaryAction => "#tool.hint.thrustertool.place";
-	public override string SecondaryAction => "#tool.hint.thrustertool.toggle_axis";
+	public override string ReloadAction => "#tool.hint.thrustertool.toggle_axis";
 
 	Vector3 _axis = Vector3.Up;
 
@@ -28,7 +28,7 @@ public class ThrusterTool : ToolMode
 
 		var pos = select.WorldTransform();
 
-		if ( Input.Pressed( "attack2" ) )
+		if ( Input.Pressed( "reload" ) )
 		{
 			_axis = _axis == Vector3.Right ? Vector3.Up : Vector3.Right;
 		}
@@ -58,6 +58,9 @@ public class ThrusterTool : ToolMode
 		if ( thrusterPrefab == null )
 			return;
 
+		if ( IsOverLimit( LimitCategory.Thruster ) )
+			return;
+
 		var go = thrusterPrefab.GetScene().Clone();
 		go.Tags.Add( "removable" );
 		go.Tags.Add( "constraint" );
@@ -81,6 +84,7 @@ public class ThrusterTool : ToolMode
 		ApplyPhysicsProperties( go );
 
 		go.NetworkSpawn( true, null );
+		TrackSpawn( go, LimitCategory.Thruster );
 
 		// undo
 		{

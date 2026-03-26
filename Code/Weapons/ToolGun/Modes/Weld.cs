@@ -203,6 +203,9 @@ public class Weld : BaseConstraintToolMode
 			return;
 		}
 
+		if ( IsOverLimit( LimitCategory.Constraint ) )
+			return;
+
 		_easyModeAngle = angle;
 		CreateConstraint( point1, point2 );
 		_easyModeAngle = 0f;
@@ -252,5 +255,7 @@ public class Weld : BaseConstraintToolMode
 		undo.Name = "Weld";
 		undo.Add( go1 );
 		undo.Add( go2 );
+
+		TrackSpawn( go1, LimitCategory.Constraint );
 	}
 }

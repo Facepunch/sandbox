@@ -1,0 +1,68 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits UtilityPage
+@namespace Sandbox
+@attribute [Icon( "🚧" )]
+@attribute [Title( "Limits" )]
+@attribute [Order( 0 )]
+@attribute [UtilityOf( typeof(LimitsFunction) )]
+
+<root class="page" style="flex-direction: column;">
+    @foreach ( var info in GetLimitConVars() )
+    {
+        var isHost = Connection.Local.IsHost;
+        <div class="control-row">
+            <label class="left">@info.Label</label>
+            @if ( info.IsBool )
+            {
+                <Checkbox Value=@((bool)info.Prop.GetValue( null )) ValueChanged=@((bool v) => ConsoleSystem.Run($"{info.Name} {(v ? 1 : 0)}")) disabled=@(!isHost) />
+            }
+            else
+            {
+                var range = info.Prop.GetCustomAttribute<RangeAttribute>();
+                float min = range?.Min ?? 0f;
+                float max = range?.Max?? 1000f;
+                float step = info.Prop.GetCustomAttribute<StepAttribute>()?.Step ?? 1f;
+                <SliderControl ShowRange=@(true) Value=@(Convert.ToSingle(info.Prop.GetValue(null)))
+                               Min=@min Max=@max Step=@step
+                               OnValueChanged=@((float v) => ConsoleSystem.Run( $"{info.Name} {(int)v}" ))
+                               disabled=@(!isHost) />
+            }
+        </div>
+    }
+</root>
+
+@code
+{
+    record ConVarInfo( string Name, string Label, bool IsBool, PropertyDescription Prop );
+
+    IEnumerable<ConVarInfo> GetLimitConVars()
+    {
+        var td = TypeLibrary.GetType( typeof(GameLimitsSystem) );
+        if ( td is null ) yield break;
+
+        foreach ( var prop in td.Properties.OrderBy( p => p.Name ) )
+        {
+            var convar = prop.GetCustomAttribute<ConVarAttribute>();
+            if ( convar is null ) continue;
+
+            var label = prop.Title ?? BuildLabel( prop.Name );
+            var isBool = prop.PropertyType == typeof(bool);
+
+            yield return new ConVarInfo( convar.Name, label, isBool, prop );
+        }
+    }
+
+    static string BuildLabel( string propertyName )
+    {
+        // "MaxProps" → "Max Props", "Enabled" → "Enabled"
+        var sb = new System.Text.StringBuilder();
+        foreach ( var c in propertyName )
+        {
+            if ( char.IsUpper( c ) && sb.Length > 0 )
+                sb.Append( ' ' );
+            sb.Append( c );
+        }
+        return sb.ToString();
+    }
+}

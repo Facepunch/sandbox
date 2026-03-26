@@ -13,19 +13,18 @@ public class CleanupFunction : UtilityFunction
 	[Rpc.Host]
 	internal static void CleanUpMine()
 	{
-		var caller = Rpc.Caller;
+		Cleanup( Rpc.Caller.SteamId );
+		Notices.SendNotice( Rpc.Caller, "cleaning_services", Color.Green, "Cleaned up your objects" );
+	}
 
+	internal static void Cleanup( ulong steamId )
+	{
 		var removable = Game.ActiveScene.GetAllComponents<Ownable>()
-			.Where( o => o.Owner == caller );
+			.Where( o => o.OwnerSteamId == steamId )
+			.ToArray();
 
-		var count = 0;
-		foreach ( var ownable in removable.ToArray() )
-		{
+		foreach ( var ownable in removable )
 			ownable.GameObject.Destroy();
-			count++;
-		}
-
-		Notices.SendNotice( caller, "cleaning_services", Color.Green, $"Cleaned up {count} objects" );
 	}
 
 	[Rpc.Host]

@@ -57,5 +57,7 @@ public class Slider : BaseConstraintToolMode
 		undo.Name = "Slider";
 		undo.Add( go1 );
 		undo.Add( go2 );
+
+		TrackSpawn( go1, LimitCategory.Constraint );
 	}
 }

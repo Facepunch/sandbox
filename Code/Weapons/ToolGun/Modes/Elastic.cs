@@ -66,5 +66,7 @@ public class Elastic : BaseConstraintToolMode
 		undo.Name = "Elastic";
 		undo.Add( go1 );
 		undo.Add( go2 );
+
+		TrackSpawn( go1, LimitCategory.Constraint );
 	}
 }

@@ -217,16 +217,16 @@ public partial class Duplicator : ToolMode
 
 		var objects = await spawner.Spawn( dest, player );
 
-		if ( objects is { Count: > 0 } )
-		{
-			var undo = player.Undo.Create();
-			undo.Name = "Duplication";
+		if ( objects is not { Count: > 0 } ) return;
 
-			foreach ( var go in objects )
-			{
-				undo.Add( go );
-			}
-		}
+		if ( !GameLimitsSystem.Current.TrackSpawned( Player.Network.Owner, objects ) )
+			return;
+
+		var undo = player.Undo.Create();
+		undo.Name = "Duplication";
+
+		foreach ( var go in objects )
+			undo.Add( go );
 	}
 
 	public static void FromStorage( Storage.Entry item )

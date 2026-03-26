@@ -284,18 +284,21 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null ) return;
 
+		// Fast pre-check for entities; dupes and props are validated post-spawn.
+		if ( Spawner is EntitySpawner && GameLimitsSystem.Current.IsOverLimit( player.Network.Owner, LimitCategory.Entity ) )
+			return;
+
 		var objects = await Spawner.Spawn( transform, player );
 
-		if ( objects is { Count: > 0 } )
-		{
-			var undo = player.Undo.Create();
-			undo.Name = $"Spawn {Spawner.DisplayName}";
+		if ( objects is not { Count: > 0 } ) return;
 
-			foreach ( var go in objects )
-			{
-				undo.Add( go );
-			}
-		}
+		if ( !GameLimitsSystem.Current.TrackSpawned( player.Network.Owner, objects ) )
+			return; // over limit — objects already destroyed by TrackSpawned
+
+		var undo = player.Undo.Create();
+		undo.Name = $"Spawn {Spawner.DisplayName}";
+		foreach ( var go in objects )
+			undo.Add( go );
 	}
 
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )

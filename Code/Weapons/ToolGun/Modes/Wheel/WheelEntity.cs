@@ -1,4 +1,4 @@
-﻿public class WheelEntity : Component, IPlayerControllable
+﻿public class WheelEntity : Component, IPlayerControllable, IToolModePreview
 {
 	[Property, Range( 0, 1 ), ClientEditable]
 	public bool Reversed { get; set; } = false;
@@ -24,9 +24,31 @@
 	[Property, Sync, ClientEditable]
 	public ClientInput TurnRight { get; set; }
 
-	protected override void OnEnabled()
+	public void OnToolModePreview()
 	{
-		base.OnEnabled();
+		var tx = WorldTransform;
+		var rollDir = Reversed ? -tx.Up : tx.Up;
+
+		float faceOffset = 2f;
+		var mr = GetComponentInChildren<ModelRenderer>();
+		if ( mr != null )
+		{
+			var he = mr.Bounds.Size * 0.5f;
+			var absRight = new Vector3( MathF.Abs( tx.Right.x ), MathF.Abs( tx.Right.y ), MathF.Abs( tx.Right.z ) );
+			faceOffset = Vector3.Dot( he, absRight );
+		}
+
+		// TODO: better effects than this
+
+		var center = tx.Position + tx.Right * faceOffset;
+		var tip = center + rollDir * 14f;
+
+		DebugOverlay.Line( new Line( center, tip ), Color.Cyan, 0f );
+
+		var side = tx.Forward * 5f;
+		var back = rollDir * 6f;
+		DebugOverlay.Line( new Line( tip, tip - back + side ), Color.Cyan, 0f );
+		DebugOverlay.Line( new Line( tip, tip - back - side ), Color.Cyan, 0f );
 	}
 
 	public void OnStartControl()

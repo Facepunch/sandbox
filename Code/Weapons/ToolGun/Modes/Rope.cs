@@ -97,5 +97,7 @@ public class Rope : BaseConstraintToolMode
 		undo.Name = "Rope";
 		undo.Add( go1 );
 		undo.Add( go2 );
+
+		TrackSpawn( go1, LimitCategory.Constraint );
 	}
 }

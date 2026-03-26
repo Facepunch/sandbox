@@ -11,7 +11,7 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 	/// <summary>
 	/// Get the undo stack for a specific SteamId
 	/// </summary>
-	public PlayerStack For( long steamId )
+	public PlayerStack For( SteamId steamId )
 	{
 		if ( !stacks.TryGetValue( steamId, out var stack ) )
 		{
@@ -26,10 +26,10 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 	/// </summary>
 	public class PlayerStack
 	{
-		long steamId;
+		SteamId steamId;
 		Stack<Entry> entries = new();
 
-		public PlayerStack( long steamId )
+		public PlayerStack( SteamId steamId )
 		{
 			this.steamId = steamId;
 		}
@@ -73,12 +73,12 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 		public string Name { get; set; }
 		public string Icon { get; set; }
 
-		long SteamId;
+		ulong SteamId;
 
 		Action actions = null;
 		bool actioned;
 
-		internal Entry( long steamId )
+		internal Entry( SteamId steamId )
 		{
 			SteamId = steamId;
 		}

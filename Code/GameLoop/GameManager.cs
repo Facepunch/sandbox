@@ -27,6 +27,8 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	/// </summary>
 	void Component.INetworkListener.OnDisconnected( Connection channel )
 	{
+		CleanupFunction.Cleanup( channel.SteamId );
+
 		var pd = PlayerData.For( channel );
 		if ( pd is not null )
 		{
@@ -228,12 +230,14 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		if ( spawner is not null && await spawner.Loading )
 		{
-			Log.Info( $"[Spawn] Spawning '{ident}' type='{type}' spawner={spawner.GetType().Name} metadata={(metadata ?? "null")}" );
+			// Pre-check entities only (exact count, fast UX). Everything else is validated
+			// post-spawn by TrackSpawned which can walk the actual spawned tree.
+			if ( type is "entity" or "sent" && GameLimitsSystem.Current.IsOverLimit( player.Network.Owner, LimitCategory.Entity ) )
+				return;
+
 			await SpawnAndUndo( spawner, spawnTransform, player );
 			return;
 		}
-
-		Log.Warning( $"[Spawn] Couldn't resolve '{ident}' — spawner={(spawner is null ? "null" : "not ready")}" );
 	}
 
 	/// <summary>
@@ -270,16 +274,15 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	{
 		var objects = await spawner.Spawn( transform, player );
 
-		if ( objects is { Count: > 0 } )
-		{
-			var undo = player.Undo.Create();
-			undo.Name = $"Spawn {spawner.DisplayName}";
+		if ( objects is not { Count: > 0 } ) return;
 
-			foreach ( var go in objects )
-			{
-				undo.Add( go );
-			}
-		}
+		if ( !GameLimitsSystem.Current.TrackSpawned( player.Network.Owner, objects ) )
+			return; // over limit — objects already destroyed by TrackSpawned
+
+		var undo = player.Undo.Create();
+		undo.Name = $"Spawn {spawner.DisplayName}";
+		foreach ( var go in objects )
+			undo.Add( go );
 	}
 
 	/// <summary>

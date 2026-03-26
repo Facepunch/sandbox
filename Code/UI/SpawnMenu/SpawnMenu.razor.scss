@@ -253,6 +253,47 @@ SpawnMenuHost.open SpawnMenu
             gap: 2px;
         }
 
+        Checkbox
+        {
+            width: 36px;
+            height: 20px;
+            border-radius: 10px;
+            background-color: #ffffff18;
+            border: 1px solid #ffffff22;
+            align-items: center;
+            justify-content: flex-start;
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+            flex-shrink: 0;
+
+            &:hover
+            {
+                background-color: #ffffff28;
+            }
+
+            .checkmark
+            {
+                width: 14px;
+                height: 14px;
+                border-radius: 7px;
+                background-color: #ffffff44;
+                margin-left: 2px;
+                transition: margin-left 0.1s ease, background-color 0.1s ease;
+            }
+
+            &.checked
+            {
+                background-color: rgba($color-accent, 0.4);
+                border-color: rgba($color-accent, 0.6);
+
+                .checkmark
+                {
+                    margin-left: 18px;
+                    background-color: $color-accent;
+                }
+            }
+        }
+
         controlsheetrow, .control-row
         {
             width: 100%;
