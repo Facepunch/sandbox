@@ -41,6 +41,11 @@ public abstract partial class ToolMode : Component, IToolInfo
 	/// </summary>
 	public virtual string ReloadAction => null;
 
+	/// <summary>
+	/// Tags that TraceSelect will ignore. Override per-tool to filter out specific objects.
+	/// </summary>
+	public virtual IEnumerable<string> TraceIgnoreTags => [];
+
 	public TypeDescription TypeDescription { get; protected set; }
 
 	protected override void OnStart()

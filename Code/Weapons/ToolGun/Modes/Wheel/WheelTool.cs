@@ -9,6 +9,7 @@ using Sandbox.UI;
 public class WheelTool : ToolMode
 {
 	public override bool UseSnapGrid => true;
+	public override IEnumerable<string> TraceIgnoreTags => ["constraint", "collision"];
 	[Property, ResourceSelect( Extension = "wdef", AllowPackages = true ), Title( "Wheel" )]
 	public string Definition { get; set; } = "entities/wheel/basic.wdef";
 

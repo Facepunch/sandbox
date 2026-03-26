@@ -8,6 +8,8 @@
 public class ThrusterTool : ToolMode
 {
 	public override bool UseSnapGrid => true;
+	public override IEnumerable<string> TraceIgnoreTags => ["constraint", "collision"];
+
 	[Property, ResourceSelect( Extension = "tdef", AllowPackages = true ), Title( "Thruster" )]
 	public string Definition { get; set; } = "entities/thruster/basic.tdef";
 

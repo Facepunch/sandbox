@@ -56,10 +56,13 @@
 		var player = Toolgun?.Owner;
 		if ( !player.IsValid() ) return default;
 
-		var tr = Scene.Trace.Ray( player.EyeTransform.ForwardRay, 4096 )
-		.IgnoreGameObjectHierarchy( player.GameObject )
-		.WithoutTags( "constraint", "collision" )
-		.Run();
+		var trace = Scene.Trace.Ray( player.EyeTransform.ForwardRay, 4096 )
+		.IgnoreGameObjectHierarchy( player.GameObject );
+
+		if ( TraceIgnoreTags.Any() )
+			trace = trace.WithoutTags( TraceIgnoreTags.ToArray() );
+
+		var tr = trace.Run();
 
 		return new SelectionPoint
 		{
