@@ -181,6 +181,11 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 	/// <returns>True if the load was successful.</returns>
 	public async Task<bool> Load( string path )
 	{
+		//
+		// Host only
+		//
+		if ( !Networking.IsHost ) return false;
+
 		if ( string.IsNullOrWhiteSpace( path ) )
 		{
 			Log.Warning( "SaveSystem: Cannot load — path is null or empty." );
