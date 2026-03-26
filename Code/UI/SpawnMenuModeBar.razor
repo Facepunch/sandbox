@@ -13,6 +13,8 @@
 
         foreach ( var mode in Game.TypeLibrary.GetTypesWithAttribute<SpawnMenuHost.SpawnMenuMode>().OrderBy( x => x.Type.Order ) )
         {
+            if ( !mode.Attribute.CheckCondition() ) continue;
+
             var activeClass = mode.Type.TargetType == activeMode?.GetType() ? "active" : "";
 
             <div class="menu-mode-button @activeClass" @onclick="@( () => SpawnMenuHost.SwitchMode( mode.Type.Name ) )">

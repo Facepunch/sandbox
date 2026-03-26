@@ -97,17 +97,31 @@
         if ( PanelSwitcher == null )
             return;
 
-        // Make sure we've created all the modes, create SpawnMenu first so it's selected by default
-        foreach ( var type in Game.TypeLibrary.GetTypesWithAttribute<SpawnMenuMode>().OrderBy( x => x.Type.Name != "SpawnMenu" ) )
+        var modes = Game.TypeLibrary.GetTypesWithAttribute<SpawnMenuMode>().OrderBy( x => x.Type.Name != "SpawnMenu" ).ToList();
+
+        // Remove panels whose condition is no longer met
+        foreach ( var child in PanelSwitcher.Children.ToList() )
         {
-            if (PanelSwitcher.Children.Any(x => x.GetType() == type.Type.TargetType)) continue;
-
-            var panel = type.Type.Create<Panel>();
-            if (panel == null) continue;
-
-            PanelSwitcher.AddChild(panel);
+            var mode = modes.FirstOrDefault( m => m.Type.TargetType == child.GetType() );
+            if ( mode.Type != null && !mode.Attribute.CheckCondition() )
+            {
+                if ( PanelSwitcher.ActivePanel == child )
+                    SwitchMode( "SpawnMenu" );
+                child.Delete();
+            }
         }
 
+        // Create panels for modes whose condition is met
+        foreach ( var type in modes )
+        {
+            if ( !type.Attribute.CheckCondition() ) continue;
+            if ( PanelSwitcher.Children.Any( x => x.GetType() == type.Type.TargetType ) ) continue;
+
+            var panel = type.Type.Create<Panel>();
+            if ( panel == null ) continue;
+
+            PanelSwitcher.AddChild( panel );
+        }
     }
 
     public static void SwitchMode( string modeName, bool remember = true )
@@ -134,8 +148,23 @@
         return host.PanelSwitcher.ActivePanel;
     }
 
-    public class SpawnMenuMode : System.Attribute
+    public interface ISpawnMenuCondition
     {
+        static abstract bool IsVisible();
     }
 
+    public class SpawnMenuMode : System.Attribute
+    {
+        public virtual bool CheckCondition() => true;
+    }
+
+    public class SpawnMenuMode<T> : SpawnMenuMode where T : ISpawnMenuCondition
+    {
+        public override bool CheckCondition() => T.IsVisible();
+    }
+
+    public class HostOnly : ISpawnMenuCondition
+    {
+        public static bool IsVisible() => Networking.IsHost;
+    }
 }
