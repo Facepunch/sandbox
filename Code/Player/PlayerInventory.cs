@@ -538,6 +538,9 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		foreach ( var weapon in Weapons.ToList() )
 			weapon.DestroyGameObject();
 
+		// Yield so we can process everything queued for deletion first (so we don't delete anything we are about to add)
+		await Task.Yield();
+
 		await EnsureMountedAsync( loadoutJson );
 		GiveLoadoutWeapons( loadoutJson );
 
@@ -621,6 +624,9 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 	{
 		foreach ( var weapon in Weapons.ToList() )
 			weapon.DestroyGameObject();
+
+		// Same as SwitchToPresetAsync, let deletions settle before restoring.
+		await Task.Yield();
 
 		await EnsureMountedAsync( loadoutJson );
 		GiveLoadoutWeapons( loadoutJson );
