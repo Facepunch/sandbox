@@ -56,6 +56,7 @@ public class DuplicationData
 			var localized = center.ToLocal( obj.WorldTransform );
 			entry["Position"] = JsonValue.Create( localized.Position );
 			entry["Rotation"] = JsonValue.Create( localized.Rotation );
+			entry["Scale"] = JsonValue.Create( localized.Scale );
 
 			dupe.Objects.Add( entry );
 
