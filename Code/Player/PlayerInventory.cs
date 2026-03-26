@@ -124,11 +124,6 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		if ( !Pickup( prefab, targetSlot, notice ) )
 			return false;
 
-		// Tag the weapon with its source path so the loadout can be serialized properly
-		var weapon = GetSlot( targetSlot );
-		if ( weapon.IsValid() && string.IsNullOrEmpty( weapon.SourcePrefabPath ) )
-			weapon.SourcePrefabPath = prefabName;
-
 		SaveLoadout();
 
 		return true;
@@ -578,10 +573,10 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 	private string SerializeLoadout()
 	{
 		var entries = Weapons
-			.Where( w => !string.IsNullOrEmpty( w.SourcePrefabPath ) )
+			.Where( w => !string.IsNullOrEmpty( w.GameObject.PrefabInstanceSource ) )
 			.Select( w => new LoadoutEntry
 			{
-				PrefabPath = w.SourcePrefabPath,
+				PrefabPath = w.GameObject.PrefabInstanceSource,
 				Slot = w.InventorySlot,
 				// Preserve the spawner-specific payload (prop path, entity path, dupe JSON, etc.)
 				SpawnerDataPayload = (w as SpawnerWeapon)?.SpawnerData
