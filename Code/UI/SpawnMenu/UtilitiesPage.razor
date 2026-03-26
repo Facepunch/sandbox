@@ -1,0 +1,14 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits UtilityPage
+@namespace Sandbox
+@attribute [Icon( "🔧" )]
+@attribute [Title( "Utilities" )]
+@attribute [Order( 0 )]
+@attribute [UtilityOf( typeof(KillSelfFunction) )]
+
+<root class="page" style="flex-direction: column;">
+    <div class="control-row" @onclick=@(() => ConsoleSystem.Run( "kill" ))>
+        <label class="left">🚿 Kill Me</label>
+    </div>
+</root>
