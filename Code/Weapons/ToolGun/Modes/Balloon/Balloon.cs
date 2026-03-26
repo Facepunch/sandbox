@@ -125,6 +125,8 @@ public class Balloon : ToolMode
 			anchor.NetworkSpawn( true, null );
 		}
 
+		ApplyPhysicsProperties( go );
+
 		go.NetworkSpawn( true, null );
 
 		foreach ( var c in go.GetComponentsInChildren<Rigidbody>( true ) )
