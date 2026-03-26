@@ -55,14 +55,13 @@
 {
     record ConVarInfo( string Name, string Label, bool IsBool, PropertyDescription Prop, string Category );
 
-    protected override int BuildHash() => HashCode.Combine(
-        GameLimitsSystem.GetLocalCount( LimitCategory.Prop ),
-        GameLimitsSystem.GetLocalCount( LimitCategory.Entity ),
-        GameLimitsSystem.GetLocalCount( LimitCategory.Thruster ),
-        GameLimitsSystem.GetLocalCount( LimitCategory.Balloon ),
-        GameLimitsSystem.GetLocalCount( LimitCategory.Wheel ),
-        GameLimitsSystem.GetLocalCount( LimitCategory.Constraint )
-    );
+    protected override int BuildHash()
+    {
+        var hc = new HashCode();
+        foreach ( var def in GameLimitsSystem.Limits )
+            hc.Add( GameLimitsSystem.GetLocalCount( def.Category ) );
+        return hc.ToHashCode();
+    }
 
     IEnumerable<ConVarInfo> GetLimitConVars()
     {

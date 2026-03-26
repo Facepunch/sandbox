@@ -167,10 +167,10 @@ public sealed partial class GameLimitsSystem : GameObjectSystem<GameLimitsSystem
 		var hint = go.GetComponent<Ownable>( true )?.HintCategory;
 		if ( hint is not null ) return hint;
 
-		if ( go.GetComponent<ConstraintCleanup>() is not null ) return LimitCategory.Constraint;
-		if ( go.GetComponent<ThrusterEntity>() is not null ) return LimitCategory.Thruster;
-		if ( go.GetComponent<WheelEntity>() is not null ) return LimitCategory.Wheel;
-		if ( go.GetComponent<Prop>() is not null ) return LimitCategory.Prop;
+		if ( go.GetComponent<ConstraintCleanup>( true ) is not null ) return LimitCategory.Constraint;
+		if ( go.GetComponent<ThrusterEntity>( true ) is not null ) return LimitCategory.Thruster;
+		if ( go.GetComponent<WheelEntity>( true ) is not null ) return LimitCategory.Wheel;
+		if ( go.GetComponent<Prop>( true ) is not null ) return LimitCategory.Prop;
 		return null;
 	}
 
