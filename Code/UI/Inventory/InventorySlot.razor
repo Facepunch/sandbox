@@ -72,7 +72,7 @@
 
         var weapon = GetWeapon();
         if ( !Inventory.Drop( weapon ) && weapon.IsValid() )
-            weapon.DestroyGameObject();
+            Inventory.Remove( weapon );
     }
 
     BaseCarryable GetWeapon()

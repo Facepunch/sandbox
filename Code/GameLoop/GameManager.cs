@@ -373,6 +373,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		{
 			existingSpawner.SetSpawner( s );
 			inventory.SwitchWeapon( existingSpawner );
+			inventory.SaveLoadout();
 			return;
 		}
 
@@ -385,6 +386,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		spawner.SetSpawner( s );
 		inventory.SwitchWeapon( spawner );
+		inventory.SaveLoadout();
 	}
 
 	void IScenePhysicsEvents.OnOutOfBounds( Rigidbody body )

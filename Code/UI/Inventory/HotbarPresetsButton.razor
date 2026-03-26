@@ -1,0 +1,78 @@
+@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits Panel
+
+<root>
+
+    <div class="presets-toggle" @onclick=@OnToggleClick>
+        <i>expand_less</i>
+    </div>
+
+</root>
+
+@code
+{
+    public PlayerInventory Inventory { get; set; }
+
+    void OnToggleClick()
+    {
+        var menu = MenuPanel.Open( this );
+
+        var presets = PlayerInventory.GetLoadoutPresets();
+        foreach ( var preset in presets )
+        {
+            var name = preset.Name;
+            var json = preset.LoadoutJson;
+            menu.AddSubmenu( "bookmark", name, sub =>
+            {
+                sub.AddOption( "play_arrow", "Load", () => OnLoadPreset( json ) );
+                sub.AddOption( "save", "Overwrite with current", () => OnOverwritePreset( name ) );
+                sub.AddOption( "close", "Delete", () => OnDeletePreset( name ) );
+            } );
+        }
+
+        menu.AddSpacer();
+        menu.AddOption( "add", "Save As New Hotbar", OnSaveNew );
+        menu.StateHasChanged();
+    }
+
+    void OnLoadPreset( string json )
+    {
+        if ( !Inventory.IsValid() ) return;
+        Inventory.SwitchToPreset( json );
+    }
+
+    void OnOverwritePreset( string name )
+    {
+		var json = LocalData.Get<string>( "hotbar" );
+        if ( string.IsNullOrEmpty( json ) ) return;
+
+        PlayerInventory.SaveLoadoutPreset( name, json );
+    }
+
+    void OnDeletePreset( string name )
+    {
+        PlayerInventory.DeleteLoadoutPreset( name );
+    }
+
+    void OnSaveNew()
+    {
+        var popup = new StringQueryPopup
+        {
+            Title = "Save Hotbar",
+            Placeholder = "Enter a name...",
+            ConfirmLabel = "Save",
+            OnConfirm = OnSaveConfirmed,
+            Parent = FindRootPanel()
+        };
+    }
+
+    void OnSaveConfirmed( string name )
+    {
+		var json = LocalData.Get<string>( "hotbar" );
+        if ( string.IsNullOrEmpty( json ) ) return;
+
+        PlayerInventory.SaveLoadoutPreset( name, json );
+    }
+}

@@ -1,0 +1,31 @@
+@import "/UI/Theme.scss";
+
+HotbarPresetsButton
+{
+    position: relative;
+    right: 0px;
+    bottom: 0px;
+    opacity: 0;
+}
+
+HotbarPresetsButton .presets-toggle
+{
+    width: 28px;
+    height: 96px;
+    background-color: #0003;
+    border-radius: $hud-radius;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: rgba( white, 0.5 );
+    font-size: 20px;
+    pointer-events: all;
+    transition: background-color 0.1s, color 0.1s;
+
+    &:hover
+    {
+        background-color: #0006;
+        color: white;
+    }
+}
+

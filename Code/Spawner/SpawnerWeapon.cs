@@ -47,11 +47,11 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 	/// Accumulated rotation offset applied to the spawn preview.
 	/// </summary>
 	private Rotation _rotationOffset = Rotation.Identity;
-	
+
 	private Rotation _snapRotation = Rotation.Identity;
 	private Rotation _spinRotation = Rotation.Identity;
 	private bool _isSnapping;
-	
+
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
 		base.OnCameraMove( player, ref angles );
@@ -85,6 +85,14 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 	public void ClearPayload()
 	{
 		SetSpawner( null );
+	}
+
+	/// <summary>
+	/// Directly restores a previously serialized payload string
+	/// </summary>
+	public void RestoreSpawnerData( string serialisedData )
+	{
+		SyncPayload( serialisedData );
 	}
 
 	[Rpc.Host]
@@ -142,8 +150,8 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 
 		UpdateViewmodelScreen();
 		ApplyCoilSpin();
-		
-		
+
+
 		if ( Spawner is null )
 			return;
 
@@ -306,7 +314,7 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 		painter.DrawCircle( crosshair, 5, color.Darken( 0.3f ) );
 		painter.DrawCircle( crosshair, 3, color );
 	}
-	
+
 	protected override void DrawScreenContent( Rect rect, HudPainter paint )
 	{
 		var icon = Texture.Load( this.InventoryIconOverride );
