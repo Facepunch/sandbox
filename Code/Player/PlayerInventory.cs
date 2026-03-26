@@ -265,8 +265,15 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		}
 
 		weapon.DestroyGameObject();
+		// DestroyGameObject is deferred, so we yield so the item is gone before we serialize the loadout.
+		_ = FinishDropAsync();
 
-		// Auto-switch to best remaining weapon
+		return true;
+	}
+
+	private async Task FinishDropAsync()
+	{
+		await Task.Yield();
 		var best = GetBestWeapon();
 		if ( best.IsValid() )
 		{
@@ -274,8 +281,6 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		}
 
 		SaveLoadout();
-
-		return true;
 	}
 
 	[Rpc.Owner]
@@ -444,7 +449,11 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			HostRemove( weapon );
 			return;
 		}
+		_ = RemoveAsync( weapon );
+	}
 
+	private async Task RemoveAsync( BaseCarryable weapon )
+	{
 		if ( !weapon.IsValid() ) return;
 		if ( weapon.Owner != Player ) return;
 
@@ -452,6 +461,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			SwitchWeapon( null, true );
 
 		weapon.DestroyGameObject();
+		await Task.Yield(); // wait for GameObject to be destroyed
 
 		var best = GetBestWeapon();
 		if ( best.IsValid() )
