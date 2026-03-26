@@ -5,31 +5,41 @@
 @attribute [SpawnMenuHost.SpawnMenuMode]
 @attribute [Icon( "💾" )]
 @attribute [Title( "Saves" )]
-@attribute [Order( 500 )]
+@attribute [Order( 150 )]
 
 <root>
-    <div class="save-menu">
-
-        <div class="save-input">
-            <TextEntry @ref="SaveNameEntry" Placeholder="Enter save name..." @onsubmit="@OnSave"></TextEntry>
-            <button @onclick="@OnSave">Save</button>
-        </div>
-
-        <div class="save-list">
+    <div class="save-window">
+        <div class="save-header">💾 Saves</div>
+        <div class="body">
+            @if ( !SaveFiles.Any() )
+            {
+                <div class="empty-state">No saves yet.</div>
+            }
             @foreach ( var save in SaveFiles )
             {
-                <div class="save-item">
-                    <div class="save-info" @onclick="@(() => LoadSave( save.FileName ))">
-                        <div class="save-name">@save.DisplayName</div>
-                        <div class="save-filename">@save.FileName</div>
+                var s = save;
+                <div class="save-card"
+                     @onclick="@(() => ConfirmLoad( s ))"
+                     @onmousedown="@((PanelEvent e) => OnCardMouseDown( s, e ))">
+                    @if ( s.Thumbnail != null )
+                    {
+                        <Image class="save-thumb" Texture="@s.Thumbnail" />
+                    }
+                    <div class="save-info @(s.Thumbnail == null ? "save-info--padded" : "")">
+                        <label class="save-name">@s.DisplayName</label>
+                        @if ( !string.IsNullOrEmpty( s.Timestamp ) )
+                        {
+                            <label class="save-timestamp">@s.Timestamp</label>
+                        }
                     </div>
-                    <div class="save-delete" @onclick="@(() => DeleteSave( save.FileName ))">
-                        <i>delete</i>
-                    </div>
+                    <div class="save-dots">⋮</div>
                 </div>
             }
         </div>
-
+        <div class="footer">
+            <TextEntry @ref="SaveNameEntry" Placeholder="Save name..." @onsubmit="@OnSave"></TextEntry>
+            <button @onclick="@OnSave">💾 Save</button>
+        </div>
     </div>
 </root>
 
@@ -38,7 +48,7 @@
     TextEntry SaveNameEntry;
     List<SaveFileEntry> SaveFiles = new();
 
-    record SaveFileEntry( string FileName, string DisplayName );
+    record SaveFileEntry( string FileName, string DisplayName, string Timestamp, Texture Thumbnail );
 	static string SavesPath => "saves";
 
     protected override void OnAfterTreeRender( bool firstTime )
@@ -62,28 +72,89 @@
         {
 			var filePath = $"{SavesPath}/{file}";
             var displayName = file;
+            string timestamp = null;
+            Texture thumbnail = null;
 
             var metadata = SaveSystem.GetFileMetadata( filePath );
-            if ( metadata != null && metadata.TryGetValue( "Name", out var name ) )
+            if ( metadata != null )
             {
-                displayName = name.ToString();
+                if ( metadata.TryGetValue( "Title", out var name ) )
+                    displayName = name;
+                if ( metadata.TryGetValue( "Timestamp", out var ts ) )
+                    timestamp = ts;
             }
 
-            SaveFiles.Add( new SaveFileEntry( file, displayName ) );
+            var thumbPath = $"{SavesPath}/{System.IO.Path.GetFileNameWithoutExtension( file )}.thumb.png";
+            if ( FileSystem.Data.FileExists( thumbPath ) )
+            {
+                thumbnail = Texture.Load( FileSystem.Data, thumbPath );
+            }
+
+            SaveFiles.Add( new SaveFileEntry( file, displayName, timestamp, thumbnail ) );
         }
 
         StateHasChanged();
     }
 
+    void OnCardMouseDown( SaveFileEntry save, PanelEvent e )
+    {
+        if ( e is MousePanelEvent { MouseButton: MouseButtons.Right } me )
+        {
+            me.StopPropagation();
+            var menu = MenuPanel.Open( this );
+            menu.AddOption( "download", "Load Save", () => ConfirmLoad( save ) );
+            menu.AddOption( "delete", "Delete", () => ConfirmDelete( save ) );
+        }
+    }
+
+    void ConfirmLoad( SaveFileEntry save )
+    {
+        var popup = new StringQueryPopup
+        {
+            Title = "Load Save",
+            Prompt = $"Load \"{save.DisplayName}\"? Unsaved changes will be lost.",
+            ConfirmLabel = "Load",
+            ShowInput = false,
+            OnConfirm = _ => LoadSave( save.FileName ),
+            Parent = FindPopupPanel()
+        };
+    }
+
+    void ConfirmDelete( SaveFileEntry save )
+    {
+        var popup = new StringQueryPopup
+        {
+            Title = "Delete Save",
+            Prompt = $"Are you sure you want to delete \"{save.DisplayName}\"?",
+            ConfirmLabel = "Delete",
+            ShowInput = false,
+            OnConfirm = _ => DeleteSave( save.FileName ),
+            Parent = FindPopupPanel()
+        };
+    }
     void OnSave()
     {
         var saveName = SaveNameEntry?.Text?.Trim();
+
         if ( string.IsNullOrEmpty( saveName ) )
             return;
 
-		var fileName = $"{SavesPath}/{saveName}.sav";
+        var now = DateTime.Now;
+        var timeString = now.ToString( "yyyy-MM-dd HH:mm:ss" );
+        var baseName = now.ToString( "yyyy-MM-dd-HH-mm-ss" );
+		var fileName = $"{SavesPath}/{baseName}.sav";
 
-        SaveSystem.Current.SetMetadata( "Name", DateTime.Now.ToString( "yyyy-MM-dd HH:mm:ss" ) );
+        // Capture a 256x144 (16:9) thumbnail from the scene camera
+        var camera = Game.ActiveScene?.Camera;
+        if ( camera.IsValid() )
+        {
+            var bitmap = new Bitmap( 256, 144 );
+            camera.RenderToBitmap( bitmap );
+            FileSystem.Data.WriteAllBytes( $"{SavesPath}/{baseName}.thumb.png", bitmap.ToPng() );
+        }
+
+        SaveSystem.Current.SetMetadata( "Timestamp", timeString );
+        SaveSystem.Current.SetMetadata( "Title", saveName );
         SaveSystem.Current.Save( fileName );
 
         SaveNameEntry.Text = "";
@@ -98,6 +169,9 @@
     void DeleteSave( string fileName )
     {
 		FileSystem.Data.DeleteFile( $"{SavesPath}/{fileName}" );
+        var thumbPath = $"{SavesPath}/{System.IO.Path.GetFileNameWithoutExtension( fileName )}.thumb.png";
+        if ( FileSystem.Data.FileExists( thumbPath ) )
+            FileSystem.Data.DeleteFile( thumbPath );
         RefreshSaveList();
     }
 }

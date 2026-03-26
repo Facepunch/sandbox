@@ -10,7 +10,7 @@
         <div class="background" @onmousedown=@Close @onclick=@Close></div>
     }
 
-    <div class="inner @( _submenuOpensLeft ? "opens-left" : "" )">
+    <div class="inner @( _submenuOpensLeft && _options.Any( o => o.SubmenuBuilder != null ) ? "opens-left" : "" )">
 
         @foreach ( var option in _options )
         {

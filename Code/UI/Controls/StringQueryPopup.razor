@@ -15,10 +15,13 @@
             <h3>@Prompt</h3>
         }
 
-        <TextEntry class="menu-input" Placeholder=@Placeholder Value:bind=@Value />
+        @if ( ShowInput )
+        {
+            <TextEntry class="menu-input" Placeholder=@Placeholder Value:bind=@Value />
+        }
 
         <span class="grow">
-            <Button Text=@ConfirmLabel Icon="check" class="menu-action primary" Disabled=@(string.IsNullOrWhiteSpace( Value )) @onclick=@OnConfirmClick />
+            <Button Text=@ConfirmLabel Icon="check" class="menu-action primary" Disabled=@(ShowInput && string.IsNullOrWhiteSpace( Value )) @onclick=@OnConfirmClick />
             <Button Text="Cancel" Icon="close" class="menu-action primary" @onclick=@(() => Delete()) />
         </span>
     </div>
@@ -42,6 +45,9 @@
     /// <summary>Pre-filled value in the text entry.</summary>
     public string InitialValue { get; set; } = "";
 
+    /// <summary>When false, hides the text entry — acts as a simple confirm/deny dialog.</summary>
+    public bool ShowInput { get; set; } = true;
+
     /// <summary>Called with the trimmed string when the user confirms.</summary>
     public Action<string> OnConfirm { get; set; }
 
@@ -55,8 +61,8 @@
 
     void OnConfirmClick()
     {
-        if ( string.IsNullOrWhiteSpace( Value ) ) return;
-        OnConfirm?.Invoke( Value.Trim() );
+        if ( ShowInput && string.IsNullOrWhiteSpace( Value ) ) return;
+        OnConfirm?.Invoke( Value?.Trim() ?? "" );
         Delete();
     }
 
