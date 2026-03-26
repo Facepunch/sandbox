@@ -40,8 +40,9 @@ public interface ISpawner
 	void DrawPreview( Transform transform, Material overrideMaterial );
 
 	/// <summary>
-	/// Actually spawn the thing at the given transform. Called on the host.
-	/// Returns the root GameObject(s) that were spawned so they can be added to undo.
+	/// Builds the object(s) at the given transform locally, without networking them.
+	/// Callers must validate limits via <see cref="GameLimitsSystem.TrackSpawned"/> and
+	/// then call <c>NetworkSpawn</c> on each root if accepted.
 	/// </summary>
 	Task<List<GameObject>> Spawn( Transform transform, Player player );
 }

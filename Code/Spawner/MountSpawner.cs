@@ -95,7 +95,6 @@ public class MountSpawner : ISpawner
 		meta.BoundsCenter = effectiveBounds.Center;
 
 		Ownable.Set( go, player.Network.Owner );
-		go.NetworkSpawn( true, null );
 
 		return Task.FromResult( new List<GameObject> { go } );
 	}

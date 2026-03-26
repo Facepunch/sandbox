@@ -119,7 +119,6 @@ public class DuplicatorSpawner : ISpawner
 				go.Deserialize( obj, new GameObject.DeserializeOptions { TransformOverride = world } );
 
 				Ownable.Set( go, player.Network.Owner );
-				go.NetworkSpawn( true, null );
 
 				results.Add( go );
 			}

@@ -220,13 +220,23 @@ public partial class Duplicator : ToolMode
 		if ( objects is not { Count: > 0 } ) return;
 
 		if ( !GameLimitsSystem.Current.TrackSpawned( Player.Network.Owner, objects ) )
-			return;
+			return; // We're over the limit, so don't spawn anything
+
+		using ( Scene.BatchGroup() )
+		{
+			foreach ( var go in objects )
+			{
+				go.NetworkSpawn( true, null );
+			}
+		}
 
 		var undo = player.Undo.Create();
 		undo.Name = "Duplication";
 
 		foreach ( var go in objects )
+		{
 			undo.Add( go );
+		}
 	}
 
 	public static void FromStorage( Storage.Entry item )

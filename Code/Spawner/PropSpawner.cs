@@ -72,8 +72,6 @@ public class PropSpawner : ISpawner
 			go.AddComponent<Rigidbody>();
 		}
 
-		go.NetworkSpawn( true, null );
-
 		return Task.FromResult( new List<GameObject> { go } );
 	}
 }

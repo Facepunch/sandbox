@@ -277,12 +277,19 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		if ( objects is not { Count: > 0 } ) return;
 
 		if ( !GameLimitsSystem.Current.TrackSpawned( player.Network.Owner, objects ) )
-			return; // over limit — objects already destroyed by TrackSpawned
+			return;
+
+		using ( Game.ActiveScene.BatchGroup() )
+		{
+			foreach ( var go in objects )
+			{
+				go.NetworkSpawn( true, null );
+			}
+		}
 
 		var undo = player.Undo.Create();
 		undo.Name = $"Spawn {spawner.DisplayName}";
-		foreach ( var go in objects )
-			undo.Add( go );
+		undo.Add( objects );
 	}
 
 	/// <summary>

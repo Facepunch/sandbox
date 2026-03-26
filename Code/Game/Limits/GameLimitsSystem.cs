@@ -169,10 +169,12 @@ public sealed class GameLimitsSystem : GameObjectSystem<GameLimitsSystem>
 	}
 
 	/// <summary>
-	/// Walks the spawned object trees, infers the limit category for each trackable
-	/// object, checks all categories against current limits, and either registers
-	/// everything or destroys the roots and notifies the owner.
-	/// Returns <c>true</c> if the spawn was accepted.
+	/// Walks the locally-built (unnetworked) object trees, infers the limit category for each
+	/// trackable object, and checks all categories against current limits.
+	/// On success: registers tracking and returns <c>true</c>. The caller must then call
+	/// <c>NetworkSpawn</c> on each root.
+	/// On failure: destroys roots locally (no network traffic) and notifies the owner,
+	/// then returns <c>false</c>.
 	/// </summary>
 	public bool TrackSpawned( Connection owner, List<GameObject> roots )
 	{
@@ -201,6 +203,7 @@ public sealed class GameLimitsSystem : GameObjectSystem<GameLimitsSystem>
 
 			foreach ( var root in roots )
 				if ( root.IsValid() ) root.Destroy();
+			roots.Clear();
 
 			return false;
 		}

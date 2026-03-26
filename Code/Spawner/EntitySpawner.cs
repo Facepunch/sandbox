@@ -70,7 +70,6 @@ public class EntitySpawner : ISpawner
 		go.Tags.Add( "removable" );
 
 		Ownable.Set( go, player.Network.Owner );
-		go.NetworkSpawn( true, null );
 
 		return Task.FromResult( new List<GameObject> { go } );
 	}
