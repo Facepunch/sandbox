@@ -44,6 +44,8 @@ public abstract partial class ToolMode
 
 		if ( Input.Released( "use" ) )
 			_lockedSnapTarget = null;
+
+		Input.Clear( "use" );
 	}
 
 	public virtual void OnControl()
