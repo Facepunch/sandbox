@@ -48,12 +48,20 @@ public abstract partial class ToolMode
 		Input.Clear( "use" );
 	}
 
+	/// <summary>
+	/// Override to control which objects show the snap grid. Returns false for world and player geometry by default.
+	/// </summary>
+	protected virtual bool ShouldDisplaySnapGrid( GameObject go )
+	{
+		return !go.Tags.Has( "world" ) && !go.Tags.Has( "player" );
+	}
+
 	public virtual void OnControl()
 	{
 		if ( !UseSnapGrid ) return;
 
 		var preview = TraceSelect();
-		if ( preview.IsValid() )
+		if ( preview.IsValid() && ShouldDisplaySnapGrid( preview.GameObject ) )
 		{
 			SnapGrid ??= new SnapGrid();
 			SnapGrid.Update( Scene.SceneWorld, preview.GameObject, preview.WorldPosition(), preview.WorldTransform().Rotation.Forward );
