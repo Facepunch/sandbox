@@ -30,10 +30,17 @@ public sealed class Ownable : Component
 	/// </summary>
 	public string LimitCategory { get; private set; }
 
-	public static Ownable Set( GameObject go, Connection owner )
+	/// <summary>
+	/// Category hint set by the spawner before tracking begins.
+	/// Used by <see cref="GameLimitsSystem"/> to identify the category.
+	/// </summary>
+	public string HintCategory { get; set; }
+
+	public static Ownable Set( GameObject go, Connection owner, string hintCategory = null )
 	{
 		var ownable = go.GetOrAddComponent<Ownable>();
 		ownable.Owner = owner;
+		ownable.HintCategory = hintCategory;
 		return ownable;
 	}
 

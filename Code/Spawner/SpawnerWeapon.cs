@@ -284,10 +284,6 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null ) return;
 
-		// Fast pre-check for entities; dupes and props are validated post-spawn.
-		if ( Spawner is EntitySpawner && GameLimitsSystem.Current.IsOverLimit( player.Network.Owner, LimitCategory.Entity ) )
-			return;
-
 		var objects = await Spawner.Spawn( transform, player );
 		if ( objects is not { Count: > 0 } ) return;
 

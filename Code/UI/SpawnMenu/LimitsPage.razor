@@ -11,30 +11,58 @@
     @foreach ( var info in GetLimitConVars() )
     {
         var isHost = Connection.Local.IsHost;
-        <div class="control-row">
-            <label class="left">@info.Label</label>
-            @if ( info.IsBool )
-            {
+        if ( info.IsBool )
+        {
+            <div class="control-row">
+                <label class="left">@info.Label</label>
                 <Checkbox Value=@((bool)info.Prop.GetValue( null )) ValueChanged=@((bool v) => ConsoleSystem.Run($"{info.Name} {(v ? 1 : 0)}")) disabled=@(!isHost) />
-            }
-            else
+            </div>
+        }
+        else
+        {
+            var limit = GameLimitsSystem.GetLimit( info.Category );
+            var current = GameLimitsSystem.GetLocalCount( info.Category );
+            var pct = limit > 0 ? (float)current / limit : 0f;
+            var fillClass = pct >= 1f ? "at-limit" : pct >= 0.75f ? "near-limit" : "ok";
+            var widthPct = (int)(MathF.Min( pct, 1f ) * 100f);
+
+            <div class="control-row">
+                <label class="left">@info.Label</label>
+                <div class="limit-bar-track">
+                    <div class="limit-bar-fill @fillClass" style="width: @(widthPct)%;"></div>
+                </div>
+                <span class="limit-count">@current / @limit</span>
+            </div>
+
+            if ( isHost )
             {
                 var range = info.Prop.GetCustomAttribute<RangeAttribute>();
                 float min = range?.Min ?? 0f;
-                float max = range?.Max?? 1000f;
+                float max = range?.Max ?? 1000f;
                 float step = info.Prop.GetCustomAttribute<StepAttribute>()?.Step ?? 1f;
-                <SliderControl ShowRange=@(true) Value=@(Convert.ToSingle(info.Prop.GetValue(null)))
-                               Min=@min Max=@max Step=@step
-                               OnValueChanged=@((float v) => ConsoleSystem.Run( $"{info.Name} {(int)v}" ))
-                               disabled=@(!isHost) />
+
+                <div class="control-row limit-slider-row">
+                    <SliderControl ShowRange=@(true) Value=@(Convert.ToSingle(info.Prop.GetValue(null)))
+                                   Min=@min Max=@max Step=@step
+                                   OnValueChanged=@((float v) => ConsoleSystem.Run( $"{info.Name} {(int)v}" )) />
+                </div>
             }
-        </div>
+        }
     }
 </root>
 
 @code
 {
-    record ConVarInfo( string Name, string Label, bool IsBool, PropertyDescription Prop );
+    record ConVarInfo( string Name, string Label, bool IsBool, PropertyDescription Prop, string Category );
+
+    protected override int BuildHash() => HashCode.Combine(
+        GameLimitsSystem.GetLocalCount( LimitCategory.Prop ),
+        GameLimitsSystem.GetLocalCount( LimitCategory.Entity ),
+        GameLimitsSystem.GetLocalCount( LimitCategory.Thruster ),
+        GameLimitsSystem.GetLocalCount( LimitCategory.Balloon ),
+        GameLimitsSystem.GetLocalCount( LimitCategory.Wheel ),
+        GameLimitsSystem.GetLocalCount( LimitCategory.Constraint )
+    );
 
     IEnumerable<ConVarInfo> GetLimitConVars()
     {
@@ -46,23 +74,11 @@
             var convar = prop.GetCustomAttribute<ConVarAttribute>();
             if ( convar is null ) continue;
 
-            var label = prop.Title ?? BuildLabel( prop.Name );
+            var label = prop.Title ?? prop.Name;
             var isBool = prop.PropertyType == typeof(bool);
+            var category = GameLimitsSystem.GetCategoryForConVar( convar.Name );
 
-            yield return new ConVarInfo( convar.Name, label, isBool, prop );
+            yield return new ConVarInfo( convar.Name, label, isBool, prop, category );
         }
-    }
-
-    static string BuildLabel( string propertyName )
-    {
-        // "MaxProps" → "Max Props", "Enabled" → "Enabled"
-        var sb = new System.Text.StringBuilder();
-        foreach ( var c in propertyName )
-        {
-            if ( char.IsUpper( c ) && sb.Length > 0 )
-                sb.Append( ' ' );
-            sb.Append( c );
-        }
-        return sb.ToString();
     }
 }

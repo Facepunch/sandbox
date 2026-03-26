@@ -69,7 +69,7 @@ public class EntitySpawner : ISpawner
 		var go = GameObject.Clone( Entity.Prefab, new CloneConfig { Transform = transform, StartEnabled = false } );
 		go.Tags.Add( "removable" );
 
-		Ownable.Set( go, player.Network.Owner );
+		Ownable.Set( go, player.Network.Owner, LimitCategory.Entity );
 
 		return Task.FromResult( new List<GameObject> { go } );
 	}

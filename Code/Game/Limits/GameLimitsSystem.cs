@@ -5,93 +5,22 @@ using Sandbox.UI;
 /// Limits are configured via ConVars and tracked via the <see cref="Ownable"/> component
 /// attached to every spawned object so counts are automatically decremented when objects are destroyed.
 /// </summary>
-public sealed class GameLimitsSystem : GameObjectSystem<GameLimitsSystem>
+public sealed partial class GameLimitsSystem : GameObjectSystem<GameLimitsSystem>
 {
-	/// <summary>
-	/// When false, all limit checks pass without restriction.
-	/// </summary>
-	[Title( "Limits Enabled" ), Group( "Limits" )]
-	[ConVar( "sb.limits.enabled", ConVarFlags.Replicated | ConVarFlags.GameSetting )]
-	public static bool Enabled { get; set; } = true;
-
-	/// <summary>
-	/// Maximum props (including duplications) a single player may have active.
-	/// </summary>
-	[Title( "Max Props" ), Group( "Limits" )]
-	[ConVar( "sb.limits.props", ConVarFlags.Replicated | ConVarFlags.GameSetting )]
-	[Range( 0, 256 ), Step( 1 )]
-	public static int MaxProps { get; set; } = 128;
-
-	/// <summary>
-	/// Maximum scripted entities a single player may have active.
-	/// </summary>
-	[Title( "Max Entities" ), Group( "Limits" )]
-	[ConVar( "sb.limits.entities", ConVarFlags.Replicated | ConVarFlags.GameSetting )]
-	[Range( 0, 128 ), Step( 1 )]
-	public static int MaxEntities { get; set; } = 32;
-
-	/// <summary>
-	/// Maximum thrusters a single player may have active.
-	/// </summary>
-	[Title( "Max Thrusters" ), Group( "Limits" )]
-	[ConVar( "sb.limits.thrusters", ConVarFlags.Replicated | ConVarFlags.GameSetting )]
-	[Range( 0, 128 ), Step( 1 )]
-	public static int MaxThrusters { get; set; } = 32;
-
-	/// <summary>
-	/// Maximum balloons a single player may have active.
-	/// </summary>
-	[Title( "Max Balloons" ), Group( "Limits" )]
-	[ConVar( "sb.limits.balloons", ConVarFlags.Replicated | ConVarFlags.GameSetting )]
-	[Range( 0, 128 ), Step( 1 )]
-	public static int MaxBalloons { get; set; } = 8;
-
-	/// <summary>
-	/// Maximum wheels a single player may have active.
-	/// </summary>
-	[Title( "Max Wheels" ), Group( "Limits" )]
-	[ConVar( "sb.limits.wheels", ConVarFlags.Replicated | ConVarFlags.GameSetting )]
-	[Range( 0, 48 ), Step( 1 )]
-	public static int MaxWheels { get; set; } = 16;
-
-	/// <summary>
-	/// Maximum constraints (ropes, welds, etc.) a single player may have active.
-	/// </summary>
-	[Title( "Max Constraints" ), Group( "Limits" )]
-	[ConVar( "sb.limits.constraints", ConVarFlags.Replicated | ConVarFlags.GameSetting )]
-	[Range( 0, 2048 ), Step( 4 )]
-	public static int MaxConstraints { get; set; } = 1024;
-
-	/// <summary>
-	/// Maps SteamId to per-category counts.
-	/// </summary>
-	class Count
-	{
-		private readonly Dictionary<string, int> _data = new();
-
-		public int Get( string category ) => _data.GetValueOrDefault( category );
-		public void Increment( string category ) => _data[category] = Get( category ) + 1;
-		public void Decrement( string category ) => _data[category] = Math.Max( 0, Get( category ) - 1 );
-		public IEnumerator<KeyValuePair<string, int>> GetEnumerator() => _data.GetEnumerator();
-	}
-
 	private readonly Dictionary<ulong, Count> _counts = new();
 
-	public GameLimitsSystem( Scene scene ) : base( scene ) { }
+	/// <summary>
+	/// The local player's per-category counts, populated by the host via RPC.
+	/// </summary>
+	private static readonly Dictionary<string, int> _localCounts = new();
 
 	/// <summary>
-	/// Returns the configured limit for the given category, or <c>-1</c> if unlimited.
+	/// Returns the local player's current active count for the given category.
 	/// </summary>
-	public static int GetLimit( string category ) => category switch
-	{
-		LimitCategory.Prop => MaxProps,
-		LimitCategory.Entity => MaxEntities,
-		LimitCategory.Thruster => MaxThrusters,
-		LimitCategory.Balloon => MaxBalloons,
-		LimitCategory.Wheel => MaxWheels,
-		LimitCategory.Constraint => MaxConstraints,
-		_ => -1,
-	};
+	public static int GetLocalCount( string category ) =>
+		_localCounts.GetValueOrDefault( category, 0 );
+
+	public GameLimitsSystem( Scene scene ) : base( scene ) { }
 
 	/// <summary>
 	/// Returns the current active count for the given player and category.
@@ -155,7 +84,9 @@ public sealed class GameLimitsSystem : GameObjectSystem<GameLimitsSystem>
 		var steamId = owner.SteamId;
 		var ownable = go.GetOrAddComponent<Ownable>();
 		ownable.TrackLimit( steamId, category );
-		GetOrCreateCounts( steamId ).Increment( category );
+		var counts = GetOrCreateCounts( steamId );
+		counts.Increment( category );
+		PushCountToPlayer( owner, category, counts.Get( category ) );
 	}
 
 	/// <summary>
@@ -164,8 +95,12 @@ public sealed class GameLimitsSystem : GameObjectSystem<GameLimitsSystem>
 	/// </summary>
 	public void Unregister( ulong steamId, string category )
 	{
-		if ( _counts.TryGetValue( steamId, out var counts ) )
-			counts.Decrement( category );
+		if ( !_counts.TryGetValue( steamId, out var counts ) ) return;
+
+		counts.Decrement( category );
+		var conn = Connection.All.FirstOrDefault( c => c.SteamId == steamId );
+		if ( conn is not null )
+			PushCountToPlayer( conn, category, counts.Get( category ) );
 	}
 
 	/// <summary>
@@ -217,6 +152,10 @@ public sealed class GameLimitsSystem : GameObjectSystem<GameLimitsSystem>
 			counts.Increment( cat );
 		}
 
+		// Push updated counts to owner for each modified category
+		foreach ( var (cat, _) in delta )
+			PushCountToPlayer( owner, cat, counts.Get( cat ) );
+
 		return true;
 	}
 
@@ -225,6 +164,9 @@ public sealed class GameLimitsSystem : GameObjectSystem<GameLimitsSystem>
 	/// </summary>
 	private static string InferCategory( GameObject go )
 	{
+		var hint = go.GetComponent<Ownable>( true )?.HintCategory;
+		if ( hint is not null ) return hint;
+
 		if ( go.GetComponent<ConstraintCleanup>() is not null ) return LimitCategory.Constraint;
 		if ( go.GetComponent<ThrusterEntity>() is not null ) return LimitCategory.Thruster;
 		if ( go.GetComponent<WheelEntity>() is not null ) return LimitCategory.Wheel;
@@ -251,6 +193,21 @@ public sealed class GameLimitsSystem : GameObjectSystem<GameLimitsSystem>
 		}
 
 		return counts;
+	}
+
+	private static void PushCountToPlayer( Connection owner, string category, int count )
+	{
+		using ( Rpc.FilterInclude( owner ) )
+			ReceiveCountUpdate( category, count );
+	}
+
+	/// <summary>
+	/// Received by a client (or the host acting as client) to update their local count store.
+	/// </summary>
+	[Rpc.Broadcast( NetFlags.HostOnly )]
+	private static void ReceiveCountUpdate( string category, int count )
+	{
+		_localCounts[category] = count;
 	}
 
 	[Rpc.Broadcast( NetFlags.HostOnly )]
