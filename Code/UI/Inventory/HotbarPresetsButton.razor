@@ -32,8 +32,12 @@
             } );
         }
 
-        menu.AddSpacer();
-        menu.AddOption( "add", "Save As New Hotbar", OnSaveNew );
+        if ( presets.Any() )
+        {
+            menu.AddSpacer();
+        }
+
+        menu.AddOption( "add", "New Preset", OnSaveNew );
         menu.StateHasChanged();
     }
 
@@ -60,7 +64,7 @@
     {
         var popup = new StringQueryPopup
         {
-            Title = "Save Hotbar",
+            Title = "New Inventoy Preset",
             Placeholder = "Enter a name...",
             ConfirmLabel = "Save",
             OnConfirm = OnSaveConfirmed,
