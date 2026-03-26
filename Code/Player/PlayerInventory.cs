@@ -535,6 +535,8 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 	private async Task SwitchToPresetAsync( string loadoutJson )
 	{
+		var previousSlot = ActiveWeapon?.InventorySlot ?? 0;
+
 		foreach ( var weapon in Weapons.ToList() )
 			weapon.DestroyGameObject();
 
@@ -543,6 +545,11 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 		await EnsureMountedAsync( loadoutJson );
 		GiveLoadoutWeapons( loadoutJson );
+
+		// Re-equip whichever slot the player was holding
+		var toEquip = GetSlot( previousSlot ) ?? GetBestWeapon();
+		if ( toEquip.IsValid() )
+			SwitchWeapon( toEquip );
 
 		SaveLoadout();
 	}
