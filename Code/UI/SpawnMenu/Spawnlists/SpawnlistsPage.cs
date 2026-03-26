@@ -12,7 +12,13 @@ public class SpawnlistsPage : BaseSpawnMenu
 
 	public SpawnlistsPage()
 	{
-		Collection.Changed += OnParametersSet;
+		Collection.Changed += () =>
+		{
+			if ( Collection.Entries.Count == 0 )
+				_firstViewed = false;
+
+			OnParametersSet();
+		};
 		Collection.Installed += name =>
 		{
 			OnParametersSet();
@@ -29,21 +35,23 @@ public class SpawnlistsPage : BaseSpawnMenu
 
 	protected override void Rebuild()
 	{
-		AddHeader( "You" );
-
-		foreach ( var entry in Collection.Entries )
+		if ( Collection.Entries.Count > 0 || Collection.PendingCount > 0 )
 		{
-			var captured = entry;
-			AddOption( entry.Icon, entry.Name,
-				() => new SpawnlistView { Entry = captured.StorageEntry },
-				entry.IsEditable
-					? () => OnEditableRightClick( captured )
-					: () => OnInstalledRightClick( captured ) );
+			AddHeader( "Local" );
+
+			foreach ( var entry in Collection.Entries )
+			{
+				var captured = entry;
+				AddOption( entry.Icon, entry.Name,
+					() => new SpawnlistView { Entry = captured.StorageEntry },
+					entry.IsEditable
+						? () => OnEditableRightClick( captured )
+						: () => OnInstalledRightClick( captured ) );
+			}
+
+			AddSkeletons( Collection.PendingCount );
 		}
 
-		AddSkeletons( Collection.PendingCount );
-
-		AddGrow();
 		AddHeader( "Workshop" );
 		AddOption( "🎖️", "Popular", () => new SpawnlistWorkshop { SortOrder = Storage.SortOrder.RankedByVote } );
 		AddOption( "🐣", "Newest", () => new SpawnlistWorkshop { SortOrder = Storage.SortOrder.RankedByPublicationDate } );

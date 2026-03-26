@@ -28,7 +28,7 @@ public partial class BaseSpawnMenu : Panel
 		}
 	}
 
-	bool _firstViewed;
+	protected bool _firstViewed;
 
 	public override void Tick()
 	{

@@ -11,7 +11,7 @@ public class MountsPage : BaseSpawnMenu
 
 		if ( available.Any() )
 		{
-			AddHeader( "Installed" );
+			AddHeader( "Local" );
 
 			foreach ( var entry in available.OrderBy( x => x.Title ) )
 			{
