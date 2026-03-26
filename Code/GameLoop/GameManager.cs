@@ -230,11 +230,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		if ( spawner is not null && await spawner.Loading )
 		{
-			// Pre-check entities only (exact count, fast UX). Everything else is validated
-			// post-spawn by TrackSpawned which can walk the actual spawned tree.
-			if ( type is "entity" or "sent" && GameLimitsSystem.Current.IsOverLimit( player.Network.Owner, LimitCategory.Entity ) )
-				return;
-
 			await SpawnAndUndo( spawner, spawnTransform, player );
 			return;
 		}
@@ -270,7 +265,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		return DuplicatorSpawner.FromJson( dupeJson, entry.GetMeta<string>( "name" ) );
 	}
 
-	private static async Task SpawnAndUndo( ISpawner spawner, Transform transform, Player player )
+	internal static async Task SpawnAndUndo( ISpawner spawner, Transform transform, Player player )
 	{
 		var objects = await spawner.Spawn( transform, player );
 

@@ -284,23 +284,7 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null ) return;
 
-		var objects = await Spawner.Spawn( transform, player );
-		if ( objects is not { Count: > 0 } ) return;
-
-		if ( !GameLimitsSystem.Current.TrackSpawned( player.Network.Owner, objects ) )
-			return;
-
-		using ( Game.ActiveScene.BatchGroup() )
-		{
-			foreach ( var go in objects )
-			{
-				go.NetworkSpawn( true, null );
-			}
-		}
-
-		var undo = player.Undo.Create();
-		undo.Name = $"Spawn {Spawner.DisplayName}";
-		undo.Add( objects );
+		await GameManager.SpawnAndUndo( Spawner, transform, player );
 	}
 
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )
