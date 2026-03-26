@@ -27,6 +27,14 @@ public class Balloon : ToolMode
 	public override string PrimaryAction => "#tool.hint.balloon.place_rope";
 	public override string SecondaryAction => "#tool.hint.balloon.place";
 
+	Color _previewTint = Color.Random;
+
+	protected override void OnEnabled()
+	{
+		base.OnEnabled();
+		_previewTint = Color.Random;
+	}
+
 	public override void OnControl()
 	{
 		base.OnControl();
@@ -42,28 +50,33 @@ public class Balloon : ToolMode
 
 		if ( Input.Pressed( "attack1" ) )
 		{
-			Spawn( select, thrusterDef.Prefab, placementTx, true );
+			Spawn( select, thrusterDef.Prefab, placementTx, true, _previewTint );
 			ShootEffects( select );
+			_previewTint = Color.Random;
 		}
 		else if ( Input.Pressed( "attack2" ) )
 		{
-			Spawn( select, thrusterDef.Prefab, placementTx, false );
+			Spawn( select, thrusterDef.Prefab, placementTx, false, _previewTint );
 			ShootEffects( select );
+			_previewTint = Color.Random;
 		}
 
-		DebugOverlay.GameObject( thrusterDef.Prefab.GetScene(), transform: placementTx, castShadows: true, color: Tint.WithAlpha( 0.9f ) );
+		var previewTint = Tint == Color.White ? _previewTint : Tint;
+		DebugOverlay.GameObject( thrusterDef.Prefab.GetScene(), transform: placementTx, castShadows: true, color: previewTint.WithAlpha( 0.9f ) );
 	}
 
 	[Rpc.Host]
-	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx, bool withRope )
+	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx, bool withRope, Color spawnTint )
 	{
 		var go = thrusterPrefab.GetScene().Clone( global::Transform.Zero, startEnabled: false );
 		go.Tags.Add( "removable" );
 		go.WorldTransform = Rigid && withRope ? tx.WithPosition( tx.Position + Vector3.Up * Length ) : tx;
 
+		var tint = Tint == Color.White ? spawnTint : Tint;
+
 		foreach ( var c in go.GetComponentsInChildren<Prop>( true ) )
 		{
-			c.Tint = Tint;
+			c.Tint = tint;
 		}
 
 		if ( withRope )
