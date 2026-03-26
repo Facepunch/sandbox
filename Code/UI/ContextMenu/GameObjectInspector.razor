@@ -68,18 +68,13 @@
 
     public bool TrySetTarget(List<GameObject> selection)
     {
-        var newTarget = selection.Any() ? selection : null;
+        var ids = selection.Select(x => x.Id);
+        if (ids.SequenceEqual(Target?.Select(x => x.Id) ?? []))
+            return true;
 
-        bool changed = newTarget?.Count != Target?.Count
-        || (newTarget != null && !newTarget.SequenceEqual(Target));
-
-        if (changed)
-        {
-            Target = newTarget;
-            RebuildFromTarget();
-            StateHasChanged();
-        }
-
+        Target = selection.Any() ? selection.ToList() : null;
+        RebuildFromTarget();
+        StateHasChanged();
         return true;
     }
 
@@ -91,7 +86,7 @@
         var hc = new HashCode();
         foreach ( var go in Target ?? [] )
         {
-            hc.Add( go );
+            hc.Add( go.Id );
             hc.Add( go.GetComponent<Rigidbody>()?.Mass ?? 0f );
             hc.Add( go.GetComponent<Prop>()?.Health ?? -1f );
         }
