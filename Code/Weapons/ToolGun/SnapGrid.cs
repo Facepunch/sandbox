@@ -82,7 +82,7 @@ public sealed class SnapGrid
 	/// Returns the nearest grid corner index (cx, cy) and its world-space position,
 	/// given the face plane in world space and the aim world position.
 	/// </summary>
-	public static (int cx, int cy, Vector3 snapPos) ComputeSnap(
+	public static (int cx, int cy, Vector3 snapPos, float snapU, float snapV, bool snapAxisX, bool snapAxisY) ComputeSnap(
 		Vector3 faceOriginWs,
 		Vector3 faceRightWs,
 		Vector3 faceUpWs,
@@ -93,15 +93,40 @@ public sealed class SnapGrid
 		var u = Vector3.Dot( offset, faceRightWs );
 		var v = Vector3.Dot( offset, faceUpWs );
 
-		// Snap to grid corners at integer multiples of cellSize; origin (bounds centre) is always snappable.
 		var cx = (int)MathF.Round( u / cellSize );
 		var cy = (int)MathF.Round( v / cellSize );
 
-		var snapPos = faceOriginWs
-			+ faceRightWs * (cx * cellSize)
-			+ faceUpWs * (cy * cellSize);
+		var distX = MathF.Abs( u - cx * cellSize );
+		var distY = MathF.Abs( v - cy * cellSize );
 
-		return (cx, cy, snapPos);
+		float snapU, snapV;
+		bool snapAxisX, snapAxisY;
+
+		// Near a corner: snap to intersection and show both lines.
+		if ( distX < cellSize * 0.35f && distY < cellSize * 0.35f )
+		{
+			snapU = cx * cellSize;
+			snapV = cy * cellSize;
+			snapAxisX = true;
+			snapAxisY = true;
+		}
+		else if ( distX <= distY )
+		{
+			snapU = cx * cellSize;
+			snapV = v;
+			snapAxisX = true;
+			snapAxisY = false;
+		}
+		else
+		{
+			snapU = u;
+			snapV = cy * cellSize;
+			snapAxisX = false;
+			snapAxisY = true;
+		}
+
+		var snapPos = faceOriginWs + faceRightWs * snapU + faceUpWs * snapV;
+		return (cx, cy, snapPos, snapU, snapV, snapAxisX, snapAxisY);
 	}
 
 	/// <summary>
@@ -185,8 +210,8 @@ public sealed class SnapGrid
 		while ( minHalf < cellSize && cellSize > 0.1f )
 			cellSize *= 0.5f;
 
-		// Compute the nearest snap corner
-		var (cx, cy, snapPos) = ComputeSnap( _cachedOrigin, _cachedRight, _cachedUp, cellSize, aimWorldPos );
+		// Compute the nearest snap line
+		var (cx, cy, snapPos, snapU, snapV, snapAxisX, snapAxisY) = ComputeSnap( _cachedOrigin, _cachedRight, _cachedUp, cellSize, aimWorldPos );
 		LastSnapWorldPos = snapPos;
 
 		_sceneObj.Write( _cachedOrigin, _cachedRight, _cachedUp, halfExtents, aimWorldPos, MaskRadius, cellSize );
@@ -198,8 +223,10 @@ public sealed class SnapGrid
 		_sceneObj.Attributes.Set( "MaskRadius", NoFade ? float.MaxValue : MaskRadius );
 		_sceneObj.Attributes.Set( "HalfExtents", halfExtents );
 		_sceneObj.Attributes.Set( "CellSize", cellSize );
-		_sceneObj.Attributes.Set( "SnapCornerX", (float)cx );
-		_sceneObj.Attributes.Set( "SnapCornerY", (float)cy );
+		_sceneObj.Attributes.Set( "SnapCornerX", snapU / cellSize );
+		_sceneObj.Attributes.Set( "SnapCornerY", snapV / cellSize );
+		_sceneObj.Attributes.Set( "SnapAxisX", snapAxisX ? 1.0f : 0.0f );
+		_sceneObj.Attributes.Set( "SnapAxisY", snapAxisY ? 1.0f : 0.0f );
 	}
 
 	/// <summary>

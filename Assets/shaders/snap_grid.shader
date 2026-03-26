@@ -75,9 +75,12 @@ PS
 
 	float SnapCornerX < Attribute( "SnapCornerX" ); Default( 0 ); >;
 	float SnapCornerY < Attribute( "SnapCornerY" ); Default( 0 ); >;
+	float SnapAxisX < Attribute( "SnapAxisX" ); Default( 1.0 ); >;
+	float SnapAxisY < Attribute( "SnapAxisY" ); Default( 0.0 ); >;
 
 	float4 GridColor < Attribute( "GridColor" ); Default4( 1.0, 1.0, 1.0, 0.5 ); >;
 	float4 CornerColor < Attribute( "CornerColor" ); Default4( 0.2, 0.6, 1.0, 1.0 ); >;
+	float4 CenterLineColor < Attribute( "CenterLineColor" ); Default4( 1.0, 1.0, 1.0, 0.85 ); >;
 
 	float2 HalfExtents < Attribute( "HalfExtents" ); Default2( 48.0, 48.0 ); >;
 
@@ -111,20 +114,48 @@ PS
 
 		float2 facePosDdx = ddx( facePos );
 		float2 facePosDdy = ddy( facePos );
-		float2 px = max( abs( facePosDdx ), abs( facePosDdy ) ) * 1.5;
-		float barW = px.x;
-		float barH = px.y;
+		float2 px = max( abs( facePosDdx ), abs( facePosDdy ) );
+
+		// Thicken the cross bar that lies along a center axis.
+		float onCenterX = 1.0 - saturate( abs( SnapCornerX ) );
+		float onCenterY = 1.0 - saturate( abs( SnapCornerY ) );
+		float barW = lerp( px.x * 1.5, px.x * 2.5, onCenterX );
+		float barH = lerp( px.y * 1.5, px.y * 2.5, onCenterY );
 
 		float barX = saturate( ( barH - abs( localUv.y ) ) / max( barH, 0.0001 ) );
 		float barY = saturate( ( barW - abs( localUv.x ) ) / max( barW, 0.0001 ) );
-		float crossMask = saturate( barX + barY );
 
-		float cornerDist = length( localUv );
-		float crossFade = 1.0 - saturate( cornerDist / ( CellSize * 1.0 ) );
-		float cross = crossMask * crossFade;
+		// Fade each line segment away from the cursor along the line direction.
+		float2 aimOffset2 = float2( dot( AimPoint - GridOrigin, GridRight ), dot( AimPoint - GridOrigin, GridUp ) );
+		float fadeRadius = max( MaskRadius * 0.075, 0.001 );
+		float fadeVert  = 1.0 - saturate( abs( facePos.y - aimOffset2.y ) / fadeRadius );
+		float fadeHoriz = 1.0 - saturate( abs( facePos.x - aimOffset2.x ) / fadeRadius );
+
+		float cross = saturate( barY * SnapAxisX * fadeVert + barX * SnapAxisY * fadeHoriz );
 
 		float4 col = GridColor * grid;
-		col = lerp( col, CornerColor, cross );
+
+		// --- Center axis lines & bounds edge lines (thicker) ---
+		// Re-use facePosDdx/ddy (already computed above in world units).
+		float2 thickLw = max( abs( facePosDdx ), abs( facePosDdy ) ) * 2.5;
+
+		// Center: lines at facePos == (0, 0).
+		float centerX = saturate( ( thickLw.x - abs( facePos.x ) ) / max( thickLw.x, 0.0001 ) );
+		float centerY = saturate( ( thickLw.y - abs( facePos.y ) ) / max( thickLw.y, 0.0001 ) );
+		float centerLines = max( centerX, centerY ) * edgeFade * gridFade;
+
+		// Bounds edges: lines at facePos == ±HalfExtents.
+		float2 boundsEdgeDist = abs( HalfExtents - abs( facePos ) );
+		float boundsX = saturate( ( thickLw.x - boundsEdgeDist.x ) / max( thickLw.x, 0.0001 ) );
+		float boundsY = saturate( ( thickLw.y - boundsEdgeDist.y ) / max( thickLw.y, 0.0001 ) );
+		float boundsLines = max( boundsX, boundsY ) * gridFade;
+
+		float specialLines = saturate( centerLines + boundsLines );
+		col = lerp( col, CenterLineColor, specialLines * CenterLineColor.a );
+
+		// Blue corner cross draws on top.
+		col = lerp( col, CornerColor, saturate( cross * 2.0 ) );
+
 		col.a *= mask;
 
 		if ( col.a < 0.002 ) discard;
