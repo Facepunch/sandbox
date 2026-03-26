@@ -36,6 +36,10 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 	private PlayerData CreatePlayerInfo( Connection channel )
 	{
+		var existingPlayerInfo = PlayerData.For( channel );
+		if ( existingPlayerInfo.IsValid() )
+			return existingPlayerInfo;
+
 		var go = new GameObject( true, $"PlayerInfo - {channel.DisplayName}" );
 		var data = go.AddComponent<PlayerData>();
 		data.SteamId = (long)channel.SteamId;
