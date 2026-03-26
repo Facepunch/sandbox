@@ -62,13 +62,13 @@ PS
 		color.brg += g_tSelfIllumMask.SampleLevel( g_sPointClamp, i.vTextureCoords.xy - float2( sin(g_flTime * 300) * offs, sin(g_flTime * 60) * offs * 4), 1 ).rgb * 0.2;
 
     	// Simulate strobing using a sine wave over time and screen Y
-    	float strobe = sin((i.vTextureCoords.y - g_flTime * 30.0) * 2.0) * 0.5 + 0.5;
+    	float strobe = sin((i.vTextureCoords.y - g_flTime * 8.0) * 2.0) * 0.5 + 0.5;
 
-    	// Sharpen the strobe line to make it more flash-like
-    	strobe = smoothstep(0.25, 0.85, strobe);
+    	// Soften the strobe line
+    	strobe = smoothstep(0.1, 0.9, strobe);
 
-    	// Dim everything except the strobe line
-    	color.rgb += lerp(0.05, 0.1, strobe) * float3( 1, 0.8, 1 );
+    	// Subtle scanline brightness
+    	color.rgb += lerp(0.01, 0.04, strobe) * float3( 1, 0.8, 1 );
 		
 
 		// round pixel
