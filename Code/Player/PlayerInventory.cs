@@ -466,9 +466,84 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		Remove( weapon );
 	}
 
-	// Cookie key used to persist the player's loadout across sessions.
-	private const string LoadoutCookieKey = "player.loadout";
+
+	public const string LoadoutCookieKey = "player.loadout";
+	private const string PresetsCookieKey = "player.loadout.presets";
 	private bool _isRestoringLoadout;
+
+	public struct SavedPreset
+	{
+		public string Name { get; set; }
+		public string LoadoutJson { get; set; }
+	}
+
+	public static IReadOnlyList<SavedPreset> GetLoadoutPresets()
+	{
+		return LoadSavedPresets();
+	}
+
+	/// <summary>
+	/// Saves (or overwrites) a named preset entry with the given loadout.
+	/// </summary>
+	public static void SaveLoadoutPreset( string name, string loadoutJson )
+	{
+		var presets = LoadSavedPresets();
+		var idx = presets.FindIndex( p => p.Name == name );
+		var entry = new SavedPreset { Name = name, LoadoutJson = loadoutJson };
+		if ( idx >= 0 )
+			presets[idx] = entry;
+		else
+			presets.Add( entry );
+		Game.Cookies.SetString( PresetsCookieKey, Json.Serialize( presets ) );
+	}
+
+	/// <summary>
+	/// Removes a preset if it exists.
+	/// </summary>
+	public static void DeleteLoadoutPreset( string name )
+	{
+		var presets = LoadSavedPresets();
+		presets.RemoveAll( p => p.Name == name );
+		Game.Cookies.SetString( PresetsCookieKey, Json.Serialize( presets ) );
+	}
+
+	private static List<SavedPreset> LoadSavedPresets()
+	{
+		if ( !Game.Cookies.TryGetString( PresetsCookieKey, out var raw ) || string.IsNullOrEmpty( raw ) )
+			return new();
+		return Json.Deserialize<List<SavedPreset>>( raw ) ?? new();
+	}
+
+	/// <summary>
+	/// Clears the inventory and restores it from the given JSON.
+	/// </summary>
+	public void SwitchToPreset( string loadoutJson )
+	{
+		if ( !Networking.IsHost )
+		{
+			HostSwitchToPreset( loadoutJson );
+			return;
+		}
+		_ = SwitchToPresetAsync( loadoutJson );
+	}
+
+	[Rpc.Host]
+	private void HostSwitchToPreset( string loadoutJson )
+	{
+		_ = SwitchToPresetAsync( loadoutJson );
+	}
+
+	private async Task SwitchToPresetAsync( string loadoutJson )
+	{
+		foreach ( var weapon in Weapons.ToList() )
+			weapon.DestroyGameObject();
+
+		await EnsureMountedAsync( loadoutJson );
+		GiveLoadoutWeapons( loadoutJson );
+
+		SaveLoadout();
+	}
+
 
 	/// <summary>
 	/// One entry in a serialized loadout: the prefab resource path and the slot it occupies.

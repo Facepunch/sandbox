@@ -1,0 +1,142 @@
+@import "/UI/Theme.scss";
+
+HotbarPresetsButton
+{
+    position: relative;
+    right: 0px;
+    bottom: 0px;
+    opacity: 0;
+}
+
+HotbarPresetsButton .presets-toggle
+{
+    width: 28px;
+    height: 96px;
+    background-color: #0003;
+    border-radius: $hud-radius;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: rgba( white, 0.5 );
+    font-size: 20px;
+    pointer-events: all;
+    transition: background-color 0.1s, color 0.1s;
+
+    &:hover
+    {
+        background-color: #0006;
+        color: white;
+    }
+}
+
+.hotbar-presets-backdrop
+{
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1059;
+    pointer-events: all;
+}
+
+HotbarPresetsButton .presets-dropdown
+{
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 6px;
+    min-width: 220px;
+    background-color: $menu-panel-bg;
+    backdrop-filter: blur( 2px );
+    border-radius: 8px;
+    padding: 4px;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 1060;
+    pointer-events: all;
+}
+
+HotbarPresetsButton .preset-item
+{
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    pointer-events: all;
+    gap: 8px;
+
+    &:hover
+    {
+        background-color: #ffffff11;
+    }
+}
+
+HotbarPresetsButton .preset-label
+{
+    flex-grow: 1;
+    color: white;
+    font-family: $subtitle-font;
+    font-size: 14px;
+}
+
+HotbarPresetsButton .preset-delete
+{
+    width: 20px;
+    height: 20px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    color: rgba( white, 0.4 );
+    font-size: 14px;
+    cursor: pointer;
+    pointer-events: all;
+
+    &:hover
+    {
+        background-color: rgba( #f00, 0.3 );
+        color: white;
+    }
+}
+
+HotbarPresetsButton .presets-empty
+{
+    padding: 12px;
+    color: rgba( white, 0.4 );
+    font-size: 13px;
+    font-family: $subtitle-font;
+    justify-content: center;
+}
+
+HotbarPresetsButton .presets-separator
+{
+    height: 1px;
+    background-color: #ffffff22;
+    margin: 2px 4px;
+}
+
+HotbarPresetsButton .preset-save-new
+{
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: $color-accent;
+    font-family: $subtitle-font;
+    font-size: 14px;
+    font-weight: 600;
+    pointer-events: all;
+
+    i
+    {
+        font-size: 18px;
+    }
+
+    &:hover
+    {
+        background-color: rgba( $color-accent, 0.15 );
+    }
+}

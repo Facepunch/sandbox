@@ -1,0 +1,139 @@
+@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits Panel
+
+<root>
+
+    <div class="presets-toggle" @onclick=@OnToggleClick>
+        <i>expand_less</i>
+    </div>
+
+    @if ( _dropdownOpen )
+    {
+        <div class="presets-dropdown">
+
+            @{
+                var presets = PlayerInventory.GetLoadoutPresets();
+            }
+
+            @if ( presets.Count == 0 )
+            {
+                <div class="presets-empty">No saved hotbars</div>
+            }
+
+            @foreach ( var preset in presets )
+            {
+                var name = preset.Name;
+                var json = preset.LoadoutJson;
+                <div class="preset-item" @onclick=@(() => OnLoadPreset( json ))>
+                    <span class="preset-label">@name</span>
+                    <div class="preset-delete" onclick:stopPropagation=@true @onclick=@(() => OnDeletePreset( name ))>
+                        <i>close</i>
+                    </div>
+                </div>
+            }
+
+            <div class="presets-separator"></div>
+
+            <div class="preset-save-new" @onclick=@OnSaveNew>
+                <i>add</i>
+                <span>Save As New Hotbar</span>
+            </div>
+
+        </div>
+    }
+
+</root>
+
+@code
+{
+    public PlayerInventory Inventory { get; set; }
+
+    bool _dropdownOpen;
+
+    // This is an invisible panel that lets you click off of the dropdown to close it so it won't linger
+    Backdrop _backdrop;
+    class Backdrop : Panel
+    {
+        public Action Clicked;
+        protected override void OnClick( MousePanelEvent e ) => Clicked?.Invoke();
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        // Close the dropdown if the spawn menu is closed
+        if ( _dropdownOpen )
+        {
+            var host = Game.ActiveScene.Get<SpawnMenuHost>();
+            if ( !(host?.Panel?.HasClass( "open" ) ?? false) )
+            {
+                CloseDropdown();
+            }
+        }
+    }
+
+    void CloseDropdown()
+    {
+        _dropdownOpen = false;
+        _backdrop?.Delete();
+        _backdrop = null;
+        StateHasChanged();
+    }
+
+    void OnToggleClick()
+    {
+        if ( _dropdownOpen )
+        {
+            CloseDropdown();
+            return;
+        }
+
+        _dropdownOpen = true;
+
+        // Attach an invisible full-screen backdrop to root so any outside click closes the dropdown.
+        _backdrop = new Backdrop { Parent = FindRootPanel(), Clicked = CloseDropdown };
+        _backdrop.AddClass( "hotbar-presets-backdrop" );
+
+        StateHasChanged();
+    }
+
+    void OnLoadPreset( string json )
+    {
+        if ( !Inventory.IsValid() ) return;
+        Inventory.SwitchToPreset( json );
+        CloseDropdown();
+    }
+
+    void OnDeletePreset( string name )
+    {
+        PlayerInventory.DeleteLoadoutPreset( name );
+        StateHasChanged();
+    }
+
+    void OnSaveNew()
+    {
+        CloseDropdown();
+
+        var popup = new StringQueryPopup
+        {
+            Title = "Save Hotbar",
+            Placeholder = "Enter a name...",
+            ConfirmLabel = "Save",
+            OnConfirm = OnSaveConfirmed,
+            Parent = FindRootPanel()
+        };
+    }
+
+    void OnSaveConfirmed( string name )
+    {
+        // The active loadout is always kept up-to-date in the cookie by SaveLoadout(),
+        // so we can snapshot it here without any host round-trip.
+        if ( !Game.Cookies.TryGetString( PlayerInventory.LoadoutCookieKey, out var json ) || string.IsNullOrEmpty( json ) )
+            return;
+
+        PlayerInventory.SaveLoadoutPreset( name, json );
+    }
+}
