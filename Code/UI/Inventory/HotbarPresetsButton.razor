@@ -45,9 +45,8 @@
 
     void OnOverwritePreset( string name )
     {
-        if ( !Game.Cookies.TryGetString( PlayerInventory.LoadoutCookieKey, out var json )
-             || string.IsNullOrEmpty( json ) )
-            return;
+		var json = LocalData.Get<string>( "hotbar" );
+        if ( string.IsNullOrEmpty( json ) ) return;
 
         PlayerInventory.SaveLoadoutPreset( name, json );
     }
@@ -71,8 +70,8 @@
 
     void OnSaveConfirmed( string name )
     {
-        if ( !Game.Cookies.TryGetString( PlayerInventory.LoadoutCookieKey, out var json ) || string.IsNullOrEmpty( json ) )
-            return;
+		var json = LocalData.Get<string>( "hotbar" );
+        if ( string.IsNullOrEmpty( json ) ) return;
 
         PlayerInventory.SaveLoadoutPreset( name, json );
     }

@@ -471,9 +471,6 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		Remove( weapon );
 	}
 
-
-	public const string LoadoutCookieKey = "player.loadout";
-	private const string PresetsCookieKey = "player.loadout.presets";
 	private bool _isRestoringLoadout;
 
 	public struct SavedPreset
@@ -484,7 +481,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 	public static IReadOnlyList<SavedPreset> GetLoadoutPresets()
 	{
-		return LoadSavedPresets();
+		return LocalData.Get<List<SavedPreset>>( "presets", new() );
 	}
 
 	/// <summary>
@@ -492,14 +489,14 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 	/// </summary>
 	public static void SaveLoadoutPreset( string name, string loadoutJson )
 	{
-		var presets = LoadSavedPresets();
+		var presets = LocalData.Get<List<SavedPreset>>( "presets", new() );
 		var idx = presets.FindIndex( p => p.Name == name );
 		var entry = new SavedPreset { Name = name, LoadoutJson = loadoutJson };
 		if ( idx >= 0 )
 			presets[idx] = entry;
 		else
 			presets.Add( entry );
-		Game.Cookies.SetString( PresetsCookieKey, Json.Serialize( presets ) );
+		LocalData.Set( "presets", presets );
 	}
 
 	/// <summary>
@@ -507,16 +504,9 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 	/// </summary>
 	public static void DeleteLoadoutPreset( string name )
 	{
-		var presets = LoadSavedPresets();
+		var presets = LocalData.Get<List<SavedPreset>>( "presets", new() );
 		presets.RemoveAll( p => p.Name == name );
-		Game.Cookies.SetString( PresetsCookieKey, Json.Serialize( presets ) );
-	}
-
-	private static List<SavedPreset> LoadSavedPresets()
-	{
-		if ( !Game.Cookies.TryGetString( PresetsCookieKey, out var raw ) || string.IsNullOrEmpty( raw ) )
-			return new();
-		return Json.Deserialize<List<SavedPreset>>( raw ) ?? new();
+		LocalData.Set( "presets", presets );
 	}
 
 	/// <summary>
@@ -596,7 +586,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 		if ( Player.IsLocalPlayer )
 		{
-			Game.Cookies.SetString( LoadoutCookieKey, json );
+			LocalData.Set( "hotbar", json );
 		}
 		else
 		{
@@ -607,13 +597,14 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 	[Rpc.Owner]
 	private void PushLoadoutToClient( string loadoutJson )
 	{
-		Game.Cookies.SetString( LoadoutCookieKey, loadoutJson );
+		LocalData.Set( "hotbar", loadoutJson );
 	}
 
 	[Rpc.Owner]
 	private void RequestClientLoadout()
 	{
-		if ( Game.Cookies.TryGetString( LoadoutCookieKey, out var json ) && !string.IsNullOrEmpty( json ) )
+		var json = LocalData.Get<string>( "hotbar" );
+		if ( !string.IsNullOrEmpty( json ) )
 			RestoreLoadoutFromClient( json );
 	}
 
@@ -679,7 +670,8 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 	{
 		if ( Player.IsLocalPlayer )
 		{
-			if ( Game.Cookies.TryGetString( LoadoutCookieKey, out var json ) && !string.IsNullOrEmpty( json ) )
+			var json = LocalData.Get<string>( "hotbar" );
+			if ( !string.IsNullOrEmpty( json ) )
 			{
 				await EnsureMountedAsync( json );
 				GiveLoadoutWeapons( json );
