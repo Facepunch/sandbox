@@ -10,6 +10,9 @@ public class ThrusterEntity : Component, IPlayerControllable
 	[Property, ClientEditable]
 	public bool Invert { get; set; } = false;
 
+	[Property, ClientEditable]
+	public bool HideEffects { get; set; } = false;
+
 	/// <summary>
 	/// While the client input is active we'll apply thrust
 	/// </summary>
@@ -52,10 +55,10 @@ public class ThrusterEntity : Component, IPlayerControllable
 
 		_state = state;
 
-		OnEffect?.Enabled = state;
+		if ( !HideEffects )
+			OnEffect?.Enabled = state;
 
 		Network.Refresh();
-
 	}
 
 	public void OnStartControl()
