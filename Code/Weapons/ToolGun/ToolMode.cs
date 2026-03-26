@@ -46,6 +46,11 @@ public abstract partial class ToolMode : Component, IToolInfo
 	/// </summary>
 	public virtual IEnumerable<string> TraceIgnoreTags => [];
 
+	/// <summary>
+	/// When true, TraceSelect will also hit hitboxes.
+	/// </summary>
+	public virtual bool TraceHitboxes => false;
+
 	public TypeDescription TypeDescription { get; protected set; }
 
 	protected override void OnStart()

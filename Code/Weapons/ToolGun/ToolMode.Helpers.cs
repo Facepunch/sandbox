@@ -62,6 +62,9 @@
 		if ( TraceIgnoreTags.Any() )
 			trace = trace.WithoutTags( TraceIgnoreTags.ToArray() );
 
+		if ( TraceHitboxes )
+			trace = trace.UseHitboxes();
+
 		var tr = trace.Run();
 
 		return new SelectionPoint

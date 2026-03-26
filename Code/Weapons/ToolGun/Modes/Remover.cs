@@ -3,6 +3,7 @@
 [Group( "Tools" )]
 public class Remover : ToolMode
 {
+	public override bool TraceHitboxes => true;
 	public override string Description => "#tool.hint.remover.description";
 	public override string PrimaryAction => "#tool.hint.remover.remove";
 
