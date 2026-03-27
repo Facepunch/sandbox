@@ -1,11 +1,10 @@
 using Sandbox.CameraNoise;
-using Sandbox.Rendering;
 using Sandbox.UI.Inventory;
 
 /// <summary>
 /// Holds player information like health
 /// </summary>
-public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents
+public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, ISaveEvents
 {
 	public static Player FindLocalPlayer() => Game.ActiveScene.GetAll<Player>().FirstOrDefault( x => x.IsLocalPlayer );
 	public static T FindLocalWeapon<T>() where T : BaseCarryable => FindLocalPlayer()?.GetComponentInChildren<T>( true );
@@ -430,5 +429,22 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	{
 		// When parent is destroyed, unparent the player to avoid destroying it
 		GameObject.SetParent( null, true );
+	}
+
+	void ISaveEvents.AfterLoad( string filename )
+	{
+		if ( !Body.IsValid() ) return;
+
+		var dresser = Body.GetComponentInChildren<Dresser>( true );
+		if ( !dresser.IsValid() ) return;
+
+		// Apply clothing after load
+		_ = ReapplyClothingAfterLoad( dresser );
+	}
+
+	private async Task ReapplyClothingAfterLoad( Dresser dresser )
+	{
+		await dresser.Apply();
+		GameObject.Network.Refresh();
 	}
 }
