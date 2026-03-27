@@ -220,6 +220,25 @@
         SelectObject(hovered);
     }
 
+    public void WorldMouseRightDown(MousePanelEvent e)
+    {
+        if ( !hovered.IsValid() ) return;
+
+        SelectObject( hovered );
+
+        var target = hovered;
+        var prop = target.GetComponent<Prop>();
+        var isGibbable = prop.IsValid() && prop.Health > 0;
+
+        var menu = MenuPanel.Open( this );
+        menu.AddOption( "🗑️", "Delete", () => GameManager.DeleteInspectedObject( target ) );
+
+        if ( isGibbable )
+        {
+            menu.AddOption( "💥", "Break", () => GameManager.BreakInspectedProp( prop ) );
+        }
+    }
+
     public void WorldMouseUp(MousePanelEvent e)
     {
         // nothing.

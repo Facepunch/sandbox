@@ -347,6 +347,33 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		renderer.GameObject.Network?.Refresh();
 	}
 
+	/// <summary>
+	/// Delete an object from the Inspector context menu.
+	/// </summary>
+	[Rpc.Host]
+	public static void DeleteInspectedObject( GameObject go )
+	{
+		if ( !go.IsValid() || go.IsProxy ) return;
+
+		go.Destroy();
+	}
+
+	/// <summary>
+	/// Break (gib) a prop from the Inspector context menu.
+	/// </summary>
+	[Rpc.Host]
+	public static void BreakInspectedProp( Prop prop )
+	{
+		if ( !prop.IsValid() || prop.IsProxy ) return;
+
+		var damageable = prop.GetComponent<Component.IDamageable>();
+		if ( damageable is null ) return;
+
+		var dmg = new DamageInfo( 999999, null, null );
+		dmg.Tags.Add( DamageTags.GibAlways );
+		damageable.OnDamage( in dmg );
+	}
+
 	[Rpc.Host]
 	public static void GiveSpawnerWeaponAt( string type, string path, int slot, string data = null, string icon = null, string title = null )
 	{

@@ -55,13 +55,19 @@
     {
         Sandbox.UI.InputFocus.Clear();
 
-        Inspector?.WorldMouseDown(e);
+        if ( e.MouseButton == MouseButtons.Right )
+        {
+            Inspector?.WorldMouseRightDown( e );
+            return;
+        }
+
+        Inspector?.WorldMouseDown( e );
     }
 
     protected override void OnMouseUp(MousePanelEvent e)
     {
 
-        Inspector?.WorldMouseUp(e);
+        Inspector?.WorldMouseUp( e );
     }
 
     Dictionary<Component, Panel> _handles = [];
