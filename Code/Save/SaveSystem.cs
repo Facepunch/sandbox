@@ -300,6 +300,11 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 		var primarySceneFile = sceneFiles[0];
 		var savedSceneProperties = saveRoot["SceneProperties"];
 		var patchedSceneFile = BuildPatchedSceneFile( primarySceneFile, patched, savedSceneProperties );
+
+		// Show loading screen first
+		BroadcastShowLoadingScreen();
+		await Task.Delay( 50 );
+
 		_suppressSystemScene = true; // Make sure we don't load two system scenes.....
 
 		var options = new SceneLoadOptions();
@@ -792,6 +797,16 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 				}
 			}
 		}
+	}
+
+	/// <summary>
+	/// Tells all clients to show the loading screen immediately, before Scene.Load() fires.
+	/// </summary>
+	[Rpc.Broadcast( NetFlags.HostOnly )]
+	private static void BroadcastShowLoadingScreen()
+	{
+		LoadingScreen.Title = "Loading Save...";
+		LoadingScreen.IsVisible = true;
 	}
 
 	/// <summary>
