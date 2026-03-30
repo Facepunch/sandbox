@@ -9,6 +9,7 @@ public class Resizer : ToolMode
 	public override string Description => "#tool.hint.resizer.description";
 	public override string PrimaryAction => "#tool.hint.resizer.grow";
 	public override string SecondaryAction => "#tool.hint.resizer.shrink";
+	public override string ReloadAction => "#tool.hint.resizer.reset";
 
 	TimeSince timeSinceAction = 0;
 
@@ -33,6 +34,20 @@ public class Resizer : ToolMode
 			Resize( select.GameObject, -0.033f );
 			timeSinceAction = 0;
 		}
+		else if ( Input.Pressed( "reload" ) )
+		{
+			ResetScale( select.GameObject );
+			ShootEffects( select );
+		}
+	}
+
+	[Rpc.Broadcast]
+	private void ResetScale( GameObject go )
+	{
+		if ( !go.IsValid() ) return;
+		if ( go.IsProxy ) return;
+
+		go.WorldScale = Vector3.One;
 	}
 
 	[Rpc.Broadcast]

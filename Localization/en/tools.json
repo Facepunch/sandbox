@@ -54,6 +54,7 @@
     "tool.hint.resizer.description": "Resizes an object",
     "tool.hint.resizer.grow": "Grow",
     "tool.hint.resizer.shrink": "Shrink",
+    "tool.hint.resizer.reset": "Reset",
 
     "tool.hint.decaltool.description": "Sprays decals onto surfaces",
     "tool.hint.decaltool.place": "Place",
