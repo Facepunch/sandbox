@@ -43,8 +43,9 @@ public abstract partial class ToolMode : Component, IToolInfo
 
 	/// <summary>
 	/// Tags that TraceSelect will ignore. Override per-tool to filter out specific objects.
+	/// Defaults to "player" so tools cannot target players.
 	/// </summary>
-	public virtual IEnumerable<string> TraceIgnoreTags => [];
+	public virtual IEnumerable<string> TraceIgnoreTags => ["player"];
 
 	/// <summary>
 	/// When true, TraceSelect will also hit hitboxes.
