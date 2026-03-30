@@ -17,6 +17,16 @@
         <div class="control-row" @onclick=@(() =>CleanUpAll() )>
             <label class="left">🧹 Clean Up All</label>
         </div>
+
+        <div class="section-header">Clean Up Player</div>
+
+        @foreach ( var connection in Connection.All )
+        {
+            var c = connection;
+            <div class="control-row" @onclick=@(() => CleanUpPlayer( c ))>
+                <label class="left">🗑️ @c.DisplayName</label>
+            </div>
+        }
     }
 </root>
 
@@ -24,4 +34,5 @@
 {
     void CleanUpMine() => CleanupFunction.CleanUpMine();
     void CleanUpAll() => CleanupFunction.CleanUpAll();
+    void CleanUpPlayer( Connection c ) => CleanupFunction.CleanUpTarget( c );
 }

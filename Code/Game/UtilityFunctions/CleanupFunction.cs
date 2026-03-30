@@ -14,6 +14,28 @@ public class CleanupFunction : UtilityFunction
 	internal static void CleanUpMine()
 	{
 		var caller = Rpc.Caller;
+		Cleanup( caller );
+	}
+
+	[Rpc.Host]
+	internal static void CleanUpAll()
+	{
+		if ( !Rpc.Caller.IsHost ) return;
+
+		CleanupSystem.Current.Cleanup();
+	}
+
+	[Rpc.Host]
+	internal static void CleanUpTarget( Connection target )
+	{
+		if ( !Rpc.Caller.IsHost ) return;
+
+		Cleanup( target );
+	}
+
+	internal static void Cleanup( Connection caller )
+	{
+		Assert.True( Networking.IsHost, "Only the host may call this method!" );
 
 		var removable = Game.ActiveScene.GetAllComponents<Ownable>()
 			.Where( o => o.Owner == caller );
@@ -26,13 +48,5 @@ public class CleanupFunction : UtilityFunction
 		}
 
 		Notices.SendNotice( caller, "cleaning_services", Color.Green, $"Cleaned up {count} objects" );
-	}
-
-	[Rpc.Host]
-	internal static void CleanUpAll()
-	{
-		if ( !Rpc.Caller.IsHost ) return;
-
-		CleanupSystem.Current.Cleanup();
 	}
 }

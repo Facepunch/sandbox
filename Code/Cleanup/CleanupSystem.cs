@@ -1,3 +1,5 @@
+using Sandbox.UI;
+
 namespace Sandbox;
 
 public interface ICleanupEvents
@@ -233,9 +235,27 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 	/// Console command to cleanup the map.
 	/// </summary>
 	[ConCmd( "cleanup" )]
-	public static void CleanupCommand()
+	public static void CleanupCommand( string targetName = null )
 	{
 		if ( !Networking.IsHost ) return;
+
+		//
+		// Targeted cleanup, doesn't use the same cleanup shit
+		//
+		if ( !string.IsNullOrEmpty( targetName ) )
+		{
+			var target = GameManager.FindPlayerWithName( targetName );
+			if ( target is not null )
+			{
+				CleanupFunction.Cleanup( target );
+			}
+			else
+			{
+				Notices.AddNotice( "cleaning_services", Color.Red, $"Can't find {targetName} to clean up" );
+			}
+
+			return;
+		}
 
 		if ( Current is null )
 		{
