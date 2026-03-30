@@ -4,8 +4,8 @@
 @namespace Sandbox
 @attribute [Icon( "🔧" )]
 @attribute [Title( "Utilities" )]
+@attribute [Group( "Utilities" )]
 @attribute [Order( 0 )]
-@attribute [UtilityOf( typeof(KillSelfFunction) )]
 
 <root class="page" style="flex-direction: column;">
     <div class="control-row" @onclick=@(() => ConsoleSystem.Run( "kill" ))>

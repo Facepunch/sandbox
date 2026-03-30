@@ -11,7 +11,7 @@
     <div class="left">
         <VerticalMenu class="menuinner">
             <Options>
-                @foreach ( var group in Game.TypeLibrary.GetTypes<UtilityFunction>().GroupBy( x => x.Group ).OrderBy( x => x.Min( t => t.Order ) ) )
+                @foreach ( var group in GetVisiblePages().GroupBy( x => x.Group ).OrderBy( x => x.Min( t => t.Order ) ) )
                 {
                     @if ( !string.IsNullOrWhiteSpace( group.Key ) )
                     {
@@ -20,14 +20,9 @@
 
                     @foreach ( var type in group.OrderBy( x => x.Order ).ThenBy( x => x.Title ) )
                     {
-                        if ( type.IsAbstract ) continue;
-
-                        var instance = type.Create<UtilityFunction>();
-                        if ( instance is null || !instance.IsVisible() ) continue;
-
                         <MenuOption Text="@type.Title" Icon="@type.Icon"
-                            class=@( SelectedFunctionType == type ? "active" : "" )
-                            @onclick="@(() => OnSelect( type, instance ))">
+                            class=@( SelectedPageType == type ? "active" : "" )
+                            @onclick="@(() => OnSelect( type ))">
                         </MenuOption>
                     }
                 }
@@ -40,46 +35,30 @@
 
 @code
 {
-    TypeDescription SelectedFunctionType { get; set; }
+    TypeDescription SelectedPageType { get; set; }
     Panel PageContainer;
-    List<UtilityPage> ActivePages = new();
+    UtilityPage ActivePage;
 
-    void OnSelect( TypeDescription type, UtilityFunction instance )
+    IEnumerable<TypeDescription> GetVisiblePages()
     {
-        var pages = GetPages( type );
-
-        if ( pages.Count > 0 )
+        foreach ( var type in Game.TypeLibrary.GetTypes<UtilityPage>() )
         {
-            SelectedFunctionType = type;
-
-            foreach ( var p in ActivePages ) p.Delete();
-            ActivePages.Clear();
-
-            foreach ( var pageType in pages )
-            {
-                var page = pageType.Create<UtilityPage>();
-                PageContainer.AddChild( page );
-                ActivePages.Add( page );
-            }
+            if ( type.IsAbstract ) continue;
+            var instance = type.Create<UtilityPage>();
+            if ( instance is null || !instance.IsVisible() ) continue;
+            instance.Delete();
+            yield return type;
         }
-        else
-        {
-            SelectedFunctionType = null;
-            foreach ( var p in ActivePages ) p.Delete();
-            ActivePages.Clear();
-            instance.Execute();
-        }
-
-        StateHasChanged();
     }
 
-    List<TypeDescription> GetPages( TypeDescription functionType )
+    void OnSelect( TypeDescription type )
     {
-        return Game.TypeLibrary.GetTypes<UtilityPage>()
-            .Where( t => !t.IsAbstract )
-            .Where( t => t.GetAttribute<UtilityOfAttribute>()?.FunctionType == functionType.TargetType )
-            .OrderBy( t => t.Order )
-            .ThenBy( t => t.Title )
-            .ToList();
+        SelectedPageType = type;
+
+        ActivePage?.Delete();
+        ActivePage = type.Create<UtilityPage>();
+        PageContainer.AddChild( ActivePage );
+
+        StateHasChanged();
     }
 }

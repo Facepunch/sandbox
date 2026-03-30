@@ -2,13 +2,9 @@ using Sandbox;
 using Sandbox.UI;
 
 /// <summary>
-/// Opens cleanup pages in the utility tab right panel.
+/// RPC helper methods for the Cleanup utility page.
 /// </summary>
-[Icon( "🧹" )]
-[Title( "Cleanup" )]
-[Group( "World" )]
-[Order( 0 )]
-public class CleanupFunction : UtilityFunction
+public static class CleanupFunction
 {
 	[Rpc.Host]
 	internal static void CleanUpMine()

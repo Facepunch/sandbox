@@ -4,8 +4,8 @@
 @namespace Sandbox
 @attribute [Icon( "👥" )]
 @attribute [Title( "Users" )]
+@attribute [Group( "World" )]
 @attribute [Order( 1 )]
-@attribute [UtilityOf( typeof(UsersFunction) )]
 
 <root class="page" style="flex-direction: column;">
 
@@ -44,6 +44,8 @@
 
 @code
 {
+    public override bool IsVisible() => Networking.IsHost;
+
     void OpenBanOptions( SteamId steamId, BanSystem.BanEntry entry )
     {
         var menu = MenuPanel.Open( this );
