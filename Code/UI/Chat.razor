@@ -98,14 +98,14 @@
 	}
 
 	[Rpc.Broadcast( NetFlags.HostOnly )]
-    public void AddSystemText(string message)
+    public void AddSystemText( string message, string icon = "ℹ️" )
     {
         message = message.Truncate(300);
 
         if (string.IsNullOrWhiteSpace(message))
             return;
 
-        Entries.Add(new Entry(0, "ℹ️", message, 0.0f));
+        Entries.Add(new Entry(0, icon, message, 0.0f));
         StateHasChanged();
     }
 

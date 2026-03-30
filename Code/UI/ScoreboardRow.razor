@@ -80,7 +80,7 @@
 				entry.Connection?.Kick( x );
 
                 // only the host can run this so it's fine
-				Game.ActiveScene.Get<Chat>()?.AddSystemText( $"{entry.DisplayName} was kicked: {x}" );
+				Game.ActiveScene.Get<Chat>()?.AddSystemText( $"{entry.DisplayName} was kicked: {x}", "🚪" );
 			}
 		};
 		popup.Parent = FindPopupPanel();
