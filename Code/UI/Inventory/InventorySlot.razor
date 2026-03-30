@@ -3,7 +3,7 @@
 @inherits Panel
 
 <root>
-    <div class="index">@(Index + 1)</div>
+    <InputHint class="index" Action=@($"Slot{Index + 1}")></InputHint>
 
     @{
         var weapon = GetWeapon();
@@ -103,6 +103,7 @@
         SetClass("selected", Active && hasWeapon);
         SetClass("hovered", Hovered && hasWeapon);
         SetClass("switchable", hasWeapon && weapon.CanSwitch());
+        SetClass("no-tint", hasWeapon && weapon is SpawnerWeapon);
 
         if (hasWeapon && IconPanel is not null)
         {

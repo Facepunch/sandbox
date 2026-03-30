@@ -9,5 +9,6 @@ SpawnMenuModeBar
 	align-items: center;
 	padding: 3rem;
 	gap: 1rem;
+	z-index: 9999;
 	background-image: linear-gradient( to bottom, rgba( black, 0.5 ), rgba( black, 0.0 ) );
 }

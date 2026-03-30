@@ -46,6 +46,17 @@
     int HealthPercent => (int)(Player.Health / Player.MaxHealth * 100);
     int ArmourPercent => (int)(Player.Armour / Player.MaxArmour * 100);
 
+    bool IsSpawnMenuOpen()
+    {
+        var host = Game.ActiveScene.Get<SpawnMenuHost>();
+        return host?.Panel?.HasClass( "open" ) ?? false;
+    }
+
+    protected override void OnUpdate()
+    {
+        Panel.SetClass( "spawnmenu-open", IsSpawnMenuOpen() );
+    }
+
     protected override int BuildHash()
     {
         if ( !Player.IsValid() || Player.WantsHideHud ) return 0;

@@ -45,7 +45,7 @@ public partial class BaseWeapon
 	/// </summary>
 	public override bool CanSwitch()
 	{
-		return HasAmmo() || CanReload();
+		return true;
 	}
 
 	/// <summary>

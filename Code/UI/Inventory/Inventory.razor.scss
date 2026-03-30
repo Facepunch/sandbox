@@ -11,6 +11,7 @@ Inventory
     color: $color-accent;
     gap: 4px;
     z-index: 1050;
+    pointer-events: none;
     transition: all 0.05s linear;
 
     &.spawnmenu-open
@@ -21,6 +22,11 @@ Inventory
         HotbarPresetsButton
         {
             opacity: 1;
+        }
+
+        InventorySlot .index
+        {
+            opacity: 0;
         }
     }
 }

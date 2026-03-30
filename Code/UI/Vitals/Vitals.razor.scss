@@ -15,6 +15,13 @@ Vitals
 		flex-direction: row;
 		gap: $deadzone-x;
 		height: 96px;
+		transition: transform 0.2s ease, opacity 0.2s ease;
+
+		.hud-panel
+		{
+			min-width: 150px;
+			justify-content: center;
+		}
 	}
 
 	.ammo
@@ -22,5 +29,23 @@ Vitals
 		position: absolute;
 		bottom: $deadzone-y;
 		right: $deadzone-x;
+		min-width: 150px;
+		justify-content: center;
+		transition: transform 0.2s ease, opacity 0.2s ease;
+	}
+
+	&.spawnmenu-open
+	{
+		.vitals
+		{
+			transform: translateX(-40px);
+			opacity: 0;
+		}
+
+		.ammo
+		{
+			transform: translateX(40px);
+			opacity: 0;
+		}
 	}
 }

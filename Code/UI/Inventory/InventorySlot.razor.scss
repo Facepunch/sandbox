@@ -18,13 +18,16 @@ InventorySlot
 InventorySlot .index
 {
     position: absolute;
-    top: 4px;
-    left: 6px;
-    font-size: 12px;
-    font-weight: 650;
-    opacity: 0.5;
-    color: rgba( white, 0.5 );
-    font-family: $subtitle-font;
+    bottom: -41px;
+    left: 50%;
+    transform: translateX( -50% );
+    width: 35px;
+    height: 35px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.3;
+    margin: 0 auto;
     pointer-events: none;
 }
 
@@ -38,8 +41,8 @@ InventorySlot .icon
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
-    mix-blend-mode: lighten;
     background-tint: rgba( $color-accent, 0.6 );
+    mix-blend-mode: lighten;
     pointer-events: none;
 }
 
@@ -58,9 +61,20 @@ InventorySlot .name
     justify-content: center;
 }
 
+InventorySlot.no-tint .icon
+{
+    background-tint: white;
+    opacity: 0.85;
+}
+
 InventorySlot.empty
 {
     opacity: 1;
+
+    .index
+    {
+        opacity: 0;
+    }
 }
 
 InventorySlot:not( .empty )
@@ -76,8 +90,15 @@ InventorySlot.drag-hover
 
     .index
     {
-        color: $color-accent;
+        opacity: 1;
     }
+}
+
+InventorySlot.active.no-tint .icon
+{
+    opacity: 1;
+    mix-blend-mode: normal;
+    background-tint: white;
 }
 
 InventorySlot.active
@@ -95,11 +116,6 @@ InventorySlot.active
     {
         background-tint: $color-accent;
     }
-
-    .name
-    {
-        color: rgba( white, 0.6 );
-    }
 }
 
 InventorySlot.hovered
@@ -109,7 +125,7 @@ InventorySlot.hovered
 
     .icon
     {
-        background-tint: rgba( $color-accent, 0.8 );
+        background-tint: $color-accent;
     }
 
     .name

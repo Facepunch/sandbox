@@ -13,19 +13,57 @@ SpawnMenuHost
 	font-size: 14px;
 	font-weight: 600;
 	z-index: 1000;
+	pointer-events: none;
 }
 
-SpawnMenuHost
+SpawnMenuHost .menu-wrapper
 {
+	width: 100%;
+	height: 100%;
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity 0.1s linear;
+	transition: opacity 0.15s ease-in;
 }
 
-SpawnMenuHost.open
+SpawnMenuHost.open .menu-wrapper
 {
 	opacity: 1;
 	pointer-events: all;
-	transition: opacity 0.1s linear;
+	transition: opacity 0.15s ease-out;
 }
+
+SpawnMenuHost .menu-backdrop
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	backdrop-filter: brightness( 0.4 ) contrast( 0.7 ) saturate( 0.7 );
+	transition: opacity 0.15s ease;
+}
+
+SpawnMenuHost.no-backdrop .menu-backdrop
+{
+	opacity: 0;
+}
+
+SpawnMenuHost .menu-slide
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	transform: translateX( -60px );
+	transition: transform 0.15s ease-in;
+}
+
+SpawnMenuHost.open .menu-slide
+{
+	transform: translateX( 0px );
+	transition: transform 0.15s ease-out;
+}
+
+
 
