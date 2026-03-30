@@ -97,7 +97,7 @@
 		StateHasChanged();
 	}
 
-	[Rpc.Broadcast] // todo: only from host/owner
+	[Rpc.Broadcast( NetFlags.HostOnly )]
     public void AddSystemText(string message)
     {
         message = message.Truncate(300);
