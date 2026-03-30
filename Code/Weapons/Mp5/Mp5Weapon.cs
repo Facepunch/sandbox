@@ -1,6 +1,6 @@
 ﻿using Sandbox.Rendering;
 
-public class Mp5Weapon : BaseBulletWeapon
+public class Mp5Weapon : IronSightsWeapon
 {
 	[Property] public float TimeBetweenShots { get; set; } = 0.1f;
 
@@ -8,7 +8,7 @@ public class Mp5Weapon : BaseBulletWeapon
 
 	public override void PrimaryAttack()
 	{
-		ShootBullet( TimeBetweenShots );
+		ShootBullet( TimeBetweenShots, GetBullet() );
 	}
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )

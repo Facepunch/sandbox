@@ -1,13 +1,10 @@
 ﻿using Sandbox.Rendering;
 
-public class GlockWeapon : BaseBulletWeapon
+public class GlockWeapon : IronSightsWeapon
 {
 	[Property] public float PrimaryFireRate { get; set; } = 0.15f;
-	[Property] public float SecondaryFireRate { get; set; } = 0.2f;
-	[Property] public float SecondarySpreadMultiplier { get; set; } = 2f;
 
 	protected override float GetPrimaryFireRate() => PrimaryFireRate;
-	protected override float GetSecondaryFireRate() => SecondaryFireRate;
 
 	protected override bool WantsPrimaryAttack()
 	{
@@ -16,14 +13,7 @@ public class GlockWeapon : BaseBulletWeapon
 
 	public override void PrimaryAttack()
 	{
-		ShootBullet( PrimaryFireRate );
-	}
-
-	public override void SecondaryAttack()
-	{
-		var config = Bullet;
-		config.AimConeSpread *= SecondarySpreadMultiplier;
-		ShootBullet( SecondaryFireRate, config );
+		ShootBullet( PrimaryFireRate, GetBullet() );
 	}
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )
