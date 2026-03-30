@@ -1,5 +1,8 @@
 public class ControlSystem : GameObjectSystem<ControlSystem>
 {
+	// When each chair first became occupied. Used to sort seats so the earliest occupant is in charge
+	private readonly Dictionary<BaseChair, RealTimeSince> _occupiedSince = new();
+
 	public ControlSystem( Scene scene ) : base( scene )
 	{
 		Listen( Stage.StartFixedUpdate, 10, OnTick, "ControlSystem" );
@@ -8,22 +11,40 @@ public class ControlSystem : GameObjectSystem<ControlSystem>
 	void OnTick()
 	{
 		// TODO this should be more generic, some kind of interface?
-		foreach ( var chair in Scene.GetAll<BaseChair>() )
+		var driven = new HashSet<GameObject>();
+
+		foreach ( var chair in GetSortedSeats() )
 		{
-			if ( !chair.IsValid() ) continue;
-			RunControl( chair );
+			var builder = new LinkedGameObjectBuilder();
+			builder.AddConnected( chair.GameObject );
+
+			// Skip if a seat occupied earlier already claimed this
+			if ( builder.Objects.Any( driven.Contains ) ) continue;
+			driven.UnionWith( builder.Objects );
+
+			RunControl( chair, builder );
 		}
 	}
 
-	void RunControl( BaseChair chair )
+	IEnumerable<BaseChair> GetSortedSeats()
 	{
-		if ( !chair.IsOccupied ) return;
+		foreach ( var chair in Scene.GetAll<BaseChair>() )
+		{
+			if ( !chair.IsValid() || !chair.IsOccupied )
+				_occupiedSince.Remove( chair );
+			else
+				_occupiedSince.TryAdd( chair, 0 );
+		}
 
+		return Scene.GetAll<BaseChair>()
+			.Where( c => c.IsValid() && c.IsOccupied )
+			.OrderBy( c => _occupiedSince.GetValueOrDefault( c, float.MaxValue ) );
+	}
+
+	void RunControl( BaseChair chair, LinkedGameObjectBuilder builder )
+	{
 		var player = chair.GetOccupant();
 		if ( !player.IsValid() ) return;
-
-		var builder = new LinkedGameObjectBuilder();
-		builder.AddConnected( chair.GameObject );
 
 		using var scope = ClientInput.PushScope( player );
 
@@ -31,11 +52,8 @@ public class ControlSystem : GameObjectSystem<ControlSystem>
 		{
 			foreach ( var controllable in o.GetComponentsInChildren<IPlayerControllable>() )
 			{
-				if ( controllable is null ) continue;
-
-				controllable.OnControl();
+				controllable?.OnControl();
 			}
 		}
-
 	}
 }
