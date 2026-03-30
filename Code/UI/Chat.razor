@@ -119,6 +119,7 @@
 	void Component.INetworkListener.OnDisconnected( Connection channel )
 	{
 		if ( IsProxy ) return;
+		if ( BanSystem.Current?.IsBanned( channel.SteamId ) ?? false ) return;
 
 		AddSystemText( $"{channel.DisplayName} has left the game" );
 	}
