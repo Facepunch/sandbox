@@ -108,7 +108,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		return Random.Shared.FromArray( spawnPoints ).Transform.World;
 	}
 
-	[Rpc.Broadcast]
+	[Rpc.Broadcast( NetFlags.HostOnly )]
 	private static void SendMessage( string msg )
 	{
 		Log.Info( msg );
