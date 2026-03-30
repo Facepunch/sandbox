@@ -11,7 +11,7 @@ public sealed class InventoryPickup : BasePickup, Component.IPressable
 	IPressable.Tooltip? IPressable.GetTooltip( IPressable.Event e )
 	{
 		if ( Items == null || Items.Count == 0 ) return null;
-		return new IPressable.Tooltip( "Pick up", "inventory_2", string.Join( ", ", Items.Select( i => i.Name.ToUpper() ) ) );
+		return new IPressable.Tooltip( "Pick up", "inventory_2", string.Join( ", ", Items.Select( i => (i.GetComponent<BaseCarryable>()?.DisplayName ?? i.Name).ToUpper() ) ) );
 	}
 
 	public bool Press( IPressable.Event e )
