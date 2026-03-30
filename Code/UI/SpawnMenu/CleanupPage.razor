@@ -32,7 +32,7 @@
 
 @code
 {
-    void CleanUpMine() => CleanupFunction.CleanUpMine();
-    void CleanUpAll() => CleanupFunction.CleanUpAll();
-    void CleanUpPlayer( Connection c ) => CleanupFunction.CleanUpTarget( c );
+    void CleanUpMine() => CleanupSystem.RpcCleanUpMine();
+    void CleanUpAll() => CleanupSystem.RpcCleanUpAll();
+    void CleanUpPlayer( Connection c ) => CleanupSystem.RpcCleanUpTarget( c );
 }

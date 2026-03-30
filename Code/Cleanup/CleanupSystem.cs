@@ -247,7 +247,7 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 			var target = GameManager.FindPlayerWithName( targetName );
 			if ( target is not null )
 			{
-				CleanupFunction.Cleanup( target );
+				CleanupPlayer( target );
 			}
 			else
 			{
@@ -264,5 +264,44 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 		}
 
 		Current.Cleanup();
+	}
+
+	[Rpc.Host]
+	public static void RpcCleanUpMine()
+	{
+		CleanupPlayer( Rpc.Caller );
+	}
+
+	[Rpc.Host]
+	public static void RpcCleanUpAll()
+	{
+		if ( !Rpc.Caller.IsHost ) return;
+
+		Current?.Cleanup();
+	}
+
+	[Rpc.Host]
+	public static void RpcCleanUpTarget( Connection target )
+	{
+		if ( !Rpc.Caller.IsHost ) return;
+
+		CleanupPlayer( target );
+	}
+
+	public static void CleanupPlayer( Connection caller )
+	{
+		Assert.True( Networking.IsHost, "Only the host may call this method!" );
+
+		var removable = Game.ActiveScene.GetAllComponents<Ownable>()
+			.Where( o => o.Owner == caller );
+
+		var count = 0;
+		foreach ( var ownable in removable.ToArray() )
+		{
+			ownable.GameObject.Destroy();
+			count++;
+		}
+
+		Notices.SendNotice( caller, "cleaning_services", Color.Green, $"Cleaned up {count} objects" );
 	}
 }
