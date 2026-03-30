@@ -26,30 +26,7 @@
 
                 @foreach ( var entry in Scene.GetAll<PlayerData>().OrderByDescending( x => x.Kills ).ThenBy( x => x.DisplayName ) )
                 {
-                    string specialClass = "";
-                    if ( entry.IsMe ) specialClass = "me";
-                    if ( new Friend( entry.Connection.SteamId ).IsFriend ) specialClass += " friend";
-
-                    var steamId = entry.Connection.SteamId;
-                    bool isMuted = SandboxVoice.IsMuted( steamId );
-
-                    <div class="row player @specialClass">
-                        <img class="avatar" src="avatar:@steamId" />
-                        <div class="name">@entry.DisplayName</div>
-                        <div class="stat">@entry.Kills</div>
-                        <div class="stat">@entry.Deaths</div>
-                        <div class="stat">@(entry.Ping.CeilToInt())</div>
-                        @if ( !entry.IsMe )
-                        {
-                            <div class="mute-btn @(isMuted ? "muted" : "")" onclick="@( () => ToggleMute( steamId ) )">
-                                <i>@(isMuted ? "volume_off" : "volume_up")</i>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="mute-spacer"></div>
-                        }
-                    </div>
+                    <ScoreboardRow Entry="@entry" />
                 }
             </div>
         </div>
@@ -75,11 +52,6 @@
         {
             _mapTitle = pkg.Title;
         }
-    }
-
-    void ToggleMute( ulong steamId )
-    {
-        SandboxVoice.Mute( steamId );
     }
 
     protected override void OnUpdate()

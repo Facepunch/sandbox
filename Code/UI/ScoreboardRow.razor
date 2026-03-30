@@ -1,0 +1,81 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+
+<root class="row player">
+
+	@if ( Entry is not null )
+	{
+		var steamId = Entry.Connection.SteamId;
+		bool isMuted = SandboxVoice.IsMuted( steamId );
+
+		<img class="avatar" src="avatar:@steamId" />
+		<div class="name">@Entry.DisplayName</div>
+		<div class="stat">@Entry.Kills</div>
+		<div class="stat">@Entry.Deaths</div>
+		<div class="stat">@(Entry.Ping.CeilToInt())</div>
+		@if ( !Entry.IsMe )
+		{
+			<div class="mute-btn @(isMuted ? "muted" : "")" onclick="@( () => SandboxVoice.Mute( steamId ) )">
+				<i>@(isMuted ? "volume_off" : "volume_up")</i>
+			</div>
+		}
+		else
+		{
+			<div class="mute-spacer"></div>
+		}
+	}
+
+</root>
+
+@code
+{
+    public PlayerData Entry { get; set; }
+
+    public override void Tick()
+    {
+        if ( Entry is null ) return;
+        SetClass( "me", Entry.IsMe );
+        SetClass( "friend", new Friend( Entry.Connection.SteamId ).IsFriend );
+    }
+
+    protected override void OnRightClick( MousePanelEvent e )
+    {
+        if ( Entry is null ) return;
+
+        var steamId = Entry.Connection.SteamId;
+        var menu = MenuPanel.Open( this );
+
+        menu.AddOption( "content_copy", "Copy Steam ID", () =>
+        {
+            Clipboard.SetText( steamId.ToString() );
+            Notices.AddNotice( "copy_all", Color.Cyan, $"Copied {Entry.Connection.DisplayName}'s SteamID to your clipboard", 5 );
+        } );
+
+		if ( !Entry.IsMe )
+		{
+			bool isMuted = SandboxVoice.IsMuted( steamId );
+			menu.AddOption( isMuted ? "volume_up" : "volume_off", isMuted ? "Unmute" : "Mute", () => SandboxVoice.Mute( steamId ) );
+
+			if ( Networking.IsHost )
+			{
+				menu.AddSpacer();
+				menu.AddOption( "person_remove", "Kick", () => OpenKickConfirm( Entry ) );
+			}
+		}
+
+		e.StopPropagation();
+	}
+
+	void OpenKickConfirm( PlayerData entry )
+	{
+		var popup = new StringQueryPopup
+		{
+			Title = "Kick Player",
+			Prompt = $"Why do you want to kick {entry.DisplayName}?",
+			ConfirmLabel = "Kick",
+			OnConfirm = x => entry.Connection?.Kick( x )
+		};
+		popup.Parent = FindPopupPanel();
+	}
+}
