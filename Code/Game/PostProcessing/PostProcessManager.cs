@@ -47,6 +47,8 @@ public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
 
 		// Spawn enabled so components initialize, then disable if not wanted
 		var go = GameObject.Clone( resource.Prefab, new CloneConfig { StartEnabled = true, Parent = camera } );
+		go.Flags |= GameObjectFlags.NotNetworked;
+
 		_active[resourcePath] = go;
 
 		if ( !startEnabled )
