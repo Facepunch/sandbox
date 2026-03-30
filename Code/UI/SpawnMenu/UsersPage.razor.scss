@@ -1,0 +1,69 @@
+@import "/UI/Theme.scss";
+
+UsersPage .ban-entry
+{
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 4px;
+    margin: 2px 0px;
+    background-color: #53698111;
+
+    &:hover
+    {
+        background-color: #53698122;
+    }
+}
+
+UsersPage .ban-entry .avatar
+{
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+UsersPage .ban-entry .ban-info
+{
+    flex-direction: column;
+    flex-grow: 1;
+    margin-left: 10px;
+    justify-content: center;
+}
+
+UsersPage .ban-entry .ban-name
+{
+    font-size: 13px;
+    font-weight: 600;
+    color: $menu-color;
+}
+
+UsersPage .ban-entry .ban-reason
+{
+    font-size: 11px;
+    opacity: 0.55;
+    color: $menu-color;
+    margin-top: 2px;
+}
+
+UsersPage .ban-entry .ban-options
+{
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+
+    &:hover
+    {
+        background-color: rgba( 255, 255, 255, 0.12 );
+        opacity: 1;
+    }
+
+    i
+    {
+        font-size: 18px;
+    }
+}

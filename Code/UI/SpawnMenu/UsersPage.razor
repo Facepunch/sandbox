@@ -1,0 +1,63 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits UtilityPage
+@namespace Sandbox
+@attribute [Icon( "👥" )]
+@attribute [Title( "Users" )]
+@attribute [Order( 1 )]
+@attribute [UtilityOf( typeof(UsersFunction) )]
+
+<root class="page" style="flex-direction: column;">
+
+    <div class="section-header">Ban List</div>
+
+    @{
+        var bans = BanSystem.Current?.GetBannedList();
+    }
+
+    @if ( bans is null || bans.Count == 0 )
+    {
+        <div class="control-row">
+            <label class="left" style="opacity: 0.5;">No one has been banned yet.</label>
+        </div>
+    }
+    else
+    {
+        @foreach ( var (steamId, entry) in bans )
+        {
+            var sid = steamId;
+            var e = entry;
+            <div class="ban-entry">
+                <img class="avatar" src="avatar:@sid" />
+                <div class="ban-info">
+                    <label class="ban-name">@e.DisplayName</label>
+                    <label class="ban-reason">@e.Reason</label>
+                </div>
+                <div class="ban-options" @onclick=@(() => OpenBanOptions( sid, e ))>
+                    <i>more_vert</i>
+                </div>
+            </div>
+        }
+    }
+
+</root>
+
+@code
+{
+    void OpenBanOptions( SteamId steamId, BanSystem.BanEntry entry )
+    {
+        var menu = MenuPanel.Open( this );
+
+        menu.AddOption( "person_add", "Unban", () =>
+        {
+            BanSystem.Current?.Unban( steamId );
+            StateHasChanged();
+        } );
+
+        menu.AddOption( "content_copy", "Copy Steam ID", () =>
+        {
+            Clipboard.SetText( steamId.ToString() );
+            Notices.AddNotice( "copy_all", Color.Cyan, $"Copied {entry.DisplayName}'s Steam ID to clipboard", 5 );
+        } );
+    }
+}

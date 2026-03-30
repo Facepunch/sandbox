@@ -61,6 +61,7 @@
 			{
 				menu.AddSpacer();
 				menu.AddOption( "person_remove", "Kick", () => OpenKickConfirm( Entry ) );
+				menu.AddOption( "gavel", "Ban", () => OpenBanConfirm( Entry ) );
 			}
 		}
 
@@ -74,7 +75,25 @@
 			Title = "Kick Player",
 			Prompt = $"Why do you want to kick {entry.DisplayName}?",
 			ConfirmLabel = "Kick",
-			OnConfirm = x => entry.Connection?.Kick( x )
+			OnConfirm = x =>
+			{
+				entry.Connection?.Kick( x );
+
+                // only the host can run this so it's fine
+				Game.ActiveScene.Get<Chat>()?.AddSystemText( $"{entry.DisplayName} was kicked: {x}" );
+			}
+		};
+		popup.Parent = FindPopupPanel();
+	}
+
+	void OpenBanConfirm( PlayerData entry )
+	{
+		var popup = new StringQueryPopup
+		{
+			Title = "Ban Player",
+			Prompt = $"Why do you want to ban {entry.DisplayName}?",
+			ConfirmLabel = "Ban",
+			OnConfirm = x => BanSystem.Current?.Ban( entry.Connection, x )
 		};
 		popup.Parent = FindPopupPanel();
 	}
