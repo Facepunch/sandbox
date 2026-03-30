@@ -26,6 +26,7 @@
         Dresser found = null;
         foreach (var go in selection)
         {
+            if ( go.Tags.Has( "player" ) ) continue;
             found = go.GetComponentInChildren<Dresser>();
             if (found != null) break;
         }
