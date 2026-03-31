@@ -283,6 +283,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	public void OnDamage( in DamageInfo dmg )
 	{
 		if ( Health < 1 ) return;
+		if ( !PlayerData.IsValid() ) return;
 		if ( PlayerData.IsGodMode ) return;
 
 		//
