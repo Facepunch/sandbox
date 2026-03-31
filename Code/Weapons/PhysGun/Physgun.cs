@@ -497,6 +497,8 @@ public partial class Physgun
 		if ( !body.IsValid() ) return;
 		if ( body.IsProxy ) return;
 
+		RemoveJoint();
+
 		var mass = body.Mass;
 		body.ApplyImpulse( force.Normal * (mass * force.Length) );
 		body.PhysicsBody?.ApplyAngularImpulse( Vector3.Random * (mass * force.Length) );
