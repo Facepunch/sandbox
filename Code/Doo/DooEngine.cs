@@ -249,7 +249,7 @@ public class DooEngine : GameObjectSystem<DooEngine>
 	static object ToType( object o, Type t )
 	{
 		if ( t == typeof( string ) ) return o?.ToString() ?? "";
-		if ( t == typeof( double ) ) return ToFloat( o );
+		if ( t == typeof( double ) ) return (double)ToFloat( o );
 		if ( t == typeof( float ) ) return ToFloat( o );
 		if ( t == typeof( GameObject ) ) return ToGameObject( o );
 		if ( t == typeof( bool ) ) return ToBool( o );
