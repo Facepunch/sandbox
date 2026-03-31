@@ -4,7 +4,7 @@
 
 <root class="row player">
 
-	@if ( Entry is not null )
+	@if ( Entry is not null && Entry.Connection is not null )
 	{
 		var steamId = Entry.Connection.SteamId;
 		bool isMuted = SandboxVoice.IsMuted( steamId );
@@ -36,12 +36,13 @@
     {
         if ( Entry is null ) return;
         SetClass( "me", Entry.IsMe );
-        SetClass( "friend", new Friend( Entry.Connection.SteamId ).IsFriend );
+        if ( Entry.Connection is not null )
+            SetClass( "friend", new Friend( Entry.Connection.SteamId ).IsFriend );
     }
 
     protected override void OnRightClick( MousePanelEvent e )
     {
-        if ( Entry is null ) return;
+        if ( Entry is null || Entry.Connection is null ) return;
 
         var steamId = Entry.Connection.SteamId;
         var menu = MenuPanel.Open( this );
