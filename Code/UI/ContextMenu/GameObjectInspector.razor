@@ -69,13 +69,29 @@
     public bool TrySetTarget(List<GameObject> selection)
     {
         var ids = selection.Select(x => x.Id);
-        if (ids.SequenceEqual(Target?.Select(x => x.Id) ?? []))
-            return true;
+        if (!ids.SequenceEqual(Target?.Select(x => x.Id) ?? []))
+        {
+            Target = selection.Any() ? selection.ToList() : null;
+            RebuildFromTarget();
+            StateHasChanged();
+        }
 
-        Target = selection.Any() ? selection.ToList() : null;
-        RebuildFromTarget();
-        StateHasChanged();
-        return true;
+        // Hide the tab when something is selected but there's nothing to show
+        return Target == null || HasContent();
+    }
+
+    bool HasContent()
+    {
+        if ( Target == null ) return false;
+        if ( Properties.Count > 0 || Renderers.Count > 0 ) return true;
+
+        var totalMass = Target.SelectMany( go => go.GetComponentsInChildren<Rigidbody>() ).Sum( rb => rb.Mass );
+        if ( totalMass > 0 ) return true;
+
+        var health = Target.Select( go => go.GetComponent<Prop>() ).FirstOrDefault( p => p.IsValid() );
+        if ( health.IsValid() && health.Health != 0 ) return true;
+
+        return false;
     }
 
     List<SerializedProperty> Properties = new();
