@@ -1,6 +1,6 @@
 using Sandbox.UI;
 
-public sealed partial class GameManager : GameObjectSystem<GameManager>, Component.INetworkListener, ISceneStartup, IScenePhysicsEvents, ICleanupEvents
+public sealed partial class GameManager : GameObjectSystem<GameManager>, Component.INetworkListener, ISceneStartup, IScenePhysicsEvents, ICleanupEvents, ISaveEvents
 {
 	public GameManager( Scene scene ) : base( scene )
 	{
@@ -77,6 +77,18 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		IPlayerEvent.PostToGameObject( player.GameObject, x => x.OnSpawned() );
 		player.EquipBestWeapon();
+	}
+
+	void ISaveEvents.AfterLoad( string filename )
+	{
+		if ( !Networking.IsHost ) return;
+
+		// Make sure we spawn any players that weren't included in the loaded save
+		foreach ( var connection in Connection.All )
+		{
+			var playerData = CreatePlayerInfo( connection );
+			SpawnPlayer( playerData );
+		}
 	}
 
 	public void SpawnPlayerDelayed( PlayerData playerData )
