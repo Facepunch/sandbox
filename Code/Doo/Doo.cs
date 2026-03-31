@@ -16,6 +16,12 @@ public partial class Doo
 	public string GetLabel()
 	{
 		if ( Body?.Count <= 0 ) return "Empty";
-		return $"Contains {Body.Count} Steps";
+
+		return $"{Body.Count} Commands";
+	}
+
+	public bool IsEmpty()
+	{
+		return Body == null || Body.Count == 0;
 	}
 }

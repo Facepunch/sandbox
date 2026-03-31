@@ -17,6 +17,7 @@ public class DooControlWidget : ControlWidget
 
 		var clearBtn = Layout.Add( new IconButton( "clear" ) );
 		clearBtn.ToolTip = "Clear";
+		clearBtn.Background = Color.Transparent;
 		clearBtn.OnClick = OnClearClicked;
 		clearBtn.MaximumHeight = Theme.RowHeight - 4;
 		clearBtn.FixedHeight = clearBtn.MaximumHeight;
@@ -58,10 +59,36 @@ public class DooControlWidget : ControlWidget
 		base.OnPaint();
 
 		var doo = SerializedProperty.GetValue<Doo>();
-		if ( doo is null ) return;
+		if ( doo is null || doo.IsEmpty() )
+		{
+			var iconRect = new Rect( LocalRect.Left + 4, LocalRect.Center.y - 8, 16, 16 );
+			Paint.SetBrushAndPen( Theme.Blue.Desaturate( 0.33f ).WithAlpha( 0.4f ) );
+			Paint.DrawRect( iconRect, 2 );
 
-		Paint.Pen = Theme.TextLight;
-		Paint.DrawText( LocalRect.Shrink( 8, 4 ), $"{doo.GetLabel()}", TextFlag.LeftCenter );
+			Paint.Pen = Theme.Blue.Lighten( 10f ).Desaturate( 0.85f ).WithAlpha( 0.3f );
+			Paint.SetDefaultFont( 7 );
+			Paint.DrawText( iconRect, $"▶️", TextFlag.Center );
+
+			Paint.SetDefaultFont();
+			Paint.Pen = Theme.TextLight.WithAlpha( 0.5f );
+			Paint.DrawText( LocalRect.Shrink( 28, 4, 8, 4 ), $"Empty", TextFlag.LeftCenter );
+
+			return;
+		}
+		else
+		{
+			var iconRect = new Rect( LocalRect.Left + 4, LocalRect.Center.y - 8, 16, 16 );
+			Paint.SetBrushAndPen( Theme.Blue );
+			Paint.DrawRect( iconRect, 2 );
+
+			Paint.Pen = Theme.Blue.Lighten( 10f ).Desaturate( 0.85f );
+			Paint.SetDefaultFont( 7 );
+			Paint.DrawText( iconRect, $"▶️", TextFlag.Center );
+
+			Paint.SetDefaultFont();
+			Paint.Pen = Theme.Blue.Lighten( 0.5f );
+			Paint.DrawText( LocalRect.Shrink( 28, 4, 8, 4 ), $"{doo.GetLabel()}", TextFlag.LeftCenter );
+		}
 
 		// Don't paint default background
 	}
