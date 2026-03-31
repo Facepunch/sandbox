@@ -33,7 +33,12 @@
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
-        "OnComponentUpdate": null
+        "OnComponentUpdate": null,
+        "SeatedCameraDistance": 200,
+        "SeatedCameraHeight": 40,
+        "SeatedCameraPositionSpeed": 3,
+        "SeatedCameraRollSpeed": 2,
+        "SeatedCameraVelocityScale": 0.25
       },
       {
         "__type": "Sandbox.PlayerController",
@@ -169,7 +174,7 @@
             "TargetColor": "0,1,0,1",
             "CacheToDisk": true
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/df06905f3db7ee89.vtex"
         }
       },
       {
@@ -410,6 +415,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
+            "RemoveUnownedItems": true,
             "Source": "OwnerConnection",
             "WorkshopItems": []
           }
@@ -3074,6 +3080,8 @@
             "OnComponentStart": null,
             "OnComponentUpdate": null,
             "Radius": 500,
+            "ShadowBias": 0.0005,
+            "ShadowHardness": 0,
             "Shadows": true
           }
         ],
