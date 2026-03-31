@@ -17,6 +17,7 @@ public class Hints : GameObjectSystem<Hints>
 	{
 		Queue( "openspawnmenu", "ℹ️", 10 );
 		Queue( "openinspectmenu", "ℹ️", 40 );
+		Queue( "openpausemenu", "ℹ️", 70 );
 
 		Listen( Stage.StartUpdate, 0, Tick, "UpdateHints" );
 	}
