@@ -16,7 +16,7 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		return _contextStack.TryPop( out var pctx ) ? pctx : new RunContext();
 	}
 
-	internal void Run( Component myComponent, Doo doo, Action<Doo.Configure> c )
+	internal void Run( BaseDooComponent myComponent, Doo doo, Action<Configure> c )
 	{
 		if ( doo == null ) return;
 
@@ -25,18 +25,33 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		ctx.Doo = doo;
 		ctx.SourceComponent = myComponent;
 
+		if ( c != null )
+		{
+			var config = new Configure( ctx );
+			c( config );
+		}
+
+		ctx.Task = RunDoo( ctx );
+	}
+
+	async Task RunDoo( RunContext ctx )
+	{
 		try
 		{
-			if ( c != null )
-			{
-				var config = new Doo.Configure( ctx );
-				c( config );
-			}
+			ctx.SourceComponent._activeDoos ??= new( 8 );
+			ctx.SourceComponent._activeDoos.Add( ctx );
 
-			_ = RunBody( ctx, doo.Body );
+			await RunBody( ctx, ctx.Doo.Body );
+		}
+		catch ( TaskCanceledException ) { }
+		catch ( Exception ex )
+		{
+			Log.Warning( ex, $"Error running Doo: {ex.Message}" );
 		}
 		finally
 		{
+			ctx.SourceComponent._activeDoos.Remove( ctx );
+
 			ctx.Clear();
 
 			if ( _contextStack.Count < 16 )
@@ -52,6 +67,8 @@ public class DooEngine : GameObjectSystem<DooEngine>
 
 		for ( int i = 0; i < b.Count; i++ )
 		{
+			if ( ctx.Stopped ) return;
+
 			await RunBlock( ctx, b[i] );
 		}
 	}
@@ -69,8 +86,8 @@ public class DooEngine : GameObjectSystem<DooEngine>
 				break;
 
 			case Doo.ReturnBlock r:
-				//	_stop = true;
-				break;
+				ctx.Stopped = true;
+				return;
 
 			case Doo.ForBlock forblock:
 				await RunBlock_For( ctx, forblock );
@@ -142,6 +159,8 @@ public class DooEngine : GameObjectSystem<DooEngine>
 
 		for ( double i = start; i < end; i += jump )
 		{
+			if ( ctx.Stopped ) return;
+
 			SetVariable( ctx, b.VariableName, i );
 
 			if ( b.Body != null )
@@ -229,6 +248,7 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		if ( t == typeof( double ) ) return ToFloat( o );
 		if ( t == typeof( float ) ) return ToFloat( o );
 		if ( t == typeof( GameObject ) ) return ToGameObject( o );
+		if ( t == typeof( bool ) ) return ToBool( o );
 
 		return o;
 	}

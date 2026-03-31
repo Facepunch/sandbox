@@ -4,14 +4,18 @@ public partial class Doo
 	{
 		public DooEngine Engine;
 		public Doo Doo;
-		public Component SourceComponent;
+		public BaseDooComponent SourceComponent;
 		public Dictionary<string, object> LocalVariables = new( StringComparer.OrdinalIgnoreCase );
+		public Task Task;
+		public bool Stopped;
 
 		internal void Clear()
 		{
 			Doo = default;
 			SourceComponent = default;
 			LocalVariables.Clear();
+			Task = default;
+			Stopped = false;
 		}
 	}
 }
