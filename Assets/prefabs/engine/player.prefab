@@ -34,11 +34,11 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "SeatedCameraDistance": 200,
+        "SeatedCameraDistance": 128,
         "SeatedCameraHeight": 40,
         "SeatedCameraPositionSpeed": 3,
         "SeatedCameraRollSpeed": 2,
-        "SeatedCameraVelocityScale": 0.25
+        "SeatedCameraVelocityScale": 0.15
       },
       {
         "__type": "Sandbox.PlayerController",
