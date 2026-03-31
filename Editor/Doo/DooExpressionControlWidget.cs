@@ -1,6 +1,6 @@
 using Sandbox.Diagnostics;
 
-namespace Sandbox;
+namespace Editor.DooEditor;
 
 /// <summary>
 /// Control widget for editing Doo properties in the inspector.

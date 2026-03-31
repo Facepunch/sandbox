@@ -1,6 +1,5 @@
 using System;
-
-namespace Sandbox;
+namespace Editor.DooEditor;
 
 /// <summary>
 /// Main window for editing Doo scripts.

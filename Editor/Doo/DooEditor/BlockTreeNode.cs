@@ -1,7 +1,7 @@
 ﻿using System;
 using static Editor.BaseItemWidget;
 
-namespace Sandbox;
+namespace Editor.DooEditor;
 
 public class BlockTreeNode : TreeNode<Doo.Block>
 {
@@ -206,7 +206,7 @@ public class BlockTreeNode : TreeNode<Doo.Block>
 
 		if ( state )
 		{
-			TreeView.GetAncestor<DooEditor>()?.Inspector.SetTarget( Value );
+			TreeView.GetAncestor<DooEditorWidget>()?.Inspector.SetTarget( Value );
 		}
 	}
 }

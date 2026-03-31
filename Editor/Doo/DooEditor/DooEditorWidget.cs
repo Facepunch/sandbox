@@ -1,13 +1,14 @@
-namespace Sandbox;
+using Sandbox.UI;
+namespace Editor.DooEditor;
 
 /// <summary>
 /// Main window for editing Doo scripts.
 /// </summary>
-public class DooEditor : PopupWidget
+public class DooEditorWidget : PopupWidget
 {
-	public static DooEditor Open( SerializedObject so, string title = "Doo Editor" )
+	public static DooEditorWidget Open( SerializedObject so, string title = "Doo Editor" )
 	{
-		var window = new DooEditor( EditorWindow, so, title );
+		var window = new DooEditorWidget( EditorWindow, so, title );
 		window.WindowFlags = WindowFlags.Tool | WindowFlags.Customized | WindowFlags.CloseButton;
 		window.OpenAtCursor( true, new Vector2( -600, -250 ) );
 		window.WindowTitle = $"{so.ParentProperty?.Name} - Doo Editor";
@@ -22,7 +23,7 @@ public class DooEditor : PopupWidget
 
 	public Doo.ArgumentHintAttribute[] ArgumentHints { get; private set; }
 
-	public DooEditor( Widget parent, SerializedObject so, string title ) : base( parent )
+	public DooEditorWidget( Widget parent, SerializedObject so, string title ) : base( parent )
 	{
 		SerializedObject = so;
 
@@ -51,7 +52,7 @@ public class DooEditor : PopupWidget
 
 		BlockTree = new BlockTree( Target )
 		{
-			Margin = new UI.Margin( 0, 16, 8, 16 ),
+			Margin = new Margin( 0, 16, 8, 16 ),
 			ContentMargins = 2,
 			MinimumWidth = 400
 		};
@@ -78,7 +79,7 @@ public class DooEditor : PopupWidget
 		if ( ArgumentHints?.Length == 0 ) return null;
 
 		var col = Layout.Row();
-		col.Margin = new UI.Margin( 8, 8, 8, 0 );
+		col.Margin = new Margin( 8, 8, 8, 0 );
 		col.Spacing = 4;
 		col.Add( new Label( "Args:" ) { HorizontalSizeMode = SizeMode.CanShrink, Color = Theme.Text.WithAlpha( 0.5f ) } );
 

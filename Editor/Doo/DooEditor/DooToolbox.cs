@@ -1,13 +1,12 @@
-namespace Sandbox;
-
+namespace Editor.DooEditor;
 /// <summary>
 /// Toolbox widget showing available block types that can be dragged onto the canvas.
 /// </summary>
 public class DooToolbox : Widget
 {
-	public DooEditor Editor { get; }
+	public DooEditorWidget Editor { get; }
 
-	public DooToolbox( DooEditor editor ) : base( null )
+	public DooToolbox( DooEditorWidget editor ) : base( null )
 	{
 		Editor = editor;
 
@@ -73,8 +72,8 @@ public class ToolboxItem<T> : Widget where T : Doo.Block, new()
 		if ( e.LeftMouseButton )
 		{
 			var block = CreateBlock();
-			GetAncestor<DooEditor>().Target.Body.Add( block );
-			GetAncestor<DooEditor>().BlockTree.SelectItem( block );
+			GetAncestor<DooEditorWidget>().Target.Body.Add( block );
+			GetAncestor<DooEditorWidget>().BlockTree.SelectItem( block );
 		}
 	}
 

@@ -1,16 +1,16 @@
-namespace Sandbox;
+namespace Editor.DooEditor;
 
 /// <summary>
 /// Inspector panel for editing selected block properties.
 /// </summary>
 public class DooInspector : Widget
 {
-	public DooEditor Editor { get; }
+	public DooEditorWidget Editor { get; }
 	public SerializedObject Target { get; private set; }
 
 	private Layout _content;
 
-	public DooInspector( DooEditor editor ) : base( null )
+	public DooInspector( DooEditorWidget editor ) : base( null )
 	{
 		Editor = editor;
 
@@ -29,7 +29,7 @@ public class DooInspector : Widget
 	[EditorEvent.Frame]
 	public void UpdateSelection()
 	{
-		var tree = GetAncestor<DooEditor>()?.BlockTree;
+		var tree = GetAncestor<DooEditorWidget>()?.BlockTree;
 		if ( !tree.IsValid() ) return;
 
 		var selection = tree.Selection.FirstOrDefault();

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sandbox;
+namespace Editor.DooEditor;
 
 public class BlockTree : TreeView
 {

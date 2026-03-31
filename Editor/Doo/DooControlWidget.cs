@@ -1,4 +1,4 @@
-namespace Sandbox;
+namespace Editor.DooEditor;
 
 /// <summary>
 /// Control widget for editing Doo properties in the inspector.
@@ -45,7 +45,7 @@ public class DooControlWidget : ControlWidget
 		SerializedProperty.TryGetAsObject( out var so );
 
 		var title = SerializedProperty.Name ?? "Doo";
-		var editor = DooEditor.Open( so, title );
+		var editor = DooEditorWidget.Open( so, title );
 
 	}
 

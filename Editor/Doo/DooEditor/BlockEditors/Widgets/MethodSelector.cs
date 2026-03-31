@@ -1,4 +1,4 @@
-namespace Sandbox;
+namespace Editor.DooEditor;
 
 public class MethodSelector : ControlWidget
 {

@@ -1,11 +1,11 @@
-﻿namespace Sandbox;
+﻿namespace Editor.DooEditor;
 
 public class DooVariableControlWidget : StringControlWidget
 {
 	public DooVariableControlWidget( SerializedProperty property ) : base( property )
 	{
 		Layout = Layout.Row();
-		Layout.Margin = new UI.Margin( 2, 0, 0, 0 );
+		Layout.Margin = new Margin( 2, 0, 0, 0 );
 		Layout.Add( new IconButton( "electric_bolt" ) { OnClick = OpenMenu, ToolTip = "Variable", Background = Theme.Green.WithAlpha( 0.2f ), Foreground = Theme.Green, IconSize = 15, FixedSize = Theme.RowHeight - 4 } );
 		Layout.Add( LineEdit, 1 );
 	}
@@ -17,7 +17,7 @@ public class DooVariableControlWidget : StringControlWidget
 
 	void OpenMenu()
 	{
-		var editor = GetAncestor<DooEditor>();
+		var editor = GetAncestor<DooEditorWidget>();
 
 		var menu = new ContextMenu( this );
 
