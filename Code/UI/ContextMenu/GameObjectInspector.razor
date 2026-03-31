@@ -31,6 +31,18 @@
 
                 @if (Renderers.Count > 0)
                 {
+                    @if ( MaterialGroups.Count > 1 )
+                    {
+                        var currentGroup = Renderers[0].MaterialGroup ?? MaterialGroups[0];
+                        <div class="material-row">
+                            <label>Skin</label>
+                            <div class="material-button" @onclick="@PickMaterialGroup">
+                                <label>@currentGroup</label>
+                                <label class="material-group-arrow">▾</label>
+                            </div>
+                        </div>
+                    }
+
                     var accessor = Renderers[0].Materials;
                     @for (int i = 0; i < accessor.Count; i++)
                     {
@@ -96,6 +108,7 @@
 
     List<SerializedProperty> Properties = new();
     List<ModelRenderer> Renderers = new();
+    List<string> MaterialGroups = new();
 
     protected override int BuildHash()
     {
@@ -105,6 +118,7 @@
             hc.Add( go.Id );
             hc.Add( go.GetComponent<Rigidbody>()?.Mass ?? 0f );
             hc.Add( go.GetComponent<Prop>()?.Health ?? -1f );
+            hc.Add( go.GetComponent<ModelRenderer>()?.MaterialGroup );
         }
         return hc.ToHashCode();
     }
@@ -119,6 +133,7 @@
     {
         Properties = new();
         Renderers = new();
+        MaterialGroups = new();
 
         if (Target == null) return;
 
@@ -169,6 +184,13 @@
         {
             Renderers.AddRange(components.OfType<ModelRenderer>());
 
+            var model = mr.Model;
+            if ( model is not null )
+            {
+                for ( int i = 0; i < model.MaterialGroupCount; i++ )
+                    MaterialGroups.Add( model.GetMaterialGroupName( i ) );
+            }
+
             var prop = mr.GetComponent<Prop>();
             if (prop is not null)
             {
@@ -195,6 +217,23 @@
             if (c is Component component)
                 GameManager.ChangeProperty(component, prop.Name, prop.GetValue<object>());
         }
+    }
+
+    void PickMaterialGroup()
+    {
+        var menu = MenuPanel.Open( this );
+        var current = Renderers[0].MaterialGroup ?? MaterialGroups.FirstOrDefault();
+        foreach ( var group in MaterialGroups )
+        {
+            var g = group;
+            menu.AddOption( current == g ? "check" : "", g, () => SetMaterialGroup( g ) );
+        }
+    }
+
+    void SetMaterialGroup( string group )
+    {
+        foreach ( var renderer in Renderers )
+            GameManager.ChangeProperty( renderer, nameof( ModelRenderer.MaterialGroup ), group );
     }
 
     void PickMaterial(int index)

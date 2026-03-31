@@ -80,6 +80,14 @@ GameObjectInspector .material-row
             overflow: hidden;
         }
 
+        .material-group-arrow
+        {
+            flex-shrink: 0;
+            margin-left: auto;
+            font-size: 10px;
+            color: rgba( white, 0.4 );
+        }
+
         .material-preview
         {
             width: 20px;
