@@ -9,17 +9,29 @@ public partial class Doo
 	[Title( "For Block" )]
 	public class ForBlock : Block
 	{
+		/// <summary>
+		/// The name of the loop counter variable.
+		/// </summary>
 		[JsonInclude]
 		public string VariableName { get; set; } = "i";
 
+		/// <summary>
+		/// The initial value of the loop counter.
+		/// </summary>
 		[JsonInclude]
 		[TypeHint( typeof( int ) )]
 		public Expression StartValue { get; set; }
 
+		/// <summary>
+		/// The upper bound of the loop (exclusive).
+		/// </summary>
 		[JsonInclude]
 		[TypeHint( typeof( int ) )]
 		public Expression EndValue { get; set; }
 
+		/// <summary>
+		/// The amount to increment the loop counter each iteration.
+		/// </summary>
 		[JsonInclude]
 		[TypeHint( typeof( int ) )]
 		public Expression JumpValue { get; set; }

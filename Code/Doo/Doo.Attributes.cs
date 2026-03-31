@@ -1,12 +1,24 @@
 public partial class Doo
 {
+	/// <summary>
+	/// Marks a static method as callable from within a Doo script.
+	/// </summary>
 	[AttributeUsage( AttributeTargets.Method )]
 	public sealed class StaticMethodAttribute : System.Attribute
 	{
+		/// <summary>
+		/// The fully qualified method path (e.g. "Log.Info").
+		/// </summary>
 		public string Path { get; set; }
 
+		/// <summary>
+		/// The category portion of the path, derived from the text before the first dot.
+		/// </summary>
 		public string CategoryName { get; init; }
 
+		/// <summary>
+		/// Creates a new <see cref="StaticMethodAttribute"/> with the given method path.
+		/// </summary>
 		public StaticMethodAttribute( string path )
 		{
 			Path = path;
@@ -21,8 +33,19 @@ public partial class Doo
 	/// </summary>
 	public class ArgumentHintAttribute : System.Attribute
 	{
+		/// <summary>
+		/// The argument name shown in the editor.
+		/// </summary>
 		public string Name { get; set; }
+
+		/// <summary>
+		/// A help string describing what this argument is for.
+		/// </summary>
 		public string Help { get; set; }
+
+		/// <summary>
+		/// The expected type of this argument.
+		/// </summary>
 		public Type Hint { get; set; }
 	}
 
@@ -31,6 +54,9 @@ public partial class Doo
 	/// </summary>
 	public sealed class ArgumentHintAttribute<T> : ArgumentHintAttribute
 	{
+		/// <summary>
+		/// Creates a new <see cref="ArgumentHintAttribute{T}"/> with the given name and type hint.
+		/// </summary>
 		public ArgumentHintAttribute( string name )
 		{
 			Name = name;

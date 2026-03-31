@@ -2,9 +2,38 @@ using System.Text.Json.Serialization;
 
 public partial class Doo
 {
+	/// <summary>
+	/// Base class for all value expressions used as arguments and assignments within blocks.
+	/// </summary>
+	[JsonDerivedType( typeof( LiteralExpression ), "lit" )]
+	[JsonDerivedType( typeof( VariableExpression ), "var" )]
+	public abstract class Expression
+	{
+		/// <summary>
+		/// Evaluates this expression and returns its value.
+		/// </summary>
+		public virtual Variant Evaluate() => default;
+
+		/// <summary>
+		/// Returns a human-readable string representation of this expression for the editor.
+		/// </summary>
+		public virtual string GetDebugText() => "";
+
+		/// <summary>
+		/// Collects all variable names referenced by this expression.
+		/// </summary>
+		public virtual void CollectArguments( HashSet<string> arguments ) { }
+	}
+
+	/// <summary>
+	/// An expression that evaluates to a constant literal value.
+	/// </summary>
 	[Icon( "tag" )]
 	public class LiteralExpression : Expression
 	{
+		/// <summary>
+		/// The constant value this expression evaluates to.
+		/// </summary>
 		[JsonInclude]
 		public Variant LiteralValue { get; set; }
 
@@ -19,9 +48,15 @@ public partial class Doo
 		}
 	}
 
+	/// <summary>
+	/// An expression that evaluates to the current value of a named variable.
+	/// </summary>
 	[Icon( "abc" )]
 	public class VariableExpression : Expression
 	{
+		/// <summary>
+		/// The name of the variable to read.
+		/// </summary>
 		[JsonInclude]
 		[JsonIgnore( Condition = JsonIgnoreCondition.WhenWritingNull )]
 		public string VariableName { get; set; }
@@ -36,14 +71,5 @@ public partial class Doo
 				arguments.Add( VariableName );
 			}
 		}
-	}
-
-	[JsonDerivedType( typeof( LiteralExpression ), "lit" )]
-	[JsonDerivedType( typeof( VariableExpression ), "var" )]
-	public abstract class Expression
-	{
-		public virtual Variant Evaluate() => default;
-		public virtual string GetDebugText() => "";
-		public virtual void CollectArguments( HashSet<string> arguments ) { }
 	}
 }

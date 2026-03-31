@@ -9,6 +9,9 @@ public partial class Doo
 	[Title( "Delay" )]
 	public class DelayBlock : Block
 	{
+		/// <summary>
+		/// The number of seconds to wait before continuing.
+		/// </summary>
 		[JsonInclude]
 		public Expression Seconds { get; set; }
 

@@ -2,7 +2,9 @@ using System.Text.Json.Serialization;
 
 public partial class Doo
 {
-
+	/// <summary>
+	/// Base class for all executable blocks within a Doo.
+	/// </summary>
 	[JsonDerivedType( typeof( DelayBlock ), "del" )]
 	[JsonDerivedType( typeof( SetBlock ), "set" )]
 	[JsonDerivedType( typeof( InvokeBlock ), "ivk" )]
@@ -10,9 +12,15 @@ public partial class Doo
 	[JsonDerivedType( typeof( ForBlock ), "for" )]
 	public partial class Block
 	{
+		/// <summary>
+		/// Optional list of child blocks nested inside this block.
+		/// </summary>
 		[JsonIgnore( Condition = JsonIgnoreCondition.WhenWritingNull )]
 		public List<Block> Body { get; set; }
 
+		/// <summary>
+		/// Returns a human-readable string describing this block for display in the editor.
+		/// </summary>
 		public virtual string GetNodeString()
 		{
 			return "unhandled block";
@@ -33,6 +41,9 @@ public partial class Doo
 
 		}
 
+		/// <summary>
+		/// Recursively collects all variable names referenced by this block and its children.
+		/// </summary>
 		public virtual void CollectArguments( HashSet<string> arguments )
 		{
 			if ( Body == null ) return;

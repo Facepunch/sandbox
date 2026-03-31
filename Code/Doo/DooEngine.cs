@@ -2,10 +2,17 @@ using System.Buffers;
 using System.Runtime.CompilerServices;
 using static Doo;
 
+/// <summary>
+/// System that manages the execution of Doo scripts within a scene.
+/// </summary>
 public class DooEngine : GameObjectSystem<DooEngine>
 {
 	Stack<RunContext> _contextStack = new();
+	Dictionary<string, object> _globals = new( StringComparer.OrdinalIgnoreCase );
 
+	/// <summary>
+	/// Creates a new DooEngine for the given scene.
+	/// </summary>
 	public DooEngine( Scene scene ) : base( scene )
 	{
 
@@ -94,16 +101,10 @@ public class DooEngine : GameObjectSystem<DooEngine>
 				break;
 
 			case Doo.InvokeBlock i:
-				bool flowControl = RunBlock_Invoke( ctx, i );
-				if ( !flowControl )
-				{
-					break;
-				}
+				RunBlock_Invoke( ctx, i );
 				break;
 		}
 	}
-
-	Dictionary<string, object> _globals = new( StringComparer.OrdinalIgnoreCase );
 
 	static bool IsGlobalVariable( string name ) => name.Length > 2 && name[0] == 'g' && name[1] == '_';
 
@@ -120,6 +121,9 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		ctx.LocalVariables[name] = value;
 	}
 
+	/// <summary>
+	/// Sets a global variable that is accessible to all Doo scripts in this scene.
+	/// </summary>
 	public void SetGlobalVariable( string name, object value )
 	{
 		if ( string.IsNullOrWhiteSpace( name ) ) return;
@@ -134,7 +138,7 @@ public class DooEngine : GameObjectSystem<DooEngine>
 			if ( _globals.TryGetValue( name, out var globalValue ) )
 				return globalValue;
 
-			return default;
+			return null;
 		}
 
 		if ( ctx.LocalVariables.TryGetValue( name, out var localValue ) )
@@ -157,6 +161,8 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		double end = ToFloat( Eval( ctx, b.EndValue ) );
 		double jump = ToFloat( Eval( ctx, b.JumpValue ) );
 
+		if ( jump == 0 ) return;
+
 		for ( double i = start; i < end; i += jump )
 		{
 			if ( ctx.Stopped ) return;
@@ -170,12 +176,12 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		}
 	}
 
-	private bool RunBlock_Invoke( RunContext ctx, Doo.InvokeBlock b )
+	private void RunBlock_Invoke( RunContext ctx, Doo.InvokeBlock b )
 	{
 		var m = Doo.Helpers.FindMethod( b.Member );
 
 		if ( m == null )
-			return false;
+			return;
 
 		int argCount = m.Parameters?.Length ?? 0;
 
@@ -185,13 +191,13 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		{
 			targetInstance = b.TargetComponent;
 			if ( !targetInstance.IsValid() )
-				return false;
+				return;
 		}
 
 		if ( argCount == 0 )
 		{
 			m.Invoke( targetInstance );
-			return true;
+			return;
 		}
 
 		var args = ArrayPool<object>.Shared.Rent( m.Parameters.Length );
@@ -216,14 +222,12 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		{
 			SetVariable( ctx, b.ReturnVariable, returnedValue );
 		}
-
-		return true;
 	}
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	private object Eval( RunContext ctx, Expression e )
 	{
-		if ( e == null ) return default;
+		if ( e == null ) return null;
 
 		if ( e is LiteralExpression le ) return le.LiteralValue.Value;
 		if ( e is VariableExpression ve ) return GetVariable( ctx, ve.VariableName );
@@ -259,7 +263,7 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		if ( o is bool b ) return b;
 		if ( o is string s ) return s.ToBool();
 		if ( o is float f ) return f != 0.0f;
-		return o != null;
+		return true;
 	}
 
 	static GameObject ToGameObject( object o )

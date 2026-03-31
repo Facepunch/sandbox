@@ -9,16 +9,28 @@ public partial class Doo
 	[Title( "Invoke" )]
 	public class InvokeBlock : Block
 	{
+		/// <summary>
+		/// Whether this invokes a static global method or a component member.
+		/// </summary>
 		[JsonInclude]
 		public InvokeType InvokeType { get; set; }
 
+		/// <summary>
+		/// The component instance to invoke the method on when using <see cref="Doo.InvokeType.Member"/>.
+		/// </summary>
 		[JsonInclude]
 		[JsonIgnore( Condition = JsonIgnoreCondition.WhenWritingNull )]
 		public Component TargetComponent { get; set; }
 
+		/// <summary>
+		/// The fully qualified method path to invoke (e.g. "Log.Info").
+		/// </summary>
 		[JsonInclude]
 		public string Member { get; set; }
 
+		/// <summary>
+		/// The list of argument expressions to pass to the method.
+		/// </summary>
 		[JsonInclude]
 		[JsonIgnore( Condition = JsonIgnoreCondition.WhenWritingNull )]
 		public List<Expression> Arguments { get; set; }
@@ -68,10 +80,8 @@ public partial class Doo
 			{
 				return $"{returnValue}[{targetName}].{funcTitle}";
 			}
-			else
-			{
-				return $"{returnValue}{funcTitle}";
-			}
+
+			return $"{returnValue}{funcTitle}";
 		}
 
 		public override void CollectArguments( HashSet<string> arguments )

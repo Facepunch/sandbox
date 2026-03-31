@@ -3,6 +3,9 @@ using System.Text.Json;
 
 public partial class Doo : IJsonConvert
 {
+	/// <summary>
+	/// Deserializes a Doo from JSON.
+	/// </summary>
 	public static object JsonRead( ref Utf8JsonReader reader, Type typeToConvert )
 	{
 		if ( reader.TokenType != JsonTokenType.StartObject )
@@ -35,6 +38,9 @@ public partial class Doo : IJsonConvert
 		return doo;
 	}
 
+	/// <summary>
+	/// Serializes a Doo to JSON.
+	/// </summary>
 	public static void JsonWrite( object value, Utf8JsonWriter writer )
 	{
 		var doo = (Doo)value;

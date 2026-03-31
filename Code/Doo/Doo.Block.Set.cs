@@ -9,9 +9,15 @@ public partial class Doo
 	[Title( "Set Variable" )]
 	public class SetBlock : Block
 	{
+		/// <summary>
+		/// The name of the variable to assign to.
+		/// </summary>
 		[JsonInclude]
 		public string VariableName { get; set; }
 
+		/// <summary>
+		/// The expression whose result will be stored in the variable.
+		/// </summary>
 		[JsonInclude]
 		public Expression Value { get; set; }
 

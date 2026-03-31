@@ -1,31 +1,40 @@
 public partial class Doo
 {
+	/// <summary>
+	/// Built-in static methods available to Doo scripts.
+	/// </summary>
 	public static partial class Methods
 	{
-		[Doo.StaticMethod( "System.Quit" )]
-		public static void DoSomething()
-		{
-
-		}
-
+		/// <summary>
+		/// Logs an informational message.
+		/// </summary>
 		[Doo.StaticMethod( "Log.Info" )]
 		public static void LogInfo( string text )
 		{
 			Log.Info( text );
 		}
 
+		/// <summary>
+		/// Logs a warning message.
+		/// </summary>
 		[Doo.StaticMethod( "Log.Warning" )]
 		public static void LogWarning( string text )
 		{
 			Log.Warning( text );
 		}
 
+		/// <summary>
+		/// Logs an error message.
+		/// </summary>
 		[Doo.StaticMethod( "Log.Error" )]
 		public static void LogError( string text )
 		{
 			Log.Error( text );
 		}
 
+		/// <summary>
+		/// Destroys the given GameObject.
+		/// </summary>
 		[Doo.StaticMethod( "GameObject.Destroy" )]
 		public static void GameObjectDestroy( GameObject gameObject )
 		{
@@ -33,6 +42,9 @@ public partial class Doo
 			gameObject.Destroy();
 		}
 
+		/// <summary>
+		/// Clones a GameObject, optionally spawning it on the network.
+		/// </summary>
 		[Doo.StaticMethod( "GameObject.Clone" )]
 		public static GameObject GameObjectClone( [Description( "The gameobject you want to clone" )] GameObject gameObject, bool enabled = true, bool networked = true )
 		{
@@ -48,6 +60,9 @@ public partial class Doo
 			return go;
 		}
 
+		/// <summary>
+		/// Clones a GameObject with an explicit position, rotation, and scale.
+		/// </summary>
 		[Doo.StaticMethod( "GameObject.CloneEx" )]
 		public static GameObject GameObjectCloneEx( [Description( "The gameobject you want to clone" )] GameObject gameObject, Vector3 position, Rotation angles, Vector3 scale )
 		{

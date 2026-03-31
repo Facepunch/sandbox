@@ -1,5 +1,6 @@
-// This will be a part of Component when we ship
-
+/// <summary>
+/// Base component that can run Doo scripts on a GameObject.
+/// </summary>
 public class BaseDooComponent : Component
 {
 	/// <summary>
@@ -15,6 +16,9 @@ public class BaseDooComponent : Component
 		StopAll();
 	}
 
+	/// <summary>
+	/// Starts executing the given Doo on this component. Optionally configure initial arguments via the callback.
+	/// </summary>
 	public void Run( Doo doo, Action<Doo.Configure> c = null )
 	{
 		DooEngine
@@ -60,7 +64,7 @@ public class BaseDooComponent : Component
 
 		for ( int i = _activeDoos.Count - 1; i >= 0; i-- )
 		{
-			if ( _activeDoos[i].Stopped ) return false;
+			if ( _activeDoos[i].Stopped ) continue;
 			if ( _activeDoos[i].Doo == doo ) return true;
 		}
 
