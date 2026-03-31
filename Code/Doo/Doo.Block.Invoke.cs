@@ -88,6 +88,14 @@ public partial class Doo
 		{
 			base.CollectArguments( arguments );
 
+			if ( Arguments != null )
+			{
+				foreach ( var arg in Arguments )
+				{
+					arg?.CollectArguments( arguments );
+				}
+			}
+
 			if ( !string.IsNullOrWhiteSpace( ReturnVariable ) )
 			{
 				arguments.Add( ReturnVariable );

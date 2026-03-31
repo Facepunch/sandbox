@@ -20,6 +20,13 @@ public partial class Doo
 			return Seconds == null ? "Delay (none)" : $"Delay {Seconds.GetDebugText()}s";
 		}
 
+		public override void CollectArguments( HashSet<string> arguments )
+		{
+			base.CollectArguments( arguments );
+
+			Seconds?.CollectArguments( arguments );
+		}
+
 		public override void Reset()
 		{
 			Seconds = new LiteralExpression() { LiteralValue = 1.0f };

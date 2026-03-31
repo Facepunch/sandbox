@@ -36,6 +36,8 @@ public partial class Doo
 		{
 			base.CollectArguments( arguments );
 
+			Value?.CollectArguments( arguments );
+
 			if ( !string.IsNullOrWhiteSpace( VariableName ) )
 			{
 				arguments.Add( VariableName );
