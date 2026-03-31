@@ -277,6 +277,9 @@ public class DooEngine : GameObjectSystem<DooEngine>
 		if ( o is bool b ) return b;
 		if ( o is string s ) return s.ToBool();
 		if ( o is float f ) return f != 0.0f;
+		if ( o is double d ) return d != 0.0;
+		if ( o is int i ) return i != 0;
+		if ( o is long l ) return l != 0;
 		return true;
 	}
 
