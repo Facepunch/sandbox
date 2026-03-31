@@ -121,7 +121,31 @@ SaveMenu
         background-color: rgba( white, 0.12 );
     }
 
-    .save-thumb
+    &.outdated
+    {
+        opacity: 0.5;
+        cursor: default;
+
+        &:hover
+        {
+            background-color: rgba( white, 0.04 );
+            sound-in: none;
+
+            .save-name { color: rgba( white, 0.8 ); }
+        }
+    }
+
+    .save-outdated-badge
+    {
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba( orange, 0.85 );
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-top: 2px;
+    }
+
+
     {
         width: 96px;
         height: 54px;

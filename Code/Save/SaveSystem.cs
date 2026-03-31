@@ -9,7 +9,12 @@ namespace Sandbox;
 /// </summary>
 public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEvents
 {
-	private const int CurrentSaveVersion = 1;
+	private const int CurrentSaveVersion = 2;
+
+	/// <summary>
+	/// The current save format version. Saves with a different version are incompatible.
+	/// </summary>
+	public static int SaveVersion => CurrentSaveVersion;
 	private Dictionary<string, string> _metadata = new();
 	private readonly List<LoadedSceneEntry> _loadedScenes = new();
 	private bool _suppressSystemScene;
@@ -90,7 +95,33 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 	}
 
 	/// <summary>
-	/// Save the game's state to a file, capturing the differences between the current scene to the original scene file(s).
+	/// Read the save format version from a save file without loading the full save.
+	/// Returns 0 if the file doesn't exist, is invalid, or has no version field.
+	/// </summary>
+	public static int GetFileSaveVersion( string path )
+	{
+		if ( string.IsNullOrWhiteSpace( path ) )
+			return 0;
+
+		if ( !FileSystem.Data.FileExists( path ) )
+			return 0;
+
+		try
+		{
+			var text = FileSystem.Data.ReadAllText( path );
+			using var doc = JsonDocument.Parse( text );
+
+			if ( doc.RootElement.TryGetProperty( "Version", out var versionElement ) )
+				return versionElement.GetInt32();
+
+			return 0;
+		}
+		catch
+		{
+			return 0;
+		}
+	}
+
 	/// This means any changes made to the those original scenes are preserved when loading an older save.
 	/// </summary>
 	/// <returns>True if the save was successful.</returns>
@@ -225,9 +256,9 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 
 		// Validate that the save format version is compatible
 		var saveVersion = saveRoot["Version"]?.GetValue<int>() ?? 0;
-		if ( saveVersion > CurrentSaveVersion )
+		if ( saveVersion != CurrentSaveVersion )
 		{
-			Log.Warning( $"SaveSystem: Save file '{path}' uses version {saveVersion}, but this build only supports up to version {CurrentSaveVersion}. The save may have been created with a newer version of the game." );
+			Log.Warning( $"SaveSystem: Save file '{path}' uses version {saveVersion}, but this build requires version {CurrentSaveVersion}. The save is incompatible." );
 			return false;
 		}
 
@@ -594,7 +625,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 	}
 
 	/// <summary>
-	/// Snapshots network ownership for all owned GameObjects in the scene, storing the SteamID of the owner.
+	/// Snapshots network ownership for all owned GameObjects in the scene, storing the owner's SteamID.
 	/// </summary>
 	private static JsonObject CollectNetworkOwnership( Scene scene )
 	{
@@ -607,10 +638,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 			var owner = go.Network.Owner;
 			if ( owner is null ) continue;
 
-			result[go.Id.ToString()] = new JsonObject
-			{
-				["SteamId"] = owner.SteamId.Value,
-			};
+			result[go.Id.ToString()] = owner.SteamId.Value;
 		}
 
 		return result;
@@ -633,14 +661,13 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 		foreach ( var (goGuidStr, node) in ownershipData )
 		{
 			if ( !Guid.TryParse( goGuidStr, out var goGuid ) ) continue;
-			if ( node is not JsonObject entry ) continue;
 
 			var go = scene.Directory.FindByGuid( goGuid ) as GameObject;
 			if ( go is null || !go.IsValid() ) continue;
 
 			Connection target = null;
 
-			if ( entry["SteamId"]?.GetValue<long>() is long steamIdValue && steamIdValue != 0 )
+			if ( node?.GetValue<long>() is long steamIdValue && steamIdValue != 0 )
 			{
 				steamIdToConnection.TryGetValue( steamIdValue, out target );
 			}

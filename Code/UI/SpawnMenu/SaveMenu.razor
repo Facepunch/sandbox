@@ -18,7 +18,7 @@
             @foreach ( var save in SaveFiles )
             {
                 var s = save;
-                <div class="save-card"
+                <div class="save-card @(!s.IsCompatible ? "outdated" : "")"
                      @onclick="@(() => ConfirmLoad( s ))"
                      @onmousedown="@((PanelEvent e) => OnCardMouseDown( s, e ))">
                     @if ( s.Thumbnail != null )
@@ -30,6 +30,10 @@
                         @if ( !string.IsNullOrEmpty( s.Timestamp ) )
                         {
                             <label class="save-timestamp">@s.Timestamp</label>
+                        }
+                        @if ( !s.IsCompatible )
+                        {
+                            <label class="save-outdated-badge">Outdated</label>
                         }
                     </div>
                     <div class="save-dots">⋮</div>
@@ -48,7 +52,7 @@
     TextEntry SaveNameEntry;
     List<SaveFileEntry> SaveFiles = new();
 
-    record SaveFileEntry( string FileName, string DisplayName, string Timestamp, Texture Thumbnail );
+    record SaveFileEntry( string FileName, string DisplayName, string Timestamp, Texture Thumbnail, bool IsCompatible );
 	static string SavesPath => "saves";
 
     protected override void OnAfterTreeRender( bool firstTime )
@@ -84,13 +88,15 @@
                     timestamp = ts;
             }
 
+            var isCompatible = SaveSystem.GetFileSaveVersion( filePath ) == SaveSystem.SaveVersion;
+
             var thumbPath = $"{SavesPath}/{System.IO.Path.GetFileNameWithoutExtension( file )}.thumb.png";
             if ( FileSystem.Data.FileExists( thumbPath ) )
             {
                 thumbnail = Texture.Load( FileSystem.Data, thumbPath );
             }
 
-            SaveFiles.Add( new SaveFileEntry( file, displayName, timestamp, thumbnail ) );
+            SaveFiles.Add( new SaveFileEntry( file, displayName, timestamp, thumbnail, isCompatible ) );
         }
 
         StateHasChanged();
@@ -109,7 +115,20 @@
 
     void ConfirmLoad( SaveFileEntry save )
     {
-        var popup = new StringQueryPopup
+        if ( !save.IsCompatible )
+        {
+            _ = new StringQueryPopup
+            {
+                Title = "Incompatible Save",
+                Prompt = $"\"{save.DisplayName}\" was created with an older version and cannot be loaded.",
+                ConfirmLabel = "OK",
+                ShowInput = false,
+                Parent = FindPopupPanel()
+            };
+            return;
+        }
+
+        _ = new StringQueryPopup
         {
             Title = "Load Save",
             Prompt = $"Load \"{save.DisplayName}\"? Unsaved changes will be lost.",
