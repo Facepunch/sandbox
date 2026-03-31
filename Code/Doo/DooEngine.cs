@@ -202,25 +202,29 @@ public class DooEngine : GameObjectSystem<DooEngine>
 
 		var args = ArrayPool<object>.Shared.Rent( m.Parameters.Length );
 
-		for ( int i = 0; i < m.Parameters.Length; i++ )
+		try
 		{
-			args[i] = null;
+			for ( int i = 0; i < m.Parameters.Length; i++ )
+			{
+				args[i] = null;
 
-			if ( b.Arguments == null || i >= b.Arguments.Count )
-				continue;
+				if ( b.Arguments == null || i >= b.Arguments.Count )
+					continue;
 
-			var value = Eval( ctx, b.Arguments[i] );
-			args[i] = ToType( value, m.Parameters[i].ParameterType );
+				var value = Eval( ctx, b.Arguments[i] );
+				args[i] = ToType( value, m.Parameters[i].ParameterType );
+			}
 
+			var returnedValue = m.InvokeWithReturn<object>( targetInstance, args );
+
+			if ( m.ReturnType != typeof( void ) && !string.IsNullOrEmpty( b.ReturnVariable ) )
+			{
+				SetVariable( ctx, b.ReturnVariable, returnedValue );
+			}
 		}
-
-		var returnedValue = m.InvokeWithReturn<object>( targetInstance, args );
-
-		ArrayPool<object>.Shared.Return( args, clearArray: true );
-
-		if ( m.ReturnType != typeof( void ) && !string.IsNullOrEmpty( b.ReturnVariable ) )
+		finally
 		{
-			SetVariable( ctx, b.ReturnVariable, returnedValue );
+			ArrayPool<object>.Shared.Return( args, clearArray: true );
 		}
 	}
 
