@@ -8,6 +8,13 @@ public class BaseDooComponent : Component
 	/// </summary>
 	internal List<Doo.RunContext> _activeDoos;
 
+	protected override void OnDisabled()
+	{
+		base.OnDisabled();
+
+		StopAll();
+	}
+
 	public void Run( Doo doo, Action<Doo.Configure> c = null )
 	{
 		DooEngine
