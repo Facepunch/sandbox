@@ -56,23 +56,23 @@
 
     void RebuildProperties()
     {
-        var props = new List<SerializedProperty>();
-
-        var enabledProp = TypeLibrary.CreateProperty("Enabled", () => _manager.IsEnabled(_selected.ResourcePath), v => _manager.Set(_selected.ResourcePath, v));
-        props.Add(enabledProp);
-
-        if ( _manager is not null )
+        var path = _selected?.ResourcePath;
+        if ( path is null )
         {
-            foreach ( var component in _manager.GetSelectedComponents() )
-            {
-                var so = TypeLibrary.GetSerializedObject( component );
-                so.OnPropertyChanged = OnPropertyChanged;
+            _properties = [];
+            return;
+        }
 
-                foreach ( var prop in so.Where( FilterProperties ) )
-                {
-                    props.Add( prop );
-                }
-            }
+        var props = new List<SerializedProperty>();
+        props.Add( TypeLibrary.CreateProperty( "Enabled",
+            () => _manager?.IsEnabled( path ) ?? false,
+            v => _manager?.Set( path, v ) ) );
+
+        foreach ( var component in _manager?.GetSelectedComponents() ?? [] )
+        {
+            var so = TypeLibrary.GetSerializedObject( component );
+            so.OnPropertyChanged = OnPropertyChanged;
+            props.AddRange( so.Where( FilterProperties ) );
         }
 
         _properties = props;
