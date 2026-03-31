@@ -133,6 +133,8 @@ public class DooEngine : GameObjectSystem<DooEngine>
 
 	internal object GetVariable( RunContext ctx, string name )
 	{
+		if ( string.IsNullOrWhiteSpace( name ) ) return null;
+
 		if ( IsGlobalVariable( name ) )
 		{
 			if ( _globals.TryGetValue( name, out var globalValue ) )
