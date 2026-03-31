@@ -9,11 +9,16 @@ public class MethodSelector : ControlWidget
 		Layout = Layout.Row();
 		Layout.AddStretchCell();
 
+		Cursor = CursorShape.Finger;
+	}
+
+	protected override void OnMouseClick( MouseEvent e )
+	{
+		base.OnMouseClick( e );
+
+		if ( e.LeftMouseButton )
 		{
-			var icon = Layout.Add( new IconButton( Icon ) );
-			icon.ToolTip = "Find Method";
-			icon.Background = Color.Transparent;
-			icon.OnClick = OpenSelector;
+			OpenSelector();
 		}
 	}
 
@@ -64,6 +69,12 @@ public class MethodSelector : ControlWidget
 	protected override void PaintControl()
 	{
 		var rect = LocalRect.Shrink( 0, 0, Theme.RowHeight, 0 );
+
+		var icon = rect.Shrink( 4, 4 ) with { Width = Theme.RowHeight - 8 };
+		Paint.SetPen( Theme.Green.WithAlpha( 0.5f ) );
+		Paint.DrawIcon( icon, "terminal", 17 );
+
+		rect = rect.Shrink( Theme.RowHeight - 4, 0, 0, 0 );
 
 		var methodpath = SerializedProperty.GetValue<string>()?.ToString();
 		if ( string.IsNullOrWhiteSpace( methodpath ) )
