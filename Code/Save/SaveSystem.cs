@@ -340,13 +340,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 
 		var options = new SceneLoadOptions();
 		options.SetScene( patchedSceneFile );
-
-		if ( !Scene.Load( options ) )
-		{
-			_suppressSystemScene = false;
-			Log.Warning( $"SaveSystem: Failed to load patched scene from save '{path}'." );
-			return false;
-		}
+		Game.ChangeScene( options );
 
 		// Make sure we keep track of the original scene sources in case we re-save from this loaded state
 		_loadedScenes.Clear();
