@@ -594,7 +594,7 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 	}
 
 	/// <summary>
-	/// Snapshots network ownership for all owned GameObjects in the scene, storing the Connection ID and SteamID to be used as fallback
+	/// Snapshots network ownership for all owned GameObjects in the scene, storing the SteamID of the owner.
 	/// </summary>
 	private static JsonObject CollectNetworkOwnership( Scene scene )
 	{
@@ -609,7 +609,6 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 
 			result[go.Id.ToString()] = new JsonObject
 			{
-				["ConnectionId"] = owner.Id.ToString(),
 				["SteamId"] = owner.SteamId.Value,
 			};
 		}
@@ -618,17 +617,18 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 	}
 
 	/// <summary>
-	/// Restores network ownership, first trying to match by Connection ID (same session, also works when testing with a second instance of the same SteamID)
-	/// falling back to SteamID (for when loading a save from a previous session).
+	/// Restores network ownership by matching saved SteamIDs to connected players.
 	/// </summary>
 	private static void RestoreNetworkOwnership( Scene scene, JsonObject ownershipData )
 	{
-		// SteamId -> Connection lookup for fallback matching
 		var steamIdToConnection = new Dictionary<long, Connection>();
 		foreach ( var conn in Connection.All )
 		{
 			steamIdToConnection.TryAdd( conn.SteamId.Value, conn );
 		}
+
+		// Anything we spawn here, let's batch it
+		using var _ = scene.BatchGroup();
 
 		foreach ( var (goGuidStr, node) in ownershipData )
 		{
@@ -638,16 +638,9 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 			var go = scene.Directory.FindByGuid( goGuid ) as GameObject;
 			if ( go is null || !go.IsValid() ) continue;
 
-			// Try matching by connection Id first (for same session)
 			Connection target = null;
 
-			if ( entry["ConnectionId"]?.GetValue<string>() is string connIdStr && Guid.TryParse( connIdStr, out var connId ) )
-			{
-				target = Connection.Find( connId );
-			}
-
-			// Fall back to SteamId (new session)
-			if ( target is null && entry["SteamId"]?.GetValue<long>() is long steamIdValue && steamIdValue != 0 )
+			if ( entry["SteamId"]?.GetValue<long>() is long steamIdValue && steamIdValue != 0 )
 			{
 				steamIdToConnection.TryGetValue( steamIdValue, out target );
 			}
