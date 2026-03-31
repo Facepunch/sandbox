@@ -1,4 +1,5 @@
 using Sandbox.CameraNoise;
+using Sandbox.Movement;
 using Sandbox.UI.Inventory;
 
 /// <summary>
@@ -373,6 +374,56 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		ApplyMovementCameraEffects( camera );
 
 		IPlayerEvent.Post( x => x.OnCameraPostSetup( camera ) );
+
+		ApplySeatedCameraOverride( camera );
+	}
+
+	[Property] public float SeatedCameraDistance { get; set; } = 200f;
+	[Property] public float SeatedCameraHeight { get; set; } = 40f;
+
+	private ISitTarget _cachedSeat;
+	private float _contraptionRadius;
+
+	private void ApplySeatedCameraOverride( CameraComponent camera )
+	{
+		if ( !Controller.ThirdPerson ) return;
+
+		var seat = GetComponentInParent<ISitTarget>( false );
+		if ( seat is null )
+		{
+			_cachedSeat = null;
+			return;
+		}
+
+		if ( seat != _cachedSeat )
+		{
+			_cachedSeat = seat;
+			RebuildContraptionBounds( (seat as Component).GameObject );
+		}
+
+		var seatPos = ((Component)seat).GameObject.WorldPosition + Vector3.Up * SeatedCameraHeight;
+		var back = camera.WorldRotation.Backward;
+		var distance = MathF.Max( SeatedCameraDistance, _contraptionRadius );
+		camera.WorldPosition = seatPos + back * distance;
+		camera.WorldRotation = Rotation.LookAt( seatPos - camera.WorldPosition );
+	}
+
+	private void RebuildContraptionBounds( GameObject seatGo )
+	{
+		var builder = new LinkedGameObjectBuilder();
+		builder.AddConnected( seatGo );
+
+		var totalBounds = new BBox();
+		var initialized = false;
+		foreach ( var obj in builder.Objects )
+		{
+			if ( obj.Tags.Has( "player" ) ) continue;
+			var b = obj.GetBounds();
+			totalBounds = initialized ? totalBounds.AddBBox( b ) : b;
+			initialized = true;
+		}
+
+		_contraptionRadius = totalBounds.Size.Length;
 	}
 
 	float roll;
