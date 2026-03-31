@@ -38,7 +38,7 @@ public class ControlSystem : GameObjectSystem<ControlSystem>
 
 		return Scene.GetAll<BaseChair>()
 			.Where( c => c.IsValid() && c.IsOccupied )
-			.OrderBy( c => _occupiedSince.GetValueOrDefault( c, float.MaxValue ) );
+			.OrderBy( c => (float)_occupiedSince.GetValueOrDefault( c, default ) );
 	}
 
 	void RunControl( BaseChair chair, LinkedGameObjectBuilder builder )
