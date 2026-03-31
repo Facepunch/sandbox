@@ -227,11 +227,15 @@
         SelectObject( hovered );
 
         var target = hovered;
+        var isPlayer = target.Tags.Has( "player" );
         var prop = target.GetComponent<Prop>();
         var isGibbable = prop.IsValid() && prop.Health > 0;
 
         var menu = MenuPanel.Open( this );
-        menu.AddOption( "🗑️", "Delete", () => GameManager.DeleteInspectedObject( target ) );
+        if ( !isPlayer )
+        {
+            menu.AddOption( "🗑️", "Delete", () => GameManager.DeleteInspectedObject( target ) );
+        }
 
         if ( isGibbable )
         {

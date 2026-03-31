@@ -366,6 +366,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	public static void DeleteInspectedObject( GameObject go )
 	{
 		if ( !go.IsValid() || go.IsProxy ) return;
+		if ( go.Tags.Has( "player" ) ) return;
 
 		go.Destroy();
 	}
