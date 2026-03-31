@@ -414,7 +414,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			return;
 		}
 
-		if ( ActiveWeapon.IsValid() )
+		if ( ActiveWeapon.IsValid() && !ActiveWeapon.IsProxy )
 			ActiveWeapon.OnPlayerUpdate( Player );
 	}
 
