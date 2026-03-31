@@ -198,7 +198,13 @@ public class DooEngine : GameObjectSystem<DooEngine>
 
 		if ( argCount == 0 )
 		{
-			m.Invoke( targetInstance );
+			var returnedValue = m.InvokeWithReturn<object>( targetInstance );
+
+			if ( m.ReturnType != typeof( void ) && !string.IsNullOrEmpty( b.ReturnVariable ) )
+			{
+				SetVariable( ctx, b.ReturnVariable, returnedValue );
+			}
+
 			return;
 		}
 
