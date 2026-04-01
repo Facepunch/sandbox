@@ -232,11 +232,12 @@ public partial class Duplicator : ToolMode
 	public static void FromStorage( Storage.Entry item )
 	{
 		var localPlayer = Player.FindLocalPlayer();
-		var toolgun = localPlayer?.GetWeapon<Toolgun>();
-		if ( !toolgun.IsValid() ) return;
+		if ( localPlayer == null ) return;
 
-		localPlayer.SwitchWeapon<Toolgun>();
-		toolgun.SetToolMode( "Duplicator" );
+		var inventory = localPlayer.GetComponent<PlayerInventory>();
+		if ( !inventory.IsValid() ) return;
+
+		inventory.SetToolMode( "Duplicator" );
 
 		var toolmode = localPlayer.GetComponentInChildren<Duplicator>( true );
 

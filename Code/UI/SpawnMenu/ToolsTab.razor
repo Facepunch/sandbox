@@ -65,12 +65,14 @@
 	void SwitchMode(TypeDescription t)
 	{
 		var localPlayer = Player.FindLocalPlayer();
-		var toolgun = localPlayer?.GetWeapon<Toolgun>();
-		if (!toolgun.IsValid()) return;
+		if ( localPlayer == null ) return;
 
 		PostProcessManager?.Deselect();
-		localPlayer.SwitchWeapon<Toolgun>();
-		toolgun.SetToolMode(t.ClassName);
+
+		var inventory = localPlayer.GetComponent<PlayerInventory>();
+		if ( !inventory.IsValid() ) return;
+
+		inventory.SetToolMode( t.ClassName );
 	}
 
 	protected override void OnVisibilityChanged()

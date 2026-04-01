@@ -60,6 +60,33 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		Pickup( "weapons/camera/camera.prefab", 8, false );
 	}
 
+	/// <summary>
+	/// Activates the named tool mode, giving and equipping the toolgun first if the player doesn't have one.
+	/// </summary>
+	public void SetToolMode( string toolModeName )
+	{
+		if ( !Networking.IsHost )
+		{
+			HostSetToolMode( toolModeName );
+			return;
+		}
+
+		if ( !HasWeapon<Toolgun>() )
+			Pickup( "weapons/toolgun/toolgun.prefab", false );
+
+		var toolgun = GetWeapon<Toolgun>();
+		if ( !toolgun.IsValid() ) return;
+
+		SwitchWeapon( toolgun );
+		toolgun.SetToolMode( toolModeName );
+	}
+
+	[Rpc.Host]
+	private void HostSetToolMode( string toolModeName )
+	{
+		SetToolMode( toolModeName );
+	}
+
 	public bool Pickup( string prefabName, bool notice = true )
 	{
 		if ( !Networking.IsHost )
