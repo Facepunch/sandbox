@@ -2,10 +2,23 @@ ClientInputControl
 {
 	background-color: #000a;
 	flex-grow: 1;
-	border-radius: 2px;
+	border-radius: 4px;
 
-	.dropdown
+	.bind-button
 	{
 		padding: 4px 8px;
+		cursor: pointer;
+		flex-grow: 1;
+		align-items: center;
+
+		&:hover
+		{
+			background-color: rgba( white, 0.05 );
+		}
+
+		.bind-label
+		{
+			flex-grow: 1;
+		}
 	}
 }
