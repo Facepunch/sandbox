@@ -42,11 +42,24 @@ public partial class Physgun
 		public readonly bool IsValid() => GameObject.IsValid();
 
 		public readonly Rigidbody Body => GameObject?.GetComponent<Rigidbody>();
+
+		public override readonly int GetHashCode()
+		{
+			return HashCode.Combine(
+				Active,
+				Pulling,
+				GameObject,
+				LocalOffset,
+				LocalNormal,
+				GrabOffset,
+				GrabDistance
+			);
+		}
 	}
 
 	[Sync] public GrabState _state { get; set; } = default;
 
-	public GrabState _stateHovered { get; set; } = default;
+	[Sync] public GrabState _stateHovered { get; set; } = default;
 
 	bool _preventReselect = false;
 
