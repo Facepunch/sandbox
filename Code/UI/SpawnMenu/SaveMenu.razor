@@ -93,7 +93,7 @@
             var thumbPath = $"{SavesPath}/{System.IO.Path.GetFileNameWithoutExtension( file )}.thumb.png";
             if ( FileSystem.Data.FileExists( thumbPath ) )
             {
-                thumbnail = Texture.Load( FileSystem.Data, thumbPath );
+                thumbnail = Texture.LoadFromFileSystem( thumbPath, FileSystem.Data );
             }
 
             SaveFiles.Add( new SaveFileEntry( file, displayName, timestamp, thumbnail, isCompatible ) );
