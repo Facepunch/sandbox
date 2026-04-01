@@ -84,5 +84,8 @@
     "tool.hint.linker.stage1": "Select the second object to link",
     "tool.hint.linker.source": "Select source",
     "tool.hint.linker.finish": "Finish",
-    "tool.hint.linker.remove": "Unlink"
+    "tool.hint.linker.remove": "Unlink",
+
+    "tool.hint.hoverballtool.description": "Attaches a hoverball that holds objects at a set height",
+    "tool.hint.hoverballtool.place": "Place"
 }
