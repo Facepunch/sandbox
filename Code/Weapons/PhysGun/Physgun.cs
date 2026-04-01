@@ -68,6 +68,8 @@ public partial class Physgun
 	Rotation _spinRotation;
 	Rotation _snapRotation;
 
+	bool _launched;
+
 	/// <summary>
 	/// The force applied to pull objects to us.
 	/// </summary>
@@ -337,6 +339,7 @@ public partial class Physgun
 
 		_state = default;
 		_stateHovered = default;
+		_launched = default;
 	}
 
 	protected override void OnFixedUpdate()
@@ -353,17 +356,20 @@ public partial class Physgun
 				_stateHovered.Body.ApplyForceAt( _stateHovered.EndPoint, force );
 			}
 
+			_launched = false;
+
 			return;
 		}
+
+		// If we just launched, don't add a joint until state has let go.
+		if ( _launched ) return;
 
 		_body ??= new PhysicsBody( Scene.PhysicsWorld ) { BodyType = PhysicsBodyType.Keyframed, AutoSleep = false };
 
 		var eyeTransform = Owner.EyeTransform;
 		var grabDistance = ClampGrabDistance( _state.Body, _state.EndPoint, eyeTransform, _state.GrabDistance );
 		var targetPosition = eyeTransform.Position + eyeTransform.Rotation.Forward * grabDistance;
-		var targetRotation = _state.Pulling
-			? eyeTransform.Rotation * _state.GrabOffset
-			: Rotation.FromYaw( Owner.Controller.EyeAngles.yaw ) * _state.GrabOffset;
+		var targetRotation = _state.Pulling ? eyeTransform.Rotation * _state.GrabOffset : Rotation.FromYaw( Owner.Controller.EyeAngles.yaw ) * _state.GrabOffset;
 		_body.Transform = new Transform( targetPosition, targetRotation );
 
 		if ( _joint is null )
@@ -510,11 +516,16 @@ public partial class Physgun
 		if ( !body.IsValid() ) return;
 		if ( body.IsProxy ) return;
 
+		// We already launched.
+		if ( _launched ) return;
+
 		RemoveJoint();
 
 		var mass = body.Mass;
 		body.ApplyImpulse( force.Normal * (mass * force.Length) );
 		body.PhysicsBody?.ApplyAngularImpulse( Vector3.Random * (mass * force.Length) );
+
+		_launched = true;
 	}
 
 	static void GetConnectedBodies( GameObject source, HashSet<Rigidbody> result )
