@@ -2887,7 +2887,7 @@
               "Id": "0b98f238-2554-4bb8-90ef-10265f02337a"
             },
             "Volume": 1,
-            "WorldspacePlayback": true
+            "WorldspacePlayback": false
           }
         ],
         "Children": []
