@@ -17,6 +17,26 @@ Voices
         justify-content: flex-end;
         background-color: $hud-element-bg;
         border-radius: $hud-radius-sm;
+        overflow: hidden;
+    }
+
+    .avatar-wrap
+    {
+        position: relative;
+        width: $hud-icon-size;
+        height: $hud-icon-size;
+        flex-shrink: 0;
+    }
+
+    .speaking-glow
+    {
+        position: absolute;
+        width: 56px;
+        height: 56px;
+        left: -13px;
+        top: -13px;
+        border-radius: 100%;
+        background: radial-gradient( rgba(0, 148, 255, 0.7) 0%, transparent 70% );
     }
 
     img
@@ -24,7 +44,6 @@ Voices
         width: $hud-icon-size;
         height: $hud-icon-size;
         border-radius: 100px;
-        flex-shrink: 0;
     }
 
     label

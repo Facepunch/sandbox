@@ -5,8 +5,11 @@
 
     @foreach (var voice in VoiceList.Where( x => CanDisplay( x ) ) )
     {
-        <div class="item-row" style="transform: scale( @GetAmplitudeScale( voice ) )">
-            <img class="avatar" src="avatar:@voice.Network.Owner.SteamId" />
+        <div class="item-row">
+            <div class="avatar-wrap">
+                <div class="speaking-glow" style="opacity: @GetGlowOpacity( voice ); transform: scale( @GetGlowScale( voice ) )"></div>
+                <img class="avatar" src="avatar:@voice.Network.Owner.SteamId" />
+            </div>
             <label class="name">@voice.Network.Owner.DisplayName</label>
         </div>
     }
@@ -17,16 +20,31 @@
 {
     public IEnumerable<Voice> VoiceList => Scene.GetAllComponents<Voice>();
 
+    private Dictionary<ulong, float> _smoothed = new();
+
+    private float GetSmoothed( Voice voice )
+    {
+        var id = voice.Network.Owner.SteamId;
+        _smoothed[id] = _smoothed.GetValueOrDefault( id, 0f ).LerpTo( voice.Amplitude, Time.Delta * 10f );
+        return _smoothed[id];
+    }
+
     private bool CanDisplay( Voice voice )
     {
         if ( voice.Network.Owner is null ) return false;
         return voice.LastPlayed < 0.25f;
     }
 
-    private string GetAmplitudeScale( Voice voice )
+    private string GetGlowOpacity( Voice voice )
     {
-        var scale = 0.5f + ( voice.Amplitude * 2.365f );
-        return ( 1f + scale ).ToString( "0.#" );
+        var s = GetSmoothed( voice );
+        return Math.Clamp( s * 4f, 0.2f, 0.9f ).ToString( "0.##" );
+    }
+
+    private string GetGlowScale( Voice voice )
+    {
+        var s = GetSmoothed( voice );
+        return Math.Clamp( 1f + s * 0.6f, 1f, 1.6f ).ToString( "0.##" );
     }
 
     protected override int BuildHash()
