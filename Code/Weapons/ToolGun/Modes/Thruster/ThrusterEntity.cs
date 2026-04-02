@@ -85,7 +85,10 @@ public class ThrusterEntity : Component, IPlayerControllable
 	{
 		if ( _thrusterSound.IsValid() && !_thrusterSound.IsStopped ) return;
 
-		_thrusterSound = Sound.Play( ThrusterSound ?? _defaultSound, WorldPosition );
+		var sound = ThrusterSound ?? _defaultSound;
+		if ( sound is null ) return;
+
+		_thrusterSound = Sound.Play( sound, WorldPosition );
 		_thrusterSound.Parent = GameObject;
 		_thrusterSound.FollowParent = true;
 	}
