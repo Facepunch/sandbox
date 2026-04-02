@@ -16,6 +16,14 @@
     "OwnerTransfer": 1,
     "Components": [
       {
+        "__type": "BalloonEntity",
+        "__guid": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+        "__enabled": true,
+        "Flags": 0,
+        "PopEffect": "entities/balloon/sounds/balloon_pop.prefab",
+        "PopSound": null
+      },
+      {
         "__type": "Sandbox.Prop",
         "__guid": "b570f909-36d8-4754-a3dd-1782c23727c3",
         "__enabled": true,
