@@ -4,15 +4,21 @@ namespace Sandbox.UI;
 [CustomEditor( typeof( ClientInput ) )]
 public partial class ClientInputControl : BaseControl
 {
-	Panel _bindButton;
+	Panel _preview;
+	InputHint _inputHint;
+	IconPanel _fallbackIcon;
 	Label _bindLabel;
 
 	public override bool SupportsMultiEdit => true;
 
 	public ClientInputControl()
 	{
-		_bindButton = AddChild<Panel>( "bind-button" );
-		_bindLabel = _bindButton.AddChild<Label>( "bind-label" );
+		_preview = AddChild<Panel>( "preview" );
+		_inputHint = _preview.AddChild<InputHint>( "hint" );
+		_fallbackIcon = _preview.AddChild<IconPanel>( "fallback" );
+		_fallbackIcon.Text = "keyboard";
+
+		_bindLabel = AddChild<Label>( "bind-label" );
 	}
 
 	public override void Rebuild()
@@ -23,9 +29,18 @@ public partial class ClientInputControl : BaseControl
 
 		if ( string.IsNullOrWhiteSpace( action ) )
 		{
+			_inputHint.Action = null;
+			_inputHint.SetClass( "hidden", true );
+			_fallbackIcon.SetClass( "hidden", false );
 			_bindLabel.Text = "No Binding";
+			SetClass( "no-binding", true );
 			return;
 		}
+
+		_inputHint.Action = action;
+		_inputHint.SetClass( "hidden", false );
+		_fallbackIcon.SetClass( "hidden", true );
+		SetClass( "no-binding", false );
 
 		var match = Input.GetActions().FirstOrDefault( a => a.Name == action );
 		_bindLabel.Text = match != null ? (match.Title ?? match.Name) : action;
@@ -51,7 +66,7 @@ public partial class ClientInputControl : BaseControl
 				foreach ( var action in group )
 				{
 					var a = action;
-					menu.AddOption( "", !string.IsNullOrEmpty( a.Title ) ? a.Title : a.Name, () => OnBindChanged( a.Name ) );
+					menu.AddOption( "", ActionLabel( a ), () => OnBindChanged( a.Name ) );
 				}
 			}
 			else
@@ -62,11 +77,18 @@ public partial class ClientInputControl : BaseControl
 					foreach ( var action in groupActions )
 					{
 						var a = action;
-						sub.AddOption( "", !string.IsNullOrEmpty( a.Title ) ? a.Title : a.Name, () => OnBindChanged( a.Name ) );
+						sub.AddOption( "", ActionLabel( a ), () => OnBindChanged( a.Name ) );
 					}
 				} );
 			}
 		}
+	}
+
+	string ActionLabel( InputAction a )
+	{
+		var title = !string.IsNullOrEmpty( a.Title ) ? a.Title : a.Name;
+		var origin = Input.GetButtonOrigin( a.Name );
+		return origin != null ? $"{title} ({origin})" : title;
 	}
 
 	void OnBindChanged( string value )
