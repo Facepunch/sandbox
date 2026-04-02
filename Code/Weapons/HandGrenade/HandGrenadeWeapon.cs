@@ -61,6 +61,15 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 			Throw( Owner, Vector3.Down, 0.2f );
 	}
 
+	public override void OnControl()
+	{
+		if ( ShootInput.Pressed() )
+		{
+			Log.Info( $"Dorp grenade" );
+			DropGrenade();
+		}
+	}
+
 	public override void OnControl( Player player )
 	{
 		// Wait for throw animation to finish
@@ -185,6 +194,30 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 	}
 
 	[Rpc.Host]
+	void DropGrenade()
+	{
+		if ( !Prefab.IsValid() ) return;
+
+		var go = Prefab.Clone( WorldPosition );
+
+		var explosive = go.GetOrAddComponent<TimedExplosive>();
+		if ( explosive.IsValid() )
+		{
+			explosive.Lifetime = Lifetime;
+			explosive.Radius = Radius;
+			explosive.Damage = MaxDamage;
+			explosive.Force = Force;
+		}
+
+		// Don't collide with the weapon we dropped from
+		var filter = go.AddComponent<PhysicsFilter>();
+		filter.Body = GameObject;
+
+		// No velocity — just drops in place
+		go.NetworkSpawn();
+	}
+
+	[Rpc.Host]
 	void SpawnProjectile( Player player, Vector3 startPos, Vector3 direction, float powerScale )
 	{
 		if ( !player.IsValid() ) return;
@@ -209,6 +242,10 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 			rb.Velocity = baseVelocity + direction * (ThrowPower * powerScale) + Vector3.Up * 100f;
 			rb.AngularVelocity = go.WorldRotation.Right * 10f;
 		}
+
+		// Don't collide with the weapon we threw from
+		var filter = go.AddComponent<PhysicsFilter>();
+		filter.Body = GameObject;
 
 		go.NetworkSpawn();
 	}
@@ -240,6 +277,11 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 		}
 
 		go.NetworkSpawn();
+
+		// Don't collide with the weapon we spawned from
+		var filter = go.AddComponent<PhysicsFilter>();
+		filter.Body = GameObject;
+
 		explosive?.Explode();
 	}
 

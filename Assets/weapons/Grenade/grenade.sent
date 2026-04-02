@@ -1,5 +1,5 @@
 {
-  "Prefab": "weapons/grenade/item_grenade.prefab",
+  "Prefab": "weapons/grenade/grenade.prefab",
   "Title": "Grenade",
   "Description": null,
   "Category": "Weapon",

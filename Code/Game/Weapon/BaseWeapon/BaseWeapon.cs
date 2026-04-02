@@ -206,7 +206,7 @@ public partial class BaseWeapon : BaseCarryable, IPlayerControllable
 
 	public void OnEndControl() { }
 
-	public void OnControl()
+	public virtual void OnControl()
 	{
 		if ( ShootInput.Down() && CanPrimaryAttack() )
 			PrimaryAttack();

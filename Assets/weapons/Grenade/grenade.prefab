@@ -6,7 +6,7 @@
     "Name": "grenade",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
-    "Scale": "1,1,1",
+    "Scale": "2,2,2",
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 1,
@@ -62,13 +62,14 @@
           "compiled": null
         },
         "DisplayName": "Grenade",
+        "DroppedGameObject": {
+          "_type": "gameobject",
+          "go": "00edf338-ad8d-4472-9725-250b57efbaba"
+        },
         "Force": 1,
         "HoldType": "HoldItem",
         "IncrementalReloading": false,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/grenade/item_grenade.prefab"
-        },
+        "ItemPrefab": null,
         "Lifetime": 3,
         "MaxDamage": 125,
         "MaxReserveAmmo": 1,
@@ -99,9 +100,168 @@
           "_type": "gameobject",
           "prefab": "weapons/grenade/grenade_wm.prefab"
         }
+      },
+      {
+        "__type": "DroppedWeapon",
+        "__guid": "a1de1dfd-9845-4552-9477-8c0a2271becf",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
+        "__type": "Sandbox.ModelCollider",
+        "__guid": "1cff94b3-d53f-4e31-968e-7783caeb8d36",
+        "__enabled": true,
+        "Flags": 0,
+        "ColliderFlags": 0,
+        "Elasticity": null,
+        "Friction": null,
+        "IsTrigger": false,
+        "Model": "models/weapons/sbox_grenade_explosive/w_he_grenade.vmdl",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnObjectTriggerEnter": null,
+        "OnObjectTriggerExit": null,
+        "OnTriggerEnter": null,
+        "OnTriggerExit": null,
+        "RollingResistance": null,
+        "Static": false,
+        "Surface": null,
+        "SurfaceVelocity": "0,0,0"
+      },
+      {
+        "__type": "Sandbox.Rigidbody",
+        "__guid": "05fe281b-17e8-464d-b061-c362b6bf4352",
+        "__enabled": true,
+        "Flags": 0,
+        "AngularDamping": 0,
+        "EnableImpactDamage": true,
+        "EnhancedCcd": false,
+        "Gravity": true,
+        "GravityScale": 1,
+        "ImpactDamage": 0,
+        "LinearDamping": 0,
+        "Locking": {
+          "X": false,
+          "Y": false,
+          "Z": false,
+          "Pitch": false,
+          "Yaw": false,
+          "Roll": false
+        },
+        "MassCenterOverride": "0,0,0",
+        "MassOverride": 0,
+        "MinImpactDamageSpeed": 500,
+        "MotionEnabled": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideMassCenter": false,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
       }
     ],
-    "Children": [],
+    "Children": [
+      {
+        "__guid": "00edf338-ad8d-4472-9725-250b57efbaba",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "standalone_wm",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "WorldModel",
+            "__guid": "3dd2497e-bb05-416d-81fe-0c469d0ff591",
+            "__enabled": true,
+            "Flags": 0,
+            "EjectBrass": null,
+            "EjectTransform": null,
+            "MuzzleEffect": null,
+            "MuzzleTransform": null,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Renderer": {
+              "_type": "component",
+              "component_id": "836c4b2b-6b6c-4409-adc1-909a6fbfe8ba",
+              "go": "00edf338-ad8d-4472-9725-250b57efbaba",
+              "component_type": "SkinnedModelRenderer"
+            },
+            "TracerEffect": null
+          },
+          {
+            "__type": "Sandbox.SkinnedModelRenderer",
+            "__guid": "836c4b2b-6b6c-4409-adc1-909a6fbfe8ba",
+            "__enabled": true,
+            "Flags": 0,
+            "AnimationGraph": null,
+            "BodyGroups": 9513,
+            "BoneMergeTarget": null,
+            "CreateAttachments": true,
+            "CreateBoneObjects": false,
+            "LodOverride": null,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
+            "Model": "models/weapons/sbox_grenade_explosive/w_he_grenade.vmdl",
+            "Morphs": {},
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Parameters": {
+              "bools": {},
+              "ints": {},
+              "floats": {},
+              "vectors": {},
+              "rotations": {}
+            },
+            "PlaybackRate": 1,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Sequence": {
+              "Name": null,
+              "Looping": true,
+              "Blending": false
+            },
+            "Tint": "1,1,1,1",
+            "UseAnimGraph": false
+          }
+        ],
+        "Children": []
+      }
+    ],
     "__properties": {
       "NetworkInterpolation": true,
       "TimeScale": 1,
@@ -117,7 +277,8 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "CustomBounds": false
       }
     },
     "__variables": []
@@ -127,6 +288,8 @@
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "__references": [],
+  "__references": [
+    "facepunch.w_he_grenade#144895"
+  ],
   "__version": 2
 }
