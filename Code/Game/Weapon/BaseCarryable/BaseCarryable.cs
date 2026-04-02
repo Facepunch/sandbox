@@ -88,6 +88,8 @@ public partial class BaseCarryable : Component, IKillIcon
 		}
 	}
 
+	public bool HasOwner => Owner.IsValid();
+
 	/// <summary>
 	/// Where shoot effects come from. Either the point on the world model or the viewmodel, whichever is currently being used.
 	/// </summary>
@@ -104,6 +106,18 @@ public partial class BaseCarryable : Component, IKillIcon
 	/// Set at runtime when picked up.
 	/// </summary>
 	[Sync( SyncFlags.FromHost )] public int InventorySlot { get; set; } = -1;
+
+	/// <summary>
+	/// This is shite
+	/// </summary>
+	[Sync( SyncFlags.FromHost ), Change( nameof( OnItemVisibility ) )]
+	public bool IsItem { get; set; } = true;
+
+	private void OnItemVisibility( bool oldVal, bool newVal )
+	{
+		if ( DroppedGameObject.IsValid() )
+			DroppedGameObject.Enabled = newVal;
+	}
 
 	/// <summary>
 	/// Can we switch to this?
@@ -243,13 +257,13 @@ public partial class BaseCarryable : Component, IKillIcon
 		if ( !attack.Target.IsValid() )
 			return;
 
-		if ( !Owner.IsValid() )
-			return;
+		// Use owner as attacker when held by a player; fall back to the weapon itself (standalone mode)
+		var attacker = HasOwner ? Owner.GameObject : GameObject;
 
 		var damagable = attack.Target.GetComponentInParent<IDamageable>();
 		if ( damagable is not null )
 		{
-			var info = new DamageInfo( attack.Damage, Owner.GameObject, GameObject );
+			var info = new DamageInfo( attack.Damage, attacker, GameObject );
 			info.Position = attack.Position;
 			info.Origin = attack.Origin;
 			info.Tags = attack.Tags;

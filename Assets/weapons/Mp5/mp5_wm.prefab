@@ -1,7 +1,7 @@
 {
   "RootObject": {
     "__guid": "628ec5b7-a64d-490e-a218-1cdfc17b67df",
-    "__version": 1,
+    "__version": 2,
     "Flags": 0,
     "Name": "mp5_wm",
     "Position": "0,0,0",
@@ -10,20 +10,25 @@
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 0,
-    "NetworkInterpolation": true,
+    "NetworkFlags": 0,
     "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
     "OwnerTransfer": 1,
     "Components": [
       {
         "__type": "WorldModel",
         "__guid": "765ebd37-c91f-4058-8815-f4b7df6f24b0",
         "__enabled": true,
+        "Flags": 0,
         "EjectBrass": null,
         "EjectTransform": {
           "_type": "gameobject",
           "go": "8e571825-7366-47b8-a226-d8c9ae8b083f"
         },
-        "MuzzleEffect": null,
+        "MuzzleEffect": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
+        },
         "MuzzleTransform": {
           "_type": "gameobject",
           "go": "ed6466c4-e28c-4e9b-8446-ffa3f096176d"
@@ -46,7 +51,7 @@
     "Children": [
       {
         "__guid": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
-        "__version": 1,
+        "__version": 2,
         "Flags": 0,
         "Name": "model",
         "Position": "-0.5918133,0.6022096,-14.1255",
@@ -55,19 +60,22 @@
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
-        "NetworkInterpolation": true,
+        "NetworkFlags": 0,
         "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
         "OwnerTransfer": 1,
         "Components": [
           {
             "__type": "Sandbox.SkinnedModelRenderer",
             "__guid": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
             "__enabled": true,
+            "Flags": 0,
             "AnimationGraph": null,
             "BodyGroups": 3,
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": true,
+            "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
@@ -106,8 +114,8 @@
         "Children": [
           {
             "__guid": "4f949ccb-cd38-4eff-a75f-e06754d3ddc1",
-            "__version": 1,
-            "Flags": 4,
+            "__version": 2,
+            "Flags": 0,
             "Name": "hold_R",
             "Position": "-1.45742,0,5.464317",
             "Rotation": "0,0,0,1",
@@ -115,14 +123,15 @@
             "Tags": "",
             "Enabled": true,
             "NetworkMode": 2,
-            "NetworkInterpolation": true,
+            "NetworkFlags": 0,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": [
               {
                 "__guid": "8e571825-7366-47b8-a226-d8c9ae8b083f",
-                "__version": 1,
+                "__version": 2,
                 "Flags": 0,
                 "Name": "eject",
                 "Position": "3.912841,-0.647761,3.410283",
@@ -131,8 +140,9 @@
                 "Tags": "",
                 "Enabled": true,
                 "NetworkMode": 2,
-                "NetworkInterpolation": true,
+                "NetworkFlags": 0,
                 "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
                 "OwnerTransfer": 1,
                 "Components": [],
                 "Children": []
@@ -141,34 +151,36 @@
           },
           {
             "__guid": "ed6466c4-e28c-4e9b-8446-ffa3f096176d",
-            "__version": 1,
+            "__version": 2,
             "Flags": 8,
             "Name": "muzzle",
-            "Position": "13.2196,0,8.088171",
+            "Position": "0,0,0",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
             "Enabled": true,
             "NetworkMode": 2,
-            "NetworkInterpolation": true,
+            "NetworkFlags": 0,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
           },
           {
             "__guid": "88302757-22b9-44b5-9561-6acad55a74a7",
-            "__version": 1,
+            "__version": 2,
             "Flags": 8,
             "Name": "eject",
-            "Position": "2.455421,-0.647761,8.8746",
+            "Position": "0,0,0",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
             "Enabled": true,
             "NetworkMode": 2,
-            "NetworkInterpolation": true,
+            "NetworkFlags": 0,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
@@ -185,13 +197,14 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "CustomBounds": false
       }
     },
     "__variables": []
@@ -202,7 +215,10 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
+    "facepunch.pistol_muzzleflash#76089",
     "facepunch.w_mp5#145410"
   ],
   "__version": 2
 }
+
+

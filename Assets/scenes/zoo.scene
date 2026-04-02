@@ -31,8 +31,13 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
+          "ShadowBias": 0.0005,
+          "ShadowCascadeCount": 4,
+          "ShadowCascadeSplitRatio": 0.91,
+          "ShadowHardness": 0,
           "Shadows": true,
-          "SkyColor": "0,0,0,0"
+          "SkyColor": "0,0,0,0",
+          "Visualizer": {}
         }
       ],
       "Children": []
@@ -5740,270 +5745,6 @@
       }
     },
     {
-      "__guid": "fbfe330b-2982-4e1f-b9d2-db29256ca94a",
-      "__version": 2,
-      "__Prefab": "weapons/camera/item_camera.prefab",
-      "__PrefabInstancePatch": {
-        "AddedObjects": [],
-        "RemovedObjects": [],
-        "PropertyOverrides": [
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "b039b186-1a9e-4166-8c29-e87c9bf90261"
-            },
-            "Property": "Position",
-            "Value": "-319.9999,192,0.02619076"
-          }
-        ],
-        "MovedObjects": []
-      },
-      "__PrefabIdToInstanceId": {
-        "b039b186-1a9e-4166-8c29-e87c9bf90261": "fbfe330b-2982-4e1f-b9d2-db29256ca94a",
-        "68f31dea-403a-4788-8c4b-7416c88f28ed": "b441ba29-4b50-4874-bedb-28e22b43ec51",
-        "558f08b2-be5c-411e-990a-9984fbea59ea": "787332e2-e927-44f4-a9d6-3bc51314cec3",
-        "c18b0492-c63f-4428-b2c8-10a5cf3a6852": "9c57f966-072d-4baf-bd4f-6ce1246638c9",
-        "be9e7dca-62e0-4fdb-ae3c-a198732868dd": "b6fb236f-8841-4145-8bb6-bd370d757311",
-        "942e53ac-f5c0-4f50-9f2a-1d45ec9b6269": "5f1409f3-191d-493b-9f05-b80b5129b097",
-        "8d775402-7810-4a2f-a548-12ba513e3061": "d95020af-a81c-44d3-9d11-d69a511752e8",
-        "e4354278-5cf0-40ab-b726-f1f3c47e6790": "61b3d1e1-9586-48bb-8d4e-68ff006b9ac8"
-      }
-    },
-    {
-      "__guid": "2029a3d5-8f85-462e-bc16-350c9426b579",
-      "__version": 2,
-      "__Prefab": "weapons/colt1911/item_colt1911.prefab",
-      "__PrefabInstancePatch": {
-        "AddedObjects": [],
-        "RemovedObjects": [],
-        "PropertyOverrides": [
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "b2c3d4e5-9999-4bbb-a999-999999999999"
-            },
-            "Property": "Position",
-            "Value": "-383.9999,192,0.1755813"
-          }
-        ],
-        "MovedObjects": []
-      },
-      "__PrefabIdToInstanceId": {
-        "b2c3d4e5-9999-4bbb-a999-999999999999": "2029a3d5-8f85-462e-bc16-350c9426b579",
-        "b2c3d4e5-999a-4bbb-a99a-99999999999a": "05a1087a-d9fd-451a-990a-4f7903c59398",
-        "b2c3d4e5-999b-4bbb-a99b-99999999999b": "e4b622aa-250b-486f-ae55-08cf5965f849",
-        "b2c3d4e5-999c-4bbb-a99c-99999999999c": "551610d3-fd34-499b-b833-393d831d998e",
-        "b2c3d4e5-999e-4bbb-a99e-99999999999e": "d4f3ccff-d89c-4818-9cc3-c72ef0c6ed92",
-        "b2c3d4e5-999d-4bbb-a99d-99999999999d": "c58bee0b-6507-47b1-8988-aa22d4c2e11c"
-      }
-    },
-    {
-      "__guid": "c11ec52e-0bd1-4ea6-8709-fb67aca8d29a",
-      "__version": 2,
-      "__Prefab": "weapons/glock/item_glock.prefab",
-      "__PrefabInstancePatch": {
-        "AddedObjects": [],
-        "RemovedObjects": [],
-        "PropertyOverrides": [
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "c76715d5-0102-49d9-b64e-bb0940ea25a7"
-            },
-            "Property": "Position",
-            "Value": "-447.9999,192,0"
-          }
-        ],
-        "MovedObjects": []
-      },
-      "__PrefabIdToInstanceId": {
-        "c76715d5-0102-49d9-b64e-bb0940ea25a7": "c11ec52e-0bd1-4ea6-8709-fb67aca8d29a",
-        "e7966944-bb48-449f-9154-0254b47cd07e": "06f02b46-2d53-461c-b631-d7e1ddb7bca3",
-        "9e33f2a0-8ce0-4bf3-bd32-3469a1628627": "f71c627e-3a6f-4469-b8b4-0168c25c1f77",
-        "2a84405e-f4db-4117-a46a-72baed362953": "c8abfc26-5158-4e15-b8ad-b0fa05c46365",
-        "94379920-fa28-490c-9368-7b51db488816": "8062c3de-d497-4b1c-8e7d-aef97beb2ef9",
-        "5e966471-2824-479b-8b91-c2d173d46e22": "377778b9-8ebe-4f6c-9b18-17ab63073abf"
-      }
-    },
-    {
-      "__guid": "47f35a1d-6547-4b4c-bd49-58dda8d20eaf",
-      "__version": 2,
-      "__Prefab": "weapons/grenade/item_grenade.prefab",
-      "__PrefabInstancePatch": {
-        "AddedObjects": [],
-        "RemovedObjects": [],
-        "PropertyOverrides": [
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "3a18d725-31aa-4c50-a848-50ab23fd2ce3"
-            },
-            "Property": "Position",
-            "Value": "-511.9999,192,-0.000007629395"
-          }
-        ],
-        "MovedObjects": []
-      },
-      "__PrefabIdToInstanceId": {
-        "3a18d725-31aa-4c50-a848-50ab23fd2ce3": "47f35a1d-6547-4b4c-bd49-58dda8d20eaf",
-        "83f0407e-3f48-4379-b453-3bb6f438b62a": "ca6e9c9d-c5a6-4a88-99fb-8700a29eb511",
-        "20487e7d-f49f-49ac-b5e3-948c9df20eb5": "3b67f213-52d9-4489-97b8-2b68b24c5e20",
-        "53f02cee-4875-4a25-8ddd-9fced80dda0e": "e87945e7-05ea-4a29-998a-b772e0091faa",
-        "8b9a8f8f-bcb2-4127-a49a-376c20f96839": "384fc8a2-a06f-40cb-a132-fc81cc76802f",
-        "5d751040-d941-48e0-945a-5528eab0086a": "3557be12-efae-43b7-8876-a3115c9a8b53"
-      }
-    },
-    {
-      "__guid": "ca21c476-b28c-4aed-88a4-806add3f2824",
-      "__version": 2,
-      "__Prefab": "weapons/m4a1/item_m4a1.prefab",
-      "__PrefabInstancePatch": {
-        "AddedObjects": [],
-        "RemovedObjects": [],
-        "PropertyOverrides": [
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "b039b186-1a9e-4166-8c29-e87c9bf90261"
-            },
-            "Property": "Position",
-            "Value": "-564.0322,192,2.154323"
-          },
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "b039b186-1a9e-4166-8c29-e87c9bf90261"
-            },
-            "Property": "Rotation",
-            "Value": "-0.4999999,-0.5,0.5,0.5000001"
-          }
-        ],
-        "MovedObjects": []
-      },
-      "__PrefabIdToInstanceId": {
-        "b039b186-1a9e-4166-8c29-e87c9bf90261": "ca21c476-b28c-4aed-88a4-806add3f2824",
-        "68f31dea-403a-4788-8c4b-7416c88f28ed": "455af6b1-b724-4c30-a27e-a1f3f75c96d5",
-        "0fe8c7ca-9ef3-4636-838b-6ccbd0aafe5a": "01855f24-ea12-420c-8db4-7b8ecfbdbbd4",
-        "c9105dcf-c921-4a2b-a33c-83f53d63733f": "828eb568-b87d-41f2-9949-ebe3a11b590d",
-        "4be29fd2-2873-4a88-9cf8-d90c47d6ae69": "03b33c0d-816b-4058-996f-ee1ca0c89923",
-        "a6f0f3ba-fb40-4b37-9371-1cb99eab79ca": "5d9b9c76-7c94-4195-9009-1bcd380d9447",
-        "86b6afbb-343b-4872-8d1c-4e8dde2cb3c6": "af8cbb35-f241-4f4e-b952-c2bd28ad747b",
-        "8a1e774b-6ebd-4976-b5f3-bdd26a5aa7dd": "7732b7d7-5dd2-4e36-9494-bd830e334ccf"
-      }
-    },
-    {
-      "__guid": "febe7e20-16cc-4d51-b179-0bdb8f4d222c",
-      "__version": 2,
-      "__Prefab": "weapons/mp5/item_mp5.prefab",
-      "__PrefabInstancePatch": {
-        "AddedObjects": [],
-        "RemovedObjects": [],
-        "PropertyOverrides": [
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "b039b186-1a9e-4166-8c29-e87c9bf90261"
-            },
-            "Property": "Position",
-            "Value": "-627.4711,192,2.619694"
-          },
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "b039b186-1a9e-4166-8c29-e87c9bf90261"
-            },
-            "Property": "Rotation",
-            "Value": "-0.4999999,-0.5,0.5,0.5000001"
-          }
-        ],
-        "MovedObjects": []
-      },
-      "__PrefabIdToInstanceId": {
-        "b039b186-1a9e-4166-8c29-e87c9bf90261": "febe7e20-16cc-4d51-b179-0bdb8f4d222c",
-        "68f31dea-403a-4788-8c4b-7416c88f28ed": "f9a94d14-dfa4-4baa-b410-662f6d071fee",
-        "558f08b2-be5c-411e-990a-9984fbea59ea": "728007b0-1933-4a9e-bb2e-865c36f3bdb1",
-        "c18b0492-c63f-4428-b2c8-10a5cf3a6852": "793f5ddf-d3f1-45bf-b69c-6fb4a64651bf",
-        "be9e7dca-62e0-4fdb-ae3c-a198732868dd": "a615c4b4-aa91-4c07-a51a-e37c7816ee3a",
-        "942e53ac-f5c0-4f50-9f2a-1d45ec9b6269": "fb5e2de8-852d-4917-952b-7bf60fce1172",
-        "8aa39fec-f54d-4373-8e3a-d0bd8c5e76cc": "6bceeb62-ee0f-49d6-babb-a117d320f629",
-        "ac8a35d9-c2b8-4147-874f-97a6f6adb93a": "c445b3e1-3be0-48e0-809a-240e19bff206"
-      }
-    },
-    {
-      "__guid": "9981c33a-5888-43e8-bbd9-971a0ef99dc0",
-      "__version": 2,
-      "__Prefab": "weapons/shotgun/item_shotgun.prefab",
-      "__PrefabInstancePatch": {
-        "AddedObjects": [],
-        "RemovedObjects": [],
-        "PropertyOverrides": [
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "a1b2c3d4-5555-4aaa-b555-555555555555"
-            },
-            "Property": "Position",
-            "Value": "-694.0779,192,2.335088"
-          },
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "a1b2c3d4-5555-4aaa-b555-555555555555"
-            },
-            "Property": "Rotation",
-            "Value": "-0.4999999,-0.5,0.5,0.5000001"
-          }
-        ],
-        "MovedObjects": []
-      },
-      "__PrefabIdToInstanceId": {
-        "a1b2c3d4-5555-4aaa-b555-555555555555": "9981c33a-5888-43e8-bbd9-971a0ef99dc0",
-        "a1b2c3d4-5556-4aaa-b556-555555555556": "b674dde7-7d69-4f28-9d8b-cb9e98ea9c21",
-        "a1b2c3d4-5557-4aaa-b557-555555555557": "53875223-dc05-4443-af91-1c36547dbaa4",
-        "a1b2c3d4-5558-4aaa-b558-555555555558": "e4800bbe-5a45-4a98-a993-2207604e9d96",
-        "a1b2c3d4-555a-4aaa-b55a-55555555555a": "dc9681df-ee96-463e-a6cb-582d164cb85e",
-        "a1b2c3d4-5559-4aaa-b559-555555555559": "d6b6e7e7-b62c-40a6-8c43-f2b171a3fb13",
-        "aa340da7-3c95-424c-bd37-5f17389cfd71": "9751cbc6-5fef-4624-9df4-14de72c8cb1f",
-        "fd3c5468-6be5-483c-82ed-00309d3d873d": "d9b4d41d-44d0-48bb-b39e-24a73fe6df56"
-      }
-    },
-    {
-      "__guid": "df74d7ae-21a3-444a-97ee-0c124246314f",
-      "__version": 2,
-      "__Prefab": "weapons/sniper/item_sniper.prefab",
-      "__PrefabInstancePatch": {
-        "AddedObjects": [],
-        "RemovedObjects": [],
-        "PropertyOverrides": [
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "a1b2c3d4-4441-4aaa-b441-444444444441"
-            },
-            "Property": "Position",
-            "Value": "-756.1805,192,2.308852"
-          },
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "a1b2c3d4-4441-4aaa-b441-444444444441"
-            },
-            "Property": "Rotation",
-            "Value": "-0.4999999,-0.5,0.5,0.5000001"
-          }
-        ],
-        "MovedObjects": []
-      },
-      "__PrefabIdToInstanceId": {
-        "a1b2c3d4-4441-4aaa-b441-444444444441": "df74d7ae-21a3-444a-97ee-0c124246314f",
-        "a1b2c3d4-4442-4aaa-b442-444444444442": "3ae31437-0b1d-4633-b4fe-d91543bee9f5",
-        "a1b2c3d4-4443-4aaa-b443-444444444443": "ef0c2532-1503-47e5-b3ee-21561896938c",
-        "a1b2c3d4-4444-4aaa-b444-444444444444": "4f9ce146-d432-44bc-a54c-709114349026",
-        "a1b2c3d4-4445-4aaa-b445-444444444445": "94b1d8ae-da70-46a5-82fb-bf3bf5f8f627",
-        "a1b2c3d4-4446-4aaa-b446-444444444446": "ea386c9d-b27a-44e6-b82e-cc40298fe259"
-      }
-    },
-    {
       "__guid": "fed67cad-009d-400f-aca5-dac04f922580",
       "__version": 2,
       "Flags": 0,
@@ -6526,8 +6267,11 @@
     "GameObjectSystems": {
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
-          "$blob": "a492246a-0e81-49f8-b08f-77e15e9acf4b"
+          "$blob": "a8843c08-1f36-4013-9aae-a607a4c2cd95"
         }
+      },
+      "Sandbox.MovieMaker.MovieRecorderSystem": {
+        "DisableClientRecording": false
       }
     }
   },

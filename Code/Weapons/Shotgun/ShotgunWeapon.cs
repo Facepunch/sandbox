@@ -50,7 +50,7 @@ public class ShotgunWeapon : BaseBulletWeapon
 
 		TimeSinceShoot = 0;
 
-		if ( !Owner.IsValid() ) return;
+		if ( !HasOwner ) return;
 
 		Owner.Controller.EyeAngles += new Angles(
 			Random.Shared.Float( Bullet.RecoilPitch.x, Bullet.RecoilPitch.y ),

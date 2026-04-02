@@ -1,5 +1,5 @@
 {
-  "Prefab": "weapons/m4a1/item_m4a1.prefab",
+  "Prefab": "weapons/m4a1/m4a1.prefab",
   "Title": "M4A1",
   "Description": "What a lovely gun.",
   "Category": "Weapon",

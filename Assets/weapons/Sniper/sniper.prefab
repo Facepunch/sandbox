@@ -6,7 +6,7 @@
     "Name": "sniper",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
-    "Scale": "1,1,1",
+    "Scale": "2,2,2",
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 1,
@@ -48,18 +48,8 @@
             "Rotate": 0,
             "FlipVertical": false,
             "FlipHorizontal": false,
-            "Cropping": {
-              "Left": 0,
-              "Top": 0,
-              "Right": 0,
-              "Bottom": 0
-            },
-            "Padding": {
-              "Left": 0,
-              "Top": 0,
-              "Right": 0,
-              "Bottom": 0
-            },
+            "Cropping": { "Left": 0, "Top": 0, "Right": 0, "Bottom": 0 },
+            "Padding": { "Left": 0, "Top": 0, "Right": 0, "Bottom": 0 },
             "InvertColor": false,
             "Tint": "1,1,1,1",
             "Blur": 0,
@@ -80,8 +70,9 @@
         "IsSelfAmmo": false,
         "ItemPrefab": {
           "_type": "gameobject",
-          "prefab": "weapons/sniper/item_sniper.prefab"
+          "prefab": "weapons/sniper/sniper.prefab"
         },
+      "DroppedGameObject": { "_type": "gameobject", "go": "2ad75b15-d73d-4018-bc22-7407f67f909e" },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -106,9 +97,177 @@
           "_type": "gameobject",
           "prefab": "weapons/sniper/sniper_wm.prefab"
         }
+      },
+      {
+        "__type": "DroppedWeapon",
+        "__guid": "a1b2c3d4-4442-4aaa-b442-444444444442",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+    {
+      "__type": "Sandbox.ModelCollider",
+      "__guid": "5da08e48-006a-734b-ef55-a73a2aa2bd31",
+      "__enabled": true,
+      "Flags": 0,
+      "ColliderFlags": 0,
+      "Elasticity": null,
+      "Friction": null,
+      "IsTrigger": false,
+      "Model": "models/weapons/sbox_sniper_m700/w_m700.vmdl",
+      "OnComponentDestroy": null,
+      "OnComponentDisabled": null,
+      "OnComponentEnabled": null,
+      "OnComponentFixedUpdate": null,
+      "OnComponentStart": null,
+      "OnComponentUpdate": null,
+      "OnObjectTriggerEnter": null,
+      "OnObjectTriggerExit": null,
+      "OnTriggerEnter": null,
+      "OnTriggerExit": null,
+      "RollingResistance": null,
+      "Static": false,
+      "Surface": null,
+      "SurfaceVelocity": "0,0,0"
+    },
+    {
+      "__type": "Sandbox.Rigidbody",
+        "__guid": "a1b2c3d4-4444-4aaa-b444-444444444444",
+        "__enabled": true,
+        "Flags": 0,
+        "AngularDamping": 0,
+        "EnableImpactDamage": true,
+        "EnhancedCcd": false,
+        "Gravity": true,
+        "GravityScale": 1,
+        "ImpactDamage": 0,
+        "LinearDamping": 0,
+        "Locking": { "X": false, "Y": false, "Z": false, "Pitch": false, "Yaw": false, "Roll": false },
+        "MassCenterOverride": "0,0,0",
+        "MassOverride": 0,
+        "MinImpactDamageSpeed": 500,
+        "MotionEnabled": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideMassCenter": false,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
       }
     ],
-    "Children": [],
+      "Children": [
+    {
+      "__guid": "2ad75b15-d73d-4018-bc22-7407f67f909e",
+      "__version": 1,
+      "Flags": 0,
+      "Name": "standalone_wm",
+      "Position": "0,0,0",
+      "Rotation": "0,0,0,1",
+      "Scale": "1,1,1",
+      "Tags": "",
+      "Enabled": true,
+      "NetworkMode": 2,
+      "NetworkInterpolation": true,
+      "NetworkOrphaned": 0,
+      "NetworkTransmit": true,
+      "OwnerTransfer": 1,
+      "Components": [
+        {
+          "__type": "WorldModel",
+          "__guid": "3be86c26-e84e-5129-cd33-851808809b1f",
+          "__enabled": true,
+          "Flags": 0,
+          "EjectBrass": null,
+          "EjectTransform": { "_type": "gameobject", "go": "7fc2a06a-228c-956d-0177-c95c4cc4df53" },
+          "MuzzleEffect": null,
+          "MuzzleTransform": { "_type": "gameobject", "go": "6eb19f59-117b-845c-f066-b84b3bb3ce42" },
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Renderer": { "_type": "component", "component_id": "4cf97d37-f95f-623a-de44-96291991ac20", "go": "2ad75b15-d73d-4018-bc22-7407f67f909e", "component_type": "Sandbox.SkinnedModelRenderer" },
+          "TracerEffect": null
+        },
+        {
+          "__type": "Sandbox.SkinnedModelRenderer",
+          "__guid": "4cf97d37-f95f-623a-de44-96291991ac20",
+          "__enabled": true,
+          "Flags": 0,
+          "BodyGroups": 9513,
+          "BoneMergeTarget": null,
+          "CreateAttachments": true,
+          "CreateBoneObjects": false,
+          "LodOverride": null,
+          "MaterialGroup": null,
+          "MaterialOverride": null,
+          "Materials": null,
+          "Model": "models/weapons/sbox_sniper_m700/w_m700.vmdl",
+          "Morphs": {},
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Parameters": { "bools": "", "ints": "", "floats": "", "vectors": "", "rotations": "" },
+          "PlaybackRate": 1,
+          "RenderOptions": { "GameLayer": true, "OverlayLayer": false, "BloomLayer": false, "AfterUILayer": false },
+          "RenderType": "On",
+          "Sequence": { "Name": null, "Looping": true, "Blending": false },
+          "Tint": "1,1,1,1",
+          "UseAnimGraph": false
+        }
+      ],
+      "Children": [
+        {
+          "__guid": "6eb19f59-117b-845c-f066-b84b3bb3ce42",
+          "__version": 1,
+          "Flags": 8,
+          "Name": "muzzle",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+      "NetworkInterpolation": true,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [],
+          "Children": []
+        },
+        {
+          "__guid": "7fc2a06a-228c-956d-0177-c95c4cc4df53",
+          "__version": 1,
+          "Flags": 8,
+          "Name": "eject",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+      "NetworkInterpolation": true,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [],
+          "Children": []
+        }
+      ]
+    }
+  ],
     "__properties": {
       "NetworkInterpolation": true,
       "TimeScale": 1,
@@ -137,3 +296,10 @@
   "__references": [],
   "__version": 2
 }
+
+
+
+
+
+
+

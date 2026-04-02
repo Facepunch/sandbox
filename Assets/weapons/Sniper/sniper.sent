@@ -1,5 +1,5 @@
 {
-  "Prefab": "weapons/sniper/item_sniper.prefab",
+  "Prefab": "weapons/sniper/sniper.prefab",
   "Title": "M700 Sniper",
   "Description": "High-powered bolt-action sniper rifle with scope",
   "Category": "Weapon",

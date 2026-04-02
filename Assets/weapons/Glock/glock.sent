@@ -1,5 +1,5 @@
 {
-  "Prefab": "weapons/glock/item_glock.prefab",
+  "Prefab": "weapons/glock/glock.prefab",
   "Title": "USP",
   "Description": null,
   "Category": "Weapon",

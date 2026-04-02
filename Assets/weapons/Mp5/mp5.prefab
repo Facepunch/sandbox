@@ -6,7 +6,7 @@
     "Name": "mp5",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
-    "Scale": "1,1,1",
+    "Scale": "2,2,2",
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 2,
@@ -20,7 +20,6 @@
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
-        "AmmoResource": "weapons/ammo/9mm.ammo",
         "Bullet": {
           "Damage": 12,
           "BulletRadius": 1,
@@ -48,18 +47,8 @@
             "Rotate": 0,
             "FlipVertical": false,
             "FlipHorizontal": false,
-            "Cropping": {
-              "Left": 0,
-              "Top": 0,
-              "Right": 0,
-              "Bottom": 0
-            },
-            "Padding": {
-              "Left": 0,
-              "Top": 0,
-              "Right": 0,
-              "Bottom": 0
-            },
+            "Cropping": { "Left": 0, "Top": 0, "Right": 0, "Bottom": 0 },
+            "Padding": { "Left": 0, "Top": 0, "Right": 0, "Bottom": 0 },
             "InvertColor": false,
             "Tint": "1,1,1,1",
             "Blur": 0,
@@ -72,16 +61,18 @@
             "TargetColor": "1,1,1,1",
             "CacheToDisk": true
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/d24ee0a15afd69d6.vtex"
         },
         "DisplayName": "SMG",
         "HoldType": "Rifle",
         "IncrementalReloading": false,
-        "IsSelfAmmo": false,
+        "IronSightsFireScale": 0.2,
         "ItemPrefab": {
           "_type": "gameobject",
-          "prefab": "weapons/mp5/item_mp5.prefab"
+          "prefab": "weapons/mp5/mp5.prefab"
         },
+      "DroppedGameObject": { "_type": "gameobject", "go": "4c0e80fa-adda-4379-9f2c-57d9fddc85f1" },
+        "MaxReserveAmmo": 120,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -90,6 +81,15 @@
         "OnComponentUpdate": null,
         "ParentBone": "hold_r",
         "ReloadTime": 1.6,
+        "ReserveAmmo": 0,
+        "SecondaryInput": {
+          "IsEnabled": true,
+          "Action": "attack2"
+        },
+        "ShootInput": {
+          "IsEnabled": true,
+          "Action": "attack1"
+        },
         "ShootSound": "weapons/mp5/sounds/mp5_shoot.sound",
         "StartingAmmo": 30,
         "TimeBetweenShots": 0.09,
@@ -104,9 +104,177 @@
           "_type": "gameobject",
           "prefab": "weapons/mp5/mp5_wm.prefab"
         }
+      },
+      {
+        "__type": "DroppedWeapon",
+        "__guid": "68f31dea-403a-4788-8c4b-7416c88f28ed",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+    {
+      "__type": "Sandbox.ModelCollider",
+      "__guid": "7f3b13cd-d00d-76ac-c25f-8a0c000198c4",
+      "__enabled": true,
+      "Flags": 0,
+      "ColliderFlags": 0,
+      "Elasticity": null,
+      "Friction": null,
+      "IsTrigger": false,
+      "Model": "models/weapons/sbox_smg_mp5/w_mp5.vmdl",
+      "OnComponentDestroy": null,
+      "OnComponentDisabled": null,
+      "OnComponentEnabled": null,
+      "OnComponentFixedUpdate": null,
+      "OnComponentStart": null,
+      "OnComponentUpdate": null,
+      "OnObjectTriggerEnter": null,
+      "OnObjectTriggerExit": null,
+      "OnTriggerEnter": null,
+      "OnTriggerExit": null,
+      "RollingResistance": null,
+      "Static": false,
+      "Surface": null,
+      "SurfaceVelocity": "0,0,0"
+    },
+    {
+      "__type": "Sandbox.Rigidbody",
+        "__guid": "558f08b2-be5c-411e-990a-9984fbea59ea",
+        "__enabled": true,
+        "Flags": 0,
+        "AngularDamping": 0,
+        "EnableImpactDamage": true,
+        "EnhancedCcd": false,
+        "Gravity": true,
+        "GravityScale": 1,
+        "ImpactDamage": 0,
+        "LinearDamping": 0,
+        "Locking": { "X": false, "Y": false, "Z": false, "Pitch": false, "Yaw": false, "Roll": false },
+        "MassCenterOverride": "0,0,0",
+        "MassOverride": 0,
+        "MinImpactDamageSpeed": 500,
+        "MotionEnabled": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideMassCenter": false,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
       }
     ],
-    "Children": [],
+      "Children": [
+    {
+      "__guid": "4c0e80fa-adda-4379-9f2c-57d9fddc85f1",
+      "__version": 1,
+      "Flags": 0,
+      "Name": "standalone_wm",
+      "Position": "0,0,0",
+      "Rotation": "0,0,0,1",
+      "Scale": "1,1,1",
+      "Tags": "",
+      "Enabled": true,
+      "NetworkMode": 2,
+      "NetworkInterpolation": true,
+      "NetworkOrphaned": 0,
+      "NetworkTransmit": true,
+      "OwnerTransfer": 1,
+      "Components": [
+        {
+          "__type": "WorldModel",
+          "__guid": "5d1f91ab-beeb-548a-a03d-68eaeed96a02",
+          "__enabled": true,
+          "Flags": 0,
+          "EjectBrass": null,
+          "EjectTransform": { "_type": "gameobject", "go": "9b5d35ef-f22f-98ce-e471-ac2e2223bae6" },
+          "MuzzleEffect": null,
+          "MuzzleTransform": { "_type": "gameobject", "go": "8a4c24de-e11e-87bd-d360-9b1d1112a9d5" },
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Renderer": { "_type": "component", "component_id": "6e2a02bc-cffc-659b-b14e-79fbfff07b13", "go": "4c0e80fa-adda-4379-9f2c-57d9fddc85f1", "component_type": "Sandbox.SkinnedModelRenderer" },
+          "TracerEffect": null
+        },
+        {
+          "__type": "Sandbox.SkinnedModelRenderer",
+          "__guid": "6e2a02bc-cffc-659b-b14e-79fbfff07b13",
+          "__enabled": true,
+          "Flags": 0,
+          "BodyGroups": 9513,
+          "BoneMergeTarget": null,
+          "CreateAttachments": true,
+          "CreateBoneObjects": false,
+          "LodOverride": null,
+          "MaterialGroup": null,
+          "MaterialOverride": null,
+          "Materials": null,
+          "Model": "models/weapons/sbox_smg_mp5/w_mp5.vmdl",
+          "Morphs": {},
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Parameters": { "bools": "", "ints": "", "floats": "", "vectors": "", "rotations": "" },
+          "PlaybackRate": 1,
+          "RenderOptions": { "GameLayer": true, "OverlayLayer": false, "BloomLayer": false, "AfterUILayer": false },
+          "RenderType": "On",
+          "Sequence": { "Name": null, "Looping": true, "Blending": false },
+          "Tint": "1,1,1,1",
+          "UseAnimGraph": false
+        }
+      ],
+      "Children": [
+        {
+          "__guid": "8a4c24de-e11e-87bd-d360-9b1d1112a9d5",
+          "__version": 1,
+          "Flags": 8,
+          "Name": "muzzle",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+      "NetworkInterpolation": true,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [],
+          "Children": []
+        },
+        {
+          "__guid": "9b5d35ef-f22f-98ce-e471-ac2e2223bae6",
+          "__version": 1,
+          "Flags": 8,
+          "Name": "eject",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+      "NetworkInterpolation": true,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [],
+          "Children": []
+        }
+      ]
+    }
+  ],
     "__properties": {
       "NetworkInterpolation": true,
       "TimeScale": 1,
@@ -122,7 +290,8 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "CustomBounds": false
       }
     },
     "__variables": []
@@ -135,3 +304,10 @@
   "__references": [],
   "__version": 2
 }
+
+
+
+
+
+
+

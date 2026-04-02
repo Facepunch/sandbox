@@ -194,7 +194,19 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		var clone = prefab.Clone( new CloneConfig { Parent = GameObject, StartEnabled = false } );
 		clone.NetworkSpawn( false, Network.Owner );
 
-		var weapon = clone.Components.Get<BaseCarryable>( true );
+		//
+		// Dropped variant components
+		//
+		{
+			clone.GetComponent<DroppedWeapon>( true )?.Enabled = false;
+			clone.GetComponent<Rigidbody>( true )?.Enabled = false;
+			clone.GetComponent<ModelCollider>( true )?.Enabled = false;
+
+			var cloneCarryable = clone.GetComponent<BaseCarryable>( true );
+			if ( cloneCarryable?.DroppedGameObject is { } droppedGo ) droppedGo.Enabled = false;
+		}
+
+		var weapon = clone.GetComponent<BaseCarryable>( true );
 		Assert.NotNull( weapon );
 
 		weapon.InventorySlot = targetSlot;
@@ -210,7 +222,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 	public void Take( BaseCarryable item, bool includeNotices )
 	{
-		var existing = Weapons.Where( x => x.GetType() == item.GetType() ).FirstOrDefault();
+		var existing = Weapons.FirstOrDefault( x => x.GetType() == item.GetType() );
 		if ( existing.IsValid() )
 		{
 			if ( existing is BaseWeapon existingWeapon && item is BaseWeapon pickupWeapon && existingWeapon.UsesAmmo )
@@ -232,8 +244,8 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			return;
 
 		item.GameObject.Parent = GameObject;
-		item.Network.Refresh();
 		item.InventorySlot = slot;
+		item.GameObject.Enabled = false;
 
 		if ( Network.Owner is not null )
 			item.Network.AssignOwnership( Network.Owner );
@@ -257,7 +269,6 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 		if ( !weapon.IsValid() ) return false;
 		if ( weapon.Owner != Player ) return false;
-		if ( !weapon.ItemPrefab.IsValid() ) return false;
 
 		var dropPosition = Player.EyeTransform.Position + Player.EyeTransform.Forward * 48f;
 		var dropVelocity = Player.EyeTransform.Forward * 200f + Vector3.Up * 100f;
@@ -268,26 +279,56 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			SwitchWeapon( null, true );
 		}
 
-		// Spawn the item prefab in the world
-		var pickup = weapon.ItemPrefab.Clone( new CloneConfig
+		// Weapons with a DroppedWeapon component: spawn a fresh prefab clone as server.
+		// This avoids all ownership/state issues from the inventory copy.
+		var droppedWeapon = weapon.GetComponent<DroppedWeapon>( true );
+		if ( droppedWeapon.IsValid() )
 		{
-			Transform = new Transform( dropPosition ),
-			StartEnabled = true
-		} );
+			var prefabSource = weapon.GameObject.PrefabInstanceSource;
+			if ( !string.IsNullOrEmpty( prefabSource ) )
+			{
+				var prefab = GameObject.GetPrefab( prefabSource );
+				if ( prefab.IsValid() )
+				{
+					var pickup = prefab.Clone( new CloneConfig
+					{
+						Transform = new Transform( dropPosition ),
+						StartEnabled = true
+					} );
 
-		pickup.NetworkSpawn();
+					pickup.NetworkSpawn();
 
-		// Apply velocity if there's a rigidbody
-		if ( pickup.GetComponent<Rigidbody>() is { } rb )
+					if ( pickup.GetComponent<Rigidbody>() is { } rb )
+					{
+						rb.Velocity = Player.Controller.Velocity + dropVelocity;
+						rb.AngularVelocity = Vector3.Random * 8.0f;
+					}
+				}
+			}
+
+			weapon.DestroyGameObject();
+		}
+		else
 		{
-			var baseVelocity = Player.Controller.Velocity;
+			if ( !weapon.ItemPrefab.IsValid() ) return false;
 
-			rb.Velocity = baseVelocity + dropVelocity;
-			rb.AngularVelocity = Vector3.Random * 8.0f;
+			var pickup = weapon.ItemPrefab.Clone( new CloneConfig
+			{
+				Transform = new Transform( dropPosition ),
+				StartEnabled = true
+			} );
+
+			pickup.NetworkSpawn();
+
+			if ( pickup.GetComponent<Rigidbody>() is { } rb )
+			{
+				rb.Velocity = Player.Controller.Velocity + dropVelocity;
+				rb.AngularVelocity = Vector3.Random * 8.0f;
+			}
+
+			weapon.DestroyGameObject();
 		}
 
-		weapon.DestroyGameObject();
-		// DestroyGameObject is deferred, so we yield so the item is gone before we serialize the loadout.
 		_ = FinishDropAsync();
 
 		return true;

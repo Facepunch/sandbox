@@ -18,6 +18,9 @@ public partial class BaseBulletWeapon : BaseWeapon
 		CameraRecoilFrequency = 1f,
 	};
 
+	[Property, Group( "Bullet" )]
+	public float StandaloneRecoilForce { get; set; } = 150f;
+
 	protected TimeSince TimeSinceShoot = 0;
 
 	/// <summary>
@@ -43,17 +46,23 @@ public partial class BaseBulletWeapon : BaseWeapon
 	}
 
 	/// <summary>
-	/// Shoot a bullet out of the front of the gun
+	/// Shoot a bullet out of the front of the gun.
+	/// When held by a player, fires from the player's eye with aim cone and recoil.
+	/// When standalone (no owner), fires straight from the weapon's muzzle.
 	/// </summary>
 	protected void ShootBullet( float fireRate, in BulletConfiguration config )
 	{
-		if ( !HasAmmo() || IsReloading() || TimeUntilNextShotAllowed > 0 )
+		if ( HasOwner && ( !HasAmmo() || IsReloading() ) )
 		{
 			TryAutoReload();
 			return;
 		}
 
-		if ( !TakeAmmo( 1 ) )
+		if ( TimeUntilNextShotAllowed > 0 )
+			return;
+
+		// Only consume ammo when held by a player
+		if ( HasOwner && !TakeAmmo( 1 ) )
 		{
 			AddShootDelay( 0.2f );
 			return;
@@ -61,15 +70,33 @@ public partial class BaseBulletWeapon : BaseWeapon
 
 		AddShootDelay( fireRate );
 
-		var aimConeAmount = GetAimConeAmount( config.AimConeRecovery );
-		var forward = Owner.EyeTransform.Rotation.Forward
-			.WithAimCone(
-				config.AimConeBase.x + aimConeAmount * config.AimConeSpread.x,
-				config.AimConeBase.y + aimConeAmount * config.AimConeSpread.y
-			);
+		Vector3 forward;
+		Ray traceRay;
+		GameObject ignoreRoot;
 
-		var tr = Scene.Trace.Ray( Owner.EyeTransform.ForwardRay with { Forward = forward }, config.Range )
-			.IgnoreGameObjectHierarchy( Owner.GameObject )
+		if ( HasOwner )
+		{
+			// Player-held: shoot from eye with aim cone spread
+			var aimConeAmount = GetAimConeAmount( config.AimConeRecovery );
+			forward = Owner.EyeTransform.Rotation.Forward
+				.WithAimCone(
+					config.AimConeBase.x + aimConeAmount * config.AimConeSpread.x,
+					config.AimConeBase.y + aimConeAmount * config.AimConeSpread.y
+				);
+			traceRay = Owner.EyeTransform.ForwardRay with { Forward = forward };
+			ignoreRoot = Owner.GameObject;
+		}
+		else
+		{
+			// Standalone: shoot straight from the weapon's muzzle
+			var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? WorldTransform;
+			forward = muzzle.Rotation.Forward;
+			traceRay = new Ray( muzzle.Position, forward );
+			ignoreRoot = GameObject;
+		}
+
+		var tr = Scene.Trace.Ray( traceRay, config.Range )
+			.IgnoreGameObjectHierarchy( ignoreRoot )
 			.WithoutTags( "playercontroller" )
 			.Radius( config.BulletRadius )
 			.UseHitboxes()
@@ -79,7 +106,17 @@ public partial class BaseBulletWeapon : BaseWeapon
 		TraceAttack( TraceAttackInfo.From( tr, config.Damage ) );
 		TimeSinceShoot = 0;
 
-		if ( !Owner.IsValid() ) return;
+		// Recoil only applies when held by a player
+		if ( !HasOwner )
+		{
+			// Simulate physical recoil by pushing the weapon opposite to its fire direction
+			if ( StandaloneRecoilForce > 0f && GetComponent<Rigidbody>( true ) is var rb )
+			{
+				var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? WorldTransform;
+				rb.ApplyForce( muzzle.Rotation.Up * StandaloneRecoilForce );
+			}
+			return;
+		}
 
 		Owner.Controller.EyeAngles += new Angles(
 			Random.Shared.Float( config.RecoilPitch.x, config.RecoilPitch.y ),
@@ -103,15 +140,23 @@ public partial class BaseBulletWeapon : BaseWeapon
 
 		if ( !noEvents )
 		{
-			ViewModel?.RunEvent<ViewModel>( x => x.OnAttack() );
-			ViewModel?.RunEvent<ViewModel>( x => x.CreateRangedEffects( this, hitpoint, origin ) );
+			if ( ViewModel.IsValid() )
+			{
+				ViewModel.RunEvent<ViewModel>( x => x.OnAttack() );
+				ViewModel.RunEvent<ViewModel>( x => x.CreateRangedEffects( this, hitpoint, origin ) );
+			}
+			else if ( WorldModel.IsValid() )
+			{
+				WorldModel.RunEvent<WorldModel>( x => x.OnAttack() );
+				WorldModel.RunEvent<WorldModel>( x => x.CreateRangedEffects( this, hitpoint, origin ) );
+			}
 
 			if ( ShootSound.IsValid() )
 			{
 				var snd = GameObject.PlaySound( ShootSound );
 
 				// If we're shooting, the sound should not be spatialized
-				if ( Owner.IsValid() && Owner.IsLocalPlayer && snd.IsValid() )
+				if ( HasOwner && Owner.IsLocalPlayer && snd.IsValid() )
 				{
 					snd.SpacialBlend = 0;
 				}

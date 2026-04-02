@@ -1,6 +1,6 @@
 using Sandbox.Rendering;
 
-public partial class BaseWeapon : BaseCarryable
+public partial class BaseWeapon : BaseCarryable, IPlayerControllable
 {
 	/// <summary>
 	/// How long after deploying a weapon can you not shoot a gun?
@@ -163,7 +163,7 @@ public partial class BaseWeapon : BaseCarryable
 	/// </summary>
 	public virtual bool CanPrimaryAttack()
 	{
-		if ( !HasAmmo() ) return false;
+		if ( HasOwner && !HasAmmo() ) return false;
 		if ( IsReloading() ) return false;
 		if ( TimeUntilNextShotAllowed > 0 ) return false;
 
@@ -175,7 +175,7 @@ public partial class BaseWeapon : BaseCarryable
 	/// </summary>
 	public virtual bool CanSecondaryAttack()
 	{
-		if ( !HasAmmo() ) return false;
+		if ( HasOwner && !HasAmmo() ) return false;
 		if ( IsReloading() ) return false;
 		if ( TimeUntilNextShotAllowed > 0 ) return false;
 
@@ -192,9 +192,32 @@ public partial class BaseWeapon : BaseCarryable
 	/// </summary>
 	protected virtual float GetSecondaryFireRate() => 0.2f;
 
+	/// <summary>
+	/// The input that fires the primary attack when this weapon is controlled via a seat.
+	/// </summary>
+	[Property, Sync, ClientEditable] public ClientInput ShootInput { get; set; } = new ClientInput { Action = "attack1" };
+
+	/// <summary>
+	/// The input that fires the secondary attack when this weapon is controlled via a seat.
+	/// </summary>
+	[Property, Sync, ClientEditable] public ClientInput SecondaryInput { get; set; } = new ClientInput { Action = "attack2" };
+
+	public void OnStartControl() { }
+
+	public void OnEndControl() { }
+
+	public void OnControl()
+	{
+		if ( ShootInput.Down() && CanPrimaryAttack() )
+			PrimaryAttack();
+
+		if ( SecondaryInput.Down() && CanSecondaryAttack() )
+			SecondaryAttack();
+	}
+
 	public virtual void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
-		Color color = Color.Red;
+		var color = Color.Red;
 
 		hud.DrawLine( center + Vector2.Left * 32, center + Vector2.Left * 15, 3, color );
 		hud.DrawLine( center - Vector2.Left * 32, center - Vector2.Left * 15, 3, color );

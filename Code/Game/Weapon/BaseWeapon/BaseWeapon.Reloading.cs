@@ -62,7 +62,7 @@ public partial class BaseWeapon
 	[Rpc.Broadcast]
 	private void BroadcastReload()
 	{
-		if ( !Owner.IsValid() ) return;
+		if ( !HasOwner ) return;
 
 		Assert.True( Owner.Controller.IsValid(), "BaseWeapon::BroadcastReload - Player Controller is invalid!" );
 		Assert.True( Owner.Controller.Renderer.IsValid(), "BaseWeapon::BroadcastReload - Renderer is invalid!" );

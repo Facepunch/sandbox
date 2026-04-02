@@ -57,7 +57,7 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 		if ( !IsCooking ) return;
 
 		// Drop the grenade at your feet
-		if ( Owner.IsValid() )
+		if ( HasOwner )
 			Throw( Owner, Vector3.Down, 0.2f );
 	}
 
