@@ -20,6 +20,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		var playerData = CreatePlayerInfo( channel );
 		SpawnPlayer( playerData );
+		CheckConnectionAchievement( channel );
 	}
 
 	/// <summary>
