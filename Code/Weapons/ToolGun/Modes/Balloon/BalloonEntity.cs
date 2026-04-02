@@ -8,6 +8,8 @@ public class BalloonEntity : Component, Component.IDamageable
 	{
 		if ( IsProxy ) return;
 
+		damage.Attacker?.GetComponent<Player>()?.PlayerData?.AddStat( "balloon.popped" );
+
 		Pop();
 	}
 
