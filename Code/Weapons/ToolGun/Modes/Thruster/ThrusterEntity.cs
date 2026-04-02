@@ -25,16 +25,31 @@ public class ThrusterEntity : Component, IPlayerControllable
 	[Property, Sync, ClientEditable]
 	public ClientInput Reverse { get; set; }
 
+	private static SoundEvent _defaultSound = ResourceLibrary.Get<SoundEvent>( "entities/thruster/sounds/thruster_loop_default.sound" );
+
+	/// <summary>
+	/// Looping sound played while the thruster is active.
+	/// </summary>
+	[Property, Group( "Sound" )]
+	public SoundEvent ThrusterSound { get; set; }
+
 	/// <summary>
 	/// Current thrust output, -1 to 1. Updated every control frame.
 	/// </summary>
 	public float ThrustAmount { get; private set; }
+
+	private SoundHandle _thrusterSound;
 
 	protected override void OnEnabled()
 	{
 		base.OnEnabled();
 
 		OnEffect?.Enabled = false;
+	}
+
+	protected override void OnDisabled()
+	{
+		StopThrusterSound();
 	}
 
 	void AddThrust( float amount )
@@ -58,7 +73,30 @@ public class ThrusterEntity : Component, IPlayerControllable
 		if ( !HideEffects )
 			OnEffect?.Enabled = state;
 
+		if ( state )
+			StartThrusterSound();
+		else
+			StopThrusterSound();
+
 		Network.Refresh();
+	}
+
+	void StartThrusterSound()
+	{
+		if ( _thrusterSound.IsValid() && !_thrusterSound.IsStopped ) return;
+
+		_thrusterSound = Sound.Play( ThrusterSound ?? _defaultSound, WorldPosition );
+		_thrusterSound.Parent = GameObject;
+		_thrusterSound.FollowParent = true;
+	}
+
+	void StopThrusterSound()
+	{
+		if ( _thrusterSound.IsValid() )
+		{
+			_thrusterSound.Stop();
+			_thrusterSound = default;
+		}
 	}
 
 	public void OnStartControl()
