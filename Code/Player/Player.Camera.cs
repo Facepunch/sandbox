@@ -5,16 +5,13 @@ public sealed partial class Player
 	[Property, Group( "Camera" )] public float SeatedCameraDistance { get; set; } = 200f;
 	[Property, Group( "Camera" )] public float SeatedCameraHeight { get; set; } = 40f;
 	[Property, Group( "Camera" )] public float SeatedCameraPositionSpeed { get; set; } = 3f;
-	[Property, Group( "Camera" )] public float SeatedCameraRollSpeed { get; set; } = 2f;
 	[Property, Group( "Camera" )] public float SeatedCameraVelocityScale { get; set; } = 0.1f;
 
 	private ISitTarget _cachedSeat;
 	private float _minCameraDistance;
 	private float _smoothedDistance;
-	private Vector3 _smoothedSeatCamUp;
 	private Angles _seatedAngles;
 	private Vector3 _lastSeatWorldPos;
-	private bool _wasThirdPerson;
 
 	private float roll;
 
@@ -33,6 +30,7 @@ public sealed partial class Player
 		IPlayerEvent.Post( x => x.OnCameraSetup( camera ) );
 
 		ApplyMovementCameraEffects( camera );
+		ApplySeatedCameraSetup( camera );
 
 		IPlayerEvent.Post( x => x.OnCameraPostSetup( camera ) );
 	}
@@ -48,26 +46,13 @@ public sealed partial class Player
 		camera.WorldRotation *= new Angles( 0, 0, roll );
 	}
 
-	protected override void OnUpdate()
+	private void ApplySeatedCameraSetup( CameraComponent camera )
 	{
-		if ( IsProxy ) return;
-		UpdateSeatedCamera();
-	}
-
-	private void UpdateSeatedCamera()
-	{
-		var isThirdPerson = Controller.ThirdPerson;
-
-		if ( isThirdPerson != _wasThirdPerson )
+		if ( !Controller.ThirdPerson )
 		{
-			_wasThirdPerson = isThirdPerson;
 			_cachedSeat = null;
-			_smoothedDistance = 0;
-			_smoothedSeatCamUp = Vector3.Up;
-			_seatedAngles = (Angles)Scene.Camera.WorldRotation;
+			return;
 		}
-
-		if ( !isThirdPerson ) return;
 
 		var seat = GetComponentInParent<ISitTarget>( false );
 		if ( seat is null )
@@ -83,8 +68,7 @@ public sealed partial class Player
 		{
 			_cachedSeat = seat;
 			_minCameraDistance = MathF.Max( SeatedCameraDistance, RebuildContraptionBounds( seatGo ) );
-			_smoothedSeatCamUp = seatGo.WorldRotation.Up;
-			_seatedAngles = Scene.Camera.WorldRotation.Angles();
+			_seatedAngles = camera.WorldRotation.Angles();
 			_lastSeatWorldPos = seatPos;
 			_smoothedDistance = _minCameraDistance;
 		}
@@ -100,15 +84,12 @@ public sealed partial class Player
 		// Smooth orbit distance
 		_smoothedDistance = _smoothedDistance.LerpTo( targetDistance, Time.Delta * SeatedCameraPositionSpeed );
 
-		// Smooth up vector for contraption tilt/roll
-		_smoothedSeatCamUp = Vector3.Lerp( _smoothedSeatCamUp, seatGo.WorldRotation.Up, Time.Delta * SeatedCameraRollSpeed ).Normal;
-
 		// Compose rotation: yaw around world up, then pitch around local right, no gimbal lock
 		var camRot = Rotation.FromYaw( _seatedAngles.yaw ) * Rotation.FromPitch( _seatedAngles.pitch );
 		var camPos = seatPos + camRot.Backward * _smoothedDistance;
 
-		Scene.Camera.WorldPosition = camPos;
-		Scene.Camera.WorldRotation = Rotation.LookAt( seatPos - camPos, _smoothedSeatCamUp );
+		camera.WorldPosition = camPos;
+		camera.WorldRotation = Rotation.LookAt( seatPos - camPos, Vector3.Up );
 	}
 
 	private float RebuildContraptionBounds( GameObject seatGo )
