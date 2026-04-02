@@ -92,6 +92,11 @@
 
 		Log.Info($"{author}: {message}");
 
+		if ( Rpc.Caller == Connection.Local && message.Contains( "colmore", StringComparison.OrdinalIgnoreCase ) )
+		{
+			Sandbox.Services.Stats.Increment( "secret_phrase", 1 );
+		}
+
         Entries.Add(new Entry(steamid, author, message, 0.0f));
 		StateHasChanged();
 	}

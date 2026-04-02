@@ -161,11 +161,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 			attacker.PlayerData.Kills++;
 			attacker.PlayerData.AddStat( $"kills" );
-
-			if ( weapon.IsValid() )
-			{
-				attacker.PlayerData.AddStat( $"kills.{weapon.Name}" );
-			}
 		}
 
 		player.PlayerData.Deaths++;

@@ -71,6 +71,7 @@
                     Hints.Current.Cancel("openspawnmenu");
                     SwitchMode(_lastMode, false);
                     PanelSwitcher.SkipTransitions();
+                    Sandbox.Services.Stats.Increment( "menu.spawnmenu.open", 1 );
                 }
             }
         }
