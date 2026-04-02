@@ -94,6 +94,7 @@ public class WheelTool : ToolMode
 		var undo = Player.Undo.Create();
 		undo.Name = "Wheel";
 		undo.Add( wheelGo );
-	}
 
+		CheckContraptionStats( point.GameObject );
+	}
 }

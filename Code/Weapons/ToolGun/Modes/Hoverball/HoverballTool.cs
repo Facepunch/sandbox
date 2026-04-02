@@ -72,5 +72,7 @@ public class HoverballTool : ToolMode
 		undo.Name = "Hoverball";
 		undo.Icon = "🎱";
 		undo.Add( go );
+
+		CheckContraptionStats( point.GameObject );
 	}
 }

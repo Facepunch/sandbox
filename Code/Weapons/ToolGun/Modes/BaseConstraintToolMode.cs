@@ -108,6 +108,7 @@
 		}
 
 		CreateConstraint( point1, point2 );
+		CheckContraptionStats( point1.GameObject );
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]

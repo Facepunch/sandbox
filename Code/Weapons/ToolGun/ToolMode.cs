@@ -106,4 +106,34 @@ public abstract partial class ToolMode : Component, IToolInfo
 			painter.DrawCircle( crosshair, 3, redColor );
 		}
 	}
+
+	/// <summary>
+	/// Called on the host after placing an entity or constraint. Fires an RPC to the owning
+	/// client so it can walk the contraption graph and record achievement stats locally.
+	/// </summary>
+	[Rpc.Owner]
+	protected void CheckContraptionStats( GameObject anchor )
+	{
+		var builder = new LinkedGameObjectBuilder();
+		builder.AddConnected( anchor );
+
+		var wheels = builder.Objects.Sum( o => o.GetComponentsInChildren<WheelEntity>().Count() );
+		var thrusters = builder.Objects.Sum( o => o.GetComponentsInChildren<ThrusterEntity>().Count() );
+		var hoverballs = builder.Objects.Sum( o => o.GetComponentsInChildren<HoverballEntity>().Count() );
+		var constraints = builder.Objects.Sum( o => o.GetComponentsInChildren<ConstraintCleanup>().Count() );
+
+		Sandbox.Services.Stats.Increment( "tool.constraint.create", 1 );
+		FireMilestone( "tool.contraption.wheel", wheels, 2, 4, 6 );
+		FireMilestone( "tool.contraption.thruster", thrusters, 2, 4 );
+		FireMilestone( "tool.contraption.hoverball", hoverballs, 2, 4 );
+		FireMilestone( "tool.contraption.constraint", constraints, 5, 10, 20 );
+
+		// Log.Info( $"stat: wheels={wheels} thrusters={thrusters} hoverballs={hoverballs} constraints={constraints}" );
+	}
+
+	private static void FireMilestone( string statBase, int count, params int[] thresholds )
+	{
+		foreach ( var t in thresholds )
+			if ( count == t ) Sandbox.Services.Stats.Increment( $"{statBase}.{t}", 1 );
+	}
 }

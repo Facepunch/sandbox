@@ -89,6 +89,8 @@ public class ThrusterTool : ToolMode
 			undo.Icon = "🚀";
 			undo.Add( go );
 		}
+
+		CheckContraptionStats( point.GameObject );
 	}
 
 }
