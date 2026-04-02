@@ -6,20 +6,35 @@
 
 <root>
 
-    @if ( Title == null )
-    {
-        <div class="title">None Selected</div>
-    }
-    else
-    {
-        <div class="title">@Title</div>
-    }
+    <div class="preview">
+        @if ( ResourcePath != null )
+        {
+            <div class="thumb" style="background-image: url( thumb:@ResourcePath )"></div>
+        }
+        else
+        {
+            <div class="ext-badge">SRF</div>
+        }
+    </div>
+
+    <div class="content">
+        @if ( Title == null )
+        {
+            <div class="title empty">None Selected</div>
+        }
+        else
+        {
+            <div class="title">@Title</div>
+        }
+        <div class="subtitle">Surface</div>
+    </div>
 
 </root>
 
 @code
 {
     string Title;
+    string ResourcePath;
 
     public override void Rebuild()
     {
@@ -34,10 +49,12 @@
         if ( surface == null || !surface.IsValid() )
         {
             Title = null;
+            ResourcePath = null;
             return;
         }
 
         Title = surface.ResourceName;
+        ResourcePath = surface.ResourcePath;
     }
 
     void SelectFile( string filePath )
