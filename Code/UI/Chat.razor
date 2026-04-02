@@ -1,7 +1,6 @@
 ﻿@using Sandbox;
 @using Sandbox.UI;
 @inherits PanelComponent
-@implements Component.INetworkListener
 
 <root>
 
@@ -109,18 +108,4 @@
         StateHasChanged();
     }
 
-	void Component.INetworkListener.OnConnected( Connection channel )
-	{
-		if ( IsProxy ) return;
-
-		AddSystemText( $"{channel.DisplayName} has joined the game" );
-	}
-
-	void Component.INetworkListener.OnDisconnected( Connection channel )
-	{
-		if ( IsProxy ) return;
-		if ( BanSystem.Current?.IsBanned( channel.SteamId ) ?? false ) return;
-
-		AddSystemText( $"{channel.DisplayName} has left the game" );
-	}
 }

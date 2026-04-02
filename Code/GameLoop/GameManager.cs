@@ -21,6 +21,8 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		var playerData = CreatePlayerInfo( channel );
 		SpawnPlayer( playerData );
 		CheckConnectionAchievement( channel );
+
+		Scene.Get<Chat>()?.AddSystemText( $"{channel.DisplayName} has joined the game", "👋" );
 	}
 
 	/// <summary>
@@ -33,6 +35,11 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		{
 			pd.GameObject.Destroy();
 		}
+
+		if ( _kickedPlayers.Remove( channel.Id ) ) return;
+		if ( BanSystem.Current?.IsBanned( channel.SteamId ) ?? false ) return;
+
+		Scene.Get<Chat>()?.AddSystemText( $"{channel.DisplayName} has left the game", "👋" );
 	}
 
 	private PlayerData CreatePlayerInfo( Connection channel )

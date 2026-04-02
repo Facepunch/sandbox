@@ -2,6 +2,8 @@ using Sandbox.UI;
 
 public sealed partial class GameManager
 {
+	private readonly HashSet<Guid> _kickedPlayers = new();
+
 	public static Connection FindPlayerWithName( string name, bool partial = true )
 	{
 		return Connection.All.FirstOrDefault( c =>
@@ -9,5 +11,53 @@ public sealed partial class GameManager
 				? c.DisplayName.Contains( name, StringComparison.OrdinalIgnoreCase )
 				: c.DisplayName.Equals( name, StringComparison.OrdinalIgnoreCase )
 		);
+	}
+
+	/// <summary>
+	/// Kicks a connected player with an optional reason.
+	/// </summary>
+	public void Kick( Connection connection, string reason = "Kicked" )
+	{
+		Assert.True( Networking.IsHost, "Only the host may kick players." );
+
+		_kickedPlayers.Add( connection.Id );
+		Scene.Get<Chat>()?.AddSystemText( $"{connection.DisplayName} was kicked: {reason}", "🥾" );
+		connection.Kick( reason );
+	}
+
+	/// <summary>
+	/// Kicks a player by name or Steam ID. Optionally provide a reason.
+	/// Usage: kick [name|steamid] [reason]
+	/// </summary>
+	[ConCmd( "kick" )]
+	public static void KickCommand( string target, string reason = "Kicked" )
+	{
+		if ( !Networking.IsHost ) return;
+
+		if ( ulong.TryParse( target, out var steamIdValue ) )
+		{
+			var connection = Connection.All.FirstOrDefault( c => c.SteamId == steamIdValue );
+			if ( connection is not null )
+			{
+				Current.Kick( connection, reason );
+				Log.Info( $"Kicked {connection.DisplayName}: {reason}" );
+			}
+			else
+			{
+				Log.Warning( $"Could not find player with Steam ID '{target}'" );
+			}
+			return;
+		}
+
+		var conn = FindPlayerWithName( target );
+		if ( conn is not null )
+		{
+			Current.Kick( conn, reason );
+			Log.Info( $"Kicked {conn.DisplayName}: {reason}" );
+		}
+		else
+		{
+			Log.Warning( $"Could not find player '{target}'" );
+		}
 	}
 }
