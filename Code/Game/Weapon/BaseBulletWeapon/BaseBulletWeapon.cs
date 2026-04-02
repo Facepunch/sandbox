@@ -18,8 +18,8 @@ public partial class BaseBulletWeapon : BaseWeapon
 		CameraRecoilFrequency = 1f,
 	};
 
-	[Property, Group( "Bullet" )]
-	public float StandaloneRecoilForce { get; set; } = 150f;
+	[Property, Group( "Bullet" ), ClientEditable, Range( 0f, 500000f, 10f )]
+	public float ShootForce { get; set; } = 100000f;
 
 	protected TimeSince TimeSinceShoot = 0;
 
@@ -110,10 +110,10 @@ public partial class BaseBulletWeapon : BaseWeapon
 		if ( !HasOwner )
 		{
 			// Simulate physical recoil by pushing the weapon opposite to its fire direction
-			if ( StandaloneRecoilForce > 0f && GetComponent<Rigidbody>( true ) is var rb )
+			if ( ShootForce > 0f && GetComponent<Rigidbody>( true ) is var rb )
 			{
 				var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? WorldTransform;
-				rb.ApplyForce( muzzle.Rotation.Up * StandaloneRecoilForce );
+				rb.ApplyForce( muzzle.Rotation.Up * ShootForce );
 			}
 			return;
 		}

@@ -14,13 +14,16 @@ public class ShotgunWeapon : BaseBulletWeapon
 
 	public override void PrimaryAttack()
 	{
-		if ( !HasAmmo() || IsReloading() || TimeUntilNextShotAllowed > 0 )
+		if ( HasOwner && ( !HasAmmo() || IsReloading() ) )
 		{
 			TryAutoReload();
 			return;
 		}
 
-		if ( !TakeAmmo( 1 ) )
+		if ( TimeUntilNextShotAllowed > 0 )
+			return;
+
+		if ( HasOwner && !TakeAmmo( 1 ) )
 		{
 			AddShootDelay( 0.2f );
 			return;
@@ -28,17 +31,35 @@ public class ShotgunWeapon : BaseBulletWeapon
 
 		AddShootDelay( PrimaryFireRate );
 
+		Vector3 eyeForward;
+		Ray eyeRay;
+		GameObject ignoreRoot;
+
+		if ( HasOwner )
+		{
+			eyeForward = Owner.EyeTransform.Rotation.Forward;
+			eyeRay = Owner.EyeTransform.ForwardRay;
+			ignoreRoot = Owner.GameObject;
+		}
+		else
+		{
+			var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? WorldTransform;
+			eyeForward = muzzle.Rotation.Forward;
+			eyeRay = new Ray( muzzle.Position, eyeForward );
+			ignoreRoot = GameObject;
+		}
+
 		for ( var i = 0; i < PelletCount; i++ )
 		{
 			var aimConeAmount = GetAimConeAmount();
-			var forward = Owner.EyeTransform.Rotation.Forward
+			var forward = eyeForward
 				.WithAimCone(
 					Bullet.AimConeBase.x + aimConeAmount * Bullet.AimConeSpread.x,
 					Bullet.AimConeBase.y + aimConeAmount * Bullet.AimConeSpread.y
 				);
 
-			var tr = Scene.Trace.Ray( Owner.EyeTransform.ForwardRay with { Forward = forward }, Bullet.Range )
-				.IgnoreGameObjectHierarchy( Owner.GameObject )
+			var tr = Scene.Trace.Ray( eyeRay with { Forward = forward }, Bullet.Range )
+				.IgnoreGameObjectHierarchy( ignoreRoot )
 				.WithoutTags( "playercontroller" )
 				.Radius( Bullet.BulletRadius )
 				.UseHitboxes()
@@ -50,7 +71,15 @@ public class ShotgunWeapon : BaseBulletWeapon
 
 		TimeSinceShoot = 0;
 
-		if ( !HasOwner ) return;
+		if ( !HasOwner )
+		{
+			if ( ShootForce > 0f && GetComponent<Rigidbody>( true ) is var rb )
+			{
+				var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? WorldTransform;
+				rb.ApplyForce( muzzle.Rotation.Up * ShootForce );
+			}
+			return;
+		}
 
 		Owner.Controller.EyeAngles += new Angles(
 			Random.Shared.Float( Bullet.RecoilPitch.x, Bullet.RecoilPitch.y ),
