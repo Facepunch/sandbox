@@ -7,19 +7,40 @@
 
 
 <root>
+    <div class="preview">
+        @if ( ResourcePath != null )
+        {
+            <div class="thumb" style="background-image: url( thumb:@ResourcePath )"></div>
+        }
+        else if ( ResourceAttribute != null )
+        {
+            <div class="ext-badge">@ResourceAttribute.Extension?.ToUpperInvariant()</div>
+        }
+        else
+        {
+            <div class="ext-badge">?</div>
+        }
+    </div>
 
-    @if (ResourceType == null )
-    {
-        <div class="title">Unknown Resource Type</div>
-    }
-    else if ( Title == null )
-    {
-        <div class="title">None Selected</div>
-    }
-    else
-    {
-        <div class="title">@Title</div>
-    }
+    <div class="content">
+        @if ( ResourceType == null )
+        {
+            <div class="title">Unknown Resource Type</div>
+        }
+        else if ( Title == null )
+        {
+            <div class="title empty">None Selected</div>
+        }
+        else
+        {
+            <div class="title">@Title</div>
+        }
+
+        @if ( ResourceAttribute != null )
+        {
+            <div class="subtitle">@ResourceAttribute.Name</div>
+        }
+    </div>
 
 </root>
 
@@ -27,6 +48,7 @@
 {
 
     string Title;
+    string ResourcePath;
     TypeDescription ResourceType;
     AssetTypeAttribute ResourceAttribute;
 
@@ -50,8 +72,11 @@
         if (string.IsNullOrWhiteSpace(path))
         {
             Title = null;
+            ResourcePath = null;
             return;
         }
+
+        ResourcePath = path;
 
         var resource = ResourceLibrary.Get<GameResource>(path);
         if ( resource == null )
