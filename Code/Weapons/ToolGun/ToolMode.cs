@@ -121,11 +121,13 @@ public abstract partial class ToolMode : Component, IToolInfo
 		var thrusters = builder.Objects.Sum( o => o.GetComponentsInChildren<ThrusterEntity>().Count() );
 		var hoverballs = builder.Objects.Sum( o => o.GetComponentsInChildren<HoverballEntity>().Count() );
 		var constraints = builder.Objects.Sum( o => o.GetComponentsInChildren<ConstraintCleanup>().Count() );
+		var chairs = builder.Objects.Sum( o => o.GetComponentsInChildren<BaseChair>().Count() );
 
 		Sandbox.Services.Stats.Increment( "tool.constraint.create", 1 );
 		Sandbox.Services.Stats.SetValue( "tool.contraption.wheel", wheels );
 		Sandbox.Services.Stats.SetValue( "tool.contraption.thruster", thrusters );
 		Sandbox.Services.Stats.SetValue( "tool.contraption.hoverball", hoverballs );
 		Sandbox.Services.Stats.SetValue( "tool.contraption.constraint", constraints );
+		Sandbox.Services.Stats.SetValue( "tool.contraption.chair", chairs );
 	}
 }
