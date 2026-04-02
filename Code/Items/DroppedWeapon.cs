@@ -4,7 +4,23 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 	{
 		var weapon = GetComponent<BaseCarryable>();
 		if ( !weapon.IsValid() ) return null;
-		return new IPressable.Tooltip( "Pick up", "inventory_2", weapon.DisplayName.ToUpper() );
+
+		var name = weapon.DisplayName.ToUpper();
+
+		if ( HasInput() ) return new IPressable.Tooltip( "Can't pick this up", "block", name );
+		return new IPressable.Tooltip( "Pick up", "inventory_2", name );
+	}
+
+	private bool HasInput() => GetComponent<BaseWeapon>() is var weapon && ( weapon.ShootInput.IsEnabled || weapon.SecondaryInput.IsEnabled );
+
+	bool IPressable.CanPress( IPressable.Event e )
+	{
+		//
+		// Can't pick up weapons that are fireable by a contraption
+		//
+		if ( HasInput() ) return false;
+
+		return true;
 	}
 
 	bool IPressable.Press( IPressable.Event e )

@@ -195,12 +195,12 @@ public partial class BaseWeapon : BaseCarryable, IPlayerControllable
 	/// <summary>
 	/// The input that fires the primary attack when this weapon is controlled via a seat.
 	/// </summary>
-	[Property, Sync, ClientEditable] public ClientInput ShootInput { get; set; } = new ClientInput { Action = "attack1" };
+	[Sync, ClientEditable] public ClientInput ShootInput { get; set; }
 
 	/// <summary>
 	/// The input that fires the secondary attack when this weapon is controlled via a seat.
 	/// </summary>
-	[Property, Sync, ClientEditable] public ClientInput SecondaryInput { get; set; } = new ClientInput { Action = "attack2" };
+	[Sync, ClientEditable] public ClientInput SecondaryInput { get; set; }
 
 	public void OnStartControl() { }
 
