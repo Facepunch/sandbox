@@ -24,9 +24,16 @@ public sealed partial class GameManager
 		}
 	}
 
-	[Rpc.Broadcast]
+	[Rpc.Broadcast( NetFlags.HostOnly )]
 	private static void Grant()
 	{
 		Sandbox.Services.Achievements.Unlock( "garry_in_server" );
+	}
+
+	[Rpc.Broadcast( NetFlags.HostOnly )]
+	private static void CheckFriendsOnlineStat()
+	{
+		var friendCount = Connection.All.Count( c => c.SteamId != Connection.Local.SteamId && new Friend( c.SteamId ).IsFriend );
+		Sandbox.Services.Stats.SetValue( "social.friends.max", friendCount );
 	}
 }

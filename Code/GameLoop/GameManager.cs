@@ -21,6 +21,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		var playerData = CreatePlayerInfo( channel );
 		SpawnPlayer( playerData );
 		CheckConnectionAchievement( channel );
+		CheckFriendsOnlineStat();
 
 		Scene.Get<Chat>()?.AddSystemText( $"{channel.DisplayName} has joined the game", "👋" );
 	}
