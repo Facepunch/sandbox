@@ -252,5 +252,7 @@ public class Weld : BaseConstraintToolMode
 		undo.Name = "Weld";
 		undo.Add( go1 );
 		undo.Add( go2 );
+
+		Player.PlayerData?.AddStat( "tool.weld.create" );
 	}
 }

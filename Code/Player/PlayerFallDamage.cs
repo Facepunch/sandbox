@@ -41,6 +41,9 @@ public class PlayerFallDamage : Component, IPlayerEvent
 		var damageAmount = MathX.Remap( fallSpeed, MaxSafeFallSpeed, FatalFallSpeed, 0f, 100f ) * DamageMultiplier;
 		if ( damageAmount < 1 ) return;
 
+		if ( damageAmount >= Player.Health )
+			Player.PlayerData?.AddStat( "player.fall.death" );
+
 		TakeFallDamage( damageAmount );
 	}
 

@@ -137,5 +137,7 @@ public class Balloon : ToolMode
 		var undo = Player.Undo.Create();
 		undo.Name = "Balloon";
 		undo.Add( go );
+
+		Player.PlayerData?.AddStat( "tool.balloon.place" );
 	}
 }

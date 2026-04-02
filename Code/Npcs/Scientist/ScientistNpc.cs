@@ -41,6 +41,7 @@ public class ScientistNpc : Npc, Component.IDamageable
 	private float _peakFear;
 	private GameObject _attacker;
 	private TimeSince _timeSinceHurt;
+	private bool _isFleeing;
 
 	public override ScheduleBase GetSchedule()
 	{
@@ -56,11 +57,19 @@ public class ScientistNpc : Npc, Component.IDamageable
 		// Afraid — flee from the attacker
 		if ( fear > 0f && _attacker.IsValid() )
 		{
+			if ( !_isFleeing )
+			{
+				_isFleeing = true;
+				_attacker.GetComponent<Player>()?.PlayerData?.AddStat( "npc.scientist.scare" );
+			}
+
 			var flee = GetSchedule<ScientistFleeSchedule>();
 			flee.Source = _attacker;
 			flee.PanicLevel = fear;
 			return flee;
 		}
+
+		_isFleeing = false;
 
 		return GetIdleSchedule();
 	}
@@ -136,6 +145,7 @@ public class ScientistNpc : Npc, Component.IDamageable
 
 		if ( Health < 1 )
 		{
+			_attacker?.GetComponent<Player>()?.PlayerData?.AddStat( "npc.scientist.kill" );
 			var attackerVelocity = GetAttackerVelocity( damage.Attacker );
 			CreateRagdoll( attackerVelocity );
 			GameObject.Destroy();

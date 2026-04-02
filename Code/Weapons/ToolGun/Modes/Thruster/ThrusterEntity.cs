@@ -74,9 +74,14 @@ public class ThrusterEntity : Component, IPlayerControllable
 			OnEffect?.Enabled = state;
 
 		if ( state )
+		{
 			StartThrusterSound();
+			Sandbox.Services.Stats.Increment( "tool.thruster.activate", 1 );
+		}
 		else
+		{
 			StopThrusterSound();
+		}
 
 		Network.Refresh();
 	}

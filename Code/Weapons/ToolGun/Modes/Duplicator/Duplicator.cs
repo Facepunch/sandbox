@@ -159,6 +159,8 @@ public partial class Duplicator : ToolMode
 		var tempDupe = DuplicationData.CreateFromObjects( builder.Objects, selectionAngle );
 
 		CopiedJson = Json.Serialize( tempDupe );
+
+		PlayerData.For( Rpc.Caller )?.AddStat( "tool.duplicator.copy" );
 	}
 
 	void JsonChanged()
@@ -226,6 +228,8 @@ public partial class Duplicator : ToolMode
 			{
 				undo.Add( go );
 			}
+
+			player.PlayerData?.AddStat( "tool.duplicator.spawn" );
 		}
 	}
 

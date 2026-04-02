@@ -40,6 +40,9 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 	{
 		Controller.IsClimbing = true;
 		Controller.Body.Gravity = false;
+
+		if ( !IsProxy )
+			Sandbox.Services.Stats.Increment( "move.noclip.use", 1 );
 	}
 
 	public override void OnModeEnd( MoveMode next )
