@@ -123,17 +123,9 @@ public abstract partial class ToolMode : Component, IToolInfo
 		var constraints = builder.Objects.Sum( o => o.GetComponentsInChildren<ConstraintCleanup>().Count() );
 
 		Sandbox.Services.Stats.Increment( "tool.constraint.create", 1 );
-		FireMilestone( "tool.contraption.wheel", wheels, 2, 4, 6 );
-		FireMilestone( "tool.contraption.thruster", thrusters, 2, 4 );
-		FireMilestone( "tool.contraption.hoverball", hoverballs, 2, 4 );
-		FireMilestone( "tool.contraption.constraint", constraints, 5, 10, 20 );
-
-		// Log.Info( $"stat: wheels={wheels} thrusters={thrusters} hoverballs={hoverballs} constraints={constraints}" );
-	}
-
-	private static void FireMilestone( string statBase, int count, params int[] thresholds )
-	{
-		foreach ( var t in thresholds )
-			if ( count == t ) Sandbox.Services.Stats.Increment( $"{statBase}.{t}", 1 );
+		Sandbox.Services.Stats.SetValue( "tool.contraption.wheel", wheels );
+		Sandbox.Services.Stats.SetValue( "tool.contraption.thruster", thrusters );
+		Sandbox.Services.Stats.SetValue( "tool.contraption.hoverball", hoverballs );
+		Sandbox.Services.Stats.SetValue( "tool.contraption.constraint", constraints );
 	}
 }
