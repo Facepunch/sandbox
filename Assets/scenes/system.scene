@@ -359,7 +359,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": "textures/generated/svgsource/446f82161774c1e.vtex"
+                "compiled": null
               },
               "ExplosionIcon": {
                 "$compiler": "texture",
@@ -375,7 +375,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": "textures/generated/svgsource/518a1f211cbd3e6b.vtex"
+                "compiled": null
               },
               "FallIcon": {
                 "$compiler": "texture",
@@ -391,7 +391,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": "textures/generated/svgsource/d9151d4f46d3f9f2.vtex"
+                "compiled": null
               },
               "HeadshotIcon": {
                 "$compiler": "texture",
@@ -407,7 +407,23 @@
                   "FlipVertical": false,
                   "FlipHorizontal": true
                 },
-                "compiled": "textures/generated/svgsource/2ef92c96449c07ac.vtex"
+                "compiled": null
+              },
+              "NpcIcon": {
+                "$compiler": "texture",
+                "$source": "svgsource",
+                "data": {
+                  "Size": "256,256",
+                  "Source": "<svg width=\"800px\" height=\"800px\" viewBox=\"-2.4 -2.4 20.80 20.80\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n\n<g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"/>\n\n<g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n\n<g id=\"SVGRepo_iconCarrier\"> <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M9 0V2H13L16 8.5L13 15H3L0 8.5L3 2H7V0H9ZM4.59794 11.7384L8 12.2618L11.4021 11.7384L11.0979 9.76163L8 10.2382L4.90206 9.76163L4.59794 11.7384ZM7 6.75C7 7.44036 6.44036 8 5.75 8C5.05964 8 4.5 7.44036 4.5 6.75C4.5 6.05964 5.05964 5.5 5.75 5.5C6.44036 5.5 7 6.05964 7 6.75ZM10.25 8C10.9404 8 11.5 7.44036 11.5 6.75C11.5 6.05964 10.9404 5.5 10.25 5.5C9.55964 5.5 9 6.05964 9 6.75C9 7.44036 9.55964 8 10.25 8Z\" fill=\"#ffffff\"/> </g>\n\n</svg>",
+                  "Colorize": false,
+                  "TargetColor": "1,1,1,1",
+                  "Scale": 1,
+                  "Offset": "0,0",
+                  "Rotate": 0,
+                  "FlipVertical": false,
+                  "FlipHorizontal": false
+                },
+                "compiled": null
               },
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
@@ -429,7 +445,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": "textures/generated/svgsource/83c263c6e0f8ced2.vtex"
+                "compiled": null
               }
             }
           ],
@@ -727,8 +743,11 @@
     "GameObjectSystems": {
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
-          "$blob": "6c837e7c-98ac-4862-a31e-e03a05e4ac91"
+          "$blob": "5959f40c-380f-4afb-834c-4235c9505df8"
         }
+      },
+      "Sandbox.MovieMaker.MovieRecorderSystem": {
+        "DisableClientRecording": false
       }
     }
   },

@@ -143,8 +143,7 @@ public class ScientistNpc : Npc, Component.IDamageable
 		if ( Health < 1 )
 		{
 			_attacker?.GetComponent<Player>()?.PlayerData?.AddStat( "npc.scientist.kill" );
-			CreateRagdoll( GetAttackerVelocity( damage.Attacker ) );
-			GameObject.Destroy();
+			Die( damage );
 		}
 	}
 }

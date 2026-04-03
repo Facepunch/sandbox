@@ -125,8 +125,7 @@ public class CombatNpc : Npc, Component.IDamageable
 			if ( Speech.CanSpeak )
 				Speech.Say( Game.Random.FromArray( DeathLines ), 2f );
 
-			CreateRagdoll( GetAttackerVelocity( damage.Attacker ) );
-			GameObject.Destroy();
+			Die( damage );
 			return;
 		}
 

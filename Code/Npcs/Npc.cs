@@ -11,6 +11,12 @@ public partial class Npc : Component
 	[Property]
 	public SkinnedModelRenderer Renderer { get; set; }
 
+	/// <summary>
+	/// The name shown in the kill feed when this NPC is killed.
+	/// </summary>
+	[Property]
+	public string DisplayName { get; set; } = "NPC";
+
 	protected override void OnUpdate()
 	{
 		if ( IsProxy )
@@ -70,7 +76,7 @@ public partial class Npc : Component
 	}
 
 	/// <summary>
-	/// Resolve the attacker's current velocity from whatever movement source it has.
+	/// Resolves the attacker's current velocity from whatever movement source it has.
 	/// </summary>
 	protected Vector3 GetAttackerVelocity( GameObject attacker )
 	{
@@ -81,5 +87,17 @@ public partial class Npc : Component
 			return rb.Velocity;
 
 		return Vector3.Zero;
+	}
+
+	/// <summary>
+	/// Notifies the kill feed, spawns a ragdoll, and destroys this NPC.
+	/// Call from subclass OnDamage when health drops below zero.
+	/// Override to add NPC-specific behaviour before/after death.
+	/// </summary>
+	protected virtual void Die( in DamageInfo damage )
+	{
+		GameManager.Current?.OnNpcDeath( DisplayName, damage );
+		CreateRagdoll( GetAttackerVelocity( damage.Attacker ) );
+		GameObject.Destroy();
 	}
 }

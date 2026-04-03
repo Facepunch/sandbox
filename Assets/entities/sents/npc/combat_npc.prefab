@@ -46,6 +46,7 @@
         "AttackRange": 1024,
         "BurstDuration": 1.5,
         "BurstPause": 0.8,
+        "DisplayName": "Army Guy",
         "EngageSpeed": 180,
         "Health": 100,
         "OnComponentDestroy": null,

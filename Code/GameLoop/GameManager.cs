@@ -166,7 +166,9 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		player.PlayerData.Deaths++;
 
 		var w = weapon.IsValid() ? weapon.GetComponentInChildren<IKillIcon>() : null;
-		Scene.RunEvent<Feed>( x => x.NotifyDeath( player.PlayerData, attacker.PlayerData, w?.DisplayIcon, dmg.Tags ) );
+		var attackerSteamId = !isSuicide && attacker.IsValid() ? attacker.SteamId : 0L;
+		var tags = dmg.Tags.ToString() + ( isSuicide ? " suicide" : "" );
+		Scene.RunEvent<Feed>( x => x.NotifyKill( player.DisplayName, isSuicide ? null : attacker.DisplayName, attackerSteamId, tags, w?.DisplayIcon ) );
 
 		var attackerName = attacker.IsValid() ? attacker.DisplayName : dmg.Attacker?.Name;
 		if ( string.IsNullOrEmpty( attackerName ) )
@@ -181,6 +183,28 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		{
 			SendMessage( $"{attackerName} killed {(isSuicide ? "self" : player.DisplayName)} (tags: {dmg.Tags})" );
 		}
+	}
+
+	/// <summary>
+	/// Called on the host when an NPC is killed. Credits the attacker and adds a kill feed entry.
+	/// </summary>
+	public void OnNpcDeath( string npcName, DamageInfo dmg )
+	{
+		Assert.True( Networking.IsHost );
+
+		var attacker = dmg.Attacker?.GetComponent<Player>();
+		if ( attacker.IsValid() )
+		{
+			attacker.PlayerData.Kills++;
+			attacker.PlayerData.AddStat( "kills.npc" );
+		}
+
+		var w = dmg.Weapon.IsValid() ? dmg.Weapon.GetComponentInChildren<IKillIcon>() : null;
+		var attackerName = attacker.IsValid() ? attacker.DisplayName : null;
+		var attackerSteamId = attacker.IsValid() ? attacker.SteamId : 0L;
+		var tags = dmg.Tags.ToString() + " npc";
+
+		Scene.RunEvent<Feed>( x => x.NotifyKill( npcName, attackerName, attackerSteamId, tags, w?.DisplayIcon ) );
 	}
 
 	[ConCmd( "spawn" )]
