@@ -2,7 +2,7 @@
 @using Sandbox.UI;
 @namespace Sandbox
 @inherits BaseControl
-@attribute [CustomEditor(typeof(Surface))]
+@attribute [CustomEditor(typeof(GameResource))]
 
 <root>
 
@@ -13,7 +13,7 @@
         }
         else
         {
-            <div class="ext-badge">SRF</div>
+            <div class="ext-badge">@Extension</div>
         }
     </div>
 
@@ -26,7 +26,7 @@
         {
             <div class="title">@Title</div>
         }
-        <div class="subtitle">Surface</div>
+        <div class="subtitle">@TypeName</div>
     </div>
 
 </root>
@@ -35,32 +35,40 @@
 {
     string Title;
     string ResourcePath;
+    string Extension;
+    string TypeName;
 
     public override void Rebuild()
     {
         base.Rebuild();
+
+        var typeDesc = TypeLibrary.GetType( Property.PropertyType );
+        var assetType = typeDesc?.GetAttribute<AssetTypeAttribute>();
+        Extension = assetType?.Extension?.ToUpperInvariant() ?? "RES";
+        TypeName = assetType?.Name ?? Property.PropertyType?.Name ?? "Resource";
+
         OnValueChanged();
     }
 
     public void OnValueChanged()
     {
-        var surface = Property.GetValue<Surface>();
+        var resource = Property.GetValue<GameResource>();
 
-        if ( surface == null || !surface.IsValid() )
+        if ( resource == null || !resource.IsValid() )
         {
             Title = null;
             ResourcePath = null;
             return;
         }
 
-        Title = surface.ResourceName;
-        ResourcePath = surface.ResourcePath;
+        Title = resource.ResourceName;
+        ResourcePath = resource.ResourcePath;
     }
 
     void SelectFile( string filePath )
     {
-        var surface = ResourceLibrary.Get<Surface>( filePath );
-        Property.SetValue( surface );
+        var resource = ResourceLibrary.Get<GameResource>( filePath );
+        Property.SetValue( resource );
         OnValueChanged();
     }
 
@@ -68,12 +76,14 @@
     {
         base.OnClick( e );
 
-        var surface = Property.GetValue<Surface>();
+        var typeDesc = TypeLibrary.GetType( Property.PropertyType );
+        var assetType = typeDesc?.GetAttribute<AssetTypeAttribute>();
 
         var popup = new ResourceSelectPopup();
-        popup.Extension = "surface";
-        popup.CurrentValue = surface?.ResourcePath;
+        popup.Extension = assetType?.Extension;
+        popup.CurrentValue = Property.GetValue<GameResource>()?.ResourcePath;
         popup.Parent = FindPopupPanel();
         popup.OnSelectedFile = SelectFile;
     }
 }
+
