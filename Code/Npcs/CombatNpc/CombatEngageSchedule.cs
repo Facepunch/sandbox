@@ -8,6 +8,29 @@ namespace Sandbox.Npcs.CombatNpc;
 /// </summary>
 public class CombatEngageSchedule : ScheduleBase
 {
+	private static readonly string[] SpotLines =
+	{
+		"Contact!",
+		"There!",
+		"I see you!",
+		"Got one!",
+		"Enemy spotted!",
+		"Don't move!",
+		"Found you.",
+	};
+
+	private static readonly string[] TauntLines =
+	{
+		"You're not getting away!",
+		"Stay down!",
+		"Take cover!",
+		"Suppressing fire!",
+		"Keep the pressure on!",
+		"Don't let up!",
+		"That's for my squad!",
+		"You picked the wrong fight.",
+	};
+
 	/// <summary>
 	/// The player to engage.
 	/// </summary>
@@ -51,10 +74,20 @@ public class CombatEngageSchedule : ScheduleBase
 		// movement, firing, waiting, and repositioning.
 		Npc.Animation.SetLookTarget( Target );
 
+		// Spot the target on engage start
+		if ( Npc.Speech.CanSpeak )
+			AddTask( new Say( Game.Random.FromArray( SpotLines ), 1.5f ) );
+
 		AddTask( new LookAt( Target ) );
 		AddTask( new MoveTo( Target, AttackRange ) );
 		AddTask( new FireWeapon( Weapon, Target, BurstDuration ) );
-		AddTask( new Wait( BurstPause ) );
+
+		// Random combat taunt during the pause after firing
+		if ( Npc.Speech.CanSpeak && Game.Random.Float() < 0.4f )
+			AddTask( new Say( Game.Random.FromArray( TauntLines ), BurstPause ) );
+		else
+			AddTask( new Wait( BurstPause ) );
+
 		AddTask( new MoveTo( GetFlankPosition(), 20f ) );
 	}
 

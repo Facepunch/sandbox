@@ -44,7 +44,7 @@
 
         var typeDesc = TypeLibrary.GetType( Property.PropertyType );
         var assetType = typeDesc?.GetAttribute<AssetTypeAttribute>();
-        Extension = assetType?.Extension?.ToUpperInvariant() ?? "RES";
+        Extension = assetType?.Extension?.ToUpperInvariant().Truncate( 4 ) ?? "RES";
         TypeName = assetType?.Name ?? Property.PropertyType?.Name ?? "Resource";
 
         OnValueChanged();
@@ -86,4 +86,3 @@
         popup.OnSelectedFile = SelectFile;
     }
 }
-

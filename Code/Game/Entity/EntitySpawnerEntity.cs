@@ -78,9 +78,21 @@ public class EntitySpawnerEntity : Component, IPlayerControllable
 		} );
 
 		spawned.Tags.Add( "removable" );
+
+		var caller = Rpc.Caller ?? GameObject.Network.Owner;
+		var player = Player.FindForConnection( caller );
+
+		Ownable.Set( spawned, caller );
 		spawned.NetworkSpawn( true, null );
 		spawned.Enabled = true;
 
 		_spawnedEntities.Add( new WeakReference<GameObject>( spawned ) );
+
+		if ( player is not null )
+		{
+			var undo = player.Undo.Create();
+			undo.Name = $"Spawn {Entity.Title ?? Entity.ResourceName}";
+			undo.Add( spawned );
+		}
 	}
 }

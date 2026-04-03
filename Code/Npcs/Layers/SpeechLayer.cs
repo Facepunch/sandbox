@@ -145,8 +145,7 @@ public class SpeechLayer : BaseNpcLayer
 	/// </summary>
 	private void DrawSpeech()
 	{
-		var bounds = Npc.GameObject.GetBounds();
-		var worldPos = Npc.WorldPosition + Vector3.Up * (bounds.Size.z + 1f);
+		var worldPos = Npc.WorldPosition + Vector3.Up * 80f;
 		var screenPos = Npc.Scene.Camera.PointToScreenPixels( worldPos, out var behind );
 		if ( behind ) return;
 

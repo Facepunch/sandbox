@@ -4,10 +4,24 @@ namespace Sandbox.Npcs.CombatNpc;
 
 /// <summary>
 /// A combat NPC that searches for players, advances on them, fires in bursts, and repositions.
-///
 /// </summary>
 public class CombatNpc : Npc, Component.IDamageable
 {
+	private static readonly string[] PainLines =
+	{
+		"Argh!",
+		"They got me!",
+		"I'm hit!",
+		"Taking fire!",
+		"Ugh!",
+	};
+
+	private static readonly string[] DeathLines =
+	{
+		"Tell them... I fought...",
+		"Not like this...",
+		"I can't...",
+	};
 	[Property, ClientEditable, Range( 1, 500 ), Sync]
 	public float Health { get; set; } = 100f;
 
@@ -105,13 +119,20 @@ public class CombatNpc : Npc, Component.IDamageable
 			}
 		}
 
-		// Interrupt current schedule so we react immediately
-		EndCurrentSchedule();
-
 		if ( Health < 1f )
 		{
+			if ( Speech.CanSpeak )
+				Speech.Say( Game.Random.FromArray( DeathLines ), 2f );
+
 			CreateRagdoll( GetAttackerVelocity( damage.Attacker ) );
 			GameObject.Destroy();
+			return;
 		}
+
+		if ( Speech.CanSpeak && Game.Random.Float() < 0.5f )
+			Speech.Say( Game.Random.FromArray( PainLines ), 1.5f );
+
+		// Interrupt current schedule so we react immediately
+		EndCurrentSchedule();
 	}
 }
