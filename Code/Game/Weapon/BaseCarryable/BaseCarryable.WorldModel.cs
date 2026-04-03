@@ -18,6 +18,17 @@ public partial class BaseCarryable : Component
 		var player = GetComponentInParent<PlayerController>();
 		if ( player?.Renderer is null ) return;
 
+		CreateWorldModel( player.Renderer );
+	}
+
+	/// <summary>
+	/// Creates and attaches the world model to the given renderer's bone.
+	/// Use this overload when the weapon is held by something other than a player (e.g. an NPC).
+	/// </summary>
+	public void CreateWorldModel( SkinnedModelRenderer renderer )
+	{
+		if ( renderer is null ) return;
+
 		if ( Networking.IsHost )
 		{
 			IsItem = false;
@@ -25,7 +36,7 @@ public partial class BaseCarryable : Component
 
 		var worldModel = WorldModelPrefab?.Clone( new CloneConfig
 		{
-			Parent = player.Renderer.GetBoneObject( ParentBone ) ?? GameObject,
+			Parent = renderer.GetBoneObject( ParentBone ) ?? GameObject,
 			StartEnabled = true,
 			Transform = global::Transform.Zero
 		} );

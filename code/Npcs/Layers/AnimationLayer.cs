@@ -204,6 +204,14 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		_renderer.Set( "b_attack", true );
 	}
 
+	/// <summary>
+	/// Sets the holdtype animation parameter so the NPC poses its arms correctly for the held item.
+	/// </summary>
+	public void SetHoldType( CitizenAnimationHelper.HoldTypes holdType )
+	{
+		_renderer?.Set( "holdtype", (int)holdType );
+	}
+
 	public override void Reset()
 	{
 		if ( _renderer is null ) return;
@@ -217,6 +225,7 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		ClearHeldProp();
 
 		_renderer.Set( "b_attack", false );
+		_renderer.Set( "holdtype", 0 );
 		_renderer.Set( "move_speed", 0.0f );
 		_renderer.Set( "move_groundspeed", 0.0f );
 		_renderer.Set( "move_y", 0.0f );
