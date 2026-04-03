@@ -1,0 +1,9 @@
+{
+  "Prefab": "entities/sents/entity_spawner.prefab",
+  "Title": "Entity Spawner",
+  "Description": "Spawns a chosen SENT at this location. Can be triggered by player input or automatically on a timer.",
+  "Category": "World",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}
