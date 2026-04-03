@@ -22,7 +22,7 @@
         "Flags": 0,
         "Name": "Droplets",
         "Position": "0,0,0",
-        "Rotation": "0,0.00000002980232,0,0.9999998",
+        "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "particles",
         "Enabled": true,
