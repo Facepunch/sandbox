@@ -28,15 +28,15 @@ public class EntitySpawnerEntity : Component, IPlayerControllable
 	/// <summary>
 	/// Seconds between automatic spawns.
 	/// </summary>
-	[Property, ClientEditable, Range( 0.5f, 300f, 0.5f ), Group( "Auto Spawn" )]
+	[Property, ClientEditable, Range( 1f, 300f ), Step( 1 ), Group( "Auto Spawn" )]
 	public float SpawnInterval { get; set; } = 5f;
 
 	/// <summary>
 	/// Maximum number of entities spawned by this spawner allowed to exist at once.
 	/// New spawns are suppressed until existing ones are destroyed.
 	/// </summary>
-	[Property, ClientEditable, Range( 1, 50, 1 ), Group( "Auto Spawn" )]
-	public int MaxEntities { get; set; } = 5;
+	[Property, ClientEditable, Range( 1, 50 ), Step( 1 ), Group( "Auto Spawn" )]
+	public float MaxEntities { get; set; } = 5;
 
 	private TimeSince _timeSinceLastSpawn;
 	private readonly List<WeakReference<GameObject>> _spawnedEntities = new();
