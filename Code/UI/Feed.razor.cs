@@ -17,17 +17,18 @@ partial class Feed : PanelComponent
 	}
 
 	[Rpc.Broadcast]
-	public void NotifyKill( string victimName, string attackerName, long attackerSteamId, string tags, Texture weaponIcon )
+	public void NotifyKill( string victimName, string attackerName, long attackerSteamId, string damageTags, string attackerTags, string victimTags, Texture weaponIcon )
 	{
 		if ( Application.IsDedicatedServer ) return;
 		if ( string.IsNullOrEmpty( victimName ) ) return;
 
-		bool isSuicide = tags.Contains( "suicide" );
+		bool isSuicide = damageTags.Contains( "suicide" );
 
 		Panel panel = new Panel();
 
 		if ( !string.IsNullOrEmpty( attackerName ) && !isSuicide )
 		{
+			if ( attackerTags.Contains( "npc" ) ) AddIcon( panel, NpcIcon );
 			var left = panel.AddChild<Label>();
 			left.Text = attackerName;
 		}
@@ -37,7 +38,7 @@ partial class Feed : PanelComponent
 		{
 			AddIcon( icons, weaponIcon );
 		}
-		else if ( tags.Contains( DamageTags.Fall ) )
+		else if ( damageTags.Contains( DamageTags.Fall ) )
 		{
 			AddIcon( icons, FallIcon );
 		}
@@ -46,10 +47,10 @@ partial class Feed : PanelComponent
 			AddIcon( icons, isSuicide ? SuicideIcon : DeathIcon );
 		}
 
-		if ( tags.Contains( DamageTags.Headshot ) ) AddIcon( icons, HeadshotIcon );
-		if ( tags.Contains( DamageTags.Explosion ) ) AddIcon( icons, ExplosionIcon );
+		if ( damageTags.Contains( DamageTags.Headshot ) ) AddIcon( icons, HeadshotIcon );
+		if ( damageTags.Contains( DamageTags.Explosion ) ) AddIcon( icons, ExplosionIcon );
 
-		if ( tags.Contains( "npc" ) ) AddIcon( panel, NpcIcon );
+		if ( victimTags.Contains( "npc" ) ) AddIcon( panel, NpcIcon );
 		var right = panel.AddChild<Label>();
 		right.Text = victimName;
 

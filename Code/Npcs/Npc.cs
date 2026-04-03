@@ -1,9 +1,9 @@
-﻿using Sandbox.Npcs.Layers;
+using Sandbox.Npcs.Layers;
 
 namespace Sandbox.Npcs;
 
 [Hide]
-public partial class Npc : Component
+public partial class Npc : Component, IKillSource
 {
 	[Property]
 	public bool ShowDebugOverlay { get; set; }
@@ -16,6 +16,15 @@ public partial class Npc : Component
 	/// </summary>
 	[Property]
 	public string DisplayName { get; set; } = "NPC";
+
+	// IKillSource
+	string IKillSource.DisplayName => DisplayName;
+	string IKillSource.Tags => "npc";
+
+	protected override void OnStart()
+	{
+		GameObject.Tags.Add( "npc" );
+	}
 
 	protected override void OnUpdate()
 	{

@@ -145,32 +145,24 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		Assert.True( player.IsValid(), "Player invalid" );
 		Assert.True( player.PlayerData.IsValid(), $"{player.GameObject.Name}'s PlayerData invalid" );
 
-		var weapon = dmg.Weapon;
-		var attacker = dmg.Attacker?.GetComponent<Player>();
+		var source = dmg.Attacker?.GetComponent<IKillSource>();
+		if ( source == null ) return;
 
-		if ( !dmg.Attacker.IsValid() || !attacker.IsValid() )
-		{
-			return;
-		}
+		var isSuicide = source is Player p && p == player;
 
-		var isSuicide = attacker == player;
-
-		if ( attacker.IsValid() && !isSuicide )
-		{
-			Assert.True( weapon.IsValid(), $"Weapon invalid. (Attacker: {attacker.DisplayName}, Victim: {player.DisplayName})" );
-
-			attacker.PlayerData.Kills++;
-			attacker.PlayerData.AddStat( $"kills" );
-		}
+		if ( !isSuicide )
+			source.OnKill( player.GameObject );
 
 		player.PlayerData.Deaths++;
 
+		var weapon = dmg.Weapon;
 		var w = weapon.IsValid() ? weapon.GetComponentInChildren<IKillIcon>() : null;
-		var attackerSteamId = !isSuicide && attacker.IsValid() ? attacker.SteamId : 0L;
-		var tags = dmg.Tags.ToString() + ( isSuicide ? " suicide" : "" );
-		Scene.RunEvent<Feed>( x => x.NotifyKill( player.DisplayName, isSuicide ? null : attacker.DisplayName, attackerSteamId, tags, w?.DisplayIcon ) );
+		var damageTags = dmg.Tags.ToString() + ( isSuicide ? " suicide" : "" );
+		var attackerTags = isSuicide ? "" : source.Tags;
+		var attackerName = isSuicide ? null : source.DisplayName;
+		var attackerSteamId = isSuicide ? 0L : source.SteamId;
+		Scene.RunEvent<Feed>( x => x.NotifyKill( player.DisplayName, attackerName, attackerSteamId, damageTags, attackerTags, "", w?.DisplayIcon ) );
 
-		var attackerName = attacker.IsValid() ? attacker.DisplayName : dmg.Attacker?.Name;
 		if ( string.IsNullOrEmpty( attackerName ) )
 		{
 			SendMessage( $"{player.DisplayName} died (tags: {dmg.Tags})" );
@@ -192,19 +184,15 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	{
 		Assert.True( Networking.IsHost );
 
-		var attacker = dmg.Attacker?.GetComponent<Player>();
-		if ( attacker.IsValid() )
-		{
-			attacker.PlayerData.Kills++;
-			attacker.PlayerData.AddStat( "kills.npc" );
-		}
+		var source = dmg.Attacker?.GetComponent<IKillSource>();
+		source?.OnKill( dmg.Attacker );
 
 		var w = dmg.Weapon.IsValid() ? dmg.Weapon.GetComponentInChildren<IKillIcon>() : null;
-		var attackerName = attacker.IsValid() ? attacker.DisplayName : null;
-		var attackerSteamId = attacker.IsValid() ? attacker.SteamId : 0L;
-		var tags = dmg.Tags.ToString() + " npc";
+		var attackerName = source?.DisplayName;
+		var attackerSteamId = source?.SteamId ?? 0L;
+		var attackerTags = source?.Tags ?? "";
 
-		Scene.RunEvent<Feed>( x => x.NotifyKill( npcName, attackerName, attackerSteamId, tags, w?.DisplayIcon ) );
+		Scene.RunEvent<Feed>( x => x.NotifyKill( npcName, attackerName, attackerSteamId, dmg.Tags.ToString(), attackerTags, "npc", w?.DisplayIcon ) );
 	}
 
 	[ConCmd( "spawn" )]

@@ -5,7 +5,7 @@ using Sandbox.UI.Inventory;
 /// <summary>
 /// Holds player information like health
 /// </summary>
-public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, ISaveEvents
+public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, ISaveEvents, IKillSource
 {
 	public static Player FindLocalPlayer() => Game.ActiveScene.GetAll<Player>().FirstOrDefault( x => x.IsLocalPlayer );
 	public static T FindLocalWeapon<T>() where T : BaseCarryable => FindLocalPlayer()?.GetComponentInChildren<T>( true );
@@ -38,6 +38,15 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	public Guid PlayerId => PlayerData.IsValid() ? PlayerData.PlayerId : Guid.Empty;
 	public long SteamId => PlayerData.IsValid() ? PlayerData.SteamId : 0;
 	public string DisplayName => PlayerData.IsValid() ? PlayerData.DisplayName : "Unknown";
+
+	// IKillSource
+	string IKillSource.DisplayName => DisplayName;
+	long IKillSource.SteamId => SteamId;
+	void IKillSource.OnKill( GameObject victim )
+	{
+		PlayerData.Kills++;
+		PlayerData.AddStat( victim?.GetComponent<Player>().IsValid() ?? false ? "kills" : "kills.npc" );
+	}
 
 	/// <summary>
 	/// True if the player wants the HUD not to draw right now
