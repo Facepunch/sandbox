@@ -65,9 +65,9 @@
         "ShowDebugOverlay": false,
         "Weapon": {
           "_type": "component",
-          "component_id": "b16fbbe6-e4df-462f-8df4-53d47eb325cc",
-          "go": "8bd0f49e-7554-4668-a81e-6c0b68795826",
-          "component_type": "Mp5Weapon"
+          "component_id": "6bb4a3cc-497d-46c1-a2cf-76c3950f9027",
+          "go": "bdce6722-1340-444b-b8e7-9686d99c71a7",
+          "component_type": "M4a1Weapon"
         }
       },
       {
@@ -2350,35 +2350,26 @@
         ]
       },
       {
-        "__guid": "8bd0f49e-7554-4668-a81e-6c0b68795826",
+        "__guid": "bdce6722-1340-444b-b8e7-9686d99c71a7",
         "__version": 2,
-        "__Prefab": "weapons/mp5/mp5.prefab",
+        "__Prefab": "weapons/m4a1/m4a1.prefab",
         "__PrefabInstancePatch": {
           "AddedObjects": [],
           "RemovedObjects": [],
-          "PropertyOverrides": [
-            {
-              "Target": {
-                "Type": "GameObject",
-                "IdValue": "3c948bf4-5353-443a-bb65-8f28584fed1b"
-              },
-              "Property": "NetworkMode",
-              "Value": 1
-            }
-          ],
+          "PropertyOverrides": [],
           "MovedObjects": []
         },
         "__PrefabIdToInstanceId": {
-          "3c948bf4-5353-443a-bb65-8f28584fed1b": "8bd0f49e-7554-4668-a81e-6c0b68795826",
-          "45dbfc9d-3b70-4986-994e-905d4f1670ba": "b16fbbe6-e4df-462f-8df4-53d47eb325cc",
-          "68f31dea-403a-4788-8c4b-7416c88f28ed": "57d923e8-d54e-4939-8d42-81aa73131dfb",
-          "7f3b13cd-d00d-76ac-c25f-8a0c000198c4": "9a01d8a4-039c-4304-b6b2-a9af0b005a43",
-          "558f08b2-be5c-411e-990a-9984fbea59ea": "227b8b2e-3154-4c58-b2f7-c6716289cbad",
-          "4c0e80fa-adda-4379-9f2c-57d9fddc85f1": "3c0a0157-9a76-452f-9c24-c5939072b889",
-          "5d1f91ab-beeb-548a-a03d-68eaeed96a02": "e121da95-b246-4e22-8023-d99181d6a0cb",
-          "6e2a02bc-cffc-659b-b14e-79fbfff07b13": "900b3035-e316-49a9-88bf-37511a30f4fd",
-          "8a4c24de-e11e-87bd-d360-9b1d1112a9d5": "6d6cb549-64c8-488b-a84b-70fe39b2c8f9",
-          "9b5d35ef-f22f-98ce-e471-ac2e2223bae6": "df5e6fd0-dfe7-4641-b1f0-f41af53860b3"
+          "3c948bf4-5353-443a-bb65-8f28584fed1b": "bdce6722-1340-444b-b8e7-9686d99c71a7",
+          "45dbfc9d-3b70-4986-994e-905d4f1670ba": "6bb4a3cc-497d-46c1-a2cf-76c3950f9027",
+          "68f31dea-403a-4788-8c4b-7416c88f28ed": "59e97d10-6dce-4f62-bda6-63073a61e95e",
+          "1a0fad55-e8da-74fc-ccdc-1a7bf3d386b1": "14b1b301-d3ee-4f4d-ac36-98a2a4fb6d66",
+          "0fe8c7ca-9ef3-4636-838b-6ccbd0aafe5a": "afa62ee4-ad1a-4a97-98aa-bd704825f32f",
+          "e7dc7a22-b5a7-41c9-9aa9-ed48c0a053e8": "670d4f8d-419c-43b4-97cd-e60f5e9b903c",
+          "f8ed8b33-c6b8-52da-aaba-fe59d1b164f9": "d3ee7c8b-5659-43f0-94e3-7f625c3f5403",
+          "09fe9c44-d7c9-63eb-bbcb-0f6ae2c275a0": "34edd1d6-c308-4a73-9296-2234ee9318c6",
+          "2b1abe66-f9eb-85ad-dded-2b8c04e497c2": "e9e0ce5d-a70b-4840-8008-2b4030745c43",
+          "3c2bcf77-0afc-96be-eefe-3c9d15f5a8d3": "5327bd79-8b04-47c8-9b46-cc3c5c131bdb"
         }
       },
       {
