@@ -6,9 +6,15 @@ namespace Sandbox.Npcs.Layers;
 public class SensesLayer : BaseNpcLayer
 {
 	public float ScanInterval { get; set; } = 0.1f; // Scan every 100ms
+
+	[Property]
 	public float SightRange { get; set; } = 500f;
+
+	[Property]
 	public float HearingRange { get; set; } = 300f;
 	public float PersonalSpace { get; set; } = 80f;
+
+	[Property]
 	public TagSet TargetTags { get; set; } = ["player"];
 
 	// Current awareness state

@@ -6265,13 +6265,13 @@
       }
     },
     "GameObjectSystems": {
-      "Sandbox.Clutter.ClutterGridSystem": {
-        "Storage": {
-          "$blob": "1e875047-fc79-4856-a16a-49d3e098889a"
-        }
-      },
       "Sandbox.MovieMaker.MovieRecorderSystem": {
         "DisableClientRecording": false
+      },
+      "Sandbox.Clutter.ClutterGridSystem": {
+        "Storage": {
+          "$blob": "00b7c556-042a-47e3-8be5-3f7cea795b48"
+        }
       }
     }
   },

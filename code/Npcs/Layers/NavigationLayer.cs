@@ -8,6 +8,8 @@ public class NavigationLayer : BaseNpcLayer
 	public NavMeshAgent Agent { get; private set; }
 
 	public Vector3? MoveTarget { get; private set; }
+
+	[Property]
 	public float StopDistance { get; private set; } = 10f;
 
 	/// <summary>
