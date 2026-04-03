@@ -48,7 +48,9 @@ public class CombatNpc : Npc, Component.IDamageable
 		if ( Weapon.IsValid() && Renderer.IsValid() )
 		{
 			Weapon.CreateWorldModel( Renderer );
-			Animation.SetHoldType( Weapon.HoldType );
+
+			if ( !IsProxy )
+				Animation.SetHoldType( Weapon.HoldType );
 		}
 	}
 

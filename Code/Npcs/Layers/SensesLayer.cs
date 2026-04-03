@@ -21,6 +21,8 @@ public class SensesLayer : BaseNpcLayer
 
 	protected override void OnUpdate()
 	{
+		if ( IsProxy ) return;
+
 		if ( _lastScan > ScanInterval )
 		{
 			ScanEnvironment();

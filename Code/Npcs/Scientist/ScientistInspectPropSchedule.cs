@@ -51,7 +51,7 @@ public class ScientistInspectPropSchedule : ScheduleBase
 
 		var bounds = PropTarget.GetBounds();
 		var isSmall = bounds.Size.Length < 256;
-		var speech = Npc.Layers.OfType<SpeechLayer>().FirstOrDefault();
+		var speech = Npc.Speech;
 
 		if ( isSmall )
 		{

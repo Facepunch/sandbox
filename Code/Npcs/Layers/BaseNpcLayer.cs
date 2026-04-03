@@ -3,47 +3,29 @@ namespace Sandbox.Npcs.Layers;
 /// <summary>
 /// A behavior layer provides specific services for tasks to use -- we don't use behavior layers for state, they are services.
 /// </summary>
-public abstract class BaseNpcLayer
+public abstract class BaseNpcLayer : Component
 {
-	protected Npc Npc { get; private set; }
-
-	public BaseNpcLayer()
-	{
-	}
-
-	internal void Initialize( Npc npc )
-	{
-		Npc = npc;
-	}
-
-	internal void InternalOnStart()
-	{
-		OnStart();
-	}
+	private Npc _npc;
 
 	/// <summary>
-	/// Called when the layer is created
+	/// The owning NPC
 	/// </summary>
-	protected virtual void OnStart() { }
-
-
-	internal void InternalUpdate()
+	protected Npc Npc
 	{
-		OnUpdate();
+		get
+		{
+			_npc ??= GetComponent<Npc>();
+			return _npc;
+		}
 	}
 
 	/// <summary>
-	/// Called each frame to update the layer
-	/// </summary>
-	protected virtual void OnUpdate() { }
-
-	/// <summary>
-	/// Reset the layer state
-	/// </summary>
-	public virtual void Reset() { }
-
-	/// <summary>
-	/// Optional debug string for the overlay. Return null to skip.
+	/// Optional debug string shown in the NPC debug overlay. Return null to skip.
 	/// </summary>
 	public virtual string GetDebugString() => null;
+
+	/// <summary>
+	/// Reset any runtime state on this layer.
+	/// </summary>
+	public virtual void Reset() { }
 }

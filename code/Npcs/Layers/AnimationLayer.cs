@@ -1,56 +1,70 @@
-﻿using Sandbox.Citizen;
+using Sandbox.Citizen;
 
 namespace Sandbox.Npcs.Layers;
 
 /// <summary>
 /// Provides animation parameters and helpers for behaviors.
 /// Also handles look-at (eyes/head) and body turning via animator parameters.
+/// Synced properties replicate animation state to all clients.
 /// </summary>
 public sealed partial class AnimationLayer : BaseNpcLayer
 {
-	// Movement animation
 	public float Speed { get; set; } = 1.0f;
 	public bool IsGrounded { get; set; } = true;
 	public float LookSpeed { get; set; } = 3f;
 	public float MaxHeadAngle { get; set; } = 45f;
 
 	/// <summary>
-	/// Current world-space target the Npc is looking at (if any).
-	/// Resolved each frame from either <see cref="LookTargetObject"/> or a fixed position.
+	/// Current world-space target the Npc is looking at (if any). Host-only.
 	/// </summary>
 	public Vector3? LookTarget { get; private set; }
 
 	/// <summary>
-	/// The GameObject being tracked as the look target, if any.
+	/// The GameObject being tracked as the look target, if any. Host-only.
 	/// </summary>
 	public GameObject LookTargetObject { get; private set; }
 
-	private SkinnedModelRenderer _renderer;
+	private SkinnedModelRenderer _renderer => Npc.Renderer;
 	private float _lastYaw = float.NaN;
+
+	[Sync] public Vector3 MoveVelocity { get; set; }
+	[Sync] public Rotation MoveRotation { get; set; }
+	[Sync] public bool Grounded { get; set; } = true;
+	[Sync] public Vector3 LookWorldPos { get; set; }
+	[Sync] public bool IsLooking { get; set; }
+	[Sync] public int HoldType { get; set; }
 
 	protected override void OnStart()
 	{
-		_renderer = Npc.GetComponentInChildren<SkinnedModelRenderer>();
 		_lastYaw = float.NaN;
 	}
 
 	protected override void OnUpdate()
 	{
-		// Continuously resolve the look target from a tracked GameObject
-		if ( LookTargetObject.IsValid() )
+		if ( !IsProxy )
 		{
-			LookTarget = LookTargetObject.WorldPosition;
+			if ( LookTargetObject.IsValid() )
+				LookTarget = LookTargetObject.WorldPosition;
+
+			IsLooking = LookTarget.HasValue;
+			if ( LookTarget.HasValue )
+			{
+				LookWorldPos = LookTarget.Value;
+				UpdateLookDirection( LookTarget.Value );
+			}
+
+			if ( _heldProp.IsValid() )
+				UpdateHeldPropIk();
+		}
+		else
+		{
+			if ( IsLooking )
+				ApplyLookToRenderer( LookWorldPos );
 		}
 
-		if ( LookTarget.HasValue )
-		{
-			UpdateLookDirection( LookTarget.Value );
-		}
-
-		if ( _heldProp.IsValid() )
-		{
-			UpdateHeldPropIk();
-		}
+		ApplyMoveToRenderer( MoveVelocity, MoveRotation );
+		_renderer?.Set( "holdtype", HoldType );
+		_renderer?.Set( "b_grounded", Grounded );
 	}
 
 	/// <summary>
@@ -78,34 +92,22 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	{
 		LookTargetObject = null;
 		LookTarget = null;
+		IsLooking = false;
 
-		if ( _renderer is not null )
-		{
-			_renderer.Set( "aim_eyes", Vector3.Zero );
-			_renderer.Set( "aim_head", Vector3.Zero );
-		}
+		_renderer?.Set( "aim_eyes", Vector3.Zero );
+		_renderer?.Set( "aim_head", Vector3.Zero );
 	}
 
 	/// <summary>
 	/// Command this layer to look at a target (one-shot, no tracking).
-	/// Prefer <see cref="SetLookTarget(Vector3)"/> or <see cref="SetLookTarget(GameObject)"/> for persistent tracking.
 	/// </summary>
-	public void LookAt( Vector3 target )
-	{
-		LookTarget = target;
-	}
+	public void LookAt( Vector3 target ) => LookTarget = target;
+
+	/// <summary>Stop looking.</summary>
+	public void StopLooking() => ClearLookTarget();
 
 	/// <summary>
-	/// Stop looking
-	/// </summary>
-	public void StopLooking()
-	{
-		ClearLookTarget();
-	}
-
-	/// <summary>
-	/// Check if we're facing the target sufficiently. Returns true if the target is within
-	/// the head's comfortable range, since the head/eyes will handle the rest.
+	/// Returns true if the NPC body is facing the current look target within MaxHeadAngle.
 	/// </summary>
 	public bool IsFacingTarget()
 	{
@@ -117,72 +119,74 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		return angleToTarget <= MaxHeadAngle;
 	}
 
-	/// <summary>
-	/// Update look direction - handles head/eye tracking and rotates the body only when the
-	/// target is outside the comfortable head-turn range.
-	/// </summary>
 	private void UpdateLookDirection( Vector3 targetPosition )
 	{
 		if ( _renderer is null ) return;
 
 		var worldDirection = ((targetPosition - Npc.WorldPosition) with { z = 0 }).Normal;
-		var currentForward = Npc.WorldRotation.Forward;
-
-		var angleToTarget = Vector3.GetAngle( currentForward, worldDirection );
-
+		var angleToTarget = Vector3.GetAngle( Npc.WorldRotation.Forward, worldDirection );
 		var localDirection = Npc.WorldRotation.Inverse * worldDirection;
 
 		_renderer.Set( "aim_head", localDirection );
 		_renderer.Set( "aim_eyes", localDirection );
 
-		// Only rotate the whole body when the head can't comfortably reach
 		if ( angleToTarget > MaxHeadAngle )
 		{
 			var targetRotation = Rotation.LookAt( worldDirection, Vector3.Up );
-			var t = LookSpeed * Time.Delta;
-			Npc.GameObject.WorldRotation = Rotation.Lerp( Npc.WorldRotation, targetRotation, t );
+			Npc.GameObject.WorldRotation = Rotation.Lerp( Npc.WorldRotation, targetRotation, LookSpeed * Time.Delta );
 		}
 	}
 
-	/// <summary>
-	/// Set both eye and head aim using a single local-space direction.
-	/// </summary>
+	private void ApplyLookToRenderer( Vector3 lookWorldPos )
+	{
+		if ( _renderer is null ) return;
+
+		var worldDirection = ((lookWorldPos - Npc.WorldPosition) with { z = 0 }).Normal;
+		var localDirection = Npc.WorldRotation.Inverse * worldDirection;
+
+		_renderer.Set( "aim_head", localDirection );
+		_renderer.Set( "aim_eyes", localDirection );
+	}
+
 	public void SetAim( Vector3 localDirection )
 	{
 		_renderer?.Set( "aim_eyes", localDirection );
 		_renderer?.Set( "aim_head", localDirection );
 	}
 
-	public void SetHead( Vector3 localDirection )
-	{
-		_renderer?.Set( "aim_head", localDirection );
-	}
+	public void SetHead( Vector3 localDirection ) => _renderer?.Set( "aim_head", localDirection );
+	public void SetEyes( Vector3 localDirection ) => _renderer?.Set( "aim_eyes", localDirection );
 
-	public void SetEyes( Vector3 localDirection )
-	{
-		_renderer?.Set( "aim_eyes", localDirection );
-	}
-
+	/// <summary>
+	/// Records move state for replication. Called by NavigationLayer on the host.
+	/// All clients apply this each frame in OnUpdate.
+	/// </summary>
 	public void SetMove( Vector3 velocity, Rotation reference )
 	{
+		MoveVelocity = velocity;
+		MoveRotation = reference;
+	}
+
+	private void ApplyMoveToRenderer( Vector3 velocity, Rotation reference )
+	{
 		if ( _renderer is null ) return;
+		if ( reference.w == 0f ) return;
 
 		var forward = reference.Forward.Dot( velocity );
 		var sideward = reference.Right.Dot( velocity );
 		var angle = MathF.Atan2( sideward, forward ).RadianToDegree().NormalizeDegrees();
 
-		// Compute rotational speed around yaw (degrees per second)
 		var yaw = reference.Angles().yaw.NormalizeDegrees();
-		float rotationSpeed = 0.0f;
+		float rotationSpeed = 0f;
 
 		if ( float.IsNaN( _lastYaw ) )
 		{
-			_lastYaw = yaw; // initialize history, no spike on first sample
+			_lastYaw = yaw;
 		}
 		else
 		{
 			var deltaYaw = Angles.NormalizeAngle( yaw - _lastYaw );
-			rotationSpeed = Time.Delta > 0.0f ? MathF.Abs( deltaYaw ) / Time.Delta : 0.0f;
+			rotationSpeed = Time.Delta > 0f ? MathF.Abs( deltaYaw ) / Time.Delta : 0f;
 			_lastYaw = yaw;
 		}
 
@@ -192,24 +196,26 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		_renderer.Set( "move_y", sideward );
 		_renderer.Set( "move_x", forward );
 		_renderer.Set( "move_z", velocity.z );
-		_renderer.Set( "b_grounded", IsGrounded );
 		_renderer.Set( "speed_move", Speed );
 		_renderer.Set( "move_rotationspeed", rotationSpeed );
 	}
 
+	/// <summary>
+	/// Broadcasts the attack trigger to all clients so the animation plays everywhere.
+	/// </summary>
+	[Rpc.Broadcast]
 	public void TriggerAttack()
 	{
-		if ( _renderer is null ) return;
-
-		_renderer.Set( "b_attack", true );
+		_renderer?.Set( "b_attack", true );
 	}
 
 	/// <summary>
-	/// Sets the holdtype animation parameter so the NPC poses its arms correctly for the held item.
+	/// Sets the holdtype so the NPC poses its arms for the held item.
+	/// Synced to all clients via HoldType.
 	/// </summary>
 	public void SetHoldType( CitizenAnimationHelper.HoldTypes holdType )
 	{
-		_renderer?.Set( "holdtype", (int)holdType );
+		HoldType = (int)holdType;
 	}
 
 	public override void Reset()
@@ -220,21 +226,23 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		Speed = 1.0f;
 		LookTarget = null;
 		LookTargetObject = null;
+		IsLooking = false;
+		MoveVelocity = default;
+		HoldType = 0;
 		_lastYaw = float.NaN;
 
 		ClearHeldProp();
 
 		_renderer.Set( "b_attack", false );
 		_renderer.Set( "holdtype", 0 );
-		_renderer.Set( "move_speed", 0.0f );
-		_renderer.Set( "move_groundspeed", 0.0f );
-		_renderer.Set( "move_y", 0.0f );
-		_renderer.Set( "move_x", 0.0f );
-		_renderer.Set( "move_z", 0.0f );
+		_renderer.Set( "move_speed", 0f );
+		_renderer.Set( "move_groundspeed", 0f );
+		_renderer.Set( "move_y", 0f );
+		_renderer.Set( "move_x", 0f );
+		_renderer.Set( "move_z", 0f );
 		_renderer.Set( "b_grounded", false );
-		_renderer.Set( "speed_move", 1.0f );
-		_renderer.Set( "move_rotationspeed", 0.0f );
-
+		_renderer.Set( "speed_move", 1f );
+		_renderer.Set( "move_rotationspeed", 0f );
 		_renderer.Set( "aim_eyes", Vector3.Zero );
 		_renderer.Set( "aim_head", Vector3.Zero );
 	}

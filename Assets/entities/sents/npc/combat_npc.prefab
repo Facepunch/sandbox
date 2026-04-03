@@ -62,7 +62,7 @@
           "component_type": "SkinnedModelRenderer"
         },
         "SearchTimeout": 8,
-        "ShowDebugOverlay": true,
+        "ShowDebugOverlay": false,
         "Weapon": {
           "_type": "component",
           "component_id": "b16fbbe6-e4df-462f-8df4-53d47eb325cc",
@@ -95,6 +95,54 @@
         "Static": false,
         "Surface": null,
         "SurfaceVelocity": "0,0,0"
+      },
+      {
+        "__type": "Sandbox.Npcs.Layers.NavigationLayer",
+        "__guid": "9d689083-bbbc-4cb9-b07f-0ac672cf5dfb",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
+        "__type": "Sandbox.Npcs.Layers.AnimationLayer",
+        "__guid": "e1a29173-65ce-4d8b-84d5-27c5503bbe38",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
+        "__type": "Sandbox.Npcs.Layers.SpeechLayer",
+        "__guid": "b586300f-0e59-4fb6-944c-7d3c244b782d",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
+        "__type": "Sandbox.Npcs.Layers.SensesLayer",
+        "__guid": "6db1ac3c-9931-45e6-b1f7-3910c62e057a",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
       }
     ],
     "Children": [

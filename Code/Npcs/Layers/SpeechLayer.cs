@@ -6,9 +6,9 @@ namespace Sandbox.Npcs.Layers;
 public class SpeechLayer : BaseNpcLayer
 {
 	/// <summary>
-	/// The subtitle text currently being shown, if any.
+	/// The subtitle text currently being shown, if any. Synced to all clients.
 	/// </summary>
-	public string CurrentSpeech { get; private set; }
+	[Sync] public string CurrentSpeech { get; set; }
 
 	/// <summary>
 	/// Whether the NPC is currently speaking.
@@ -127,12 +127,13 @@ public class SpeechLayer : BaseNpcLayer
 
 	protected override void OnUpdate()
 	{
-		// Clear subtitle once both the sound and duration are done
-		if ( CurrentSpeech is not null && IsFinished )
+		// Only the host manages speech state (sound playback, duration tracking)
+		if ( !IsProxy && CurrentSpeech is not null && IsFinished )
 		{
 			CurrentSpeech = null;
 		}
 
+		// All clients draw the subtitle when speech is active
 		if ( CurrentSpeech is not null )
 		{
 			DrawSpeech();

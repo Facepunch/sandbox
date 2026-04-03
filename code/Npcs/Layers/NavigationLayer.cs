@@ -42,6 +42,8 @@ public class NavigationLayer : BaseNpcLayer
 
 	protected override void OnUpdate()
 	{
+		if ( IsProxy ) return;
+
 		if ( Agent.IsValid() )
 		{
 			Agent.MaxSpeed = WishSpeed;

@@ -1,4 +1,3 @@
-using Sandbox.Npcs.Layers;
 using Sandbox.Npcs.Tasks;
 
 namespace Sandbox.Npcs.Schedules;
@@ -27,7 +26,7 @@ public class ScientistIdleSchedule : ScheduleBase
 		AddTask( new LookAt( lookTarget ) );
 
 		// occasionally mutter something
-		var speech = Npc.Layers.OfType<SpeechLayer>().FirstOrDefault();
+		var speech = Npc.Speech;
 		if ( speech is not null && speech.CanSpeak && Game.Random.Float() < 0.15f )
 		{
 			var line = IdleLines[Game.Random.Int( 0, IdleLines.Length - 1 )];

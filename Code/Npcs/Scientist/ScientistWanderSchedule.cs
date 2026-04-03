@@ -37,7 +37,7 @@ public class ScientistWanderSchedule : ScheduleBase
 		AddTask( new MoveTo( wanderTarget, 15f ) );
 
 		// Occasionally say something while walking
-		var speech = Npc.Layers.OfType<SpeechLayer>().FirstOrDefault();
+		var speech = Npc.Speech;
 		if ( speech is not null && speech.CanSpeak && Game.Random.Float() < 0.2f )
 		{
 			var line = WanderLines[Game.Random.Int( 0, WanderLines.Length - 1 )];

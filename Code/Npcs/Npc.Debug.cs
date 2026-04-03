@@ -1,4 +1,6 @@
-﻿namespace Sandbox.Npcs;
+﻿using Sandbox.Npcs.Layers;
+
+namespace Sandbox.Npcs;
 
 public partial class Npc : Component
 {
@@ -12,7 +14,7 @@ public partial class Npc : Component
 		var str = $"{ActiveSchedule?.GetDebugString()}";
 
 		// Collect debug output from all layers
-		foreach ( var layer in _layers )
+		foreach ( var layer in GetComponents<BaseNpcLayer>() )
 		{
 			var layerDebug = layer.GetDebugString();
 			if ( !string.IsNullOrEmpty( layerDebug ) )
