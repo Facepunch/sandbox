@@ -22,7 +22,8 @@ public class CombatNpc : Npc, Component.IDamageable
 		"Not like this...",
 		"I can't...",
 	};
-	[Property, ClientEditable, Range( 1, 500 ), Sync]
+
+	[Property, ClientEditable, Range( 1, 250 ), Sync]
 	public float Health { get; set; } = 100f;
 
 	/// <summary>
@@ -31,10 +32,10 @@ public class CombatNpc : Npc, Component.IDamageable
 	[Property]
 	public BaseWeapon Weapon { get; set; }
 
-	[Property, Group( "Balance" )]
-	public float AttackRange { get; set; } = 300f;
+	[Property, Group( "Balance" ), Range( 512, 4096 ), Step( 1 ), ClientEditable, Sync]
+	public float AttackRange { get; set; } = 1024f;
 
-	[Property, Group( "Balance" )]
+	[Property, Group( "Balance" ), Range( 90, 250f ), Step( 1 ), ClientEditable, Sync]
 	public float EngageSpeed { get; set; } = 180f;
 
 	/// <summary>

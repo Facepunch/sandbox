@@ -71,32 +71,6 @@
         }
       },
       {
-        "__type": "Sandbox.BoxCollider",
-        "__guid": "fcc82acd-d2d0-4e85-b6e5-67bcb0cba727",
-        "__enabled": true,
-        "Flags": 0,
-        "Center": "0,0,37.5",
-        "ColliderFlags": 0,
-        "Elasticity": null,
-        "Friction": null,
-        "IsTrigger": false,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "OnObjectTriggerEnter": null,
-        "OnObjectTriggerExit": null,
-        "OnTriggerEnter": null,
-        "OnTriggerExit": null,
-        "RollingResistance": null,
-        "Scale": "25,25,75",
-        "Static": false,
-        "Surface": null,
-        "SurfaceVelocity": "0,0,0"
-      },
-      {
         "__type": "Sandbox.Npcs.Layers.NavigationLayer",
         "__guid": "9d689083-bbbc-4cb9-b07f-0ac672cf5dfb",
         "__enabled": true,
@@ -2029,7 +2003,7 @@
             ]
           },
           {
-            "__guid": "47758309-8159-47a9-9674-c6c0adcdb1cc",
+            "__guid": "2ab0ef02-c5f1-4c06-828a-b0ff0bfeda7a",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - black_boots",
@@ -2046,7 +2020,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "e84f6043-4609-4082-8e86-9547afbef3c5",
+                "__guid": "9a065a0a-2148-4288-bb1f-61ed2f6f1f23",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2098,7 +2072,7 @@
             "Children": []
           },
           {
-            "__guid": "86fbaae5-ca7d-4962-917a-4cdf1415e655",
+            "__guid": "96311050-2045-48d7-8146-460577a93e28",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - army_shirt",
@@ -2115,7 +2089,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "5a713a1b-4a5e-4a54-bef7-4feb7292d0ec",
+                "__guid": "45828a48-0ae0-4577-8edd-93947565506f",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2167,7 +2141,7 @@
             "Children": []
           },
           {
-            "__guid": "71634411-dbee-425a-84a9-ef2da8880e4f",
+            "__guid": "15c6961a-d49f-4ff6-8f71-8c2656886da6",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - cargo_pants_army",
@@ -2184,7 +2158,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "87fb805e-2629-4281-a2e5-4fa2af077742",
+                "__guid": "2496a658-4b47-4729-a8cf-1457e0879956",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2236,7 +2210,7 @@
             "Children": []
           },
           {
-            "__guid": "02e3ba77-d55e-4c33-aeef-f48ad2261a1d",
+            "__guid": "e19afba8-2b22-4216-81ca-0e1186670e07",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - balaclava",
@@ -2253,7 +2227,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "0d5980cd-0941-4168-bb64-72e07d92ff10",
+                "__guid": "6fe73391-ecdc-40b3-af2c-189b5ecf74e6",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2305,7 +2279,7 @@
             "Children": []
           },
           {
-            "__guid": "1c7e683c-8f3d-400f-a392-557a74e7683c",
+            "__guid": "d8a31370-5fa2-4cf5-9faa-f5cdcf1f3e3f",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - tactical_vest",
@@ -2322,7 +2296,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "1b90def3-ab5c-4e11-9e50-7b3b512a4292",
+                "__guid": "a14c6237-907d-4336-b0c0-b1626009b2c2",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2406,6 +2380,51 @@
           "8a4c24de-e11e-87bd-d360-9b1d1112a9d5": "6d6cb549-64c8-488b-a84b-70fe39b2c8f9",
           "9b5d35ef-f22f-98ce-e471-ac2e2223bae6": "df5e6fd0-dfe7-4641-b1f0-f41af53860b3"
         }
+      },
+      {
+        "__guid": "37074cd2-13b9-4a86-a6f5-a60c5fca8ac9",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "collider",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.BoxCollider",
+            "__guid": "11f34d70-2f81-41e9-b832-446dcde13c1a",
+            "__enabled": true,
+            "Flags": 0,
+            "Center": "0,0,37.5",
+            "ColliderFlags": 0,
+            "Elasticity": null,
+            "Friction": null,
+            "IsTrigger": false,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "OnObjectTriggerEnter": null,
+            "OnObjectTriggerExit": null,
+            "OnTriggerEnter": null,
+            "OnTriggerExit": null,
+            "RollingResistance": null,
+            "Scale": "25,25,75",
+            "Static": false,
+            "Surface": null,
+            "SurfaceVelocity": "0,0,0"
+          }
+        ],
+        "Children": []
       }
     ],
     "__properties": {
