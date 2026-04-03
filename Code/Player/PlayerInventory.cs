@@ -21,7 +21,10 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 			oldWeapon.GameObject.Enabled = false;
 
 		if ( newWeapon.IsValid() )
+		{
 			newWeapon.GameObject.Enabled = true;
+			newWeapon.SetDropped( false );
+		}
 	}
 
 	/// <summary>
@@ -198,12 +201,8 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		// Dropped variant components
 		//
 		{
-			clone.GetComponent<DroppedWeapon>( true )?.Enabled = false;
-			clone.GetComponent<Rigidbody>( true )?.Enabled = false;
-			clone.GetComponent<ModelCollider>( true )?.Enabled = false;
-
 			var cloneCarryable = clone.GetComponent<BaseCarryable>( true );
-			if ( cloneCarryable?.DroppedGameObject is { } droppedGo ) droppedGo.Enabled = false;
+			cloneCarryable?.SetDropped( false );
 		}
 
 		var weapon = clone.GetComponent<BaseCarryable>( true );

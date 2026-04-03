@@ -21,6 +21,25 @@ public partial class BaseCarryable : Component
 		CreateWorldModel( player.Renderer );
 	}
 
+	
+	/// <summary>
+	/// Enables or disables the physics/dropped components of this carryable.
+	/// Call with <c>false</c> when picking up/holding, <c>true</c> when dropping.
+	/// </summary>
+	public void SetDropped( bool dropped )
+	{
+		var rb = GetComponent<Rigidbody>( true );
+		if ( rb.IsValid() ) rb.Enabled = dropped;
+
+		var col = GetComponent<ModelCollider>( true );
+		if ( col.IsValid() ) col.Enabled = dropped;
+
+		var droppedWeapon = GetComponent<DroppedWeapon>( true );
+		if ( droppedWeapon.IsValid() ) droppedWeapon.Enabled = dropped;
+
+		if ( DroppedGameObject.IsValid() ) DroppedGameObject.Enabled = dropped;
+	}
+
 	/// <summary>
 	/// Creates and attaches the world model to the given renderer's bone.
 	/// Use this overload when the weapon is held by something other than a player (e.g. an NPC).
@@ -33,6 +52,8 @@ public partial class BaseCarryable : Component
 		{
 			IsItem = false;
 		}
+
+		SetDropped( false );
 
 		var worldModel = WorldModelPrefab?.Clone( new CloneConfig
 		{
