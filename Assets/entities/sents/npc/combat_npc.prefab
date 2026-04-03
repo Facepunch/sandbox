@@ -43,7 +43,7 @@
         "__guid": "9e7014a2-de94-4f9f-852e-871f9fd821ef",
         "__enabled": true,
         "Flags": 0,
-        "AttackRange": 300,
+        "AttackRange": 1024,
         "BurstDuration": 1.5,
         "BurstPause": 0.8,
         "EngageSpeed": 180,
@@ -54,14 +54,14 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "PatrolRadius": 400,
+        "PatrolRadius": 2048,
         "Renderer": {
           "_type": "component",
           "component_id": "2d981081-c1b7-4be7-b39c-529e7f3fb0f2",
           "go": "20ebc983-bcde-4769-9dda-e8b4ae45a063",
           "component_type": "SkinnedModelRenderer"
         },
-        "SearchTimeout": 8,
+        "SearchTimeout": 10,
         "ShowDebugOverlay": false,
         "Weapon": {
           "_type": "component",

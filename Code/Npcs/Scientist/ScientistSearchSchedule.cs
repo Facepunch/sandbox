@@ -12,4 +12,9 @@ public class ScientistSearchSchedule : ScheduleBase
 		AddTask( new LookAt( Target ) );
 		AddTask( new Wait( 1f ) );
 	}
+
+	protected override bool ShouldCancel()
+	{
+		return Npc.Senses.GetNearestVisible().IsValid();
+	}
 }

@@ -9,7 +9,7 @@
     "weapons/mp5/sounds/mp5_shot_02.vsnd",
     "weapons/mp5/sounds/mp5_shot_03.vsnd"
   ],
-  "Occlusion": true,
+  "Occlusion": false,
   "AirAbsorption": true,
   "Transmission": true,
   "OcclusionRadius": 64,
