@@ -1,5 +1,5 @@
 ﻿[Alias( "Button" ), EditorHandle( Icon = "touch_app" )]
-public sealed class Button : BaseDooComponent, Component.IPressable
+public sealed class Button : Component, Component.IPressable
 {
 	/// <summary>
 	/// The button's behavior mode.

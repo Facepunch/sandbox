@@ -31,8 +31,13 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
+          "ShadowBias": 0.0005,
+          "ShadowCascadeCount": 4,
+          "ShadowCascadeSplitRatio": 0.91,
+          "ShadowHardness": 0,
           "Shadows": true,
-          "SkyColor": "0,0,0,0"
+          "SkyColor": "0,0,0,0",
+          "Visualizer": {}
         }
       ],
       "Children": []
@@ -269,7 +274,7 @@
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "13f1b0b1-7f5b-48e8-aace-d283df468b58"
+              "IdValue": "6eedd384-0502-44ca-9978-a2da4060525a"
             },
             "Parent": {
               "Type": "GameObject",
@@ -282,7 +287,7 @@
             "ContainerProperty": "Children",
             "IsContainerArray": true,
             "Data": {
-              "__guid": "13f1b0b1-7f5b-48e8-aace-d283df468b58",
+              "__guid": "6eedd384-0502-44ca-9978-a2da4060525a",
               "__version": 2,
               "Flags": 0,
               "Name": "Clothing - blue_shirt",
@@ -303,18 +308,18 @@
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "2f42c1f3-2084-4f7b-b334-efbcde1563aa"
+              "IdValue": "1f48e3fa-ab45-4875-ae1e-4aaed29fa8ad"
             },
             "Parent": {
               "Type": "GameObject",
-              "IdValue": "13f1b0b1-7f5b-48e8-aace-d283df468b58"
+              "IdValue": "6eedd384-0502-44ca-9978-a2da4060525a"
             },
             "PreviousElement": null,
             "ContainerProperty": "Components",
             "IsContainerArray": true,
             "Data": {
               "__type": "Sandbox.SkinnedModelRenderer",
-              "__guid": "2f42c1f3-2084-4f7b-b334-efbcde1563aa",
+              "__guid": "1f48e3fa-ab45-4875-ae1e-4aaed29fa8ad",
               "__enabled": true,
               "Flags": 0,
               "AnimationGraph": null,
@@ -366,7 +371,7 @@
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "2b6accae-a4e2-486e-95c5-ad2f48ff4b45"
+              "IdValue": "1188c515-218a-4507-8d4c-efccd14a1d1c"
             },
             "Parent": {
               "Type": "GameObject",
@@ -374,12 +379,12 @@
             },
             "PreviousElement": {
               "Type": "GameObject",
-              "IdValue": "13f1b0b1-7f5b-48e8-aace-d283df468b58"
+              "IdValue": "6eedd384-0502-44ca-9978-a2da4060525a"
             },
             "ContainerProperty": "Children",
             "IsContainerArray": true,
             "Data": {
-              "__guid": "2b6accae-a4e2-486e-95c5-ad2f48ff4b45",
+              "__guid": "1188c515-218a-4507-8d4c-efccd14a1d1c",
               "__version": 2,
               "Flags": 0,
               "Name": "Clothing - labcoat",
@@ -400,18 +405,18 @@
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "1c244295-a1e6-4f52-87d6-64a055b4f1af"
+              "IdValue": "8de28068-2c30-4d40-9bc4-d070fc3b507b"
             },
             "Parent": {
               "Type": "GameObject",
-              "IdValue": "2b6accae-a4e2-486e-95c5-ad2f48ff4b45"
+              "IdValue": "1188c515-218a-4507-8d4c-efccd14a1d1c"
             },
             "PreviousElement": null,
             "ContainerProperty": "Components",
             "IsContainerArray": true,
             "Data": {
               "__type": "Sandbox.SkinnedModelRenderer",
-              "__guid": "1c244295-a1e6-4f52-87d6-64a055b4f1af",
+              "__guid": "8de28068-2c30-4d40-9bc4-d070fc3b507b",
               "__enabled": true,
               "Flags": 0,
               "AnimationGraph": null,
@@ -463,7 +468,7 @@
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "f852f8f5-f0fa-4000-9366-f82d43a36778"
+              "IdValue": "b96f0098-cb76-4ef8-9997-c916d1eb6e33"
             },
             "Parent": {
               "Type": "GameObject",
@@ -471,12 +476,12 @@
             },
             "PreviousElement": {
               "Type": "GameObject",
-              "IdValue": "2b6accae-a4e2-486e-95c5-ad2f48ff4b45"
+              "IdValue": "1188c515-218a-4507-8d4c-efccd14a1d1c"
             },
             "ContainerProperty": "Children",
             "IsContainerArray": true,
             "Data": {
-              "__guid": "f852f8f5-f0fa-4000-9366-f82d43a36778",
+              "__guid": "b96f0098-cb76-4ef8-9997-c916d1eb6e33",
               "__version": 2,
               "Flags": 0,
               "Name": "Clothing - hair_baldingbrown",
@@ -497,18 +502,18 @@
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "8fb442ac-31bf-4859-a4c0-2ab2e902909d"
+              "IdValue": "ef15d8da-0b24-47d1-89f5-5a5fccae994c"
             },
             "Parent": {
               "Type": "GameObject",
-              "IdValue": "f852f8f5-f0fa-4000-9366-f82d43a36778"
+              "IdValue": "b96f0098-cb76-4ef8-9997-c916d1eb6e33"
             },
             "PreviousElement": null,
             "ContainerProperty": "Components",
             "IsContainerArray": true,
             "Data": {
               "__type": "Sandbox.SkinnedModelRenderer",
-              "__guid": "8fb442ac-31bf-4859-a4c0-2ab2e902909d",
+              "__guid": "ef15d8da-0b24-47d1-89f5-5a5fccae994c",
               "__enabled": true,
               "Flags": 0,
               "AnimationGraph": null,
@@ -560,7 +565,7 @@
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "01eeb583-bd2b-45cc-9894-2294d0f8ef53"
+              "IdValue": "b9620f29-5683-4a85-9e26-7c4f2a432934"
             },
             "Parent": {
               "Type": "GameObject",
@@ -568,12 +573,12 @@
             },
             "PreviousElement": {
               "Type": "GameObject",
-              "IdValue": "f852f8f5-f0fa-4000-9366-f82d43a36778"
+              "IdValue": "b96f0098-cb76-4ef8-9997-c916d1eb6e33"
             },
             "ContainerProperty": "Children",
             "IsContainerArray": true,
             "Data": {
-              "__guid": "01eeb583-bd2b-45cc-9894-2294d0f8ef53",
+              "__guid": "b9620f29-5683-4a85-9e26-7c4f2a432934",
               "__version": 2,
               "Flags": 0,
               "Name": "Clothing - loose_trousers",
@@ -594,18 +599,18 @@
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "c635e595-3b3d-4cdc-82f4-92fffe40d18a"
+              "IdValue": "807046cd-de51-4989-b07e-80c949a7cce0"
             },
             "Parent": {
               "Type": "GameObject",
-              "IdValue": "01eeb583-bd2b-45cc-9894-2294d0f8ef53"
+              "IdValue": "b9620f29-5683-4a85-9e26-7c4f2a432934"
             },
             "PreviousElement": null,
             "ContainerProperty": "Components",
             "IsContainerArray": true,
             "Data": {
               "__type": "Sandbox.SkinnedModelRenderer",
-              "__guid": "c635e595-3b3d-4cdc-82f4-92fffe40d18a",
+              "__guid": "807046cd-de51-4989-b07e-80c949a7cce0",
               "__enabled": true,
               "Flags": 0,
               "AnimationGraph": null,
@@ -657,7 +662,7 @@
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "a2dedf77-8a58-4b06-a80a-768fcadd5989"
+              "IdValue": "ab541061-3323-4654-bf36-2122e5b49cd8"
             },
             "Parent": {
               "Type": "GameObject",
@@ -665,12 +670,12 @@
             },
             "PreviousElement": {
               "Type": "GameObject",
-              "IdValue": "01eeb583-bd2b-45cc-9894-2294d0f8ef53"
+              "IdValue": "b9620f29-5683-4a85-9e26-7c4f2a432934"
             },
             "ContainerProperty": "Children",
             "IsContainerArray": true,
             "Data": {
-              "__guid": "a2dedf77-8a58-4b06-a80a-768fcadd5989",
+              "__guid": "ab541061-3323-4654-bf36-2122e5b49cd8",
               "__version": 2,
               "Flags": 0,
               "Name": "Clothing - black_boots",
@@ -691,18 +696,18 @@
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "ef09c956-f084-4c61-bc45-585e26fde8f9"
+              "IdValue": "509d1f76-64d5-4380-b719-a2e4c0e55c56"
             },
             "Parent": {
               "Type": "GameObject",
-              "IdValue": "a2dedf77-8a58-4b06-a80a-768fcadd5989"
+              "IdValue": "ab541061-3323-4654-bf36-2122e5b49cd8"
             },
             "PreviousElement": null,
             "ContainerProperty": "Components",
             "IsContainerArray": true,
             "Data": {
               "__type": "Sandbox.SkinnedModelRenderer",
-              "__guid": "ef09c956-f084-4c61-bc45-585e26fde8f9",
+              "__guid": "509d1f76-64d5-4380-b719-a2e4c0e55c56",
               "__enabled": true,
               "Flags": 0,
               "AnimationGraph": null,
@@ -754,7 +759,7 @@
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "70b01289-3e65-4cde-89b9-ff98595b93e8"
+              "IdValue": "cb5eb3bc-6126-4538-b3dd-78399defa9ba"
             },
             "Parent": {
               "Type": "GameObject",
@@ -762,12 +767,12 @@
             },
             "PreviousElement": {
               "Type": "GameObject",
-              "IdValue": "a2dedf77-8a58-4b06-a80a-768fcadd5989"
+              "IdValue": "ab541061-3323-4654-bf36-2122e5b49cd8"
             },
             "ContainerProperty": "Children",
             "IsContainerArray": true,
             "Data": {
-              "__guid": "70b01289-3e65-4cde-89b9-ff98595b93e8",
+              "__guid": "cb5eb3bc-6126-4538-b3dd-78399defa9ba",
               "__version": 2,
               "Flags": 0,
               "Name": "Clothing - moustache",
@@ -788,18 +793,18 @@
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "9bd076df-f68f-4b42-8684-1b576ebe8e24"
+              "IdValue": "3afc8224-63b8-4918-9d23-a281e1f4099e"
             },
             "Parent": {
               "Type": "GameObject",
-              "IdValue": "70b01289-3e65-4cde-89b9-ff98595b93e8"
+              "IdValue": "cb5eb3bc-6126-4538-b3dd-78399defa9ba"
             },
             "PreviousElement": null,
             "ContainerProperty": "Components",
             "IsContainerArray": true,
             "Data": {
               "__type": "Sandbox.SkinnedModelRenderer",
-              "__guid": "9bd076df-f68f-4b42-8684-1b576ebe8e24",
+              "__guid": "3afc8224-63b8-4918-9d23-a281e1f4099e",
               "__enabled": true,
               "Flags": 0,
               "AnimationGraph": null,
@@ -851,7 +856,7 @@
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "bd6434ed-3c3c-4d59-b2b8-7a6eb821d5f4"
+              "IdValue": "3397d6b9-c868-4eea-8c43-4715ed0b95a7"
             },
             "Parent": {
               "Type": "GameObject",
@@ -859,12 +864,12 @@
             },
             "PreviousElement": {
               "Type": "GameObject",
-              "IdValue": "70b01289-3e65-4cde-89b9-ff98595b93e8"
+              "IdValue": "cb5eb3bc-6126-4538-b3dd-78399defa9ba"
             },
             "ContainerProperty": "Children",
             "IsContainerArray": true,
             "Data": {
-              "__guid": "bd6434ed-3c3c-4d59-b2b8-7a6eb821d5f4",
+              "__guid": "3397d6b9-c868-4eea-8c43-4715ed0b95a7",
               "__version": 2,
               "Flags": 0,
               "Name": "Clothing - eyebrows_bushy",
@@ -885,18 +890,18 @@
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "10606f2e-9dcb-49f1-b4cb-dc98a9bb25ec"
+              "IdValue": "80d9af32-370d-4a11-a839-f978bb92f1b0"
             },
             "Parent": {
               "Type": "GameObject",
-              "IdValue": "bd6434ed-3c3c-4d59-b2b8-7a6eb821d5f4"
+              "IdValue": "3397d6b9-c868-4eea-8c43-4715ed0b95a7"
             },
             "PreviousElement": null,
             "ContainerProperty": "Components",
             "IsContainerArray": true,
             "Data": {
               "__type": "Sandbox.SkinnedModelRenderer",
-              "__guid": "10606f2e-9dcb-49f1-b4cb-dc98a9bb25ec",
+              "__guid": "80d9af32-370d-4a11-a839-f978bb92f1b0",
               "__enabled": true,
               "Flags": 0,
               "AnimationGraph": null,
@@ -950,85 +955,85 @@
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "c868212d-8a9d-4fb3-be4d-e757295ce302"
+              "IdValue": "8a9d8e04-e8ac-43cd-9ad9-eff439cbaf89"
             }
           },
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "ef9d0a59-470d-43f1-b711-c7a3d0bc80cf"
+              "IdValue": "7c28df22-07d3-416d-89b8-d968fdba752a"
             }
           },
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "595dfb3a-acaa-4ea1-a0c9-d5108044f307"
+              "IdValue": "2ff16c74-00ae-4eeb-9ed4-4d5a09686f97"
             }
           },
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "7a98f977-ec7d-40bb-b5dd-fa464a23465b"
+              "IdValue": "fdcfdae1-4114-4ae8-af4a-1f135f243100"
             }
           },
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "adf22e1b-6375-471d-94fd-08aa29519a2c"
+              "IdValue": "c68dce97-0ab8-4ee5-9bc9-a90660100122"
             }
           },
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "b5cce703-002c-4f01-aff2-64975fa5546b"
+              "IdValue": "76c0a89e-330b-41f6-98d1-4d8c10e12a1b"
             }
           },
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "d860b7c0-bce8-43ae-aaac-304553c08127"
+              "IdValue": "935fd18c-bd01-4d2a-91ab-de33f21f6910"
             }
           },
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "8bdb1249-c628-4382-b364-83dbc429e0bc"
+              "IdValue": "a66167b0-cc09-411b-9b53-dc9b487f5b13"
             }
           },
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "51a0461b-b0c7-422e-b37a-da2e1b01d7cc"
+              "IdValue": "e5a8a86b-57da-4813-a482-11a1cbc892ba"
             }
           },
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "0d5a2b0d-33f1-4e09-bf9f-003e2d9061ac"
+              "IdValue": "a82ffa76-3177-4fe7-aa32-6e5308c248c0"
             }
           },
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "9a835394-bacd-4952-8903-5a90195762dc"
+              "IdValue": "3302ce3f-d52d-437c-9bad-99f614398e55"
             }
           },
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "ea7fe346-1d89-4452-8915-26f04d4dc8c2"
+              "IdValue": "0d70d7cd-37ba-469a-9d0e-f0a47d7cae77"
             }
           },
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "18fb4146-d13b-4919-9825-01f67fa825e9"
+              "IdValue": "6e423afc-825b-4bf1-b183-faafc0b20d69"
             }
           },
           {
             "Id": {
               "Type": "Component",
-              "IdValue": "ef2c8a89-c492-4bd5-94b0-db5755f177dd"
+              "IdValue": "4e50d412-2ae4-4722-94fa-2f6cb640b794"
             }
           }
         ],
@@ -1148,20 +1153,24 @@
         "4d0adb57-bea9-4092-9a28-177a567fcbdd": "9fda8d8e-d54f-4735-ae6b-e033964bab35",
         "890a23e2-d0dc-4314-859a-ba2f4e663731": "635fd7d3-bc70-4047-a780-21efc30a1688",
         "ce865edd-088e-4555-a337-c1910cc7cf9b": "9000a281-8d88-4d16-9701-124420f00daa",
-        "ef2c8a89-c492-4bd5-94b0-db5755f177dd": "ed33c936-0177-4a02-aa0b-9ee3c7c1b135",
-        "ea7fe346-1d89-4452-8915-26f04d4dc8c2": "330ecc91-b2d2-4960-ade3-dde48c0a1306",
-        "0d5a2b0d-33f1-4e09-bf9f-003e2d9061ac": "6f8f727f-94c4-4403-8e4a-80b5c3f0d4b1",
-        "8bdb1249-c628-4382-b364-83dbc429e0bc": "38d2568b-d82b-432e-8a65-0b0e906af48e",
-        "b5cce703-002c-4f01-aff2-64975fa5546b": "bd0262ec-0d8c-499d-925d-20d5465c80a0",
-        "7a98f977-ec7d-40bb-b5dd-fa464a23465b": "6693a5a1-74a2-436d-971e-a3f8771e7d16",
-        "ef9d0a59-470d-43f1-b711-c7a3d0bc80cf": "2a2bbda7-b646-4d03-b74d-36e075ddf7be",
-        "18fb4146-d13b-4919-9825-01f67fa825e9": "3536bf12-cf77-4bb4-aa86-990e82f56a58",
-        "9a835394-bacd-4952-8903-5a90195762dc": "4defdccd-34b3-429e-b32c-5af6de444302",
-        "51a0461b-b0c7-422e-b37a-da2e1b01d7cc": "67b59d5f-ef49-48f4-b695-aab2c6c13f5a",
-        "d860b7c0-bce8-43ae-aaac-304553c08127": "e9406440-798b-44e1-a657-0e5bc86e25dd",
-        "adf22e1b-6375-471d-94fd-08aa29519a2c": "16191d53-a791-4bd8-820a-c70cbf8c3374",
-        "595dfb3a-acaa-4ea1-a0c9-d5108044f307": "9de7ede0-465d-47b7-b5fb-a723583f5fae",
-        "c868212d-8a9d-4fb3-be4d-e757295ce302": "c74af133-9f51-4ec7-9724-67e71e738919"
+        "76c0a89e-330b-41f6-98d1-4d8c10e12a1b": "15bf9d12-c5dd-4225-92b0-13ff1a4dcb0f",
+        "fdcfdae1-4114-4ae8-af4a-1f135f243100": "b406253c-883a-4126-9795-0fa318c04d6a",
+        "7c28df22-07d3-416d-89b8-d968fdba752a": "1b713d78-05ac-45ac-9f20-81b0750b5577",
+        "9bded40e-8481-4286-bb7b-22d63a1f5874": "f3bc580a-6899-45bd-9980-d688e3d7b867",
+        "646e2ab5-f09d-4a51-883c-6318853b12ef": "2a8c68a3-95e4-43ec-9c52-5864500eb01b",
+        "922d3e85-1af9-4010-a06f-ef8e94654191": "626af96c-ef59-4d96-9daf-134b4923ea8d",
+        "b0b7fd7b-974f-4e43-aa77-2a28bec8771c": "574d0186-dce8-4232-b757-0f62947fb22c",
+        "6e423afc-825b-4bf1-b183-faafc0b20d69": "46159171-b14b-44c1-9d09-174c3804963d",
+        "3302ce3f-d52d-437c-9bad-99f614398e55": "04afea5e-7df1-4b32-bda5-97796545356e",
+        "e5a8a86b-57da-4813-a482-11a1cbc892ba": "a3221a26-485d-4f4c-8d65-f7300f82cd0e",
+        "935fd18c-bd01-4d2a-91ab-de33f21f6910": "f9db9416-4415-4981-a2b1-e4c340b986c4",
+        "c68dce97-0ab8-4ee5-9bc9-a90660100122": "f9cb1eab-f656-4153-b38c-7e5acf6dde0f",
+        "2ff16c74-00ae-4eeb-9ed4-4d5a09686f97": "55c613ea-decc-454e-b2d9-60fc3048ad17",
+        "8a9d8e04-e8ac-43cd-9ad9-eff439cbaf89": "edf16718-cafb-4e79-8d36-02c3626045c9",
+        "a66167b0-cc09-411b-9b53-dc9b487f5b13": "99036b04-d3f2-4b5b-aa21-1092a7e08568",
+        "a82ffa76-3177-4fe7-aa32-6e5308c248c0": "3be2ba1e-4dba-4b35-86bd-202e32f983cb",
+        "0d70d7cd-37ba-469a-9d0e-f0a47d7cae77": "baecd183-c946-4f09-9dff-d982e705d781",
+        "4e50d412-2ae4-4722-94fa-2f6cb640b794": "cdf3064b-6b88-4acd-b6c2-9e6d97d89393"
       }
     },
     {
@@ -1514,12 +1523,10 @@
                     "$type": "ivk",
                     "InvokeType": "Static",
                     "TargetComponent": {
-                      "_type": "component",
-                      "component_id": "4c73c05f-d42e-431b-b7b9-e43df04fcec0",
-                      "go": "972c1427-2e0f-4678-a72d-06226bb288a2",
-                      "component_type": "Prop"
+                      "t": "Direct",
+                      "cv": null
                     },
-                    "Member": "Doo+Methods.GameObjectClone",
+                    "Member": "Sandbox.Doo+Methods.GameObjectClone",
                     "Arguments": [
                       {
                         "$type": "lit",
@@ -1562,12 +1569,10 @@
                     "$type": "ivk",
                     "InvokeType": "Static",
                     "TargetComponent": {
-                      "_type": "component",
-                      "component_id": "408bb2ac-8306-401d-80fa-5693437f0b51",
-                      "go": "e43bdd6c-9327-4d1e-aa8f-8f974c3dec6e",
-                      "component_type": "Prop"
+                      "t": "Direct",
+                      "cv": null
                     },
-                    "Member": "Doo+Methods.LogInfo",
+                    "Member": "Sandbox.Doo+Methods.LogInfo",
                     "Arguments": [
                       {
                         "$type": "var",
@@ -1619,8 +1624,11 @@
     "GameObjectSystems": {
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
-          "$blob": "417a85ca-c240-4140-ae04-27b4662a1ccc"
+          "$blob": "2302ce2b-e1ff-4d94-afd2-b841acbeb73d"
         }
+      },
+      "Sandbox.MovieMaker.MovieRecorderSystem": {
+        "DisableClientRecording": false
       }
     }
   },
