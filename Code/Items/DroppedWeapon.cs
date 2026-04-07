@@ -11,7 +11,12 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 		return new IPressable.Tooltip( "Pick up", "inventory_2", name );
 	}
 
-	private bool HasInput() => GetComponent<BaseWeapon>() is var weapon && ( weapon.ShootInput.IsEnabled || weapon.SecondaryInput.IsEnabled );
+	private bool HasInput()
+	{
+		var weapon = GetComponent<BaseWeapon>();
+		if ( !weapon.IsValid() ) return false;
+		return weapon.ShootInput.IsEnabled || weapon.SecondaryInput.IsEnabled;
+	}
 
 	bool IPressable.CanPress( IPressable.Event e )
 	{
