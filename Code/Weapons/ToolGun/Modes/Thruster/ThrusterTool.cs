@@ -70,7 +70,7 @@ public class ThrusterTool : ToolMode
 			// attach it
 			var joint = thruster.AddComponent<FixedJoint>();
 			joint.Attachment = Joint.AttachmentMode.LocalFrames;
-			joint.LocalFrame2 = point.GameObject.WorldTransform.ToLocal( tx );
+			joint.LocalFrame2 = point.GameObject.WorldTransform.WithScale( 1 ).ToLocal( tx );
 			joint.LocalFrame1 = new Transform();
 			joint.AngularFrequency = 0;
 			joint.LinearFrequency = 0;
