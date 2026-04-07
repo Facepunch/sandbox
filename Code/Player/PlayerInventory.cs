@@ -589,6 +589,37 @@ public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 		_ = SwitchToPresetAsync( loadoutJson );
 	}
 
+	/// <summary>
+	/// Clears the inventory and restores the default weapons (physgun, toolgun, camera).
+	/// </summary>
+	public void ResetToDefault()
+	{
+		if ( !Networking.IsHost )
+		{
+			HostResetToDefault();
+			return;
+		}
+		_ = ResetToDefaultAsync();
+	}
+
+	[Rpc.Host]
+	private void HostResetToDefault()
+	{
+		_ = ResetToDefaultAsync();
+	}
+
+	private async Task ResetToDefaultAsync()
+	{
+		foreach ( var weapon in Weapons.ToList() )
+			weapon.DestroyGameObject();
+
+		await Task.Yield();
+
+		GiveDefaultWeapons();
+		SwitchWeapon( GetBestWeapon() );
+		SaveLoadout();
+	}
+
 	[Rpc.Host]
 	private void HostSwitchToPreset( string loadoutJson )
 	{

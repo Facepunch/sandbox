@@ -37,6 +37,7 @@
             menu.AddSpacer();
         }
 
+        menu.AddOption( "refresh", "Reset to Default", ResetToDefault );
         menu.AddOption( "add", "New Preset", OnSaveNew );
         menu.StateHasChanged();
     }
@@ -49,7 +50,7 @@
 
     void OnOverwritePreset( string name )
     {
-		var json = LocalData.Get<string>( "hotbar" );
+        var json = LocalData.Get<string>( "hotbar" );
         if ( string.IsNullOrEmpty( json ) ) return;
 
         PlayerInventory.SaveLoadoutPreset( name, json );
@@ -58,6 +59,12 @@
     void OnDeletePreset( string name )
     {
         PlayerInventory.DeleteLoadoutPreset( name );
+    }
+
+    void ResetToDefault()
+    {
+        if ( !Inventory.IsValid() ) return;
+        Inventory.ResetToDefault();
     }
 
     void OnSaveNew()
@@ -74,7 +81,7 @@
 
     void OnSaveConfirmed( string name )
     {
-		var json = LocalData.Get<string>( "hotbar" );
+        var json = LocalData.Get<string>( "hotbar" );
         if ( string.IsNullOrEmpty( json ) ) return;
 
         PlayerInventory.SaveLoadoutPreset( name, json );
