@@ -122,6 +122,40 @@
         "OnComponentUpdate": null,
         "SightRange": 8192,
         "TargetTags": "player"
+      },
+      {
+        "__type": "Sandbox.Rigidbody",
+        "__guid": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+        "__enabled": true,
+        "Flags": 0,
+        "AngularDamping": 2,
+        "EnableImpactDamage": false,
+        "EnhancedCcd": false,
+        "Gravity": true,
+        "GravityScale": 1,
+        "ImpactDamage": 0,
+        "LinearDamping": 0.5,
+        "Locking": {
+          "X": false,
+          "Y": false,
+          "Z": false,
+          "Pitch": true,
+          "Yaw": false,
+          "Roll": true
+        },
+        "MassCenterOverride": "0,0,0",
+        "MassOverride": 0,
+        "MinImpactDamageSpeed": 500,
+        "MotionEnabled": false,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideMassCenter": false,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
       }
     ],
     "Children": [
@@ -2008,7 +2042,7 @@
             ]
           },
           {
-            "__guid": "d0754ecb-c5ec-49b1-a4a5-e3db535633d5",
+            "__guid": "62d599cb-cc10-4f84-93bb-2b8e060f05b5",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - black_boots",
@@ -2025,7 +2059,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "f22a233a-7e81-4fad-9914-0e7de7bd6686",
+                "__guid": "4a8fe8f1-7984-46b7-bfe4-267829db9310",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2077,7 +2111,7 @@
             "Children": []
           },
           {
-            "__guid": "ec67ebd2-4c7a-41e1-90d3-3c91a3c2faf0",
+            "__guid": "b317a9fe-49fb-4368-9a82-9f7fbd6bb375",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - army_shirt",
@@ -2094,7 +2128,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "8abb7e75-bb84-4fc2-9f1b-571e017fc2a8",
+                "__guid": "593fbed1-b3bb-4005-95b6-c259eca1a2dc",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2146,7 +2180,7 @@
             "Children": []
           },
           {
-            "__guid": "bc155d2c-07d9-44d1-8672-826910ca2b41",
+            "__guid": "c2b6f52e-38d6-44e6-bfdc-fe8465e0f5b9",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - cargo_pants_army",
@@ -2163,7 +2197,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "09494a0d-3b7f-4255-9085-58ad6bc60e20",
+                "__guid": "ba1d1c6c-32de-44dc-82a2-65eb36261961",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2215,7 +2249,7 @@
             "Children": []
           },
           {
-            "__guid": "37bb5f35-2b8e-41a8-bf1f-eccc962a2469",
+            "__guid": "3c262728-44ec-4a57-ac35-0e24db149cdb",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - balaclava",
@@ -2232,7 +2266,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "9e086e19-b928-48fc-b3bf-30a66ddeab5e",
+                "__guid": "b6158284-9751-40a6-aa02-fb3043c854ef",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2284,7 +2318,7 @@
             "Children": []
           },
           {
-            "__guid": "a3c1918a-6b0a-4dfa-89de-f13e2348afe4",
+            "__guid": "60ceb6ef-5bae-4186-81dc-f7743bba8cab",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - tactical_vest",
@@ -2301,7 +2335,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "03a6ed36-f4a1-4b0d-b167-76a52f66898a",
+                "__guid": "d46c0501-576d-4050-bb47-799686ee822d",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,

@@ -21,9 +21,48 @@ public partial class Npc : Component, IKillSource
 	string IKillSource.DisplayName => DisplayName;
 	string IKillSource.Tags => "npc";
 
+	private Rigidbody _rigidbody;
+	private NavMeshAgent _navAgent;
+	private TimeSince _timeSincePhysicsEnabled;
+
 	protected override void OnStart()
 	{
 		GameObject.Tags.Add( "npc" );
+		_rigidbody = GetComponent<Rigidbody>();
+		_navAgent = GetComponent<NavMeshAgent>();
+	}
+
+	protected override void OnFixedUpdate()
+	{
+		if ( IsProxy || !_rigidbody.IsValid() || !_navAgent.IsValid() ) return;
+
+		if ( _rigidbody.MotionEnabled )
+		{
+			// Physics is active (physgun grabbed us), so stop NavMesh from fighting the physics position.
+			if ( _navAgent.UpdatePosition )
+			{
+				_navAgent.UpdatePosition = false;
+				_timeSincePhysicsEnabled = 0;
+			}
+
+			// Once no longer constrained by a joint and velocity has settled, hand control back to navmesh
+			var isJointHeld = _rigidbody.Joints.Count > 0;
+			if ( !isJointHeld && _timeSincePhysicsEnabled > 0.5f && _rigidbody.Velocity.Length < 20f )
+			{
+				_rigidbody.MotionEnabled = false;
+				_navAgent.Enabled = false;
+
+				// Re-register the agent at the physics landing position by disabling and re-enabling it.
+				_navAgent.Enabled = true;
+				_navAgent.Stop();
+				_navAgent.UpdatePosition = true;
+			}
+		}
+		else if ( !_navAgent.UpdatePosition )
+		{
+			// MotionEnabled was cleared externally (eg. physgun), so re-enable NavMesh.
+			_navAgent.UpdatePosition = true;
+		}
 	}
 
 	protected override void OnUpdate()
