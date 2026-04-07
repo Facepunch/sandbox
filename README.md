@@ -6,7 +6,7 @@
   <h3 align="center">Sandbox</h3>
 
   <p align="center">
-    A multiplayer sandbox game built on <a href="https://sbox.facepunch.com">s&box</a>.
+    Our multiplayer sandbox built with the tools provided by <a href="https://sbox.facepunch.com">s&box</a>.
     <br />
     <a href="https://sbox.game/facepunch/sandbox"><strong>Play now »</strong></a>
   </p>
@@ -20,3 +20,11 @@ https://github.com/user-attachments/assets/f68c7011-6560-49c3-9d3a-ce2411885d08
 Feel free to learn and use parts in your own s&box games.
 
 [MIT](LICENSE) - Copyright (c) 2026 Facepunch
+
+## Pull Requests
+
+We accept pull requests, but ensure that you're using the same coding style and standards as us. We reserve the right to reject any pull request. Feel free to fork if you wish.
+
+## Issues
+
+If you encounter any bugs, feel free to make an issue. Make sure that the issue doesn't already exist before making one.
