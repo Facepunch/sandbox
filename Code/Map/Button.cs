@@ -63,8 +63,7 @@ public sealed class Button : Component, Component.IPressable
 	[Sync] private TimeSince LastUse { get; set; }
 	[Sync] private bool _isOn { get; set; }
 
-	[Doo.ArgumentHint<GameObject>( "user" )]
-	[Property] public Doo OnPressed { get; set; }
+	[Property] public Action<GameObject> OnPressed { get; set; }
 
 	/// <summary>
 	/// True if the button is currently on
@@ -211,7 +210,7 @@ public sealed class Button : Component, Component.IPressable
 		if ( IsAnimating )
 			return;
 
-		Run( OnPressed, c => c.SetArgument( "user", presser ) );
+		OnPressed?.Invoke( presser );
 
 		switch ( Mode )
 		{
