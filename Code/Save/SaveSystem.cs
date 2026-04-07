@@ -342,36 +342,43 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 		options.SetScene( patchedSceneFile );
 		Game.ChangeScene( options );
 
-		// Make sure we keep track of the original scene sources in case we re-save from this loaded state
-		_loadedScenes.Clear();
+		var newSystem = SaveSystem.Current;
+		if ( newSystem is null )
+		{
+			Log.Warning( "SaveSystem: Could not find new SaveSystem instance after ChangeScene." );
+			return false;
+		}
+
+		// Keep track of the original scene sources so any subsequent re-save diffs correctly.
+		newSystem._loadedScenes.Clear();
 		foreach ( var sf in sceneFiles )
 		{
 			if ( string.IsNullOrEmpty( sf.ResourcePath ) ) continue;
-			_loadedScenes.Add( new LoadedSceneEntry
+			newSystem._loadedScenes.Add( new LoadedSceneEntry
 			{
 				ResourcePath = sf.ResourcePath,
 				SceneFileId = sf.Id
 			} );
 		}
 
-		// Restore metadata
-		_metadata = saveRoot["Metadata"] is JsonObject metaNode
+		// Restore metadata onto the new instance so AfterLoad event handlers can read it.
+		newSystem._metadata = saveRoot["Metadata"] is JsonObject metaNode
 			? JsonSerializer.Deserialize<Dictionary<string, string>>( metaNode ) ?? new Dictionary<string, string>()
 			: new Dictionary<string, string>();
-		LoadedSavePath = path;
+		newSystem.LoadedSavePath = path;
 
 		// Restore [Sync] property values before network ownership so everything is populated BEFORE any ownership-change callbacks fire.
 		if ( saveRoot["SyncState"] is JsonObject syncNode )
 		{
-			RestoreSyncState( Scene, syncNode );
+			RestoreSyncState( newSystem.Scene, syncNode );
 		}
 
 		if ( saveRoot["NetworkOwnership"] is JsonObject ownershipNode )
 		{
-			RestoreNetworkOwnership( Scene, ownershipNode );
+			RestoreNetworkOwnership( newSystem.Scene, ownershipNode );
 		}
 
-		Scene.RunEvent<ISaveEvents>( x => x.AfterLoad( path ) );
+		newSystem.Scene.RunEvent<ISaveEvents>( x => x.AfterLoad( path ) );
 		return true;
 	}
 

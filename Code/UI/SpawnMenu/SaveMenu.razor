@@ -53,9 +53,9 @@
     List<SaveFileEntry> SaveFiles = new();
 
     record SaveFileEntry( string FileName, string DisplayName, string Timestamp, Texture Thumbnail, bool IsCompatible );
-	static string SavesPath => "saves";
+    static string SavesPath => "saves";
 
-    protected override void OnAfterTreeRender( bool firstTime )
+    protected override void OnAfterTreeRender ( bool firstTime )
     {
         if ( firstTime )
         {
@@ -67,14 +67,14 @@
     {
         SaveFiles.Clear();
 
-		if ( !FileSystem.Data.DirectoryExists( SavesPath ) )
+        if ( !FileSystem.Data.DirectoryExists( SavesPath ) )
         {
-			FileSystem.Data.CreateDirectory( SavesPath );
+            FileSystem.Data.CreateDirectory( SavesPath );
         }
 
-		foreach ( var file in FileSystem.Data.FindFile( SavesPath, "*.sav" ) )
+        foreach ( var file in FileSystem.Data.FindFile( SavesPath, "*.sav" ) )
         {
-			var filePath = $"{SavesPath}/{file}";
+            var filePath = $"{SavesPath}/{file}";
             var displayName = file;
             string timestamp = null;
             Texture thumbnail = null;
@@ -161,7 +161,7 @@
         var now = DateTime.Now;
         var timeString = now.ToString( "yyyy-MM-dd HH:mm:ss" );
         var baseName = now.ToString( "yyyy-MM-dd-HH-mm-ss" );
-		var fileName = $"{SavesPath}/{baseName}.sav";
+        var fileName = $"{SavesPath}/{baseName}.sav";
 
         // Capture a 256x144 (16:9) thumbnail from the scene camera
         var camera = Game.ActiveScene?.Camera;
@@ -182,12 +182,12 @@
 
     void LoadSave( string fileName )
     {
-		_ = SaveSystem.Current.Load( $"{SavesPath}/{fileName}" );
+        _ = SaveSystem.Current.Load( $"{SavesPath}/{fileName}" );
     }
 
     void DeleteSave( string fileName )
     {
-		FileSystem.Data.DeleteFile( $"{SavesPath}/{fileName}" );
+        FileSystem.Data.DeleteFile( $"{SavesPath}/{fileName}" );
         var thumbPath = $"{SavesPath}/{System.IO.Path.GetFileNameWithoutExtension( fileName )}.thumb.png";
         if ( FileSystem.Data.FileExists( thumbPath ) )
             FileSystem.Data.DeleteFile( thumbPath );

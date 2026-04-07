@@ -1,6 +1,6 @@
 using Sandbox.Citizen;
 
-public sealed class PlayerInventory : Component, IPlayerEvent
+public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 {
 	[Property] public int MaxSlots { get; set; } = 6;
 
@@ -779,5 +779,49 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		if ( !ActiveWeapon.IsValid() ) return;
 
 		ActiveWeapon.OnCameraSetup( Player, camera );
+	}
+
+	void ISaveEvents.BeforeSave( string filename )
+	{
+		if ( !Networking.IsHost ) return;
+
+		var steamId = Player.SteamId;
+		if ( steamId == 0 ) return;
+
+		var json = SerializeLoadout();
+		if ( string.IsNullOrEmpty( json ) ) return;
+
+		// Store the hotbar loadout in save's metadata
+		SaveSystem.Current?.SetMetadata( $"Loadout_{steamId}", json );
+	}
+
+	void ISaveEvents.AfterLoad( string filename )
+	{
+		if ( !Networking.IsHost ) return;
+
+		var steamId = Player.SteamId;
+		if ( steamId == 0 ) return;
+
+		// Restore the hotbar loadout
+		var json = SaveSystem.Current?.GetMetadata( $"Loadout_{steamId}" );
+		if ( string.IsNullOrEmpty( json ) ) return;
+
+		_ = RestoreLoadoutFromSaveAsync( json );
+	}
+
+	private async Task RestoreLoadoutFromSaveAsync( string json )
+	{
+		foreach ( var weapon in Weapons.ToList() )
+			weapon.DestroyGameObject();
+
+		// Let queued destructions finish before adding new weapons.
+		await Task.Yield();
+
+		await EnsureMountedAsync( json );
+		GiveLoadoutWeapons( json );
+
+		var best = GetBestWeapon();
+		if ( best.IsValid() )
+			SwitchWeapon( best );
 	}
 }
