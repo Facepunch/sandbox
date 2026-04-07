@@ -231,6 +231,15 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	void OnControl()
 	{
+		if ( Input.UsingController )
+		{
+			Controller.UseInputControls = !(Input.Down( "SpawnMenu" ) || Input.Down( "InspectMenu" ));
+		}
+		else
+		{
+			Controller.UseInputControls = true;
+		}
+
 		if ( Input.Pressed( "die" ) )
 		{
 			KillSelf();

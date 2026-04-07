@@ -3,7 +3,10 @@
 @inherits Panel
 
 <root>
-    <InputHint class="index" Action=@($"Slot{Index + 1}")></InputHint>
+    @if ( !Input.UsingController )
+    {
+        <InputHint class="index" Action=@($"Slot{Index + 1}")></InputHint>
+    }
 
     @{
         var weapon = GetWeapon();
@@ -156,5 +159,5 @@
         GameManager.GiveSpawnerWeaponAt( data.Type, data.Path, Index, data.Data as string, data.Icon, data.Title );
     }
 
-    protected override int BuildHash() => HashCode.Combine(GetWeapon(), Hovered, Active);
+    protected override int BuildHash() => HashCode.Combine(GetWeapon(), Hovered, Active, Input.UsingController);
 }
