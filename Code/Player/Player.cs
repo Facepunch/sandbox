@@ -209,6 +209,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		//
 		// Ghost and say goodbye to the player
 		//
+		PlayerData?.MarkForRespawn();
 		Ghost();
 		GameObject.Destroy();
 	}

@@ -35,16 +35,9 @@ public sealed class PlayerObserver : Component
 		// If pressed a button, or has been too long
 		if ( Input.Pressed( "attack1" ) || Input.Pressed( "jump" ) || timeSinceStarted > 4f )
 		{
-			Respawn();
+			PlayerData.For( Network.Owner )?.RequestRespawn();
 			GameObject.Destroy();
 		}
-	}
-
-	[Rpc.Host( NetFlags.OwnerOnly | NetFlags.Reliable )]
-	public void Respawn()
-	{
-		GameManager.Current.SpawnPlayer( Network.Owner );
-		GameObject.Destroy();
 	}
 
 	private void RotateAround( Component target )
