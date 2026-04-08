@@ -67,11 +67,21 @@
 
 		var tr = trace.Run();
 
-		return new SelectionPoint
+		var sp = new SelectionPoint
 		{
 			GameObject = tr.GameObject,
 			LocalTransform = tr.GameObject?.WorldTransform.ToLocal( new Transform( tr.EndPosition, Rotation.LookAt( tr.Normal ) ) ) ?? global::Transform.Zero
 		};
+
+		if ( sp.IsValid() )
+		{
+			// Ask the object if it allows toolgun interaction (Ownable and others can reject via IToolgunEvent)
+			var selectEvent = new IToolgunEvent.SelectEvent { User = Player.Network.Owner };
+			sp.GameObject.Root.RunEvent<IToolgunEvent>( x => x.OnToolgunSelect( selectEvent ) );
+			if ( selectEvent.Cancelled ) return default;
+		}
+
+		return sp;
 	}
 
 	/// <summary>

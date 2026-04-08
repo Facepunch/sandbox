@@ -424,6 +424,11 @@ public partial class Physgun
 		var go = tr.Body.GameObject;
 		if ( !go.IsValid() || go.IsDestroyed ) return false;
 
+		// Ask the object if it allows being grabbed (Ownable and others can reject via IPhysgunEvent)
+		var grabEvent = new IPhysgunEvent.GrabEvent { Grabber = Network.Owner };
+		go.Root.RunEvent<IPhysgunEvent>( x => x.OnPhysgunGrab( grabEvent ) );
+		if ( grabEvent.Cancelled ) return false;
+
 		// Trace hits physics, convert to local using scaled physics transform.
 		var bodyTransform = tr.Body.Transform.WithScale( go.WorldScale );
 
