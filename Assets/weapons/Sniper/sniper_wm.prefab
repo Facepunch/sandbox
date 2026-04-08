@@ -53,7 +53,7 @@
         "Name": "w_sniper",
         "Position": "3.418695,-0.6192533,-5.397455",
         "Rotation": "0,0,0,1",
-        "Scale": "2,2,2",
+        "Scale": "1.5,1.5,1.5",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
@@ -181,7 +181,8 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "CustomBounds": false
       }
     },
     "__variables": []
@@ -196,5 +197,3 @@
   ],
   "__version": 2
 }
-
-
