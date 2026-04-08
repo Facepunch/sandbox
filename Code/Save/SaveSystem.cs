@@ -338,6 +338,8 @@ public sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEven
 
 		_suppressSystemScene = true; // Make sure we don't load two system scenes.....
 
+		CleanupSystem.PreserveBaselineForSaveLoad();
+
 		var options = new SceneLoadOptions();
 		options.SetScene( patchedSceneFile );
 		Game.ChangeScene( options );
