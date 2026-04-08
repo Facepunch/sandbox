@@ -141,6 +141,8 @@ public sealed class SnapGrid
 			_sceneObj = new SnapGridSceneObject( world ) { Material = _material };
 		}
 
+		_sceneObj.RenderingEnabled = true;
+
 		// Only recalculate the plane when the surface normal or hovered object changes
 		var faceNormal = hitNormalWorld.Normal;
 		var holdingUse = Input.Down( "use" );
