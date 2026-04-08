@@ -66,15 +66,72 @@ public class RollermineNpc : Npc, Component.IDamageable, Component.ICollisionLis
 	[Property]
 	public GameObject Eye { get; set; }
 
+	/// <summary>
+	/// GameObject whose child ParticleEffects are enabled while actively hunting a target.
+	/// </summary>
+	[Property, Group( "Effects" )]
+	public GameObject HuntingEffects { get; set; }
+
+	/// <summary>
+	/// Prefab cloned at world position when leaping at the target.
+	/// </summary>
+	[Property, Group( "Effects" )]
+	public GameObject LeapEffect { get; set; }
+
+	/// <summary>
+	/// Prefab cloned at the contact point when hitting a player.
+	/// </summary>
+	[Property, Group( "Effects" )]
+	public GameObject ContactEffect { get; set; }
+
 	public Rigidbody Rigidbody { get; private set; }
 
+	private bool _hunting;
 	private TimeSince _lastBounce;
 	private const float BounceCooldown = 0.25f;
+
+	/// <summary>
+	/// Called by chase/idle schedules to toggle the hunting particle children.
+	/// </summary>
+	public void SetHunting( bool hunting )
+	{
+		if ( _hunting == hunting ) return;
+		_hunting = hunting;
+
+		if ( HuntingEffects.IsValid() )
+			HuntingEffects.Enabled = hunting;
+	}
+
+	/// <summary>
+	/// Clones the leap effect prefab at our current position (broadcast so all clients see it).
+	/// </summary>
+	[Rpc.Broadcast]
+	public void BroadcastLeapEffect()
+	{
+		if ( LeapEffect is null ) return;
+		LeapEffect.Clone( WorldPosition );
+	}
+
+	/// <summary>
+	/// Clones the contact effect prefab at the hit position (broadcast so all clients see it).
+	/// </summary>
+	[Rpc.Broadcast]
+	public void BroadcastContactEffect( Vector3 position )
+	{
+		if ( ContactEffect is null ) return;
+		ContactEffect.Clone( position );
+	}
 
 	protected override void OnStart()
 	{
 		base.OnStart();
 		Rigidbody = GetComponent<Rigidbody>();
+
+		if ( Rigidbody.IsValid() )
+			Rigidbody.MotionEnabled = true;
+
+		if ( HuntingEffects.IsValid() )
+			HuntingEffects.Enabled = false;
 	}
 
 	protected override void OnUpdate()
@@ -133,7 +190,9 @@ public class RollermineNpc : Npc, Component.IDamageable, Component.ICollisionLis
 			Position = collision.Contact.Point,
 		} );
 
-		// Bounce up and away from the player rather than a pure reflection
+		BroadcastContactEffect( collision.Contact.Point );
+
+		// Bounce up and awayfrom the player rather than a pure reflection
 		var away = (WorldPosition - root.WorldPosition).WithZ( 0 );
 		if ( away.LengthSquared < 0.01f )
 			away = WorldRotation.Backward.WithZ( 0 );

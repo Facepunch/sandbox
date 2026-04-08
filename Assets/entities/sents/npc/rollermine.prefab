@@ -20,14 +20,26 @@
         "__guid": "d4a29b17-3f65-4c80-b752-1e8a5c7d9e02",
         "__enabled": true,
         "Flags": 0,
-        "BounceForce": 450,
+        "BounceForce": 600000,
         "ContactDamage": 20,
+        "ContactEffect": {
+          "_type": "gameobject",
+          "prefab": "entities/sents/npc/rollermine/rollermine_contact_fx.prefab"
+        },
         "DisplayName": "Roller",
         "Eye": {
           "_type": "gameobject",
           "go": "f9b3c841-5d72-4e1a-8c06-2a7d4f0e3b05"
         },
         "Health": 35,
+        "HuntingEffects": {
+          "_type": "gameobject",
+          "go": "19b83c12-b341-4d99-a660-c2131044ae84"
+        },
+        "LeapEffect": {
+          "_type": "gameobject",
+          "prefab": "entities/sents/npc/rollermine/rollermine_leap_fx.prefab"
+        },
         "LeapForce": 350000,
         "LeapRange": 160,
         "LeapUpwardBias": 1,
@@ -37,7 +49,12 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "Renderer": null,
+        "Renderer": {
+          "_type": "component",
+          "component_id": "7a3c0e25-4b68-4f91-d506-2b8f1e7c4d11",
+          "go": "c4d81f96-2e53-4a07-b480-1f6e3d9c5a10",
+          "component_type": "SkinnedModelRenderer"
+        },
         "RollForce": 80000,
         "RollTorque": 40000,
         "ShowDebugOverlay": false,
@@ -157,6 +174,35 @@
       }
     ],
     "Children": [
+      {
+        "__guid": "19b83c12-b341-4d99-a660-c2131044ae84",
+        "__version": 2,
+        "__Prefab": "entities/sents/npc/rollermine/rollermine_hunting_fx.prefab",
+        "__PrefabInstancePatch": {
+          "AddedObjects": [],
+          "RemovedObjects": [],
+          "PropertyOverrides": [
+            {
+              "Target": {
+                "Type": "GameObject",
+                "IdValue": "eef3a57b-aa75-4a8b-b52f-2ccad977ffbb"
+              },
+              "Property": "Enabled",
+              "Value": false
+            }
+          ],
+          "MovedObjects": []
+        },
+        "__PrefabIdToInstanceId": {
+          "eef3a57b-aa75-4a8b-b52f-2ccad977ffbb": "19b83c12-b341-4d99-a660-c2131044ae84",
+          "4ea7f593-94f8-4ffa-8514-3d88095cf402": "fa00b0a0-9828-40df-8ff5-afc4a1700815",
+          "8a730490-5045-4c62-bd11-2069a03338f6": "5cbbdb2c-29ff-430c-9a80-e949610d7ebe",
+          "3005c6a7-0e0c-4765-a36a-3b423ecce8b1": "550d3e4c-3574-403c-ac38-fecb2d29aaa9",
+          "9d57dd02-9432-4b3b-88ed-f74df060e7e7": "c066bdbc-06f3-4b3c-b2be-e5859631c01b",
+          "4c1df0c8-7d33-4768-a3f9-234caad29c82": "bc4cd856-6184-4056-938a-c8f75e429416",
+          "a2bd0693-00a9-402c-bd08-5b26737d34bf": "1a7e679c-048b-4b37-badd-751d11d39915"
+        }
+      },
       {
         "__guid": "c4d81f96-2e53-4a07-b480-1f6e3d9c5a10",
         "__version": 2,

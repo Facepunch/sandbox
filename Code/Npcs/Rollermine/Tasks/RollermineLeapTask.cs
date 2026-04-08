@@ -32,6 +32,8 @@ public class RollermineLeapTask : TaskBase
 
 		rb.ApplyImpulse( leapDir * rollermine.LeapForce );
 
+		rollermine.BroadcastLeapEffect();
+
 		_cooldown = LeapCooldown;
 	}
 

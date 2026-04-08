@@ -10,8 +10,19 @@ public class RollermineChaseSchedule : ScheduleBase
 {
 	protected override void OnStart()
 	{
+		(Npc as RollermineNpc)?.SetHunting( true );
 		AddTask( new RollermineRollTask() );
 		AddTask( new RollermineLeapTask() );
+	}
+
+	protected override void OnEnd()
+	{
+		(Npc as RollermineNpc)?.SetHunting( false );
+	}
+
+	protected override void OnCancelled()
+	{
+		(Npc as RollermineNpc)?.SetHunting( false );
 	}
 
 	protected override bool ShouldCancel()
