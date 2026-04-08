@@ -296,6 +296,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 					} );
 
 					pickup.NetworkSpawn();
+					Ownable.Set( pickup, Player.Network.Owner );
 
 					if ( pickup.GetComponent<Rigidbody>() is { } rb )
 					{
@@ -318,6 +319,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 			} );
 
 			pickup.NetworkSpawn();
+			Ownable.Set( pickup, Player.Network.Owner );
 
 			if ( pickup.GetComponent<Rigidbody>() is { } rb )
 			{
