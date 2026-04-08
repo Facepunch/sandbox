@@ -325,6 +325,37 @@
           "Children": []
         },
         {
+          "__guid": "78115e94-766a-4ae8-afc2-3b6de76dcf8f",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "Ownables",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Sandbox.OwnerLabel",
+              "__guid": "db75cc70-434d-4579-979c-551366af1b76",
+              "__enabled": true,
+              "Flags": 0,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          ],
+          "Children": []
+        },
+        {
           "__guid": "e3f5abac-7509-4728-851f-3a54863d8229",
           "__version": 2,
           "Flags": 0,
@@ -359,7 +390,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/446f82161774c1e.vtex"
               },
               "ExplosionIcon": {
                 "$compiler": "texture",
@@ -375,7 +406,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/518a1f211cbd3e6b.vtex"
               },
               "FallIcon": {
                 "$compiler": "texture",
@@ -391,7 +422,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/d9151d4f46d3f9f2.vtex"
               },
               "HeadshotIcon": {
                 "$compiler": "texture",
@@ -407,7 +438,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": true
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/2ef92c96449c07ac.vtex"
               },
               "NpcIcon": {
                 "$compiler": "texture",
@@ -423,7 +454,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/73e6609cff0780f0.vtex"
               },
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
@@ -445,7 +476,7 @@
                   "FlipVertical": false,
                   "FlipHorizontal": false
                 },
-                "compiled": null
+                "compiled": "textures/generated/svgsource/83c263c6e0f8ced2.vtex"
               }
             }
           ],
@@ -741,13 +772,13 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.Clutter.ClutterGridSystem": {
-        "Storage": {
-          "$blob": "5959f40c-380f-4afb-834c-4235c9505df8"
-        }
-      },
       "Sandbox.MovieMaker.MovieRecorderSystem": {
         "DisableClientRecording": false
+      },
+      "Sandbox.Clutter.ClutterGridSystem": {
+        "Storage": {
+          "$blob": "b4480286-f726-43b5-928b-af01786f9788"
+        }
       }
     }
   },
