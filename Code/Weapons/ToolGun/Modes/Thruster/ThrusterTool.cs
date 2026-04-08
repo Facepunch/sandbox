@@ -15,7 +15,8 @@ public class ThrusterTool : ToolMode
 
 	public override string Description => "#tool.hint.thrustertool.description";
 	public override string PrimaryAction => "#tool.hint.thrustertool.place";
-	public override string SecondaryAction => "#tool.hint.thrustertool.toggle_axis";
+	public override string SecondaryAction => "#tool.hint.thrustertool.place_no_weld";
+	public override string ReloadAction => "#tool.hint.thrustertool.toggle_axis";
 
 	Vector3 _axis = Vector3.Up;
 
@@ -28,7 +29,7 @@ public class ThrusterTool : ToolMode
 
 		var pos = select.WorldTransform();
 
-		if ( Input.Pressed( "attack2" ) )
+		if ( Input.Pressed( "reload" ) )
 		{
 			_axis = _axis == Vector3.Right ? Vector3.Up : Vector3.Right;
 		}
@@ -44,7 +45,12 @@ public class ThrusterTool : ToolMode
 
 		if ( Input.Pressed( "attack1" ) )
 		{
-			Spawn( select, thrusterDef.Prefab, placementTrans );
+			Spawn( select, thrusterDef.Prefab, placementTrans, false );
+			ShootEffects( select );
+		}
+		else if ( Input.Pressed( "attack2" ) )
+		{
+			Spawn( select, thrusterDef.Prefab, placementTrans, true );
 			ShootEffects( select );
 		}
 
@@ -53,7 +59,7 @@ public class ThrusterTool : ToolMode
 	}
 
 	[Rpc.Host]
-	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx )
+	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx, bool noWeld )
 	{
 		if ( thrusterPrefab == null )
 			return;
@@ -63,7 +69,7 @@ public class ThrusterTool : ToolMode
 		go.Tags.Add( "constraint" );
 		go.WorldTransform = tx;
 
-		if ( !point.GameObject.Tags.Contains( "world" ) )
+		if ( !noWeld && !point.GameObject.Tags.Contains( "world" ) )
 		{
 			var thruster = go.GetComponent<ThrusterEntity>();
 

@@ -18,6 +18,7 @@
 
     "tool.hint.thrustertool.description": "Attaches a thruster to an object",
     "tool.hint.thrustertool.place": "Place",
+    "tool.hint.thrustertool.place_no_weld": "Place (no weld)",
     "tool.hint.thrustertool.toggle_axis": "Toggle axis",
 
     "tool.hint.wheeltool.description": "Attaches a wheel to an object",
