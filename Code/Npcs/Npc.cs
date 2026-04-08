@@ -83,7 +83,7 @@ public partial class Npc : Component, IKillSource
 	/// and optionally applies a launch velocity from the attacker.
 	/// </summary>
 	[Rpc.Broadcast( NetFlags.HostOnly )]
-	protected void CreateRagdoll( Vector3 velocity )
+	protected void CreateRagdoll( Vector3 velocity, float duration = 30 )
 	{
 		if ( !Renderer.IsValid() )
 			return;
@@ -121,6 +121,11 @@ public partial class Npc : Component, IKillSource
 				body.Component.Velocity = velocity;
 			}
 		}
+
+		//
+		// Destroy after a while
+		//
+		mainBody.Invoke( duration, mainBody.DestroyGameObject );
 	}
 
 	/// <summary>
