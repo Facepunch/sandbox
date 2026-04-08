@@ -88,5 +88,8 @@
     "tool.hint.linker.remove": "Unlink",
 
     "tool.hint.hoverballtool.description": "Attaches a hoverball that holds objects at a set height",
-    "tool.hint.hoverballtool.place": "Place"
+    "tool.hint.hoverballtool.place": "Place",
+
+    "tool.hint.emittertool.description": "Places a configurable particle emitter",
+    "tool.hint.emittertool.place": "Place"
 }

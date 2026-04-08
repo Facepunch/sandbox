@@ -1,9 +1,0 @@
-{
-  "Prefab": "entities/sents/emitter.prefab",
-  "Title": "Emitter",
-  "Description": "Spawns a particle effect. Can be toggled on/off or held to emit.",
-  "Category": "World",
-  "IncludeCode": false,
-  "__references": [],
-  "__version": 0
-}
