@@ -19,6 +19,7 @@ public class EntityPage : BaseSpawnMenu
 		AddHeader( "Local" );
 
 		var categories = ResourceLibrary.GetAll<ScriptedEntity>()
+			.Where( e => !e.Developer || ServerSettings.ShowDeveloperEntities )
 			.Select( e => string.IsNullOrWhiteSpace( e.Category ) ? "Other" : e.Category )
 			.Distinct()
 			.OrderBy( c => c == "Other" ? "\xFF" : c ); // sort Other last

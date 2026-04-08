@@ -1,0 +1,10 @@
+{
+  "Prefab": "entities/sents/npc/rollermine.prefab",
+  "Title": "Roller",
+  "Description": "",
+  "Category": "Npc",
+  "IncludeCode": false,
+  "Developer": true,
+  "__references": [],
+  "__version": 0
+}

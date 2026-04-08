@@ -8,7 +8,7 @@
     <Item Context="item">
         @if (item is ScriptedEntity entry)
         {
-            <SpawnMenuIcon Ident=@($"entity:{entry.ResourcePath}") Title=@entry.Title></SpawnMenuIcon>
+            <SpawnMenuIcon Ident=@($"entity:{entry.ResourcePath}") Title=@entry.Title Developer=@entry.Developer></SpawnMenuIcon>
         }
     </Item>
 </VirtualGrid>
@@ -23,7 +23,8 @@
     {
         base.OnParametersSet();
 
-        var all = ResourceLibrary.GetAll<ScriptedEntity>();
+        var all = ResourceLibrary.GetAll<ScriptedEntity>()
+            .Where( e => !e.Developer || ServerSettings.ShowDeveloperEntities );
 
         Entities = (Category is null
             ? all
