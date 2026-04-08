@@ -84,6 +84,26 @@ public class RollermineNpc : Npc, Component.IDamageable, Component.ICollisionLis
 	[Property, Group( "Effects" )]
 	public GameObject ContactEffect { get; set; }
 
+	/// <summary>
+	/// Looping roll sound — pitch is driven by speed.
+	/// </summary>
+	[Property, Group( "Effects" )]
+	public SoundEvent RollSound { get; set; }
+
+	/// <summary>Speed (units/s) at which pitch reaches PitchMax.</summary>
+	[Property, Group( "Effects" )]
+	public float PitchSpeedMax { get; set; } = 600f;
+
+	/// <summary>Pitch at rest.</summary>
+	[Property, Group( "Effects" )]
+	public float PitchMin { get; set; } = 0.6f;
+
+	/// <summary>Pitch at full speed.</summary>
+	[Property, Group( "Effects" )]
+	public float PitchMax { get; set; } = 1.6f;
+
+	private SoundHandle _rollSound;
+
 	public Rigidbody Rigidbody { get; private set; }
 
 	private bool _hunting;
@@ -132,12 +152,21 @@ public class RollermineNpc : Npc, Component.IDamageable, Component.ICollisionLis
 
 		if ( HuntingEffects.IsValid() )
 			HuntingEffects.Enabled = false;
+
+		StartRollSound();
+	}
+
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+		StopRollSound();
 	}
 
 	protected override void OnUpdate()
 	{
 		base.OnUpdate();
 		TrackEye();
+		UpdateRollSound();
 	}
 
 	public override ScheduleBase GetSchedule()
@@ -200,6 +229,36 @@ public class RollermineNpc : Npc, Component.IDamageable, Component.ICollisionLis
 		var bounceDir = (away.Normal + Vector3.Up * 2f).Normal;
 		Rigidbody.Velocity = Vector3.Zero;
 		Rigidbody.ApplyImpulse( bounceDir * BounceForce );
+	}
+
+	private void StartRollSound()
+	{
+		if ( RollSound is null ) return;
+		if ( _rollSound.IsValid() && !_rollSound.IsStopped ) return;
+
+		_rollSound = Sound.Play( RollSound, WorldPosition );
+		_rollSound.Parent = GameObject;
+		_rollSound.FollowParent = true;
+		_rollSound.Pitch = PitchMin;
+	}
+
+	private void StopRollSound()
+	{
+		if ( _rollSound.IsValid() )
+		{
+			_rollSound.Stop();
+			_rollSound = default;
+		}
+	}
+
+	private void UpdateRollSound()
+	{
+		if ( !_rollSound.IsValid() || _rollSound.IsStopped ) return;
+		if ( !Rigidbody.IsValid() ) return;
+
+		var speed = Rigidbody.Velocity.Length;
+		var t = MathX.Clamp( speed / PitchSpeedMax, 0f, 1f );
+		_rollSound.Pitch = MathX.Lerp( PitchMin, PitchMax, t );
 	}
 
 	private void TrackEye()

@@ -20,7 +20,7 @@
         "__guid": "d4a29b17-3f65-4c80-b752-1e8a5c7d9e02",
         "__enabled": true,
         "Flags": 0,
-        "BounceForce": 600000,
+        "BounceForce": 450000,
         "ContactDamage": 20,
         "ContactEffect": {
           "_type": "gameobject",
@@ -40,15 +40,18 @@
           "_type": "gameobject",
           "prefab": "entities/sents/npc/rollermine/rollermine_leap_fx.prefab"
         },
-        "LeapForce": 350000,
+        "LeapForce": 300000,
         "LeapRange": 160,
-        "LeapUpwardBias": 1,
+        "LeapUpwardBias": 0.8,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "PitchMax": 1.6,
+        "PitchMin": 0.6,
+        "PitchSpeedMax": 600,
         "Renderer": {
           "_type": "component",
           "component_id": "7a3c0e25-4b68-4f91-d506-2b8f1e7c4d11",
@@ -56,6 +59,7 @@
           "component_type": "SkinnedModelRenderer"
         },
         "RollForce": 80000,
+        "RollSound": "entities/sents/npc/rollermine/rollermine_move_loop.sound",
         "RollTorque": 40000,
         "ShowDebugOverlay": false,
         "StuckJumpForce": 500
@@ -80,7 +84,7 @@
         "OnObjectTriggerExit": null,
         "OnTriggerEnter": null,
         "OnTriggerExit": null,
-        "Radius": 18,
+        "Radius": 16,
         "RollingResistance": null,
         "Static": false,
         "Surface": null,
@@ -208,9 +212,9 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "0,0,0",
+        "Position": "0,0,-9.977467",
         "Rotation": "0,0,0,1",
-        "Scale": "0.5,0.5,0.5",
+        "Scale": "0.35,0.35,0.35",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
@@ -233,7 +237,7 @@
             "MaterialGroup": "default",
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/dev/sphere.vmdl",
+            "Model": "models/scrap/scrap_ball.vmdl",
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -312,6 +316,8 @@
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "__references": [],
+  "__references": [
+    "facepunch.scrap_ball#48217"
+  ],
   "__version": 2
 }
