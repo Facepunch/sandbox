@@ -121,22 +121,43 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		}
 	}
 
-	/// <summary>
-	/// Creates a ragdoll but it isn't enabled
-	/// </summary>
 	[Rpc.Broadcast( NetFlags.HostOnly | NetFlags.Reliable )]
 	void CreateRagdoll()
 	{
-		if ( Application.IsDedicatedServer ) return;
+		if ( !Controller.Renderer.IsValid() )
+			return;
 
-		var ragdoll = Controller.CreateRagdoll();
-		if ( !ragdoll.IsValid() ) return;
+		var go = new GameObject( true, "Ragdoll" );
+		go.Tags.Add( "ragdoll" );
+		go.WorldTransform = WorldTransform;
 
-		CopyBoneScalesToRagdoll( ragdoll );
+		var mainBody = go.Components.Create<SkinnedModelRenderer>();
+		mainBody.CopyFrom( Controller.Renderer );
+		mainBody.UseAnimGraph = false;
 
-		var corpse = ragdoll.AddComponent<DeathCameraTarget>();
+		// copy the clothes
+		foreach ( var clothing in Controller.Renderer.GameObject.Children.Where( x => x.Tags.Has( "clothing" ) ).SelectMany( x => x.Components.GetAll<SkinnedModelRenderer>() ) )
+		{
+			if ( !clothing.IsValid() ) continue;
+
+			var newClothing = new GameObject( true, clothing.GameObject.Name );
+			newClothing.Parent = go;
+
+			var item = newClothing.Components.Create<SkinnedModelRenderer>();
+			item.CopyFrom( clothing );
+			item.BoneMergeTarget = mainBody;
+		}
+
+		var physics = go.Components.Create<ModelPhysics>();
+		physics.Model = mainBody.Model;
+		physics.Renderer = mainBody;
+		physics.CopyBonesFrom( Controller.Renderer, true );
+
+		var corpse = go.AddComponent<DeathCameraTarget>();
 		corpse.Connection = Network.Owner;
 		corpse.Created = DateTime.Now;
+
+		CopyBoneScalesToRagdoll( go );
 	}
 
 	void CreateRagdollAndGhost()
