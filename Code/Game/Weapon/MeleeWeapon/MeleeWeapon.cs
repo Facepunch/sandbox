@@ -140,7 +140,7 @@ public class MeleeWeapon : BaseCarryable
 	public virtual void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
 		var len = 6;
-		Color color = CanAttack() ? Color.Yellow : Color.Red;
+		Color color = CanAttack() ? Color.White : Color.Red;
 
 		hud.SetBlendMode( BlendMode.Lighten );
 		hud.DrawCircle( center, len, color );
