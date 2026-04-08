@@ -1,5 +1,6 @@
 ﻿@using Sandbox;
 @using Sandbox.UI;
+@using Sandbox.Utility
 @inherits PanelComponent
 
 <root>
@@ -95,9 +96,12 @@
 		if ( Rpc.Caller == Connection.Local && message.Contains( "colmore", StringComparison.OrdinalIgnoreCase ) )
 		{
 			Sandbox.Services.Stats.Increment( "secret_phrase", 1 );
-		}
+        }
 
-        Entries.Add(new Entry(steamid, author, message, 0.0f));
+        var filteredName = Steam.FilterName(author, steamid);
+        message = Steam.FilterChat(message, steamid);
+
+        Entries.Add(new Entry(steamid, filteredName, message, 0.0f));
 		StateHasChanged();
 	}
 
