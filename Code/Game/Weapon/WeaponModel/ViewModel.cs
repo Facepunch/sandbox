@@ -31,6 +31,9 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 
 	TimeSince AttackDuration;
 
+	bool _reloadFinishing;
+	TimeSince _reloadFinishTimer;
+
 	Vector2 lastInertia;
 	Vector2 currentInertia;
 	bool isFirstUpdate = true;
@@ -112,6 +115,13 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 
 		Renderer.Set( "attack_hold", IsAttacking ? AttackDuration.Relative.Clamp( 0f, 1f ) : 0f );
 
+		if ( _reloadFinishing && _reloadFinishTimer >= 0.5f )
+		{
+			_reloadFinishing = false;
+			Renderer.Set( "speed_reload", AnimationSpeed );
+			Renderer.Set( "b_reloading", false );
+		}
+
 		var velocity = playerController.Velocity;
 
 		var dir = velocity;
@@ -157,6 +167,7 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	/// </summary>
 	public void OnReloadStart()
 	{
+		_reloadFinishing = false; // cancel any pending incremental finish from a previous reload
 		Renderer?.Set( "speed_reload", AnimationSpeed );
 		Renderer?.Set( IsIncremental ? "b_reloading" : "b_reload", true );
 	}
@@ -174,14 +185,8 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	{
 		if ( IsIncremental )
 		{
-			//
-			// Stops the reload after a little delay so it's not immediately cancelling the animation.
-			//
-			Invoke( 0.5f, () =>
-			{
-				Renderer?.Set( "speed_reload", AnimationSpeed );
-				Renderer?.Set( "b_reloading", false );
-			} );
+			_reloadFinishing = true;
+			_reloadFinishTimer = 0;
 		}
 		else
 		{

@@ -1,6 +1,6 @@
 ﻿using Sandbox.Rendering;
 
-public class ShotgunWeapon : BaseBulletWeapon
+public class ShotgunWeapon : IronSightsWeapon
 {
 	[Property] public float PrimaryFireRate { get; set; } = 0.8f;
 	[Property] public int PelletCount { get; set; } = 8;

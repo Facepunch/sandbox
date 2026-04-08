@@ -28,7 +28,7 @@
         },
         "IncrementalAnimationSpeed": 3,
         "InertiaScale": "2,2",
-        "IsIncremental": false,
+        "IsIncremental": true,
         "IsThrowable": false,
         "MuzzleEffect": {
           "_type": "gameobject",
@@ -1836,7 +1836,8 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "CustomBounds": false
       }
     },
     "__variables": []

@@ -45,17 +45,23 @@ public partial class BaseWeapon
 
 		CancelReload();
 
+		var cts = new CancellationTokenSource();
+		reloadToken = cts;
+		isReloading = true;
+
 		try
 		{
-			reloadToken = new CancellationTokenSource();
-			isReloading = true;
-
-			await ReloadAsync( reloadToken.Token );
+			await ReloadAsync( cts.Token );
 		}
 		finally
 		{
-			reloadToken?.Dispose();
-			reloadToken = null;
+			// Only clean up our own reload
+			if ( reloadToken == cts )
+			{
+				isReloading = false;
+				reloadToken = null;
+			}
+			cts.Dispose();
 		}
 	}
 
@@ -70,8 +76,11 @@ public partial class BaseWeapon
 		Owner.Controller.Renderer.Set( "b_reload", true );
 	}
 
-	public virtual async Task ReloadAsync( CancellationToken ct )
+	protected virtual async Task ReloadAsync( CancellationToken ct )
 	{
+		// Capture so we can tell if a newer reload has replaced us by the time finally runs.
+		var mySource = reloadToken;
+
 		try
 		{
 			ViewModel?.RunEvent<ViewModel>( x => x.OnReloadStart() );
@@ -88,22 +97,18 @@ public partial class BaseWeapon
 				if ( available <= 0 )
 					break;
 
-				ReserveAmmo -= available;
-				ClipContents += available;
-
 				ViewModel?.RunEvent<ViewModel>( x => x.OnIncrementalReload() );
 
-			}
-
-			if ( ClipContents > 0 )
-			{
-				ViewModel?.RunEvent<ViewModel>( x => x.OnReloadFinish() );
+				ReserveAmmo -= available;
+				ClipContents += available;
 			}
 		}
 		finally
 		{
-			reloadToken?.Cancel();
-			isReloading = false;
+			if ( reloadToken == mySource )
+			{
+				ViewModel?.RunEvent<ViewModel>( x => x.OnReloadFinish() );
+			}
 		}
 	}
 }
