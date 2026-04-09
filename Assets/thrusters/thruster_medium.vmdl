@@ -61,7 +61,7 @@
 					{
 						_class = "PhysicsBodyMarkup"
 						target_body = ""
-						mass_override = 8.0
+						mass_override = 2.0
 						inertia_scale = 1.0
 						linear_damping = 0.0
 						angular_damping = 0.0
