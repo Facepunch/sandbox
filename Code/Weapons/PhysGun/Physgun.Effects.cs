@@ -21,6 +21,7 @@ public partial class Physgun : ScreenWeapon
 
 	Vector3.SpringDamped middleSpring = new Vector3.SpringDamped( 0, 0 );
 
+	float _prevBeamDistance;
 	GameObject _endPointEffect;
 	GameObject _grabEffect;
 
@@ -89,12 +90,28 @@ public partial class Physgun : ScreenWeapon
 			BeamRenderer.VectorPoints = new List<Vector3>( [0, 0, 0, 0] );
 
 		var distance = source.Position.Distance( end );
-
-		BeamRenderer.VectorPoints[0] = source.Position;
-
-
 		var targetMiddle = source.Position + source.Forward * distance * 0.33f;
 		targetMiddle = targetMiddle + Noise.FbmVector( 2, Time.Now * 400.0f, Time.Now * 100.0f ) * 1.0f;
+
+		if ( !justEnabled )
+		{
+			// If the beam halved or more in a single frame, snap the spring to the new position to avoid shakiness
+			if ( _prevBeamDistance > 1f && distance / _prevBeamDistance < 0.5f )
+			{
+				middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 4, 0.2f );
+			}
+
+			// Ensure the middle point is never behind the first one
+			var alongFwd = Vector3.Dot( middleSpring.Current - source.Position, source.Forward );
+			if ( alongFwd < 0 )
+			{
+				var clamped = middleSpring.Current - source.Forward * alongFwd;
+				middleSpring = new Vector3.SpringDamped( clamped, targetMiddle, 4, 0.2f );
+			}
+		}
+		_prevBeamDistance = distance;
+
+		BeamRenderer.VectorPoints[0] = source.Position;
 
 		BeamRenderer.VectorPoints[1] = middleSpring.Current;
 		middleSpring.Target = targetMiddle;
@@ -106,6 +123,7 @@ public partial class Physgun : ScreenWeapon
 		if ( justEnabled )
 		{
 			BeamRenderer.GameObject.Enabled = true;
+			_prevBeamDistance = distance;
 			BeamRenderer.VectorPoints[1] = targetMiddle;
 			middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 4, 0.2f );
 		}
