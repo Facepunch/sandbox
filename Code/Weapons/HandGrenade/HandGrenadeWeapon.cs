@@ -1,4 +1,3 @@
-using Sandbox;
 using Sandbox.Rendering;
 
 public enum ThrowType
@@ -263,26 +262,29 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 	[Rpc.Host]
 	void ExplodeInHand()
 	{
-		// Spawn the prefab at our position and immediately detonate it
-		if ( !Prefab.IsValid() ) return;
+		// Spawn the explosion directly
+		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
+		if ( !explosionPrefab.IsValid() )
+			return;
 
-		var go = Prefab.Clone( WorldPosition );
+		var explosionPos = Owner.IsValid() ? Owner.EyeTransform.Position : WorldPosition;
+		var explosion = GameObject.Clone( explosionPrefab, new CloneConfig { Transform = new Transform( explosionPos ), StartEnabled = false } );
+		if ( !explosion.IsValid() )
+			return;
 
-		var explosive = go.GetOrAddComponent<TimedExplosive>();
-		if ( explosive.IsValid() )
+		explosion.RunEvent<RadiusDamage>( x =>
 		{
-			explosive.Radius = Radius;
-			explosive.Damage = MaxDamage;
-			explosive.Force = Force;
-		}
+			x.Radius = Radius;
+			x.PhysicsForceScale = Force;
+			x.DamageAmount = MaxDamage;
+			x.Attacker = explosion;
+		}, FindMode.EverythingInSelfAndDescendants );
 
-		go.NetworkSpawn();
+		explosion.Enabled = true;
+		explosion.NetworkSpawn( true, null );
 
-		// Don't collide with the weapon we spawned from
-		var filter = go.AddComponent<PhysicsFilter>();
-		filter.Body = GameObject;
-
-		explosive?.Explode();
+		SwitchToBestWeapon();
+		DestroyGameObject();
 	}
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )
