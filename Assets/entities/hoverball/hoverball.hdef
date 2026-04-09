@@ -1,0 +1,7 @@
+{
+  "Prefab": "entities/hoverball/hoverball.prefab",
+  "Title": "Hoverball",
+  "Description": "A basic hoverball",
+  "__references": [],
+  "__version": 0
+}

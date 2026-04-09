@@ -1,13 +1,52 @@
+// THIS FILE IS AUTO-GENERATED
 
 Layer0
 {
-	shader "shaders/complex.shader_c"
+	shader "shaders/complex.shader"
 
-	TextureColor "entities/hoverball/materials/hover_golf_ball_color.png"
-	TextureAmbientOcclusion "materials/default/default_ao.tga"
-	TextureNormal "entities/hoverball/materials/hover_golf_ball_normal.png"
-	TextureRoughness "entities/hoverball/materials/hover_golf_ball_rough.png"
+	//---- PBR ----
+	F_ANISOTROPIC_GLOSS 1
+	F_METALNESS_TEXTURE 1
 	F_SELF_ILLUM 1
-	TextureSelfIllumMask "entities/hoverball/materials/hover_golf_ball_selfillum.png"
+	F_SPECULAR 1
 
+	//---- Ambient Occlusion ----
+	g_flAmbientOcclusionDirectDiffuse "0.726"
+	g_flAmbientOcclusionDirectSpecular "0.738"
+	TextureAmbientOcclusion "entities/hoverball/materials/hoverball_ao.png"
+
+	//---- Color ----
+	g_flModelTintAmount "1.000"
+	g_vColorTint "[1.000000 1.000000 1.000000 0.000000]"
+	TextureColor "entities/hoverball/materials/hoverball_color.png"
+
+	//---- Fade ----
+	g_flFadeExponent "1.000"
+
+	//---- Fog ----
+	g_bFogEnabled "1"
+
+	//---- Metalness ----
+	TextureMetalness "entities/hoverball/materials/hoverball_metal.png"
+
+	//---- Normal ----
+	TextureNormal "entities/hoverball/materials/hoverball_normal.png"
+
+	//---- Roughness ----
+	g_flRoughnessScaleFactor "1.000"
+	TextureRoughness "entities/hoverball/materials/hoverball_rough.png"
+
+	//---- Self Illum ----
+	g_flSelfIllumAlbedoFactor "1.000"
+	g_flSelfIllumBrightness "4.400"
+	g_flSelfIllumScale "0.000"
+	g_vSelfIllumOffset "[0.000 0.000]"
+	g_vSelfIllumScrollSpeed "[0.000 0.000]"
+	g_vSelfIllumTint "[1.000000 1.000000 1.000000 0.000000]"
+	TextureSelfIllumMask "entities/hoverball/materials/hoverball_selfillum.png"
+
+	//---- Texture Coordinates ----
+	g_vTexCoordOffset "[0.000 0.000]"
+	g_vTexCoordScale "[1.000 1.000]"
+	g_vTexCoordScrollSpeed "[0.000 0.000]"
 }
