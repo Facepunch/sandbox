@@ -733,6 +733,11 @@ public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 
 		await EnsureMountedAsync( loadoutJson );
 		GiveLoadoutWeapons( loadoutJson );
+
+		// Switch to the best weapon after restoring the loadout.
+		var best = GetBestWeapon();
+		if ( best.IsValid() )
+			SwitchWeapon( best );
 	}
 
 	private void GiveLoadoutWeapons( string json )
