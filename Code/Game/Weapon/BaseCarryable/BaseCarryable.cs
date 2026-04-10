@@ -163,6 +163,14 @@ public partial class BaseCarryable : Component, IKillIcon
 				aimPos = Scene.Camera.PointToScreenPixels( tr.EndPosition );
 			}
 
+			var host = Game.ActiveScene.Get<SpawnMenuHost>();
+			var mode = SpawnMenuHost.GetActiveMode()?.GetType().Name;
+			if ( ( host?.Panel?.HasClass("open") ?? false ) && 
+				( mode is "ContextMenuHost" or "SaveMenu" or "EffectsHost" ) )
+			{
+				aimPos = Sandbox.Mouse.Position;
+			}
+
 			if ( !Scene.Camera.RenderExcludeTags.Has( "ui" ) )
 			{
 				DrawHud( hud, aimPos );
