@@ -136,6 +136,19 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		Renderer.Set( "move_y", sideward );
 		Renderer.Set( "move_x", forward );
 		Renderer.Set( "move_z", velocity.z );
+
+	    var host = Game.ActiveScene.Get<SpawnMenuHost>();
+		var mode = SpawnMenuHost.GetActiveMode()?.GetType().Name;
+		if ( ( host?.Panel?.HasClass("open") ?? false ) && 
+			( mode is "ContextMenuHost" or "SaveMenu" or "EffectsHost" ) )
+		{
+			var cursor = Sandbox.Mouse.Position;
+			var screenRay = Scene.Camera.ScreenPixelToRay( cursor );
+			var lookRot = Rotation.LookAt( screenRay.Forward );
+			Renderer.WorldRotation = Rotation.Lerp( Renderer.WorldRotation, lookRot, Time.Delta * 5.0f );
+		}
+		else
+			Renderer.LocalRotation = Rotation.Lerp( Renderer.LocalRotation, Angles.Zero, Time.Delta * 5.0f );
 	}
 
 	public void OnAttack()
