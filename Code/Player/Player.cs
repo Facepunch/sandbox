@@ -1,6 +1,5 @@
 using Sandbox.CameraNoise;
 using Sandbox.Movement;
-using Sandbox.UI.Inventory;
 
 /// <summary>
 /// Holds player information like health
