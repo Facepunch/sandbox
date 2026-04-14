@@ -212,9 +212,9 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "0,0,-9.977467",
+        "Position": "0,0,0",
         "Rotation": "0,0,0,1",
-        "Scale": "0.35,0.35,0.35",
+        "Scale": "2,2,2",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
@@ -237,7 +237,7 @@
             "MaterialGroup": "default",
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/scrap/scrap_ball.vmdl",
+            "Model": "entities/hoverball/hoverball.vmdl",
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -306,6 +306,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },
@@ -316,8 +317,6 @@
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "__references": [
-    "facepunch.scrap_ball#48217"
-  ],
+  "__references": [],
   "__version": 2
 }
