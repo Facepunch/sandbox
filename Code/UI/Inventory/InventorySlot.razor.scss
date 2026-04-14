@@ -18,16 +18,19 @@ InventorySlot
 InventorySlot .index
 {
     position: absolute;
-    bottom: -41px;
-    left: 50%;
-    transform: translateX( -50% );
-    width: 35px;
-    height: 35px;
+    left: 6px;
+    top: 2px;
+    width: 16px;
+    height: 16px;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    opacity: 0.3;
+    opacity: 0.15;
     margin: 0 auto;
+    font-size: 15px;
+    font-family: $subtitle-font;
+    color: white;
+    font-weight: bold;
     pointer-events: none;
 }
 
