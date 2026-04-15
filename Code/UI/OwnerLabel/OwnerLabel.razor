@@ -5,15 +5,13 @@
 
 <root>
 	<div class="owner-label hud-panel">
-		<div class="avatar" style="background-image: url( avatar:@_ownerId )"></div>
-		<label class="name">@_ownerName</label>
+		<label class="name">Owned by @_ownerName</label>
 	</div>
 </root>
 
 @code
 {
 	string _ownerName;
-	ulong _ownerId;
 
 	protected override void OnUpdate()
 	{
@@ -35,7 +33,6 @@
 			if ( ownable.IsValid() && ownable.Owner is not null )
 			{
 				_ownerName = ownable.Owner.DisplayName;
-				_ownerId = ownable.Owner.SteamId;
 				Panel.SetClass( "visible", true );
 				return;
 			}
@@ -44,5 +41,5 @@
 		Panel.SetClass( "visible", false );
 	}
 
-	protected override int BuildHash() => System.HashCode.Combine( _ownerName, _ownerId );
+	protected override int BuildHash() => System.HashCode.Combine( _ownerName );
 }
