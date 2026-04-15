@@ -2,7 +2,7 @@
   "Prefab": "entities/ammo/ammo_9mm.prefab",
   "Title": "Pistol Ammo",
   "Description": null,
-  "Category": "Ammo",
+  "Category": "Pickup",
   "IncludeCode": false,
   "Developer": false,
   "__references": [],

@@ -1,8 +1,8 @@
 {
-  "Prefab": "entities/ammo/ammo_rifle.prefab",
-  "Title": "Rifle Ammo",
+  "Prefab": "entities/ammo/ammo_shotgun.prefab",
+  "Title": "Shotgun Ammo",
   "Description": null,
-  "Category": "Ammo",
+  "Category": "Pickup",
   "IncludeCode": false,
   "Developer": false,
   "__references": [],

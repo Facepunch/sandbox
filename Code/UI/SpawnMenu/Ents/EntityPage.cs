@@ -8,7 +8,7 @@ public class EntityPage : BaseSpawnMenu
 	static Dictionary<string, string> CategoryIcons = new()
 	{
 		{ "Chair", "🪑" },
-		{ "Ammo", "💣" },
+		{ "Pickup", "🧰" },
 		{ "Weapon", "🔫" },
 		{ "Npc", "🤖" },
 		{ "Vehicle", "🚕" },
