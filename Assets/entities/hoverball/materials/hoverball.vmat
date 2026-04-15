@@ -4,6 +4,9 @@ Layer0
 {
 	shader "shaders/complex.shader"
 
+	//---- Animation ----
+	F_MORPH_SUPPORTED 1
+
 	//---- PBR ----
 	F_ANISOTROPIC_GLOSS 1
 	F_METALNESS_TEXTURE 1
