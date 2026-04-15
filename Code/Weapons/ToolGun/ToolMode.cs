@@ -87,7 +87,28 @@ public abstract partial class ToolMode : Component, IToolInfo
 		text.TextColor = Color.Orange;
 		text.FontWeight = 700;
 
-		paint.DrawText( text, rect, TextFlag.Center );
+		var measured = text.Measure();
+	    float textW = measured.x;
+	    float textH = measured.y;
+	
+	    if ( textW <= rect.Width )
+	    {
+	        paint.DrawText( text, rect, TextFlag.Center );
+	        return;
+	    }
+	
+	    // Marquee: scroll text right-to-left, looping seamlessly.
+	    // The render target viewport naturally clips anything outside [0, rect.Width].
+	    const float scrollSpeed = 80f;
+	    const float gap = 60f;
+	    float cycle = textW + gap;
+	    float offset = (Time.Now * scrollSpeed) % cycle;
+	
+	    float y = rect.Top + (rect.Height - textH) * 0.5f;
+	
+	    float x = rect.Width - offset;
+	    paint.DrawText( text, new Rect( x, y, textW, textH ), TextFlag.SingleLine | TextFlag.Left );
+	    paint.DrawText( text, new Rect( x - cycle, y, textW, textH ), TextFlag.SingleLine | TextFlag.Left );
 	}
 
 	public virtual void DrawHud( HudPainter painter, Vector2 crosshair )
