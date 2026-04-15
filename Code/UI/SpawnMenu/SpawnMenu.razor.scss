@@ -218,6 +218,7 @@ SpawnMenuHost.open SpawnMenu
             flex-grow: 1;
             padding: 8px;
             margin: 8px;
+            overflow-x: hidden;
             overflow-y: scroll;
         }
 
