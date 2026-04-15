@@ -78,9 +78,19 @@ public partial class BaseWeapon : BaseCarryable, IPlayerControllable
 	{
 		base.OnAdded( player );
 
-		if ( UsesAmmo && StartingAmmo > 0 )
+		if ( !UsesAmmo )
+			return;
+
+		if ( AmmoType is not null )
 		{
-			ReserveAmmo = Math.Min( StartingAmmo, MaxReserveAmmo );
+			// Seed the shared pool with the resource's default if the player has none yet
+			var inv = GetAmmoInventory();
+			if ( inv is not null && !inv.HasAmmo( AmmoType ) && AmmoType.DefaultStartingAmmo > 0 )
+				inv.AddAmmo( AmmoType, AmmoType.DefaultStartingAmmo );
+		}
+		else if ( StartingAmmo > 0 )
+		{
+			_reserveAmmo = Math.Min( StartingAmmo, _maxReserveAmmo );
 		}
 	}
 

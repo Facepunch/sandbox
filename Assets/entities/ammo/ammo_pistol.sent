@@ -1,0 +1,10 @@
+{
+  "Prefab": "entities/ammo/ammo_9mm.prefab",
+  "Title": "Pistol Ammo",
+  "Description": null,
+  "Category": "Ammo",
+  "IncludeCode": false,
+  "Developer": false,
+  "__references": [],
+  "__version": 0
+}

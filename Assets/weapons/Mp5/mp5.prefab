@@ -20,14 +20,15 @@
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
+        "AmmoType": "ammotype/9mm.ammo",
         "Bullet": {
           "Damage": 12,
           "BulletRadius": 1,
           "AimConeBase": "0.5,0.25",
           "AimConeSpread": "3,3",
           "AimConeRecovery": 0.2,
-          "RecoilPitch": "-0.3,-0.1",
-          "RecoilYaw": "-0.1,0.1",
+          "RecoilPitch": "-0.300000012,-0.100000001",
+          "RecoilYaw": "-0.100000001,0.100000001",
           "CameraRecoilStrength": 1,
           "CameraRecoilFrequency": 1,
           "Range": 4096
@@ -95,7 +96,15 @@
         "ParentBone": "hold_r",
         "ReloadTime": 1.6,
         "ReserveAmmo": 0,
+        "SecondaryInput": {
+          "IsEnabled": false,
+          "Action": null
+        },
         "ShootForce": 100000,
+        "ShootInput": {
+          "IsEnabled": false,
+          "Action": null
+        },
         "ShootSound": "weapons/mp5/sounds/mp5_shoot.sound",
         "StartingAmmo": 30,
         "TimeBetweenShots": 0.09,
@@ -331,6 +340,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },

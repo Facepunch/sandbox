@@ -20,14 +20,15 @@
         "__guid": "a1b2c3d4-1112-4aaa-b112-111111111112",
         "__enabled": true,
         "Flags": 0,
+        "AmmoType": "ammotype/sniper.ammo",
         "Bullet": {
           "Damage": 100,
           "BulletRadius": 1,
-          "AimConeBase": "0.1,0.1",
+          "AimConeBase": "0.100000001,0.100000001",
           "AimConeSpread": "1,1",
           "AimConeRecovery": 0.5,
-          "RecoilPitch": "-1.5,-0.8",
-          "RecoilYaw": "-0.3,0.3",
+          "RecoilPitch": "-1.5,-0.800000012",
+          "RecoilYaw": "-0.300000012,0.300000012",
           "CameraRecoilStrength": 10,
           "CameraRecoilFrequency": 0.8,
           "Range": 8192
@@ -84,7 +85,7 @@
           "_type": "gameobject",
           "prefab": "weapons/sniper/sniper.prefab"
         },
-        "MaxReserveAmmo": 120,
+        "MaxReserveAmmo": 80,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -340,6 +341,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },
