@@ -4,7 +4,7 @@
   "Description": "",
   "Category": "Npc",
   "IncludeCode": false,
-  "Developer": true,
+  "Developer": false,
   "__references": [],
   "__version": 0
 }
