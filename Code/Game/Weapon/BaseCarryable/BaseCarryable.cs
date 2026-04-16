@@ -40,6 +40,12 @@ public partial class BaseCarryable : Component, IKillIcon
 	public GameObject WorldModel { get; protected set; }
 
 	/// <summary>
+	/// Optional explicit muzzle point. Used when no WeaponModel is present (e.g. standalone/seat mode).
+	/// If unset, falls back to the WeaponModel muzzle or the weapon's own GameObject.
+	/// </summary>
+	[Property] public GameObject MuzzleGameObject { get; set; }
+
+	/// <summary>
 	/// Used for overriding the display icon
 	/// </summary>
 	public virtual string InventoryIconOverride => null;
@@ -97,7 +103,9 @@ public partial class BaseCarryable : Component, IKillIcon
 	{
 		get
 		{
-			return WeaponModel?.MuzzleTransform ?? GameObject;
+			if ( WeaponModel?.MuzzleTransform.IsValid() ?? false ) return WeaponModel.MuzzleTransform;
+			if ( MuzzleGameObject.IsValid() ) return MuzzleGameObject;
+			return GameObject;
 		}
 	}
 

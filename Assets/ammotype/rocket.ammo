@@ -1,0 +1,8 @@
+{
+  "Title": "Rocket",
+  "Icon": null,
+  "MaxReserve": 6,
+  "DefaultStartingAmmo": 1,
+  "__references": [],
+  "__version": 0
+}
