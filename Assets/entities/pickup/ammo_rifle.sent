@@ -1,0 +1,10 @@
+{
+  "Prefab": "entities/pickup/ammo_rifle.prefab",
+  "Title": "Rifle Ammo",
+  "Description": null,
+  "Category": "Pickup",
+  "IncludeCode": false,
+  "Developer": false,
+  "__references": [],
+  "__version": 0
+}

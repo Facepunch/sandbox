@@ -22,6 +22,12 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	public float IncrementalAnimationSpeed { get; set; } = 3.0f;
 
 	/// <summary>
+	/// Use fast anims?
+	/// </summary>
+	[Property] 
+	public bool UseFastAnimations { get; set; } = false;
+
+	/// <summary>
 	/// How much inertia should this weapon have?
 	/// </summary>
 	[Property, Group( "Inertia" )]
@@ -104,6 +110,9 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		var rot = Scene.Camera.WorldRotation.Angles();
 
 		Renderer.Set( "b_twohanded", true );
+		Renderer.Set( "deploy_type", UseFastAnimations ? 1 : 0 );
+		Renderer.Set( "reload_type", UseFastAnimations ? 1 : 0 );
+
 		Renderer.Set( "b_grounded", playerController.IsOnGround );
 		Renderer.Set( "move_bob", GamePreferences.ViewBobbing ? playerController.Velocity.Length.Remap( 0, playerController.RunSpeed * 2f ) : 0 );
 

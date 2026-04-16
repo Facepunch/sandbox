@@ -10,7 +10,7 @@ public sealed class PhygunWorldmodel : Component
 
 	protected override void OnUpdate()
 	{
-		var physgun = GameObject.Root.Components.Get<Physgun>( FindMode.EverythingInDescendants );
+		var physgun = GameObject.Root.Components.Get<Physgun>( FindMode.EverythingInSelfAndDescendants );
 		var pullActive = physgun?.PullActive ?? false;
 
 		_tintFrac = MathX.Approach( _tintFrac, pullActive ? 1 : 0, Time.Delta * 5 );

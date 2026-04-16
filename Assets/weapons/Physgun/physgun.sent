@@ -1,9 +1,10 @@
 {
-  "Prefab": "weapons/physgun/item_physgun.prefab",
+  "Prefab": "weapons/physgun/physgun.prefab",
   "Title": "Physics Gun",
   "Description": "bzzzzt...",
   "Category": "Weapon",
   "IncludeCode": false,
+  "Developer": false,
   "__references": [],
   "__version": 0
 }

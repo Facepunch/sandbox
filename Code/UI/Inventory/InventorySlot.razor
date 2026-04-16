@@ -5,7 +5,7 @@
 <root>
     @if ( !Input.UsingController )
     {
-        <InputHint class="index" Action=@($"Slot{Index + 1}")></InputHint>
+        <label class="index">@(Index + 1)</label>
     }
 
     @{

@@ -7,36 +7,22 @@ OwnerLabel
 	top: 50%;
 	pointer-events: none;
 	opacity: 0;
-	transform: translate(32px) scale(0.9);
 	transition: all 0.15s ease;
 
 	&.visible
 	{
 		opacity: 1;
-		transform: translate(0) scale(1);
 	}
 
 	.owner-label
 	{
 		flex-direction: row;
 		align-items: center;
-		gap: 10px;
 		padding: 10px 14px;
-
-		.avatar
-		{
-			width: 20px;
-			height: 20px;
-			border-radius: 50%;
-			background-size: cover;
-			background-repeat: no-repeat;
-			background-position: center;
-			flex-shrink: 0;
-		}
 
 		.name
 		{
-			font-size: 14px;
+			font-size: 11px;
 			font-weight: 600;
 			font-family: $title-font;
 			color: $hud-text;

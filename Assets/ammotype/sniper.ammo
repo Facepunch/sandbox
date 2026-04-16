@@ -1,0 +1,8 @@
+{
+  "Title": "Sniper Ammo",
+  "Icon": null,
+  "MaxReserve": 80,
+  "DefaultStartingAmmo": 10,
+  "__references": [],
+  "__version": 0
+}

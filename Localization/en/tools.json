@@ -91,5 +91,13 @@
     "tool.hint.hoverballtool.place": "Place",
 
     "tool.hint.emittertool.description": "Places a configurable particle emitter",
-    "tool.hint.emittertool.place": "Place"
+    "tool.hint.emittertool.place": "Place",
+
+    "tool.hint.keepupright.description": "Constrains an object to stay upright",
+    "tool.hint.keepupright.stage1": "Select the second object to link",
+    "tool.hint.keepupright.apply_world": "Apply (anchor to world)",
+    "tool.hint.keepupright.start_link": "Select first object",
+    "tool.hint.keepupright.finish": "Finish link",
+    "tool.hint.keepupright.cancel": "Cancel",
+    "tool.hint.keepupright.remove": "Remove"
 }

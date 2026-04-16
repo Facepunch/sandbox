@@ -23,7 +23,7 @@
 				[
 					{
 						_class = "RenderMeshFile"
-						name = "base"
+						name = "LOD0"
 						children = 
 						[
 							{
@@ -49,43 +49,17 @@
 							exception_list = 
 							[
 								"hoverball",
-							]
-						}
-					},
-					{
-						_class = "RenderMeshFile"
-						name = "coils"
-						children = 
-						[
-							{
-								_class = "RenderMeshMarkup"
-								material_search_path = ""
-								use_expensive_tangents = true
-								high_high_precision_texcoords = false
-								calc_per_vertex_curvature = false
-								prefer_high_density_tris_in_uv_density_calc = false
-							},
-						]
-						filename = "entities/hoverball/hoverball.fbx"
-						import_translation = [ 0.0, 0.0, 0.0 ]
-						import_rotation = [ 0.0, 0.0, 0.0 ]
-						import_scale = 1.0
-						align_origin_x_type = "None"
-						align_origin_y_type = "None"
-						align_origin_z_type = "None"
-						parent_bone = ""
-						import_filter = 
-						{
-							exclude_by_default = true
-							exception_list = 
-							[
 								"hoverball_coils",
+								"hoverball_pins",
+								"hoverball_LOD0",
+								"hoverball_coils_LOD0",
+								"hoverball_pins_LOD0",
 							]
 						}
 					},
 					{
 						_class = "RenderMeshFile"
-						name = "pins"
+						name = "LOD1"
 						children = 
 						[
 							{
@@ -110,7 +84,120 @@
 							exclude_by_default = true
 							exception_list = 
 							[
+								"hoverball",
+								"hoverball_coils",
 								"hoverball_pins",
+								"hoverball_LOD1",
+								"hoverball_coils_LOD1",
+								"hoverball_pins_LOD1",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "LOD2"
+						children = 
+						[
+							{
+								_class = "RenderMeshMarkup"
+								material_search_path = ""
+								use_expensive_tangents = true
+								high_high_precision_texcoords = false
+								calc_per_vertex_curvature = false
+								prefer_high_density_tris_in_uv_density_calc = false
+							},
+						]
+						filename = "entities/hoverball/hoverball.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = ""
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"hoverball",
+								"hoverball_coils",
+								"hoverball_pins",
+								"hoverball_LOD2",
+								"hoverball_coils_LOD2",
+								"hoverball_pins_LOD2",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "LOD3"
+						children = 
+						[
+							{
+								_class = "RenderMeshMarkup"
+								material_search_path = ""
+								use_expensive_tangents = true
+								high_high_precision_texcoords = false
+								calc_per_vertex_curvature = false
+								prefer_high_density_tris_in_uv_density_calc = false
+							},
+						]
+						filename = "entities/hoverball/hoverball.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = ""
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"hoverball",
+								"hoverball_coils",
+								"hoverball_pins",
+								"hoverball_LOD3",
+								"hoverball_coils_LOD3",
+								"hoverball_pins_LOD3",
+							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "LOD4"
+						children = 
+						[
+							{
+								_class = "RenderMeshMarkup"
+								material_search_path = ""
+								use_expensive_tangents = true
+								high_high_precision_texcoords = false
+								calc_per_vertex_curvature = false
+								prefer_high_density_tris_in_uv_density_calc = false
+							},
+						]
+						filename = "entities/hoverball/hoverball.fbx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = ""
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"hoverball",
+								"hoverball_coils",
+								"hoverball_pins",
+								"hoverball_LOD4",
+								"hoverball_coils_LOD4",
+								"hoverball_pins_LOD4",
 							]
 						}
 					},
@@ -128,33 +215,155 @@
 						radius = 8.25
 						center = [ 0.0, 0.0, 0.0 ]
 					},
+				]
+			},
+			{
+				_class = "LODGroupList"
+				children = 
+				[
 					{
-						_class = "PhysicsHullFile"
-						name = "hoverball"
-						parent_bone = ""
-						surface_prop = "metal"
-						collision_tags = "solid"
-						recenter_on_parent_bone = false
-						offset_origin = [ 0.0, 0.0, 0.0 ]
-						offset_angles = [ 0.0, 0.0, 0.0 ]
-						align_origin_x_type = "None"
-						align_origin_y_type = "None"
-						align_origin_z_type = "None"
-						filename = "entities/hoverball/hoverball.fbx"
-						import_scale = 1.0
-						faceMergeAngle = 10.0
-						maxHullVertices = 14
-						import_mode = "HullPerElement"
-						optimization_algorithm = "QEM"
-						import_filter = 
-						{
-							exclude_by_default = false
-							exception_list = 
-							[
-								"hoverball",
-								"hoverball_pins",
-							]
-						}
+						_class = "LODGroup"
+						switch_threshold = 0.0
+						meshes = 
+						[
+							"LOD0",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 7.0
+						meshes = 
+						[
+							"LOD1",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 17.0
+						meshes = 
+						[
+							"LOD2",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 36.0
+						meshes = 
+						[
+							"LOD3",
+						]
+					},
+					{
+						_class = "LODGroup"
+						switch_threshold = 70.0
+						meshes = 
+						[
+							"LOD4",
+						]
+					},
+				]
+			},
+			{
+				_class = "AnimationList"
+				children = 
+				[
+					{
+						_class = "AnimBindPose"
+						name = "bindPose"
+						activity_name = ""
+						activity_weight = 1
+						weight_list_name = ""
+						fade_in_time = 0.2
+						fade_out_time = 0.2
+						looping = false
+						delta = false
+						worldSpace = false
+						hidden = false
+						anim_markup_ordered = false
+						disable_compression = false
+						disable_interpolation = false
+						enable_scale = false
+						frame_count = 1
+						frame_rate = 30
+					},
+				]
+				default_root_bone_name = ""
+			},
+			{
+				_class = "AttachmentList"
+				children = 
+				[
+					{
+						_class = "Attachment"
+						name = "pin_0"
+						parent_bone = "pin_0"
+						relative_origin = [ 1.75, 0.0, 0.0 ]
+						relative_angles = [ 0.0, 0.0, 0.0 ]
+						weight = 1.0
+						ignore_rotation = false
+					},
+					{
+						_class = "Attachment"
+						name = "pin_1"
+						parent_bone = "pin_1"
+						relative_origin = [ 1.75, 0.0, 0.0 ]
+						relative_angles = [ 0.0, 0.0, 0.0 ]
+						weight = 1.0
+						ignore_rotation = false
+					},
+					{
+						_class = "Attachment"
+						name = "pin_2"
+						parent_bone = "pin_2"
+						relative_origin = [ 1.75, 0.0, 0.0 ]
+						relative_angles = [ 0.0, 0.0, 0.0 ]
+						weight = 1.0
+						ignore_rotation = false
+					},
+					{
+						_class = "Attachment"
+						name = "pin_3"
+						parent_bone = "pin_3"
+						relative_origin = [ 1.75, 0.0, 0.0 ]
+						relative_angles = [ 0.0, 0.0, 0.0 ]
+						weight = 1.0
+						ignore_rotation = false
+					},
+					{
+						_class = "Attachment"
+						name = "pin_4"
+						parent_bone = "pin_4"
+						relative_origin = [ 1.75, 0.0, 0.0 ]
+						relative_angles = [ 0.0, 0.0, 0.0 ]
+						weight = 1.0
+						ignore_rotation = false
+					},
+					{
+						_class = "Attachment"
+						name = "pin_5"
+						parent_bone = "pin_5"
+						relative_origin = [ 1.75, 0.0, 0.0 ]
+						relative_angles = [ 0.0, 0.0, 0.0 ]
+						weight = 1.0
+						ignore_rotation = false
+					},
+					{
+						_class = "Attachment"
+						name = "pin_6"
+						parent_bone = "pin_6"
+						relative_origin = [ 1.75, 0.0, 0.0 ]
+						relative_angles = [ 0.0, 0.0, 0.0 ]
+						weight = 1.0
+						ignore_rotation = false
+					},
+					{
+						_class = "Attachment"
+						name = "pin_7"
+						parent_bone = "pin_7"
+						relative_origin = [ 1.75, 0.0, 0.0 ]
+						relative_angles = [ 0.0, 0.0, 0.0 ]
+						weight = 1.0
+						ignore_rotation = false
 					},
 				]
 			},

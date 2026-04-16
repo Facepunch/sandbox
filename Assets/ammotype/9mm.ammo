@@ -1,8 +1,8 @@
 {
-  "AmmoType": "9mm",
-  "MaxAmount": 250,
-  "Icon": "apple",
-  "SvgIcon": "",
+  "Title": "Pistol Ammo",
+  "Icon": null,
+  "MaxReserve": 300,
+  "DefaultStartingAmmo": 60,
   "__references": [],
   "__version": 0
 }

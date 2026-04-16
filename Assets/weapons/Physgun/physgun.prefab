@@ -6,7 +6,7 @@
     "Name": "physgun",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
-    "Scale": "1,1,1",
+    "Scale": "1.5,1.5,1.5",
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 1,
@@ -72,6 +72,10 @@
           "compiled": null
         },
         "DisplayName": "Physics Gun",
+        "DroppedGameObject": {
+          "_type": "gameobject",
+          "go": "eee17487-5a77-418f-b927-43e62b57dbbb"
+        },
         "EndPointEffectPrefab": {
           "_type": "gameobject",
           "prefab": "weapons/physgun/effects/beam-end.prefab"
@@ -85,9 +89,10 @@
           "prefab": "weapons/physgun/effects/grab.prefab"
         },
         "HoldType": "Physgun",
-        "ItemPrefab": {
+        "ItemPrefab": null,
+        "MuzzleGameObject": {
           "_type": "gameobject",
-          "prefab": "weapons/physgun/item_physgun.prefab"
+          "go": "6fb841db-2a8c-429c-9db2-6dd3298f18f7"
         },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -102,6 +107,14 @@
         "PowerMinFraction": 0.5,
         "Range": 8196,
         "ReleasedSound": "weapons/physgun/sounds/physgun.shoot.end.sound",
+        "SecondaryInput": {
+          "IsEnabled": false,
+          "Action": null
+        },
+        "ShootInput": {
+          "IsEnabled": false,
+          "Action": null
+        },
         "UnFreezeEffectPrefab": {
           "_type": "gameobject",
           "prefab": "weapons/physgun/effects/unfreeze.prefab"
@@ -135,6 +148,77 @@
         "OverrideTargets": true,
         "Targets": [],
         "Width": 0.25
+      },
+      {
+        "__type": "DroppedWeapon",
+        "__guid": "ad4301b1-c0bf-49e5-bfdc-9b3deee7aae8",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
+        "__type": "Sandbox.ModelCollider",
+        "__guid": "578d9c80-7f3c-4a8e-bdbe-5c2ecfdaa70c",
+        "__enabled": true,
+        "Flags": 0,
+        "ColliderFlags": 0,
+        "Elasticity": null,
+        "Friction": null,
+        "IsTrigger": false,
+        "Model": "models/weapons/sbox_physgun/w_physgun.vmdl",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnObjectTriggerEnter": null,
+        "OnObjectTriggerExit": null,
+        "OnTriggerEnter": null,
+        "OnTriggerExit": null,
+        "RollingResistance": null,
+        "Static": false,
+        "Surface": null,
+        "SurfaceVelocity": "0,0,0"
+      },
+      {
+        "__type": "Sandbox.Rigidbody",
+        "__guid": "ea100376-3f7f-42e5-ac00-4611c93554f0",
+        "__enabled": true,
+        "Flags": 0,
+        "AngularDamping": 0,
+        "EnableImpactDamage": true,
+        "EnhancedCcd": false,
+        "Gravity": true,
+        "GravityScale": 1,
+        "ImpactDamage": 0,
+        "LinearDamping": 0,
+        "Locking": {
+          "X": false,
+          "Y": false,
+          "Z": false,
+          "Pitch": false,
+          "Yaw": false,
+          "Roll": false
+        },
+        "MassCenterOverride": "0,0,0",
+        "MassOverride": 0,
+        "MinImpactDamageSpeed": 500,
+        "MotionEnabled": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideMassCenter": false,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
       }
     ],
     "Children": [
@@ -237,11 +321,11 @@
             "UseVectorPoints": true,
             "VectorPoints": [
               "0,0,0",
-              "163.4002,0,0",
-              "307.8,126.6,0"
+              "163.400208,0,0",
+              "307.799988,126.599998,0"
             ],
             "Width": {
-              "rangey": "0.1674,5",
+              "rangey": "0.167400002,5",
               "frames": [
                 {
                   "x": 0,
@@ -439,6 +523,162 @@
           }
         ],
         "Children": []
+      },
+      {
+        "__guid": "eee17487-5a77-418f-b927-43e62b57dbbb",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "standalone_wm",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.SkinnedModelRenderer",
+            "__guid": "6db9066b-b035-4403-8c6c-77716c4bb6cd",
+            "__enabled": true,
+            "Flags": 0,
+            "AnimationGraph": null,
+            "BodyGroups": 18446744073709551615,
+            "BoneMergeTarget": null,
+            "CreateAttachments": false,
+            "CreateBoneObjects": false,
+            "LodOverride": null,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
+            "Model": "models/weapons/sbox_physgun/w_physgun.vmdl",
+            "Morphs": {},
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Parameters": {
+              "bools": {},
+              "ints": {},
+              "floats": {},
+              "vectors": {},
+              "rotations": {}
+            },
+            "PlaybackRate": 1,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Sequence": {
+              "Name": null,
+              "Looping": true,
+              "Blending": false
+            },
+            "Tint": "1,1,1,1",
+            "UseAnimGraph": true
+          },
+          {
+            "__type": "WorldModel",
+            "__guid": "5d90b75d-4489-449b-93e4-8de1007de4e7",
+            "__enabled": true,
+            "Flags": 0,
+            "EjectBrass": null,
+            "EjectTransform": null,
+            "MuzzleEffect": null,
+            "MuzzleTransform": {
+              "_type": "gameobject",
+              "go": "6fb841db-2a8c-429c-9db2-6dd3298f18f7"
+            },
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Renderer": {
+              "_type": "component",
+              "component_id": "6db9066b-b035-4403-8c6c-77716c4bb6cd",
+              "go": "eee17487-5a77-418f-b927-43e62b57dbbb",
+              "component_type": "SkinnedModelRenderer"
+            },
+            "TracerEffect": null
+          },
+          {
+            "__type": "PhygunWorldmodel",
+            "__guid": "03f10cd3-9c31-4821-bb17-3a51e201af8c",
+            "__enabled": true,
+            "Flags": 0,
+            "GlowEffect": {
+              "_type": "component",
+              "component_id": "5e76084d-9107-4f38-9084-5b4a513b8cc2",
+              "go": "4b0f5e82-61b1-4741-98e6-5a3494a762dd",
+              "component_type": "ParticleEffect"
+            },
+            "GlowLight": {
+              "_type": "component",
+              "component_id": "5e5f9ab1-8787-4cde-8375-73eb57d76646",
+              "go": "46aa8309-7659-4f73-ad63-6869b56bbd4c",
+              "component_type": "PointLight"
+            },
+            "GravTint": "1,0.8,0,1",
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "PhysTint": "0,0.68333,1,1"
+          }
+        ],
+        "Children": [
+          {
+            "__guid": "6fb841db-2a8c-429c-9db2-6dd3298f18f7",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "muzzle",
+            "Position": "12.7835922,0,5.33333349",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": [
+              {
+                "__guid": "c0c2a398-6d71-418b-b883-12ee49db7ac8",
+                "__version": 2,
+                "__Prefab": "weapons/physgun/effects/wm-glow.prefab",
+                "__PrefabInstancePatch": {
+                  "AddedObjects": [],
+                  "RemovedObjects": [],
+                  "PropertyOverrides": [],
+                  "MovedObjects": []
+                },
+                "__PrefabIdToInstanceId": {
+                  "e5cf5f34-17b5-4e70-b8db-d7f54a8ad61d": "c0c2a398-6d71-418b-b883-12ee49db7ac8",
+                  "3c06d747-a92f-49b3-9749-0902446440a0": "46aa8309-7659-4f73-ad63-6869b56bbd4c",
+                  "1eade6ef-bca3-4844-967d-98d7e79c224e": "5e5f9ab1-8787-4cde-8375-73eb57d76646",
+                  "14848a05-e916-4b3f-abdf-34cf6ff912c9": "4b0f5e82-61b1-4741-98e6-5a3494a762dd",
+                  "41ef4816-f57a-420c-bc59-2411a9f5251a": "5e76084d-9107-4f38-9084-5b4a513b8cc2",
+                  "feb67b66-6937-4970-b707-655e5b1eb784": "0c9dbabf-2bd9-4610-996a-7f21d6eecdbc",
+                  "aa79498c-82a3-4823-9f26-a5eda7dac889": "e0c725b0-acdb-48ee-a228-78f47efc10a4"
+                }
+              }
+            ]
+          }
+        ]
       }
     ],
     "__properties": {
@@ -457,6 +697,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },
@@ -467,6 +708,8 @@
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "__references": [],
+  "__references": [
+    "facepunch.w_physgun#153998"
+  ],
   "__version": 2
 }

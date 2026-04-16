@@ -23,7 +23,7 @@ public class PropSpawner : ISpawner
 	private async Task<bool> LoadAsync()
 	{
 		// Try local/installed first, then fall back to cloud
-		if ( Path.EndsWith( ".vmdl" ) )
+		if ( Path.EndsWith( ".vmdl" ) || Path.EndsWith( ".vmdl_c" ) )
 		{
 			Model = await ResourceLibrary.LoadAsync<Model>( Path );
 			if ( Model is not null )

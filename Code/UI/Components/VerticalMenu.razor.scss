@@ -9,6 +9,8 @@ VerticalMenu
 	flex-grow: 1;
 	flex-shrink: 0;
 	padding: 8px;
+	overflow-x: hidden;
+	overflow-y: scroll;
 
 	h2
 	{

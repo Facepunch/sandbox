@@ -1,0 +1,341 @@
+{
+  "RootObject": {
+    "__guid": "0eaf45e1-44b7-44dd-8b4f-252eba51a334",
+    "__version": 2,
+    "Flags": 0,
+    "Name": "rpg",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "2,2,2",
+    "Tags": "",
+    "Enabled": true,
+    "NetworkMode": 1,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 1,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
+    "Components": [
+      {
+        "__type": "DroppedWeapon",
+        "__guid": "a1de1dfd-9845-4552-9477-8c0a2271becf",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
+        "__type": "Sandbox.ModelCollider",
+        "__guid": "1cff94b3-d53f-4e31-968e-7783caeb8d36",
+        "__enabled": true,
+        "Flags": 0,
+        "ColliderFlags": 0,
+        "Elasticity": null,
+        "Friction": null,
+        "IsTrigger": false,
+        "Model": "models/weapons/sbox_rpg_recoillessrifle/w_recoillessrifle.vmdl",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnObjectTriggerEnter": null,
+        "OnObjectTriggerExit": null,
+        "OnTriggerEnter": null,
+        "OnTriggerExit": null,
+        "RollingResistance": null,
+        "Static": false,
+        "Surface": null,
+        "SurfaceVelocity": "0,0,0"
+      },
+      {
+        "__type": "Sandbox.Rigidbody",
+        "__guid": "05fe281b-17e8-464d-b061-c362b6bf4352",
+        "__enabled": true,
+        "Flags": 0,
+        "AngularDamping": 0,
+        "EnableImpactDamage": true,
+        "EnhancedCcd": false,
+        "Gravity": true,
+        "GravityScale": 1,
+        "ImpactDamage": 0,
+        "LinearDamping": 0,
+        "Locking": {
+          "X": false,
+          "Y": false,
+          "Z": false,
+          "Pitch": false,
+          "Yaw": false,
+          "Roll": false
+        },
+        "MassCenterOverride": "0,0,0",
+        "MassOverride": 0,
+        "MinImpactDamageSpeed": 500,
+        "MotionEnabled": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideMassCenter": false,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
+      },
+      {
+        "__type": "RpgWeapon",
+        "__guid": "ab522638-2fd4-40a8-b165-36922f5ec630",
+        "__enabled": true,
+        "Flags": 0,
+        "AmmoType": "ammotype/rocket.ammo",
+        "CanCancelReload": false,
+        "ClipContents": 17,
+        "ClipMaxSize": 17,
+        "DeployTime": 0.5,
+        "DisplayIcon": {
+          "$compiler": "texture",
+          "$source": "svgsource",
+          "data": {
+            "Size": "256,256",
+            "Source": "<svg fill=\"#ffffff\" height=\"200px\" width=\"200px\" version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 512 512\" xml:space=\"preserve\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"> <g> <g> <path d=\"M509.494,2.506c-2.313-2.312-5.741-3.104-8.831-2.041l-67.045,23.046c-1.599,0.55-3,1.562-4.024,2.908l-41.837,54.94 L369.49,94.923c-1.996,1.483-3.25,3.761-3.431,6.242c-0.171,2.326,0.625,4.606,2.173,6.332l-16.62,21.699 c-3.189-1.549-7.137-1.007-9.785,1.64L41.488,431.175l-6.149-6.149c-3.341-3.341-8.758-3.341-12.098,0L2.506,445.759 C0.901,447.364,0,449.541,0,451.809s0.901,4.445,2.506,6.049l51.635,51.635c1.67,1.671,3.86,2.506,6.049,2.506 s4.379-0.835,6.049-2.506l20.734-20.734c1.605-1.604,2.506-3.78,2.506-6.049c0-2.269-0.901-4.445-2.506-6.049l-6.149-6.149 l120.419-120.419l36.815,36.815c1.67,1.671,3.86,2.506,6.049,2.506s4.379-0.835,6.049-2.506l18.857-18.857 c3.341-3.341,3.341-8.757,0-12.098l-18.955-18.955l23.294-23.293c1.604-1.605,2.505-3.78,2.505-6.049s-0.901-4.445-2.506-6.049 l-11.811-11.811l29.237-29.237l36.815,36.815c1.605,1.604,3.78,2.506,6.05,2.506s4.444-0.901,6.05-2.506l18.856-18.857 c3.341-3.341,3.341-8.757,0-12.098l-36.815-36.815l59.432-59.432c1.604-1.604,2.505-3.78,2.505-6.049 c0-1.307-0.308-2.579-0.868-3.732l21.699-16.621c1.571,1.409,3.6,2.195,5.706,2.195c0.21,0,0.419-0.008,0.628-0.023 c2.48-0.182,4.759-1.435,6.242-3.431l13.564-18.265l54.939-41.837c1.346-1.024,2.357-2.425,2.908-4.026l23.048-67.045 C512.598,8.245,511.806,4.818,509.494,2.506z M297.236,199.626l15.138,15.138l-7.292,7.292l-15.138-15.138L297.236,199.626z M60.191,491.346l-39.537-39.536l8.635-8.635l6.148,6.148c0,0,0,0.001,0.001,0.001l27.237,27.237 c0.001,0.001,0.003,0.003,0.005,0.005l6.145,6.145L60.191,491.346z M68.725,458.412l-15.138-15.138l29.653-29.653l15.138,15.138 L68.725,458.412z M110.477,416.66L95.34,401.522l9.005-9.005l15.137,15.138L110.477,416.66z M250.865,362.002l-6.757,6.756 l-30.764-30.764l6.757-6.757L250.865,362.002z M237.959,324.899l-5.762-5.76l17.244-17.244l5.762,5.76L237.959,324.899z M131.581,395.557l-15.138-15.138l161.403-161.402l15.138,15.138L131.581,395.557z M340.398,272.467l-6.757,6.757l-30.764-30.766 l6.757-6.757L340.398,272.467z M324.473,202.665l-15.138-15.138l38.543-38.543l15.138,15.138L324.473,202.665z M370.981,147.89 l-6.871-6.873l16.312-21.297l11.857,11.857L370.981,147.89z M409.25,124.351l-21.6-21.601l5.35-3.973L413.223,119L409.25,124.351z M425.258,106.836l-20.094-20.094l32.109-42.166l30.151,30.151L425.258,106.836z M476.76,59.864l-24.624-24.625L489.66,22.34 L476.76,59.864z\"></path> </g> </g> </g></svg>",
+            "Colorize": false,
+            "TargetColor": "1,1,1,1",
+            "Scale": 0.75,
+            "Offset": "0,0",
+            "Rotate": 0,
+            "FlipVertical": false,
+            "FlipHorizontal": false
+          },
+          "compiled": null
+        },
+        "DisplayName": "RPG",
+        "DroppedGameObject": {
+          "_type": "gameobject",
+          "go": "00edf338-ad8d-4472-9725-250b57efbaba"
+        },
+        "HoldType": "RPG",
+        "IncrementalReloading": false,
+        "ItemPrefab": null,
+        "MaxReserveAmmo": 6,
+        "MuzzleGameObject": {
+          "_type": "gameobject",
+          "go": "6efc4b36-63ca-4285-89ff-d811da6362fa"
+        },
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "ParentBone": "hold_r",
+        "ProjectilePrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/rpg/rpg_projectile.prefab"
+        },
+        "ReloadTime": 1.5,
+        "ReserveAmmo": 0,
+        "SecondaryInput": {
+          "IsEnabled": false,
+          "Action": null
+        },
+        "ShootInput": {
+          "IsEnabled": false,
+          "Action": null
+        },
+        "ShootSound": "weapons/rpg/sounds/rpg_shoot.sound",
+        "StartingAmmo": 1,
+        "TimeBetweenShots": 2,
+        "UsesAmmo": true,
+        "UsesClips": false,
+        "Value": 2,
+        "ViewModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/rpg/rpg_vm.prefab"
+        },
+        "WorldModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/rpg/rpg_wm.prefab"
+        }
+      }
+    ],
+    "Children": [
+      {
+        "__guid": "00edf338-ad8d-4472-9725-250b57efbaba",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "standalone_wm",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "WorldModel",
+            "__guid": "3dd2497e-bb05-416d-81fe-0c469d0ff591",
+            "__enabled": true,
+            "Flags": 0,
+            "EjectBrass": null,
+            "EjectTransform": null,
+            "MuzzleEffect": null,
+            "MuzzleTransform": null,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Renderer": {
+              "_type": "component",
+              "component_id": "836c4b2b-6b6c-4409-adc1-909a6fbfe8ba",
+              "go": "00edf338-ad8d-4472-9725-250b57efbaba",
+              "component_type": "SkinnedModelRenderer"
+            },
+            "TracerEffect": null
+          },
+          {
+            "__type": "Sandbox.SkinnedModelRenderer",
+            "__guid": "836c4b2b-6b6c-4409-adc1-909a6fbfe8ba",
+            "__enabled": true,
+            "Flags": 0,
+            "AnimationGraph": null,
+            "BodyGroups": 18446744073709551615,
+            "BoneMergeTarget": null,
+            "CreateAttachments": true,
+            "CreateBoneObjects": false,
+            "LodOverride": null,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
+            "Model": "models/weapons/sbox_rpg_recoillessrifle/w_recoillessrifle.vmdl",
+            "Morphs": {},
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Parameters": {
+              "bools": {},
+              "ints": {},
+              "floats": {},
+              "vectors": {},
+              "rotations": {}
+            },
+            "PlaybackRate": 1,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Sequence": {
+              "Name": null,
+              "Looping": true,
+              "Blending": false
+            },
+            "Tint": "1,1,1,1",
+            "UseAnimGraph": false
+          }
+        ],
+        "Children": [
+          {
+            "__guid": "7e23b575-7aed-4c5e-83b1-0658ed88b107",
+            "__version": 2,
+            "Flags": 8,
+            "Name": "muzzle",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": [
+              {
+                "__guid": "6efc4b36-63ca-4285-89ff-d811da6362fa",
+                "__version": 2,
+                "Flags": 0,
+                "Name": "muzzle_end",
+                "Position": "5.16593933,0,0",
+                "Rotation": "0,0,0,1",
+                "Scale": "1,1,1",
+                "Tags": "",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "NetworkFlags": 0,
+                "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
+                "OwnerTransfer": 1,
+                "Components": [],
+                "Children": []
+              }
+            ]
+          },
+          {
+            "__guid": "1d0e7c2e-8d80-489e-8514-87f366ce0231",
+            "__version": 2,
+            "Flags": 8,
+            "Name": "eject",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
+          }
+        ]
+      }
+    ],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
+      }
+    },
+    "__variables": []
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "__references": [
+    "facepunch.wrecoillessrifle#144908"
+  ],
+  "__version": 2
+}

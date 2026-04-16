@@ -1,13 +1,19 @@
 ﻿using Sandbox.Rendering;
 using Sandbox.Utility;
 
-public partial class Physgun : ScreenWeapon
+public partial class Physgun : ScreenWeapon, IPlayerControllable
 {
 	[Property] public LineRenderer BeamRenderer { get; set; }
 	[Property] public GameObject EndPointEffectPrefab { get; set; }
 	[Property] public GameObject FreezeEffectPrefab { get; set; }
 	[Property] public GameObject UnFreezeEffectPrefab { get; set; }
 	[Property] public GameObject GrabEffectPrefab { get; set; }
+
+	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput ShootInput { get; set; }
+	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput SecondaryInput { get; set; }
+
+	public void OnStartControl() { }
+	public void OnEndControl() { }
 
 	[Property, Group( "Screen" )] public float PowerMinDistance { get; set; } = 64f;
 	[Property, Group( "Screen" )] public float PowerMaxDistance { get; set; } = 512f;
