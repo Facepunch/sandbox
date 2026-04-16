@@ -21,5 +21,10 @@ public class PropsPage : BaseSpawnMenu
 		AddOption( "🪀", "Toy", () => new SpawnPageCloud() { Category = "toy" } );
 		AddOption( "🍦", "Food", () => new SpawnPageCloud() { Category = "food" } );
 		AddOption( "🔫", "Guns", () => new SpawnPageCloud() { Category = "weapon" } );
+
+		AddHeader( "Local" );
+		AddOption( "🧍", "All", () => new SpawnPageLocal() );
+		AddOption( "🙎", "Characters", () => new SpawnPageLocal() { Category = "characters" } );
+		AddOption( "📦", "Props", () => new SpawnPageLocal() { Category = "props" } );
 	}
 }

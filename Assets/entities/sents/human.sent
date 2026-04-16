@@ -1,9 +1,0 @@
-{
-  "Prefab": "entities/sents/human.prefab",
-  "Title": "Human",
-  "Description": "",
-  "Category": null,
-  "IncludeCode": false,
-  "__references": [],
-  "__version": 0
-}

@@ -1,0 +1,60 @@
+@using Sandbox;
+@using Sandbox.UI;
+
+@inherits Panel
+@namespace Sandbox
+
+<SpawnMenuContent>
+
+    <Header>
+        <SpawnMenuToolbar>
+            <Left>
+                <TextEntry Placeholder="Search..." class="filter menu-input" Value:bind=@Filter />
+            </Left>
+        </SpawnMenuToolbar>
+    </Header>
+
+    <Body>
+        <VirtualGrid Items=@Entries ItemSize=@(120)>
+            <Item Context="item">
+                @if ( item is LocalProps.Entry entry )
+                {
+                    <SpawnMenuIcon Ident=@($"prop:{entry.Path}") Title=@entry.DisplayName />
+                }
+            </Item>
+        </VirtualGrid>
+    </Body>
+
+</SpawnMenuContent>
+
+@code
+{
+    public string Category { get; set; } = "";
+
+    private string Filter
+    {
+        get;
+        set { field = value; Rebuild(); }
+    }
+
+    private List<LocalProps.Entry> Entries = new();
+
+    protected override void OnParametersSet()
+    {
+        Rebuild();
+    }
+
+    void Rebuild()
+    {
+        var source = string.IsNullOrEmpty( Category )
+            ? LocalProps.All
+            : LocalProps.All.Where( x => x.Category == Category ).ToList();
+
+        if ( !string.IsNullOrWhiteSpace( Filter ) )
+            source = source.Where( x => x.DisplayName.Contains( Filter, StringComparison.OrdinalIgnoreCase )
+                                     || x.Path.Contains( Filter, StringComparison.OrdinalIgnoreCase ) ).ToList();
+
+        Entries = source;
+        StateHasChanged();
+    }
+}
