@@ -61,6 +61,10 @@ public partial class Physgun
 
 	[Sync] public GrabState _stateHovered { get; set; } = default;
 
+	// Aim transform resolved during OnControl() where ClientInput scope is valid.
+	// Reused by OnFixedUpdate() / OnPreRender() which run outside that scope.
+	Transform _lastAimTransform;
+
 	bool _preventReselect = false;
 
 	bool _isSpinning;
@@ -101,7 +105,7 @@ public partial class Physgun
 
 		if ( _state.Active && !_state.Pulling )
 		{
-			var muzzle = MuzzleTransform.WorldTransform;
+			var muzzle = HasOwner ? MuzzleTransform.WorldTransform : _lastAimTransform;
 			UpdateBeam( muzzle, _state.EndPoint, _stateHovered.EndNormal, _state.IsValid() );
 		}
 		else
@@ -113,6 +117,8 @@ public partial class Physgun
 	public override void OnControl( Player player )
 	{
 		base.OnControl( player );
+
+		_lastAimTransform = AimTransform;
 
 		UpdateViewmodelScreen();
 		UpdateScreenGraph();
@@ -308,6 +314,7 @@ public partial class Physgun
 	public void OnControl()
 	{
 		var aim = AimTransform;
+		_lastAimTransform = aim;
 		var isPulling = SecondaryInput.Down() && !_preventReselect;
 
 		_stateHovered = default;
@@ -441,7 +448,7 @@ public partial class Physgun
 
 			if ( CanMove( _stateHovered ) && _stateHovered.Pulling )
 			{
-				var force = AimTransform.Rotation.Backward * _stateHovered.Body.Mass * PullForce;
+				var force = _lastAimTransform.Rotation.Backward * _stateHovered.Body.Mass * PullForce;
 				_stateHovered.Body.ApplyForceAt( _stateHovered.EndPoint, force );
 			}
 
@@ -455,7 +462,7 @@ public partial class Physgun
 
 		_body ??= new PhysicsBody( Scene.PhysicsWorld ) { BodyType = PhysicsBodyType.Keyframed, AutoSleep = false };
 
-		var eyeTransform = AimTransform;
+		var eyeTransform = _lastAimTransform;
 		var grabDistance = ClampGrabDistance( _state.Body, _state.EndPoint, eyeTransform, _state.GrabDistance );
 		var targetPosition = eyeTransform.Position + eyeTransform.Rotation.Forward * grabDistance;
 		var targetRotation = _state.Pulling ? eyeTransform.Rotation * _state.GrabOffset : Rotation.FromYaw( eyeTransform.Rotation.Yaw() ) * _state.GrabOffset;
@@ -479,8 +486,30 @@ public partial class Physgun
 
 	/// <summary>
 	/// Aim source: player eye when held, muzzle transform when standalone/seat.
+	/// When <see cref="CanAim"/> is true and a player is seated, uses the muzzle
+	/// position with the seated player's eye rotation so the gun points where they look.
 	/// </summary>
-	Transform AimTransform => HasOwner ? Owner.EyeTransform : MuzzleTransform.WorldTransform;
+	[Property, ClientEditable, Sync] public bool CanAim { get; set; } = true;
+
+	Transform AimTransform
+	{
+		get
+		{
+			if ( HasOwner ) return Owner.EyeTransform;
+
+			if ( CanAim )
+			{
+				var seated = ClientInput.Current;
+				if ( seated.IsValid() )
+				{
+					var muzzlePos = MuzzleTransform.WorldTransform.Position;
+					return new Transform( muzzlePos, seated.EyeTransform.Rotation );
+				}
+			}
+
+			return MuzzleTransform.WorldTransform;
+		}
+	}
 
 	bool CanMove( GrabState state )
 	{

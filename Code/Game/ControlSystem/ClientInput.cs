@@ -60,4 +60,10 @@ public struct ClientInput
 
 		return DisposeAction.Create( () => _currentState = previousState );
 	}
+
+	/// <summary>
+	/// The player currently running an <see cref="IPlayerControllable.OnControl"/> tick,
+	/// or null when not inside a control scope (e.g. during regular player input).
+	/// </summary>
+	public static PlayerController Current => _currentState.playerController;
 }
