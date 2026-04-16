@@ -1,5 +1,5 @@
 {
-  "Prefab": "entities/ammo/ammo_9mm.prefab",
+  "Prefab": "entities/pickup/ammo_9mm.prefab",
   "Title": "Pistol Ammo",
   "Description": null,
   "Category": "Pickup",

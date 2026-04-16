@@ -1,5 +1,5 @@
 {
-  "Prefab": "entities/ammo/ammo_rifle.prefab",
+  "Prefab": "entities/pickup/ammo_rifle.prefab",
   "Title": "Rifle Ammo",
   "Description": null,
   "Category": "Pickup",

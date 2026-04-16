@@ -1,5 +1,5 @@
 {
-  "Prefab": "entities/ammo/ammo_shotgun.prefab",
+  "Prefab": "entities/pickup/ammo_shotgun.prefab",
   "Title": "Shotgun Ammo",
   "Description": null,
   "Category": "Pickup",
