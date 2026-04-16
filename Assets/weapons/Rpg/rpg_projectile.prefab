@@ -499,7 +499,7 @@
                 "__guid": "f73243cc-f84e-47f3-84e3-b4a7e7f5f097",
                 "__enabled": true,
                 "Flags": 0,
-                "BecomeOrphan": false,
+                "BecomeOrphan": true,
                 "DestroyAfterSeconds": 1,
                 "OnComponentDestroy": null,
                 "OnComponentDisabled": null,
