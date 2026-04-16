@@ -61,9 +61,8 @@ public partial class Physgun
 
 	[Sync] public GrabState _stateHovered { get; set; } = default;
 
-	// Aim transform resolved during OnControl() where ClientInput scope is valid.
-	// Reused by OnFixedUpdate() / OnPreRender() which run outside that scope.
 	Transform _lastAimTransform;
+	Transform CurrentAimTransform => HasOwner ? AimTransform : _lastAimTransform;
 
 	bool _preventReselect = false;
 
@@ -105,7 +104,7 @@ public partial class Physgun
 
 		if ( _state.Active && !_state.Pulling )
 		{
-			var muzzle = HasOwner ? MuzzleTransform.WorldTransform : _lastAimTransform;
+			var muzzle = HasOwner ? MuzzleTransform.WorldTransform : CurrentAimTransform;
 			UpdateBeam( muzzle, _state.EndPoint, _stateHovered.EndNormal, _state.IsValid() );
 		}
 		else
@@ -448,7 +447,7 @@ public partial class Physgun
 
 			if ( CanMove( _stateHovered ) && _stateHovered.Pulling )
 			{
-				var force = _lastAimTransform.Rotation.Backward * _stateHovered.Body.Mass * PullForce;
+				var force = CurrentAimTransform.Rotation.Backward * _stateHovered.Body.Mass * PullForce;
 				_stateHovered.Body.ApplyForceAt( _stateHovered.EndPoint, force );
 			}
 
@@ -462,7 +461,7 @@ public partial class Physgun
 
 		_body ??= new PhysicsBody( Scene.PhysicsWorld ) { BodyType = PhysicsBodyType.Keyframed, AutoSleep = false };
 
-		var eyeTransform = _lastAimTransform;
+		var eyeTransform = CurrentAimTransform;
 		var grabDistance = ClampGrabDistance( _state.Body, _state.EndPoint, eyeTransform, _state.GrabDistance );
 		var targetPosition = eyeTransform.Position + eyeTransform.Rotation.Forward * grabDistance;
 		var targetRotation = _state.Pulling ? eyeTransform.Rotation * _state.GrabOffset : Rotation.FromYaw( eyeTransform.Rotation.Yaw() ) * _state.GrabOffset;
