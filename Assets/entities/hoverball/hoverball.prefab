@@ -94,7 +94,7 @@
         "OnComponentUpdate": null,
         "OnEffect": {
           "_type": "gameobject",
-          "go": "f1e2d3c4-b5a6-9780-fedc-ba9876543210"
+          "go": "bdbe0239-e992-41e5-af84-68a57ee72034"
         },
         "Speed": 1,
         "TargetZ": 0,
@@ -106,6 +106,20 @@
           "IsEnabled": false,
           "Action": null
         }
+      },
+      {
+        "__type": "HoverballMorphs",
+        "__guid": "89192032-9030-46e9-b325-b9388827aa7e",
+        "__enabled": true,
+        "Flags": 0,
+        "GlowMaterial": "entities/hoverball/materials/hoverball.vmat",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "Speed": 15
       }
     ],
     "Children": [
@@ -139,7 +153,7 @@
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "entities/hoverball/hoverball.vmdl",
+            "Model": "entities/hoverball/hoverball_morph.vmdl",
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -490,7 +504,7 @@
         ]
       },
       {
-        "__guid": "f1e2d3c4-b5a6-9780-fedc-ba9876543210",
+        "__guid": "bdbe0239-e992-41e5-af84-68a57ee72034",
         "__version": 2,
         "Flags": 0,
         "Name": "effect",
@@ -498,7 +512,7 @@
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "light_point,light",
-        "Enabled": true,
+        "Enabled": false,
         "NetworkMode": 2,
         "NetworkFlags": 0,
         "NetworkOrphaned": 0,
@@ -507,8 +521,8 @@
         "Components": [
           {
             "__type": "Sandbox.PointLight",
-            "__guid": "a9b8c7d6-e5f4-3210-9876-fedcba012345",
-            "__enabled": false,
+            "__guid": "8ce7a715-cbe0-4b17-bcac-3f60bef271cb",
+            "__enabled": true,
             "Flags": 0,
             "Attenuation": 2,
             "FogMode": "Enabled",
@@ -520,7 +534,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Radius": 128,
+            "Radius": 16,
             "ShadowBias": 0.0005,
             "ShadowHardness": 0,
             "Shadows": false
@@ -528,7 +542,7 @@
         ],
         "Children": [
           {
-            "__guid": "5cd1bba3-dad4-4cfd-bb13-b1a8be1edc8d",
+            "__guid": "9933a29b-31e9-4f8e-a150-b9497011483e",
             "__version": 2,
             "Flags": 0,
             "Name": "glow",
@@ -545,7 +559,7 @@
             "Components": [
               {
                 "__type": "Sandbox.ParticleEffect",
-                "__guid": "6c7b7466-8e41-459c-9dcd-b1fb26ba24fa",
+                "__guid": "feb68a54-0e9a-4054-ace0-b5cebd7582c1",
                 "__enabled": true,
                 "Flags": 0,
                 "__version": 3,
@@ -660,7 +674,7 @@
                 "PreWarm": 1,
                 "PushStrength": 0,
                 "Roll": 0,
-                "Scale": 24,
+                "Scale": 32,
                 "SequenceId": 0,
                 "SequenceSpeed": 1,
                 "SequenceTime": 1,
@@ -675,7 +689,7 @@
                 "Stretch": 0,
                 "TimeScale": 1,
                 "Timing": "GameTime",
-                "Tint": "1,0.70046,0.25116,1",
+                "Tint": "0.25116,0.72543,1,1",
                 "UsePrefabFeature": false,
                 "Yaw": {
                   "Type": "Range",
@@ -685,7 +699,7 @@
               },
               {
                 "__type": "Sandbox.ParticleSpriteRenderer",
-                "__guid": "bafd8596-83e4-4367-8513-047c46aacd6a",
+                "__guid": "b41d9f99-4a9e-4616-b31a-448b46f448a7",
                 "__enabled": true,
                 "Flags": 0,
                 "__version": 2,
@@ -745,7 +759,7 @@
               },
               {
                 "__type": "Sandbox.ParticleSphereEmitter",
-                "__guid": "2a665073-b2cb-4757-8f89-480493573750",
+                "__guid": "3b14d685-e2fe-4141-a41e-e03108249903",
                 "__enabled": true,
                 "Flags": 0,
                 "Burst": 0,

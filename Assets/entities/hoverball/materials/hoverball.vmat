@@ -41,11 +41,11 @@ Layer0
 
 	//---- Self Illum ----
 	g_flSelfIllumAlbedoFactor "1.000"
-	g_flSelfIllumBrightness "4.400"
-	g_flSelfIllumScale "0.000"
+	g_flSelfIllumBrightness "5.000"
+	g_flSelfIllumScale "1.000"
 	g_vSelfIllumOffset "[0.000 0.000]"
 	g_vSelfIllumScrollSpeed "[0.000 0.000]"
-	g_vSelfIllumTint "[1.000000 1.000000 1.000000 0.000000]"
+	g_vSelfIllumTint "[0.000000 1.000000 1.000000 1.000000]"
 	TextureSelfIllumMask "entities/hoverball/materials/hoverball_selfillum.png"
 
 	//---- Texture Coordinates ----
