@@ -41,7 +41,7 @@ public sealed class Ownable : Component, IPhysgunEvent, IToolgunEvent
 	{
 		if ( !OwnershipChecks ) return true;
 		if ( caller is null ) return false;
-		if ( caller.IsHost ) return true;
+		if ( caller.HasPermission( "admin" ) ) return true;
 		if ( owner is null ) return true;
 		return owner == caller;
 	}

@@ -26,6 +26,17 @@ public sealed partial class GameManager
 	}
 
 	/// <summary>
+	/// RPC to kick a player. Caller must be host or have admin permission.
+	/// </summary>
+	[Rpc.Host]
+	public static void RpcKickPlayer( Connection target, string reason = "Kicked" )
+	{
+		if ( !Rpc.Caller.HasPermission( "admin" ) ) return;
+
+		Current.Kick( target, reason );
+	}
+
+	/// <summary>
 	/// Kicks a player by name or Steam ID. Optionally provide a reason.
 	/// Usage: kick [name|steamid] [reason]
 	/// </summary>

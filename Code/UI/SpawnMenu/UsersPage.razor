@@ -44,7 +44,7 @@
 
 @code
 {
-    public override bool IsVisible() => Networking.IsHost;
+    public override bool IsVisible() => Connection.Local?.HasPermission( "admin" ) == true;
 
     void OpenBanOptions( SteamId steamId, BanSystem.BanEntry entry )
     {

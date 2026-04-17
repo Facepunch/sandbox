@@ -72,6 +72,17 @@ public sealed class BanSystem : GameObjectSystem<BanSystem>, Component.INetworkL
 	private void Save() => LocalData.Set( "bans", _bans );
 
 	/// <summary>
+	/// RPC to ban a connected player. Caller must be host or have admin permission.
+	/// </summary>
+	[Rpc.Host]
+	public static void RpcBanPlayer( Connection target, string reason = "Banned" )
+	{
+		if ( !Rpc.Caller.HasPermission( "admin" ) ) return;
+
+		Current.Ban( target, reason );
+	}
+
+	/// <summary>
 	/// Bans a player by name or Steam ID. Optionally provide a reason.
 	/// Usage: ban [name|steamid] [reason]
 	/// </summary>

@@ -12,7 +12,7 @@
         <label class="left">🧼 Clean Up Mine</label>
     </div>
 
-    @if ( Connection.Local.IsHost )
+    @if ( Connection.Local.HasPermission( "admin" ) )
     {
         <div class="control-row" @onclick=@(() =>CleanUpAll() )>
             <label class="left">🧹 Clean Up All</label>

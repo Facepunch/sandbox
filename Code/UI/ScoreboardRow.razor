@@ -58,7 +58,7 @@
 			bool isMuted = SandboxVoice.IsMuted( steamId );
 			menu.AddOption( isMuted ? "volume_up" : "volume_off", isMuted ? "Unmute" : "Mute", () => SandboxVoice.Mute( steamId ) );
 
-			if ( Networking.IsHost )
+			if ( Connection.Local?.HasPermission( "admin" ) == true )
 			{
 				menu.AddSpacer();
 				menu.AddOption( "person_remove", "Kick", () => OpenKickConfirm( Entry ) );
@@ -78,10 +78,7 @@
 			ConfirmLabel = "Kick",
 			OnConfirm = x =>
 			{
-				entry.Connection?.Kick( x );
-
-                // only the host can run this so it's fine
-				Game.ActiveScene.Get<Chat>()?.AddSystemText( $"{entry.DisplayName} was kicked: {x}", "🚪" );
+				GameManager.RpcKickPlayer( entry.Connection, x );
 			}
 		};
 		popup.Parent = FindPopupPanel();
@@ -94,7 +91,7 @@
 			Title = "Ban Player",
 			Prompt = $"Why do you want to ban {entry.DisplayName}?",
 			ConfirmLabel = "Ban",
-			OnConfirm = x => BanSystem.Current?.Ban( entry.Connection, x )
+			OnConfirm = x => BanSystem.RpcBanPlayer( entry.Connection, x )
 		};
 		popup.Parent = FindPopupPanel();
 	}
