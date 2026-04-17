@@ -106,20 +106,31 @@ public class RollermineNpc : Npc, Component.IDamageable, Component.ICollisionLis
 
 	public Rigidbody Rigidbody { get; private set; }
 
-	private bool _hunting;
+	[Sync] public bool IsHunting { get; private set; }
 	private TimeSince _lastBounce;
 	private const float BounceCooldown = 0.25f;
+
+	private SphereCollider _collider;
+	private float _baseRadius;
 
 	/// <summary>
 	/// Called by chase/idle schedules to toggle the hunting particle children.
 	/// </summary>
 	public void SetHunting( bool hunting )
 	{
-		if ( _hunting == hunting ) return;
-		_hunting = hunting;
+		if ( IsHunting == hunting ) return;
+		IsHunting = hunting;
 
 		if ( HuntingEffects.IsValid() )
 			HuntingEffects.Enabled = hunting;
+
+		if ( _collider.IsValid() )
+		{
+			_collider.Radius = hunting ? _baseRadius * 1.4f : _baseRadius;
+
+			if ( hunting && Rigidbody.IsValid() )
+				Rigidbody.ApplyImpulse( Vector3.Up * 50000f );
+		}
 	}
 
 	/// <summary>
@@ -146,6 +157,10 @@ public class RollermineNpc : Npc, Component.IDamageable, Component.ICollisionLis
 	{
 		base.OnStart();
 		Rigidbody = GetComponent<Rigidbody>();
+		_collider = GetComponent<SphereCollider>();
+
+		if ( _collider.IsValid() )
+			_baseRadius = _collider.Radius;
 
 		if ( Rigidbody.IsValid() )
 			Rigidbody.MotionEnabled = true;

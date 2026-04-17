@@ -1,8 +1,14 @@
 using Sandbox.Utility;
 
-public sealed class HoverballMorphs : Component
+namespace Sandbox.Npcs.Rollermine;
+
+/// <summary>
+/// Drives morph targets and material glow on the rollermine mesh based on hunting state.
+/// Same mesh as hoverball — uses Coils_Deployed and Pins_Deployed morphs.
+/// </summary>
+public sealed class RollermineMorphs : Component
 {
-	private HoverballEntity _hoverball;
+	private RollermineNpc _rollermine;
 	private SkinnedModelRenderer _renderer;
 	private Material _glowMaterialCopy;
 
@@ -20,7 +26,7 @@ public sealed class HoverballMorphs : Component
 	private float _pinsTime;
 
 	[Property] public float Speed { get; set; } = 15f;
-	[Property] public float TransitionDuration { get; set; } = 0.5f;
+	public float TransitionDuration => 0.3f;
 	[Property] public Material GlowMaterial { get; set; }
 
 	public Color IllumTint => Color.FromBytes( 20, 165, 200 );
@@ -28,7 +34,7 @@ public sealed class HoverballMorphs : Component
 
 	protected override void OnStart()
 	{
-		_hoverball = GetComponent<HoverballEntity>();
+		_rollermine = GetComponent<RollermineNpc>();
 		_renderer = GetComponentInChildren<SkinnedModelRenderer>();
 
 		if ( GlowMaterial is not null && _renderer.IsValid() )
@@ -41,10 +47,12 @@ public sealed class HoverballMorphs : Component
 
 	protected override void OnUpdate()
 	{
-		if ( !_hoverball.IsValid() || !_renderer.IsValid() ) return;
+		if ( !_rollermine.IsValid() || !_renderer.IsValid() ) return;
 
-		var targetCoils = _hoverball.IsEnabled ? 1f : 0f;
-		var targetPins = Math.Clamp( _hoverball.AirResistance / 5f, 0f, 1f );
+		var hunting = _rollermine.IsHunting;
+
+		var targetCoils = hunting ? 1f : 0f;
+		var targetPins = hunting ? 1f : 0f;
 
 		if ( targetCoils != _coilsTo )
 		{
@@ -76,9 +84,10 @@ public sealed class HoverballMorphs : Component
 	{
 		if ( _glowMaterialCopy is null ) return;
 
-		var brightness = _hoverball.IsEnabled ? IllumBrightness : 0f;
+		var hunting = _rollermine.IsHunting;
+		var brightness = hunting ? IllumBrightness : 0f;
 
-		if ( _hoverball.IsEnabled )
+		if ( hunting )
 		{
 			_brightnessTimer -= Time.Delta;
 			if ( _brightnessTimer <= 0f )
@@ -90,7 +99,7 @@ public sealed class HoverballMorphs : Component
 			brightness = _brightnessCurrent;
 		}
 
-		_glowMaterialCopy.Set( "g_vSelfIllumTint", _hoverball.IsEnabled ? IllumTint : Color.Black );
+		_glowMaterialCopy.Set( "g_vSelfIllumTint", hunting ? IllumTint : Color.Black );
 		_glowMaterialCopy.Set( "g_flSelfIllumBrightness", brightness * _coils );
 	}
 }

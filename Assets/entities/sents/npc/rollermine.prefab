@@ -20,7 +20,7 @@
         "__guid": "d4a29b17-3f65-4c80-b752-1e8a5c7d9e02",
         "__enabled": true,
         "Flags": 0,
-        "BounceForce": 450000,
+        "BounceForce": 303750,
         "ContactDamage": 20,
         "ContactEffect": {
           "_type": "gameobject",
@@ -40,7 +40,7 @@
           "_type": "gameobject",
           "prefab": "entities/sents/npc/rollermine/rollermine_leap_fx.prefab"
         },
-        "LeapForce": 300000,
+        "LeapForce": 202500,
         "LeapRange": 160,
         "LeapUpwardBias": 0.8,
         "OnComponentDestroy": null,
@@ -58,9 +58,9 @@
           "go": "c4d81f96-2e53-4a07-b480-1f6e3d9c5a10",
           "component_type": "SkinnedModelRenderer"
         },
-        "RollForce": 80000,
+        "RollForce": 40000,
         "RollSound": "entities/sents/npc/rollermine/rollermine_move_loop.sound",
-        "RollTorque": 40000,
+        "RollTorque": 20000,
         "ShowDebugOverlay": false,
         "StuckJumpForce": 500
       },
@@ -84,7 +84,7 @@
         "OnObjectTriggerExit": null,
         "OnTriggerEnter": null,
         "OnTriggerExit": null,
-        "Radius": 16,
+        "Radius": 10,
         "RollingResistance": null,
         "Static": false,
         "Surface": null,
@@ -175,6 +175,20 @@
         "OverrideMassCenter": false,
         "RigidbodyFlags": 0,
         "StartAsleep": false
+      },
+      {
+        "__type": "Sandbox.Npcs.Rollermine.RollermineMorphs",
+        "__guid": "08db7bd7-6381-412e-bd62-050e342a56ed",
+        "__enabled": true,
+        "Flags": 0,
+        "GlowMaterial": "entities/hoverball/materials/hoverball.vmat",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "Speed": 15
       }
     ],
     "Children": [
@@ -214,7 +228,7 @@
         "Name": "model",
         "Position": "0,0,0",
         "Rotation": "0,0,0,1",
-        "Scale": "2,2,2",
+        "Scale": "1.25,1.25,1.25",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
@@ -237,7 +251,7 @@
             "MaterialGroup": "default",
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "entities/hoverball/hoverball.vmdl",
+            "Model": "entities/hoverball/hoverball_morph.vmdl",
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,

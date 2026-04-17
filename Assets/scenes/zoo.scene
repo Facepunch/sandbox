@@ -4386,7 +4386,7 @@
         "MovedObjects": []
       },
       "__PrefabIdToInstanceId": {
-        "ea40b85e-87b5-4d3d-90dd-1ecbbfafc2cc": "14a49969-720a-4287-ae69-54cc6513799f"
+        "e310c4f3-f34f-4976-a9d0-653dac4f36ea": "47961788-d336-40ea-9a51-44d2eb9d5049"
       }
     },
     {
@@ -6238,7 +6238,7 @@
               "__version": 2,
               "Flags": 12288,
               "Name": "front_right",
-              "Position": "5.58132744,-4.28576803,3.3849895",
+              "Position": "5.58132744,-4.28576803,3.38498926",
               "Rotation": "0,0,0,1",
               "Scale": "1,1,1",
               "Tags": "",
@@ -6574,13 +6574,13 @@
       }
     },
     "GameObjectSystems": {
+      "Sandbox.MovieMaker.MovieRecorderSystem": {
+        "DisableClientRecording": false
+      },
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
           "$blob": "00b7c556-042a-47e3-8be5-3f7cea795b48"
         }
-      },
-      "Sandbox.MovieMaker.MovieRecorderSystem": {
-        "DisableClientRecording": false
       }
     }
   },
