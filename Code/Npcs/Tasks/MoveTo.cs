@@ -5,8 +5,9 @@ namespace Sandbox.Npcs.Tasks;
 /// <summary>
 /// Task that commands the NavigationLayer to move to a target position or GameObject.
 /// When tracking a GameObject, re-evaluates the path periodically.
-/// Does not override the NPC's look target — but will rotate the body to face the
-/// movement direction when the angle would otherwise cause silly walking
+/// If a look target is set (e.g. chasing a player), rotates the body to face that target
+/// each frame. Otherwise, rotates to face the movement direction when the angle would
+/// otherwise cause sideways walking.
 /// </summary>
 public class MoveTo : TaskBase
 {
@@ -61,9 +62,18 @@ public class MoveTo : TaskBase
 			var fwd = Npc.WorldRotation.Forward.WithZ( 0 ).Normal;
 			var angle = Vector3.GetAngle( fwd, moveDir );
 
-			if ( angle > LateralThreshold && !Npc.Animation.LookTarget.HasValue )
+			if ( Npc.Animation.LookTarget.HasValue )
 			{
-				// No look target — face the movement direction
+				// Has a look target (e.g. chasing a player) — rotate body to face the target
+				// directly so the NPC always looks at what it's chasing, not the path direction.
+				var toTarget = (Npc.Animation.LookTarget.Value.WithZ( 0 ) - Npc.WorldPosition.WithZ( 0 )).Normal;
+				var targetRot = Rotation.LookAt( toTarget, Vector3.Up );
+				Npc.GameObject.WorldRotation = Rotation.Lerp(
+					Npc.WorldRotation, targetRot, Npc.Animation.LookSpeed * Time.Delta );
+			}
+			else if ( angle > LateralThreshold )
+			{
+				// No look target — face the movement direction to avoid sideways walking
 				var targetRot = Rotation.LookAt( moveDir, Vector3.Up );
 				Npc.GameObject.WorldRotation = Rotation.Lerp(
 					Npc.WorldRotation, targetRot, Npc.Animation.LookSpeed * Time.Delta );
