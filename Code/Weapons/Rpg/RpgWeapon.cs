@@ -58,9 +58,17 @@ public class RpgWeapon : BaseWeapon
 		}
 		else
 		{
-			// Seat / standalone — fire straight from the muzzle
-			var muzzleTransform = MuzzleTransform.WorldTransform;
-			CreateProjectile( muzzleTransform.Position, muzzleTransform.Rotation.Forward, 1024 );
+			// Seat / standalone — fire straight from the muzzle.
+			// ControlSystem runs on every client and calls PrimaryAttack for all occupied seats,
+			// including seats occupied by non-host players. Since CreateProjectile is [Rpc.Host],
+			// calling it from both the non-host client and the host would execute it twice on the
+			// host, creating two rockets. Restrict creation to the host; the host's ControlSystem
+			// already sees every client's input via ClientInput.PushScope.
+			if ( Networking.IsHost )
+			{
+				var muzzleTransform = MuzzleTransform.WorldTransform;
+				CreateProjectile( muzzleTransform.Position, muzzleTransform.Rotation.Forward, 1024 );
+			}
 		}
 	}
 
