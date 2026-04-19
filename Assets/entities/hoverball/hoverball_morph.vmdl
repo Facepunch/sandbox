@@ -19,6 +19,7 @@
 			},
 			{
 				_class = "RenderMeshList"
+				note = "FYI: I disabled the \'expensive tangents\' here to save half a megabyte. The bone-based version can be considered to be the more expensive version by virtue of being skinned, but since it\'s not using morphs, it remains around the same size as this one despite having \'expensive tangents\' on. So it makes more sense, IMO, for this performant version to NOT have them, and for the other version to have them. -MaxL"
 				children = 
 				[
 					{
@@ -28,6 +29,7 @@
 						[
 							{
 								_class = "RenderMeshMarkup"
+								disabled = true
 								material_search_path = ""
 								use_expensive_tangents = true
 								high_high_precision_texcoords = false
@@ -65,6 +67,7 @@
 						[
 							{
 								_class = "RenderMeshMarkup"
+								disabled = true
 								material_search_path = ""
 								use_expensive_tangents = true
 								high_high_precision_texcoords = false
@@ -102,6 +105,7 @@
 						[
 							{
 								_class = "RenderMeshMarkup"
+								disabled = true
 								material_search_path = ""
 								use_expensive_tangents = true
 								high_high_precision_texcoords = false
@@ -139,6 +143,7 @@
 						[
 							{
 								_class = "RenderMeshMarkup"
+								disabled = true
 								material_search_path = ""
 								use_expensive_tangents = true
 								high_high_precision_texcoords = false
@@ -176,6 +181,7 @@
 						[
 							{
 								_class = "RenderMeshMarkup"
+								disabled = true
 								material_search_path = ""
 								use_expensive_tangents = true
 								high_high_precision_texcoords = false
