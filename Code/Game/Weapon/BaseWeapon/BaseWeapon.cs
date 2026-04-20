@@ -218,6 +218,8 @@ public partial class BaseWeapon : BaseCarryable, IPlayerControllable
 
 	public virtual void OnControl()
 	{
+		if ( HasOwner ) return;
+
 		if ( ShootInput.Down() && CanPrimaryAttack() )
 			PrimaryAttack();
 
