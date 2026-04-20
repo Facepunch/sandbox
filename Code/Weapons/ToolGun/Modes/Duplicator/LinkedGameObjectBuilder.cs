@@ -63,6 +63,12 @@ public class LinkedGameObjectBuilder
 			if ( link.Body.IsValid() )
 				AddConnected( link.Body );
 		}
+
+		// If any children have a physics filter, also connect them.
+		foreach ( var filter in source.GetComponentsInChildren<PhysicsFilter>( includeSelf: false ) )
+		{
+			AddConnected( filter.GameObject );
+		}
 	}
 
 	public void RemoveDeletedObjects()
