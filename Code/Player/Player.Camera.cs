@@ -88,8 +88,7 @@ public sealed partial class Player
 		var camRot = Rotation.FromYaw( _seatedAngles.yaw ) * Rotation.FromPitch( _seatedAngles.pitch );
 		var desiredPos = seatPos + camRot.Backward * _smoothedDistance;
 
-		// Trace from pivot to desired camera position; stop at walls so the camera doesn't clip through geometry
-		var tr = Scene.Trace.FromTo( seatPos, desiredPos ).Radius( 8f ).WithoutTags( "player", "ragdoll", "effect" ).IgnoreGameObjectHierarchy( GameObject.Root ).Run();
+		var tr = Scene.Trace.FromTo( seatPos, desiredPos ).Radius( 8f ).WithTag( "world" ).IgnoreGameObjectHierarchy( GameObject.Root ).Run();
 		var camPos = tr.Hit ? tr.HitPosition + (seatPos - desiredPos).Normal * 4f : desiredPos;
 
 		camera.WorldPosition = camPos;
