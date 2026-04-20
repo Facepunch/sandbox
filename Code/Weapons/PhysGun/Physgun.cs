@@ -312,6 +312,8 @@ public partial class Physgun
 	/// </summary>
 	public void OnControl()
 	{
+		if ( HasOwner ) return;
+
 		var aim = AimTransform;
 		_lastAimTransform = aim;
 		var isPulling = SecondaryInput.Down() && !_preventReselect;
