@@ -81,10 +81,12 @@
         "__enabled": true,
         "Flags": 0,
         "AirResistance": 0,
+        "DisableSound": null,
         "Down": {
           "IsEnabled": false,
           "Action": null
         },
+        "EnableSound": null,
         "IsEnabled": true,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -119,7 +121,8 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "Speed": 15
+        "Speed": 15,
+        "TransitionDuration": 0.5
       }
     ],
     "Children": [
@@ -512,7 +515,7 @@
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "light_point,light",
-        "Enabled": false,
+        "Enabled": true,
         "NetworkMode": 2,
         "NetworkFlags": 0,
         "NetworkOrphaned": 0,

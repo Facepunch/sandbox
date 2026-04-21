@@ -23,8 +23,17 @@ public sealed class HoverballMorphs : Component
 	[Property] public float TransitionDuration { get; set; } = 0.5f;
 	[Property] public Material GlowMaterial { get; set; }
 
-	public Color IllumTint => Color.FromBytes( 20, 165, 200 );
-	public float IllumBrightness => 8f;
+	[Property, Group( "Illumination" )] public Color IllumTint { get; set; } = Color.FromBytes( 20, 165, 200 );
+	[Property, Group( "Illumination" )] public float IllumBrightness { get; set; } = 8f;
+	[Property, Group( "Illumination" ), Title( "Flicker Min" )] public float IllumFlickerMin { get; set; } = 6f;
+	[Property, Group( "Illumination" ), Title( "Flicker Max" )] public float IllumFlickerMax { get; set; } = 8f;
+	[Property, Group( "Illumination" ), Title( "Flicker Interval Min" )] public float IllumFlickerIntervalMin { get; set; } = 0.1f;
+	[Property, Group( "Illumination" ), Title( "Flicker Interval Max" )] public float IllumFlickerIntervalMax { get; set; } = 0.4f;
+	[Property, Group( "Illumination" ), Title( "Flicker Approach Speed" )] public float IllumFlickerSpeed { get; set; } = 7f;
+
+	[Property, Group( "Morphs" ), Title( "Pin Range Max" )] public float PinRangeMax { get; set; } = 5f;
+	[Property, Group( "Morphs" ), Title( "Pin Deployed" )] public float PinDeployedValue { get; set; } = 1f;
+	[Property, Group( "Morphs" ), Title( "Coil Deployed" )] public float CoilDeployedValue { get; set; } = 1f;
 
 	protected override void OnStart()
 	{
@@ -43,8 +52,8 @@ public sealed class HoverballMorphs : Component
 	{
 		if ( !_hoverball.IsValid() || !_renderer.IsValid() ) return;
 
-		var targetCoils = _hoverball.IsEnabled ? 1f : 0f;
-		var targetPins = Math.Clamp( _hoverball.AirResistance / 5f, 0f, 1f );
+		var targetCoils = _hoverball.IsEnabled ? CoilDeployedValue : 0f;
+		var targetPins = Math.Clamp( _hoverball.AirResistance / PinRangeMax, 0f, 1f ) * PinDeployedValue;
 
 		if ( targetCoils != _coilsTo )
 		{
@@ -83,10 +92,10 @@ public sealed class HoverballMorphs : Component
 			_brightnessTimer -= Time.Delta;
 			if ( _brightnessTimer <= 0f )
 			{
-				_brightnessTarget = Random.Shared.Float( 6f, 8f );
-				_brightnessTimer = Random.Shared.Float( 0.1f, 0.4f );
+				_brightnessTarget = Random.Shared.Float( IllumFlickerMin, IllumFlickerMax );
+				_brightnessTimer = Random.Shared.Float( IllumFlickerIntervalMin, IllumFlickerIntervalMax );
 			}
-			_brightnessCurrent = MathX.Approach( _brightnessCurrent, _brightnessTarget, Time.Delta * 7f );
+			_brightnessCurrent = MathX.Approach( _brightnessCurrent, _brightnessTarget, Time.Delta * IllumFlickerSpeed );
 			brightness = _brightnessCurrent;
 		}
 
