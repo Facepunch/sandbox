@@ -3,11 +3,12 @@
 OwnerLabel
 {
 	position: absolute;
-	right: $deadzone-x;
-	top: 50%;
+	bottom: 180px;
+	left: 50%;
 	pointer-events: none;
 	opacity: 0;
 	transition: all 0.15s ease;
+	transform: translateX( -50% );
 
 	&.visible
 	{
