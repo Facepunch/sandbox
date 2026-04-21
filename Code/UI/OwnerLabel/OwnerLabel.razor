@@ -3,6 +3,9 @@
 @inherits PanelComponent
 @namespace Sandbox
 
+@if ( Player.IsValid() && Player.WantsHideHud )
+    return;
+
 <root>
 	<div class="owner-label hud-panel">
 		<label class="name">Owned by @_ownerName</label>
@@ -11,7 +14,9 @@
 
 @code
 {
-	string _ownerName;
+    string _ownerName;
+
+    Player Player => Player.FindLocalPlayer();
 
 	protected override void OnUpdate()
 	{
