@@ -45,6 +45,7 @@
     {
         var lp = Player.FindLocalPlayer();
         if (lp is null) return default;
+        if (lp.WantsHideHud) return default;
         if (lp.Controller.Tooltips.Count == 0) return default;
 
         return lp.Controller.Tooltips.FirstOrDefault();
