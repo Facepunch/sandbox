@@ -1,7 +1,0 @@
-{
-  "Prefab": "entities/sents/emitter.prefab",
-  "Title": "Basic",
-  "Description": "A basic emitter",
-  "__references": [],
-  "__version": 0
-}

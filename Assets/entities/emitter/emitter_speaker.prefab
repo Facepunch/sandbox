@@ -3,7 +3,7 @@
     "__guid": "d4e1b7f2-8a93-4c05-b318-6f0a2e5d9c47",
     "__version": 2,
     "Flags": 0,
-    "Name": "emitter",
+    "Name": "emitter_speaker",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
@@ -43,7 +43,7 @@
         "__guid": "c3f9a2e4-5d71-4b08-e720-2a4c1d7f3b89",
         "__enabled": true,
         "Flags": 0,
-        "Center": "0,0,1.81",
+        "Center": "0,0,1.80999994",
         "ColliderFlags": 0,
         "Elasticity": null,
         "Friction": null,
@@ -59,7 +59,7 @@
         "OnTriggerEnter": null,
         "OnTriggerExit": null,
         "RollingResistance": null,
-        "Scale": "4,4,3.390001",
+        "Scale": "4,4,3.39000106",
         "Static": false,
         "Surface": null,
         "SurfaceVelocity": "0,0,0"
@@ -105,8 +105,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Cube",
-        "Position": "-2.1759,0,1.563663",
-        "Rotation": "0,0.7071066,0,0.7071068",
+        "Position": "-2.17589998,0,1.56366301",
+        "Rotation": "0,0.70710659,0,0.707106829",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -127,7 +127,7 @@
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/props/packaged_food/can_long.vmdl",
+            "Model": "entities/emitter/emitter_speaker.vmdl",
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -163,6 +163,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },
@@ -173,8 +174,6 @@
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "__references": [
-    "facepunch.can_long#143339"
-  ],
+  "__references": [],
   "__version": 2
 }
