@@ -3,9 +3,6 @@
 @inherits PanelComponent
 @namespace Sandbox
 
-@if ( Player.IsValid() && Player.WantsHideHud )
-    return;
-
 <root>
 	<div class="owner-label hud-panel">
 		<label class="name">Owned by @_ownerName</label>
@@ -21,7 +18,7 @@
 	protected override void OnUpdate()
 	{
 		var camera = Scene.Camera;
-		if ( camera is null )
+        if (camera is null || (Player.IsValid() && Player.WantsHideHud) )
 		{
 			Panel.SetClass( "visible", false );
 			return;
