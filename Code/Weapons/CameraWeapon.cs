@@ -1,5 +1,4 @@
 ﻿using Sandbox.Rendering;
-using Sandbox.Utility;
 
 public class CameraWeapon : BaseWeapon
 {
@@ -48,15 +47,6 @@ public class CameraWeapon : BaseWeapon
 
 		camera.FieldOfView = fov;
 		camera.WorldRotation = camera.WorldRotation * new Angles( 0, 0, roll );
-
-		var t = 20.0f;
-		var s = 1.0f;
-
-		var x = Noise.Perlin( Time.Now * t, 3, 5 ).Remap( 0, 1, -1, 1 ) * s;
-		var y = Noise.Perlin( Time.Now * t * 0.8f, 3, 4 ).Remap( 0, 1, -1, 1 ) * s;
-
-		camera.WorldRotation *= new Angles( x, y, 0 );
-
 	}
 
 	public override void OnCameraMove( Player player, ref Angles angles )
@@ -108,21 +98,21 @@ public class CameraWeapon : BaseWeapon
 	{
 		if ( !focusing )
 		{
-			dof.BlurSize = Scene.Camera.FieldOfView.Remap( 20, 80, 25, 5 );
-			dof.FocusRange = 1024;
+			dof.BlurSize = MathF.Pow( Scene.Camera.FieldOfView.Remap( 1, 55, 1, 0 ), 4 ) * 16;
+			dof.FocusRange = 512;
 			dof.FrontBlur = false;
 
 			var tr = Scene.Trace.Ray( Scene.Camera.Transform.World.ForwardRay, 5000 )
-								.Radius( 8 )
+								.Radius( 4 )
 								.IgnoreGameObjectHierarchy( GameObject.Root )
 								.Run();
 
 			focusPoint = tr.EndPosition;
 		}
 
-		var target = Scene.Camera.WorldPosition.Distance( focusPoint ) + 32;
+		var target = Scene.Camera.WorldPosition.Distance( focusPoint ) + 64;
 
-		dof.FocalDistance = dof.FocalDistance.LerpTo( target, Time.Delta * 10.0f );
+		dof.FocalDistance = dof.FocalDistance.LerpTo( target, Time.Delta * 2.0f );
 	}
 
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )
