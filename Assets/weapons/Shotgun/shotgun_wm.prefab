@@ -25,7 +25,10 @@
           "_type": "gameobject",
           "go": "8e571825-7366-47b8-a226-d8c9ae8b083f"
         },
-        "MuzzleEffect": null,
+        "MuzzleEffect": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapon_effects/shotgun_muzzleflash.prefab"
+        },
         "MuzzleTransform": {
           "_type": "gameobject",
           "go": "ed6466c4-e28c-4e9b-8446-ffa3f096176d"
@@ -42,7 +45,10 @@
           "go": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
           "component_type": "SkinnedModelRenderer"
         },
-        "TracerEffect": null
+        "TracerEffect": {
+          "_type": "gameobject",
+          "prefab": "weapons/tracer_9mm.prefab"
+        }
       }
     ],
     "Children": [
@@ -51,7 +57,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "7.182847,-0.0000077039,-7.999946",
+        "Position": "7.18284702,-7.70390034E-06,-7.99994612",
         "Rotation": "0,0,0,1",
         "Scale": "1.5,1.5,1.5",
         "Tags": "",
@@ -114,7 +120,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "hold_R",
-            "Position": "-1.45742,0,5.464317",
+            "Position": "-1.45741999,0,5.46431684",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -131,7 +137,7 @@
                 "__version": 2,
                 "Flags": 0,
                 "Name": "eject",
-                "Position": "3.912841,-0.647761,3.410283",
+                "Position": "3.91284108,-0.647760987,3.41028309",
                 "Rotation": "0,0,0,1",
                 "Scale": "1,1,1",
                 "Tags": "",
@@ -200,7 +206,9 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
     },
     "__variables": []
@@ -211,9 +219,8 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
+    "facepunch.shotgun_muzzleflash#76091",
     "facepunch.w_spaghellim4#144906"
   ],
   "__version": 2
 }
-
-

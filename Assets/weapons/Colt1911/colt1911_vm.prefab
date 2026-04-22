@@ -51,7 +51,11 @@
           "component_type": "SkinnedModelRenderer"
         },
         "ThrowableType": "HEGrenade",
-        "TracerEffect": null
+        "TracerEffect": {
+          "_type": "gameobject",
+          "prefab": "weapons/tracer_9mm.prefab"
+        },
+        "UseFastAnimations": false
       }
     ],
     "Children": [
@@ -60,7 +64,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Viewmodel",
-        "Position": "0,0,-0.01578379",
+        "Position": "0,0,-0.0157837905",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -357,7 +361,7 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "MuzzleTransform",
-                    "Position": "6.119591,-0.1247237,1.695858",
+                    "Position": "6.11959124,-0.124723703,1.695858",
                     "Rotation": "0,0,0,1",
                     "Scale": "1,1,1",
                     "Tags": "",
@@ -449,7 +453,7 @@
                 "__version": 2,
                 "Flags": 0,
                 "Name": "muzzle",
-                "Position": "6.013762,-0.0000003937,1.795534",
+                "Position": "6.013762,-3.93699992E-07,1.79553401",
                 "Rotation": "0,0,0,1",
                 "Scale": "1,1,1",
                 "Tags": "",
@@ -467,8 +471,8 @@
                 "__version": 2,
                 "Flags": 0,
                 "Name": "eject",
-                "Position": "2.38468,-0.1475521,1.941945",
-                "Rotation": "-0.000000000000003552713,-0.7071066,-0.000000000000003552713,0.7071068",
+                "Position": "2.38468003,-0.147552103,1.94194496",
+                "Rotation": "-3.55271304E-15,-0.70710659,-3.55271304E-15,0.707106829",
                 "Scale": "1,1,1",
                 "Tags": "",
                 "Enabled": true,
@@ -1800,7 +1804,9 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
     },
     "__variables": []

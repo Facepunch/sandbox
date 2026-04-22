@@ -1,7 +1,7 @@
 {
   "RootObject": {
     "__guid": "628ec5b7-a64d-490e-a218-1cdfc17b67df",
-    "__version": 1,
+    "__version": 2,
     "Flags": 0,
     "Name": "glock_wm",
     "Position": "0,0,0",
@@ -10,7 +10,7 @@
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 0,
-    "NetworkInterpolation": true,
+    "NetworkFlags": 0,
     "NetworkOrphaned": 0,
     "NetworkTransmit": true,
     "OwnerTransfer": 1,
@@ -19,6 +19,7 @@
         "__type": "WorldModel",
         "__guid": "765ebd37-c91f-4058-8815-f4b7df6f24b0",
         "__enabled": true,
+        "Flags": 0,
         "EjectBrass": null,
         "EjectTransform": {
           "_type": "gameobject",
@@ -41,22 +42,25 @@
           "go": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
           "component_type": "SkinnedModelRenderer"
         },
-        "TracerEffect": null
+        "TracerEffect": {
+          "_type": "gameobject",
+          "prefab": "weapons/tracer_9mm.prefab"
+        }
       }
     ],
     "Children": [
       {
         "__guid": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
-        "__version": 1,
+        "__version": 2,
         "Flags": 0,
         "Name": "w_usp",
-        "Position": "3.418695,-0.6192533,-5.397455",
+        "Position": "3.41869497,-0.619253278,-5.39745522",
         "Rotation": "0,0,0,1",
         "Scale": "2,2,2",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
-        "NetworkInterpolation": true,
+        "NetworkFlags": 0,
         "NetworkOrphaned": 0,
         "NetworkTransmit": true,
         "OwnerTransfer": 1,
@@ -65,6 +69,7 @@
             "__type": "Sandbox.SkinnedModelRenderer",
             "__guid": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
             "__enabled": true,
+            "Flags": 0,
             "AnimationGraph": null,
             "BodyGroups": 9513,
             "BoneMergeTarget": null,
@@ -109,7 +114,7 @@
         "Children": [
           {
             "__guid": "e4312b65-c2f9-4ab7-bdb5-2e6bc4b67507",
-            "__version": 1,
+            "__version": 2,
             "Flags": 8,
             "Name": "muzzle",
             "Position": "0,0,0",
@@ -118,7 +123,7 @@
             "Tags": "",
             "Enabled": true,
             "NetworkMode": 2,
-            "NetworkInterpolation": true,
+            "NetworkFlags": 0,
             "NetworkOrphaned": 0,
             "NetworkTransmit": true,
             "OwnerTransfer": 1,
@@ -127,7 +132,7 @@
           },
           {
             "__guid": "1d5347e0-820c-4015-96dc-4efd0679eca3",
-            "__version": 1,
+            "__version": 2,
             "Flags": 8,
             "Name": "eject",
             "Position": "0,0,0",
@@ -136,7 +141,7 @@
             "Tags": "",
             "Enabled": true,
             "NetworkMode": 2,
-            "NetworkInterpolation": true,
+            "NetworkFlags": 0,
             "NetworkOrphaned": 0,
             "NetworkTransmit": true,
             "OwnerTransfer": 1,
@@ -145,16 +150,16 @@
           },
           {
             "__guid": "8d74fc05-f7a5-4d25-b3cd-74aaae956572",
-            "__version": 1,
+            "__version": 2,
             "Flags": 0,
             "Name": "hold_R",
-            "Position": "-1.848641,0,3.195872",
+            "Position": "-1.84864104,0,3.19587207",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
             "Enabled": true,
             "NetworkMode": 2,
-            "NetworkInterpolation": true,
+            "NetworkFlags": 0,
             "NetworkOrphaned": 0,
             "NetworkTransmit": true,
             "OwnerTransfer": 1,
@@ -173,13 +178,15 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
     },
     "__variables": []
@@ -194,5 +201,3 @@
   ],
   "__version": 2
 }
-
-

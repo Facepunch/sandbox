@@ -25,7 +25,10 @@
           "_type": "gameobject",
           "go": "1d5347e0-820c-4015-96dc-4efd0679eca3"
         },
-        "MuzzleEffect": null,
+        "MuzzleEffect": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
+        },
         "MuzzleTransform": {
           "_type": "gameobject",
           "go": "e4312b65-c2f9-4ab7-bdb5-2e6bc4b67507"
@@ -42,7 +45,10 @@
           "go": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
           "component_type": "SkinnedModelRenderer"
         },
-        "TracerEffect": null
+        "TracerEffect": {
+          "_type": "gameobject",
+          "prefab": "weapons/tracer_9mm.prefab"
+        }
       }
     ],
     "Children": [
@@ -51,7 +57,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_1911",
-        "Position": "3.418695,-0.6192533,-5.397455",
+        "Position": "3.41869497,-0.619253278,-5.39745522",
         "Rotation": "0,0,0,1",
         "Scale": "2,2,2",
         "Tags": "",
@@ -150,7 +156,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "hold_R",
-            "Position": "-1.848641,0,3.195872",
+            "Position": "-1.84864104,0,3.19587207",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -181,7 +187,9 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
     },
     "__variables": []
@@ -192,9 +200,8 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
+    "facepunch.pistol_muzzleflash#76089",
     "facepunch.w_1911#158879"
   ],
   "__version": 2
 }
-
-

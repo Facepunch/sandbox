@@ -72,7 +72,7 @@
             "TargetColor": "1,1,1,1",
             "CacheToDisk": true
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/3ee0db368e056402.vtex"
         },
         "DisplayName": "1911",
         "DroppedGameObject": {
@@ -240,7 +240,10 @@
               "go": "e2753d64-19ba-46a0-a05b-b1f8115a1a01",
               "component_type": "SkinnedModelRenderer"
             },
-            "TracerEffect": null
+            "TracerEffect": {
+              "_type": "gameobject",
+              "prefab": "weapons/tracer_9mm.prefab"
+            }
           },
           {
             "__type": "Sandbox.SkinnedModelRenderer",

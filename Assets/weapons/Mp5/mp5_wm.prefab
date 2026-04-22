@@ -45,7 +45,10 @@
           "go": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
           "component_type": "SkinnedModelRenderer"
         },
-        "TracerEffect": null
+        "TracerEffect": {
+          "_type": "gameobject",
+          "prefab": "weapons/tracer_9mm.prefab"
+        }
       }
     ],
     "Children": [
@@ -54,7 +57,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "-0.5918133,0.6022096,-14.1255",
+        "Position": "-0.591813326,0.602209628,-14.1254997",
         "Rotation": "0,0,0,1",
         "Scale": "2,2,2",
         "Tags": "",
@@ -117,7 +120,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "hold_R",
-            "Position": "-1.45742,0,5.464317",
+            "Position": "-1.45741999,0,5.46431684",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -134,7 +137,7 @@
                 "__version": 2,
                 "Flags": 0,
                 "Name": "eject",
-                "Position": "3.912841,-0.647761,3.410283",
+                "Position": "3.91284108,-0.647760987,3.41028309",
                 "Rotation": "0,0,0,1",
                 "Scale": "1,1,1",
                 "Tags": "",
@@ -204,6 +207,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },
@@ -220,5 +224,3 @@
   ],
   "__version": 2
 }
-
-

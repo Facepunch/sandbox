@@ -72,7 +72,7 @@
             "TargetColor": "1,1,1,1",
             "CacheToDisk": true
           },
-          "compiled": "textures/generated/imagefile/280bb8c5c69aeda5.vtex"
+          "compiled": null
         },
         "DisplayName": "M4A1",
         "DroppedGameObject": {
@@ -240,7 +240,10 @@
               "go": "e7dc7a22-b5a7-41c9-9aa9-ed48c0a053e8",
               "component_type": "SkinnedModelRenderer"
             },
-            "TracerEffect": null
+            "TracerEffect": {
+              "_type": "gameobject",
+              "prefab": "weapons/tracer_rifle.prefab"
+            }
           },
           {
             "__type": "Sandbox.SkinnedModelRenderer",

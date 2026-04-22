@@ -25,7 +25,10 @@
           "_type": "gameobject",
           "go": "8e571825-7366-47b8-a226-d8c9ae8b083f"
         },
-        "MuzzleEffect": null,
+        "MuzzleEffect": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapon_effects/rifle_muzzleflash.prefab"
+        },
         "MuzzleTransform": {
           "_type": "gameobject",
           "go": "ed6466c4-e28c-4e9b-8446-ffa3f096176d"
@@ -42,7 +45,10 @@
           "go": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
           "component_type": "SkinnedModelRenderer"
         },
-        "TracerEffect": null
+        "TracerEffect": {
+          "_type": "gameobject",
+          "prefab": "weapons/tracer_rifle.prefab"
+        }
       }
     ],
     "Children": [
@@ -51,7 +57,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "-0.5918133,0.6022096,-14.1255",
+        "Position": "-0.591813326,0.602209628,-14.1254997",
         "Rotation": "0,0,0,1",
         "Scale": "2,2,2",
         "Tags": "",
@@ -114,7 +120,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "hold_R",
-            "Position": "-1.45742,0,5.464317",
+            "Position": "-1.45741999,0,5.46431684",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -131,7 +137,7 @@
                 "__version": 2,
                 "Flags": 0,
                 "Name": "eject",
-                "Position": "3.912841,-0.647761,3.410283",
+                "Position": "3.91284108,-0.647760987,3.41028309",
                 "Rotation": "0,0,0,1",
                 "Scale": "1,1,1",
                 "Tags": "",
@@ -149,9 +155,9 @@
           {
             "__guid": "ed6466c4-e28c-4e9b-8446-ffa3f096176d",
             "__version": 2,
-            "Flags": 0,
+            "Flags": 8,
             "Name": "muzzle",
-            "Position": "13.2196,0,8.088171",
+            "Position": "0,0,0",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -167,9 +173,9 @@
           {
             "__guid": "88302757-22b9-44b5-9561-6acad55a74a7",
             "__version": 2,
-            "Flags": 0,
+            "Flags": 8,
             "Name": "eject",
-            "Position": "2.455421,-0.647761,8.8746",
+            "Position": "0,0,0",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -194,13 +200,15 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
     },
     "__variables": []
@@ -211,9 +219,8 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
+    "facepunch.rifle_muzzleflash#76090",
     "facepunch.w_m4a1#154378"
   ],
   "__version": 2
 }
-
-

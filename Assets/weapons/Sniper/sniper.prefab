@@ -223,7 +223,7 @@
             },
             "MuzzleEffect": {
               "_type": "gameobject",
-              "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
+              "prefab": "prefabs/weapon_effects/rifle_muzzleflash.prefab"
             },
             "MuzzleTransform": {
               "_type": "gameobject",
@@ -241,7 +241,10 @@
               "go": "2ad75b15-d73d-4018-bc22-7407f67f909e",
               "component_type": "SkinnedModelRenderer"
             },
-            "TracerEffect": null
+            "TracerEffect": {
+              "_type": "gameobject",
+              "prefab": "weapons/tracer_rifle.prefab"
+            }
           },
           {
             "__type": "Sandbox.SkinnedModelRenderer",
@@ -357,7 +360,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.pistol_muzzleflash#76089",
+    "facepunch.rifle_muzzleflash#76090",
     "facepunch.w_m700#144907"
   ],
   "__version": 2

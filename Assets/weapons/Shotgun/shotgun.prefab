@@ -241,7 +241,10 @@
               "go": "da725ca9-1b64-40ba-a2c2-fad3776e75be",
               "component_type": "SkinnedModelRenderer"
             },
-            "TracerEffect": null
+            "TracerEffect": {
+              "_type": "gameobject",
+              "prefab": "weapons/tracer_9mm.prefab"
+            }
           },
           {
             "__type": "Sandbox.SkinnedModelRenderer",

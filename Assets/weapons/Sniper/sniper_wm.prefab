@@ -25,7 +25,10 @@
           "_type": "gameobject",
           "go": "a1b2c3d4-3336-4aaa-b336-333333333336"
         },
-        "MuzzleEffect": null,
+        "MuzzleEffect": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapon_effects/rifle_muzzleflash.prefab"
+        },
         "MuzzleTransform": {
           "_type": "gameobject",
           "go": "a1b2c3d4-3335-4aaa-b335-333333333335"
@@ -42,7 +45,10 @@
           "go": "a1b2c3d4-3333-4aaa-b333-333333333333",
           "component_type": "SkinnedModelRenderer"
         },
-        "TracerEffect": null
+        "TracerEffect": {
+          "_type": "gameobject",
+          "prefab": "weapons/tracer_rifle.prefab"
+        }
       }
     ],
     "Children": [
@@ -51,7 +57,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_sniper",
-        "Position": "3.418695,-0.6192533,-5.397455",
+        "Position": "3.41869497,-0.619253278,-5.39745522",
         "Rotation": "0,0,0,1",
         "Scale": "1.5,1.5,1.5",
         "Tags": "",
@@ -150,7 +156,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "hold_R",
-            "Position": "-1.848641,0,3.195872",
+            "Position": "-1.84864104,0,3.19587207",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -182,6 +188,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },
@@ -193,6 +200,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
+    "facepunch.rifle_muzzleflash#76090",
     "facepunch.w_m700#144907"
   ],
   "__version": 2

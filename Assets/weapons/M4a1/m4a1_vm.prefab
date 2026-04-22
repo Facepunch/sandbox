@@ -36,7 +36,7 @@
         },
         "MuzzleTransform": {
           "_type": "gameobject",
-          "go": "71ca31da-3c1d-41d2-8061-f4b1d307d635"
+          "go": "cee08223-1f37-41fa-a57a-5ac8be70a8f9"
         },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -51,7 +51,11 @@
           "component_type": "SkinnedModelRenderer"
         },
         "ThrowableType": "HEGrenade",
-        "TracerEffect": null
+        "TracerEffect": {
+          "_type": "gameobject",
+          "prefab": "weapons/tracer_rifle.prefab"
+        },
+        "UseFastAnimations": false
       }
     ],
     "Children": [
@@ -157,8 +161,8 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "forearm",
-                    "Position": "9.051657,0.000002539877,2.272008",
-                    "Rotation": "0.00000000000007194245,-0.0000001192093,-0.0000000000000008881784,1",
+                    "Position": "9.05165672,2.53987696E-06,2.27200794",
+                    "Rotation": "7.1942452E-14,-1.19209304E-07,-8.8817842E-16,1",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -175,8 +179,8 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "cocking_lever",
-                    "Position": "10.12399,0.000003429857,3.379919",
-                    "Rotation": "0.00000000000007194245,-0.0000001192093,-0.0000000000000008881784,1",
+                    "Position": "10.1239901,3.42985709E-06,3.37991905",
+                    "Rotation": "7.1942452E-14,-1.19209304E-07,-8.8817842E-16,1",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -229,8 +233,8 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "reload_lever",
-                    "Position": "3.910427,0.0000003576322,0.05897713",
-                    "Rotation": "-0.0000002712796,0.8191516,-0.0000002712796,0.5735771",
+                    "Position": "3.91042709,3.57632189E-07,0.0589771308",
+                    "Rotation": "-2.71279589E-07,0.81915158,-2.71279589E-07,0.573577106",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -247,8 +251,8 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "reload_latch",
-                    "Position": "4.400158,0.0000003932034,0.7034111",
-                    "Rotation": "0.5000001,0.5,0.4999998,0.5000001",
+                    "Position": "4.40015793,3.93203408E-07,0.703411102",
+                    "Rotation": "0.500000119,0.5,0.499999791,0.500000119",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -496,6 +500,24 @@
                     "OwnerTransfer": 1,
                     "Components": [],
                     "Children": []
+                  },
+                  {
+                    "__guid": "b8cff9a5-94c5-4c2a-806e-50ce19fee2ec",
+                    "__version": 2,
+                    "Flags": 4,
+                    "Name": "charging_handle",
+                    "Position": "0,0,0",
+                    "Rotation": "0,0,0,1",
+                    "Scale": "1,1,1",
+                    "Tags": "",
+                    "Enabled": true,
+                    "NetworkMode": 2,
+                    "NetworkFlags": 0,
+                    "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
+                    "OwnerTransfer": 1,
+                    "Components": [],
+                    "Children": []
                   }
                 ]
               },
@@ -504,7 +526,7 @@
                 "__version": 2,
                 "Flags": 0,
                 "Name": "muzzle",
-                "Position": "15.22057,0,2.264799",
+                "Position": "15.2205696,0,2.26479912",
                 "Rotation": "0,0,0,1",
                 "Scale": "1,1,1",
                 "Tags": "",
@@ -522,8 +544,8 @@
                 "__version": 2,
                 "Flags": 0,
                 "Name": "eject",
-                "Position": "4.016383,-0.503845,2.920278",
-                "Rotation": "0.0696337,-0.7036697,-0.06963374,0.7036699",
+                "Position": "4.01638317,-0.503844976,2.92027807",
+                "Rotation": "0.0696337,-0.703669727,-0.0696337372,0.703669906",
                 "Scale": "1,1,1",
                 "Tags": "",
                 "Enabled": true,
@@ -702,8 +724,8 @@
                                 "__version": 2,
                                 "Flags": 0,
                                 "Name": "hold_R",
-                                "Position": "2.131874,-0.1289463,-2.895847",
-                                "Rotation": "-0.3298892,0.6145931,0.4724823,0.5387103",
+                                "Position": "2.13187408,-0.128946304,-2.89584708",
+                                "Rotation": "-0.329889208,0.614593089,0.472482294,0.538710296",
                                 "Scale": "1,1,1",
                                 "Tags": "",
                                 "Enabled": true,
@@ -1506,8 +1528,8 @@
                                 "__version": 2,
                                 "Flags": 0,
                                 "Name": "hold_L",
-                                "Position": "2.130754,-0.1296377,2.896524",
-                                "Rotation": "0.3298803,-0.6147378,0.4724678,0.5385635",
+                                "Position": "2.13075399,-0.129637703,2.89652395",
+                                "Rotation": "0.329880297,-0.614737809,0.47246781,0.53856349",
                                 "Scale": "1,1,1",
                                 "Tags": "",
                                 "Enabled": true,
@@ -1748,14 +1770,33 @@
             "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
-            "Children": []
+            "Children": [
+              {
+                "__guid": "cee08223-1f37-41fa-a57a-5ac8be70a8f9",
+                "__version": 2,
+                "Flags": 0,
+                "Name": "muzzle",
+                "Position": "2.07223153,-7.23667792E-10,7.79686161E-07",
+                "Rotation": "0,0,0,1",
+                "Scale": "1,1,1",
+                "Tags": "",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "NetworkFlags": 0,
+                "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
+                "OwnerTransfer": 1,
+                "Components": [],
+                "Children": []
+              }
+            ]
           },
           {
             "__guid": "467c0bf4-9489-4925-a2aa-c7f72109fe28",
             "__version": 2,
-            "Flags": 0,
+            "Flags": 8,
             "Name": "eject",
-            "Position": "2.047883,-0.5038458,8.747038",
+            "Position": "0,0,0",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -1849,13 +1890,15 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
     },
     "__variables": []
