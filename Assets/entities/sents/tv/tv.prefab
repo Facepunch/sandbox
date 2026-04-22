@@ -1,46 +1,42 @@
 {
   "RootObject": {
-    "__guid": "b039b186-1a9e-4166-8c29-e87c9bf90261",
+    "__guid": "f0e1d2c3-b4a5-4697-8899-aabbccddeeff",
     "__version": 2,
     "Flags": 0,
-    "Name": "item_camera",
+    "Name": "tv",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
-    "Scale": "2,2,2",
-    "Tags": "",
+    "Scale": "1,1,1",
+    "Tags": "tv",
     "Enabled": true,
     "NetworkMode": 1,
     "NetworkFlags": 0,
-    "NetworkOrphaned": 1,
+    "NetworkOrphaned": 0,
     "NetworkTransmit": true,
     "OwnerTransfer": 1,
     "Components": [
       {
-        "__type": "InventoryPickup",
-        "__guid": "68f31dea-403a-4788-8c4b-7416c88f28ed",
+        "__type": "TVEntity",
+        "__guid": "e1d2c3b4-a596-4788-99aa-bbccddeeff00",
         "__enabled": true,
         "Flags": 0,
-        "Items": [
-          {
-            "_type": "gameobject",
-            "prefab": "weapons/camera/camera.prefab"
-          }
-        ],
+        "Brightness": 1,
+        "On": true,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "PickupSound": null
+        "ScreenMaterialName": "tv_surface"
       },
       {
         "__type": "Sandbox.Rigidbody",
-        "__guid": "558f08b2-be5c-411e-990a-9984fbea59ea",
+        "__guid": "d2c3b4a5-9687-4899-aabb-ccddeeff0011",
         "__enabled": true,
         "Flags": 0,
         "AngularDamping": 0,
-        "EnableImpactDamage": true,
+        "EnableImpactDamage": false,
         "EnhancedCcd": false,
         "Gravity": true,
         "GravityScale": 1,
@@ -70,14 +66,14 @@
       },
       {
         "__type": "Sandbox.ModelCollider",
-        "__guid": "c18b0492-c63f-4428-b2c8-10a5cf3a6852",
+        "__guid": "b647f1a9-123a-4be7-9031-2bfd0fbeadee",
         "__enabled": true,
         "Flags": 0,
         "ColliderFlags": 0,
         "Elasticity": null,
         "Friction": null,
         "IsTrigger": false,
-        "Model": "models/props/camera_film/camera_film.vmdl",
+        "Model": "models/sbox_props/tv/tv.vmdl",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -96,10 +92,10 @@
     ],
     "Children": [
       {
-        "__guid": "be9e7dca-62e0-4fdb-ae3c-a198732868dd",
+        "__guid": "abae0817-6fd6-4188-85e7-c30a9cbdb5b4",
         "__version": 2,
         "Flags": 0,
-        "Name": "Model",
+        "Name": "mdl",
         "Position": "0,0,0",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
@@ -112,35 +108,23 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "Sandbox.SkinnedModelRenderer",
-            "__guid": "942e53ac-f5c0-4f50-9f2a-1d45ec9b6269",
+            "__type": "Sandbox.ModelRenderer",
+            "__guid": "dc8a08a3-62a1-4cd5-a460-76a8400d86ed",
             "__enabled": true,
             "Flags": 0,
-            "AnimationGraph": null,
             "BodyGroups": 18446744073709551615,
-            "BoneMergeTarget": null,
-            "CreateAttachments": true,
-            "CreateBoneObjects": false,
+            "CreateAttachments": false,
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/props/camera_film/camera_film.vmdl",
-            "Morphs": {},
+            "Model": "models/sbox_props/tv/tv.vmdl",
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
-            "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
               "OverlayLayer": false,
@@ -148,53 +132,52 @@
               "AfterUILayer": false
             },
             "RenderType": "On",
-            "Sequence": {
-              "Name": null,
-              "Looping": true,
-              "Blending": false
-            },
-            "Tint": "1,1,1,1",
-            "UseAnimGraph": true
+            "Tint": "1,1,1,1"
           }
         ],
-        "Children": [
+        "Children": []
+      },
+      {
+        "__guid": "dfc0c7a5-71ce-417d-af9d-5c698d0a3c02",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "light",
+        "Position": "6.30579376,0,15.7979279",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "light_spot,light",
+        "Enabled": false,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
           {
-            "__guid": "8d775402-7810-4a2f-a548-12ba513e3061",
-            "__version": 2,
+            "__type": "Sandbox.SpotLight",
+            "__guid": "6e2209c2-f507-4580-b3fe-89a46320dff1",
+            "__enabled": true,
             "Flags": 0,
-            "Name": "muzzle",
-            "Position": "6.11233,0,5.608825",
-            "Rotation": "0,0,0,1",
-            "Scale": "1,1,1",
-            "Tags": "",
-            "Enabled": true,
-            "NetworkMode": 2,
-            "NetworkFlags": 0,
-            "NetworkOrphaned": 0,
-            "NetworkTransmit": true,
-            "OwnerTransfer": 1,
-            "Components": [],
-            "Children": []
-          },
-          {
-            "__guid": "e4354278-5cf0-40ab-b726-f1f3c47e6790",
-            "__version": 2,
-            "Flags": 0,
-            "Name": "eject",
-            "Position": "2,-0.443764,8.557577",
-            "Rotation": "-0.2126311,-0.2126311,-0.6743796,0.6743796",
-            "Scale": "1,1,1",
-            "Tags": "",
-            "Enabled": true,
-            "NetworkMode": 2,
-            "NetworkFlags": 0,
-            "NetworkOrphaned": 0,
-            "NetworkTransmit": true,
-            "OwnerTransfer": 1,
-            "Components": [],
-            "Children": []
+            "Attenuation": 1,
+            "ConeInner": 15,
+            "ConeOuter": 45,
+            "Cookie": null,
+            "FogMode": "Enabled",
+            "FogStrength": 1,
+            "LightColor": "0.91373,0.98039,1,1",
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Radius": 500,
+            "ShadowBias": 0.0005,
+            "ShadowHardness": 0,
+            "Shadows": false
           }
-        ]
+        ],
+        "Children": []
       }
     ],
     "__properties": {
@@ -213,18 +196,19 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },
     "__variables": []
   },
   "ResourceVersion": 2,
-  "ShowInMenu": true,
-  "MenuPath": "Deathmatch/Items/MP5",
+  "ShowInMenu": false,
+  "MenuPath": null,
   "MenuIcon": null,
-  "DontBreakAsTemplate": true,
+  "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.camerafilm#153556"
+    "facepunch.tv#143951"
   ],
   "__version": 2
 }

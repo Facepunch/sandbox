@@ -11,38 +11,72 @@ public class CameraWeapon : BaseWeapon
 
 	[Property] SoundEvent CameraShoot { get; set; }
 
+	[Property, Range( 128, 1024, 128 ), ClientEditable, Group( "Render Target" )]
+	public int Resolution { get; set; } = 512;
+
+	/// <summary>
+	/// The render target texture produced by this camera. Read by <see cref="TVEntity"/>.
+	/// </summary>
+	public Texture RenderTexture => _renderTexture;
+
+	private Texture _renderTexture;
+	private CameraComponent _rtCamera;
+
 	public override bool WantsHideHud => true;
 
 	protected override void OnEnabled()
 	{
 		base.OnEnabled();
 
-		if ( IsProxy )
-			return;
-
-		dof = Scene.Camera.Components.GetOrCreate<DepthOfField>();
-		dof.Flags |= ComponentFlags.NotNetworked;
-
-		focusing = false;
+		EnsureRTCamera();
+		EnsureRenderTexture();
 	}
 
 	protected override void OnDisabled()
 	{
 		base.OnDisabled();
 
-		if ( IsProxy )
-			return;
+		CleanupDoF();
+		CleanupRenderTexture();
+		CleanupRTCamera();
+	}
 
-		dof?.Destroy();
-		dof = default;
+	protected override void OnDestroy()
+	{
+		CleanupDoF();
+		CleanupRenderTexture();
+		CleanupRTCamera();
+		base.OnDestroy();
+	}
+
+	protected override void OnPreRender()
+	{
+		if ( _rtCamera is null ) return;
+
+		EnsureRenderTexture();
+
+		if ( HasOwner && Scene.Camera is not null )
+		{
+			// When held, mirror the player's camera so the TV shows their POV.
+			_rtCamera.WorldPosition = Scene.Camera.WorldPosition;
+			_rtCamera.WorldRotation = Scene.Camera.WorldRotation;
+			_rtCamera.FieldOfView = Scene.Camera.FieldOfView;
+
+			if ( !_rtCamera.RenderExcludeTags.Has( "viewer" ) )
+				_rtCamera.RenderExcludeTags.Add( "viewer" );
+		}
+		else
+		{
+			_rtCamera.RenderExcludeTags.Remove( "viewer" );
+			_rtCamera.FieldOfView = 40f;
+		}
 	}
 
 	/// <summary>
-	/// We want to control the camera fov
+	/// We want to control the camera fov when held by a player.
 	/// </summary>
 	public override void OnCameraSetup( Player player, Sandbox.CameraComponent camera )
 	{
-		//Log.Info( $"{player.Network.IsOwner} {Network.IsOwner}" );
 		if ( !player.Network.IsOwner || !Network.IsOwner ) return;
 
 		camera.FieldOfView = fov;
@@ -51,7 +85,6 @@ public class CameraWeapon : BaseWeapon
 
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
-		// We're zooming
 		if ( Input.Down( "attack2" ) )
 		{
 			angles = default;
@@ -78,6 +111,9 @@ public class CameraWeapon : BaseWeapon
 			roll -= Input.AnalogLook.yaw;
 		}
 
+		// DoF only when weapon has an owner
+		EnsureDoF();
+
 		if ( dof.IsValid() )
 		{
 			UpdateDepthOfField( dof );
@@ -92,6 +128,21 @@ public class CameraWeapon : BaseWeapon
 		}
 
 		focusing = Input.Down( "attack1" );
+	}
+
+	private void EnsureDoF()
+	{
+		if ( dof.IsValid() ) return;
+
+		dof = Scene.Camera.Components.GetOrCreate<DepthOfField>();
+		dof.Flags |= ComponentFlags.NotNetworked;
+		focusing = false;
+	}
+
+	private void CleanupDoF()
+	{
+		dof?.Destroy();
+		dof = default;
 	}
 
 	private void UpdateDepthOfField( DepthOfField dof )
@@ -113,6 +164,52 @@ public class CameraWeapon : BaseWeapon
 		var target = Scene.Camera.WorldPosition.Distance( focusPoint ) + 64;
 
 		dof.FocalDistance = dof.FocalDistance.LerpTo( target, Time.Delta * 2.0f );
+	}
+
+	private void EnsureRTCamera()
+	{
+		_rtCamera = GetComponentInChildren<CameraComponent>( true );
+
+		if ( _rtCamera is null )
+		{
+			var go = new GameObject( GameObject, true, "rt_camera" );
+			_rtCamera = go.AddComponent<CameraComponent>();
+		}
+
+		_rtCamera.IsMainCamera = false;
+		_rtCamera.BackgroundColor = Color.Black;
+		_rtCamera.ClearFlags = ClearFlags.Color | ClearFlags.Depth | ClearFlags.Stencil;
+		_rtCamera.FieldOfView = fov;
+		_rtCamera.RenderExcludeTags.Add( "viewmodel" );
+	}
+
+	private void EnsureRenderTexture()
+	{
+		if ( _renderTexture is not null && _renderTexture.Width == Resolution && _renderTexture.Height == Resolution )
+			return;
+
+		CleanupRenderTexture();
+
+		_renderTexture = Texture.CreateRenderTarget()
+			.WithSize( Resolution, Resolution )
+			.Create();
+
+		if ( _rtCamera is not null )
+			_rtCamera.RenderTarget = _renderTexture;
+	}
+
+	private void CleanupRenderTexture()
+	{
+		if ( _rtCamera is not null )
+			_rtCamera.RenderTarget = null;
+
+		_renderTexture?.Dispose();
+		_renderTexture = null;
+	}
+
+	private void CleanupRTCamera()
+	{
+		_rtCamera = null;
 	}
 
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )

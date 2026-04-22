@@ -1,0 +1,9 @@
+{
+  "Prefab": "entities/sents/tv/tv.prefab",
+  "Title": "TV",
+  "Description": "A screen that displays a linked camera's feed. Link a Camera to this with the Linker tool.",
+  "Category": "World",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}
