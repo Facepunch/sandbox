@@ -242,7 +242,8 @@ public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 		if ( slot < 0 )
 			return;
 
-		item.GameObject.Parent = GameObject;
+		item.GameObject.SetParent( GameObject, false );
+		item.LocalTransform = global::Transform.Zero;
 		item.InventorySlot = slot;
 		item.GameObject.Enabled = false;
 
