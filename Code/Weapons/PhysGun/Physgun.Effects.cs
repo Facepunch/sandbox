@@ -11,6 +11,8 @@ public partial class Physgun : ScreenWeapon, IPlayerControllable
 
 	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput ShootInput { get; set; }
 	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput SecondaryInput { get; set; }
+	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput ExtendInput { get; set; }
+	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput RetractInput { get; set; }
 
 	public void OnStartControl() { }
 	public void OnEndControl() { }

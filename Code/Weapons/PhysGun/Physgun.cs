@@ -349,6 +349,18 @@ public partial class Physgun
 					GameObject.PlaySound( ReleasedSound );
 					return;
 				}
+
+				// Retract / extend grabbed object
+				if ( ExtendInput.Down() || RetractInput.Down() )
+				{
+					var state = _state;
+					if ( ExtendInput.Down() ) state.GrabDistance += 200.0f * Time.Delta;
+					if ( RetractInput.Down() ) state.GrabDistance -= 200.0f * Time.Delta;
+					state.GrabDistance = MathF.Max( 0.0f, state.GrabDistance );
+
+					_state = default;
+					_state = state;
+				}
 			}
 
 			return;
