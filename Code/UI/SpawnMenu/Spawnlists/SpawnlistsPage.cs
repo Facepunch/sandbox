@@ -53,8 +53,8 @@ public class SpawnlistsPage : BaseSpawnMenu
 		}
 
 		AddHeader( "Workshop" );
-		AddOption( "🎖️", "Popular", () => new SpawnlistWorkshop { SortOrder = Storage.SortOrder.RankedByVote } );
-		AddOption( "🐣", "Newest", () => new SpawnlistWorkshop { SortOrder = Storage.SortOrder.RankedByPublicationDate } );
+		AddOption( "🎖️", "Popular", () => new SpawnlistWorkshop { SortOrder = WorkshopSortMode.Popular } );
+		AddOption( "🐣", "Newest", () => new SpawnlistWorkshop { SortOrder = WorkshopSortMode.Newest } );
 	}
 
 	protected override void OnMenuFooter( Panel footer )

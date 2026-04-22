@@ -21,7 +21,15 @@
 <SpawnMenuContent>
 
     <Header>
-        <SpawnMenuToolbar></SpawnMenuToolbar>
+        <SpawnMenuToolbar>
+            <Left>
+                <TextEntry Placeholder="Search..." class="filter menu-input" Value:bind=@Filter />
+            </Left>
+
+            <Right>
+                <DropDown Value:bind=@SortOrder />
+            </Right>
+        </SpawnMenuToolbar>
     </Header>
 
     <Body>
@@ -41,24 +49,33 @@
 {
     public string Query { get; set; } = "";
 
-    void Spawn( Package package )
+    private string Filter
     {
-        GameManager.Spawn( $"entity:{package.FullIdent}" );
+        get;
+        set { field = value; Rebuild(); }
+    }
+
+    public PackageSortMode SortOrder
+    {
+        get;
+        set { field = value; Rebuild(); }
     }
 
     protected override void OnParametersSet()
     {
-        base.OnParametersSet();
-
-        _ = Rebuild();
+        SortOrder = PackageSortMode.Popular;
+        Rebuild();
     }
-
 
     Package.FindResult LastResult;
 
-    async Task Rebuild()
+    async void Rebuild()
     {
-        LastResult = await Package.FindAsync($"type:sent {Query}");
+        var query = $"sort:{SortOrder.ToIdentifier()} type:sent";
+        if ( !string.IsNullOrEmpty( Query ) ) query += $" {Query}";
+        if ( !string.IsNullOrEmpty( Filter ) ) query += $" {Filter}";
+
+        LastResult = await Package.FindAsync( query );
         StateHasChanged();
     }
     
