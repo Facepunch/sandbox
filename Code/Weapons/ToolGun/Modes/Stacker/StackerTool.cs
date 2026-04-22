@@ -1,0 +1,372 @@
+/// <summary>
+/// Direction to stack objects in.
+/// </summary>
+public enum StackDirection
+{
+	Up,
+	Down,
+	Left,
+	Right,
+	Forward,
+	Back
+}
+
+/// <summary>
+/// How to interpret the stack direction axis.
+/// </summary>
+public enum StackAlignMode
+{
+	/// <summary>
+	/// Stack along world-space axes regardless of object orientation.
+	/// </summary>
+	World,
+
+	/// <summary>
+	/// Stack along the target object's local axes.
+	/// </summary>
+	Object
+}
+
+[Icon( "📚" )]
+[ClassName( "stacker" )]
+[Group( "Building" )]
+[Title( "Stacker" )]
+public class StackerTool : ToolMode
+{
+	private const int MaxStackCount = 50;
+
+	public override IEnumerable<string> TraceIgnoreTags => ["player", "constraint", "collision"];
+
+	/// <summary>
+	/// Number of copies to create.
+	/// </summary>
+	[Property, Sync, Range( 1, MaxStackCount ), Step( 1 ), Title( "Count" ), ClientEditable]
+	public float StackCount { get; set; } = 2;
+
+	/// <summary>
+	/// Which direction to stack in.
+	/// </summary>
+	[Property, Sync]
+	public StackDirection Direction { get; set; } = StackDirection.Up;
+
+	/// <summary>
+	/// Whether to align the stack axis to the world or the target object.
+	/// </summary>
+	[Property, Sync, Title( "Alignment" )]
+	public StackAlignMode AlignMode { get; set; } = StackAlignMode.Object;
+
+	/// <summary>
+	/// Rotation offset (degrees) around the first perpendicular axis of the stack direction.
+	/// For Up/Down stacking this rotates around the right axis.
+	/// </summary>
+	[Property, Sync, Title( "Angle X" ), Range( -180, 180 ), Step( 1 )]
+	public float AngleOffsetX { get; set; } = 0f;
+
+	/// <summary>
+	/// Rotation offset (degrees) around the second perpendicular axis of the stack direction.
+	/// For Up/Down stacking this rotates around the forward axis.
+	/// </summary>
+	[Property, Sync, Title( "Angle Y" ), Range( -180, 180 ), Step( 1 )]
+	public float AngleOffsetY { get; set; } = 0f;
+
+	/// <summary>
+	/// Extra gap (in units) between each stacked copy.
+	/// </summary>
+	[Property, Sync, Range( 0, 128 ), Title( "Gap" )]
+	public float PositionOffset { get; set; } = 0f;
+
+	/// <summary>
+	/// When true, stacked copies will be frozen (motion disabled).
+	/// </summary>
+	[Property, Sync, Title( "Freeze" )]
+	public bool FreezeAll { get; set; } = true;
+
+	public override string Description => "#tool.hint.stacker.description";
+	public override string PrimaryAction => "#tool.hint.stacker.stack";
+	public override string SecondaryAction => "#tool.hint.stacker.cycle_alignment";
+	public override string ReloadAction => "#tool.hint.stacker.cycle_direction";
+
+	public override void OnControl()
+	{
+		base.OnControl();
+
+		var select = TraceSelect();
+
+		IsValidState = IsValidTarget( select );
+
+		if ( Input.Pressed( "reload" ) )
+		{
+			CycleDirection();
+		}
+
+		if ( Input.Pressed( "attack2" ) )
+		{
+			CycleAlignment();
+		}
+
+		if ( !IsValidState )
+			return;
+
+		var target = ResolveRoot( select.GameObject );
+		var transforms = ComputeStackTransforms( target );
+
+		DrawStackPreview( target, transforms );
+
+		if ( Input.Pressed( "attack1" ) )
+		{
+			SpawnStack( target );
+			ShootEffects( select );
+		}
+	}
+
+	/// <summary>
+	/// Resolve to the networked root object so we clone the full prop, not a child collider.
+	/// </summary>
+	private static GameObject ResolveRoot( GameObject go )
+	{
+		return go?.Network?.RootGameObject ?? go;
+	}
+
+	/// <summary>
+	/// Cycle through stack directions on reload.
+	/// </summary>
+	private void CycleDirection()
+	{
+		Direction = Direction switch
+		{
+			StackDirection.Up => StackDirection.Right,
+			StackDirection.Right => StackDirection.Down,
+			StackDirection.Down => StackDirection.Left,
+			StackDirection.Left => StackDirection.Forward,
+			StackDirection.Forward => StackDirection.Back,
+			StackDirection.Back => StackDirection.Up,
+			_ => StackDirection.Up
+		};
+	}
+
+	/// <summary>
+	/// Toggle between world and object alignment.
+	/// </summary>
+	private void CycleAlignment()
+	{
+		AlignMode = AlignMode == StackAlignMode.World
+			? StackAlignMode.Object
+			: StackAlignMode.World;
+	}
+
+	/// <summary>
+	/// Check if the aimed-at object is a valid stacking target.
+	/// </summary>
+	private bool IsValidTarget( SelectionPoint select )
+	{
+		if ( !select.IsValid() ) return false;
+		if ( select.IsWorld ) return false;
+		if ( select.IsPlayer ) return false;
+
+		return true;
+	}
+
+	/// <summary>
+	/// Get the local-space direction vector for the configured <see cref="Direction"/>.
+	/// </summary>
+	private static Vector3 GetLocalDirection( StackDirection dir )
+	{
+		return dir switch
+		{
+			StackDirection.Up => Vector3.Up,
+			StackDirection.Down => Vector3.Down,
+			StackDirection.Left => Vector3.Left,
+			StackDirection.Right => Vector3.Right,
+			StackDirection.Forward => Vector3.Forward,
+			StackDirection.Back => Vector3.Backward,
+			_ => Vector3.Up
+		};
+	}
+
+	/// <summary>
+	/// Get the two perpendicular axes for a given stack direction.
+	/// X and Y angle offsets rotate around these respectively.
+	/// </summary>
+	private static (Vector3 axisX, Vector3 axisY) GetPerpendicularAxes( StackDirection dir )
+	{
+		return dir switch
+		{
+			StackDirection.Up or StackDirection.Down => (Vector3.Right, Vector3.Forward),
+			StackDirection.Left or StackDirection.Right => (Vector3.Forward, Vector3.Up),
+			StackDirection.Forward or StackDirection.Back => (Vector3.Right, Vector3.Up),
+			_ => (Vector3.Right, Vector3.Forward)
+		};
+	}
+
+	/// <summary>
+	/// Build the per-step rotation from the X/Y angle offsets around the
+	/// two axes perpendicular to the stack direction.
+	/// </summary>
+	private Rotation GetStepRotation()
+	{
+		if ( AngleOffsetX == 0f && AngleOffsetY == 0f )
+			return Rotation.Identity;
+
+		var (axisX, axisY) = GetPerpendicularAxes( Direction );
+		return Rotation.FromAxis( axisX, AngleOffsetX ) * Rotation.FromAxis( axisY, AngleOffsetY );
+	}
+
+	/// <summary>
+	/// Compute how far apart copies should be along the stack axis by projecting
+	/// the object's oriented bounding box corners onto the actual world-space axis.
+	/// </summary>
+	private float GetStackExtent( GameObject target, Vector3 worldAxis )
+	{
+		var renderer = target.GetComponentInChildren<ModelRenderer>();
+		BBox localBounds;
+
+		if ( renderer.IsValid() && renderer.Model.IsValid() )
+		{
+			var mb = renderer.Model.Bounds;
+			localBounds = new BBox( mb.Mins * target.WorldScale, mb.Maxs * target.WorldScale );
+		}
+		else
+		{
+			localBounds = new BBox( -Vector3.One * 8f, Vector3.One * 8f );
+		}
+
+		// Project all 8 corners of the oriented bounding box onto the axis
+		var rot = target.WorldRotation;
+		float min = float.MaxValue;
+		float max = float.MinValue;
+
+		for ( int i = 0; i < 8; i++ )
+		{
+			var corner = new Vector3(
+				(i & 1) == 0 ? localBounds.Mins.x : localBounds.Maxs.x,
+				(i & 2) == 0 ? localBounds.Mins.y : localBounds.Maxs.y,
+				(i & 4) == 0 ? localBounds.Mins.z : localBounds.Maxs.z
+			);
+
+			var worldCorner = rot * corner;
+			var proj = Vector3.Dot( worldCorner, worldAxis );
+			min = MathF.Min( min, proj );
+			max = MathF.Max( max, proj );
+		}
+
+		return (max - min) + PositionOffset;
+	}
+
+	/// <summary>
+	/// Compute the world transforms for all stacked copies using iterative placement.
+	/// Each copy is positioned relative to the previous one, so angle offsets
+	/// produce correct arcs and circles rather than spirals.
+	/// </summary>
+	private Transform[] ComputeStackTransforms( GameObject target )
+	{
+		var localDir = GetLocalDirection( Direction );
+		var basePos = target.WorldPosition;
+		var baseRot = target.WorldRotation;
+
+		// The initial world-space axis (before any angle offsets)
+		var initialAxis = AlignMode == StackAlignMode.Object
+			? baseRot * localDir
+			: localDir;
+
+		var extent = GetStackExtent( target, initialAxis );
+		var stepAngle = GetStepRotation();
+
+		var count = Math.Clamp( StackCount, 1, MaxStackCount );
+		var transforms = new Transform[count.CeilToInt()];
+
+		// Track the current step's rotation and position iteratively
+		var prevPos = basePos;
+		var prevRot = baseRot;
+
+		for ( int i = 0; i < count; i++ )
+		{
+			// Apply the per-step angle offset to get this copy's rotation
+			Rotation copyRot;
+			if ( AlignMode == StackAlignMode.Object )
+			{
+				// Object mode: angle offset rotates in the object's local frame
+				copyRot = prevRot * stepAngle;
+			}
+			else
+			{
+				// World mode: angle offset rotates in world space
+				copyRot = stepAngle * prevRot;
+			}
+
+			// Compute the step direction from the *previous* copy's orientation
+			Vector3 stepAxis;
+			if ( AlignMode == StackAlignMode.Object )
+			{
+				stepAxis = prevRot * localDir;
+			}
+			else
+			{
+				stepAxis = localDir;
+			}
+
+			var copyPos = prevPos + stepAxis * extent;
+
+			transforms[i] = new Transform( copyPos, copyRot, target.WorldScale );
+
+			prevPos = copyPos;
+			prevRot = copyRot;
+		}
+
+		return transforms;
+	}
+
+	/// <summary>
+	/// Render ghost previews of each stacked copy.
+	/// </summary>
+	private void DrawStackPreview( GameObject target, Transform[] transforms )
+	{
+		foreach ( var tx in transforms )
+		{
+			DebugOverlay.GameObject( target, transform: tx, color: Color.White.WithAlpha( 0.5f ) );
+		}
+	}
+
+	/// <summary>
+	/// Server-side spawn: recomputes transforms from synced properties to prevent
+	/// clients from sending arbitrary placement data.
+	/// </summary>
+	[Rpc.Host]
+	private void SpawnStack( GameObject target )
+	{
+		if ( !target.IsValid() ) return;
+
+		var root = ResolveRoot( target );
+
+		// Recompute transforms server-side from synced properties
+		var transforms = ComputeStackTransforms( root );
+
+		var undo = Player.Undo.Create();
+		undo.Name = "Stack";
+		undo.Icon = "📚";
+
+		for ( int i = 0; i < transforms.Length; i++ )
+		{
+			var tx = transforms[i];
+
+			var clone = root.Clone( new CloneConfig
+			{
+				Transform = tx,
+				StartEnabled = true
+			} );
+
+			clone.Tags.Add( "removable" );
+
+			if ( FreezeAll )
+			{
+				var rb = clone.GetComponent<Rigidbody>();
+				if ( rb.IsValid() )
+				{
+					rb.MotionEnabled = false;
+				}
+			}
+
+			clone.NetworkSpawn( true, null );
+			undo.Add( clone );
+		}
+	}
+}
