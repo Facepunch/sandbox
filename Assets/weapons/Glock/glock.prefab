@@ -86,7 +86,8 @@
           "_type": "gameobject",
           "prefab": "weapons/glock/glock.prefab"
         },
-        "MaxReserveAmmo": 120,
+        "MaxReserveAmmo": 300,
+        "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -219,7 +220,10 @@
               "_type": "gameobject",
               "go": "e5f6a7b8-c9d0-1234-ef01-345678901234"
             },
-            "MuzzleEffect": null,
+            "MuzzleEffect": {
+              "_type": "gameobject",
+              "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
+            },
             "MuzzleTransform": {
               "_type": "gameobject",
               "go": "d4e5f6a7-b8c9-0123-def0-234567890123"
@@ -352,6 +356,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": true,
   "__references": [
+    "facepunch.pistol_muzzleflash#76089",
     "facepunch.w_usp#152497"
   ],
   "__version": 2

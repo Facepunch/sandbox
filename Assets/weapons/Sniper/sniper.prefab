@@ -86,6 +86,7 @@
           "prefab": "weapons/sniper/sniper.prefab"
         },
         "MaxReserveAmmo": 80,
+        "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -220,7 +221,10 @@
               "_type": "gameobject",
               "go": "7fc2a06a-228c-956d-0177-c95c4cc4df53"
             },
-            "MuzzleEffect": null,
+            "MuzzleEffect": {
+              "_type": "gameobject",
+              "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
+            },
             "MuzzleTransform": {
               "_type": "gameobject",
               "go": "6eb19f59-117b-845c-f066-b84b3bb3ce42"
@@ -353,6 +357,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
+    "facepunch.pistol_muzzleflash#76089",
     "facepunch.w_m700#144907"
   ],
   "__version": 2

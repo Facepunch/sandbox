@@ -86,7 +86,8 @@
           "_type": "gameobject",
           "prefab": "weapons/mp5/mp5.prefab"
         },
-        "MaxReserveAmmo": 120,
+        "MaxReserveAmmo": 300,
+        "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -219,7 +220,10 @@
               "_type": "gameobject",
               "go": "9b5d35ef-f22f-98ce-e471-ac2e2223bae6"
             },
-            "MuzzleEffect": null,
+            "MuzzleEffect": {
+              "_type": "gameobject",
+              "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
+            },
             "MuzzleTransform": {
               "_type": "gameobject",
               "go": "8a4c24de-e11e-87bd-d360-9b1d1112a9d5"
@@ -352,6 +356,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
+    "facepunch.pistol_muzzleflash#76089",
     "facepunch.w_mp5#145410"
   ],
   "__version": 2

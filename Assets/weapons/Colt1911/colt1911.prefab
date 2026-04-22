@@ -72,7 +72,7 @@
             "TargetColor": "1,1,1,1",
             "CacheToDisk": true
           },
-          "compiled": "textures/generated/imagefile/3ee0db368e056402.vtex"
+          "compiled": null
         },
         "DisplayName": "1911",
         "DroppedGameObject": {
@@ -86,7 +86,8 @@
           "_type": "gameobject",
           "prefab": "weapons/colt1911/colt1911.prefab"
         },
-        "MaxReserveAmmo": 120,
+        "MaxReserveAmmo": 300,
+        "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -219,7 +220,10 @@
               "_type": "gameobject",
               "go": "37ca82b9-6e0f-9bf5-f5a0-064d606f6f56"
             },
-            "MuzzleEffect": null,
+            "MuzzleEffect": {
+              "_type": "gameobject",
+              "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
+            },
             "MuzzleTransform": {
               "_type": "gameobject",
               "go": "26b971a8-5dfe-8ae4-e49f-f53c5f5e5e45"
@@ -352,6 +356,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
+    "facepunch.pistol_muzzleflash#76089",
     "facepunch.w_1911#158879"
   ],
   "__version": 2

@@ -87,6 +87,7 @@
           "prefab": "weapons/m4a1/m4a1.prefab"
         },
         "MaxReserveAmmo": 300,
+        "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -219,7 +220,10 @@
               "_type": "gameobject",
               "go": "3c2bcf77-0afc-96be-eefe-3c9d15f5a8d3"
             },
-            "MuzzleEffect": null,
+            "MuzzleEffect": {
+              "_type": "gameobject",
+              "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
+            },
             "MuzzleTransform": {
               "_type": "gameobject",
               "go": "2b1abe66-f9eb-85ad-dded-2b8c04e497c2"
@@ -352,6 +356,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
+    "facepunch.pistol_muzzleflash#76089",
     "facepunch.w_m4a1#154378"
   ],
   "__version": 2
