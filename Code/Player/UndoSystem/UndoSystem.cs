@@ -22,6 +22,15 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 	}
 
 	/// <summary>
+	/// Remove a GameObject from all player undo stacks so it can no longer be undone.
+	/// </summary>
+	public void Remove( GameObject go )
+	{
+		foreach ( var stack in stacks.Values )
+			stack.Remove( go );
+	}
+
+	/// <summary>
 	/// Per-player undo stack
 	/// </summary>
 	public class PlayerStack
@@ -60,6 +69,15 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 				Undo();
 			}
 		}
+
+		/// <summary>
+		/// Remove a GameObject from all entries in this stack.
+		/// </summary>
+		public void Remove( GameObject go )
+		{
+			foreach ( var entry in entries )
+				entry.Remove( go );
+		}
 	}
 
 	/// <summary>
@@ -75,8 +93,7 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 
 		long SteamId;
 
-		Action actions = null;
-		bool actioned;
+		List<GameObject> gameObjects = new();
 
 		internal Entry( long steamId )
 		{
@@ -88,14 +105,7 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 		/// </summary>
 		public void Add( GameObject go )
 		{
-			actions += () =>
-			{
-				if ( go.IsValid() )
-				{
-					go.Destroy();
-					actioned = true;
-				}
-			};
+			gameObjects.Add( go );
 		}
 
 		/// <summary>
@@ -111,12 +121,28 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 		}
 
 		/// <summary>
+		/// Remove a GameObject from this entry so it will no longer be destroyed on undo.
+		/// </summary>
+		public void Remove( GameObject go )
+		{
+			gameObjects.Remove( go );
+		}
+
+		/// <summary>
 		/// Run this undo
 		/// </summary>
 		public bool Run( bool sendNotice = true )
 		{
-			actioned = false;
-			actions?.InvokeWithWarning();
+			var actioned = false;
+
+			foreach ( var go in gameObjects )
+			{
+				if ( go.IsValid() )
+				{
+					go.Destroy();
+					actioned = true;
+				}
+			}
 
 			if ( !actioned )
 				return false;

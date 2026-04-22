@@ -247,6 +247,9 @@ public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 		item.InventorySlot = slot;
 		item.GameObject.Enabled = false;
 
+		// Remove from undo stacks so the weapon can't be undone out of our hands
+		UndoSystem.Current.Remove( item.GameObject );
+
 		if ( Network.Owner is not null )
 			item.Network.AssignOwnership( Network.Owner );
 		else
