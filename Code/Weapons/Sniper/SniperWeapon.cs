@@ -72,7 +72,11 @@ public class SniperWeapon : BaseBulletWeapon
 		if ( _hasFired && Input.Released( "attack1" ) )
 		{
 			_hasFired = false;
-			ViewModel?.RunEvent<ViewModel>( x => x.Renderer?.Set( "b_reload_bolt", true ) );
+			ViewModel?.RunEvent<ViewModel>( x =>
+			{
+				x.Renderer?.Set( "speed_reload", 1 );
+				x.Renderer?.Set( "b_reload_bolt", true );
+			} );
 		}
 	}
 
