@@ -27,8 +27,15 @@ public class TVEntity : Component
 	private ModelRenderer _renderer;
 	private bool _hasSignal;
 	private RealTimeSince _timeSinceSignalChange;
+
 	private static readonly float TransitionDuration = 0.4f;
 	private static readonly float FadeStartFraction = 0.75f;
+
+	protected override void OnStart()
+	{
+		_renderer = GetComponentInChildren<ModelRenderer>( true );
+		_renderer?.SceneObject.Batchable = false;
+	}
 
 	protected override void OnUpdate()
 	{
@@ -43,14 +50,11 @@ public class TVEntity : Component
 		// Enable/disable the linked RT camera based on distance
 		if ( _linkedWeapon is not null )
 		{
-			var rtCam = _linkedWeapon.GetComponentInChildren<CameraComponent>( true );
-			if ( rtCam.IsValid() )
-			{
-				rtCam.Enabled = !tooFar;
-			}
+			var camera = _linkedWeapon.GetComponentInChildren<CameraComponent>( true );
+			camera?.Enabled = !tooFar;
 		}
 
-		bool newSignal = On && _linkedTexture is not null && !tooFar;
+		var newSignal = On && _linkedTexture is not null && !tooFar;
 
 		if ( newSignal != _hasSignal )
 		{
@@ -74,39 +78,21 @@ public class TVEntity : Component
 
 		if ( _materialCopy is null || _renderer is null ) return;
 
-		// Use the last texture during transition so the shader can blend smoothly
-		bool inTransition = _timeSinceSignalChange < TransitionDuration;
+		var inTransition = _timeSinceSignalChange < TransitionDuration;
 		var textureToUse = _linkedTexture ?? ( inTransition ? _lastTexture : null );
 
-		if ( textureToUse is not null )
-		{
-			_materialCopy.Attributes.Set( "Color", textureToUse );
-			_renderer.SceneObject?.Attributes.Set( "Color", textureToUse );
-		}
-		else
-		{
-			_materialCopy.Attributes.Set( "Color", Texture.Black );
-			_renderer.SceneObject?.Attributes.Set( "Color", Texture.Black );
-		}
+		_renderer.Attributes.Set( "Color", textureToUse is not null ? textureToUse : Texture.Black );
 
-		// Clear the cached texture after the transition completes
 		if ( !_hasSignal && !inTransition )
 		{
 			_lastTexture = null;
 		}
 
-		float signalFloat = _hasSignal ? 1.0f : 0.0f;
-		float screenOn = On ? 1.0f : 0.0f;
-		_materialCopy.Attributes.Set( "HasSignal", signalFloat );
-		_materialCopy.Attributes.Set( "ScreenOn", screenOn );
-		_materialCopy.Attributes.Set( "TimeSinceSignalChange", (float)_timeSinceSignalChange );
-		_materialCopy.Attributes.Set( "DistanceFade", distanceFade );
-		_materialCopy.Attributes.Set( "Brightness", Brightness );
-		_renderer.SceneObject?.Attributes.Set( "HasSignal", signalFloat );
-		_renderer.SceneObject?.Attributes.Set( "ScreenOn", screenOn );
-		_renderer.SceneObject?.Attributes.Set( "TimeSinceSignalChange", (float)_timeSinceSignalChange );
-		_renderer.SceneObject?.Attributes.Set( "DistanceFade", distanceFade );
-		_renderer.SceneObject?.Attributes.Set( "Brightness", Brightness );
+		_renderer.Attributes.Set( "HasSignal", _hasSignal ? 1.0f : 0.0f );
+		_renderer.Attributes.Set( "ScreenOn", On ? 1.0f : 0.0f );
+		_renderer.Attributes.Set( "TimeSinceSignalChange", (float)_timeSinceSignalChange );
+		_renderer.Attributes.Set( "DistanceFade", distanceFade );
+		_renderer.Attributes.Set( "Brightness", Brightness );
 	}
 
 	protected override void OnDestroy()
@@ -130,8 +116,7 @@ public class TVEntity : Component
 			var target = link.Body?.Root;
 			if ( target is null ) continue;
 
-			if ( target.GetComponentInChildren<CameraWeapon>( true ) is CameraWeapon weapon
-				&& weapon.Enabled
+			if ( target.GetComponentInChildren<CameraWeapon>() is CameraWeapon weapon
 				&& weapon.RenderTexture is not null )
 			{
 				_linkedTexture = weapon.RenderTexture;
@@ -141,13 +126,11 @@ public class TVEntity : Component
 		}
 	}
 
-	private static readonly string CrtShaderPath = "entities/sents/tv/materials/tv_crt_screen.shader";
+	private static readonly string ShaderPath = "entities/sents/tv/materials/tv_crt_screen.shader";
 
 	private void EnsureMaterialSetup()
 	{
 		if ( _materialCopy is not null && _renderer.IsValid() ) return;
-
-		_renderer = GetComponentInChildren<ModelRenderer>( true );
 		if ( _renderer is null ) return;
 
 		var materials = _renderer.Model?.Materials;
@@ -155,9 +138,9 @@ public class TVEntity : Component
 
 		for ( int i = 0; i < mats.Length; i++ )
 		{
-			if ( mats[i]?.Name?.Contains( ScreenMaterialName ) == true )
+			if ( mats[i]?.Name?.Contains( ScreenMaterialName ) is true )
 			{
-				_materialCopy = Material.FromShader( CrtShaderPath );
+				_materialCopy = Material.FromShader( ShaderPath );
 				_renderer.Materials.SetOverride( i, _materialCopy );
 				return;
 			}
