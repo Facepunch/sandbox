@@ -42,6 +42,6 @@ public class EntityPage : BaseSpawnMenu
 		AddOption( "💪", "Showcase", () => new EntityListCloud() { Query = "cat:showcase" } );
 		AddOption( "🧸", "Toys & Fun", () => new EntityListCloud() { Query = "cat:toy" } );
 		AddOption( "🚚", "Vehicle", () => new EntityListCloud() { Query = "cat:vehicle" } );
-		AddOption( "⭐", "Favourites", () => new EntityListCloud() { Query = "sort:favourite" } );
+		// AddOption( "⭐", "Favourites", () => new EntityListCloud() { Query = "sort:favourite" } );
 	}
 }

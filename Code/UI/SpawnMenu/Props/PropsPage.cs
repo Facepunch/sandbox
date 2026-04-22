@@ -7,10 +7,6 @@ public class PropsPage : BaseSpawnMenu
 {
 	protected override void Rebuild()
 	{
-		// spawnlists should do this
-		// AddHeader( "You" );
-		// AddOption( "⭐", "Favourites", () => new SpawnPageFavourites() );
-
 		AddHeader( "Workshop" );
 		AddOption( "🧠", "All", () => new SpawnPageCloud() );
 		AddOption( "🥸", "Humans", () => new SpawnPageCloud() { Category = "human" } );
