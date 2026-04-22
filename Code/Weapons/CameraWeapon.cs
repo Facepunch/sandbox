@@ -11,8 +11,10 @@ public class CameraWeapon : BaseWeapon
 
 	[Property] SoundEvent CameraShoot { get; set; }
 
-	[Property, Range( 128, 1024, 128 ), ClientEditable, Group( "Render Target" )]
-	public int Resolution { get; set; } = 512;
+	/// <summary>
+	/// The RT camera's resolution 
+	/// </summary>
+	private static int _cameraResolution = 512;
 
 	/// <summary>
 	/// The render target texture produced by this camera. Read by <see cref="TVEntity"/>.
@@ -36,14 +38,14 @@ public class CameraWeapon : BaseWeapon
 	{
 		base.OnDisabled();
 
-		CleanupDoF();
+		DestroyDepthOfField();
 		CleanupRenderTexture();
 		CleanupRTCamera();
 	}
 
 	protected override void OnDestroy()
 	{
-		CleanupDoF();
+		DestroyDepthOfField();
 		CleanupRenderTexture();
 		CleanupRTCamera();
 		base.OnDestroy();
@@ -111,8 +113,7 @@ public class CameraWeapon : BaseWeapon
 			roll -= Input.AnalogLook.yaw;
 		}
 
-		// DoF only when weapon has an owner
-		EnsureDoF();
+		EnsureDepthOfField();
 
 		if ( dof.IsValid() )
 		{
@@ -130,16 +131,16 @@ public class CameraWeapon : BaseWeapon
 		focusing = Input.Down( "attack1" );
 	}
 
-	private void EnsureDoF()
+	private void EnsureDepthOfField()
 	{
 		if ( dof.IsValid() ) return;
 
-		dof = Scene.Camera.Components.GetOrCreate<DepthOfField>();
+		dof = Scene.Camera.GetOrAddComponent<DepthOfField>();
 		dof.Flags |= ComponentFlags.NotNetworked;
 		focusing = false;
 	}
 
-	private void CleanupDoF()
+	private void DestroyDepthOfField()
 	{
 		dof?.Destroy();
 		dof = default;
@@ -185,13 +186,13 @@ public class CameraWeapon : BaseWeapon
 
 	private void EnsureRenderTexture()
 	{
-		if ( _renderTexture is not null && _renderTexture.Width == Resolution && _renderTexture.Height == Resolution )
+		if ( _renderTexture is not null && _renderTexture.Width == _cameraResolution && _renderTexture.Height == _cameraResolution )
 			return;
 
 		CleanupRenderTexture();
 
 		_renderTexture = Texture.CreateRenderTarget()
-			.WithSize( Resolution, Resolution )
+			.WithSize( _cameraResolution, _cameraResolution )
 			.Create();
 
 		if ( _rtCamera is not null )
