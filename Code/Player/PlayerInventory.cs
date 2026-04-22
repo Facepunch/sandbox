@@ -298,8 +298,9 @@ public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 						StartEnabled = true
 					} );
 
-					pickup.NetworkSpawn();
 					Ownable.Set( pickup, Player.Network.Owner );
+					pickup.Tags.Add( "removable" );
+					pickup.NetworkSpawn();
 
 					if ( pickup.GetComponent<Rigidbody>() is { } rb )
 					{
@@ -321,8 +322,9 @@ public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 				StartEnabled = true
 			} );
 
-			pickup.NetworkSpawn();
 			Ownable.Set( pickup, Player.Network.Owner );
+			pickup.Tags.Add( "removable" );
+			pickup.NetworkSpawn();
 
 			if ( pickup.GetComponent<Rigidbody>() is { } rb )
 			{
