@@ -92,7 +92,7 @@
 		query.SortOrder = SortOrder.ToSortOrder();
 
         if ( !string.IsNullOrWhiteSpace( Filter ) ) query.SearchText = Filter;
-        if (Category != null) query.KeyValues["category"] = Category;
+        if (Category != null) query.KeyValues["Category"] = Category;
 
 		LastResult = await query.Run();
 		if ( LastResult.Items == null ) return;
