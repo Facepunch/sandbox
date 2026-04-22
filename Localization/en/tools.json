@@ -65,6 +65,7 @@
     "tool.hint.nocollide.stage1": "Select the second object",
     "tool.hint.nocollide.source": "Select source",
     "tool.hint.nocollide.finish": "Finish",
+    "tool.hint.nocollide.remove": "Remove",
 
     "tool.hint.mass.description": "Sets the mass of an object",
     "tool.hint.mass.set": "Set mass",
