@@ -28,7 +28,7 @@ public class ThrusterEntity : Component, IPlayerControllable
 	/// <summary>
 	/// The fallback sound for all thrusters.
 	/// </summary>
-	private static SoundDefinition _defaultSound = ResourceLibrary.Get<SoundDefinition>( "entities/thruster/sounds/thruster_basic.sndef" );
+	private static SoundDefinition _defaultSound => ResourceLibrary.Get<SoundDefinition>( "entities/thruster/sounds/thruster_basic.sndef" );
 
 	/// <summary>
 	/// Looping sound played while the thruster is active.
@@ -115,6 +115,8 @@ public class ThrusterEntity : Component, IPlayerControllable
 
 	public void OnControl()
 	{
+		if ( !Networking.IsHost ) return;
+
 		var forward = Activate.GetAnalog();
 		var backward = Reverse.GetAnalog();
 		var analog = forward - backward;
