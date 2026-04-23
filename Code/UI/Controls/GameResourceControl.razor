@@ -84,5 +84,8 @@
         popup.CurrentValue = Property.GetValue<GameResource>()?.ResourcePath;
         popup.Parent = FindPopupPanel();
         popup.OnSelectedFile = SelectFile;
+
+        if ( Property.TryGetAttribute<MetadataAttribute>( out var metadata ) )
+            popup.Category = metadata.Tag;
     }
 }

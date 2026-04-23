@@ -74,6 +74,8 @@
     public bool AllowPackages { get; set; }
     public Action<string> OnSelectedFile;
 
+    public string Category { get; set; }
+
     PackageSortMode SortMode { get; set; } = PackageSortMode.Popular;
 
     void SetSort( PackageSortMode mode )
@@ -93,7 +95,7 @@
         _localResources.Clear();
         _cloudPackages.Clear();
 
-        _localResources.AddRange( ResourceLibrary.GetAll<Resource>().Where( FilterExtension ) );
+        _localResources.AddRange( ResourceLibrary.GetAll<Resource>().Where( FilterExtension ).Where( FilterCategory ) );
 
         RebuildFilteredItems();
 
@@ -136,6 +138,14 @@
         if (string.IsNullOrEmpty(ext)) return false;
 
         return ext.TrimStart('.').Equals(Extension, StringComparison.OrdinalIgnoreCase);
+    }
+
+    bool FilterCategory(Resource res)
+    {
+        if (string.IsNullOrEmpty(Category)) return true;
+        if (res is not SoundDefinition soundDef) return true;
+
+        return string.Equals(soundDef.Category, Category, StringComparison.OrdinalIgnoreCase);
     }
 
     protected override void OnMouseDown(MousePanelEvent e)

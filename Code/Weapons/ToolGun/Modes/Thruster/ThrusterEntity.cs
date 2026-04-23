@@ -26,16 +26,15 @@ public class ThrusterEntity : Component, IPlayerControllable
 	public ClientInput Reverse { get; set; }
 
 	/// <summary>
-	/// The fallback sound for all thrusters. If a thruster doesn't have a sound assigned, this will be used instead.
+	/// The fallback sound for all thrusters.
 	/// </summary>
-	private static SoundEvent _defaultSound = ResourceLibrary.Get<SoundEvent>( "entities/thruster/sounds/thruster_loop_default.sound" );
+	private static SoundDefinition _defaultSound = ResourceLibrary.Get<SoundDefinition>( "entities/thruster/sounds/thruster_basic.sndef" );
 
 	/// <summary>
 	/// Looping sound played while the thruster is active.
-	/// TODO: Create a SoundDefinition resource so we can use different sounds for thrusters
 	/// </summary>
-	[Property, Group( "Sound" )]
-	public SoundEvent ThrusterSound { get; set; }
+	[Property, ClientEditable, Metadata( SoundDefinition.Thruster ), Group( "Sound" )]
+	public SoundDefinition ThrusterSound { get; set; }
 
 	/// <summary>
 	/// Current thrust output, -1 to 1. Updated every control frame.
@@ -102,9 +101,7 @@ public class ThrusterEntity : Component, IPlayerControllable
 		var sound = ThrusterSound ?? _defaultSound;
 		if ( sound is null ) return;
 
-		_thrusterSound = Sound.Play( sound, WorldPosition, 0.15f );
-		_thrusterSound.Parent = GameObject;
-		_thrusterSound.FollowParent = true;
+		_thrusterSound = sound.Play( WorldPosition, GameObject );
 	}
 
 	private void StopThrusterSound()
