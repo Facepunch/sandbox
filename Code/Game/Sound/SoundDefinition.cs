@@ -53,4 +53,9 @@ public class SoundDefinition : GameResource, IDefinitionResource
 		handle.FollowParent = true;
 		return handle;
 	}
+
+	protected override Bitmap CreateAssetTypeIcon( int width, int height )
+	{
+		return CreateSimpleAssetTypeIcon( "🔊", width, height, "#4a90d9" );
+	}
 }
