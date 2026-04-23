@@ -498,29 +498,18 @@ public partial class Physgun
 	}
 
 	/// <summary>
-	/// Aim source: player eye when held, muzzle transform when standalone/seat.
-	/// When <see cref="CanAim"/> is true and a player is seated, uses the muzzle
-	/// position with the seated player's eye rotation so the gun points where they look.
+	/// When true, the physgun aims where the seated player's camera looks.
 	/// </summary>
 	[Property, ClientEditable, Sync] public bool CanAim { get; set; } = true;
+
+	public override bool IsTargetedAim => CanAim;
 
 	Transform AimTransform
 	{
 		get
 		{
-			if ( HasOwner ) return Owner.EyeTransform;
-
-			if ( CanAim )
-			{
-				var seated = ClientInput.Current;
-				if ( seated.IsValid() )
-				{
-					var muzzlePos = MuzzleTransform.WorldTransform.Position;
-					return new Transform( muzzlePos, seated.EyeTransform.Rotation );
-				}
-			}
-
-			return MuzzleTransform.WorldTransform;
+			var ray = AimRay;
+			return new Transform( ray.Position, Rotation.LookAt( ray.Forward ) );
 		}
 	}
 

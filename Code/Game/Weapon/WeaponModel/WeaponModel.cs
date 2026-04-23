@@ -57,4 +57,14 @@
 
 		MuzzleEffect.Clone( new CloneConfig { Parent = MuzzleTransform, Transform = global::Transform.Zero, StartEnabled = true } );
 	}
+
+	public virtual void OnAttack()
+	{
+
+	}
+
+	public virtual void CreateRangedEffects( BaseWeapon weapon, Vector3 hitPoint, Vector3? origin )
+	{
+
+	}
 }

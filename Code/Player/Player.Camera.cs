@@ -148,18 +148,33 @@ public sealed partial class Player
 
 	private void DrawSeatedWeaponHud()
 	{
-		if ( Controller.ThirdPerson ) return;
 		if ( _seatedWeapons == null || _seatedWeapons.Count == 0 ) return;
 		if ( Scene.Camera is null ) return;
 		if ( Scene.Camera.RenderExcludeTags.Has( "ui" ) ) return;
 
 		var hud = Scene.Camera.Hud;
-		var aimPos = Screen.Size * 0.5f;
 
 		foreach ( var weapon in _seatedWeapons )
 		{
 			if ( !weapon.IsValid() ) continue;
 			if ( weapon is IPlayerControllable controllable && !controllable.CanControl( Controller ) ) continue;
+
+			Vector2 aimPos;
+
+			if ( weapon.IsTargetedAim )
+			{
+				aimPos = Screen.Size * 0.5f;
+			}
+			else
+			{
+				var muzzle = weapon.MuzzleTransform.WorldTransform;
+				var tr = Scene.Trace.Ray( muzzle.Position, muzzle.Position + muzzle.Rotation.Forward * 4096f )
+					.IgnoreGameObjectHierarchy( weapon.GameObject.Root )
+					.Run();
+
+				aimPos = Scene.Camera.PointToScreenPixels( tr.EndPosition );
+			}
+
 			weapon.DrawHud( hud, aimPos );
 		}
 	}

@@ -79,7 +79,12 @@ public partial class BaseCarryable : Component, IKillIcon
 			if ( !go.IsValid() ) go = WorldModel;
 			if ( !go.IsValid() ) go = GameObject;
 
-			return go.GetComponentInChildren<WeaponModel>();
+			var wm = go.GetComponentInChildren<WeaponModel>();
+			if ( wm.IsValid() )
+				return wm;
+
+			// Standalone weapons may have a WorldModel in their hierarchy without the stored reference
+			return GameObject.GetComponentInChildren<WeaponModel>();
 		}
 	}
 
@@ -95,6 +100,43 @@ public partial class BaseCarryable : Component, IKillIcon
 	}
 
 	public bool HasOwner => Owner.IsValid();
+
+	/// <summary>
+	/// When true, seated aim uses the scene camera direction instead of the weapon's muzzle direction.
+	/// Override in weapons that support player-directed aim (e.g. RPG tracked mode, Physgun aim mode).
+	/// </summary>
+	public virtual bool IsTargetedAim => false;
+
+	/// <summary>
+	/// Unified aim ray for all weapons. Returns the correct ray based on context:
+	/// first-person held, third-person held, seated (targeted or muzzle), or standalone.
+	/// </summary>
+	public Ray AimRay
+	{
+		get
+		{
+			if ( HasOwner )
+			{
+				var owner = Owner;
+				if ( owner.Controller.IsValid() && owner.Controller.ThirdPerson && Scene.Camera.IsValid() )
+					return Scene.Camera.Transform.World.ForwardRay;
+
+				return owner.EyeTransform.ForwardRay;
+			}
+
+			var seated = ClientInput.Current;
+			if ( seated.IsValid() && IsTargetedAim && Scene.Camera.IsValid() )
+				return Scene.Camera.Transform.World.ForwardRay;
+
+			var muzzle = MuzzleTransform.WorldTransform;
+			return new Ray( muzzle.Position, muzzle.Rotation.Forward );
+		}
+	}
+
+	/// <summary>
+	/// The root GameObject to ignore when tracing from AimRay.
+	/// </summary>
+	public GameObject AimIgnoreRoot => HasOwner ? Owner.GameObject : GameObject;
 
 	/// <summary>
 	/// Where shoot effects come from. Either the point on the world model or the viewmodel, whichever is currently being used.
@@ -164,8 +206,8 @@ public partial class BaseCarryable : Component, IKillIcon
 
 			if ( controller.ThirdPerson )
 			{
-				var tr = Scene.Trace.Ray( controller.EyeTransform.ForwardRay, 4096 )
-									.IgnoreGameObjectHierarchy( controller.GameObject )
+				var tr = Scene.Trace.Ray( AimRay, 4096 )
+									.IgnoreGameObjectHierarchy( AimIgnoreRoot )
 									.Run();
 
 				aimPos = Scene.Camera.PointToScreenPixels( tr.EndPosition );

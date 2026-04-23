@@ -14,6 +14,8 @@ public class RpgWeapon : BaseWeapon
 	/// </summary>
 	[Property, Sync, ClientEditable] public bool IsTrackedAim { get; set; } = false;
 
+	public override bool IsTargetedAim => IsTrackedAim;
+
 	[Sync( SyncFlags.FromHost )] RpgProjectile Projectile { get; set; }
 
 	TimeSince TimeSinceShoot;
@@ -36,7 +38,7 @@ public class RpgWeapon : BaseWeapon
 
 		if ( IsGuiding )
 		{
-			var target = GetAimTarget( player.EyeTransform );
+			var target = GetAimTarget();
 			Projectile.UpdateWithTarget( target, ProjectileSpeed );
 		}
 	}
@@ -55,7 +57,7 @@ public class RpgWeapon : BaseWeapon
 
 		if ( IsGuiding )
 		{
-			var target = GetAimTarget( AimTransform );
+			var target = GetAimTarget();
 			Projectile.UpdateWithTarget( target, ProjectileSpeed );
 		}
 	}
@@ -67,34 +69,17 @@ public class RpgWeapon : BaseWeapon
 	}
 
 	/// <summary>
-	/// Aim source: player eye when held, muzzle/seat when standalone.
+	/// Traces from AimRay and returns the world-space point the player is looking at.
 	/// </summary>
-	private Transform AimTransform
+	private Vector3 GetAimTarget()
 	{
-		get
-		{
-			var seated = ClientInput.Current;
-			if ( seated.IsValid() )
-			{
-				var muzzlePos = MuzzleTransform.WorldTransform.Position;
-				return new Transform( muzzlePos, seated.EyeTransform.Rotation );
-			}
-
-			return MuzzleTransform.WorldTransform;
-		}
-	}
-
-	/// <summary>
-	/// Traces from the given aim transform and returns the world-space point the player is looking at.
-	/// </summary>
-	private Vector3 GetAimTarget( Transform aim )
-	{
-		var tr = Scene.Trace.Ray( aim.Position, aim.Position + aim.Forward * 16384f )
-			.IgnoreGameObjectHierarchy( GameObject.Root )
+		var ray = AimRay;
+		var tr = Scene.Trace.Ray( ray, 16384f )
+			.IgnoreGameObjectHierarchy( AimIgnoreRoot )
 			.WithoutTags( "trigger", "projectile" )
 			.Run();
 
-		return tr.Hit ? tr.HitPosition : aim.Position + aim.Forward * 16384f;
+		return tr.Hit ? tr.HitPosition : ray.Position + ray.Forward * 16384f;
 	}
 
 	public override void PrimaryAttack()
@@ -116,16 +101,13 @@ public class RpgWeapon : BaseWeapon
 		if ( ShootSound.IsValid() )
 			GameObject.PlaySound( ShootSound );
 
+		var ray = AimRay;
+		var muzzlePos = MuzzleTransform.WorldTransform.Position;
+		var spawnPos = muzzlePos + ray.Forward * 64f;
+
 		if ( HasOwner )
 		{
-			var transform = Owner.EyeTransform;
-			transform.Position = transform.Position + Vector3.Down * 8f + transform.Right * 8f;
-			var forward = transform.Forward;
-			var initialPos = transform.ForwardRay.Position + (forward * 64.0f);
-
-			initialPos = CheckThrowPosition( Owner, transform.Position, initialPos );
-
-			CreateProjectile( initialPos, transform.Forward, ProjectileSpeed );
+			spawnPos = CheckThrowPosition( Owner, muzzlePos, spawnPos );
 
 			Owner.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
 
@@ -140,12 +122,8 @@ public class RpgWeapon : BaseWeapon
 				}
 			}
 		}
-		else
-		{
-			// Seat / standalone — fire straight from the muzzle
-			var muzzleTransform = MuzzleTransform.WorldTransform;
-			CreateProjectile( muzzleTransform.Position, muzzleTransform.Rotation.Forward, ProjectileSpeed );
-		}
+
+		CreateProjectile( spawnPos, ray.Forward, ProjectileSpeed );
 	}
 
 	private Vector3 CheckThrowPosition( Player player, Vector3 eyePosition, Vector3 grenadePosition )

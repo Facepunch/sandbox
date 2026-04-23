@@ -54,10 +54,10 @@ public class MeleeWeapon : BaseCarryable
 		if ( !CanAttack() )
 			return;
 
-		var forward = player.EyeTransform.Rotation.Forward;
+		var forward = AimRay.Forward;
 
-		var tr = Scene.Trace.Ray( player.EyeTransform.ForwardRay with { Forward = forward }, Range )
-							.IgnoreGameObjectHierarchy( player.GameObject )
+		var tr = Scene.Trace.Ray( AimRay with { Forward = forward }, Range )
+							.IgnoreGameObjectHierarchy( AimIgnoreRoot )
 							.WithoutTags( "playercontroller" )
 							.Radius( SwingRadius )
 							.UseHitboxes()
