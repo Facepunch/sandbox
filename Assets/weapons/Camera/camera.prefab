@@ -228,7 +228,7 @@
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
-        "Enabled": false,
+        "Enabled": true,
         "NetworkMode": 2,
         "NetworkFlags": 0,
         "NetworkOrphaned": 0,
@@ -238,7 +238,7 @@
           {
             "__type": "Sandbox.CameraComponent",
             "__guid": "939a7d2f-5e9b-4f7e-953a-6b4e87bf8d3b",
-            "__enabled": true,
+            "__enabled": false,
             "Flags": 0,
             "BackgroundColor": "0.33333,0.46275,0.52157,1",
             "ClearFlags": "All",
