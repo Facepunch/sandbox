@@ -40,26 +40,26 @@ public class CameraWeapon : BaseWeapon
 
 		DestroyDepthOfField();
 		CleanupRenderTexture();
-		CleanupRTCamera();
+		_rtCamera = null;
 	}
 
 	protected override void OnDestroy()
 	{
 		DestroyDepthOfField();
 		CleanupRenderTexture();
-		CleanupRTCamera();
-		base.OnDestroy();
+		_rtCamera = null;
 	}
 
 	protected override void OnPreRender()
 	{
-		if ( _rtCamera is null ) return;
+		if ( !_rtCamera.IsValid() ) return;
 
 		EnsureRenderTexture();
 
-		if ( HasOwner && Scene.Camera is not null )
+		if ( HasOwner && Scene.Camera.IsValid() )
 		{
 			// When held, mirror the player's camera so the TV shows their POV.
+			// TODO: network some props to the TV so they show up in the RT camera when held by a player other than the host.
 			_rtCamera.WorldPosition = Scene.Camera.WorldPosition;
 			_rtCamera.WorldRotation = Scene.Camera.WorldRotation;
 			_rtCamera.FieldOfView = Scene.Camera.FieldOfView;
@@ -186,7 +186,7 @@ public class CameraWeapon : BaseWeapon
 
 	private void EnsureRenderTexture()
 	{
-		if ( _renderTexture is not null && _renderTexture.Width == _cameraResolution && _renderTexture.Height == _cameraResolution )
+		if ( _renderTexture.IsValid() && _renderTexture.Width == _cameraResolution && _renderTexture.Height == _cameraResolution )
 			return;
 
 		CleanupRenderTexture();
@@ -195,22 +195,21 @@ public class CameraWeapon : BaseWeapon
 			.WithSize( _cameraResolution, _cameraResolution )
 			.Create();
 
-		if ( _rtCamera is not null )
+		if ( _rtCamera.IsValid() )
+		{
 			_rtCamera.RenderTarget = _renderTexture;
+		}
 	}
 
 	private void CleanupRenderTexture()
 	{
-		if ( _rtCamera is not null )
+		if ( _rtCamera.IsValid() )
+		{
 			_rtCamera.RenderTarget = null;
+		}
 
 		_renderTexture?.Dispose();
 		_renderTexture = null;
-	}
-
-	private void CleanupRTCamera()
-	{
-		_rtCamera = null;
 	}
 
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )
