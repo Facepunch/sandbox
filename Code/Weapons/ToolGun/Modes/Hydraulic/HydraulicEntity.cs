@@ -123,8 +123,6 @@ public class HydraulicEntity : Component, IPlayerControllable
 		{
 			_targetValue = _lastTargetValue.HasValue ? (_lastTargetValue > 0.5f ? 0.0f : 1.0f) : 1;
 			_lastTargetValue = _targetValue;
-
-			Log.Info( _targetValue );
 		}
 
 		if ( _targetValue.HasValue )

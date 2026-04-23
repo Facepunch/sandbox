@@ -15,6 +15,7 @@ public partial class BaseSpawnMenu : Panel
 
 		options.Clear();
 		Rebuild();
+		StateHasChanged();
 	}
 
 	protected override void OnAfterTreeRender( bool firstTime )
@@ -63,7 +64,6 @@ public partial class BaseSpawnMenu : Panel
 		};
 
 		options.Add( o );
-		StateHasChanged();
 	}
 
 	public void AddGrow()
@@ -74,7 +74,6 @@ public partial class BaseSpawnMenu : Panel
 		};
 
 		options.Add( o );
-		StateHasChanged();
 	}
 
 	public void AddOption( string name, Func<Panel> createPanelFunction )
@@ -86,7 +85,6 @@ public partial class BaseSpawnMenu : Panel
 		};
 
 		options.Add( o );
-		StateHasChanged();
 	}
 
 	public void AddOption( string icon, string name, Func<Panel> createPanelFunction )
@@ -99,7 +97,6 @@ public partial class BaseSpawnMenu : Panel
 		};
 
 		options.Add( o );
-		StateHasChanged();
 	}
 
 	public void AddOption( string icon, string name, Func<Panel> createPanelFunction, Action onRightClick )
@@ -113,7 +110,6 @@ public partial class BaseSpawnMenu : Panel
 		};
 
 		options.Add( o );
-		StateHasChanged();
 	}
 
 	void OnOptionClick( SpawnMenuOption o )
@@ -169,7 +165,6 @@ public partial class BaseSpawnMenu : Panel
 		};
 
 		options.Add( o );
-		StateHasChanged();
 	}
 
 	public void SelectOption( string name )

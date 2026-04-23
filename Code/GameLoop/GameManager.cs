@@ -256,12 +256,11 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		if ( spawner is not null && await spawner.Loading )
 		{
-			Log.Info( $"[Spawn] Spawning '{ident}' type='{type}' spawner={spawner.GetType().Name} metadata={(metadata ?? "null")}" );
 			await SpawnAndUndo( spawner, spawnTransform, player );
 			return;
 		}
 
-		Log.Warning( $"[Spawn] Couldn't resolve '{ident}' — spawner={(spawner is null ? "null" : "not ready")}" );
+		Log.Warning( $"Couldn't resolve '{ident}' — spawner={(spawner is null ? "null" : "not ready")}" );
 	}
 
 	/// <summary>

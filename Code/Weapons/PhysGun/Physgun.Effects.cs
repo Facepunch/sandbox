@@ -94,7 +94,7 @@ public partial class Physgun : ScreenWeapon, IPlayerControllable
 
 		bool justEnabled = !BeamRenderer.GameObject.Enabled;
 
-		if ( BeamRenderer.VectorPoints.Count != 4 )
+			if ( BeamRenderer.VectorPoints == null || BeamRenderer.VectorPoints.Count != 4 )
 			BeamRenderer.VectorPoints = new List<Vector3>( [0, 0, 0, 0] );
 
 		var distance = source.Position.Distance( end );

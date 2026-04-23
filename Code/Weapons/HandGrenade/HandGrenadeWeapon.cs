@@ -64,7 +64,6 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 	{
 		if ( ShootInput.Pressed() )
 		{
-			Log.Info( $"Dorp grenade" );
 			DropGrenade();
 		}
 	}

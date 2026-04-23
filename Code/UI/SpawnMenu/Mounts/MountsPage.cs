@@ -6,8 +6,9 @@ public class MountsPage : BaseSpawnMenu
 {
 	protected override void Rebuild()
 	{
-		var available = Sandbox.Mounting.Directory.GetAll().Where( x => x.Available ).ToArray();
-		var unavailable = Sandbox.Mounting.Directory.GetAll().Where( x => !x.Available ).ToArray();
+		var all = Sandbox.Mounting.Directory.GetAll().ToArray();
+		var available = all.Where( x => x.Available ).ToArray();
+		var unavailable = all.Where( x => !x.Available ).ToArray();
 
 		if ( available.Any() )
 		{

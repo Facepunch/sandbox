@@ -5,6 +5,7 @@ public sealed class PlayerObserver : Component
 {
 	Angles EyeAngles;
 	TimeSince timeSinceStarted;
+	DeathCameraTarget _cachedCorpse;
 
 	protected override void OnEnabled()
 	{
@@ -12,20 +13,20 @@ public sealed class PlayerObserver : Component
 
 		EyeAngles = Scene.Camera.WorldRotation;
 		timeSinceStarted = 0;
+
+		_cachedCorpse = Scene.GetAllComponents<DeathCameraTarget>()
+					.Where( x => x.Connection == Network.Owner )
+					.OrderByDescending( x => x.Created )
+					.FirstOrDefault();
 	}
 
 	protected override void OnUpdate()
 	{
 		if ( IsProxy ) return;
 
-		var corpse = Scene.GetAllComponents<DeathCameraTarget>()
-					.Where( x => x.Connection == Network.Owner )
-					.OrderByDescending( x => x.Created )
-					.FirstOrDefault();
-
-		if ( corpse.IsValid() )
+		if ( _cachedCorpse.IsValid() )
 		{
-			RotateAround( corpse );
+			RotateAround( _cachedCorpse );
 		}
 
 		// Don't allow immediate respawn

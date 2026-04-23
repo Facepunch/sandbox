@@ -72,9 +72,9 @@ public class Notices : PanelComponent
 		var innerBox = Panel.Box.RectInner;
 		float y = 0;
 		float gap = 5;
-		foreach ( var p in Panel.Children.OfType<NoticePanel>().Reverse() )
+		for ( int i = Panel.ChildrenCount - 1; i >= 0; i-- )
 		{
-			var size = p.Box.RectOuter;
+			if ( Panel.GetChild( i ) is not NoticePanel p ) continue;
 
 			var w = p.Box.RectOuter.Width;
 			var h = p.Box.RectOuter.Height + gap;
