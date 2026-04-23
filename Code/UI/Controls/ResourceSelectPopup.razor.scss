@@ -102,3 +102,47 @@ ResourceSelectPopup .inner .grid .item
         background-color: #08f5;
     }
 }
+
+ResourceSelectPopup .inner .popup-footer
+{
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 0.5rem 0;
+    flex-shrink: 0;
+    gap: 0.5rem;
+
+    .clear-button
+    {
+        padding: 0.6rem 2rem;
+        background-color: rgba( white, 0.1 );
+        color: rgba( white, 0.7 );
+        font-weight: 700;
+        font-size: 1.2rem;
+        border-radius: 6px;
+        cursor: pointer;
+        pointer-events: all;
+
+        &:hover
+        {
+            background-color: rgba( white, 0.2 );
+            color: white;
+        }
+    }
+
+    .select-button
+    {
+        padding: 0.6rem 2rem;
+        background-color: #08f;
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+        border-radius: 6px;
+        cursor: pointer;
+        pointer-events: all;
+
+        &:hover
+        {
+            background-color: #09f;
+        }
+    }
+}

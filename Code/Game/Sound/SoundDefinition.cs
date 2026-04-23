@@ -3,7 +3,7 @@
 /// The <see cref="Category"/> field allows the editor to filter definitions by type.
 /// </summary>
 [AssetType( Name = "Sound Definition", Extension = "sndef", Category = "Sandbox" )]
-public class SoundDefinition : GameResource, IDefinitionResource
+public class SoundDefinition : GameResource, IDefinitionResource, IResourcePreview
 {
 	public const string Thruster = "thruster";
 	public const string Hoverball = "hoverball";
@@ -57,5 +57,24 @@ public class SoundDefinition : GameResource, IDefinitionResource
 	protected override Bitmap CreateAssetTypeIcon( int width, int height )
 	{
 		return CreateSimpleAssetTypeIcon( "🔊", width, height, "#4a90d9" );
+	}
+
+	private SoundHandle _previewHandle;
+
+	public void OnPreview()
+	{
+		OnPreviewStop();
+
+		if ( Sound is null ) return;
+		_previewHandle = Sandbox.Sound.Play( Sound );
+	}
+
+	public void OnPreviewStop()
+	{
+		if ( _previewHandle.IsValid() )
+		{
+			_previewHandle.Stop();
+			_previewHandle = default;
+		}
 	}
 }

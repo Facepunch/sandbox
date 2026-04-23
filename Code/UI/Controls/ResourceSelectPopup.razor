@@ -25,11 +25,11 @@
             <Item Context="item">
                 @if (item is Resource res)
                 {
-                    bool selected = res.ResourcePath.Equals(CurrentValue, StringComparison.OrdinalIgnoreCase);
+                    bool selected = res.ResourcePath.Equals(_pendingValue ?? CurrentValue, StringComparison.OrdinalIgnoreCase);
                     string itemClass = selected ? "item active" : "item";
                     string thumbUrl = $"thumb:{res.ResourcePath}";
 
-                    <div class="@itemClass" @onclick=@(() => { SelectResource(res); })>
+                    <div @key=@res.ResourcePath class="@itemClass" @onclick=@(() => { OnItemClicked(res); })>
 
                         <div class="icon" style="background-image: url( @thumbUrl )"></div>
 
@@ -51,7 +51,7 @@
                     bool selected = pkg.FullIdent.Equals(CurrentValue, StringComparison.OrdinalIgnoreCase);
                     string itemClass = selected ? "item active" : "item";
 
-                    <div class="@itemClass" @onclick=@(() => { SelectPackage(pkg); })>
+                    <div @key=@pkg.FullIdent class="@itemClass" @onclick=@(() => { SelectPackage(pkg); })>
 
                         <div class="icon" style="background-image: url( @pkg.Thumb )"></div>
                         <div class="title">@pkg.Title</div>
@@ -61,6 +61,11 @@
                 }
             </Item>
         </VirtualGrid>
+
+        <div class="popup-footer">
+            <div class="clear-button" @onclick=@ClearSelection>Clear</div>
+            <div class="select-button" @onclick=@ConfirmSelection>Select</div>
+        </div>
 
     </div>
 
@@ -73,6 +78,9 @@
     public string CurrentValue { get; set; }
     public bool AllowPackages { get; set; }
     public Action<string> OnSelectedFile;
+
+    string _pendingValue;
+    IResourcePreview _previewingResource;
 
     public string Category { get; set; }
 
@@ -148,12 +156,62 @@
         return string.Equals(soundDef.Category, Category, StringComparison.OrdinalIgnoreCase);
     }
 
+    void OnItemClicked( Resource res )
+    {
+        StopPreview();
+
+        _pendingValue = res.ResourcePath;
+
+        var gameRes = ResourceLibrary.Get<GameResource>( res.ResourcePath );
+        if ( gameRes is IResourcePreview preview )
+        {
+            _previewingResource = preview;
+            preview.OnPreview();
+        }
+
+        StateHasChanged();
+    }
+
+    void StopPreview()
+    {
+        _previewingResource?.OnPreviewStop();
+        _previewingResource = null;
+    }
+
+    public override void OnDeleted()
+    {
+        StopPreview();
+        base.OnDeleted();
+    }
+
+    void ClearSelection()
+    {
+        StopPreview();
+        _pendingValue = null;
+        OnSelectedFile?.Invoke( null );
+        StateHasChanged();
+    }
+
+    void ConfirmSelection()
+    {
+        StopPreview();
+
+        if ( _pendingValue != null )
+        {
+            OnSelectedFile?.Invoke( _pendingValue );
+            Delete();
+        }
+    }
+
     protected override void OnMouseDown(MousePanelEvent e)
     {
         base.OnMouseDown(e);
 
         if (e.Target == this)
+        {
+            StopPreview();
             Delete();
+        }
     }
 
     void SelectResource(Resource res)
