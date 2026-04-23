@@ -54,7 +54,10 @@ public class ControlSystem : GameObjectSystem<ControlSystem>
 		{
 			foreach ( var controllable in o.GetComponentsInChildren<IPlayerControllable>() )
 			{
-				controllable?.OnControl();
+				if ( controllable is null ) continue;
+				if ( !controllable.CanControl( player ) ) continue;
+
+				controllable.OnControl();
 			}
 		}
 	}

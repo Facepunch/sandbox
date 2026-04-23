@@ -8,10 +8,12 @@ public sealed partial class Player
 	[Property, Group( "Camera" )] public float SeatedCameraVelocityScale { get; set; } = 0.1f;
 
 	private ISitTarget _cachedSeat;
+	private bool _seatCameraInitialized;
 	private float _minCameraDistance;
 	private float _smoothedDistance;
 	private Angles _seatedAngles;
 	private Vector3 _lastSeatWorldPos;
+	private List<BaseCarryable> _seatedWeapons;
 
 	private float roll;
 
@@ -30,7 +32,9 @@ public sealed partial class Player
 		IPlayerEvent.Post( x => x.OnCameraSetup( camera ) );
 
 		ApplyMovementCameraEffects( camera );
+		UpdateSeatedWeapons();
 		ApplySeatedCameraSetup( camera );
+		DrawSeatedWeaponHud();
 
 		IPlayerEvent.Post( x => x.OnCameraPostSetup( camera ) );
 	}
@@ -46,27 +50,38 @@ public sealed partial class Player
 		camera.WorldRotation *= new Angles( 0, 0, roll );
 	}
 
-	private void ApplySeatedCameraSetup( CameraComponent camera )
+	private void UpdateSeatedWeapons()
 	{
-		if ( !Controller.ThirdPerson )
-		{
-			_cachedSeat = null;
-			return;
-		}
-
 		var seat = GetComponentInParent<ISitTarget>( false );
 		if ( seat is null )
 		{
 			_cachedSeat = null;
+			_seatedWeapons = null;
 			return;
 		}
-
-		var seatGo = (seat as Component).GameObject;
-		var seatPos = seatGo.WorldPosition + Vector3.Up * SeatedCameraHeight;
 
 		if ( seat != _cachedSeat )
 		{
 			_cachedSeat = seat;
+			_seatCameraInitialized = false;
+			RebuildSeatedWeapons( (seat as Component).GameObject );
+		}
+	}
+
+	private void ApplySeatedCameraSetup( CameraComponent camera )
+	{
+		if ( !Controller.ThirdPerson )
+			return;
+
+		if ( _cachedSeat is null )
+			return;
+
+		var seatGo = (_cachedSeat as Component).GameObject;
+		var seatPos = seatGo.WorldPosition + Vector3.Up * SeatedCameraHeight;
+
+		if ( !_seatCameraInitialized )
+		{
+			_seatCameraInitialized = true;
 			_minCameraDistance = MathF.Max( SeatedCameraDistance, RebuildContraptionBounds( seatGo ) );
 			_seatedAngles = camera.WorldRotation.Angles();
 			_lastSeatWorldPos = seatPos;
@@ -111,5 +126,41 @@ public sealed partial class Player
 		}
 
 		return totalBounds.Size.Length;
+	}
+
+	private void RebuildSeatedWeapons( GameObject seatGo )
+	{
+		var builder = new LinkedGameObjectBuilder();
+		builder.AddConnected( seatGo );
+
+		_seatedWeapons ??= new List<BaseCarryable>();
+		_seatedWeapons.Clear();
+
+		foreach ( var obj in builder.Objects )
+		{
+			foreach ( var weapon in obj.GetComponentsInChildren<BaseCarryable>() )
+			{
+				if ( !weapon.HasOwner )
+					_seatedWeapons.Add( weapon );
+			}
+		}
+	}
+
+	private void DrawSeatedWeaponHud()
+	{
+		if ( Controller.ThirdPerson ) return;
+		if ( _seatedWeapons == null || _seatedWeapons.Count == 0 ) return;
+		if ( Scene.Camera is null ) return;
+		if ( Scene.Camera.RenderExcludeTags.Has( "ui" ) ) return;
+
+		var hud = Scene.Camera.Hud;
+		var aimPos = Screen.Size * 0.5f;
+
+		foreach ( var weapon in _seatedWeapons )
+		{
+			if ( !weapon.IsValid() ) continue;
+			if ( weapon is IPlayerControllable controllable && !controllable.CanControl( Controller ) ) continue;
+			weapon.DrawHud( hud, aimPos );
+		}
 	}
 }
