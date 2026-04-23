@@ -64,7 +64,6 @@
         "ParentBone": "hold_R",
         "ReloadTime": 2.5,
         "ReserveAmmo": 0,
-        "Resolution": 512,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null
@@ -216,6 +215,54 @@
             },
             "Tint": "1,1,1,1",
             "UseAnimGraph": true
+          }
+        ],
+        "Children": []
+      },
+      {
+        "__guid": "667b3807-67cc-49ca-ba4b-3187cccad8a5",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "rt_camera",
+        "Position": "0.615291476,-0.442408323,1.11825669",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": false,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.CameraComponent",
+            "__guid": "939a7d2f-5e9b-4f7e-953a-6b4e87bf8d3b",
+            "__enabled": true,
+            "Flags": 0,
+            "BackgroundColor": "0.33333,0.46275,0.52157,1",
+            "ClearFlags": "All",
+            "EnablePostProcessing": true,
+            "FieldOfView": 45,
+            "FovAxis": "Horizontal",
+            "IsMainCamera": true,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Orthographic": false,
+            "OrthographicHeight": 1204,
+            "PostProcessAnchor": null,
+            "Priority": 1,
+            "RenderExcludeTags": "",
+            "RenderTags": "",
+            "RenderTexture": null,
+            "TargetEye": "None",
+            "Viewport": "0,0,1,1",
+            "ZFar": 10000,
+            "ZNear": 1
           }
         ],
         "Children": []
