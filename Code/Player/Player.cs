@@ -6,7 +6,8 @@ using Sandbox.Movement;
 /// </summary>
 public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, ISaveEvents, IKillSource
 {
-	public static Player FindLocalPlayer() => Game.ActiveScene.GetAll<Player>().FirstOrDefault( x => x.IsLocalPlayer );
+	private static Player Local { get; set; }
+	public static Player FindLocalPlayer() => Local;
 	public static T FindLocalWeapon<T>() where T : BaseCarryable => FindLocalPlayer()?.GetComponentInChildren<T>( true );
 	public static T FindLocalToolMode<T>() where T : ToolMode => FindLocalPlayer()?.GetComponentInChildren<T>( true );
 
@@ -68,6 +69,9 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	protected override void OnStart()
 	{
+		if ( IsLocalPlayer )
+			Local = this;
+
 		var targets = Scene.GetAllComponents<DeathCameraTarget>()
 			.Where( x => x.Connection == Network.Owner );
 
@@ -76,6 +80,12 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		{
 			t.GameObject.Destroy();
 		}
+	}
+
+	protected override void OnDestroy()
+	{
+		if ( Local == this )
+			Local = null;
 	}
 
 	/// <summary>
