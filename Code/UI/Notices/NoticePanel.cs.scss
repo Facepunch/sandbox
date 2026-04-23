@@ -3,6 +3,7 @@
 NoticePanel
 {
 	position: absolute;
+	left: 100%;
 	backdrop-filter: blur( 4px ) brightness( 0.4 );
 	padding: 0.75rem 1.5rem;
 	border-radius: 10px;
