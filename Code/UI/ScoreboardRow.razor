@@ -40,6 +40,12 @@
             SetClass( "friend", new Friend( Entry.Connection.SteamId ).IsFriend );
     }
 
+    protected override int BuildHash()
+    {
+        if (Entry is null) return 0;
+        return System.HashCode.Combine( Entry.DisplayName, Entry.Kills, Entry.Deaths, Entry.Ping );
+    }
+
     protected override void OnRightClick( MousePanelEvent e )
     {
         if ( Entry is null || Entry.Connection is null ) return;
