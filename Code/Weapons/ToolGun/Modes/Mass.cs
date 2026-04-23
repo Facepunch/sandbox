@@ -35,12 +35,12 @@ public class Mass : ToolMode
 
 		if ( mass <= 0f )
 		{
-			rb.GetComponent<MassOverride>()?.Destroy();
+			rb.GetComponent<PhysicalProperties>()?.Destroy();
 			rb.MassOverride = 0f;
 			return;
 		}
 
-		var mo = rb.GetOrAddComponent<MassOverride>();
+		var mo = rb.GetOrAddComponent<PhysicalProperties>();
 		mo.Mass = mass;
 		mo.Apply();
 	}
@@ -50,7 +50,7 @@ public class Mass : ToolMode
 	{
 		if ( !rb.IsValid() || rb.IsProxy ) return;
 
-		var mo = rb.GetComponent<MassOverride>();
+		var mo = rb.GetComponent<PhysicalProperties>();
 		Value = mo.IsValid() ? mo.Mass : rb.Mass;
 	}
 }

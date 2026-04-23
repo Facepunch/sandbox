@@ -134,6 +134,9 @@ public class Balloon : ToolMode
 			c.GravityScale = Force;
 		}
 
+		var props = go.GetOrAddComponent<PhysicalProperties>();
+		props.GravityScale = Force;
+
 		var undo = Player.Undo.Create();
 		undo.Name = "Balloon";
 		undo.Add( go );

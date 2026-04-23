@@ -120,6 +120,10 @@
             rb.OverrideMassCenter = part.OverrideMassCenter;
             rb.MassCenterOverride = part.MassCenterOverride;
             rb.GravityScale = part.GravityScale;
+
+            var props = go.GetOrAddComponent<PhysicalProperties>();
+            props.Mass = part.Mass;
+            props.GravityScale = part.GravityScale;
         }
     }
 }
