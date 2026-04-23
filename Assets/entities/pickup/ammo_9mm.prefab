@@ -54,7 +54,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "PickupSound": null
+        "PickupSound": "sounds/weapons/ammo_pickup.sound"
       }
     ],
     "Children": [

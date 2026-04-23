@@ -26,7 +26,7 @@ public partial class BaseWeapon : BaseCarryable, IPlayerControllable
 	/// <summary>
 	/// The dry fire sound if we have no ammo
 	/// </summary>
-	private static SoundEvent DryFireSound = new SoundEvent( "audio/sounds/dry_fire.sound" );
+	private static SoundEvent DryFireSound = new SoundEvent( "sounds/dry_fire.sound" );
 
 	/// <summary>
 	/// Play a dry fire sound. You should only call this on weapons that can't auto reload - if they can, use <see cref="TryAutoReload"/> instead.

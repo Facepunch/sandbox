@@ -27,7 +27,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "PickupSound": null
+        "PickupSound": "sounds/equip_health.sound"
       },
       {
         "__type": "Sandbox.ModelCollider",

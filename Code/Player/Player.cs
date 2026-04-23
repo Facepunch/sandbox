@@ -183,7 +183,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	[Rpc.Owner( NetFlags.HostOnly )]
 	private void Flatline()
 	{
-		Sound.Play( "audio/sounds/flatline.sound" );
+		Sound.Play( "sounds/flatline.sound" );
 	}
 
 	private void Ghost()

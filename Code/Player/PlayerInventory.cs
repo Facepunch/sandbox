@@ -355,6 +355,9 @@ public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 		SaveLoadout();
 	}
 
+	private static SoundEvent AmmoPickupSound = ResourceLibrary.Get<SoundEvent>( "sounds/weapons/ammo_pickup.sound" );
+	private static SoundEvent GunPickupSound = ResourceLibrary.Get<SoundEvent>( "sounds/weapons/ammo_pickup.sound" );
+
 	[Rpc.Owner]
 	private void OnClientPickup( BaseCarryable weapon, bool justAmmo = false )
 	{
@@ -366,7 +369,10 @@ public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 		}
 
 		if ( Player.IsLocalPlayer )
+		{
+			GameObject.PlaySound( justAmmo ? AmmoPickupSound : GunPickupSound );
 			ILocalPlayerEvent.Post( e => e.OnPickup( weapon ) );
+		}
 	}
 
 	private bool ShouldAutoswitchTo( BaseCarryable item )
