@@ -77,9 +77,9 @@ public partial class BaseCarryable : Component, IKillIcon
 			if ( Scene.Camera.RenderExcludeTags.Contains( "firstperson" ) ) go = default;
 
 			if ( !go.IsValid() ) go = WorldModel;
-			if ( !go.IsValid() ) return null;
+			if ( !go.IsValid() ) go = GameObject;
 
-			return go.GetComponent<WeaponModel>();
+			return go.GetComponentInChildren<WeaponModel>();
 		}
 	}
 
