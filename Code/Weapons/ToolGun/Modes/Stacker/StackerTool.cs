@@ -223,7 +223,7 @@ public class StackerTool : ToolMode
 		if ( renderer.IsValid() && renderer.Model.IsValid() )
 		{
 			var mb = renderer.Model.Bounds;
-			localBounds = new BBox( mb.Mins * target.WorldScale, mb.Maxs * target.WorldScale );
+			localBounds = new BBox( mb.Mins * renderer.WorldScale, mb.Maxs * renderer.WorldScale );
 		}
 		else
 		{
@@ -350,7 +350,7 @@ public class StackerTool : ToolMode
 
 			var clone = root.Clone( new CloneConfig
 			{
-				Transform = tx,
+				Transform = new Transform( tx.Position, tx.Rotation ),
 				StartEnabled = true
 			} );
 

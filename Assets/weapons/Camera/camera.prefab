@@ -28,17 +28,38 @@
         "DeployTime": 0.5,
         "DisplayIcon": {
           "$compiler": "texture",
-          "$source": "svgsource",
+          "$source": "imagefile",
           "data": {
-            "Size": "512,256",
-            "Source": "\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"1200pt\" height=\"1200pt\" version=\"1.1\" viewBox=\"0 0 1200 1200\" xmlns=\"http://www.w3.org/2000/svg\">\n <path d=\"m1032 242.2h-241.16l-38.016-57.012c-7.1055-10.715-23.387-19.414-36.215-19.414h-233.18c-12.852 0-29.137 8.6992-36.289 19.414l-37.992 57.012h-241.12c-59.555 0-108.02 48.434-108.02 107.98v576.01c0 59.578 48.469 108.04 108.02 108.04h863.98c59.555 0 108-48.469 108-108.04v-576.01c0-59.543-48.445-107.98-108-107.98zm-804.42 210.9c-33.602 0-60.84-27.238-60.84-60.84 0-33.602 27.238-60.84 60.84-60.84s60.84 27.238 60.84 60.84c0.003906 33.598-27.238 60.84-60.84 60.84zm372.42 437.1c-139.14 0-252-112.81-252-251.96 0-139.2 112.86-252.01 252-252.01 139.18 0 252.01 112.81 252.01 252.01 0 139.15-112.85 251.96-252.01 251.96z\"/>\n <path d=\"m754.13 638.21c0 85.125-69.008 154.13-154.13 154.13s-154.13-69.004-154.13-154.13c0-85.121 69.008-154.13 154.13-154.13s154.13 69.008 154.13 154.13\"/>\n</svg>\n",
-            "Colorize": true,
-            "TargetColor": "1,1,1,1",
-            "Scale": 1,
-            "Offset": "0,0",
+            "FilePath": "ui/weapons/camera_image.png",
+            "MaxSize": 4096,
+            "ConvertHeightToNormals": false,
+            "NormalScale": 1,
             "Rotate": 0,
             "FlipVertical": false,
-            "FlipHorizontal": false
+            "FlipHorizontal": false,
+            "Cropping": {
+              "Left": 0,
+              "Top": 0,
+              "Right": 0,
+              "Bottom": 0
+            },
+            "Padding": {
+              "Left": 0,
+              "Top": 0,
+              "Right": 0,
+              "Bottom": 0
+            },
+            "InvertColor": false,
+            "Tint": "1,1,1,1",
+            "Blur": 0,
+            "Sharpen": 0,
+            "Brightness": 1,
+            "Contrast": 1,
+            "Saturation": 1,
+            "Hue": 0,
+            "Colorize": false,
+            "TargetColor": "1,1,1,1",
+            "CacheToDisk": true
           },
           "compiled": null
         },
