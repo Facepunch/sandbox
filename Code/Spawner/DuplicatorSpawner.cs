@@ -78,6 +78,9 @@ public class DuplicatorSpawner : ISpawner
 
 		foreach ( var model in Dupe.PreviewModels )
 		{
+			if ( model.Model is null )
+				continue;
+
 			if ( model.Model.IsError )
 			{
 				var bounds = model.Bounds;

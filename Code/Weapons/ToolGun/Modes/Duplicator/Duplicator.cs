@@ -142,6 +142,9 @@ public partial class Duplicator : ToolMode
 	{
 		base.OnUpdate();
 
+		if ( Application.IsDedicatedServer )
+			return;
+
 		// this is called on every client, so we can see what the other
 		// players are placing. It's kind of cool.
 		DrawPreview();
