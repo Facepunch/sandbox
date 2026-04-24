@@ -24,9 +24,48 @@
 	[Property, Sync, ClientEditable]
 	public ClientInput TurnRight { get; set; }
 
+	Vector3 _localAxle;
+	Vector3 _localUp;
+
 	protected override void OnEnabled()
 	{
 		base.OnEnabled();
+
+		var joint = GetComponentInChildren<WheelJoint>();
+		if ( joint.IsValid() && joint.Body.IsValid() )
+		{
+			var bodyRotInv = joint.Body.WorldRotation.Inverse;
+			_localAxle = bodyRotInv * WorldRotation.Right;
+			_localUp = bodyRotInv * WorldRotation.Up;
+		}
+	}
+
+	protected override void OnUpdate()
+	{
+		if ( SpawnMenuHost.GetActiveMode() is not ContextMenuHost )
+			return;
+
+		var renderers = GameObject.GetComponentsInChildren<Renderer>();
+		var outlines = Game.ActiveScene.GetAllComponents<HighlightOutline>();
+		if ( !outlines.Any( o => o.Targets?.Any( t => renderers.Contains( t ) ) == true ) )
+			return;
+
+		var joint = GetComponentInChildren<WheelJoint>();
+		if ( !joint.IsValid() || !joint.Body.IsValid() || _localAxle == Vector3.Zero )
+			return;
+
+		var spinAxis = joint.Body.WorldRotation * _localAxle;
+		var stableUp = joint.Body.WorldRotation * _localUp;
+
+		var renderer = GameObject.GetComponentInChildren<ModelRenderer>();
+		var overlayRadius = 0f;
+		if ( renderer.IsValid() )
+		{
+			var size = renderer.Model.Bounds.Size;
+			overlayRadius = MathF.Max( size.x, size.z ) * 0.01f * WorldScale.x;
+		}
+
+		WheelOverlay.DrawDirection( WorldPosition, spinAxis, stableUp, overlayRadius, Reversed );
 	}
 
 	public void OnStartControl()
@@ -81,7 +120,6 @@
 		{
 			joint.TargetSteeringAngle = 0;
 		}
-
 	}
 }
 

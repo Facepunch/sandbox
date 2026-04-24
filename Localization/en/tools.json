@@ -24,6 +24,7 @@
     "tool.hint.wheeltool.description": "Attaches a wheel to an object",
     "tool.hint.wheeltool.place": "Place",
     "tool.hint.wheeltool.toggle_axis": "Toggle axis",
+    "tool.hint.wheeltool.toggle_direction": "Toggle direction",
 
     "tool.hint.rope.stage0": "Connects two objects with a rope",
     "tool.hint.rope.stage1": "Select the second object",

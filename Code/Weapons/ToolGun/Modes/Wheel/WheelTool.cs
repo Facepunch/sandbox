@@ -1,5 +1,4 @@
-﻿﻿
-using Sandbox.UI;
+﻿using Sandbox.UI;
 
 [Hide]
 [Title( "Wheel" )]
@@ -16,8 +15,10 @@ public class WheelTool : ToolMode
 	public override string Description => "#tool.hint.wheeltool.description";
 	public override string PrimaryAction => "#tool.hint.wheeltool.place";
 	public override string SecondaryAction => "#tool.hint.wheeltool.toggle_axis";
+	public override string ReloadAction => "#tool.hint.wheeltool.toggle_direction";
 
 	Vector3 _axis = Vector3.Right;
+	bool _reversed = false;
 
 	public override void OnControl()
 	{
@@ -38,26 +39,35 @@ public class WheelTool : ToolMode
 			_axis = _axis == Vector3.Right ? Vector3.Up : Vector3.Right;
 		}
 
+		if ( Input.Pressed( "reload" ) )
+		{
+			_reversed = !_reversed;
+		}
+
 		var placementTrans = new Transform( pos.Position + pos.Rotation.Forward * surfaceOffset );
 		placementTrans.Rotation = Rotation.LookAt( pos.Rotation.Forward, pos.Rotation * _axis ) * new Angles( 0, 90, 0 );
 		placementTrans.Scale = scene.LocalScale;
 
 		if ( Input.Pressed( "attack1" ) )
 		{
-			SpawnWheel( select, def, placementTrans );
+			SpawnWheel( select, def, placementTrans, _reversed );
 			ShootEffects( select );
 		}
 
 		DebugOverlay.GameObject( scene, transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
-		DebugOverlay.Line( new Line( placementTrans.Position, placementTrans.Position + placementTrans.Right * 5 ), Color.White );
 
-		var suspensionAxis = placementTrans.Forward * 20;
-		DebugOverlay.Line( new Line( placementTrans.Position - suspensionAxis, placementTrans.Position + suspensionAxis ), Color.Green );
+		var steerAngle = MathF.Sin( Time.Now * 2f ) * 25f;
+		var steer = Rotation.FromAxis( placementTrans.Forward, steerAngle );
+		var cylRadius = MathF.Max( modelBounds.Size.x, modelBounds.Size.z ) * 0.5f * placementTrans.Scale.x + 0.5f;
+		var cylAxis = steer * placementTrans.Right;
+		DebugOverlay.Cylinder( new Capsule( placementTrans.Position - cylAxis * 2f, placementTrans.Position + cylAxis * 2f, cylRadius ), Color.Yellow, segments: 32 );
 
+		var overlayRadius = MathF.Max( modelBounds.Size.x, modelBounds.Size.z ) * 0.01f * placementTrans.Scale.x;
+		WheelOverlay.DrawDirection( placementTrans.Position, placementTrans.Right, pos.Rotation.Up, overlayRadius, _reversed );
 	}
 
 	[Rpc.Host]
-	public void SpawnWheel( SelectionPoint point, WheelDefinition def, Transform tx )
+	public void SpawnWheel( SelectionPoint point, WheelDefinition def, Transform tx, bool reversed )
 	{
 		if ( def == null || def.Prefab?.GetScene() is not Scene scene ) return;
 
@@ -68,6 +78,7 @@ public class WheelTool : ToolMode
 		wheelGo.WorldTransform = tx;
 
 		var we = wheelGo.GetOrAddComponent<WheelEntity>();
+		we.Reversed = reversed;
 		var joint = wheelGo.GetComponentInChildren<WheelJoint>( true );
 
 		if ( joint is null )
