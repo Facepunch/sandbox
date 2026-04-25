@@ -383,6 +383,9 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		if ( !go.IsValid() || go.IsProxy ) return;
 		if ( go.Tags.Has( "player" ) ) return;
 
+		// Check ownership if the object has an Ownable component
+		if ( !go.HasAccess( Rpc.Caller ) ) return;
+
 		go.Destroy();
 	}
 
@@ -393,6 +396,8 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	public static void BreakInspectedProp( Prop prop )
 	{
 		if ( !prop.IsValid() || prop.IsProxy ) return;
+		// Check ownership if the object has an Ownable component
+		if ( !prop.GameObject.HasAccess( Rpc.Caller ) ) return;
 
 		var damageable = prop.GetComponent<Component.IDamageable>();
 		if ( damageable is null ) return;

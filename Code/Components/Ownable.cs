@@ -35,7 +35,7 @@ public sealed class Ownable : Component, IPhysgunEvent, IToolgunEvent
 	[ConVar( "sb.ownership_checks", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Enforce ownership, players can only interact with their own props." )]
 	public static bool OwnershipChecks { get; set; } = false;
 
-	bool CallerHasAccess( Connection caller ) => HasAccess( caller, Owner );
+	internal bool CallerHasAccess( Connection caller ) => HasAccess( caller, Owner );
 
 	public static bool HasAccess( Connection caller, Connection owner )
 	{
@@ -56,5 +56,16 @@ public sealed class Ownable : Component, IPhysgunEvent, IToolgunEvent
 	{
 		if ( !CallerHasAccess( e.User ) )
 			e.Cancelled = true;
+	}
+}
+
+
+public static class OwnableExtensions
+{
+	public static bool HasAccess( this GameObject go, Connection caller )
+	{
+		if ( go.Components.TryGet<Ownable>( out var ownable ) )
+			return ownable.CallerHasAccess( caller );
+		return true;
 	}
 }
