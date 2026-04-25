@@ -284,6 +284,18 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null ) return;
 
+		var spawnData = new ISpawnEvents.SpawnData
+		{
+			Spawner = Spawner,
+			Transform = transform,
+			Player = player
+		};
+
+		Scene.RunEvent<ISpawnEvents>( x => x.OnSpawn( spawnData ) );
+
+		if ( spawnData.Cancelled )
+			return;
+
 		var objects = await Spawner.Spawn( transform, player );
 
 		if ( objects is { Count: > 0 } )
@@ -295,6 +307,14 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 			{
 				undo.Add( go );
 			}
+
+			Scene.RunEvent<ISpawnEvents>( x => x.OnPostSpawn( new ISpawnEvents.PostSpawnData
+			{
+				Spawner = Spawner,
+				Transform = transform,
+				Player = player,
+				Objects = objects
+			} ) );
 		}
 	}
 
