@@ -120,6 +120,45 @@ public sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, ISpawnEvents,
 
 		var steamId = e.Player.SteamId;
 
+		// Duplicator: batch pre-check — reject entire dupe if it would exceed limits
+		if ( e.Spawner is DuplicatorSpawner dupeSpawner )
+		{
+			var dupeObjectCount = dupeSpawner.Dupe?.Objects?.Count ?? 0;
+
+			if ( MaxPropsPerPlayer >= 0 && dupeObjectCount > 0 )
+			{
+				var current = Count( steamId, go => go.GetComponent<Prop>().IsValid() );
+				if ( current + dupeObjectCount > MaxPropsPerPlayer )
+				{
+					e.Cancelled = true;
+					NotifyLimit( e.Player, "props", MaxPropsPerPlayer );
+					return;
+				}
+			}
+
+			if ( MaxExplosivesPerPlayer >= 0 )
+			{
+				var explosivesInDupe = CountExplosivesInDupe( dupeSpawner );
+				if ( explosivesInDupe > 0 )
+				{
+					var current = Count( steamId, go =>
+					{
+						var prop = go.GetComponent<Prop>();
+						return prop.IsValid() && prop.Model?.Data?.Explosive == true;
+					} );
+
+					if ( current + explosivesInDupe > MaxExplosivesPerPlayer )
+					{
+						e.Cancelled = true;
+						NotifyLimit( e.Player, "explosives", MaxExplosivesPerPlayer );
+						return;
+					}
+				}
+			}
+
+			return;
+		}
+
 		if ( MaxPropsPerPlayer >= 0 && e.Spawner is PropSpawner )
 		{
 			var count = Count( steamId, go => go.GetComponent<Prop>().IsValid() );
@@ -212,7 +251,16 @@ public sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, ISpawnEvents,
 		if ( spawner is PropSpawner propSpawner )
 			return propSpawner.Model?.Data?.Explosive == true;
 
+		if ( spawner is DuplicatorSpawner dupeSpawner )
+			return dupeSpawner.Dupe?.PreviewModels?.Any( m => m.Model?.Data?.Explosive == true ) == true;
+
 		return false;
+	}
+
+	private static int CountExplosivesInDupe( DuplicatorSpawner spawner )
+	{
+		if ( spawner.Dupe?.PreviewModels is null ) return 0;
+		return spawner.Dupe.PreviewModels.Count( m => m.Model?.Data?.Explosive == true );
 	}
 
 	private static string GetToolName( ToolMode tool ) => tool?.TypeDescription?.Title ?? tool?.GetType().Name ?? "Unknown";
