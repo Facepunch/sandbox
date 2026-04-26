@@ -7,34 +7,42 @@ using Sandbox.UI;
 /// </summary>
 public sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, ISpawnEvents, IToolActionEvents
 {
+	[Range( -1, 1024 )]
 	[Title( "Max Props Per Player" ), Group( "Limits" )]
 	[ConVar( "sb.limit.props", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum props per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxPropsPerPlayer { get; set; } = -1;
 
+	[Range( -1, 16 )]
 	[Title( "Max Explosives Per Player" ), Group( "Limits" )]
 	[ConVar( "sb.limit.explosives", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum explosive props per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxExplosivesPerPlayer { get; set; } = -1;
 
+	[Range( -1, 64 )]
 	[Title( "Max Balloons Per Player" ), Group( "Limits" )]
 	[ConVar( "sb.limit.balloons", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum balloons per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxBalloons { get; set; } = -1;
 
+	[Range( -1, 512 )]
 	[Title( "Max Constraints Per Player" ), Group( "Limits" )]
 	[ConVar( "sb.limit.constraints", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum constraints per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxConstraints { get; set; } = -1;
 
+	[Range( -1, 64 )]
 	[Title( "Max Emitters Per Player" ), Group( "Limits" )]
 	[ConVar( "sb.limit.emitters", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum emitters per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxEmitters { get; set; } = -1;
 
+	[Range( -1, 64 )]
 	[Title( "Max Thrusters Per Player" ), Group( "Limits" )]
 	[ConVar( "sb.limit.thrusters", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum thrusters per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxThrusters { get; set; } = -1;
 
+	[Range( -1, 32 )]
 	[Title( "Max Hoverballs Per Player" ), Group( "Limits" )]
 	[ConVar( "sb.limit.hoverballs", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum hoverballs per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxHoverballs { get; set; } = -1;
 
+	[Range( -1, 32 )]
 	[Title( "Max Wheels Per Player" ), Group( "Limits" )]
 	[ConVar( "sb.limit.wheels", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum wheels per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxWheels { get; set; } = -1;
@@ -52,10 +60,6 @@ public sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, ISpawnEvents,
 	public LimitsSystem( Scene scene ) : base( scene )
 	{
 	}
-
-	//
-	// Tracking helpers
-	//
 
 	/// <summary>
 	/// Returns true if the given count meets or exceeds the limit.
