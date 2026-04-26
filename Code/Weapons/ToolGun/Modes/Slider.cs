@@ -53,6 +53,8 @@ public class Slider : BaseConstraintToolMode
 		go2.NetworkSpawn();
 		go1.NetworkSpawn();
 
+		Track( go1, go2 );
+
 		var undo = Player.Undo.Create();
 		undo.Name = "Slider";
 		undo.Add( go1 );

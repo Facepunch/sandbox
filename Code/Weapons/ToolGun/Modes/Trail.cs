@@ -25,28 +25,36 @@ public class Trail : ToolMode
 	public bool CastShadows { get; set; } = false;
 
 	public override string Description => "Add or remove trails from objects";
-	public override string PrimaryAction => "Add Trail";
-	public override string SecondaryAction => "Remove Trail";
 
-	public override void OnControl()
+	protected override void OnStart()
+	{
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "Add Trail", OnAddTrail );
+		RegisterAction( ToolInput.Secondary, () => "Remove Trail", OnRemoveTrail );
+	}
+
+	void OnAddTrail()
 	{
 		var select = TraceSelect();
 
 		IsValidState = select.IsValid() && !select.IsWorld && !select.IsPlayer;
-		if ( !IsValidState )
-			return;
+		if ( !IsValidState ) return;
 
-		if ( Input.Pressed( "attack1" ) )
-		{
-			var lineDef = ResourceLibrary.Get<LineDefinition>( Definition );
-			AddTrail( select.GameObject, TrailColor, StartWidth, EndWidth, Lifetime, CastShadows, lineDef );
-			ShootEffects( select );
-		}
-		else if ( Input.Pressed( "attack2" ) )
-		{
-			RemoveTrail( select.GameObject );
-			ShootEffects( select );
-		}
+		var lineDef = ResourceLibrary.Get<LineDefinition>( Definition );
+		AddTrail( select.GameObject, TrailColor, StartWidth, EndWidth, Lifetime, CastShadows, lineDef );
+		ShootEffects( select );
+	}
+
+	void OnRemoveTrail()
+	{
+		var select = TraceSelect();
+
+		IsValidState = select.IsValid() && !select.IsWorld && !select.IsPlayer;
+		if ( !IsValidState ) return;
+
+		RemoveTrail( select.GameObject );
+		ShootEffects( select );
 	}
 
 	[Rpc.Broadcast]

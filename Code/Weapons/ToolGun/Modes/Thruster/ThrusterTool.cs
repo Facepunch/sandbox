@@ -14,11 +14,58 @@ public class ThrusterTool : ToolMode
 	public string Definition { get; set; } = "entities/thruster/basic.tdef";
 
 	public override string Description => "#tool.hint.thrustertool.description";
-	public override string PrimaryAction => "#tool.hint.thrustertool.place";
-	public override string SecondaryAction => "#tool.hint.thrustertool.place_no_weld";
-	public override string ReloadAction => "#tool.hint.thrustertool.toggle_axis";
 
 	Vector3 _axis = Vector3.Up;
+
+	protected override void OnStart()
+	{
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.thrustertool.place", OnPlace );
+		RegisterAction( ToolInput.Secondary, () => "#tool.hint.thrustertool.place_no_weld", OnPlaceNoWeld );
+		RegisterAction( ToolInput.Reload, () => "#tool.hint.thrustertool.toggle_axis", OnToggleAxis );
+	}
+
+	void OnToggleAxis()
+	{
+		_axis = _axis == Vector3.Right ? Vector3.Up : Vector3.Right;
+	}
+
+	void OnPlace()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		var thrusterDef = ResourceLibrary.Get<ThrusterDefinition>( Definition );
+		if ( thrusterDef == null ) return;
+
+		var placementTrans = GetPlacementTransform( select );
+		Spawn( select, thrusterDef.Prefab, placementTrans, false );
+		ShootEffects( select );
+	}
+
+	void OnPlaceNoWeld()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		var thrusterDef = ResourceLibrary.Get<ThrusterDefinition>( Definition );
+		if ( thrusterDef == null ) return;
+
+		var placementTrans = GetPlacementTransform( select );
+		Spawn( select, thrusterDef.Prefab, placementTrans, true );
+		ShootEffects( select );
+	}
+
+	Transform GetPlacementTransform( SelectionPoint select )
+	{
+		var pos = select.WorldTransform();
+		var axisOffset = _axis == Vector3.Up ? new Angles( 90, 0, 0 ) : new Angles( -90, 0, 0 );
+
+		var placementTrans = new Transform( pos.Position );
+		placementTrans.Rotation = pos.Rotation * axisOffset;
+		return placementTrans;
+	}
 
 	public override void OnControl()
 	{
@@ -27,35 +74,12 @@ public class ThrusterTool : ToolMode
 		var select = TraceSelect();
 		if ( !select.IsValid() ) return;
 
-		var pos = select.WorldTransform();
-
-		if ( Input.Pressed( "reload" ) )
-		{
-			_axis = _axis == Vector3.Right ? Vector3.Up : Vector3.Right;
-		}
-
-		// Default: thrust away from surface normal. Toggle: thrust into surface (180° flip).
-		var axisOffset = _axis == Vector3.Up ? new Angles( 90, 0, 0 ) : new Angles( -90, 0, 0 );
-
-		var placementTrans = new Transform( pos.Position );
-		placementTrans.Rotation = pos.Rotation * axisOffset;
-
 		var thrusterDef = ResourceLibrary.Get<ThrusterDefinition>( Definition );
 		if ( thrusterDef == null ) return;
 
-		if ( Input.Pressed( "attack1" ) )
-		{
-			Spawn( select, thrusterDef.Prefab, placementTrans, false );
-			ShootEffects( select );
-		}
-		else if ( Input.Pressed( "attack2" ) )
-		{
-			Spawn( select, thrusterDef.Prefab, placementTrans, true );
-			ShootEffects( select );
-		}
+		var placementTrans = GetPlacementTransform( select );
 
 		DebugOverlay.GameObject( thrusterDef.Prefab.GetScene(), transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
-
 	}
 
 	[Rpc.Host]
@@ -87,6 +111,8 @@ public class ThrusterTool : ToolMode
 		ApplyPhysicsProperties( go );
 
 		go.NetworkSpawn( true, null );
+
+		Track( go );
 
 		// undo
 		{

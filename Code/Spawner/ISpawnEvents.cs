@@ -22,7 +22,7 @@ public interface ISpawnEvents : ISceneEvent<ISpawnEvents>
 		/// <summary>
 		/// The player requesting the spawn.
 		/// </summary>
-		public Player Player { get; init; }
+		public PlayerData Player { get; init; }
 
 		/// <summary>
 		/// Set to true to cancel the spawn.

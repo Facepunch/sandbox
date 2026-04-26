@@ -93,6 +93,8 @@ public class Rope : BaseConstraintToolMode
 		go2.NetworkSpawn( true, null );
 		go1.NetworkSpawn( true, null );
 
+		Track( go1, go2 );
+
 		var undo = Player.Undo.Create();
 		undo.Name = "Rope";
 		undo.Add( go1 );

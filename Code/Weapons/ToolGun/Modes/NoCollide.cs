@@ -24,6 +24,8 @@ public class NoCollide : BaseConstraintToolMode
 
 		go.NetworkSpawn();
 
+		Track( go );
+
 		var undo = Player.Undo.Create();
 		undo.Name = "No Collide";
 		undo.Add( go );

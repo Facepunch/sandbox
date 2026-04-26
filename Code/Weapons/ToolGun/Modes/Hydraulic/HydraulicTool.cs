@@ -104,6 +104,8 @@ public class HydraulicTool : BaseConstraintToolMode
 		go1.NetworkSpawn( true, null );
 		jointGo.NetworkSpawn( true, null );
 
+		Track( go1, go2, jointGo );
+
 		var undo = Player.Undo.Create();
 		undo.Name = "Hydraulic";
 		undo.Add( go1 );
@@ -225,6 +227,8 @@ public class HydraulicTool : BaseConstraintToolMode
 		ballAnchor.NetworkSpawn( true, null );
 		sliderB.NetworkSpawn( true, null );
 		sliderA.NetworkSpawn( true, null );
+
+		Track( goA, goB, ballAnchor, ballTarget, sliderA, sliderB );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Hydraulic (Ball Joints)";

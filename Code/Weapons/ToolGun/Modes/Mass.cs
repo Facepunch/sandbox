@@ -8,11 +8,17 @@ public class Mass : ToolMode
 	public float Value { get; set; } = 100.0f;
 
 	public override string Description => "#tool.hint.mass.description";
-	public override string PrimaryAction => "#tool.hint.mass.set";
-	public override string SecondaryAction => "#tool.hint.mass.copy";
-	public override string ReloadAction => "#tool.hint.mass.reset";
 
-	public override void OnControl()
+	protected override void OnStart()
+	{
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.mass.set", OnSetMass );
+		RegisterAction( ToolInput.Secondary, () => "#tool.hint.mass.copy", OnCopyMass );
+		RegisterAction( ToolInput.Reload, () => "#tool.hint.mass.reset", OnResetMass );
+	}
+
+	void OnSetMass()
 	{
 		var select = TraceSelect();
 		if ( !select.IsValid() ) return;
@@ -20,11 +26,31 @@ public class Mass : ToolMode
 		var rb = select.GameObject.GetComponent<Rigidbody>();
 		if ( !rb.IsValid() ) return;
 
-		if ( Input.Pressed( "attack1" ) ) SetMass( rb, Value );
-		else if ( Input.Pressed( "attack2" ) ) CopyMass( rb );
-		else if ( Input.Pressed( "reload" ) ) SetMass( rb, 0.0f );
-		else return;
+		SetMass( rb, Value );
+		ShootEffects( select );
+	}
 
+	void OnCopyMass()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		var rb = select.GameObject.GetComponent<Rigidbody>();
+		if ( !rb.IsValid() ) return;
+
+		CopyMass( rb );
+		ShootEffects( select );
+	}
+
+	void OnResetMass()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		var rb = select.GameObject.GetComponent<Rigidbody>();
+		if ( !rb.IsValid() ) return;
+
+		SetMass( rb, 0.0f );
 		ShootEffects( select );
 	}
 

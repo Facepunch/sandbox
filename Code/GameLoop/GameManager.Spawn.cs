@@ -104,7 +104,7 @@ public sealed partial class GameManager
 		{
 			Spawner = spawner,
 			Transform = transform,
-			Player = player
+			Player = player?.PlayerData
 		};
 
 		Game.ActiveScene.RunEvent<ISpawnEvents>( x => x.OnSpawn( spawnData ) );
@@ -128,7 +128,7 @@ public sealed partial class GameManager
 			{
 				Spawner = spawner,
 				Transform = transform,
-				Player = player,
+				Player = player?.PlayerData,
 				Objects = objects
 			} ) );
 		}

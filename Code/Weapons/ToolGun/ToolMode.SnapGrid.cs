@@ -58,6 +58,8 @@ public abstract partial class ToolMode
 
 	public virtual void OnControl()
 	{
+		DispatchActions();
+
 		if ( !UseSnapGrid ) return;
 
 		var preview = TraceSelect();

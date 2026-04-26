@@ -82,9 +82,24 @@ public class StackerTool : ToolMode
 	public bool FreezeAll { get; set; } = true;
 
 	public override string Description => "#tool.hint.stacker.description";
-	public override string PrimaryAction => "#tool.hint.stacker.stack";
-	public override string SecondaryAction => "#tool.hint.stacker.cycle_alignment";
-	public override string ReloadAction => "#tool.hint.stacker.cycle_direction";
+
+	protected override void OnStart()
+	{
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.stacker.stack", OnStack );
+		RegisterAction( ToolInput.Secondary, () => "#tool.hint.stacker.cycle_alignment", CycleAlignment );
+		RegisterAction( ToolInput.Reload, () => "#tool.hint.stacker.cycle_direction", CycleDirection );
+	}
+
+	void OnStack()
+	{
+		var select = TraceSelect();
+		if ( !IsValidTarget( select ) ) return;
+
+		SpawnStack( ResolveRoot( select.GameObject ) );
+		ShootEffects( select );
+	}
 
 	public override void OnControl()
 	{
@@ -93,17 +108,6 @@ public class StackerTool : ToolMode
 		var select = TraceSelect();
 
 		IsValidState = IsValidTarget( select );
-
-		if ( Input.Pressed( "reload" ) )
-		{
-			CycleDirection();
-		}
-
-		if ( Input.Pressed( "attack2" ) )
-		{
-			CycleAlignment();
-		}
-
 		if ( !IsValidState )
 			return;
 
@@ -111,12 +115,6 @@ public class StackerTool : ToolMode
 		var transforms = ComputeStackTransforms( target );
 
 		DrawStackPreview( target, transforms );
-
-		if ( Input.Pressed( "attack1" ) )
-		{
-			SpawnStack( target );
-			ShootEffects( select );
-		}
 	}
 
 	/// <summary>
@@ -162,6 +160,9 @@ public class StackerTool : ToolMode
 		if ( !select.IsValid() ) return false;
 		if ( select.IsWorld ) return false;
 		if ( select.IsPlayer ) return false;
+
+		var root = ResolveRoot( select.GameObject );
+		if ( root.Tags.Contains( "constraint" ) ) return false;
 
 		return true;
 	}
@@ -336,6 +337,7 @@ public class StackerTool : ToolMode
 		if ( !target.IsValid() ) return;
 
 		var root = ResolveRoot( target );
+		if ( root.Tags.Contains( "constraint" ) ) return;
 
 		// Recompute transforms server-side from synced properties
 		var transforms = ComputeStackTransforms( root );

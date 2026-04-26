@@ -23,7 +23,30 @@ public class EmitterTool : ToolMode
 	public string EffectDef { get; set; } = "entities/particles/sparks.semit";
 
 	public override string Description => "#tool.hint.emittertool.description";
-	public override string PrimaryAction => "#tool.hint.emittertool.place";
+
+	protected override void OnStart()
+	{
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.emittertool.place", OnPlace );
+	}
+
+	void OnPlace()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		var baseDef = ResourceLibrary.Get<ScriptedEmitterModel>( BaseDef );
+		if ( baseDef == null ) return;
+
+		var pos = select.WorldTransform();
+		var placementTrans = new Transform( pos.Position );
+		placementTrans.Rotation = pos.Rotation;
+
+		var effectDef = ResourceLibrary.Get<ScriptedEmitter>( EffectDef );
+		Spawn( select, baseDef.Prefab, effectDef, placementTrans );
+		ShootEffects( select );
+	}
 
 	public override void OnControl()
 	{
@@ -32,19 +55,12 @@ public class EmitterTool : ToolMode
 		var select = TraceSelect();
 		if ( !select.IsValid() ) return;
 
-		var pos = select.WorldTransform();
-		var placementTrans = new Transform( pos.Position );
-		placementTrans.Rotation = pos.Rotation;
-
 		var baseDef = ResourceLibrary.Get<ScriptedEmitterModel>( BaseDef );
 		if ( baseDef == null ) return;
 
-		if ( Input.Pressed( "attack1" ) )
-		{
-			var effectDef = ResourceLibrary.Get<ScriptedEmitter>( EffectDef );
-			Spawn( select, baseDef.Prefab, effectDef, placementTrans );
-			ShootEffects( select );
-		}
+		var pos = select.WorldTransform();
+		var placementTrans = new Transform( pos.Position );
+		placementTrans.Rotation = pos.Rotation;
 
 		DebugOverlay.GameObject( baseDef.Prefab.GetScene(), transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
 	}
@@ -81,6 +97,8 @@ public class EmitterTool : ToolMode
 		ApplyPhysicsProperties( go );
 
 		go.NetworkSpawn( true, null );
+
+		Track( go );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Emitter";

@@ -32,9 +32,14 @@
 
 		if ( Input.Pressed( "reload" ) )
 		{
+			if ( !FireToolAction( ToolInput.Reload ) )
+				return;
+
 			var go = select.GameObject.Network.RootGameObject ?? select.GameObject;
 			RemoveConstraints( go );
 			ShootEffects( select );
+
+			FirePostToolAction( ToolInput.Reload );
 		}
 
 		IsValidState = true;
@@ -63,10 +68,18 @@
 
 			if ( Stage == 1 )
 			{
+				if ( !FireToolAction( ToolInput.Primary ) )
+				{
+					Stage = 0;
+					return;
+				}
+
 				Point2 = select;
 
 				Create( Point1, Point2 );
 				ShootEffects( select );
+
+				FirePostToolAction( ToolInput.Primary );
 			}
 
 			Stage = 0;

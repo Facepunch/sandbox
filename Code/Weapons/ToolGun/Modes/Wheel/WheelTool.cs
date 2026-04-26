@@ -13,12 +13,53 @@ public class WheelTool : ToolMode
 	public string Definition { get; set; } = "entities/wheel/basic.wdef";
 
 	public override string Description => "#tool.hint.wheeltool.description";
-	public override string PrimaryAction => "#tool.hint.wheeltool.place";
-	public override string SecondaryAction => "#tool.hint.wheeltool.toggle_axis";
-	public override string ReloadAction => "#tool.hint.wheeltool.toggle_direction";
 
 	Vector3 _axis = Vector3.Right;
 	bool _reversed = false;
+
+	protected override void OnStart()
+	{
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.wheeltool.place", OnPlace );
+		RegisterAction( ToolInput.Secondary, () => "#tool.hint.wheeltool.toggle_axis", OnToggleAxis );
+		RegisterAction( ToolInput.Reload, () => "#tool.hint.wheeltool.toggle_direction", OnToggleDirection );
+	}
+
+	void OnToggleAxis()
+	{
+		_axis = _axis == Vector3.Right ? Vector3.Up : Vector3.Right;
+	}
+
+	void OnToggleDirection()
+	{
+		_reversed = !_reversed;
+	}
+
+	void OnPlace()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		var def = ResourceLibrary.Get<WheelDefinition>( Definition );
+		if ( def == null || def.Prefab?.GetScene() is not Scene scene ) return;
+
+		var placementTrans = GetPlacementTransform( select, scene );
+		SpawnWheel( select, def, placementTrans, _reversed );
+		ShootEffects( select );
+	}
+
+	Transform GetPlacementTransform( SelectionPoint select, Scene scene )
+	{
+		var pos = select.WorldTransform();
+		var modelBounds = scene.GetBounds();
+		var surfaceOffset = modelBounds.Size.y * 0.5f;
+
+		var placementTrans = new Transform( pos.Position + pos.Rotation.Forward * surfaceOffset );
+		placementTrans.Rotation = Rotation.LookAt( pos.Rotation.Forward, pos.Rotation * _axis ) * new Angles( 0, 90, 0 );
+		placementTrans.Scale = scene.LocalScale;
+		return placementTrans;
+	}
 
 	public override void OnControl()
 	{
@@ -30,29 +71,8 @@ public class WheelTool : ToolMode
 		var def = ResourceLibrary.Get<WheelDefinition>( Definition );
 		if ( def == null || def.Prefab?.GetScene() is not Scene scene ) return;
 
-		var pos = select.WorldTransform();
+		var placementTrans = GetPlacementTransform( select, scene );
 		var modelBounds = scene.GetBounds();
-		var surfaceOffset = modelBounds.Size.y * 0.5f;
-
-		if ( Input.Pressed( "attack2" ) )
-		{
-			_axis = _axis == Vector3.Right ? Vector3.Up : Vector3.Right;
-		}
-
-		if ( Input.Pressed( "reload" ) )
-		{
-			_reversed = !_reversed;
-		}
-
-		var placementTrans = new Transform( pos.Position + pos.Rotation.Forward * surfaceOffset );
-		placementTrans.Rotation = Rotation.LookAt( pos.Rotation.Forward, pos.Rotation * _axis ) * new Angles( 0, 90, 0 );
-		placementTrans.Scale = scene.LocalScale;
-
-		if ( Input.Pressed( "attack1" ) )
-		{
-			SpawnWheel( select, def, placementTrans, _reversed );
-			ShootEffects( select );
-		}
 
 		DebugOverlay.GameObject( scene, transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
 
@@ -63,7 +83,7 @@ public class WheelTool : ToolMode
 		DebugOverlay.Cylinder( new Capsule( placementTrans.Position - cylAxis * 2f, placementTrans.Position + cylAxis * 2f, cylRadius ), Color.Yellow, segments: 32 );
 
 		var overlayRadius = MathF.Max( modelBounds.Size.x, modelBounds.Size.z ) * 0.01f * placementTrans.Scale.x;
-		WheelOverlay.DrawDirection( placementTrans.Position, placementTrans.Right, pos.Rotation.Up, overlayRadius, _reversed );
+		WheelOverlay.DrawDirection( placementTrans.Position, placementTrans.Right, select.WorldTransform().Rotation.Up, overlayRadius, _reversed );
 	}
 
 	[Rpc.Host]
@@ -101,6 +121,8 @@ public class WheelTool : ToolMode
 		joint.Body = point.GameObject;
 
 		wheelGo.NetworkSpawn( true, null );
+
+		Track( wheelGo );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Wheel";

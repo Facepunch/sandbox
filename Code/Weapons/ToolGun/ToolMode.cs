@@ -28,18 +28,21 @@ public abstract partial class ToolMode : Component, IToolInfo
 
 	/// <summary>
 	/// Label for the primary action (attack1), or null if none.
+	/// Auto-populated from registered <see cref="ToolActionEntry"/> when not overridden.
 	/// </summary>
-	public virtual string PrimaryAction => null;
+	public virtual string PrimaryAction => GetActionName( ToolInput.Primary );
 
 	/// <summary>
 	/// Label for the secondary action (attack2), or null if none.
+	/// Auto-populated from registered <see cref="ToolActionEntry"/> when not overridden.
 	/// </summary>
-	public virtual string SecondaryAction => null;
+	public virtual string SecondaryAction => GetActionName( ToolInput.Secondary );
 
 	/// <summary>
 	/// Label for the reload action, or null if none.
+	/// Auto-populated from registered <see cref="ToolActionEntry"/> when not overridden.
 	/// </summary>
-	public virtual string ReloadAction => null;
+	public virtual string ReloadAction => GetActionName( ToolInput.Reload );
 
 	/// <summary>
 	/// Tags that TraceSelect will ignore. Override per-tool to filter out specific objects.
@@ -53,6 +56,109 @@ public abstract partial class ToolMode : Component, IToolInfo
 	public virtual bool TraceHitboxes => false;
 
 	public TypeDescription TypeDescription { get; protected set; }
+
+	private readonly List<ToolActionEntry> _actions = new();
+	private readonly List<GameObject> _createdObjects = new();
+
+	/// <summary>
+	/// Register a tool action that will be dispatched automatically by the base <see cref="OnControl"/>.
+	/// The display name is a lambda so it can vary with tool state (e.g. stage-dependent hints).
+	/// </summary>
+	protected void RegisterAction( ToolInput input, Func<string> name, Action callback, InputMode mode = InputMode.Pressed )
+	{
+		if ( IsProxy ) return;
+
+		_actions.Add( new ToolActionEntry( input, name, callback, mode ) );
+	}
+
+	/// <summary>
+	/// Track a GameObject created by this tool action. These are passed through
+	/// to <see cref="IToolActionEvents.PostActionData.CreatedObjects"/> when the post-event fires.
+	/// </summary>
+	protected void Track( params GameObject[] objects )
+	{
+		foreach ( var go in objects )
+		{
+			if ( go.IsValid() )
+				_createdObjects.Add( go );
+		}
+	}
+
+	/// <summary>
+	/// Returns the display name for the first registered action matching <paramref name="input"/>, or null.
+	/// </summary>
+	private string GetActionName( ToolInput input )
+	{
+		foreach ( var action in _actions )
+		{
+			if ( action.Input == input )
+				return action.Name?.Invoke();
+		}
+
+		return null;
+	}
+
+	/// <summary>
+	/// Fire <see cref="IToolActionEvents.OnToolAction"/> before executing an action.
+	/// Returns true if the action should proceed, false if cancelled.
+	/// </summary>
+	protected bool FireToolAction( ToolInput input )
+	{
+		var data = new IToolActionEvents.ActionData
+		{
+			Tool = this,
+			Input = input,
+			Player = Player?.PlayerData
+		};
+
+		Scene.RunEvent<IToolActionEvents>( x => x.OnToolAction( data ) );
+		return !data.Cancelled;
+	}
+
+	/// <summary>
+	/// Fire <see cref="IToolActionEvents.OnPostToolAction"/> after a successful action.
+	/// Passes a snapshot of tracked objects, then clears the list.
+	/// </summary>
+	protected void FirePostToolAction( ToolInput input )
+	{
+		var objects = _createdObjects.Count > 0 ? new List<GameObject>( _createdObjects ) : null;
+		_createdObjects.Clear();
+
+		Scene.RunEvent<IToolActionEvents>( x => x.OnPostToolAction( new IToolActionEvents.PostActionData
+		{
+			Tool = this,
+			Input = input,
+			Player = Player?.PlayerData,
+			CreatedObjects = objects
+		} ) );
+	}
+
+	/// <summary>
+	/// Check registered actions and invoke any whose input condition is met this frame.
+	/// Wraps each callback with <see cref="IToolActionEvents"/> pre/post events.
+	/// </summary>
+	private void DispatchActions()
+	{
+		foreach ( var action in _actions )
+		{
+			var inputName = action.InputAction;
+			if ( inputName is null ) continue;
+
+			bool active = action.Mode == InputMode.Down
+				? Input.Down( inputName )
+				: Input.Pressed( inputName );
+
+			if ( active )
+			{
+				if ( !FireToolAction( action.Input ) )
+					continue;
+
+				_createdObjects.Clear();
+				action.Callback?.Invoke();
+				FirePostToolAction( action.Input );
+			}
+		}
+	}
 
 	protected override void OnStart()
 	{

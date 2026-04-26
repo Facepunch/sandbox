@@ -13,9 +13,30 @@ public class HoverballTool : ToolMode
 	public string Definition { get; set; } = "entities/hoverball/basic.hdef";
 
 	public override string Description => "#tool.hint.hoverballtool.description";
-	public override string PrimaryAction => "#tool.hint.hoverballtool.place";
 
 	public override bool UseSnapGrid => true;
+
+	protected override void OnStart()
+	{
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.hoverballtool.place", OnPlace );
+	}
+
+	void OnPlace()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		var hoverballDef = ResourceLibrary.Get<HoverballDefinition>( Definition );
+		if ( hoverballDef == null ) return;
+
+		var pos = select.WorldTransform();
+		var placementTrans = new Transform( pos.Position );
+
+		Spawn( select, hoverballDef.Prefab, placementTrans );
+		ShootEffects( select );
+	}
 
 	public override void OnControl()
 	{
@@ -24,17 +45,11 @@ public class HoverballTool : ToolMode
 		var select = TraceSelect();
 		if ( !select.IsValid() ) return;
 
-		var pos = select.WorldTransform();
-		var placementTrans = new Transform( pos.Position );
-
 		var hoverballDef = ResourceLibrary.Get<HoverballDefinition>( Definition );
 		if ( hoverballDef == null ) return;
 
-		if ( Input.Pressed( "attack1" ) )
-		{
-			Spawn( select, hoverballDef.Prefab, placementTrans );
-			ShootEffects( select );
-		}
+		var pos = select.WorldTransform();
+		var placementTrans = new Transform( pos.Position );
 
 		DebugOverlay.GameObject( hoverballDef.Prefab.GetScene(), transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
 	}
@@ -67,6 +82,8 @@ public class HoverballTool : ToolMode
 		ApplyPhysicsProperties( go );
 
 		go.NetworkSpawn( true, null );
+
+		Track( go );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Hoverball";

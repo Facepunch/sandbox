@@ -5,10 +5,16 @@
 public class Unbreakable : ToolMode
 {
 	public override string Description => "#tool.hint.unbreakable.description";
-	public override string PrimaryAction => "#tool.hint.unbreakable.set";
-	public override string SecondaryAction => "#tool.hint.unbreakable.unset";
 
-	public override void OnControl()
+	protected override void OnStart()
+	{
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.unbreakable.set", OnSetUnbreakable );
+		RegisterAction( ToolInput.Secondary, () => "#tool.hint.unbreakable.unset", OnUnsetUnbreakable );
+	}
+
+	void OnSetUnbreakable()
 	{
 		var select = TraceSelect();
 		if ( !select.IsValid() ) return;
@@ -16,10 +22,19 @@ public class Unbreakable : ToolMode
 		var prop = select.GameObject.GetComponent<Prop>();
 		if ( !prop.IsValid() ) return;
 
-		if ( Input.Pressed( "attack1" ) ) SetUnbreakable( prop, true );
-		else if ( Input.Pressed( "attack2" ) ) SetUnbreakable( prop, false );
-		else return;
+		SetUnbreakable( prop, true );
+		ShootEffects( select );
+	}
 
+	void OnUnsetUnbreakable()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		var prop = select.GameObject.GetComponent<Prop>();
+		if ( !prop.IsValid() ) return;
+
+		SetUnbreakable( prop, false );
 		ShootEffects( select );
 	}
 

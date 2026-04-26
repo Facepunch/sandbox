@@ -7,38 +7,48 @@ public class Resizer : ToolMode
 	public override IEnumerable<string> TraceIgnoreTags => [];
 
 	public override string Description => "#tool.hint.resizer.description";
-	public override string PrimaryAction => "#tool.hint.resizer.grow";
-	public override string SecondaryAction => "#tool.hint.resizer.shrink";
-	public override string ReloadAction => "#tool.hint.resizer.reset";
 
 	TimeSince timeSinceAction = 0;
 
-	public override void OnControl()
+	protected override void OnStart()
+	{
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.resizer.grow", OnGrow, InputMode.Down );
+		RegisterAction( ToolInput.Secondary, () => "#tool.hint.resizer.shrink", OnShrink, InputMode.Down );
+		RegisterAction( ToolInput.Reload, () => "#tool.hint.resizer.reset", OnReset );
+	}
+
+	void OnGrow()
 	{
 		var select = TraceSelect();
-
 		IsValidState = select.IsValid() && !select.IsWorld;
-		if ( !IsValidState )
-			return;
+		if ( !IsValidState ) return;
+		if ( timeSinceAction < 0.03f ) return;
 
-		if ( timeSinceAction < 0.03f )
-			return;
+		Resize( select.GameObject, 0.033f );
+		timeSinceAction = 0;
+	}
 
-		if ( Input.Down( "attack1" ) )
-		{
-			Resize( select.GameObject, 0.033f );
-			timeSinceAction = 0;
-		}
-		else if ( Input.Down( "attack2" ) )
-		{
-			Resize( select.GameObject, -0.033f );
-			timeSinceAction = 0;
-		}
-		else if ( Input.Pressed( "reload" ) )
-		{
-			ResetScale( select.GameObject );
-			ShootEffects( select );
-		}
+	void OnShrink()
+	{
+		var select = TraceSelect();
+		IsValidState = select.IsValid() && !select.IsWorld;
+		if ( !IsValidState ) return;
+		if ( timeSinceAction < 0.03f ) return;
+
+		Resize( select.GameObject, -0.033f );
+		timeSinceAction = 0;
+	}
+
+	void OnReset()
+	{
+		var select = TraceSelect();
+		IsValidState = select.IsValid() && !select.IsWorld;
+		if ( !IsValidState ) return;
+
+		ResetScale( select.GameObject );
+		ShootEffects( select );
 	}
 
 	[Rpc.Broadcast]

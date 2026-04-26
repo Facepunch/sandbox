@@ -11,14 +11,31 @@ public class DecalTool : ToolMode
 	public string Decal { get; set; }
 
 	public override string Description => "#tool.hint.decaltool.description";
-	public override string PrimaryAction => "#tool.hint.decaltool.place";
-	public override string SecondaryAction => "#tool.hint.decaltool.paint";
 
 	TimeSince timeSinceShoot = 0;
 
-	public override void OnControl()
+	protected override void OnStart()
 	{
-		base.OnControl();
+		base.OnStart();
+
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.decaltool.place", OnPlace );
+		RegisterAction( ToolInput.Secondary, () => "#tool.hint.decaltool.paint", OnPaint, InputMode.Down );
+	}
+
+	void OnPlace()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		var resource = ResourceLibrary.Get<DecalDefinition>( Decal );
+		if ( resource == null ) return;
+
+		SpawnDecal( select, resource );
+	}
+
+	void OnPaint()
+	{
+		if ( timeSinceShoot < 0.05f ) return;
 
 		var select = TraceSelect();
 		if ( !select.IsValid() ) return;
@@ -26,21 +43,8 @@ public class DecalTool : ToolMode
 		var resource = ResourceLibrary.Get<DecalDefinition>( Decal );
 		if ( resource == null ) return;
 
-		var def = Decal;
-		if ( def == null ) return;
-
-		var pos = select.WorldTransform();
-
-		if ( Input.Pressed( "attack1" ) )
-		{
-			SpawnDecal( select, resource );
-		}
-
-		if ( Input.Down( "attack2" ) && timeSinceShoot > 0.05f )
-		{
-			timeSinceShoot = 0;
-			SpawnDecal( select, resource );
-		}
+		timeSinceShoot = 0;
+		SpawnDecal( select, resource );
 	}
 
 	uint _layer = 0;

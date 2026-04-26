@@ -60,19 +60,29 @@ public class KeepUpright : ToolMode
 			}
 			else
 			{
+				if ( !FireToolAction( ToolInput.Reload ) )
+					return;
+
 				var go = select.GameObject.Network.RootGameObject ?? select.GameObject;
 				RemoveConstraints( go );
 				ShootEffects( select );
+
+				FirePostToolAction( ToolInput.Reload );
 			}
 			return;
 		}
 
 		if ( Input.Pressed( "attack1" ) )
 		{
+			if ( !FireToolAction( ToolInput.Primary ) )
+				return;
+
 			CreateWorldAnchor( select );
 			ShootEffects( select );
 			_stage = 0;
 			_point1 = default;
+
+			FirePostToolAction( ToolInput.Primary );
 			return;
 		}
 
@@ -88,8 +98,17 @@ public class KeepUpright : ToolMode
 			{
 				if ( _point1.IsValid() && _point1.GameObject != select.GameObject )
 				{
+					if ( !FireToolAction( ToolInput.Secondary ) )
+					{
+						_stage = 0;
+						_point1 = default;
+						return;
+					}
+
 					CreateLinked( _point1, select );
 					ShootEffects( select );
+
+					FirePostToolAction( ToolInput.Secondary );
 				}
 
 				_stage = 0;
@@ -117,6 +136,8 @@ public class KeepUpright : ToolMode
 		joint.MaxTorque = TorqueMultiplier * mass * torqueScale;
 
 		go.NetworkSpawn();
+
+		Track( go );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Upright";
@@ -153,6 +174,8 @@ public class KeepUpright : ToolMode
 
 		go2.NetworkSpawn();
 		go1.NetworkSpawn();
+
+		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Upright";
