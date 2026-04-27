@@ -1795,8 +1795,8 @@
   "DontBreakAsTemplate": false,
   "__references": [
     "facepunch.pistol_muzzleflash#76089",
-    "facepunch.v_first_person_arms_human#142949",
-    "facepunch.v_he_grenade#150528"
+    "facepunch.v_first_person_arms_human#205798",
+    "facepunch.v_he_grenade#205802"
   ],
   "__version": 2
 }

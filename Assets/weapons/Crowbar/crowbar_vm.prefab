@@ -1515,8 +1515,8 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.v_crowbar#150525",
-    "facepunch.v_first_person_arms_human#142949"
+    "facepunch.v_crowbar#205801",
+    "facepunch.v_first_person_arms_human#205798"
   ],
   "__version": 2
 }

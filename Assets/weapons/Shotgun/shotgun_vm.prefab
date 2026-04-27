@@ -1854,8 +1854,8 @@
   "DontBreakAsTemplate": false,
   "__references": [
     "facepunch.shotgun_muzzleflash#76091",
-    "facepunch.v_first_person_arms_human#142949",
-    "facepunch.v_spaghellim4#150536"
+    "facepunch.v_first_person_arms_human#205798",
+    "facepunch.v_spaghellim4#205815"
   ],
   "__version": 2
 }
