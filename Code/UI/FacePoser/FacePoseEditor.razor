@@ -64,6 +64,7 @@
         SkinnedModelRenderer smr = null;
         foreach (var go in selection)
         {
+            if ( go.Tags.Has( "player" ) ) continue;
             var found = go.GetComponentInChildren<SkinnedModelRenderer>();
             if (found?.Morphs?.Names?.Length > 0) { smr = found; break; }
         }
