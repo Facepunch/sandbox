@@ -157,7 +157,7 @@ public sealed partial class Player
 		foreach ( var weapon in _seatedWeapons )
 		{
 			if ( !weapon.IsValid() ) continue;
-			if ( weapon is IPlayerControllable controllable && !controllable.CanControl( Controller ) ) continue;
+			if ( weapon is IPlayerControllable controllable && !controllable.CanControl( this ) ) continue;
 
 			Vector2 aimPos;
 

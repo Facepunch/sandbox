@@ -151,7 +151,9 @@ public class RpgWeapon : BaseWeapon
 		Assert.True( projectile.IsValid(), "RpgProjectile not on projectile prefab" );
 
 		if ( Owner.IsValid() )
-			projectile.Instigator = Owner.PlayerData;
+			projectile.Instigator = Owner;
+		else if ( ClientInput.Current.IsValid() )
+			projectile.Instigator = ClientInput.Current;
 
 		go.NetworkSpawn();
 

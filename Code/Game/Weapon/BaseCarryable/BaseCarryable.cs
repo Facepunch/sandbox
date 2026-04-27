@@ -139,6 +139,22 @@ public partial class BaseCarryable : Component, IKillIcon
 	public GameObject AimIgnoreRoot => HasOwner ? Owner.GameObject : GameObject;
 
 	/// <summary>
+	/// The effective attacker to use in damage attribution.
+	/// Returns the owning player's GameObject if held, the seated player's GameObject if
+	/// controlled from a contraption seat, or this weapon's own GameObject as a last resort.
+	/// </summary>
+	protected GameObject EffectiveAttacker
+	{
+		get
+		{
+			if ( HasOwner ) return Owner.GameObject;
+			var seatedPlayer = ClientInput.Current;
+			if ( seatedPlayer.IsValid() ) return seatedPlayer.GameObject;
+			return GameObject;
+		}
+	}
+
+	/// <summary>
 	/// Where shoot effects come from. Either the point on the world model or the viewmodel, whichever is currently being used.
 	/// </summary>
 	public GameObject MuzzleTransform
@@ -307,8 +323,9 @@ public partial class BaseCarryable : Component, IKillIcon
 		if ( !attack.Target.IsValid() )
 			return;
 
-		// Use owner as attacker when held by a player; fall back to the weapon itself (standalone mode)
-		var attacker = HasOwner ? Owner.GameObject : GameObject;
+		// Use owner as attacker when held by a player, seated player when controlled from a
+		// contraption seat, or fall back to the weapon itself (standalone/world weapon)
+		var attacker = EffectiveAttacker;
 
 		var damagable = attack.Target.GetComponentInParent<IDamageable>();
 		if ( damagable is not null )

@@ -4,7 +4,7 @@ using Sandbox.Utility;
 
 public struct ClientInput
 {
-	readonly record struct State( Connection connection, PlayerController playerController );
+	readonly record struct State( Connection connection, Player player );
 
 	static State _currentState;
 
@@ -53,7 +53,7 @@ public struct ClientInput
 		return Connection?.Pressed( Action ) ?? false;
 	}
 
-	internal static IDisposable PushScope( PlayerController player )
+	internal static IDisposable PushScope( Player player )
 	{
 		var previousState = _currentState;
 		_currentState = new State( player?.Network?.Owner, player );
@@ -65,5 +65,5 @@ public struct ClientInput
 	/// The player currently running an <see cref="IPlayerControllable.OnControl"/> tick,
 	/// or null when not inside a control scope (e.g. during regular player input).
 	/// </summary>
-	public static PlayerController Current => _currentState.playerController;
+	public static Player Current => _currentState.player;
 }

@@ -5,7 +5,7 @@ public class Projectile : Component, Component.ICollisionListener
 {
 	[RequireComponent] public Rigidbody Rigidbody { get; set; }
 
-	[Sync( SyncFlags.FromHost )] public PlayerData Instigator { get; set; }
+	[Sync( SyncFlags.FromHost )] public Player Instigator { get; set; }
 
 	protected TimeSince TimeSinceCreated;
 
@@ -25,7 +25,7 @@ public class Projectile : Component, Component.ICollisionListener
 			return;
 
 		var player = collision.Other.GameObject.GetComponentInParent<Player>();
-		if ( Instigator.IsValid() && player.IsValid() && player.PlayerData == Instigator )
+		if ( Instigator.IsValid() && player.IsValid() && player == Instigator )
 		{
 			return;
 		}
@@ -45,7 +45,7 @@ public class Projectile : Component, Component.ICollisionListener
 	{
 		if ( !Instigator.IsValid() ) return;
 
-		var connection = Instigator.Connection;
+		var connection = Instigator.Network.Owner;
 		if ( connection is null ) return;
 
 		// TODO: implement me

@@ -45,7 +45,10 @@ public class ControlSystem : GameObjectSystem<ControlSystem>
 
 	void RunControl( BaseChair chair, LinkedGameObjectBuilder builder )
 	{
-		var player = chair.GetOccupant();
+		var controller = chair.GetOccupant();
+		if ( !controller.IsValid() ) return;
+
+		var player = controller.GetComponent<Player>();
 		if ( !player.IsValid() ) return;
 
 		using var scope = ClientInput.PushScope( player );

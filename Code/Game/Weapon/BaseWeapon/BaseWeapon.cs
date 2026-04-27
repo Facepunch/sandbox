@@ -212,7 +212,7 @@ public partial class BaseWeapon : BaseCarryable, IPlayerControllable
 	/// </summary>
 	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput SecondaryInput { get; set; }
 
-	public bool CanControl( PlayerController player )
+	public bool CanControl( Player player )
 	{
 		var inventory = player.GetComponent<PlayerInventory>();
 		return inventory is null || !inventory.ActiveWeapon.IsValid();
