@@ -14,7 +14,7 @@
             }
             else
             {
-                var totalMass = Target.SelectMany( go => go.GetComponentsInChildren<Rigidbody>() ).Sum( rb => rb.Mass );
+                var totalMass = Target.SelectMany( go => go.GetComponentsInChildren<Rigidbody>() ).Sum( ResolveMass );
                 var health = Target.Select( go => go.GetComponent<Prop>() ).FirstOrDefault( p => p.IsValid() );
 
                 <div class="object-info">
@@ -92,12 +92,23 @@
         return Target == null || HasContent();
     }
 
+    // Frozen rigidbodies report Mass = 0 from the live physics body, so fall back
+    // to PhysicalProperties.Mass and MassOverride before giving up.
+    static float ResolveMass( Rigidbody rb )
+    {
+        if ( !rb.IsValid() ) return 0f;
+        var mo = rb.GetComponent<PhysicalProperties>();
+        if ( mo.IsValid() && mo.Mass > 0f ) return mo.Mass;
+        if ( rb.MassOverride > 0f ) return rb.MassOverride;
+        return rb.Mass;
+    }
+
     bool HasContent()
     {
         if ( Target == null ) return false;
         if ( Properties.Count > 0 || Renderers.Count > 0 ) return true;
 
-        var totalMass = Target.SelectMany( go => go.GetComponentsInChildren<Rigidbody>() ).Sum( rb => rb.Mass );
+        var totalMass = Target.SelectMany( go => go.GetComponentsInChildren<Rigidbody>() ).Sum( ResolveMass );
         if ( totalMass > 0 ) return true;
 
         var health = Target.Select( go => go.GetComponent<Prop>() ).FirstOrDefault( p => p.IsValid() );
@@ -116,7 +127,7 @@
         foreach ( var go in Target ?? [] )
         {
             hc.Add( go.Id );
-            hc.Add( go.GetComponent<Rigidbody>()?.Mass ?? 0f );
+            hc.Add( ResolveMass( go.GetComponent<Rigidbody>() ) );
             hc.Add( go.GetComponent<Prop>()?.Health ?? -1f );
             hc.Add( go.GetComponent<ModelRenderer>()?.MaterialGroup );
         }
