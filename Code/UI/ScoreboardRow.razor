@@ -51,7 +51,7 @@
         if ( Entry is null || Entry.Connection is null ) return;
 
         var steamId = Entry.Connection.SteamId;
-        var menu = MenuPanel.Open( this );
+        var menu = Sandbox.MenuPanel.Open( this );
 
         menu.AddOption( "content_copy", "Copy Steam ID", () =>
         {
