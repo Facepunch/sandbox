@@ -374,6 +374,8 @@ public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 			GameObject.PlaySound( justAmmo ? AmmoPickupSound : GunPickupSound );
 			ILocalPlayerEvent.Post( e => e.OnPickup( weapon ) );
 		}
+		
+		SaveLoadout();
 	}
 
 	private bool ShouldAutoswitchTo( BaseCarryable item )
