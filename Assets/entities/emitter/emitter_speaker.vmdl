@@ -12,6 +12,14 @@
 					{
 						_class = "LODGroup"
 						switch_threshold = 0.0
+						auto_simplify_mode = 0
+						auto_reduction = 0.5
+						auto_max_error = 0.0
+						auto_lock_border_vertices = true
+						auto_permissive_simplification = false
+						auto_protect_uv_seams = true
+						auto_regularize = 1
+						auto_prune_isolated_components = false
 						meshes = 
 						[
 							"LOD0",
@@ -20,6 +28,14 @@
 					{
 						_class = "LODGroup"
 						switch_threshold = 2.0
+						auto_simplify_mode = 0
+						auto_reduction = 0.5
+						auto_max_error = 0.0
+						auto_lock_border_vertices = true
+						auto_permissive_simplification = false
+						auto_protect_uv_seams = true
+						auto_regularize = 1
+						auto_prune_isolated_components = false
 						meshes = 
 						[
 							"LOD1",
@@ -28,6 +44,14 @@
 					{
 						_class = "LODGroup"
 						switch_threshold = 6.0
+						auto_simplify_mode = 0
+						auto_reduction = 0.5
+						auto_max_error = 0.0
+						auto_lock_border_vertices = true
+						auto_permissive_simplification = false
+						auto_protect_uv_seams = true
+						auto_regularize = 1
+						auto_prune_isolated_components = false
 						meshes = 
 						[
 							"LOD2",
@@ -36,6 +60,14 @@
 					{
 						_class = "LODGroup"
 						switch_threshold = 15.0
+						auto_simplify_mode = 0
+						auto_reduction = 0.5
+						auto_max_error = 0.0
+						auto_lock_border_vertices = true
+						auto_permissive_simplification = false
+						auto_protect_uv_seams = true
+						auto_regularize = 1
+						auto_prune_isolated_components = false
 						meshes = 
 						[
 							"LOD3",
@@ -44,6 +76,14 @@
 					{
 						_class = "LODGroup"
 						switch_threshold = 30.0
+						auto_simplify_mode = 0
+						auto_reduction = 0.5
+						auto_max_error = 0.0
+						auto_lock_border_vertices = true
+						auto_permissive_simplification = false
+						auto_protect_uv_seams = true
+						auto_regularize = 1
+						auto_prune_isolated_components = false
 						meshes = 
 						[
 							"LOD4",
@@ -52,6 +92,14 @@
 					{
 						_class = "LODGroup"
 						switch_threshold = 50.0
+						auto_simplify_mode = 0
+						auto_reduction = 0.5
+						auto_max_error = 0.0
+						auto_lock_border_vertices = true
+						auto_permissive_simplification = false
+						auto_protect_uv_seams = true
+						auto_regularize = 1
+						auto_prune_isolated_components = false
 						meshes = 
 						[
 							"LOD5",
@@ -266,6 +314,21 @@
 								"emitter_speaker_LOD5",
 							]
 						}
+					},
+				]
+			},
+			{
+				_class = "PhysicsShapeList"
+				children = 
+				[
+					{
+						_class = "PhysicsShapeBox"
+						parent_bone = ""
+						surface_prop = "metal"
+						collision_tags = "solid"
+						origin = [ 0.006293, -0.003995, 1.597963 ]
+						angles = [ -0.0, 45.0, 0.0 ]
+						dimensions = [ 5.658848, 5.62791, 3.220085 ]
 					},
 				]
 			},
