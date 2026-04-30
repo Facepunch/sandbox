@@ -5,39 +5,35 @@ using System.Threading;
 /// <summary>
 /// Holds player information like health
 /// </summary>
-public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, ISaveEvents, IKillSource
+public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, Global.ISaveEvents, IKillSource
 {
-	private static Player Local { get; set; }
-	public static Player FindLocalPlayer() => Local;
+	private static Player LocalPlayer { get; set; }
+	public static Player FindLocalPlayer() => LocalPlayer;
 	public static T FindLocalWeapon<T>() where T : BaseCarryable => FindLocalPlayer()?.GetComponentInChildren<T>( true );
 	public static T FindLocalToolMode<T>() where T : ToolMode => FindLocalPlayer()?.GetComponentInChildren<T>( true );
 
 	[RequireComponent] public PlayerController Controller { get; set; }
 	[Property] public GameObject Body { get; set; }
 
+	private float _health = 100;
 	private bool _isTakingDamage;
-	private float _health = 100f;
+	private bool _isDead;
 
-	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )] 
-	public float Health 
-	{ 
-		get => _health; 
+	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )]
+	public float Health
+	{
+		get => _health;
 		set
 		{
-			var previousHealth = _health;
 			_health = value;
-
-			if ( _health < 0 )
-				_health = 0;
-
-			if ( !_isTakingDamage && previousHealth >= 1 && _health < 1 )
+			if ( Networking.IsHost && _health < 1 && !_isTakingDamage && !_isDead )
 			{
-				if ( PlayerData.IsValid() && !PlayerData.IsGodMode )
-				{
-					var dmg = new DamageInfo( previousHealth - _health, GameObject, null );
-					GameManager.Current?.OnDeath( this, dmg );
-					Kill( dmg );
-				}
+				_isDead = true;
+				var dmg = new DamageInfo( float.MaxValue, GameObject, null );
+				if ( GameManager.Current != null )
+					GameManager.Current.OnDeath( this, dmg );
+				_health = 0;
+				Kill( dmg );
 			}
 		}
 	}
@@ -98,7 +94,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	protected override void OnStart()
 	{
 		if ( IsLocalPlayer )
-			Local = this;
+			LocalPlayer = this;
 
 		var targets = Scene.GetAllComponents<DeathCameraTarget>()
 			.Where( x => x.Connection == Network.Owner );
@@ -112,8 +108,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	protected override void OnDestroy()
 	{
-		if ( Local == this )
-			Local = null;
+		if ( LocalPlayer == this )
+			LocalPlayer = null;
 	}
 
 	/// <summary>
@@ -169,7 +165,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		{
 
 			var dist = (WorldPosition - damage.Origin).Length;
-			var strength = MathX.Remap( dist, 0, 512, 500, 1500 ).Clamp( 500, 1500 );
+			var strength = MathX.Remap( dist, 0, 512, 1024, 2048, true );
 
 			var dir = (WorldPosition - damage.Origin).Normal;
 			dir += Vector3.Up * 1.0f;
@@ -238,6 +234,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			{
 				var offset = (body.Component.WorldPosition - origin);
 				var angular = Vector3.Cross( offset.Normal, force.Normal ) * force.Length * 0.5f;
+				angular += Vector3.Random * force.Length * 0.15f;
 				body.Component.AngularVelocity = angular;
 			}
 		}
@@ -255,13 +252,15 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	/// Broadcasts death to other players
 	/// </summary>
 	[Rpc.Broadcast( NetFlags.HostOnly | NetFlags.Reliable )]
-	void NotifyDeath( IPlayerEvent.DiedParams args )
+	void NotifyDeath( PlayerDiedParams args )
 	{
-		IPlayerEvent.PostToGameObject( GameObject, x => x.OnDied( args ) );
+		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnDied( args ) );
+		Global.IPlayerEvents.Post( x => x.OnPlayerDied( this, args ) );
 
 		if ( args.Attacker == GameObject )
 		{
-			IPlayerEvent.PostToGameObject( GameObject, x => x.OnSuicide() );
+			Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnSuicide() );
+			Global.IPlayerEvents.Post( x => x.OnPlayerSuicide( this ) );
 		}
 	}
 
@@ -293,7 +292,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		// Let everyone know about the death
 		//
 
-		NotifyDeath( new IPlayerEvent.DiedParams() { Attacker = d.Attacker } );
+		NotifyDeath( new PlayerDiedParams() { Attacker = d.Attacker } );
 
 		var inventory = GetComponent<PlayerInventory>();
 		if ( inventory.IsValid() )
@@ -376,9 +375,10 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	private SoundHandle _dmgSound;
 
 	[Rpc.Broadcast( NetFlags.HostOnly | NetFlags.Reliable )]
-	private void NotifyOnDamage( IPlayerEvent.DamageParams args )
+	private void NotifyOnDamage( PlayerDamageParams args )
 	{
-		IPlayerEvent.PostToGameObject( GameObject, x => x.OnDamage( args ) );
+		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnDamage( args ) );
+		Global.IPlayerEvents.Post( x => x.OnPlayerDamage( this, args ) );
 
 		Effects.Current.SpawnBlood( args.Position, (args.Origin - args.Position).Normal, args.Damage );
 
@@ -416,8 +416,15 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			// so lets take that damage.
 		}
 
+		// Fire pre-damage event — listeners can modify damage or cancel
+		var damageEvent = new PlayerDamageEvent { Player = this, DamageInfo = dmg, Damage = dmg.Damage };
+		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnDamaging( damageEvent ) );
+		Global.IPlayerEvents.Post( x => x.OnPlayerDamaging( damageEvent ) );
 
-		var damage = dmg.Damage;
+		if ( damageEvent.Cancelled )
+			return;
+
+		var damage = damageEvent.Damage;
 		if ( dmg.Tags.Contains( DamageTags.Headshot ) )
 			damage *= 2;
 
@@ -432,7 +439,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		Health -= damage;
 		_isTakingDamage = false;
 
-		NotifyOnDamage( new IPlayerEvent.DamageParams()
+		NotifyOnDamage( new PlayerDamageParams()
 		{
 			Damage = damage,
 			Attacker = dmg.Attacker,
@@ -445,11 +452,13 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		// We didn't die
 		if ( Health >= 1 ) return;
 
-		GameManager.Current.OnDeath( this, dmg );
+		if ( _isDead ) return;
+		_isDead = true;
 
-		_isTakingDamage = true;
-		Health = 0;
-		_isTakingDamage = false;
+		if ( GameManager.Current != null )
+			GameManager.Current.OnDeath( this, dmg );
+
+		_health = 0;
 		Kill( dmg );
 	}
 
@@ -477,7 +486,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	void PlayerController.IEvents.OnLanded( float distance, Vector3 impactVelocity )
 	{
-		IPlayerEvent.PostToGameObject( GameObject, x => x.OnLand( distance, impactVelocity ) );
+		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnLand( distance, impactVelocity ) );
+		Global.IPlayerEvents.Post( x => x.OnPlayerLanded( this, distance, impactVelocity ) );
 
 		var player = Components.Get<Player>();
 		if ( !player.IsValid() ) return;
@@ -489,7 +499,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	void PlayerController.IEvents.OnJumped()
 	{
-		IPlayerEvent.PostToGameObject( GameObject, x => x.OnJump() );
+		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnJump() );
+		Global.IPlayerEvents.Post( x => x.OnPlayerJumped( this ) );
 
 		var player = Components.Get<Player>();
 
@@ -517,7 +528,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		GameObject.SetParent( null, true );
 	}
 
-	void ISaveEvents.AfterLoad( string filename )
+	void Global.ISaveEvents.AfterLoad( string filename )
 	{
 		if ( !Body.IsValid() ) return;
 
