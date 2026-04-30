@@ -35,7 +35,7 @@ public sealed partial class Player
 	{
 		if ( Rpc.Caller != Network.Owner ) return;
 
-		this.OnDamage( new DamageInfo( 5000, GameObject, null ) );
+		this.OnDamage( new DamageInfo( float.MaxValue, GameObject, null ) );
 	}
 
 	[ConCmd( "god", ConVarFlags.Server | ConVarFlags.Cheat, Help = "Toggle invulnerability" )]
