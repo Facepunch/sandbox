@@ -3,7 +3,7 @@
 /// Lives on the Player GameObject alongside PlayerInventory.
 /// Listens to inventory events to auto-save, and handles all loadout RPCs directly.
 /// </summary>
-public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlayerEvents, ISaveEvents
+public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlayerEvents, Global.ISaveEvents
 {
 	[RequireComponent] public Player Player { get; set; }
 	[RequireComponent] public PlayerInventory Inventory { get; set; }
@@ -289,7 +289,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 		SaveLoadout();
 	}
 
-	void ISaveEvents.BeforeSave( string filename )
+	void Global.ISaveEvents.BeforeSave( string filename )
 	{
 		if ( !Networking.IsHost ) return;
 
@@ -302,7 +302,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 		SaveSystem.Current?.SetMetadata( $"Loadout_{steamId}", json );
 	}
 
-	void ISaveEvents.AfterLoad( string filename )
+	void Global.ISaveEvents.AfterLoad( string filename )
 	{
 		if ( !Networking.IsHost ) return;
 

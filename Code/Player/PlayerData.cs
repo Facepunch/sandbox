@@ -1,7 +1,7 @@
 /// <summary>
 /// Holds persistent player information like deaths, kills
 /// </summary>
-public sealed partial class PlayerData : Component, ISaveEvents
+public sealed partial class PlayerData : Component, Global.ISaveEvents
 {
 	/// <summary>
 	/// Unique Id per each player and bot, equal to owning Player connection Id if it's a real player.
@@ -112,7 +112,7 @@ public sealed partial class PlayerData : Component, ISaveEvents
 		}
 	}
 
-	void ISaveEvents.AfterLoad( string filename )
+	void Global.ISaveEvents.AfterLoad( string filename )
 	{
 		var connection = Connection;
 		if ( connection == null )

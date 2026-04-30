@@ -5,7 +5,7 @@ using System.Threading;
 /// <summary>
 /// Holds player information like health
 /// </summary>
-public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, ISaveEvents, IKillSource
+public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, Global.ISaveEvents, IKillSource
 {
 	private static Player LocalPlayer { get; set; }
 	public static Player FindLocalPlayer() => LocalPlayer;
@@ -392,8 +392,15 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			// so lets take that damage.
 		}
 
+		// Fire pre-damage event — listeners can modify damage or cancel
+		var damageEvent = new PlayerDamageEvent { Player = this, DamageInfo = dmg, Damage = dmg.Damage };
+		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnDamaging( damageEvent ) );
+		Global.IPlayerEvents.Post( x => x.OnPlayerDamaging( damageEvent ) );
 
-		var damage = dmg.Damage;
+		if ( damageEvent.Cancelled )
+			return;
+
+		var damage = damageEvent.Damage;
 		if ( dmg.Tags.Contains( DamageTags.Headshot ) )
 			damage *= 2;
 
@@ -491,7 +498,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		GameObject.SetParent( null, true );
 	}
 
-	void ISaveEvents.AfterLoad( string filename )
+	void Global.ISaveEvents.AfterLoad( string filename )
 	{
 		if ( !Body.IsValid() ) return;
 

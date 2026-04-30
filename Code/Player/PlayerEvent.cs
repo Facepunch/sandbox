@@ -67,6 +67,38 @@ public class PlayerMoveSlotEvent
 }
 
 /// <summary>
+/// Pre-damage event. Fired before damage is applied. Listeners can modify <see cref="Damage"/>
+/// or set <see cref="Cancelled"/> to block damage entirely.
+/// </summary>
+public class PlayerDamageEvent
+{
+	public Player Player { get; init; }
+	public DamageInfo DamageInfo { get; init; }
+	public float Damage { get; set; }
+	public bool Cancelled { get; set; }
+}
+
+/// <summary>
+/// Pre-respawn event. Fired before the player is spawned. Listeners can modify
+/// <see cref="SpawnLocation"/> to control where the player appears.
+/// </summary>
+public class PlayerRespawnEvent
+{
+	public PlayerData PlayerData { get; init; }
+	public Transform SpawnLocation { get; set; }
+}
+
+/// <summary>
+/// Fired when a player kills another player or NPC.
+/// </summary>
+public class PlayerKillEvent
+{
+	public Player Player { get; init; }
+	public GameObject Victim { get; init; }
+	public DamageInfo DamageInfo { get; init; }
+}
+
+/// <summary>
 /// Events fired only to the Player's own GameObject hierarchy.
 /// </summary>
 public static partial class Local
@@ -84,6 +116,8 @@ public static partial class Local
 		void OnSwitchWeapon( PlayerSwitchWeaponEvent e ) { }
 		void OnRemoveWeapon( PlayerRemoveWeaponEvent e ) { }
 		void OnMoveSlot( PlayerMoveSlotEvent e ) { }
+		void OnDamaging( PlayerDamageEvent e ) { }
+		void OnKill( PlayerKillEvent e ) { }
 		void OnCameraMove( ref Angles angles ) { }
 		void OnCameraSetup( CameraComponent camera ) { }
 		void OnCameraPostSetup( CameraComponent camera ) { }
@@ -108,5 +142,8 @@ public static partial class Global
 		void OnPlayerSwitchWeapon( PlayerSwitchWeaponEvent e ) { }
 		void OnPlayerRemoveWeapon( PlayerRemoveWeaponEvent e ) { }
 		void OnPlayerMoveSlot( PlayerMoveSlotEvent e ) { }
+		void OnPlayerDamaging( PlayerDamageEvent e ) { }
+		void OnPlayerRespawning( PlayerRespawnEvent e ) { }
+		void OnPlayerKill( PlayerKillEvent e ) { }
 	}
 }
