@@ -51,7 +51,7 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 		AddShootDelay( 0.5f );
 	}
 
-	public override void OnPlayerDeath( IPlayerEvent.DiedParams args )
+	public override void OnPlayerDeath( PlayerDiedParams args )
 	{
 		if ( !IsCooking ) return;
 

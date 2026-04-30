@@ -19,7 +19,7 @@
     {
         var menu = MenuPanel.Open( this );
 
-        var presets = PlayerInventory.GetLoadoutPresets();
+        var presets = PlayerLoadout.GetLoadoutPresets();
         foreach ( var preset in presets )
         {
             var name = preset.Name;
@@ -44,8 +44,9 @@
 
     void OnLoadPreset( string json )
     {
-        if ( !Inventory.IsValid() ) return;
-        Inventory.SwitchToPreset( json );
+        var loadout = GetLoadout();
+        if ( !loadout.IsValid() ) return;
+        loadout.SwitchToPreset( json );
     }
 
     void OnOverwritePreset( string name )
@@ -53,18 +54,19 @@
         var json = LocalData.Get<string>( "hotbar" );
         if ( string.IsNullOrEmpty( json ) ) return;
 
-        PlayerInventory.SaveLoadoutPreset( name, json );
+        PlayerLoadout.SaveLoadoutPreset( name, json );
     }
 
     void OnDeletePreset( string name )
     {
-        PlayerInventory.DeleteLoadoutPreset( name );
+        PlayerLoadout.DeleteLoadoutPreset( name );
     }
 
     void ResetToDefault()
     {
-        if ( !Inventory.IsValid() ) return;
-        Inventory.ResetToDefault();
+        var loadout = GetLoadout();
+        if ( !loadout.IsValid() ) return;
+        loadout.ResetToDefault();
     }
 
     void OnSaveNew()
@@ -84,6 +86,11 @@
         var json = LocalData.Get<string>( "hotbar" );
         if ( string.IsNullOrEmpty( json ) ) return;
 
-        PlayerInventory.SaveLoadoutPreset( name, json );
+        PlayerLoadout.SaveLoadoutPreset( name, json );
+    }
+
+    PlayerLoadout GetLoadout()
+    {
+        return Inventory?.GetComponent<PlayerLoadout>();
     }
 }

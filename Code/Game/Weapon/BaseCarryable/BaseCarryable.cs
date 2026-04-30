@@ -352,7 +352,7 @@ public partial class BaseCarryable : Component, IKillIcon
 		return false;
 	}
 
-	public virtual void OnPlayerDeath( IPlayerEvent.DiedParams args )
+	public virtual void OnPlayerDeath( PlayerDiedParams args )
 	{
 	}
 }

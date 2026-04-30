@@ -7,8 +7,8 @@ using System.Threading;
 /// </summary>
 public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, ISaveEvents, IKillSource
 {
-	private static Player Local { get; set; }
-	public static Player FindLocalPlayer() => Local;
+	private static Player LocalPlayer { get; set; }
+	public static Player FindLocalPlayer() => LocalPlayer;
 	public static T FindLocalWeapon<T>() where T : BaseCarryable => FindLocalPlayer()?.GetComponentInChildren<T>( true );
 	public static T FindLocalToolMode<T>() where T : ToolMode => FindLocalPlayer()?.GetComponentInChildren<T>( true );
 
@@ -71,7 +71,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	protected override void OnStart()
 	{
 		if ( IsLocalPlayer )
-			Local = this;
+			LocalPlayer = this;
 
 		var targets = Scene.GetAllComponents<DeathCameraTarget>()
 			.Where( x => x.Connection == Network.Owner );
@@ -85,8 +85,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	protected override void OnDestroy()
 	{
-		if ( Local == this )
-			Local = null;
+		if ( LocalPlayer == this )
+			LocalPlayer = null;
 	}
 
 	/// <summary>
@@ -228,13 +228,15 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	/// Broadcasts death to other players
 	/// </summary>
 	[Rpc.Broadcast( NetFlags.HostOnly | NetFlags.Reliable )]
-	void NotifyDeath( IPlayerEvent.DiedParams args )
+	void NotifyDeath( PlayerDiedParams args )
 	{
-		IPlayerEvent.PostToGameObject( GameObject, x => x.OnDied( args ) );
+		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnDied( args ) );
+		Global.IPlayerEvents.Post( x => x.OnPlayerDied( this, args ) );
 
 		if ( args.Attacker == GameObject )
 		{
-			IPlayerEvent.PostToGameObject( GameObject, x => x.OnSuicide() );
+			Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnSuicide() );
+			Global.IPlayerEvents.Post( x => x.OnPlayerSuicide( this ) );
 		}
 	}
 
@@ -266,7 +268,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		// Let everyone know about the death
 		//
 
-		NotifyDeath( new IPlayerEvent.DiedParams() { Attacker = d.Attacker } );
+		NotifyDeath( new PlayerDiedParams() { Attacker = d.Attacker } );
 
 		var inventory = GetComponent<PlayerInventory>();
 		if ( inventory.IsValid() )
@@ -349,9 +351,10 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	private SoundHandle _dmgSound;
 
 	[Rpc.Broadcast( NetFlags.HostOnly | NetFlags.Reliable )]
-	private void NotifyOnDamage( IPlayerEvent.DamageParams args )
+	private void NotifyOnDamage( PlayerDamageParams args )
 	{
-		IPlayerEvent.PostToGameObject( GameObject, x => x.OnDamage( args ) );
+		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnDamage( args ) );
+		Global.IPlayerEvents.Post( x => x.OnPlayerDamage( this, args ) );
 
 		Effects.Current.SpawnBlood( args.Position, (args.Origin - args.Position).Normal, args.Damage );
 
@@ -403,7 +406,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 		Health -= damage;
 
-		NotifyOnDamage( new IPlayerEvent.DamageParams()
+		NotifyOnDamage( new PlayerDamageParams()
 		{
 			Damage = damage,
 			Attacker = dmg.Attacker,
@@ -446,7 +449,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	void PlayerController.IEvents.OnLanded( float distance, Vector3 impactVelocity )
 	{
-		IPlayerEvent.PostToGameObject( GameObject, x => x.OnLand( distance, impactVelocity ) );
+		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnLand( distance, impactVelocity ) );
+		Global.IPlayerEvents.Post( x => x.OnPlayerLanded( this, distance, impactVelocity ) );
 
 		var player = Components.Get<Player>();
 		if ( !player.IsValid() ) return;
@@ -458,7 +462,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	void PlayerController.IEvents.OnJumped()
 	{
-		IPlayerEvent.PostToGameObject( GameObject, x => x.OnJump() );
+		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnJump() );
+		Global.IPlayerEvents.Post( x => x.OnPlayerJumped( this ) );
 
 		var player = Components.Get<Player>();
 

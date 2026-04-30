@@ -84,8 +84,8 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		var owner = Connection.Find( playerData.PlayerId );
 		playerGo.NetworkSpawn( owner );
 
-		IPlayerEvent.PostToGameObject( player.GameObject, x => x.OnSpawned() );
-		player.EquipBestWeapon();
+		Local.IPlayerEvents.PostToGameObject( player.GameObject, x => x.OnSpawned() );
+		Global.IPlayerEvents.Post( x => x.OnPlayerSpawned( player ) );
 	}
 
 	void ISaveEvents.AfterLoad( string filename )
@@ -314,12 +314,14 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		if ( s is null ) return;
 
+		var loadout = player.GetComponent<PlayerLoadout>();
+
 		// If there's already a spawner weapon in this slot, just update
 		if ( inventory.GetSlot( slot ) is SpawnerWeapon existingSpawner )
 		{
 			existingSpawner.SetSpawner( s );
 			inventory.SwitchWeapon( existingSpawner );
-			inventory.SaveLoadout();
+			loadout?.SaveLoadout();
 			return;
 		}
 
@@ -332,7 +334,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		spawner.SetSpawner( s );
 		inventory.SwitchWeapon( spawner );
-		inventory.SaveLoadout();
+		loadout?.SaveLoadout();
 	}
 
 	void IScenePhysicsEvents.OnOutOfBounds( Rigidbody body )

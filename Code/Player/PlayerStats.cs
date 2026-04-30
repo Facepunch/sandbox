@@ -1,7 +1,7 @@
 /// <summary>
 /// Record stats for the local player
 /// </summary>
-public sealed class PlayerStats : Component, IPlayerEvent
+public sealed class PlayerStats : Component, Local.IPlayerEvents
 {
 	[RequireComponent] public Player Player { get; set; }
 
@@ -34,28 +34,28 @@ public sealed class PlayerStats : Component, IPlayerEvent
 
 	}
 
-	void IPlayerEvent.OnJump()
+	void Local.IPlayerEvents.OnJump()
 	{
 		if ( IsProxy ) return;
 
 		Sandbox.Services.Stats.Increment( "jump", 1 );
 	}
 
-	void IPlayerEvent.OnDamage( IPlayerEvent.DamageParams args )
+	void Local.IPlayerEvents.OnDamage( PlayerDamageParams args )
 	{
 		if ( IsProxy ) return;
 
 		Sandbox.Services.Stats.Increment( "damage_taken", args.Damage );
 	}
 
-	void IPlayerEvent.OnDied( IPlayerEvent.DiedParams args )
+	void Local.IPlayerEvents.OnDied( PlayerDiedParams args )
 	{
 		if ( IsProxy ) return;
 
 		Sandbox.Services.Stats.Increment( "deaths", 1 );
 	}
 
-	void IPlayerEvent.OnSuicide()
+	void Local.IPlayerEvents.OnSuicide()
 	{
 		if ( IsProxy ) return;
 
