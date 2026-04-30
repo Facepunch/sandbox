@@ -40,7 +40,7 @@ public class EntityPage : BaseSpawnMenu
 		AddOption( "🥼", "Npc", () => new EntityListCloud() { Query = "cat:npc" } );
 		AddOption( "🎈", "Other", () => new EntityListCloud() { Query = "cat:other" } );
 		AddOption( "💪", "Showcase", () => new EntityListCloud() { Query = "cat:showcase" } );
-		AddOption( "🧸", "Toys & Fun", () => new EntityListCloud() { Query = "cat:toy" } );
+		AddOption( "🧸", "Toys & Fun", () => new EntityListCloud() { Query = "cat:toyfun" } );
 		AddOption( "🚚", "Vehicle", () => new EntityListCloud() { Query = "cat:vehicle" } );
 		// AddOption( "⭐", "Favourites", () => new EntityListCloud() { Query = "sort:favourite" } );
 	}
