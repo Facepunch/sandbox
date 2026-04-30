@@ -12,12 +12,12 @@
         {
             <div class="stat armour hud-panel">
                 <Image class="icon" Texture=@ArmourIcon />
-                <label class="value">@(ArmourPercent)</label>
+                <label class="value">@(DisplayArmour)</label>
             </div>
         }
         <div class="stat health hud-panel">
             <Image class="icon" Texture=@HealthIcon />
-            <label class="value">@(HealthPercent)</label>
+            <label class="value">@(DisplayHealth)</label>
         </div>
     </div>
 
@@ -43,8 +43,8 @@
     Player Player => Player.FindLocalPlayer();
     BaseWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseWeapon;
 
-    int HealthPercent => (int)(Player.Health / Player.MaxHealth * 100);
-    int ArmourPercent => (int)(Player.Armour / Player.MaxArmour * 100);
+    int DisplayHealth => (int)Player.Health;
+    int DisplayArmour => (int)Player.Armour;
 
     bool IsSpawnMenuOpen()
     {
