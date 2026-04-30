@@ -9,7 +9,8 @@ public sealed class PlayerInventory : Component, IPlayerEvent, ISaveEvents
 	/// <summary>
 	/// All weapons currently in the inventory, ordered by slot.
 	/// </summary>
-	public IEnumerable<BaseCarryable> Weapons => GetComponentsInChildren<BaseCarryable>( true );
+	public IEnumerable<BaseCarryable> Weapons => 
+		GetComponentsInChildren<BaseCarryable>( true ).OrderBy( x => x.InventorySlot );
 
 	[Sync( SyncFlags.FromHost ), Change] public BaseCarryable ActiveWeapon { get; private set; }
 
