@@ -19,14 +19,38 @@
 	{
 		base.OnControl();
 
-		if ( Input.Down( "attack2" ) )
+		var select = TraceSelect();
+
+		if ( Input.Pressed( "attack2" ) )
 		{
+			// Some constraint tools can one-shot with secondary, like sliders.
+			if ( Stage == 0 && GetSecondaryPoint( select ) is SelectionPoint point2 )
+			{
+				if ( !select.IsValid() )
+					return;
+
+				if ( !UpdateValidity( select, point2 ) )
+					return;
+
+				if ( !FireToolAction( ToolInput.Secondary ) )
+					return;
+
+				Point1 = select;
+				Point2 = point2;
+
+				Create( Point1, Point2 );
+				ShootEffects( select );
+
+				FirePostToolAction( ToolInput.Secondary );
+
+				return;
+			}
+
 			Stage = 0;
 			IsValidState = false;
 			return;
 		}
 
-		var select = TraceSelect();
 		if ( !select.IsValid() )
 			return;
 
@@ -147,4 +171,6 @@
 	protected virtual IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target ) => [];
 
 	protected abstract void CreateConstraint( SelectionPoint point1, SelectionPoint point2 );
+
+	protected virtual SelectionPoint? GetSecondaryPoint( SelectionPoint select ) => default;
 }

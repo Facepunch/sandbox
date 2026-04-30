@@ -47,6 +47,8 @@
     "tool.hint.slider.stage0": "Connects two objects with a sliding joint",
     "tool.hint.slider.stage1": "Select the second object",
     "tool.hint.slider.source": "Select source",
+    "tool.hint.slider.secondary": "Along normal",
+    "tool.hint.slider.secondary.stage1": "Cancel",
     "tool.hint.slider.finish": "Finish",
     "tool.hint.slider.remove": "Remove",
 

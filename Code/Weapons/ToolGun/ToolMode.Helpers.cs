@@ -49,15 +49,12 @@
 	}
 
 	/// <summary>
-	/// Get a SelectionPoint from the tool gun owner's eyes.
+	/// Get a SelectionPoint along a ray.
 	/// </summary>
-	public SelectionPoint TraceSelect()
+	public SelectionPoint TraceFromRay( Ray ray, float distance, GameObject source )
 	{
-		var player = Toolgun?.Owner;
-		if ( !player.IsValid() ) return default;
-
-		var trace = Scene.Trace.Ray( player.EyeTransform.ForwardRay, 4096 )
-		.IgnoreGameObjectHierarchy( player.GameObject );
+		var trace = Scene.Trace.Ray( ray, distance )
+			.IgnoreGameObjectHierarchy( source );
 
 		if ( TraceIgnoreTags.Any() )
 			trace = trace.WithoutTags( TraceIgnoreTags.ToArray() );
@@ -82,6 +79,17 @@
 		}
 
 		return sp;
+	}
+
+	/// <summary>
+	/// Get a SelectionPoint from the tool gun owner's eyes.
+	/// </summary>
+	public SelectionPoint TraceSelect()
+	{
+		var player = Toolgun?.Owner;
+		if ( !player.IsValid() ) return default;
+
+		return TraceFromRay( player.EyeTransform.ForwardRay, 4096, player.GameObject );
 	}
 
 	/// <summary>
