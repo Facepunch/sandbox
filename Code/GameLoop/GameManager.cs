@@ -1,6 +1,6 @@
 using Sandbox.UI;
 
-public sealed partial class GameManager : GameObjectSystem<GameManager>, Component.INetworkListener, ISceneStartup, IScenePhysicsEvents, ICleanupEvents, ISaveEvents
+public sealed partial class GameManager : GameObjectSystem<GameManager>, Component.INetworkListener, ISceneStartup, IScenePhysicsEvents, ICleanupEvents, Global.ISaveEvents
 {
 	public GameManager( Scene scene ) : base( scene )
 	{
@@ -75,6 +75,11 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		// Find a spawn location for this player
 		var startLocation = FindSpawnLocation().WithScale( 1 );
 
+		// Fire pre-respawn event — listeners can modify spawn location
+		var respawnEvent = new PlayerRespawnEvent { PlayerData = playerData, SpawnLocation = startLocation };
+		Global.IPlayerEvents.Post( x => x.OnPlayerRespawning( respawnEvent ) );
+		startLocation = respawnEvent.SpawnLocation;
+
 		// Spawn this object and make the client the owner
 		var playerGo = GameObject.Clone( "/prefabs/engine/player.prefab", new CloneConfig { Name = playerData.DisplayName, StartEnabled = false, Transform = startLocation } );
 
@@ -84,11 +89,11 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		var owner = Connection.Find( playerData.PlayerId );
 		playerGo.NetworkSpawn( owner );
 
-		IPlayerEvent.PostToGameObject( player.GameObject, x => x.OnSpawned() );
-		player.EquipBestWeapon();
+		Local.IPlayerEvents.PostToGameObject( player.GameObject, x => x.OnSpawned() );
+		Global.IPlayerEvents.Post( x => x.OnPlayerSpawned( player ) );
 	}
 
-	void ISaveEvents.AfterLoad( string filename )
+	void Global.ISaveEvents.AfterLoad( string filename )
 	{
 		if ( !Networking.IsHost ) return;
 
@@ -152,6 +157,14 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		if ( !isSuicide )
 			source.OnKill( player.GameObject );
+
+		// Fire kill event on the killer if they're a player
+		if ( !isSuicide && source is Player killer )
+		{
+			var killEvent = new PlayerKillEvent { Player = killer, Victim = player.GameObject, DamageInfo = dmg };
+			Local.IPlayerEvents.PostToGameObject( killer.GameObject, x => x.OnKill( killEvent ) );
+			Global.IPlayerEvents.Post( x => x.OnPlayerKill( killEvent ) );
+		}
 
 		player.PlayerData.Deaths++;
 
@@ -314,12 +327,14 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		if ( s is null ) return;
 
+		var loadout = player.GetComponent<PlayerLoadout>();
+
 		// If there's already a spawner weapon in this slot, just update
 		if ( inventory.GetSlot( slot ) is SpawnerWeapon existingSpawner )
 		{
 			existingSpawner.SetSpawner( s );
 			inventory.SwitchWeapon( existingSpawner );
-			inventory.SaveLoadout();
+			loadout?.SaveLoadout();
 			return;
 		}
 
@@ -332,7 +347,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		spawner.SetSpawner( s );
 		inventory.SwitchWeapon( spawner );
-		inventory.SaveLoadout();
+		loadout?.SaveLoadout();
 	}
 
 	void IScenePhysicsEvents.OnOutOfBounds( Rigidbody body )

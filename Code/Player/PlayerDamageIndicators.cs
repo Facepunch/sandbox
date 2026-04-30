@@ -1,4 +1,4 @@
-public sealed class PlayerDamageIndicators : Component, IPlayerEvent
+public sealed class PlayerDamageIndicators : Component, Local.IPlayerEvents
 {
 	[RequireComponent] Player Player { get; set; }
 
@@ -56,7 +56,7 @@ public sealed class PlayerDamageIndicators : Component, IPlayerEvent
 		hud.SetMatrix( Matrix.Identity );
 	}
 
-	void IPlayerEvent.OnDamage( IPlayerEvent.DamageParams args )
+	void Local.IPlayerEvents.OnDamage( PlayerDamageParams args )
 	{
 		if ( !args.Attacker.IsValid() ) return;
 		

@@ -2,53 +2,56 @@
 /// Allows listening to spawn events across the scene.
 /// Implement this on a <see cref="Component"/> to receive callbacks before and after objects are spawned.
 /// </summary>
-public interface ISpawnEvents : ISceneEvent<ISpawnEvents>
+public static partial class Global
 {
-	/// <summary>
-	/// Data passed to <see cref="OnSpawn"/>. Set <see cref="Cancelled"/> to true to prevent the spawn.
-	/// </summary>
-	public class SpawnData
+	public interface ISpawnEvents : ISceneEvent<ISpawnEvents>
 	{
 		/// <summary>
-		/// The spawner that will create the object(s).
+		/// Data passed to <see cref="OnSpawn"/>. Set <see cref="Cancelled"/> to true to prevent the spawn.
 		/// </summary>
-		public ISpawner Spawner { get; init; }
+		public class SpawnData
+		{
+			/// <summary>
+			/// The spawner that will create the object(s).
+			/// </summary>
+			public ISpawner Spawner { get; init; }
+
+			/// <summary>
+			/// The world-space transform where the object will be placed.
+			/// </summary>
+			public Transform Transform { get; init; }
+
+			/// <summary>
+			/// The player requesting the spawn.
+			/// </summary>
+			public PlayerData Player { get; init; }
+
+			/// <summary>
+			/// Set to true to cancel the spawn.
+			/// </summary>
+			public bool Cancelled { get; set; }
+		}
 
 		/// <summary>
-		/// The world-space transform where the object will be placed.
+		/// Data passed to <see cref="OnPostSpawn"/> after a successful spawn.
 		/// </summary>
-		public Transform Transform { get; init; }
+		public class PostSpawnData : SpawnData
+		{
+			/// <summary>
+			/// The GameObjects that were spawned.
+			/// </summary>
+			public List<GameObject> Objects { get; init; }
+		}
 
 		/// <summary>
-		/// The player requesting the spawn.
+		/// Called before an object is spawned into the world.
+		/// Set <see cref="SpawnData.Cancelled"/> to true to reject the spawn.
 		/// </summary>
-		public PlayerData Player { get; init; }
+		void OnSpawn( SpawnData e ) { }
 
 		/// <summary>
-		/// Set to true to cancel the spawn.
+		/// Called after an object has been successfully spawned into the world.
 		/// </summary>
-		public bool Cancelled { get; set; }
+		void OnPostSpawn( PostSpawnData e ) { }
 	}
-
-	/// <summary>
-	/// Data passed to <see cref="OnPostSpawn"/> after a successful spawn.
-	/// </summary>
-	public class PostSpawnData : SpawnData
-	{
-		/// <summary>
-		/// The GameObjects that were spawned.
-		/// </summary>
-		public List<GameObject> Objects { get; init; }
-	}
-
-	/// <summary>
-	/// Called before an object is spawned into the world.
-	/// Set <see cref="SpawnData.Cancelled"/> to true to reject the spawn.
-	/// </summary>
-	void OnSpawn( SpawnData e ) { }
-
-	/// <summary>
-	/// Called after an object has been successfully spawned into the world.
-	/// </summary>
-	void OnPostSpawn( PostSpawnData e ) { }
 }

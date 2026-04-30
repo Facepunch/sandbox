@@ -20,7 +20,7 @@ public sealed partial class Player
 	void PlayerController.IEvents.OnEyeAngles( ref Angles ang )
 	{
 		var angles = ang;
-		IPlayerEvent.Post( x => x.OnCameraMove( ref angles ) );
+		Local.IPlayerEvents.Post( x => x.OnCameraMove( ref angles ) );
 		ang = angles;
 	}
 
@@ -29,14 +29,14 @@ public sealed partial class Player
 		camera.FovAxis = CameraComponent.Axis.Vertical;
 		camera.FieldOfView = Screen.CreateVerticalFieldOfView( Preferences.FieldOfView, 9.0f / 16.0f );
 
-		IPlayerEvent.Post( x => x.OnCameraSetup( camera ) );
+		Local.IPlayerEvents.Post( x => x.OnCameraSetup( camera ) );
 
 		ApplyMovementCameraEffects( camera );
 		UpdateSeatedWeapons();
 		ApplySeatedCameraSetup( camera );
 		DrawSeatedWeaponHud();
 
-		IPlayerEvent.Post( x => x.OnCameraPostSetup( camera ) );
+		Local.IPlayerEvents.Post( x => x.OnCameraPostSetup( camera ) );
 	}
 
 	private void ApplyMovementCameraEffects( CameraComponent camera )

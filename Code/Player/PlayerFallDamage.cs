@@ -1,7 +1,7 @@
 ﻿/// <summary>
 /// Apply fall damage to the player
 /// </summary>
-public class PlayerFallDamage : Component, IPlayerEvent
+public class PlayerFallDamage : Component, Local.IPlayerEvents
 {
 	[RequireComponent] public Player Player { get; set; }
 
@@ -31,7 +31,7 @@ public class PlayerFallDamage : Component, IPlayerEvent
 		GameObject.PlaySound( FallSound );
 	}
 
-	void IPlayerEvent.OnLand( float distance, Vector3 velocity )
+	void Local.IPlayerEvents.OnLand( float distance, Vector3 velocity )
 	{
 		var fallSpeed = Math.Abs( velocity.z );
 

@@ -57,6 +57,9 @@ public sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoadi
 
 	async Task ISceneLoadingEvents.OnLoad( Scene scene, SceneLoadOptions options, LoadingContext context )
 	{
+		// We don't care if the game is not playing
+		if ( !Game.IsPlaying ) return;
+
 		// Wait for next frame to ensure all objects are spawned
 		await Task.Yield();
 

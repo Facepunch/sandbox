@@ -5,7 +5,7 @@ using Sandbox.UI;
 /// Maintains a per-player tracked object list populated from post-events.
 /// Limit checks iterate only the player's objects, not the entire scene.
 /// </summary>
-public sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, ISpawnEvents, IToolActionEvents
+public sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpawnEvents, IToolActionEvents
 {
 	[Range( -1, 1024 )]
 	[Title( "Max Props Per Player" ), Group( "Limits" )]
@@ -118,7 +118,7 @@ public sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, ISpawnEvents,
 		return count;
 	}
 
-	void ISpawnEvents.OnSpawn( ISpawnEvents.SpawnData e )
+	void Global.ISpawnEvents.OnSpawn( Global.ISpawnEvents.SpawnData e )
 	{
 		if ( e.Player is null ) return;
 
@@ -191,7 +191,7 @@ public sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, ISpawnEvents,
 		}
 	}
 
-	void ISpawnEvents.OnPostSpawn( ISpawnEvents.PostSpawnData e )
+	void Global.ISpawnEvents.OnPostSpawn( Global.ISpawnEvents.PostSpawnData e )
 	{
 		if ( e.Player is null || e.Objects is null ) return;
 

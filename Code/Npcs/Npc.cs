@@ -137,6 +137,7 @@ public partial class Npc : Component, IKillSource
 			{
 				var offset = (body.Component.WorldPosition - origin);
 				var angular = Vector3.Cross( offset.Normal, force.Normal ) * force.Length * 0.5f;
+				angular += Vector3.Random * force.Length * 0.15f;
 				body.Component.AngularVelocity = angular;
 			}
 		}

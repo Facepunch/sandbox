@@ -2,7 +2,7 @@
 @using Sandbox.UI;
 @namespace Sandbox
 @inherits PanelComponent
-@implements ILocalPlayerEvent
+@implements Global.IPlayerEvents
 
 @if ( Player.IsValid() && Player.WantsHideHud )
     return;
@@ -30,7 +30,7 @@
 
     protected override int BuildHash() => HashCode.Combine( inventory, activeSlot, Player?.WantsHideHud );
 
-    void ILocalPlayerEvent.OnPickup(BaseCarryable weapon)
+    void Global.IPlayerEvents.OnPlayerPickup(PlayerPickupEvent e)
     {
         StateHasChanged();
     }

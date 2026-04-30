@@ -220,14 +220,14 @@ public partial class Duplicator : ToolMode
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null ) return;
 
-		var spawnData = new ISpawnEvents.SpawnData
+		var spawnData = new Global.ISpawnEvents.SpawnData
 		{
 			Spawner = spawner,
 			Transform = dest,
 			Player = player.PlayerData
 		};
 
-		Scene.RunEvent<ISpawnEvents>( x => x.OnSpawn( spawnData ) );
+		Scene.RunEvent<Global.ISpawnEvents>( x => x.OnSpawn( spawnData ) );
 
 		if ( spawnData.Cancelled )
 			return;
@@ -244,7 +244,7 @@ public partial class Duplicator : ToolMode
 				undo.Add( go );
 			}
 
-			Scene.RunEvent<ISpawnEvents>( x => x.OnPostSpawn( new ISpawnEvents.PostSpawnData
+			Scene.RunEvent<Global.ISpawnEvents>( x => x.OnPostSpawn( new Global.ISpawnEvents.PostSpawnData
 			{
 				Spawner = spawner,
 				Transform = dest,
