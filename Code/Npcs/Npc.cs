@@ -83,7 +83,7 @@ public partial class Npc : Component, IKillSource
 	/// and optionally applies a launch velocity from the attacker.
 	/// </summary>
 	[Rpc.Broadcast( NetFlags.HostOnly )]
-	protected void CreateRagdoll( Vector3 velocity, float duration = 30 )
+	protected void CreateRagdoll( Vector3 velocity, Vector3 origin, float duration = 30 )
 	{
 		if ( !Renderer.IsValid() )
 			return;
@@ -114,18 +114,32 @@ public partial class Npc : Component, IKillSource
 		physics.Renderer = mainBody;
 		physics.CopyBonesFrom( Renderer, true );
 
-		if ( velocity.LengthSquared > 0f )
-		{
-			foreach ( var body in physics.Bodies )
-			{
-				body.Component.Velocity = velocity;
-			}
-		}
+		ApplyRagdollForce( physics, velocity, origin );
 
 		//
 		// Destroy after a while
 		//
 		mainBody.Invoke( duration, mainBody.DestroyGameObject );
+	}
+
+	async void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
+	{
+		await GameTask.Delay( 10 );
+
+		if ( !physics.IsValid() ) return;
+		if ( force.Length < 1 ) return;
+
+		foreach ( var body in physics.Bodies )
+		{
+			body.Component.Velocity = force;
+
+			if ( origin != Vector3.Zero )
+			{
+				var offset = (body.Component.WorldPosition - origin);
+				var angular = Vector3.Cross( offset.Normal, force.Normal ) * force.Length * 0.5f;
+				body.Component.AngularVelocity = angular;
+			}
+		}
 	}
 
 	/// <summary>
@@ -143,6 +157,29 @@ public partial class Npc : Component, IKillSource
 	}
 
 	/// <summary>
+	/// Calculates the launch velocity for a ragdoll based on the damage source.
+	/// For explosions, uses the direction from the blast origin to this NPC.
+	/// Otherwise, falls back to the attacker's physical velocity.
+	/// </summary>
+	protected Vector3 GetDeathLaunchVelocity( in DamageInfo damage )
+	{
+		if ( damage.Tags.Contains( DamageTags.Explosion ) && damage.Origin != Vector3.Zero )
+		{
+
+			var dist = (WorldPosition - damage.Origin).Length;
+			var strength = MathX.Remap( dist, 0, 512, 500, 1500 ).Clamp( 500, 1500 );
+
+			var dir = (WorldPosition - damage.Origin).Normal;
+			dir += Vector3.Up * 1.0f;
+			dir = dir.Normal;
+
+			return dir * strength;
+		}
+
+		return GetAttackerVelocity( damage.Attacker );
+	}
+
+	/// <summary>
 	/// Notifies the kill feed, spawns a ragdoll, and destroys this NPC.
 	/// Call from subclass OnDamage when health drops below zero.
 	/// Override to add NPC-specific behaviour before/after death.
@@ -150,7 +187,7 @@ public partial class Npc : Component, IKillSource
 	protected virtual void Die( in DamageInfo damage )
 	{
 		GameManager.Current?.OnNpcDeath( DisplayName, damage );
-		CreateRagdoll( GetAttackerVelocity( damage.Attacker ) );
+		CreateRagdoll( GetDeathLaunchVelocity( damage ), damage.Origin );
 		GameObject.Destroy();
 	}
 }

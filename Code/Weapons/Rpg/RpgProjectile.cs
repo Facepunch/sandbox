@@ -60,6 +60,8 @@ public partial class RpgProjectile : Projectile
 				x.PhysicsForceScale = ExplosionForce;
 				x.DamageAmount = ExplosionDamage;
 				x.Attacker = Instigator.GameObject;
+				x.DamageTags ??= new();
+				x.DamageTags.Add( DamageTags.Explosion );
 			}, FindMode.EverythingInSelfAndDescendants );
 
 			go.Enabled = true;

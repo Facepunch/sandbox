@@ -1,5 +1,6 @@
 using Sandbox.CameraNoise;
 using Sandbox.Movement;
+using System.Threading;
 
 /// <summary>
 /// Holds player information like health
@@ -130,8 +131,31 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		}
 	}
 
+	/// <summary>
+	/// Calculates the launch velocity for a ragdoll based on the damage source.
+	/// For explosions, uses the direction from the blast origin to this NPC.
+	/// Otherwise, falls back to the attacker's physical velocity.
+	/// </summary>
+	Vector3 GetDeathLaunchVelocity( in DamageInfo damage )
+	{
+		if ( damage.Tags.Contains( DamageTags.Explosion ) && damage.Origin != Vector3.Zero )
+		{
+
+			var dist = (WorldPosition - damage.Origin).Length;
+			var strength = MathX.Remap( dist, 0, 512, 500, 1500 ).Clamp( 500, 1500 );
+
+			var dir = (WorldPosition - damage.Origin).Normal;
+			dir += Vector3.Up * 1.0f;
+			dir = dir.Normal;
+
+			return dir * strength;
+		}
+
+		return 0;
+	}
+
 	[Rpc.Broadcast( NetFlags.HostOnly | NetFlags.Reliable )]
-	void CreateRagdoll()
+	void CreateRagdoll( Vector3 velocity, Vector3 origin )
 	{
 		if ( !Controller.Renderer.IsValid() )
 			return;
@@ -162,11 +186,35 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		physics.Renderer = mainBody;
 		physics.CopyBonesFrom( Controller.Renderer, true );
 
+		ApplyRagdollForce( physics, velocity, origin );
+		
 		var corpse = go.AddComponent<DeathCameraTarget>();
 		corpse.Connection = Network.Owner;
 		corpse.Created = DateTime.Now;
 
 		CopyBoneScalesToRagdoll( go );
+	}
+
+	async void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
+	{
+		await GameTask.Delay( 10 );
+
+		if ( !physics.IsValid() ) return;
+		if ( force.Length < 1 ) return;
+
+		foreach ( var body in physics.Bodies )
+		{
+			body.Component.Velocity = force;
+
+			// Compute angular velocity from the offset between the body and the force origin
+			if ( origin != Vector3.Zero )
+			{
+				var offset = (body.Component.WorldPosition - origin);
+				var angular = Vector3.Cross( offset.Normal, force.Normal ) * force.Length * 0.5f;
+				body.Component.AngularVelocity = angular;
+			}
+		}
+
 	}
 
 	void CreateRagdollAndGhost()
@@ -226,15 +274,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			inventory.SwitchWeapon( null );
 		}
 
-
-		if ( d.Tags.HasAny( DamageTags.Crush, DamageTags.Explosion, DamageTags.GibAlways ) )
-		{
-			Gib( d.Position, d.Origin );
-		}
-		else
-		{
-			CreateRagdoll();
-		}
+		CreateRagdoll( GetDeathLaunchVelocity( d ), d.Origin );
 
 		//
 		// Ghost and say goodbye to the player
