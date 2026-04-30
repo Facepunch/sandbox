@@ -142,7 +142,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		{
 
 			var dist = (WorldPosition - damage.Origin).Length;
-			var strength = MathX.Remap( dist, 0, 512, 500, 1500 ).Clamp( 500, 1500 );
+			var strength = MathX.Remap( dist, 0, 512, 1024, 2048, true );
 
 			var dir = (WorldPosition - damage.Origin).Normal;
 			dir += Vector3.Up * 1.0f;
@@ -211,6 +211,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			{
 				var offset = (body.Component.WorldPosition - origin);
 				var angular = Vector3.Cross( offset.Normal, force.Normal ) * force.Length * 0.5f;
+				angular += Vector3.Random * force.Length * 0.15f;
 				body.Component.AngularVelocity = angular;
 			}
 		}
