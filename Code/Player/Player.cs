@@ -357,6 +357,20 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnDamage( args ) );
 		Global.IPlayerEvents.Post( x => x.OnPlayerDamage( this, args ) );
 
+		var safeHitPos = args.Position;
+		if ( safeHitPos.LengthSquared <= 0.1f )
+		{
+			safeHitPos = WorldPosition + Vector3.Up * 32f; // Fallback to chest height
+		}
+
+		var direction = Vector3.Zero;
+		if ( args.Origin.LengthSquared > 0.1f )
+		{
+			direction = (args.Origin - safeHitPos).Normal;
+		}
+
+		BloodSystem.Current.SpawnBlood( safeHitPos, direction, args.Damage );
+
 		if ( IsLocalPlayer )
 		{
 			_dmgSound?.Stop();
