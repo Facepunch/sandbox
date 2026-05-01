@@ -37,6 +37,8 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 			pd.GameObject.Destroy();
 		}
 
+		UndoSystem.Current?.RemovePlayer( channel.SteamId );
+
 		if ( _kickedPlayers.Remove( channel.Id ) ) return;
 		if ( BanSystem.Current?.IsBanned( channel.SteamId ) ?? false ) return;
 

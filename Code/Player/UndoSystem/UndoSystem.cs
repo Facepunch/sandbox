@@ -1,4 +1,6 @@
 using Sandbox.UI;
+using System.Collections.Generic;
+using System.Linq;
 
 public class UndoSystem : GameObjectSystem<UndoSystem>
 {
@@ -22,12 +24,22 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 	}
 
 	/// <summary>
-	/// Remove a GameObject from all player undo stacks so it can no longer be undone.
+	/// Call this when a player disconnects to prevent memory leaks!
+	/// </summary>
+	public void RemovePlayer( long steamId )
+	{
+		stacks.Remove( steamId );
+	}
+
+	/// <summary>
+	/// Remove a GameObject from all player undo stacks.
 	/// </summary>
 	public void Remove( GameObject go )
 	{
 		foreach ( var stack in stacks.Values )
+		{
 			stack.Remove( go );
+		}
 	}
 
 	/// <summary>
@@ -36,7 +48,8 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 	public class PlayerStack
 	{
 		long steamId;
-		Stack<Entry> entries = new();
+		List<Entry> entries = new();
+		const int MaxUndoSteps = 128; // Bounded history prevents indefinite memory leaks
 
 		public PlayerStack( long steamId )
 		{
@@ -49,7 +62,13 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 		public Entry Create()
 		{
 			var entry = new Entry( steamId );
-			entries.Push( entry );
+			entries.Add( entry );
+
+			if ( entries.Count > MaxUndoSteps )
+			{
+				entries.RemoveAt( 0 );
+			}
+
 			return entry;
 		}
 
@@ -58,15 +77,13 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 		/// </summary>
 		public void Undo()
 		{
-			if ( entries.Count == 0 )
-				return;
-
-			var entry = entries.Pop();
-
-			// if we didn't do anything, do the next one
-			if ( !entry.Run() )
+			while ( entries.Count > 0 )
 			{
-				Undo();
+				var entry = entries[^1];
+				entries.RemoveAt( entries.Count - 1 );
+
+				if ( entry.Run() )
+					return;
 			}
 		}
 
@@ -93,7 +110,7 @@ public class UndoSystem : GameObjectSystem<UndoSystem>
 
 		long SteamId;
 
-		List<GameObject> gameObjects = new();
+		HashSet<GameObject> gameObjects = new();
 
 		internal Entry( long steamId )
 		{
