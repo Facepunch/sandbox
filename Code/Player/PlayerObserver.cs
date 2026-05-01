@@ -60,7 +60,7 @@ public sealed class PlayerObserver : Component
 
 		var tr = Scene.Trace.FromTo( center, targetPos ).Radius( 1.0f ).WithoutTags( "ragdoll", "effect" ).Run();
 
-		Scene.Camera.WorldPosition = Vector3.Lerp( Scene.Camera.WorldPosition, tr.EndPosition, timeSinceStarted, true );
+		Scene.Camera.WorldPosition = tr.EndPosition;
 		Scene.Camera.WorldRotation = EyeAngles;
 	}
 }
