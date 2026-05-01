@@ -12,12 +12,6 @@ public class BloodSystem : GameObjectSystem<BloodSystem>
 
 	public BloodSystem( Scene scene ) : base( scene )
 	{
-	}
-
-	private void InitializeResources()
-	{
-		if ( _dripSplatters != null ) return;
-
 		var main = ResourceLibrary.Get<DecalDefinition>( "decals/blood/blood_splatter_01.decal" );
 		_mainSplatter = main != null ? new() { main } : null;
 
@@ -33,8 +27,6 @@ public class BloodSystem : GameObjectSystem<BloodSystem>
 	public void SpawnBlood( Vector3 hitPosition, Vector3 direction, float damage = 50.0f )
 	{
 		if ( damage < 5.0f ) return;
-
-		InitializeResources();
 
 		int dropCount = (int)Math.Clamp( damage / 15.0f, 1.0f, 10.0f );
 		bool isMajorDamage = damage >= 35.0f;
