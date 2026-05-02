@@ -131,15 +131,9 @@ public partial class Npc : Component, IKillSource
 
 		foreach ( var body in physics.Bodies )
 		{
-			body.Component.Velocity = force;
-
-			if ( origin != Vector3.Zero )
-			{
-				var offset = (body.Component.WorldPosition - origin);
-				var angular = Vector3.Cross( offset.Normal, force.Normal ) * force.Length * 0.5f;
-				angular += Vector3.Random * force.Length * 0.15f;
-				body.Component.AngularVelocity = angular;
-			}
+			var rb = body.Component;
+			if ( !rb.IsValid() ) continue;
+			rb.ApplyImpulse( Vector3.Direction( origin, rb.WorldPosition ) * force.Length * rb.Mass );
 		}
 	}
 
