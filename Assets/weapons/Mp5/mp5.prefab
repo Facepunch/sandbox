@@ -72,7 +72,7 @@
             "TargetColor": "1,1,1,1",
             "CacheToDisk": true
           },
-          "compiled": "textures/generated/imagefile/d24ee0a15afd69d6.vtex"
+          "compiled": null
         },
         "DisplayName": "SMG",
         "DroppedGameObject": {
@@ -95,7 +95,7 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "ParentBone": "hold_r",
-        "ReloadTime": 1.6,
+        "ReloadTime": 1.8,
         "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,

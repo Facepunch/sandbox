@@ -26,7 +26,7 @@
           "_type": "gameobject",
           "go": "f356ae8a-95fe-4a7b-9afe-dc337736eb24"
         },
-        "IncrementalAnimationSpeed": 3,
+        "IncrementalAnimationSpeed": 1,
         "InertiaScale": "2,2",
         "IsIncremental": false,
         "IsThrowable": false,
@@ -44,6 +44,16 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "ReloadSoundEvents": [
+          {
+            "Time": 0.5,
+            "Sound": "weapons/glock/reload/pistol_mag_out.sound"
+          },
+          {
+            "Time": 1.1,
+            "Sound": "weapons/m4a1/reload/m4a1_mag_in.sound"
+          }
+        ],
         "Renderer": {
           "_type": "component",
           "component_id": "0d315a8a-856e-49cb-b5d6-a16482eaf1be",
