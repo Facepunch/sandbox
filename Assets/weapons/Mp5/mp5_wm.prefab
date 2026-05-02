@@ -20,7 +20,10 @@
         "__guid": "765ebd37-c91f-4058-8815-f4b7df6f24b0",
         "__enabled": true,
         "Flags": 0,
-        "EjectBrass": null,
+        "EjectBrass": {
+          "_type": "gameobject",
+          "prefab": "weapons/common/effects/eject_9mm.prefab"
+        },
         "EjectTransform": {
           "_type": "gameobject",
           "go": "8e571825-7366-47b8-a226-d8c9ae8b083f"

@@ -21,7 +21,10 @@
         "__enabled": true,
         "Flags": 0,
         "AnimationSpeed": 1,
-        "EjectBrass": null,
+        "EjectBrass": {
+          "_type": "gameobject",
+          "prefab": "weapons/common/effects/eject_9mm.prefab"
+        },
         "EjectTransform": {
           "_type": "gameobject",
           "go": "f356ae8a-95fe-4a7b-9afe-dc337736eb24"

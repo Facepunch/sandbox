@@ -20,7 +20,10 @@
         "__guid": "a1b2c3d4-3332-4aaa-b332-333333333332",
         "__enabled": true,
         "Flags": 0,
-        "EjectBrass": null,
+        "EjectBrass": {
+          "_type": "gameobject",
+          "prefab": "weapons/common/effects/eject_rifle.prefab"
+        },
         "EjectTransform": {
           "_type": "gameobject",
           "go": "a1b2c3d4-3336-4aaa-b336-333333333336"

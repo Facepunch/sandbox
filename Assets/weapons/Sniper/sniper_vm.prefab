@@ -21,7 +21,10 @@
         "__enabled": true,
         "Flags": 0,
         "AnimationSpeed": 1,
-        "EjectBrass": null,
+        "EjectBrass": {
+          "_type": "gameobject",
+          "prefab": "weapons/common/effects/eject_rifle.prefab"
+        },
         "EjectTransform": {
           "_type": "gameobject",
           "go": "a1b2c3d4-2223-4aaa-b223-222222222223"
@@ -44,6 +47,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "ReloadSoundEvents": [],
         "Renderer": {
           "_type": "component",
           "component_id": "a1b2c3d4-2225-4aaa-b225-222222222225",
