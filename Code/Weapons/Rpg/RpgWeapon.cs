@@ -19,6 +19,8 @@ public class RpgWeapon : BaseWeapon
 	[Sync( SyncFlags.FromHost )] RpgProjectile Projectile { get; set; }
 
 	TimeSince TimeSinceShoot;
+	private bool _hasFired;
+	private bool _waitingForReload;
 
 	/// <summary>
 	/// Whether a live rocket is currently being guided toward the crosshair.
@@ -36,10 +38,28 @@ public class RpgWeapon : BaseWeapon
 		if ( Input.Pressed( "attack2" ) )
 			ToggleTrackedAim();
 
+		if ( _hasFired && Input.Released( "attack1" ) )
+		{
+			_hasFired = false;
+
+			if ( HasAmmo() )
+			{
+				if ( IsGuiding )
+					_waitingForReload = true;
+				else
+					ViewModel?.RunEvent<ViewModel>( x => x.OnReloadStart() );
+			}
+		}
+
 		if ( IsGuiding )
 		{
 			var target = GetAimTarget();
 			Projectile.UpdateWithTarget( target, ProjectileSpeed );
+		}
+		else if ( _waitingForReload && HasAmmo() )
+		{
+			_waitingForReload = false;
+			ViewModel?.RunEvent<ViewModel>( x => x.OnReloadStart() );
 		}
 	}
 
@@ -116,10 +136,7 @@ public class RpgWeapon : BaseWeapon
 				new Sandbox.CameraNoise.Punch( new Vector3( Random.Shared.Float( 45, 35 ), Random.Shared.Float( -10, -5 ), 0 ), 1.5f, 2, 0.5f );
 				new Sandbox.CameraNoise.Shake( 1f, 0.6f );
 
-				if ( HasAmmo() )
-				{
-					ViewModel?.RunEvent<ViewModel>( x => x.OnReloadStart() );
-				}
+				_hasFired = true;
 			}
 		}
 
