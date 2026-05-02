@@ -35,6 +35,8 @@ public partial class BaseWeapon
 		{
 			reloadToken?.Cancel();
 			isReloading = false;
+
+			ViewModel?.RunEvent<ViewModel>( x => x.OnReloadCancel() );
 		}
 	}
 
