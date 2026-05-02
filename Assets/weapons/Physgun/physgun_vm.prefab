@@ -21,6 +21,7 @@
         "__enabled": true,
         "Flags": 0,
         "AnimationSpeed": 1,
+        "DeploySound": "weapons/common/foley/foley_deploy_weapon_01.sound",
         "EjectBrass": null,
         "EjectTransform": {
           "_type": "gameobject",
@@ -41,6 +42,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "ReloadSoundEvents": [],
         "Renderer": {
           "_type": "component",
           "component_id": "0d315a8a-856e-49cb-b5d6-a16482eaf1be",
@@ -48,7 +50,8 @@
           "component_type": "SkinnedModelRenderer"
         },
         "ThrowableType": "HEGrenade",
-        "TracerEffect": null
+        "TracerEffect": null,
+        "UseFastAnimations": false
       },
       {
         "__type": "PhygunViewmodel",
@@ -106,7 +109,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Viewmodel",
-        "Position": "0,0,-0.01578379",
+        "Position": "0,0,-0.0157837905",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -203,7 +206,7 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "silencer",
-                    "Position": "6.013762,-0.0000003516906,1.795536",
+                    "Position": "6.013762,-3.51690602E-07,1.79553604",
                     "Rotation": "0,0,0,1",
                     "Scale": "1,1,1",
                     "Tags": "",
@@ -221,7 +224,7 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "slide",
-                    "Position": "1.32287,0.0000001710258,1.630533",
+                    "Position": "1.32287002,1.71025803E-07,1.63053298",
                     "Rotation": "0,0,0,1",
                     "Scale": "1,1,1",
                     "Tags": "",
@@ -239,8 +242,8 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "slide_catch",
-                    "Position": "2.356294,0.5472428,0.8523614",
-                    "Rotation": "0.00000000000002842171,0.0000001509957,1,-0.0000001509958",
+                    "Position": "2.35629392,0.54724282,0.852361381",
+                    "Rotation": "2.84217094E-14,1.50995703E-07,1,-1.50995803E-07",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -257,8 +260,8 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "hammer",
-                    "Position": "-0.9212563,0.0000003579457,0.9763753",
-                    "Rotation": "0.4226182,0.00000007405067,0.9063078,0.00000007256151",
+                    "Position": "-0.921256304,3.57945709E-07,0.976375282",
+                    "Rotation": "0.42261821,7.40506678E-08,0.906307817,7.25615124E-08",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -275,7 +278,7 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "safety",
-                    "Position": "-0.9448798,0.5472435,0.9035423",
+                    "Position": "-0.94487977,0.547243476,0.90354228",
                     "Rotation": "0,0,0,1",
                     "Scale": "1,1,1",
                     "Tags": "",
@@ -293,8 +296,8 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "magazine",
-                    "Position": "-0.07164717,-0.0000001187523,-0.8246388",
-                    "Rotation": "0.00000002971902,0.7986354,0.00000002971902,0.6018152",
+                    "Position": "-0.0716471672,-1.18752297E-07,-0.824638784",
+                    "Rotation": "2.97190201E-08,0.798635423,2.97190201E-08,0.601815224",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -311,8 +314,8 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "trigger",
-                    "Position": "1.952979,-0.0000001178662,0.6523969",
-                    "Rotation": "0.00000002107339,0.7071064,-0.00000002107339,0.7071072",
+                    "Position": "1.95297897,-1.178662E-07,0.652396917",
+                    "Rotation": "2.10733901E-08,0.707106411,-2.10733901E-08,0.707107186",
                     "Scale": "1,1,1",
                     "Tags": "",
                     "Enabled": true,
@@ -403,7 +406,7 @@
                     "__version": 2,
                     "Flags": 0,
                     "Name": "MuzzleTransform",
-                    "Position": "17.63894,-0.1247237,1.695858",
+                    "Position": "17.6389408,-0.124723703,1.695858",
                     "Rotation": "0,0,0,1",
                     "Scale": "1,1,1",
                     "Tags": "",
@@ -420,7 +423,7 @@
                         "__version": 2,
                         "Flags": 0,
                         "Name": "GlowEffectParticles",
-                        "Position": "2.787677,0.1247226,-0.7768826",
+                        "Position": "2.78767705,0.1247226,-0.776882589",
                         "Rotation": "0,0,0,1",
                         "Scale": "1,1,1",
                         "Tags": "particles",
@@ -467,32 +470,7 @@
                             "ForceScale": 1,
                             "ForceSpace": "World",
                             "Friction": 1,
-                            "Gradient": {
-                              "Type": "Constant",
-                              "Evaluation": "Particle",
-                              "GradientA": {
-                                "blend": "Linear",
-                                "color": [
-                                  {
-                                    "t": 0.5,
-                                    "c": "1,1,1,1"
-                                  }
-                                ],
-                                "alpha": []
-                              },
-                              "GradientB": {
-                                "blend": "Linear",
-                                "color": [
-                                  {
-                                    "t": 0.5,
-                                    "c": "1,1,1,1"
-                                  }
-                                ],
-                                "alpha": []
-                              },
-                              "ConstantA": "1,1,1,1",
-                              "ConstantB": "1,1,1,1"
-                            },
+                            "Gradient": "1,1,1,1",
                             "InitialVelocity": {
                               "X": 0,
                               "Y": 0,
@@ -580,7 +558,7 @@
                             "Stretch": 0,
                             "TimeScale": 1,
                             "Timing": "GameTime",
-                            "Tint": "0,0,0,0",
+                            "Tint": "0,0.68333,1,1",
                             "UsePrefabFeature": false,
                             "Yaw": {
                               "Type": "Range",
@@ -678,7 +656,7 @@
                         "__version": 2,
                         "Flags": 0,
                         "Name": "TurnOnSparks",
-                        "Position": "2.148911,-0.00000000110029,0.0000000000001563194",
+                        "Position": "2.148911,-1.10028997E-09,1.56319402E-13",
                         "Rotation": "0,0,0,1",
                         "Scale": "1,1,1",
                         "Tags": "particles",
@@ -753,32 +731,7 @@
                             "ForceScale": 1,
                             "ForceSpace": "World",
                             "Friction": 1,
-                            "Gradient": {
-                              "Type": "Constant",
-                              "Evaluation": "Particle",
-                              "GradientA": {
-                                "blend": "Linear",
-                                "color": [
-                                  {
-                                    "t": 0.5,
-                                    "c": "1,1,1,1"
-                                  }
-                                ],
-                                "alpha": []
-                              },
-                              "GradientB": {
-                                "blend": "Linear",
-                                "color": [
-                                  {
-                                    "t": 0.5,
-                                    "c": "1,1,1,1"
-                                  }
-                                ],
-                                "alpha": []
-                              },
-                              "ConstantA": "1,1,1,1",
-                              "ConstantB": "1,1,1,1"
-                            },
+                            "Gradient": "1,1,1,1",
                             "InitialVelocity": {
                               "X": 0,
                               "Y": 0,
@@ -787,7 +740,7 @@
                             "Lifetime": {
                               "Type": "Range",
                               "Evaluation": "Seed",
-                              "Constants": "0.1,0.5,0,0"
+                              "Constants": "0.100000001,0.5,0,0"
                             },
                             "LocalSpace": {
                               "Type": "Curve",
@@ -990,9 +943,9 @@
                         "__version": 2,
                         "Flags": 0,
                         "Name": "Sprite (1)",
-                        "Position": "6.141765,2.823237,-0.000001788139",
+                        "Position": "6.14176512,2.82323694,-1.788139E-06",
                         "Rotation": "0,0,0,1",
-                        "Scale": "3.400001,3.400001,3.400001",
+                        "Scale": "3.40000105,3.40000105,3.40000105",
                         "Tags": "",
                         "Enabled": true,
                         "NetworkMode": 2,
@@ -1010,7 +963,7 @@
                             "Additive": true,
                             "AlphaCutoff": 0.5,
                             "Billboard": "Always",
-                            "Color": "0,0,0,0.48509",
+                            "Color": "0,0.68333,1,0.89855",
                             "DepthFeather": 3,
                             "FlipHorizontal": false,
                             "FlipVertical": false,
@@ -1036,7 +989,7 @@
                               "AfterUILayer": false
                             },
                             "Shadows": false,
-                            "Size": "6.827022,6.827022",
+                            "Size": "6.99058962,6.99058962",
                             "Sprite": {
                               "$compiler": "embed",
                               "$source": null,
@@ -1089,9 +1042,9 @@
                         "__version": 2,
                         "Flags": 0,
                         "Name": "Sprite",
-                        "Position": "6.141765,2.823237,-0.000001788139",
+                        "Position": "6.14176512,2.82323694,-1.788139E-06",
                         "Rotation": "0,0,0,1",
-                        "Scale": "3.400001,3.400001,3.400001",
+                        "Scale": "3.40000105,3.40000105,3.40000105",
                         "Tags": "",
                         "Enabled": true,
                         "NetworkMode": 2,
@@ -1109,7 +1062,7 @@
                             "Additive": true,
                             "AlphaCutoff": 0.5,
                             "Billboard": "Always",
-                            "Color": "0,0,0,0.68276",
+                            "Color": "0,0.68333,1,0.55943",
                             "DepthFeather": 3,
                             "FlipHorizontal": false,
                             "FlipVertical": false,
@@ -1135,7 +1088,7 @@
                               "AfterUILayer": false
                             },
                             "Shadows": false,
-                            "Size": "6.673591,6.673591",
+                            "Size": "6.93208694,6.93208694",
                             "Sprite": {
                               "$compiler": "embed",
                               "$source": null,
@@ -1188,9 +1141,9 @@
                         "__version": 2,
                         "Flags": 0,
                         "Name": "Sprite",
-                        "Position": "6.141765,2.823237,-0.000001788139",
+                        "Position": "6.14176512,2.82323694,-1.788139E-06",
                         "Rotation": "0,0,0,1",
-                        "Scale": "3.400001,3.400001,3.400001",
+                        "Scale": "3.40000105,3.40000105,3.40000105",
                         "Tags": "",
                         "Enabled": true,
                         "NetworkMode": 2,
@@ -1208,7 +1161,7 @@
                             "Additive": true,
                             "AlphaCutoff": 0.5,
                             "Billboard": "Always",
-                            "Color": "0,0,0,0.58081",
+                            "Color": "0,0.68333,1,0.79387",
                             "DepthFeather": 3,
                             "FlipHorizontal": false,
                             "FlipVertical": false,
@@ -1234,7 +1187,7 @@
                               "AfterUILayer": false
                             },
                             "Shadows": false,
-                            "Size": "6.730619,6.730619",
+                            "Size": "6.22779274,6.22779274",
                             "Sprite": {
                               "$compiler": "embed",
                               "$source": null,
@@ -1308,7 +1261,7 @@
                 "__version": 2,
                 "Flags": 0,
                 "Name": "muzzle",
-                "Position": "6.013762,-0.0000003937,1.795534",
+                "Position": "6.013762,-3.93699992E-07,1.79553401",
                 "Rotation": "0,0,0,1",
                 "Scale": "1,1,1",
                 "Tags": "",
@@ -1326,8 +1279,8 @@
                 "__version": 2,
                 "Flags": 0,
                 "Name": "eject",
-                "Position": "2.38468,-0.1475521,1.941945",
-                "Rotation": "-0.000000000000003552713,-0.7071066,-0.000000000000003552713,0.7071068",
+                "Position": "2.38468003,-0.147552103,1.94194496",
+                "Rotation": "-3.55271304E-15,-0.70710659,-3.55271304E-15,0.707106829",
                 "Scale": "1,1,1",
                 "Tags": "",
                 "Enabled": true,
@@ -1344,8 +1297,8 @@
                 "__version": 2,
                 "Flags": 0,
                 "Name": "ScreenLight",
-                "Position": "3.569029,0.01023707,4.771395",
-                "Rotation": "-0.0000000000000000000101644,0.000000000000000000006225648,-1,0.0000001947072",
+                "Position": "3.56902909,0.0102370698,4.77139521",
+                "Rotation": "-1.01644002E-20,6.22564806E-21,-1,1.94707198E-07",
                 "Scale": "1,1,1",
                 "Tags": "light_point,light,light_spot",
                 "Enabled": false,
@@ -1374,6 +1327,8 @@
                     "OnComponentStart": null,
                     "OnComponentUpdate": null,
                     "Radius": 500,
+                    "ShadowBias": 0.0005,
+                    "ShadowHardness": 0,
                     "Shadows": false
                   }
                 ],
@@ -1546,8 +1501,8 @@
                                 "__version": 2,
                                 "Flags": 0,
                                 "Name": "hold_R",
-                                "Position": "2.131865,-0.1289349,-2.895818",
-                                "Rotation": "-0.3298903,0.6145923,0.4724828,0.5387101",
+                                "Position": "2.13186502,-0.128934905,-2.895818",
+                                "Rotation": "-0.329890311,0.614592314,0.4724828,0.538710117",
                                 "Scale": "1,1,1",
                                 "Tags": "",
                                 "Enabled": true,
@@ -2350,8 +2305,8 @@
                                 "__version": 2,
                                 "Flags": 0,
                                 "Name": "hold_L",
-                                "Position": "2.130785,-0.1296434,2.896551",
-                                "Rotation": "0.3298808,-0.6147375,0.472468,0.5385633",
+                                "Position": "2.13078499,-0.129643396,2.89655089",
+                                "Rotation": "0.329880804,-0.614737511,0.472467989,0.538563311",
                                 "Scale": "1,1,1",
                                 "Tags": "",
                                 "Enabled": true,
@@ -2599,8 +2554,8 @@
             "__version": 2,
             "Flags": 0,
             "Name": "eject",
-            "Position": "8.712667,-5.820626,5.533315",
-            "Rotation": "0.000000000000004440892,0.00000008429372,-0.7071067,0.7071069",
+            "Position": "8.71266747,-5.82062578,5.53331518",
+            "Rotation": "4.4408921E-15,8.42937169E-08,-0.707106709,0.707106888",
             "Scale": "1,1,1",
             "Tags": "",
             "Enabled": true,
@@ -2753,7 +2708,9 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
     },
     "__variables": []

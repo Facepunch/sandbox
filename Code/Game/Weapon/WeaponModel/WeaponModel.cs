@@ -1,6 +1,7 @@
 ﻿public abstract class WeaponModel : Component
 {
 	[Property] public SkinnedModelRenderer Renderer { get; set; }
+	[Property] public SoundEvent DeploySound { get; set; }
 	[Property] public GameObject MuzzleTransform { get; set; }
 	[Property] public GameObject EjectTransform { get; set; }
 	[Property] public GameObject MuzzleEffect { get; set; }
@@ -10,6 +11,9 @@
 	public void Deploy()
 	{
 		Renderer?.Set( "b_deploy", true );
+
+		if ( DeploySound is not null )
+			GameObject.PlaySound( DeploySound );
 	}
 
 	public Transform GetTracerOrigin()

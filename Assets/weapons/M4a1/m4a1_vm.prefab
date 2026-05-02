@@ -21,6 +21,7 @@
         "__enabled": true,
         "Flags": 0,
         "AnimationSpeed": 1,
+        "DeploySound": "weapons/common/foley/foley_deploy_weapon_01.sound",
         "EjectBrass": {
           "_type": "gameobject",
           "prefab": "weapons/common/effects/eject_rifle.prefab"
