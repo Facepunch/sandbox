@@ -6,6 +6,7 @@ public sealed class PlayerObserver : Component
 	Angles EyeAngles;
 	TimeSince timeSinceStarted;
 	DeathCameraTarget _cachedCorpse;
+	float currentDistance;
 
 	protected override void OnEnabled()
 	{
@@ -13,6 +14,7 @@ public sealed class PlayerObserver : Component
 
 		EyeAngles = Scene.Camera.WorldRotation;
 		timeSinceStarted = 0;
+		currentDistance = 32;
 
 		_cachedCorpse = Scene.GetAllComponents<DeathCameraTarget>()
 					.Where( x => x.Connection == Network.Owner )
@@ -22,13 +24,6 @@ public sealed class PlayerObserver : Component
 
 	protected override void OnUpdate()
 	{
-		if ( IsProxy ) return;
-
-		if ( _cachedCorpse.IsValid() )
-		{
-			RotateAround( _cachedCorpse );
-		}
-
 		// Don't allow immediate respawn
 		if ( timeSinceStarted < 1 )
 			return;
@@ -41,12 +36,22 @@ public sealed class PlayerObserver : Component
 		}
 	}
 
+	protected override void OnPreRender()
+	{
+		if ( IsProxy ) return;
+
+		if ( _cachedCorpse.IsValid() )
+		{
+			RotateAround( _cachedCorpse );
+		}
+	}
+
 	private void RotateAround( Component target )
 	{
 		// Find the corpse eyes
-		if ( !target.Components.Get<SkinnedModelRenderer>().TryGetBoneTransform( "head", out var tx ) )
+		if ( target.Components.Get<SkinnedModelRenderer>().TryGetBoneTransform( "pelvis", out var tx ) )
 		{
-			tx.Position = target.GameObject.GetBounds().Center + Vector3.Up * 25f;
+			tx.Position += Vector3.Up * 25;
 		}
 
 		var e = EyeAngles;
@@ -55,8 +60,10 @@ public sealed class PlayerObserver : Component
 		e.roll = 0.0f;
 		EyeAngles = e;
 
+		currentDistance = currentDistance.LerpTo( 150, Time.Delta * 5 );
+
 		var center = tx.Position;
-		var targetPos = center - EyeAngles.Forward * 150f;
+		var targetPos = center - EyeAngles.Forward * currentDistance;
 
 		var tr = Scene.Trace.FromTo( center, targetPos ).Radius( 1.0f ).WithoutTags( "ragdoll", "effect" ).Run();
 
