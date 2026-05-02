@@ -44,6 +44,20 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "ReloadSoundEvents": [
+          {
+            "Time": 0.1,
+            "Sound": "weapons/m4a1/reload/m4a1_mag_out.sound"
+          },
+          {
+            "Time": 1.1,
+            "Sound": "weapons/m4a1/reload/m4a1_mag_in.sound"
+          },
+          {
+            "Time": 1.58,
+            "Sound": "weapons/m4a1/reload/gun_grab_foley.sound"
+          }
+        ],
         "Renderer": {
           "_type": "component",
           "component_id": "0d315a8a-856e-49cb-b5d6-a16482eaf1be",
