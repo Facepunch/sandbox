@@ -44,6 +44,16 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "ReloadSoundEvents": [
+          {
+            "Time": 0,
+            "Sound": "weapons/glock/reload/pistol_mag_out.sound"
+          },
+          {
+            "Time": 0.6,
+            "Sound": "weapons/glock/reload/pistol_mag_in.sound"
+          }
+        ],
         "Renderer": {
           "_type": "component",
           "component_id": "0d315a8a-856e-49cb-b5d6-a16482eaf1be",
