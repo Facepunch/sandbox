@@ -21,6 +21,7 @@
         "__enabled": true,
         "Flags": 0,
         "AnimationSpeed": 1,
+        "DeploySound": null,
         "EjectBrass": {
           "_type": "gameobject",
           "prefab": "weapons/common/effects/eject_shotgun.prefab"
@@ -30,6 +31,19 @@
           "go": "f356ae8a-95fe-4a7b-9afe-dc337736eb24"
         },
         "IncrementalAnimationSpeed": 3,
+        "IncrementalReloadFinishSounds": [
+          {
+            "Time": 0.6,
+            "Sound": "weapons/m4a1/reload/gun_grab_foley.sound"
+          }
+        ],
+        "IncrementalReloadSoundEvents": [
+          {
+            "Time": 0,
+            "Sound": "weapons/shotgun/sounds/shotgun_load.sound"
+          }
+        ],
+        "IncrementalReloadStartSounds": [],
         "InertiaScale": "2,2",
         "IsIncremental": true,
         "IsThrowable": false,

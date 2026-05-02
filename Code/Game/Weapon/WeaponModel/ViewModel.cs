@@ -27,7 +27,26 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	[Property, Group( "Reload Sounds" )]
 	public List<ReloadSoundEntry> ReloadSoundEvents { get; set; } = new();
 
+	/// <summary>
+	/// Timed sound events to play during each incremental reload cycle.
+	/// </summary>
+	[Property, Group( "Reload Sounds" )]
+	public List<ReloadSoundEntry> IncrementalReloadSoundEvents { get; set; } = new();
+
+	/// <summary>
+	/// Timed sound events played when starting an incremental reload sequence.
+	/// </summary>
+	[Property, Group( "Reload Sounds" )]
+	public List<ReloadSoundEntry> IncrementalReloadStartSounds { get; set; } = new();
+
+	/// <summary>
+	/// Timed sound events played when finishing an incremental reload sequence.
+	/// </summary>
+	[Property, Group( "Reload Sounds" )]
+	public List<ReloadSoundEntry> IncrementalReloadFinishSounds { get; set; } = new();
+
 	private CancellationTokenSource _reloadSoundCts;
+	private CancellationTokenSource _reloadFinishSoundCts;
 
 	/// <summary>
 	/// Turns on incremental reloading parameters.
@@ -206,7 +225,10 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		Renderer?.Set( "speed_reload", AnimationSpeed );
 		Renderer?.Set( IsIncremental ? "b_reloading" : "b_reload", true );
 
-		StartReloadSounds();
+		if ( IsIncremental )
+			StartSounds( IncrementalReloadStartSounds, ref _reloadFinishSoundCts );
+
+		StartSounds( ReloadSoundEvents, ref _reloadSoundCts );
 	}
 
 	/// <summary>
@@ -216,14 +238,18 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	{
 		Renderer?.Set( "speed_reload", IncrementalAnimationSpeed );
 		Renderer?.Set( "b_reloading_shell", true );
+
+		StartSounds( IncrementalReloadSoundEvents, ref _reloadSoundCts );
 	}
 
 	public void OnReloadFinish()
 	{
-		CancelReloadSounds();
+		CancelSounds( ref _reloadSoundCts );
 
 		if ( IsIncremental )
 		{
+			StartSounds( IncrementalReloadFinishSounds, ref _reloadFinishSoundCts );
+
 			_reloadFinishing = true;
 			_reloadFinishTimer = 0;
 		}
@@ -235,32 +261,33 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 
 	public void OnReloadCancel()
 	{
-		CancelReloadSounds();
+		CancelSounds( ref _reloadSoundCts );
+		CancelSounds( ref _reloadFinishSoundCts );
 	}
 
-	private void StartReloadSounds()
+	private void StartSounds( List<ReloadSoundEntry> events, ref CancellationTokenSource cts )
 	{
-		CancelReloadSounds();
+		CancelSounds( ref cts );
 
-		if ( ReloadSoundEvents.Count == 0 )
+		if ( events.Count == 0 )
 			return;
 
-		_reloadSoundCts = new CancellationTokenSource();
-		_ = PlayReloadSoundsAsync( _reloadSoundCts.Token );
+		cts = new CancellationTokenSource();
+		_ = PlaySoundsAsync( events, cts.Token );
 	}
 
-	private void CancelReloadSounds()
+	private void CancelSounds( ref CancellationTokenSource cts )
 	{
-		if ( _reloadSoundCts is null ) return;
+		if ( cts is null ) return;
 
-		_reloadSoundCts.Cancel();
-		_reloadSoundCts.Dispose();
-		_reloadSoundCts = null;
+		cts.Cancel();
+		cts.Dispose();
+		cts = null;
 	}
 
-	private async Task PlayReloadSoundsAsync( CancellationToken ct )
+	private async Task PlaySoundsAsync( List<ReloadSoundEntry> events, CancellationToken ct )
 	{
-		var sorted = ReloadSoundEvents.OrderBy( e => e.Time ).ToList();
+		var sorted = events.OrderBy( e => e.Time ).ToList();
 		var elapsed = 0f;
 
 		foreach ( var entry in sorted )
