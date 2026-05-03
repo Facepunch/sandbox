@@ -45,7 +45,7 @@
         {
             if ( type.IsAbstract ) continue;
             var instance = type.Create<UtilityPage>();
-            if ( instance is null || !instance.IsVisible() ) continue;
+            if ( instance is null || !instance.IsPageVisible() ) continue;
             instance.Delete();
             yield return type;
         }

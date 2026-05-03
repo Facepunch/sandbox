@@ -161,7 +161,7 @@ public class SpeechLayer : BaseNpcLayer
 		Npc.DebugOverlay.ScreenText( screenPos, text, TextFlag.CenterBottom );
 	}
 
-	public override void Reset()
+	public override void ResetLayer()
 	{
 		Stop();
 	}

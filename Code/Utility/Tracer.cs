@@ -100,7 +100,7 @@
 
 		if ( EnableLight )
 		{
-			_light ??= new SceneLight( Scene.SceneWorld );
+			_light ??= new ScenePointLight( Scene.SceneWorld );
 			_light.Transform = Transform.World;
 			_light.QuadraticAttenuation = 10;
 			_light.LightColor = LightColor.Evaluate( delta );

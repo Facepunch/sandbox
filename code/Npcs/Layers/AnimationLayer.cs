@@ -226,7 +226,7 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		HoldType = (int)holdType;
 	}
 
-	public override void Reset()
+	public override void ResetLayer()
 	{
 		if ( _renderer is null ) return;
 

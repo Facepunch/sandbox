@@ -155,7 +155,7 @@ public class SensesLayer : BaseNpcLayer
 		return _audibleByTag.TryGetValue( tag, out var list ) ? list : _empty;
 	}
 
-	public override void Reset()
+	public override void ResetLayer()
 	{
 		VisibleTargets.Clear();
 		AudibleTargets.Clear();

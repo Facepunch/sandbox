@@ -18,7 +18,7 @@ public partial class BaseBulletWeapon : BaseWeapon
 		CameraRecoilFrequency = 1f,
 	};
 
-	[Property, Group( "Bullet" ), ClientEditable, Range( 0f, 500000f, 10f )]
+	[Property, Group( "Bullet" ), ClientEditable, Range( 0f, 500000f ), Step( 10f )]
 	public float ShootForce { get; set; } = 100000f;
 
 	protected TimeSince TimeSinceShoot = 0;

@@ -89,7 +89,7 @@
         }
 
         // Hide the tab when something is selected but there's nothing to show
-        return Target == null || HasContent();
+        return Target == null || InspectorHasContent();
     }
 
     // Frozen rigidbodies report Mass = 0 from the live physics body, so fall back
@@ -103,7 +103,7 @@
         return rb.Mass;
     }
 
-    bool HasContent()
+    bool InspectorHasContent()
     {
         if ( Target == null ) return false;
         if ( Properties.Count > 0 || Renderers.Count > 0 ) return true;

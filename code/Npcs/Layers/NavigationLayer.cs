@@ -82,7 +82,7 @@ public class NavigationLayer : BaseNpcLayer
 		return TaskStatus.Running;
 	}
 
-	public override void Reset()
+	public override void ResetLayer()
 	{
 		MoveTarget = null;
 

@@ -29,7 +29,7 @@
 
 @code
 {
-    public override bool IsVisible() => Connection.Local.HasPermission( "admin" );
+    public override bool IsPageVisible() => Connection.Local.HasPermission( "admin" );
 
     static readonly string UnlimitedAmmoDescription = "When enabled, weapons have unlimited ammo — no ammo is consumed when firing.";
     static readonly string InfiniteReservesDescription = "When enabled, reserve ammo is infinite — clip ammo is still consumed, but you can always reload.";

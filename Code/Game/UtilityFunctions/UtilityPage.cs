@@ -9,5 +9,5 @@ public abstract class UtilityPage : Panel
 	/// <summary>
 	/// Return false to hide this page from the utility menu.
 	/// </summary>
-	public virtual bool IsVisible() => true;
+	public virtual bool IsPageVisible() => true;
 }

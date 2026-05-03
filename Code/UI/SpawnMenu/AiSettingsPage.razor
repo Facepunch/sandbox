@@ -31,7 +31,7 @@
 
 @code
 {
-    public override bool IsVisible() => Connection.Local.HasPermission( "admin" );
+    public override bool IsPageVisible() => Connection.Local.HasPermission( "admin" );
 
     static readonly string EnabledDescription = "When disabled, all NPC AI thinking is paused — they just stand idle.";
     static readonly string NoTargetDescription = "When enabled, NPCs cannot target players.";

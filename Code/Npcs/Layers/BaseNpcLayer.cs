@@ -27,5 +27,5 @@ public abstract class BaseNpcLayer : Component
 	/// <summary>
 	/// Reset any runtime state on this layer.
 	/// </summary>
-	public virtual void Reset() { }
+	public virtual void ResetLayer() { }
 }
