@@ -22,7 +22,7 @@ public partial class BaseWeapon
 		if ( !UsesClips ) return false;
 		if ( ClipContents >= ClipMaxSize ) return false;
 		if ( isReloading ) return false;
-		if ( ReserveAmmo <= 0 ) return false;
+		if ( !WeaponConVars.InfiniteReserves && ReserveAmmo <= 0 ) return false;
 
 		return true;
 	}
@@ -94,15 +94,24 @@ public partial class BaseWeapon
 				await Task.DelaySeconds( ReloadTime, ct );
 
 				var needed = IncrementalReloading ? 1 : (ClipMaxSize - ClipContents);
-				var available = Math.Min( needed, ReserveAmmo );
 
-				if ( available <= 0 )
-					break;
+				if ( WeaponConVars.InfiniteReserves )
+				{
+					ViewModel?.RunEvent<ViewModel>( x => x.OnIncrementalReload() );
+					ClipContents += needed;
+				}
+				else
+				{
+					var available = Math.Min( needed, ReserveAmmo );
 
-				ViewModel?.RunEvent<ViewModel>( x => x.OnIncrementalReload() );
+					if ( available <= 0 )
+						break;
 
-				ReserveAmmo -= available;
-				ClipContents += available;
+					ViewModel?.RunEvent<ViewModel>( x => x.OnIncrementalReload() );
+
+					ReserveAmmo -= available;
+					ClipContents += available;
+				}
 			}
 		}
 		finally

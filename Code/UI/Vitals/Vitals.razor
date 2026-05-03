@@ -30,10 +30,10 @@
             }
             else
             {
-                <label class="value">@(Weapon.UsesClips ? Weapon.ClipContents : Weapon.ReserveAmmo)</label>
+                <label class="value">@(Weapon.UsesClips ? Weapon.ClipContents.ToString() : (WeaponConVars.InfiniteReserves ? "∞" : Weapon.ReserveAmmo.ToString()))</label>
                 @if ( Weapon.UsesClips )
                 {
-                    <label class="alternate">@Weapon.ReserveAmmo</label>
+                    <label class="alternate">@(WeaponConVars.InfiniteReserves ? "∞" : Weapon.ReserveAmmo.ToString())</label>
                 }
             }
             <Image class="icon" Texture=@AmmoIcon />

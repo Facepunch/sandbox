@@ -110,6 +110,8 @@ public partial class BaseWeapon
 		}
 
 		// No clips — take directly from reserve
+		if ( WeaponConVars.InfiniteReserves ) return true;
+
 		if ( AmmoType is not null )
 		{
 			var inv = GetAmmoInventory();
@@ -134,6 +136,8 @@ public partial class BaseWeapon
 
 		if ( UsesClips )
 			return ClipContents > 0;
+
+		if ( WeaponConVars.InfiniteReserves ) return true;
 
 		return ReserveAmmo > 0;
 	}

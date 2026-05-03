@@ -14,6 +14,10 @@
             <label class="left">@(WeaponConVars.UnlimitedAmmo ? "🟢" : "⚪") Unlimited Ammo</label>
             <label class="right">@(WeaponConVars.UnlimitedAmmo ? "On" : "Off")</label>
         </div>
+        <div class="control-row" Tooltip=@InfiniteReservesDescription @onclick=@ToggleInfiniteReserves>
+            <label class="left">@(WeaponConVars.InfiniteReserves ? "🟢" : "⚪") Infinite Reserves</label>
+            <label class="right">@(WeaponConVars.InfiniteReserves ? "On" : "Off")</label>
+        </div>
     }
     else
     {
@@ -28,6 +32,8 @@
     public override bool IsVisible() => Connection.Local.HasPermission( "admin" );
 
     static readonly string UnlimitedAmmoDescription = "When enabled, weapons have unlimited ammo — no ammo is consumed when firing.";
+    static readonly string InfiniteReservesDescription = "When enabled, reserve ammo is infinite — clip ammo is still consumed, but you can always reload.";
 
     void ToggleUnlimitedAmmo() => GameManager.SetConVar( "sb.weapon.unlimitedammo", !WeaponConVars.UnlimitedAmmo );
+    void ToggleInfiniteReserves() => GameManager.SetConVar( "sb.weapon.infinitereserves", !WeaponConVars.InfiniteReserves );
 }
