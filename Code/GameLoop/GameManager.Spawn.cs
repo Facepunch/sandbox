@@ -32,7 +32,7 @@ public sealed partial class GameManager
 
 		var eyes = player.EyeTransform;
 
-		var trace = Game.SceneTrace.Ray( eyes.Position, eyes.Position + eyes.Forward * 200 )
+		var trace = Game.SceneTrace.Ray( eyes.Position, eyes.Position + eyes.Forward * 2048 )
 			.IgnoreGameObject( player.GameObject )
 			.WithoutTags( "player" )
 			.Run();
