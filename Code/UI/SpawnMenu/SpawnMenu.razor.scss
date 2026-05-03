@@ -124,7 +124,6 @@ SpawnMenuHost.open SpawnMenu
     cursor: pointer;
     background-color: $menu-panel-bg;
     pointer-events: none;
-    backdrop-filter: blur( 8px );
 }
 
 
@@ -166,7 +165,6 @@ SpawnMenuHost.open SpawnMenu
     > .body
     {
         background-color: $menu-panel-bg;
-        backdrop-filter: blur( 2px );
     }
 }
 
