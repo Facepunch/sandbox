@@ -17,9 +17,18 @@ public class NavigationLayer : BaseNpcLayer
 	/// </summary>
 	public float WishSpeed { get; set; } = 100f;
 
+	// Grace period after issuing a move before we allow failure checks,
+	// so the agent has time to start navigating.
+	private TimeSince _timeSinceLastMoveIssued;
+
 	protected override void OnStart()
 	{
 		Agent = Npc.GetComponent<NavMeshAgent>();
+
+		// We handle rotation ourselves (facing look target or movement direction),
+		// so prevent the agent from snapping the body to the path direction.
+		if ( Agent.IsValid() )
+			Agent.UpdateRotation = false;
 	}
 
 	/// <summary>
@@ -29,6 +38,7 @@ public class NavigationLayer : BaseNpcLayer
 	{
 		MoveTarget = target;
 		StopDistance = stopDistance;
+		_timeSinceLastMoveIssued = 0;
 
 		if ( Agent.IsValid() )
 		{
@@ -49,7 +59,21 @@ public class NavigationLayer : BaseNpcLayer
 		if ( Agent.IsValid() )
 		{
 			Agent.MaxSpeed = WishSpeed;
-			Npc.Animation.SetMove( Agent.Velocity, Agent.WorldRotation );
+			// Use the NPC's actual body rotation (not the agent's path rotation) as the
+			// reference frame so that animation blend parameters (move_x / move_y) are
+			// computed relative to where the body is actually facing.
+			Npc.Animation.SetMove( Agent.Velocity, Npc.WorldRotation );
+
+			// If we have a pending move target but the agent isn't navigating,
+			// and the navmesh just finished building, re-issue the MoveTo so the
+			// agent can register on the freshly-built surface.
+			if ( MoveTarget.HasValue && !Agent.IsNavigating
+				&& !Npc.Scene.NavMesh.IsGenerating && !Npc.Scene.NavMesh.IsDirty
+				&& _timeSinceLastMoveIssued > 0.1f )
+			{
+				Agent.MoveTo( MoveTarget.Value );
+				_timeSinceLastMoveIssued = 0;
+			}
 		}
 	}
 
@@ -75,6 +99,15 @@ public class NavigationLayer : BaseNpcLayer
 
 		if ( distance <= StopDistance )
 			return TaskStatus.Success;
+
+		// If the navmesh is still building (e.g. after procedural geometry was spawned),
+		// keep waiting rather than failing immediately.
+		if ( Npc.Scene.NavMesh.IsGenerating || Npc.Scene.NavMesh.IsDirty )
+			return TaskStatus.Running;
+
+		// Give the agent a short grace period to start navigating after a move is issued.
+		if ( _timeSinceLastMoveIssued < 0.1f )
+			return TaskStatus.Running;
 
 		if ( Agent.IsValid() && !Agent.IsNavigating )
 			return TaskStatus.Failed;
