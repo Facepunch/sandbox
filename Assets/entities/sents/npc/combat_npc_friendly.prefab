@@ -46,7 +46,7 @@
         "AttackRange": 1024,
         "BurstDuration": 1.5,
         "BurstPause": 0.8,
-        "DisplayName": "Army Guy",
+        "DisplayName": "Army Guy (Friendly)",
         "EngageSpeed": 180,
         "FollowDistance": 256,
         "Friendly": true,

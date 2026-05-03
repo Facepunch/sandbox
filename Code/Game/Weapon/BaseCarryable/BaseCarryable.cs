@@ -150,6 +150,8 @@ public partial class BaseCarryable : Component, IKillIcon
 			if ( HasOwner ) return Owner.GameObject;
 			var seatedPlayer = ClientInput.Current;
 			if ( seatedPlayer.IsValid() ) return seatedPlayer.GameObject;
+			var killSource = GetComponentInParent<IKillSource>( true );
+			if ( killSource is Component c ) return c.GameObject;
 			return GameObject;
 		}
 	}
