@@ -5,8 +5,8 @@
 
 <root>
     <div class="list-tabs">
-        <div class="list-tab @( _tab == 0 ? "active" : "" )" @onclick="@(() => SwitchTab(0))">📦 Installed</div>
-        <div class="list-tab @( _tab == 1 ? "active" : "" )" @onclick="@(() => SwitchTab(1))">☁️ Workshop</div>
+        <div class="list-tab @( _tab == 0 ? "active" : "" )" @onclick="@(() => SwitchTab(0))"><label>📦 </label><label>#spawnmenu.effects.installed</label></div>
+        <div class="list-tab @( _tab == 1 ? "active" : "" )" @onclick="@(() => SwitchTab(1))"><label>☁️ </label><label>#spawnmenu.effects.workshop</label></div>
     </div>
 
     <div class="panel-body">
@@ -40,22 +40,22 @@
 
             @if ( !_groups.Any() )
             {
-                <div class="empty-state">No installed effects.</div>
+                <div class="empty-state">#spawnmenu.effects.no_installed</div>
             }
         }
         else
         {
             <div class="workshop-search">
-                <TextEntry class="search-input" placeholder="Search.." value="@_filter"/>
+                <TextEntry class="search-input" placeholder="#spawnmenu.common.search" value="@_filter"/>
             </div>
 
             @if ( _loadingWorkshop )
             {
-                <div class="empty-state">Loading...</div>
+                <div class="empty-state">#spawnmenu.common.loading</div>
             }
             else if ( _workshopPackages.Count == 0 )
             {
-                <div class="empty-state">No results.</div>
+                <div class="empty-state">#spawnmenu.common.no_results</div>
             }
             else
             {
@@ -95,7 +95,7 @@
     @if ( _tab == 0 )
     {
         <div class="footer">
-            <Button class="menu-action primary" Text="Presets" Icon="📋" onclick=@OpenPresetsMenu></Button>
+            <Button class="menu-action primary" Text="#spawnmenu.effects.presets" Icon="📋" onclick=@OpenPresetsMenu></Button>
         </div>
     }
     </div>
@@ -321,14 +321,14 @@
     {
         var menu = MenuPanel.Open( this );
 
-        menu.AddOption( "save", "Save New Preset...", () =>
+        menu.AddOption( "save", Game.Language.GetPhrase( "spawnmenu.effects.save_new_preset" ), () =>
         {
             var popup = new StringQueryPopup
             {
-                Title = "Save Preset",
-                Prompt = "Enter a name for this effects preset.",
-                Placeholder = "Preset name...",
-                ConfirmLabel = "Save",
+                Title = "#spawnmenu.effects.save_preset",
+                Prompt = "#spawnmenu.effects.save_preset_prompt",
+                Placeholder = "#spawnmenu.effects.preset_name_placeholder",
+                ConfirmLabel = "#spawnmenu.common.save",
                 OnConfirm = name => SaveNewPreset( name )
             };
             popup.Parent = FindPopupPanel();
@@ -343,8 +343,8 @@
                 var captured = preset;
                 menu.AddSubmenu( "auto_awesome", captured.Name, sub =>
                 {
-                    sub.AddOption( "play_arrow", "Load", () => ApplyPreset( captured ) );
-                    sub.AddOption( "delete", "Delete", () => DeletePreset( captured.Name ) );
+                    sub.AddOption( "play_arrow", Game.Language.GetPhrase( "spawnmenu.common.load" ), () => ApplyPreset( captured ) );
+                    sub.AddOption( "delete", Game.Language.GetPhrase( "spawnmenu.inspect.delete" ), () => DeletePreset( captured.Name ) );
                 } );
             }
         }

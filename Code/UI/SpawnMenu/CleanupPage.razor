@@ -9,13 +9,13 @@
 
 <root class="page" style="flex-direction: column;">
     <div class="control-row" @onclick=@(() =>CleanUpMine() )>
-        <label class="left">🧼 #spawnmenu.utility.cleanup_mine</label>
+        <div class="left"><label>🧼 </label><label>#spawnmenu.utility.cleanup_mine</label></div>
     </div>
 
     @if ( Connection.Local.HasPermission( "admin" ) )
     {
         <div class="control-row" @onclick=@(() =>CleanUpAll() )>
-            <label class="left">🧹 #spawnmenu.utility.cleanup_all</label>
+            <div class="left"><label>🧹 </label><label>#spawnmenu.utility.cleanup_all</label></div>
         </div>
 
         <div class="section-header">#spawnmenu.utility.cleanup_player</div>

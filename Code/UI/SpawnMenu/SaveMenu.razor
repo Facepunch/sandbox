@@ -9,7 +9,7 @@
 
 <root>
     <div class="save-window">
-        <div class="save-header">💾 #spawnmenu.saves.header</div>
+        <div class="save-header">💾 <label>#spawnmenu.saves.header</label></div>
         <div class="body">
             @if ( !SaveFiles.Any() )
             {
@@ -42,7 +42,7 @@
         </div>
         <div class="footer">
             <TextEntry @ref="SaveNameEntry" Placeholder="#spawnmenu.saves.name_placeholder" @onsubmit="@OnSave"></TextEntry>
-            <button @onclick="@OnSave">💾 #spawnmenu.saves.save_button</button>
+            <button @onclick="@OnSave">💾 <label>#spawnmenu.saves.save_button</label></button>
         </div>
     </div>
 </root>
@@ -120,7 +120,7 @@
             _ = new StringQueryPopup
             {
                 Title = "#spawnmenu.saves.incompatible_title",
-                Prompt = $"\"{save.DisplayName}\" #spawnmenu.saves.incompatible_message",
+                Prompt = Game.Language.GetPhrase( "spawnmenu.saves.incompatible_message", new() { { "name", save.DisplayName } } ),
                 ConfirmLabel = "#spawnmenu.common.ok",
                 ShowInput = false,
                 Parent = FindPopupPanel()
@@ -131,7 +131,7 @@
         _ = new StringQueryPopup
         {
             Title = "#spawnmenu.saves.load_title",
-            Prompt = $"#spawnmenu.saves.load_confirm",
+            Prompt = Game.Language.GetPhrase( "spawnmenu.saves.load_confirm", new() { { "name", save.DisplayName } } ),
             ConfirmLabel = "#spawnmenu.saves.load_button",
             ShowInput = false,
             OnConfirm = _ => LoadSave( save.FileName ),
@@ -144,7 +144,7 @@
         var popup = new StringQueryPopup
         {
             Title = "#spawnmenu.saves.delete_title",
-            Prompt = $"#spawnmenu.saves.delete_confirm",
+            Prompt = Game.Language.GetPhrase( "spawnmenu.saves.delete_confirm", new() { { "name", save.DisplayName } } ),
             ConfirmLabel = "#spawnmenu.saves.delete_button",
             ShowInput = false,
             OnConfirm = _ => DeleteSave( save.FileName ),

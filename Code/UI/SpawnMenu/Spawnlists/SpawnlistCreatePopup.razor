@@ -36,7 +36,7 @@
 
         SpawnlistData.Create( Name.Trim() );
 
-        Notices.AddNotice( "list_alt", Color.Cyan, $"#spawnmenu.spawnlist.created_notice" );
+        Notices.AddNotice( "list_alt", Color.Cyan, Game.Language.GetPhrase( "spawnmenu.spawnlist.created_notice", new() { { "name", Name } } ) );
 
         OnCreated?.Invoke();
 

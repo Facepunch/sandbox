@@ -19,7 +19,7 @@ public abstract partial class ToolMode : Component, IToolInfo
 	/// <summary>
 	/// Display name for the tool, defaults to the TypeDescription title.
 	/// </summary>
-	public virtual string Name => TypeDescription?.Title ?? GetType().Name;
+	public virtual string Name => Game.Language.GetPhrase( (TypeDescription?.Title ?? GetType().Name).TrimStart( '#' ) );
 
 	/// <summary>
 	/// Description of what this tool does.
@@ -185,7 +185,8 @@ public abstract partial class ToolMode : Component, IToolInfo
 
 	public virtual void DrawScreen( Rect rect, HudPainter paint )
 	{
-		var t = $"{TypeDescription.Icon} {TypeDescription.Title}";
+		var title = Game.Language.GetPhrase( TypeDescription.Title.TrimStart( '#' ) );
+		var t = $"{TypeDescription.Icon} {title}";
 
 		var text = new TextRendering.Scope( t, Color.White, 64 );
 		text.LineHeight = 0.75f;

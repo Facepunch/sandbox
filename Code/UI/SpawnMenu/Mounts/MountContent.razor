@@ -28,7 +28,7 @@
 				<SpawnMenuPath Path=@CurrentPath></SpawnMenuPath>
 				*@
 
-				<label>@( $"{mount.Title}, {@GetData().Count()} #spawnmenu.common.items" )</label>
+				<label>@( $"{mount.Title}, {GetData().Count()}" ) </label><label>#spawnmenu.common.items</label>
 			</Body>
 			<Right>
 				<SpawnMenuFilter Query:bind="@Filter"></SpawnMenuFilter>

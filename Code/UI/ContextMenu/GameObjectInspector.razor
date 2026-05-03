@@ -10,7 +10,7 @@
     <div class="body">
             @if (Target == null || Target.Count == 0)
             {
-                <div class="empty-state">Click on an object to inspect it.</div>
+            <div class="empty-state">#spawnmenu.inspect.click_to_inspect</div>
             }
             else
             {
@@ -35,7 +35,7 @@
                     {
                         var currentGroup = Renderers[0].MaterialGroup ?? MaterialGroups[0];
                         <div class="material-row">
-                            <label>Skin</label>
+                        <label>#spawnmenu.inspect.skin</label>
                             <div class="material-button" @onclick="@PickMaterialGroup">
                                 <label>@currentGroup</label>
                                 <label class="material-group-arrow">▾</label>
@@ -52,7 +52,7 @@
                         var name = mat?.ResourceName ?? "Default";
 
                         <div class="material-row @(hasOverride ? "overridden" : "")">
-                            <label>Material @(index + 1)</label>
+                        <label>#spawnmenu.inspect.material</label><label> @(index + 1)</label>
                             <div class="material-button" @onclick=@(() => PickMaterial(index))>
                                 <div class="material-preview" style="background-image: url( thumb:@(mat?.ResourcePath) )"></div>
                                 <label>@name</label>
@@ -72,8 +72,8 @@
 {
     public string Title => Target?.Count switch
     {
-        null or < 2 => "📦 Object",
-        _ => $"📦 Object (+{Target.Count - 1})"
+        null or < 2 => "📦 " + Game.Language.GetPhrase( "spawnmenu.inspect.object" ),
+        _ => "📦 " + Game.Language.GetPhrase( "spawnmenu.inspect.object" ) + $" (+{Target.Count - 1})"
     };
 
     public List<GameObject> Target { get; private set; }

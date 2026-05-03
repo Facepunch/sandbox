@@ -234,12 +234,12 @@
         var menu = MenuPanel.Open( this );
         if ( !isPlayer )
         {
-            menu.AddOption( "🗑️", "Delete", () => GameManager.DeleteInspectedObject( target ) );
+            menu.AddOption( "🗑️", Game.Language.GetPhrase( "spawnmenu.inspect.delete" ), () => GameManager.DeleteInspectedObject( target ) );
         }
 
         if ( isGibbable )
         {
-            menu.AddOption( "💥", "Break", () => GameManager.BreakInspectedProp( prop ) );
+            menu.AddOption( "💥", Game.Language.GetPhrase( "spawnmenu.inspect.break" ), () => GameManager.BreakInspectedProp( prop ) );
         }
     }
 

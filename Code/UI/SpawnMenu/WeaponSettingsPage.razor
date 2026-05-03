@@ -11,18 +11,20 @@
     @if ( Connection.Local.HasPermission( "admin" ) )
     {
         <div class="control-row" Tooltip=@UnlimitedAmmoDescription @onclick=@ToggleUnlimitedAmmo>
-            <label class="left">@(WeaponConVars.UnlimitedAmmo ? "🟢" : "⚪") #spawnmenu.utility.unlimited_ammo</label>
+            <div class="left"><label>@(WeaponConVars.UnlimitedAmmo ? "🟢" : "⚪") </label><label>#spawnmenu.utility.unlimited_ammo</label></div>
+            <div style="flex-grow: 1;"></div>
             <label class="right">@(WeaponConVars.UnlimitedAmmo ? "#spawnmenu.common.on" : "#spawnmenu.common.off")</label>
         </div>
         <div class="control-row" Tooltip=@InfiniteReservesDescription @onclick=@ToggleInfiniteReserves>
-            <label class="left">@(WeaponConVars.InfiniteReserves ? "🟢" : "⚪") #spawnmenu.utility.infinite_reserves</label>
+            <div class="left"><label>@(WeaponConVars.InfiniteReserves ? "🟢" : "⚪") </label><label>#spawnmenu.utility.infinite_reserves</label></div>
+            <div style="flex-grow: 1;"></div>
             <label class="right">@(WeaponConVars.InfiniteReserves ? "#spawnmenu.common.on" : "#spawnmenu.common.off")</label>
         </div>
     }
     else
     {
         <div class="control-row">
-            <label class="left">⚠️ #spawnmenu.common.host_only</label>
+            <div class="left"><label>⚠️ </label><label>#spawnmenu.common.host_only</label></div>
         </div>
     }
 </root>

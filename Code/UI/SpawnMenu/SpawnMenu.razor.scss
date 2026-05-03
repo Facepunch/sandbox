@@ -258,6 +258,7 @@ SpawnMenuHost.open SpawnMenu
             padding: 8px;
             border-radius: 4px;
             max-height: auto;
+            gap: 4px;
 
             &:hover
             {
@@ -274,6 +275,7 @@ SpawnMenuHost.open SpawnMenu
                 width: 150px;
                 overflow: hidden;
                 flex-shrink: 0;
+                gap: 4px;
             }
 
             > .right, > .left

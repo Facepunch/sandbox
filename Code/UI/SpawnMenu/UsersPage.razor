@@ -59,7 +59,7 @@
         menu.AddOption( "content_copy", "#spawnmenu.utility.copy_steam_id", () =>
         {
             Clipboard.SetText( steamId.ToString() );
-            Notices.AddNotice( "copy_all", Color.Cyan, $"Copied {entry.DisplayName}'s Steam ID to clipboard", 5 );
+            Notices.AddNotice( "copy_all", Color.Cyan, Game.Language.GetPhrase( "spawnmenu.utility.copied_steam_id", new() { { "name", entry.DisplayName } } ), 5 );
         } );
     }
 }

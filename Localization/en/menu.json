@@ -7,6 +7,30 @@
     "spawnmenu.tab.spawnlists": "Spawnlists",
     "spawnmenu.tab.saves": "Saves",
 
+    "spawnmenu.mode.inspect": "Inspect",
+    "spawnmenu.mode.effects": "Effects",
+
+    "spawnmenu.inspect.click_to_inspect": "Click on an object to inspect it.",
+    "spawnmenu.inspect.object": "Object",
+    "spawnmenu.inspect.skin": "Skin",
+    "spawnmenu.inspect.material": "Material",
+    "spawnmenu.inspect.delete": "Delete",
+    "spawnmenu.inspect.break": "Break",
+
+    "spawnmenu.effects.presets": "Presets",
+    "spawnmenu.effects.save_new_preset": "Save New Preset...",
+    "spawnmenu.effects.save_preset": "Save Preset",
+    "spawnmenu.effects.save_preset_prompt": "Enter a name for this effects preset.",
+    "spawnmenu.effects.preset_name_placeholder": "Preset name...",
+    "spawnmenu.effects.no_properties": "No editable properties.",
+    "spawnmenu.effects.select_effect": "Select an effect to edit its properties.",
+    "spawnmenu.effects.installed": "Installed",
+    "spawnmenu.effects.workshop": "Workshop",
+    "spawnmenu.effects.no_installed": "No installed effects.",
+
+    "spawnmenu.common.loading": "Loading...",
+    "spawnmenu.common.no_results": "No results.",
+
     "spawnmenu.tab.tools": "Tools",
     "spawnmenu.tab.utilities": "Utilities",
 
@@ -53,7 +77,7 @@
     "spawnmenu.spawnlist.create_prompt": "Give your new spawnlist a name.",
     "spawnmenu.spawnlist.name_placeholder": "Spawnlist name...",
     "spawnmenu.spawnlist.create_button": "Create",
-    "spawnmenu.spawnlist.created_notice": "Created spawnlist '{0}'",
+    "spawnmenu.spawnlist.created_notice": "Created spawnlist '{name}'",
     "spawnmenu.spawnlist.rename": "Rename",
     "spawnmenu.spawnlist.rename_title": "Rename Spawnlist",
     "spawnmenu.spawnlist.rename_prompt": "Enter a new name for your spawnlist.",
@@ -95,6 +119,7 @@
     "spawnmenu.utility.no_bans": "No one has been banned yet.",
     "spawnmenu.utility.unban": "Unban",
     "spawnmenu.utility.copy_steam_id": "Copy Steam ID",
+    "spawnmenu.utility.copied_steam_id": "Copied {name}'s Steam ID to clipboard",
 
     "spawnmenu.saves.header": "Saves",
     "spawnmenu.saves.empty": "No saves yet.",
@@ -104,12 +129,12 @@
     "spawnmenu.saves.load_context": "Load Save",
     "spawnmenu.saves.delete_context": "Delete",
     "spawnmenu.saves.incompatible_title": "Incompatible Save",
-    "spawnmenu.saves.incompatible_message": "was created with an older version and cannot be loaded.",
+    "spawnmenu.saves.incompatible_message": "\"{name}\" was created with an older version and cannot be loaded.",
     "spawnmenu.saves.load_title": "Load Save",
-    "spawnmenu.saves.load_confirm": "Load \"{0}\"? Unsaved changes will be lost.",
+    "spawnmenu.saves.load_confirm": "Load \"{name}\"? Unsaved changes will be lost.",
     "spawnmenu.saves.load_button": "Load",
     "spawnmenu.saves.delete_title": "Delete Save",
-    "spawnmenu.saves.delete_confirm": "Are you sure you want to delete \"{0}\"?",
+    "spawnmenu.saves.delete_confirm": "Are you sure you want to delete \"{name}\"?",
     "spawnmenu.saves.delete_button": "Delete",
 
     "spawnmenu.common.on": "On",
@@ -120,6 +145,8 @@
     "spawnmenu.common.publish": "Publish",
     "spawnmenu.common.search": "Search...",
     "spawnmenu.common.host_only": "Host only",
+    "spawnmenu.common.save": "Save",
+    "spawnmenu.common.load": "Load",
     "spawnmenu.common.items": "items",
 
     "spawnmenu.mounts.error": "Error getting mount."
