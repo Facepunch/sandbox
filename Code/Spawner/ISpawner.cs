@@ -35,6 +35,12 @@ public interface ISpawner
 	string Data { get; }
 
 	/// <summary>
+	/// The unspawned prefab GameObject, if available. Allows inspecting components before spawning.
+	/// Returns null for spawners that don't use prefabs (e.g. props, duplicator).
+	/// </summary>
+	GameObject Prefab => null;
+
+	/// <summary>
 	/// Draw a ghost preview at the given world transform.
 	/// </summary>
 	void DrawPreview( Transform transform, Material overrideMaterial );

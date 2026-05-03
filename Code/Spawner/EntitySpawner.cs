@@ -9,6 +9,7 @@ public class EntitySpawner : ISpawner
 	public BBox Bounds { get; private set; }
 	public bool IsReady => Entity is not null;
 	public Task<bool> Loading { get; }
+	public GameObject Prefab => Entity?.Prefab is not null ? GameObject.GetPrefab( Entity.Prefab.ResourcePath ) : null;
 
 	public ScriptedEntity Entity { get; private set; }
 	public string Path { get; }

@@ -112,6 +112,15 @@ public sealed partial class GameManager
 		if ( spawnData.Cancelled )
 			return;
 
+		// If the prefab is a weapon, pick it up directly instead of spawning into the world
+		var prefab = spawner.Prefab;
+		if ( prefab is not null && prefab.GetComponent<BaseCarryable>( true ) is not null )
+		{
+			var inventory = player.GetComponent<PlayerInventory>();
+			inventory.Pickup( prefab );
+			return;
+		}
+
 		var objects = await spawner.Spawn( transform, player );
 
 		if ( objects is { Count: > 0 } )
@@ -122,21 +131,6 @@ public sealed partial class GameManager
 			foreach ( var go in objects )
 			{
 				undo.Add( go );
-			}
-
-			// Auto-pickup weapons into the player's inventory
-			var inventory = player.GetComponent<PlayerInventory>();
-			foreach ( var go in objects )
-			{
-				var weapon = go.GetComponent<BaseCarryable>( true );
-				if ( weapon is not null )
-				{
-					var isNew = !inventory.HasWeapon( go );
-					inventory.Take( weapon, true );
-
-					if ( isNew )
-						inventory.SwitchWeapon( weapon );
-				}
 			}
 
 			Game.ActiveScene.RunEvent<Global.ISpawnEvents>( x => x.OnPostSpawn( new Global.ISpawnEvents.PostSpawnData
