@@ -41,6 +41,12 @@ public interface ISpawner
 	GameObject Prefab => null;
 
 	/// <summary>
+	/// Populate a right-click context menu with spawner-specific options.
+	/// Override in spawner implementations to add custom menu items.
+	/// </summary>
+	void PopulateContextMenu( MenuPanel menu, string ident, string metadata ) { }
+
+	/// <summary>
 	/// Draw a ghost preview at the given world transform.
 	/// </summary>
 	void DrawPreview( Transform transform, Material overrideMaterial );

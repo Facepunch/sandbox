@@ -82,9 +82,13 @@
         GameManager.Spawn( Ident, Metadata );
     }
 
-    protected override void OnRightClick( MousePanelEvent e )
+    protected override async void OnRightClick( MousePanelEvent e )
     {
         var menu = MenuPanel.Open( this );
+
+        // Let the spawner populate its own context menu options
+        var spawner = await ISpawner.Create( Type, Path, Metadata );
+        spawner?.PopulateContextMenu( menu, Ident, Metadata );
 
         // If inside a spawnlist, offer removal
         var spawnlistView = Ancestors.OfType<SpawnlistView>().FirstOrDefault();
