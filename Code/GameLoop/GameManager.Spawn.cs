@@ -124,15 +124,18 @@ public sealed partial class GameManager
 				undo.Add( go );
 			}
 
-			// Auto-pickup weapons into the player's inventory if not already owned
+			// Auto-pickup weapons into the player's inventory
 			var inventory = player.GetComponent<PlayerInventory>();
 			foreach ( var go in objects )
 			{
 				var weapon = go.GetComponent<BaseCarryable>( true );
-				if ( weapon is not null && !inventory.HasWeapon( go ) )
+				if ( weapon is not null )
 				{
+					var isNew = !inventory.HasWeapon( go );
 					inventory.Take( weapon, true );
-					inventory.SwitchWeapon( weapon );
+
+					if ( isNew )
+						inventory.SwitchWeapon( weapon );
 				}
 			}
 
