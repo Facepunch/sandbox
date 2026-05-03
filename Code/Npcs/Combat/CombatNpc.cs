@@ -76,6 +76,8 @@ public class CombatNpc : Npc, Component.IDamageable
 
 		if ( !IsProxy )
 		{
+			Senses.ScanTags = new TagSet { "player", "friendly_npc", "hostile_npc" };
+
 			if ( Friendly )
 			{
 				GameObject.Tags.Add( "friendly_npc" );

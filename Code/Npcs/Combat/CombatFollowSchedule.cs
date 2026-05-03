@@ -26,7 +26,7 @@ public class CombatFollowSchedule : ScheduleBase
 
 	protected override void OnStart()
 	{
-		_followTarget = FindNearestPlayer();
+		_followTarget = Npc.Senses.GetNearestVisible( "player" );
 
 		if ( !_followTarget.IsValid() )
 		{
@@ -51,25 +51,5 @@ public class CombatFollowSchedule : ScheduleBase
 	protected override bool ShouldCancel()
 	{
 		return Npc.Senses.GetNearestVisible().IsValid();
-	}
-
-	private GameObject FindNearestPlayer()
-	{
-		GameObject nearest = null;
-		float nearestDist = float.MaxValue;
-
-		foreach ( var obj in Npc.Scene.FindInPhysics( new Sphere( Npc.WorldPosition, Npc.Senses.SightRange ) ) )
-		{
-			if ( !obj.Tags.Has( "player" ) ) continue;
-
-			var dist = Npc.WorldPosition.Distance( obj.WorldPosition );
-			if ( dist < nearestDist )
-			{
-				nearestDist = dist;
-				nearest = obj;
-			}
-		}
-
-		return nearest;
 	}
 }

@@ -122,6 +122,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "ScanTags": "player",
         "SightRange": 8192,
         "TargetTags": "player"
       },
