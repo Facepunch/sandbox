@@ -1,0 +1,41 @@
+@using Sandbox;
+@using Sandbox.UI;
+@using Sandbox.Npcs;
+@inherits UtilityPage
+@namespace Sandbox
+@attribute [Icon( "🤖" )]
+@attribute [Title( "NPCs" )]
+@attribute [Group( "World" )]
+@attribute [Order( 1 )]
+
+<root class="page" style="flex-direction: column;">
+    @if ( Connection.Local.HasPermission( "admin" ) )
+    {
+        <div class="control-row" Tooltip=@EnabledDescription @onclick=@ToggleAiEnabled>
+            <label class="left">@(NpcConVars.Enabled ? "🟢" : "🔴") AI Enabled</label>
+            <label class="right">@(NpcConVars.Enabled ? "On" : "Off")</label>
+        </div>
+
+        <div class="control-row" Tooltip=@NoTargetDescription @onclick=@ToggleNoTarget>
+            <label class="left">@(NpcConVars.NoTarget ? "🟢" : "⚪") No Target</label>
+            <label class="right">@(NpcConVars.NoTarget ? "On" : "Off")</label>
+        </div>
+    }
+    else
+    {
+        <div class="control-row">
+            <label class="left">⚠️ Host only</label>
+        </div>
+    }
+</root>
+
+@code
+{
+    public override bool IsVisible() => Connection.Local.HasPermission( "admin" );
+
+    static readonly string EnabledDescription = "When disabled, all NPC AI thinking is paused — they just stand idle.";
+    static readonly string NoTargetDescription = "When enabled, NPCs cannot target players.";
+
+    void ToggleAiEnabled() => ConsoleSystem.Run( "sb.ai.enabled", NpcConVars.Enabled ? "false" : "true" );
+    void ToggleNoTarget() => ConsoleSystem.Run( "sb.ai.notarget", NpcConVars.NoTarget ? "false" : "true" );
+}

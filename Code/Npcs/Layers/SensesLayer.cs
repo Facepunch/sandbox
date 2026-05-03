@@ -53,6 +53,9 @@ public class SensesLayer : BaseNpcLayer
 		Nearest = null;
 		DistanceToNearest = float.MaxValue;
 
+		if ( NpcConVars.NoTarget )
+			return;
+
 		// Find all potential targets in hearing range
 		var nearbyObjects = Npc.Scene.FindInPhysics( new Sphere( Npc.WorldPosition, HearingRange ) );
 

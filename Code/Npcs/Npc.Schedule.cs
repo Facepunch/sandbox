@@ -34,6 +34,9 @@ public partial class Npc : Component
 	/// </summary>
 	void TickSchedule()
 	{
+		if ( !NpcConVars.Enabled )
+			return;
+
 		// If we have a schedule, keep running it 
 		// until it's completely finished.
 		if ( ActiveSchedule is not null )
