@@ -62,32 +62,6 @@
         "ShowDebugOverlay": false
       },
       {
-        "__type": "Sandbox.BoxCollider",
-        "__guid": "fcc82acd-d2d0-4e85-b6e5-67bcb0cba727",
-        "__enabled": true,
-        "Flags": 0,
-        "Center": "0,0,37.5",
-        "ColliderFlags": 0,
-        "Elasticity": null,
-        "Friction": null,
-        "IsTrigger": false,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "OnObjectTriggerEnter": null,
-        "OnObjectTriggerExit": null,
-        "OnTriggerEnter": null,
-        "OnTriggerExit": null,
-        "RollingResistance": null,
-        "Scale": "25,25,75",
-        "Static": false,
-        "Surface": null,
-        "SurfaceVelocity": "0,0,0"
-      },
-      {
         "__type": "Sandbox.Npcs.Layers.SensesLayer",
         "__guid": "b0b7fd7b-974f-4e43-aa77-2a28bec8771c",
         "__enabled": true,
@@ -99,6 +73,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "ScanTags": "player",
         "SightRange": 500,
         "TargetTags": "player"
       },
@@ -2067,7 +2042,7 @@
             ]
           },
           {
-            "__guid": "23f6ae4e-fc3a-4b01-bbee-2ef46d8bf69b",
+            "__guid": "33feb484-12e4-46cf-8683-e63a51cdc41d",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - blue_shirt",
@@ -2084,7 +2059,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "d4f52cdb-b198-4bfd-9f6c-97c10e445f19",
+                "__guid": "67971b0d-c789-4f1c-ba8e-deff04f89117",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2136,7 +2111,7 @@
             "Children": []
           },
           {
-            "__guid": "20c00990-72d0-42b3-af40-2a30f12c1edf",
+            "__guid": "0e06ef5f-bd18-4eb8-afd1-86e0321fa950",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - labcoat",
@@ -2153,7 +2128,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "5e25cb77-6ad2-4ec8-ba83-d811cabd4af4",
+                "__guid": "7c8d7611-6348-48d7-9138-5d43093907bd",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2205,7 +2180,7 @@
             "Children": []
           },
           {
-            "__guid": "c09ae159-1fde-4682-8a81-485f04487cca",
+            "__guid": "bd4a2abc-0721-4bf8-a709-5a19e243d3ca",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - hair_baldingbrown",
@@ -2222,7 +2197,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "8ef723a5-ad72-465d-9cdd-38bdef290117",
+                "__guid": "62193f00-ab61-43c0-9c10-15f78fdf382b",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2274,7 +2249,7 @@
             "Children": []
           },
           {
-            "__guid": "17f6c958-53cb-4118-9cda-00e6c2e31a3c",
+            "__guid": "f4d5e913-2d53-4ec0-8870-f4b32c61cc39",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - loose_trousers",
@@ -2291,7 +2266,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "1211f5a8-4431-49e8-b396-a5ea9967c828",
+                "__guid": "08755722-ffac-44c5-b972-14300d8df769",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2343,7 +2318,7 @@
             "Children": []
           },
           {
-            "__guid": "2fc19138-2624-46bf-be9c-6776c0a87181",
+            "__guid": "d6c8ea1f-2704-4a9c-b22d-8ecb1e5822b1",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - black_boots",
@@ -2360,7 +2335,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "944b7446-1da9-47c0-8921-c51939104346",
+                "__guid": "e95f70b1-3a1c-4d24-9654-149eaf5d87cc",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2412,7 +2387,7 @@
             "Children": []
           },
           {
-            "__guid": "b8748018-caae-4f61-8bab-00418977337b",
+            "__guid": "fe3d849a-9e24-4767-a95d-7d9e1403ccd2",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - moustache",
@@ -2429,7 +2404,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "0ef06459-1d47-49ea-a9dc-02e82ac9358e",
+                "__guid": "ed0a81e1-e57e-42de-9aa8-abe80be605f2",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2481,7 +2456,7 @@
             "Children": []
           },
           {
-            "__guid": "e9e15c00-ef24-4da6-87d4-cd63e3acb4b3",
+            "__guid": "12a65cc4-f6c7-4d2b-bde7-80ec87dc81a9",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - eyebrows_bushy",
@@ -2498,7 +2473,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "1601e3b2-2b48-4cb0-8ee8-a5adab16930b",
+                "__guid": "442293f7-04d0-473b-bae1-e75f30eb2dc1",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2550,6 +2525,51 @@
             "Children": []
           }
         ]
+      },
+      {
+        "__guid": "91584b1f-07e0-438e-9195-8cb98200f00f",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "colliders",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "playercontroller",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.BoxCollider",
+            "__guid": "59d73aef-039c-48ab-90d2-518f3839a630",
+            "__enabled": true,
+            "Flags": 0,
+            "Center": "0,0,37.5",
+            "ColliderFlags": 0,
+            "Elasticity": null,
+            "Friction": null,
+            "IsTrigger": false,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "OnObjectTriggerEnter": null,
+            "OnObjectTriggerExit": null,
+            "OnTriggerEnter": null,
+            "OnTriggerExit": null,
+            "RollingResistance": null,
+            "Scale": "25,25,75",
+            "Static": false,
+            "Surface": null,
+            "SurfaceVelocity": "0,0,0"
+          }
+        ],
+        "Children": []
       }
     ],
     "__properties": {
@@ -2568,6 +2588,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },
