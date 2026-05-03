@@ -4,27 +4,27 @@
 @inherits UtilityPage
 @namespace Sandbox
 @attribute [Icon( "🤖" )]
-@attribute [Title( "NPCs" )]
-@attribute [Group( "World" )]
+@attribute [Title( "#spawnmenu.utility.npcs" )]
+@attribute [Group( "#spawnmenu.utility.group.world" )]
 @attribute [Order( 1 )]
 
 <root class="page" style="flex-direction: column;">
     @if ( Connection.Local.HasPermission( "admin" ) )
     {
         <div class="control-row" Tooltip=@EnabledDescription @onclick=@ToggleAiEnabled>
-            <label class="left">@(NpcConVars.Enabled ? "🟢" : "🔴") AI Enabled</label>
-            <label class="right">@(NpcConVars.Enabled ? "On" : "Off")</label>
+            <label class="left">@(NpcConVars.Enabled ? "🟢" : "🔴") #spawnmenu.utility.ai_enabled</label>
+            <label class="right">@(NpcConVars.Enabled ? "#spawnmenu.common.on" : "#spawnmenu.common.off")</label>
         </div>
 
         <div class="control-row" Tooltip=@NoTargetDescription @onclick=@ToggleNoTarget>
-            <label class="left">@(NpcConVars.NoTarget ? "🟢" : "⚪") No Target</label>
-            <label class="right">@(NpcConVars.NoTarget ? "On" : "Off")</label>
+            <label class="left">@(NpcConVars.NoTarget ? "🟢" : "⚪") #spawnmenu.utility.no_target</label>
+            <label class="right">@(NpcConVars.NoTarget ? "#spawnmenu.common.on" : "#spawnmenu.common.off")</label>
         </div>
     }
     else
     {
         <div class="control-row">
-            <label class="left">⚠️ Host only</label>
+            <label class="left">⚠️ #spawnmenu.common.host_only</label>
         </div>
     }
 </root>
@@ -33,8 +33,8 @@
 {
     public override bool IsPageVisible() => Connection.Local.HasPermission( "admin" );
 
-    static readonly string EnabledDescription = "When disabled, all NPC AI thinking is paused — they just stand idle.";
-    static readonly string NoTargetDescription = "When enabled, NPCs cannot target players.";
+    static readonly string EnabledDescription = "#spawnmenu.utility.ai_enabled_description";
+    static readonly string NoTargetDescription = "#spawnmenu.utility.no_target_description";
 
     void ToggleAiEnabled() => GameManager.SetConVar( "sb.ai.enabled", !NpcConVars.Enabled );
     void ToggleNoTarget() => GameManager.SetConVar( "sb.ai.notarget", !NpcConVars.NoTarget );

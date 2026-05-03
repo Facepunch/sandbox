@@ -1,10 +1,10 @@
 ﻿using Sandbox.UI;
 
 [Hide]
-[Title( "Hoverball" )]
+[Title( "#tool.name.hoverball" )]
 [Icon( "🎱" )]
 [ClassName( "hoverballtool" )]
-[Group( "Building" )]
+[Group( "#tool.group.building" )]
 public class HoverballTool : ToolMode
 {
 	public override IEnumerable<string> TraceIgnoreTags => ["constraint", "collision"];

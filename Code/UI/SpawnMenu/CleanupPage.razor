@@ -3,22 +3,22 @@
 @inherits UtilityPage
 @namespace Sandbox
 @attribute [Icon( "🧹" )]
-@attribute [Title( "Cleanup" )]
-@attribute [Group( "World" )]
+@attribute [Title( "#spawnmenu.utility.cleanup" )]
+@attribute [Group( "#spawnmenu.utility.group.world" )]
 @attribute [Order( 0 )]
 
 <root class="page" style="flex-direction: column;">
     <div class="control-row" @onclick=@(() =>CleanUpMine() )>
-        <label class="left">🧼 Clean Up Mine</label>
+        <label class="left">🧼 #spawnmenu.utility.cleanup_mine</label>
     </div>
 
     @if ( Connection.Local.HasPermission( "admin" ) )
     {
         <div class="control-row" @onclick=@(() =>CleanUpAll() )>
-            <label class="left">🧹 Clean Up All</label>
+            <label class="left">🧹 #spawnmenu.utility.cleanup_all</label>
         </div>
 
-        <div class="section-header">Clean Up Player</div>
+        <div class="section-header">#spawnmenu.utility.cleanup_player</div>
 
         @foreach ( var connection in Connection.All )
         {

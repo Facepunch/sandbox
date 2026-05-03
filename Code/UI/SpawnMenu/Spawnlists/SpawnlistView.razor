@@ -22,20 +22,20 @@
                 <div class="menu-icon-toggle-group">
                     @if ( isPublished )
                     {
-                        <IconPanel Tooltip="Copy Url" Text="link" @onclick=@( () => Clipboard.SetText( $"https://steamcommunity.com/sharedfiles/filedetails/?id={workshopId}" ) ) />
-                        <IconPanel Tooltip="Sync" Text="sync" @onclick=@( () => OnPublish() ) />
+                        <IconPanel Tooltip="#spawnmenu.spawnlist.copy_url" Text="link" @onclick=@( () => Clipboard.SetText( $"https://steamcommunity.com/sharedfiles/filedetails/?id={workshopId}" ) ) />
+                        <IconPanel Tooltip="#spawnmenu.spawnlist.sync" Text="sync" @onclick=@( () => OnPublish() ) />
                     }
                     else
                     {
-                        <IconPanel Tooltip="Publish" Text="cloud_upload" @onclick=@( () => OnPublish() ) />
+                        <IconPanel Tooltip="#spawnmenu.spawnlist.publish" Text="cloud_upload" @onclick=@( () => OnPublish() ) />
                     }
                     @if ( !Entry.Files.IsReadOnly )
                     {
-                        <IconPanel Tooltip="Delete" Text="delete" @onclick=@( () => OnDelete() ) />
+                        <IconPanel Tooltip="#spawnmenu.spawnlist.delete" Text="delete" @onclick=@( () => OnDelete() ) />
                     }
                     else
                     {
-                        <IconPanel Tooltip="Remove" Text="delete" @onclick=@( () => OnUninstall() ) />
+                        <IconPanel Tooltip="#spawnmenu.spawnlist.remove" Text="delete" @onclick=@( () => OnUninstall() ) />
                     }
                 </div>
             </Right>
@@ -46,8 +46,8 @@
         @if ( data.Items.Count == 0 )
         {
             <div class="empty-state">
-                <p>This spawnlist is empty.</p>
-                <p>Right-click items in other tabs to add them here.</p>
+                <p>#spawnmenu.spawnlist.empty_title</p>
+                <p>#spawnmenu.spawnlist.empty_instructions</p>
             </div>
         }
         else

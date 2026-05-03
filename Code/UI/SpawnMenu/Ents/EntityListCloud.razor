@@ -12,7 +12,7 @@
 
 @if ( LastResult.Packages.Count() == 0 )
 {
-    <p>No entities found.</p>
+    <p>#spawnmenu.entity.no_results</p>
     return;
 }
 
@@ -23,7 +23,7 @@
     <Header>
         <SpawnMenuToolbar>
             <Left>
-                <TextEntry Placeholder="Search..." class="filter menu-input" Value:bind=@Filter />
+                <TextEntry Placeholder="#spawnmenu.common.search" class="filter menu-input" Value:bind=@Filter />
             </Left>
 
             <Right>

@@ -1,10 +1,10 @@
 ﻿using Sandbox.UI;
 
 [Hide]
-[Title( "Wheel" )]
+[Title( "#tool.name.wheel" )]
 [Icon( "🛞" )]
 [ClassName( "wheeltool" )]
-[Group( "Building" )]
+[Group( "#tool.group.building" )]
 public class WheelTool : ToolMode
 {
 	public override bool UseSnapGrid => true;

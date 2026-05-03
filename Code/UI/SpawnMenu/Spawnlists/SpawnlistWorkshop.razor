@@ -8,7 +8,7 @@
     <Header>
         <SpawnMenuToolbar>
             <Left>
-                <TextEntry Placeholder="Search..." class="filter menu-input" Value:bind=@Filter />
+                <TextEntry Placeholder="#spawnmenu.common.search" class="filter menu-input" Value:bind=@Filter />
             </Left>
             <Right>
                 <DropDown Value:bind=@SortOrder />
@@ -25,10 +25,10 @@
                         <div class="avatar" style="background-image: url('@item.Owner.Avatar');"></div>
                         <div class="info">
                             <div class="name">@item.Title</div>
-                            <div class="author">By @item.Owner.Name</div>
+                            <div class="author">#spawnmenu.spawnlist.by @item.Owner.Name</div>
                         </div>
 
-                        <div class="item-count">@GetItemCount( item ) items</div>
+                        <div class="item-count">@GetItemCount( item ) #spawnmenu.common.items</div>
                     </div>
                 }
             </Item>

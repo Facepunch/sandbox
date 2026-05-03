@@ -7,7 +7,7 @@
 @if ( mount is null )
 {
     <root>
-        Error getting mount.
+        #spawnmenu.mounts.error
     </root>
     return;
 }
@@ -28,7 +28,7 @@
 				<SpawnMenuPath Path=@CurrentPath></SpawnMenuPath>
 				*@
 
-				<label>@( $"{mount.Title}, {@GetData().Count()} items" )</label>
+				<label>@( $"{mount.Title}, {@GetData().Count()} #spawnmenu.common.items" )</label>
 			</Body>
 			<Right>
 				<SpawnMenuFilter Query:bind="@Filter"></SpawnMenuFilter>

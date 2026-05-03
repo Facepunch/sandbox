@@ -5,7 +5,7 @@ namespace Sandbox;
 /// <summary>
 /// Top-level spawn menu tab for user-created spawnlists.
 /// </summary>
-[Title( "Spawnlists" ), Order( 1000 ), Icon( "📋" )]
+[Title( "#spawnmenu.tab.spawnlists" ), Order( 1000 ), Icon( "📋" )]
 public class SpawnlistsPage : BaseSpawnMenu
 {
 	public SpawnlistCollection Collection { get; } = new();
@@ -37,7 +37,7 @@ public class SpawnlistsPage : BaseSpawnMenu
 	{
 		if ( Collection.Entries.Count > 0 || Collection.PendingCount > 0 )
 		{
-			AddHeader( "Local" );
+			AddHeader( "#spawnmenu.section.local" );
 
 			foreach ( var entry in Collection.Entries )
 			{
@@ -52,9 +52,9 @@ public class SpawnlistsPage : BaseSpawnMenu
 			AddSkeletons( Collection.PendingCount );
 		}
 
-		AddHeader( "Workshop" );
-		AddOption( "🎖️", "Popular", () => new SpawnlistWorkshop { SortOrder = WorkshopSortMode.Popular } );
-		AddOption( "🐣", "Newest", () => new SpawnlistWorkshop { SortOrder = WorkshopSortMode.Newest } );
+		AddHeader( "#spawnmenu.section.workshop" );
+		AddOption( "🎖️", "#spawnmenu.spawnlist.popular", () => new SpawnlistWorkshop { SortOrder = WorkshopSortMode.Popular } );
+		AddOption( "🐣", "#spawnmenu.spawnlist.newest", () => new SpawnlistWorkshop { SortOrder = WorkshopSortMode.Newest } );
 	}
 
 	protected override void OnMenuFooter( Panel footer )
@@ -69,15 +69,15 @@ public class SpawnlistsPage : BaseSpawnMenu
 	{
 		var menu = MenuPanel.Open( this );
 
-		menu.AddOption( "edit", "Rename", () =>
+		menu.AddOption( "edit", "#spawnmenu.spawnlist.rename", () =>
 		{
 			var data = SpawnlistData.Load( entry.StorageEntry );
 			var popup = new StringQueryPopup
 			{
-				Title = "Rename Spawnlist",
-				Prompt = "Enter a new name for your spawnlist.",
-				Placeholder = "Spawnlist name...",
-				ConfirmLabel = "Rename",
+				Title = "#spawnmenu.spawnlist.rename_title",
+				Prompt = "#spawnmenu.spawnlist.rename_prompt",
+				Placeholder = "#spawnmenu.spawnlist.name_placeholder",
+				ConfirmLabel = "#spawnmenu.spawnlist.rename_button",
 				InitialValue = data.Name,
 				OnConfirm = newName =>
 				{
@@ -88,13 +88,13 @@ public class SpawnlistsPage : BaseSpawnMenu
 			popup.Parent = FindPopupPanel();
 		} );
 
-		menu.AddOption( "delete", "Delete", () => Collection.Delete( entry.StorageEntry ) );
+		menu.AddOption( "delete", "#spawnmenu.spawnlist.delete", () => Collection.Delete( entry.StorageEntry ) );
 	}
 
 	void OnInstalledRightClick( SpawnlistCollection.Entry entry )
 	{
 		var menu = MenuPanel.Open( this );
-		menu.AddOption( "delete", "Remove", () => Collection.Uninstall( entry.WorkshopId ) );
+		menu.AddOption( "delete", "#spawnmenu.spawnlist.remove", () => Collection.Uninstall( entry.WorkshopId ) );
 	}
 }
 

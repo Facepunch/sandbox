@@ -1,7 +1,8 @@
 
 [Icon( "🛡️" )]
+[Title( "#tool.name.unbreakable" )]
 [ClassName( "unbreakable" )]
-[Group( "Tools" )]
+[Group( "#tool.group.tools" )]
 public class Unbreakable : ToolMode
 {
 	public override string Description => "#tool.hint.unbreakable.description";

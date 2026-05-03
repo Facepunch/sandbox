@@ -1,10 +1,10 @@
 ﻿﻿using Sandbox.UI;
 
 [Hide]
-[Title( "Thruster" )]
+[Title( "#tool.name.thruster" )]
 [Icon( "🚀" )]
 [ClassName( "thrustertool" )]
-[Group( "Building" )]
+[Group( "#tool.group.building" )]
 public class ThrusterTool : ToolMode
 {
 	public override bool UseSnapGrid => true;

@@ -1,8 +1,9 @@
 ﻿using Sandbox.UI;
 
 [Icon( "🎈" )]
+[Title( "#tool.name.balloon" )]
 [ClassName( "balloon" )]
-[Group( "Building" )]
+[Group( "#tool.group.building" )]
 public class Balloon : ToolMode
 {
 	public override bool UseSnapGrid => true;

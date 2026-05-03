@@ -1,9 +1,9 @@
 
 [Hide]
-[Title( "Upright" )]
+[Title( "#tool.name.keepupright" )]
 [Icon( "👆🏻" )]
 [ClassName( "upright" )]
-[Group( "Constraints" )]
+[Group( "#tool.group.constraints" )]
 public class KeepUpright : ToolMode
 {
 	[Range( 0, 20 )]

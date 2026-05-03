@@ -1,7 +1,8 @@
 ﻿﻿
 [Icon( "➖" )]
+[Title( "#tool.name.slider" )]
 [ClassName( "slider" )]
-[Group( "Constraints" )]
+[Group( "#tool.group.constraints" )]
 public class Slider : BaseConstraintToolMode
 {
 	public override string Description => Stage == 1 ? "#tool.hint.slider.stage1" : "#tool.hint.slider.stage0";

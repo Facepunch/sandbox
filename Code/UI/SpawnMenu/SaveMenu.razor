@@ -4,16 +4,16 @@
 @inherits Panel
 @attribute [SpawnMenuHost.SpawnMenuMode<SpawnMenuHost.HostOnly>]
 @attribute [Icon( "💾" )]
-@attribute [Title( "Saves" )]
+@attribute [Title( "#spawnmenu.tab.saves" )]
 @attribute [Order( 150 )]
 
 <root>
     <div class="save-window">
-        <div class="save-header">💾 Saves</div>
+        <div class="save-header">💾 #spawnmenu.saves.header</div>
         <div class="body">
             @if ( !SaveFiles.Any() )
             {
-                <div class="empty-state">No saves yet.</div>
+                <div class="empty-state">#spawnmenu.saves.empty</div>
             }
             @foreach ( var save in SaveFiles )
             {
@@ -33,7 +33,7 @@
                         }
                         @if ( !s.IsCompatible )
                         {
-                            <label class="save-outdated-badge">Outdated</label>
+                            <label class="save-outdated-badge">#spawnmenu.saves.outdated_badge</label>
                         }
                     </div>
                     <div class="save-dots">⋮</div>
@@ -41,8 +41,8 @@
             }
         </div>
         <div class="footer">
-            <TextEntry @ref="SaveNameEntry" Placeholder="Save name..." @onsubmit="@OnSave"></TextEntry>
-            <button @onclick="@OnSave">💾 Save</button>
+            <TextEntry @ref="SaveNameEntry" Placeholder="#spawnmenu.saves.name_placeholder" @onsubmit="@OnSave"></TextEntry>
+            <button @onclick="@OnSave">💾 #spawnmenu.saves.save_button</button>
         </div>
     </div>
 </root>
@@ -108,8 +108,8 @@
         {
             me.StopPropagation();
             var menu = MenuPanel.Open( this );
-            menu.AddOption( "download", "Load Save", () => ConfirmLoad( save ) );
-            menu.AddOption( "delete", "Delete", () => ConfirmDelete( save ) );
+            menu.AddOption( "download", "#spawnmenu.saves.load_context", () => ConfirmLoad( save ) );
+            menu.AddOption( "delete", "#spawnmenu.saves.delete_context", () => ConfirmDelete( save ) );
         }
     }
 
@@ -119,9 +119,9 @@
         {
             _ = new StringQueryPopup
             {
-                Title = "Incompatible Save",
-                Prompt = $"\"{save.DisplayName}\" was created with an older version and cannot be loaded.",
-                ConfirmLabel = "OK",
+                Title = "#spawnmenu.saves.incompatible_title",
+                Prompt = $"\"{save.DisplayName}\" #spawnmenu.saves.incompatible_message",
+                ConfirmLabel = "#spawnmenu.common.ok",
                 ShowInput = false,
                 Parent = FindPopupPanel()
             };
@@ -130,9 +130,9 @@
 
         _ = new StringQueryPopup
         {
-            Title = "Load Save",
-            Prompt = $"Load \"{save.DisplayName}\"? Unsaved changes will be lost.",
-            ConfirmLabel = "Load",
+            Title = "#spawnmenu.saves.load_title",
+            Prompt = $"#spawnmenu.saves.load_confirm",
+            ConfirmLabel = "#spawnmenu.saves.load_button",
             ShowInput = false,
             OnConfirm = _ => LoadSave( save.FileName ),
             Parent = FindPopupPanel()
@@ -143,9 +143,9 @@
     {
         var popup = new StringQueryPopup
         {
-            Title = "Delete Save",
-            Prompt = $"Are you sure you want to delete \"{save.DisplayName}\"?",
-            ConfirmLabel = "Delete",
+            Title = "#spawnmenu.saves.delete_title",
+            Prompt = $"#spawnmenu.saves.delete_confirm",
+            ConfirmLabel = "#spawnmenu.saves.delete_button",
             ShowInput = false,
             OnConfirm = _ => DeleteSave( save.FileName ),
             Parent = FindPopupPanel()

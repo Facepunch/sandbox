@@ -1,9 +1,9 @@
 using Sandbox.UI;
 
 [Icon( "✨" )]
-[Title( "Trail" )]
+[Title( "#tool.name.trail" )]
 [ClassName( "trail" )]
-[Group( "Render" )]
+[Group( "#tool.group.render" )]
 public class Trail : ToolMode
 {
 	[Property, ResourceSelect( Extension = "ldef", AllowPackages = true ), Title( "Line" )]

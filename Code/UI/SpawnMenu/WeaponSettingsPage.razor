@@ -3,26 +3,26 @@
 @inherits UtilityPage
 @namespace Sandbox
 @attribute [Icon( "🔫" )]
-@attribute [Title( "Weapons" )]
-@attribute [Group( "World" )]
+@attribute [Title( "#spawnmenu.utility.weapons" )]
+@attribute [Group( "#spawnmenu.utility.group.world" )]
 @attribute [Order( 2 )]
 
 <root class="page" style="flex-direction: column;">
     @if ( Connection.Local.HasPermission( "admin" ) )
     {
         <div class="control-row" Tooltip=@UnlimitedAmmoDescription @onclick=@ToggleUnlimitedAmmo>
-            <label class="left">@(WeaponConVars.UnlimitedAmmo ? "🟢" : "⚪") Unlimited Ammo</label>
-            <label class="right">@(WeaponConVars.UnlimitedAmmo ? "On" : "Off")</label>
+            <label class="left">@(WeaponConVars.UnlimitedAmmo ? "🟢" : "⚪") #spawnmenu.utility.unlimited_ammo</label>
+            <label class="right">@(WeaponConVars.UnlimitedAmmo ? "#spawnmenu.common.on" : "#spawnmenu.common.off")</label>
         </div>
         <div class="control-row" Tooltip=@InfiniteReservesDescription @onclick=@ToggleInfiniteReserves>
-            <label class="left">@(WeaponConVars.InfiniteReserves ? "🟢" : "⚪") Infinite Reserves</label>
-            <label class="right">@(WeaponConVars.InfiniteReserves ? "On" : "Off")</label>
+            <label class="left">@(WeaponConVars.InfiniteReserves ? "🟢" : "⚪") #spawnmenu.utility.infinite_reserves</label>
+            <label class="right">@(WeaponConVars.InfiniteReserves ? "#spawnmenu.common.on" : "#spawnmenu.common.off")</label>
         </div>
     }
     else
     {
         <div class="control-row">
-            <label class="left">⚠️ Host only</label>
+            <label class="left">⚠️ #spawnmenu.common.host_only</label>
         </div>
     }
 </root>
@@ -31,8 +31,8 @@
 {
     public override bool IsPageVisible() => Connection.Local.HasPermission( "admin" );
 
-    static readonly string UnlimitedAmmoDescription = "When enabled, weapons have unlimited ammo — no ammo is consumed when firing.";
-    static readonly string InfiniteReservesDescription = "When enabled, reserve ammo is infinite — clip ammo is still consumed, but you can always reload.";
+    static readonly string UnlimitedAmmoDescription = "#spawnmenu.utility.unlimited_ammo_description";
+    static readonly string InfiniteReservesDescription = "#spawnmenu.utility.infinite_reserves_description";
 
     void ToggleUnlimitedAmmo() => GameManager.SetConVar( "sb.weapon.unlimitedammo", !WeaponConVars.UnlimitedAmmo );
     void ToggleInfiniteReserves() => GameManager.SetConVar( "sb.weapon.infinitereserves", !WeaponConVars.InfiniteReserves );

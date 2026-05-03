@@ -1,7 +1,7 @@
 ﻿/// <summary>
 /// This component has a kill icon that can be used in the killfeed, or somewhere else.
 /// </summary>
-[Title( "Games" ), Order( 2000 ), Icon( "🧩" )]
+[Title( "#spawnmenu.tab.games" ), Order( 2000 ), Icon( "🧩" )]
 public class MountsPage : BaseSpawnMenu
 {
 	protected override void Rebuild()
@@ -12,7 +12,7 @@ public class MountsPage : BaseSpawnMenu
 
 		if ( available.Any() )
 		{
-			AddHeader( "Local" );
+			AddHeader( "#spawnmenu.section.local" );
 
 			foreach ( var entry in available.OrderBy( x => x.Title ) )
 			{
@@ -22,7 +22,7 @@ public class MountsPage : BaseSpawnMenu
 
 		if ( unavailable.Any() )
 		{
-			AddHeader( "Not Installed" );
+			AddHeader( "#spawnmenu.section.not_installed" );
 			
 			foreach ( var entry in unavailable.OrderBy( x => x.Title ) )
 			{

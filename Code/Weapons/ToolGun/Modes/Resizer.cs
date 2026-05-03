@@ -1,7 +1,8 @@
 ﻿﻿
 [Icon( "🍄" )]
+[Title( "#tool.name.resizer" )]
 [ClassName( "resizer" )]
-[Group( "Tools" )]
+[Group( "#tool.group.tools" )]
 public class Resizer : ToolMode
 {
 	public override IEnumerable<string> TraceIgnoreTags => [];

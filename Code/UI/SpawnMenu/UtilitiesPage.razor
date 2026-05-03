@@ -3,12 +3,12 @@
 @inherits UtilityPage
 @namespace Sandbox
 @attribute [Icon( "🔧" )]
-@attribute [Title( "Utilities" )]
-@attribute [Group( "Utilities" )]
+@attribute [Title( "#spawnmenu.utility.utilities" )]
+@attribute [Group( "#spawnmenu.utility.group.utilities" )]
 @attribute [Order( 0 )]
 
 <root class="page" style="flex-direction: column;">
     <div class="control-row" @onclick=@(() => ConsoleSystem.Run( "kill" ))>
-        <label class="left">🚿 Kill Me</label>
+        <label class="left">🚿 #spawnmenu.utility.kill_me</label>
     </div>
 </root>

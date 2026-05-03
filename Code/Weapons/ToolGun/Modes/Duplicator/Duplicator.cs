@@ -3,8 +3,9 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 
 [Icon( "✌️" )]
+[Title( "#tool.name.duplicator" )]
 [ClassName( "duplicator" )]
-[Group( "Building" )]
+[Group( "#tool.group.building" )]
 public partial class Duplicator : ToolMode
 {
 	/// <summary>

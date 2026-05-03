@@ -7,16 +7,16 @@
 
     <div class="inner">
         <div class="popup-header">
-            <h2>Create a Spawnlist</h2>
+            <h2>#spawnmenu.spawnlist.create_title</h2>
         </div>
 
-        <h3>Give your new spawnlist a name.</h3>
+        <h3>#spawnmenu.spawnlist.create_prompt</h3>
 
-        <TextEntry class="menu-input" Placeholder="Spawnlist name..." Value:bind=@Name />
+        <TextEntry class="menu-input" Placeholder="#spawnmenu.spawnlist.name_placeholder" Value:bind=@Name />
 
         <span class="grow">
-            <Button Text="Create" Icon="add" class="menu-action primary" Disabled=@(string.IsNullOrWhiteSpace(Name)) @onclick=@OnCreate />
-            <Button Text="Cancel" Icon="close" class="menu-action primary" @onclick=@(() => Delete() ) />
+            <Button Text="#spawnmenu.spawnlist.create_button" Icon="add" class="menu-action primary" Disabled=@(string.IsNullOrWhiteSpace(Name)) @onclick=@OnCreate />
+            <Button Text="#spawnmenu.common.cancel" Icon="close" class="menu-action primary" @onclick=@(() => Delete() ) />
         </span>
     </div>
 </root>
@@ -36,7 +36,7 @@
 
         SpawnlistData.Create( Name.Trim() );
 
-        Notices.AddNotice( "list_alt", Color.Cyan, $"Created spawnlist '{Name}'" );
+        Notices.AddNotice( "list_alt", Color.Cyan, $"#spawnmenu.spawnlist.created_notice" );
 
         OnCreated?.Invoke();
 

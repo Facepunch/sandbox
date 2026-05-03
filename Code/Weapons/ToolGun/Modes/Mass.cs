@@ -1,7 +1,8 @@
 ﻿﻿
 [Icon( "🍔" )]
+[Title( "#tool.name.mass" )]
 [ClassName( "mass" )]
-[Group( "Tools" )]
+[Group( "#tool.group.tools" )]
 public class Mass : ToolMode
 {
 	[Sync, Property, Title( "Mass (kg)" ), Range( 1, 250 ), Step( 0.5f )]

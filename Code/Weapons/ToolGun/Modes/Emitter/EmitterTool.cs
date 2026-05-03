@@ -1,10 +1,10 @@
 using Sandbox.UI;
 
 [Hide]
-[Title( "Emitter" )]
+[Title( "#tool.name.emitter" )]
 [Icon( "💨" )]
 [ClassName( "emittertool" )]
-[Group( "Building" )]
+[Group( "#tool.group.building" )]
 public class EmitterTool : ToolMode
 {
 	public override bool UseSnapGrid => true;

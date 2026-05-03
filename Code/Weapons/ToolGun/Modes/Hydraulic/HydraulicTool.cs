@@ -1,8 +1,8 @@
 ﻿[Hide]
-[Title( "Hydraulic" )]
+[Title( "#tool.name.hydraulic" )]
 [Icon( "⚙️" )]
 [ClassName( "HydraulicTool" )]
-[Group( "Building" )]
+[Group( "#tool.group.building" )]
 public class HydraulicTool : BaseConstraintToolMode
 {
 	public override string Description => Stage == 1 ? "#tool.hint.hydraulictool.stage1" : "#tool.hint.hydraulictool.stage0";

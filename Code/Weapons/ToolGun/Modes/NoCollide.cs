@@ -1,8 +1,8 @@
 ﻿﻿
 [Icon( "⛔" )]
-[Title( "No Collide" )]
+[Title( "#tool.name.nocollide" )]
 [ClassName( "nocollide" )]
-[Group( "Tools" )]
+[Group( "#tool.group.tools" )]
 public class NoCollide : BaseConstraintToolMode
 {
 	public override string Description => Stage == 1 ? "#tool.hint.nocollide.stage1" : "#tool.hint.nocollide.stage0";

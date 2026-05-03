@@ -1,10 +1,10 @@
 ﻿﻿
 using Sandbox.UI;
 
-[Title( "Decal" )]
+[Title( "#tool.name.decal" )]
 [Icon( "🖌️" )]
 [ClassName( "decaltool" )]
-[Group( "Render" )]
+[Group( "#tool.group.render" )]
 public class DecalTool : ToolMode
 {
 	[Property, ResourceSelect( Extension = "decal", AllowPackages = true ), Title( "Decal" )]

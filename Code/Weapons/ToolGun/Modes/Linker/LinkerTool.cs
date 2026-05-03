@@ -1,8 +1,8 @@
 
 [Icon( "🔗" )]
-[Title( "Linker" )]
+[Title( "#tool.name.linker" )]
 [ClassName( "linker" )]
-[Group( "Constraints" )]
+[Group( "#tool.group.constraints" )]
 public class LinkerTool : BaseConstraintToolMode
 {
 	public override string Description => Stage == 1 ? "#tool.hint.linker.stage1" : "#tool.hint.linker.stage0";

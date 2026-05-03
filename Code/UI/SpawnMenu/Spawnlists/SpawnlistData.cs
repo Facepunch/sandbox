@@ -57,7 +57,7 @@ public class SpawnlistData
 	public static event Action SpawnlistCreated;
 
 	[JsonPropertyName( "name" )]
-	public string Name { get; set; } = "Untitled";
+	public string Name { get; set; } = "#spawnmenu.spawnlist.untitled";
 
 	[JsonPropertyName( "description" )]
 	public string Description { get; set; } = "";
@@ -85,10 +85,10 @@ public class SpawnlistData
 	public static SpawnlistData Load( Storage.Entry entry )
 	{
 		if ( !entry.Files.FileExists( "/spawnlist.json" ) )
-			return new SpawnlistData { Name = entry.GetMeta<string>( "name" ) ?? "Untitled" };
+			return new SpawnlistData { Name = entry.GetMeta<string>( "name" ) ?? "#spawnmenu.spawnlist.untitled" };
 
 		return entry.Files.ReadJson<SpawnlistData>( "/spawnlist.json" )
-			?? new SpawnlistData { Name = "Untitled" };
+			?? new SpawnlistData { Name = "#spawnmenu.spawnlist.untitled" };
 	}
 
 	public static IEnumerable<Storage.Entry> GetAll()
@@ -110,7 +110,7 @@ public class SpawnlistData
 
 	public static void Publish( Storage.Entry entry )
 	{
-		var options = new Modals.WorkshopPublishOptions { Title = "My Spawnlist" };
+		var options = new Modals.WorkshopPublishOptions { Title = "#spawnmenu.spawnlist.publish_title" };
 		entry.Publish( options );
 	}
 
@@ -139,7 +139,7 @@ public class SpawnlistData
 
 		if ( entries.Count > 0 )
 		{
-			menu.AddSubmenu( "📋", "Add to Spawnlist", sub =>
+			menu.AddSubmenu( "📋", "#spawnmenu.spawnlist.add_to_submenu", sub =>
 			{
 				foreach ( var entry in entries )
 				{
@@ -152,7 +152,7 @@ public class SpawnlistData
 			menu.AddSpacer();
 		}
 
-		menu.AddOption( "➕", "Create New Spawnlist", () =>
+		menu.AddOption( "➕", "#spawnmenu.spawnlist.create_new_option", () =>
 		{
 			Create( item.Title ?? "New Spawnlist" );
 			var created = GetAll().FirstOrDefault();

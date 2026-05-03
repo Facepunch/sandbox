@@ -1,6 +1,7 @@
 ﻿﻿[Icon( "🧨" )]
+[Title( "#tool.name.remover" )]
 [ClassName( "remover" )]
-[Group( "Tools" )]
+[Group( "#tool.group.tools" )]
 public class Remover : ToolMode
 {
 	public override bool TraceHitboxes => true;
