@@ -343,7 +343,8 @@ public partial class BaseCarryable : Component, IKillIcon
 
 		if ( attack.Target.GetComponentInChildren<Rigidbody>() is var rb && rb.IsValid() )
 		{
-			rb.ApplyForce( (attack.Position - attack.Origin) * 1000f );
+			// TODO: Scale this based on damage?
+			rb.ApplyImpulseAt( attack.Position, Vector3.Direction( attack.Origin, attack.Position ) * rb.Mass * 100 );
 		}
 	}
 
