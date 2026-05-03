@@ -24,10 +24,17 @@
     @if ( Weapon.IsValid() && Weapon.UsesAmmo )
     {
         <div class="ammo hud-panel">
-            <label class="value">@(Weapon.UsesClips ? Weapon.ClipContents : Weapon.ReserveAmmo)</label>
-            @if ( Weapon.UsesClips )
+            @if ( WeaponConVars.UnlimitedAmmo )
             {
-                <label class="alternate">@Weapon.ReserveAmmo</label>
+                <label class="value">∞</label>
+            }
+            else
+            {
+                <label class="value">@(Weapon.UsesClips ? Weapon.ClipContents : Weapon.ReserveAmmo)</label>
+                @if ( Weapon.UsesClips )
+                {
+                    <label class="alternate">@Weapon.ReserveAmmo</label>
+                }
             }
             <Image class="icon" Texture=@AmmoIcon />
         </div>
