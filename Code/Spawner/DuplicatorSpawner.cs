@@ -14,9 +14,9 @@ public class DuplicatorSpawner : ISpawner
 
 	public string Data => Sandbox.Json.Serialize( new DupeInfo( Icon, Json ) );
 
-	public DuplicationData Dupe { get; }
+	public DuplicationData Dupe { get; private set; }
 
-	public string Json { get; }
+	public string Json { get; private set; }
 
 	private bool _packagesReady;
 
@@ -27,6 +27,53 @@ public class DuplicatorSpawner : ISpawner
 		Icon = icon;
 		DisplayName = name ?? "Duplication";
 		Loading = InstallPackages();
+	}
+
+	/// <summary>
+	/// Create a duplicator spawner from a storage or workshop ident.
+	/// Resolution and package installation happen asynchronously via <see cref="ISpawner.Loading"/>.
+	/// </summary>
+	public DuplicatorSpawner( string id, string source )
+	{
+		Loading = ResolveAndLoad( id, source );
+	}
+
+	private async Task<bool> ResolveAndLoad( string id, string source )
+	{
+		if ( !ulong.TryParse( id, out var fileId ) )
+			return false;
+
+		string json;
+		string name = null;
+
+		if ( source == "workshop" )
+		{
+			var query = new Storage.Query { FileIds = [fileId] };
+
+			var result = await query.Run();
+			var item = result.Items?.FirstOrDefault();
+			if ( item is null ) return false;
+
+			var installed = await item.Install();
+			if ( installed is null ) return false;
+
+			json = await installed.Files.ReadAllTextAsync( "/dupe.json" );
+			name = item.Title;
+		}
+		else
+		{
+			var entry = Storage.GetAll( "dupe" ).FirstOrDefault( x => x.Id.ToString() == fileId.ToString() );
+			if ( entry is null ) return false;
+
+			json = await entry.Files.ReadAllTextAsync( "/dupe.json" );
+			name = entry.GetMeta<string>( "name" );
+		}
+
+		Dupe = Sandbox.Json.Deserialize<DuplicationData>( json );
+		Json = json;
+		DisplayName = name ?? "Duplication";
+
+		return await InstallPackages();
 	}
 
 	/// <summary>

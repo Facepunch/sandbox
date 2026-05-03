@@ -50,9 +50,9 @@ public sealed partial class GameManager
 
 		var (type, path, source) = SpawnlistItem.ParseIdent( ident );
 
-		var spawner = await ISpawner.Create( type, path, source, metadata );
+		var spawner = ISpawner.Create( type, path, source, metadata );
 
-		if ( spawner is not null )
+		if ( spawner is not null && await spawner.Loading )
 		{
 			await SpawnAndUndo( spawner, spawnTransform, player, forceWorld );
 			return;

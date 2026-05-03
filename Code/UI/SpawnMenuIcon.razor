@@ -87,8 +87,11 @@
         var menu = MenuPanel.Open( this );
 
         // Let the spawner populate its own context menu options
-        var spawner = await ISpawner.Create( Type, Path, Metadata );
-        spawner?.PopulateContextMenu( menu, Ident, Metadata );
+        var spawner = ISpawner.Create( Type, Path, metadata: Metadata );
+        if ( spawner is not null && await spawner.Loading )
+        {
+            spawner.PopulateContextMenu( menu, Ident, Metadata );
+        }
 
         // If inside a spawnlist, offer removal
         var spawnlistView = Ancestors.OfType<SpawnlistView>().FirstOrDefault();
