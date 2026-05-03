@@ -1,4 +1,5 @@
 {
-  "hint.openspawnmenu": "Κρατήστε {input:SpawnMenu} για να ανοίξετε το μενού Spawn",
-  "hint.openinspectmenu": "Πάτησε {input:InspectMenu} για να ανοίξεις το μενού Επιθεώρησης"
+  "hint.openspawnmenu": "Πάτησε {input:SpawnMenu} για να ανοίξεις το μενού Spawn",
+  "hint.openinspectmenu": "Πάτησε {input:InspectMenu} για να ανοίξεις το μενού Επιθεώρησης",
+  "hint.openpausemenu": "Πατήστε ESC για να ανοίξετε το μενού Παύσης και να ελέγξετε τους ελέγχους σας"
 }

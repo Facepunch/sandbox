@@ -1,4 +1,5 @@
 {
-  "hint.openspawnmenu": "Houd {input:SpawnMenu} vast om het Spawn-menu te openen",
-  "hint.openinspectmenu": "Houd {input:InspectMenu} vast om het Inspect-menu te openen"
+  "hint.openspawnmenu": "Houd {input:SpawnMenu} ingedrukt om het Spawn-menu te openen",
+  "hint.openinspectmenu": "Houd {input:InspectMenu} ingedrukt om het Inspect-menu te openen",
+  "hint.openpausemenu": "Druk op ESC om het Pauze-menu te openen en je besturing te controleren"
 }

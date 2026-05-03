@@ -1,4 +1,5 @@
 {
   "hint.openspawnmenu": "Giữ {input:SpawnMenu} để mở menu Spawn",
-  "hint.openinspectmenu": "Giữ {input:InspectMenu} để mở menu Kiểm tra"
+  "hint.openinspectmenu": "Giữ {input:InspectMenu} để mở menu Kiểm tra",
+  "hint.openpausemenu": "Nhấn ESC để mở menu Tạm dừng và kiểm tra điều khiển của bạn"
 }
