@@ -98,6 +98,7 @@ public partial class BaseWeapon
 	public bool TakeAmmo( int count )
 	{
 		if ( !UsesAmmo ) return true;
+		if ( WeaponConVars.UnlimitedAmmo ) return true;
 
 		if ( UsesClips )
 		{
@@ -129,6 +130,7 @@ public partial class BaseWeapon
 	public bool HasAmmo()
 	{
 		if ( !UsesAmmo ) return true;
+		if ( WeaponConVars.UnlimitedAmmo ) return true;
 
 		if ( UsesClips )
 			return ClipContents > 0;

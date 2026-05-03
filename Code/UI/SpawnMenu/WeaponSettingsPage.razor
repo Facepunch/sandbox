@@ -1,0 +1,33 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits UtilityPage
+@namespace Sandbox
+@attribute [Icon( "🔫" )]
+@attribute [Title( "Weapons" )]
+@attribute [Group( "World" )]
+@attribute [Order( 2 )]
+
+<root class="page" style="flex-direction: column;">
+    @if ( Connection.Local.HasPermission( "admin" ) )
+    {
+        <div class="control-row" Tooltip=@UnlimitedAmmoDescription @onclick=@ToggleUnlimitedAmmo>
+            <label class="left">@(WeaponConVars.UnlimitedAmmo ? "🟢" : "⚪") Unlimited Ammo</label>
+            <label class="right">@(WeaponConVars.UnlimitedAmmo ? "On" : "Off")</label>
+        </div>
+    }
+    else
+    {
+        <div class="control-row">
+            <label class="left">⚠️ Host only</label>
+        </div>
+    }
+</root>
+
+@code
+{
+    public override bool IsVisible() => Connection.Local.HasPermission( "admin" );
+
+    static readonly string UnlimitedAmmoDescription = "When enabled, weapons have unlimited ammo — no ammo is consumed when firing.";
+
+    void ToggleUnlimitedAmmo() => ConsoleSystem.Run( "sb.weapon.unlimitedammo", WeaponConVars.UnlimitedAmmo ? "false" : "true" );
+}
