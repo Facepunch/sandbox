@@ -8,7 +8,8 @@ using Sandbox.Rendering;
 /// <param name="Tags"></param>
 /// <param name="Position"></param>
 /// <param name="Origin"></param>
-public record struct TraceAttackInfo( GameObject Target, float Damage, TagSet Tags = null, Vector3 Position = default, Vector3 Origin = default )
+/// <param name="Hitbox"></param>
+public record struct TraceAttackInfo( GameObject Target, float Damage, TagSet Tags = null, Vector3 Position = default, Vector3 Origin = default, Hitbox Hitbox = null )
 {
 	/// <summary>
 	/// Constructs a <see cref="TraceAttackInfo"/> from a trace and input damage.
@@ -22,7 +23,7 @@ public record struct TraceAttackInfo( GameObject Target, float Damage, TagSet Ta
 			tags.Add( tr.Hitbox?.Tags );
 		}
 
-		return new TraceAttackInfo( tr.GameObject, damage, tags, tr.HitPosition, tr.StartPosition );
+		return new TraceAttackInfo( tr.GameObject, damage, tags, tr.HitPosition, tr.StartPosition, tr.Hitbox );
 	}
 }
 
@@ -332,7 +333,7 @@ public partial class BaseCarryable : Component, IKillIcon
 		var damagable = attack.Target.GetComponentInParent<IDamageable>();
 		if ( damagable is not null )
 		{
-			var info = new DamageInfo( attack.Damage, attacker, GameObject );
+			var info = new DamageInfo( attack.Damage, attacker, GameObject, attack.Hitbox );
 			info.Position = attack.Position;
 			info.Origin = attack.Origin;
 			info.Tags = attack.Tags;
