@@ -341,7 +341,12 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		}
 		else
 		{
-			if ( !weapon.ItemPrefab.IsValid() ) return false;
+			if ( !weapon.ItemPrefab.IsValid() )
+			{
+				weapon.DestroyGameObject();
+				_ = FinishDropAsync();
+				return true;
+			}
 
 			var pickup = weapon.ItemPrefab.Clone( new CloneConfig
 			{
