@@ -14,6 +14,10 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	public float LookSpeed { get; set; } = 3f;
 	public float MaxHeadAngle { get; set; } = 45f;
 
+	public float AimStrengthEyes { get; set; } = 1.0f;
+	public float AimStrengthHead { get; set; } = 1.0f;
+	public float AimStrengthBody { get; set; } = 1.0f;
+
 	/// <summary>
 	/// Current world-space target the Npc is looking at (if any). Host-only.
 	/// </summary>
@@ -94,8 +98,9 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		LookTarget = null;
 		IsLooking = false;
 
-		_renderer?.Set( "aim_eyes", Vector3.Zero );
-		_renderer?.Set( "aim_head", Vector3.Zero );
+		_renderer?.SetLookDirection( "aim_eyes", Vector3.Zero, 0f );
+		_renderer?.SetLookDirection( "aim_head", Vector3.Zero, 0f );
+		_renderer?.SetLookDirection( "aim_body", Vector3.Zero, 0f );
 	}
 
 	/// <summary>
@@ -123,16 +128,18 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	{
 		if ( _renderer is null ) return;
 
-		var worldDirection = ((targetPosition - Npc.WorldPosition) with { z = 0 }).Normal;
-		var angleToTarget = Vector3.GetAngle( Npc.WorldRotation.Forward, worldDirection );
-		var localDirection = Npc.WorldRotation.Inverse * worldDirection;
+		var fullDirection = (targetPosition - Npc.WorldPosition).Normal;
+		var flatDirection = (targetPosition - Npc.WorldPosition).WithZ( 0 ).Normal;
 
-		_renderer.Set( "aim_head", localDirection );
-		_renderer.Set( "aim_eyes", localDirection );
+		_renderer.SetLookDirection( "aim_eyes", fullDirection, AimStrengthEyes );
+		_renderer.SetLookDirection( "aim_head", fullDirection, AimStrengthHead );
+		_renderer.SetLookDirection( "aim_body", fullDirection, AimStrengthBody );
+
+		var angleToTarget = Vector3.GetAngle( Npc.WorldRotation.Forward, flatDirection );
 
 		if ( angleToTarget > MaxHeadAngle )
 		{
-			var targetRotation = Rotation.LookAt( worldDirection, Vector3.Up );
+			var targetRotation = Rotation.LookAt( flatDirection, Vector3.Up );
 			Npc.GameObject.WorldRotation = Rotation.Lerp( Npc.WorldRotation, targetRotation, LookSpeed * Time.Delta );
 		}
 	}
@@ -141,21 +148,22 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	{
 		if ( _renderer is null ) return;
 
-		var worldDirection = ((lookWorldPos - Npc.WorldPosition) with { z = 0 }).Normal;
-		var localDirection = Npc.WorldRotation.Inverse * worldDirection;
+		var fullDirection = (lookWorldPos - Npc.WorldPosition).Normal;
 
-		_renderer.Set( "aim_head", localDirection );
-		_renderer.Set( "aim_eyes", localDirection );
+		_renderer.SetLookDirection( "aim_eyes", fullDirection, AimStrengthEyes );
+		_renderer.SetLookDirection( "aim_head", fullDirection, AimStrengthHead );
+		_renderer.SetLookDirection( "aim_body", fullDirection, AimStrengthBody );
 	}
 
-	public void SetAim( Vector3 localDirection )
+	public void SetAim( Vector3 direction )
 	{
-		_renderer?.Set( "aim_eyes", localDirection );
-		_renderer?.Set( "aim_head", localDirection );
+		_renderer?.SetLookDirection( "aim_eyes", direction, AimStrengthEyes );
+		_renderer?.SetLookDirection( "aim_head", direction, AimStrengthHead );
+		_renderer?.SetLookDirection( "aim_body", direction, AimStrengthBody );
 	}
 
-	public void SetHead( Vector3 localDirection ) => _renderer?.Set( "aim_head", localDirection );
-	public void SetEyes( Vector3 localDirection ) => _renderer?.Set( "aim_eyes", localDirection );
+	public void SetHead( Vector3 direction ) => _renderer?.SetLookDirection( "aim_head", direction, AimStrengthHead );
+	public void SetEyes( Vector3 direction ) => _renderer?.SetLookDirection( "aim_eyes", direction, AimStrengthEyes );
 
 	/// <summary>
 	/// Records move state for replication. Called by NavigationLayer on the host.
@@ -243,7 +251,8 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		_renderer.Set( "b_grounded", false );
 		_renderer.Set( "speed_move", 1f );
 		_renderer.Set( "move_rotationspeed", 0f );
-		_renderer.Set( "aim_eyes", Vector3.Zero );
-		_renderer.Set( "aim_head", Vector3.Zero );
+		_renderer.SetLookDirection( "aim_eyes", Vector3.Zero, 0f );
+		_renderer.SetLookDirection( "aim_head", Vector3.Zero, 0f );
+		_renderer.SetLookDirection( "aim_body", Vector3.Zero, 0f );
 	}
 }
