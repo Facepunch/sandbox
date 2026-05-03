@@ -36,6 +36,6 @@
     static readonly string EnabledDescription = "When disabled, all NPC AI thinking is paused — they just stand idle.";
     static readonly string NoTargetDescription = "When enabled, NPCs cannot target players.";
 
-    void ToggleAiEnabled() => ConsoleSystem.Run( "sb.ai.enabled", NpcConVars.Enabled ? "false" : "true" );
-    void ToggleNoTarget() => ConsoleSystem.Run( "sb.ai.notarget", NpcConVars.NoTarget ? "false" : "true" );
+    void ToggleAiEnabled() => GameManager.SetConVar( "sb.ai.enabled", !NpcConVars.Enabled );
+    void ToggleNoTarget() => GameManager.SetConVar( "sb.ai.notarget", !NpcConVars.NoTarget );
 }

@@ -71,4 +71,18 @@ public sealed partial class GameManager
 			Log.Warning( $"Could not find player '{target}'" );
 		}
 	}
+
+	/// <summary>
+	/// Sets a boolean convar and broadcasts the change to all players via chat.
+	/// Only callable by the host.
+	/// </summary>
+	public static void SetConVar( string name, bool value )
+	{
+		if ( !Networking.IsHost ) return;
+
+		ConsoleSystem.Run( name, value ? "true" : "false" );
+
+		var chat = Game.ActiveScene?.Get<Chat>();
+		chat?.AddSystemText( $"{name} set to {(value ? "On" : "Off")}", "⚙️" );
+	}
 }

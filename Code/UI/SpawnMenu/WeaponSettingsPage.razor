@@ -29,5 +29,5 @@
 
     static readonly string UnlimitedAmmoDescription = "When enabled, weapons have unlimited ammo — no ammo is consumed when firing.";
 
-    void ToggleUnlimitedAmmo() => ConsoleSystem.Run( "sb.weapon.unlimitedammo", WeaponConVars.UnlimitedAmmo ? "false" : "true" );
+    void ToggleUnlimitedAmmo() => GameManager.SetConVar( "sb.weapon.unlimitedammo", !WeaponConVars.UnlimitedAmmo );
 }
