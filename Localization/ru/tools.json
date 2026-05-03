@@ -1,0 +1,112 @@
+{
+    "tool.hint.duplicator.description": "Используется для копирования, вставки и сохранения построек целиком",
+    "tool.hint.duplicator.place": "Установить",
+    "tool.hint.duplicator.copy": "Скопировать",
+
+    "tool.hint.weld.stage0": "Приваривает два объекта друг к другу",
+    "tool.hint.weld.stage1": "Выберите второй объект для сварки",
+    "tool.hint.weld.stage2": "Поворачивайте объект",
+    "tool.hint.weld.source": "Выбрать источник",
+    "tool.hint.weld.finish": "Завершить",
+    "tool.hint.weld.remove": "Отварить",
+    "tool.hint.weld.confirm": "Подтвердить",
+
+    "tool.hint.balloon.description": "Устанавливает лопающийся воздушный шар",
+    "tool.hint.balloon.place_rope": "Установить (rope)",
+    "tool.hint.balloon.place": "Установить",
+    
+
+    "tool.hint.thrustertool.description": "Прикрепляет толкатель к объекту",
+    "tool.hint.thrustertool.place": "Установить",
+    "tool.hint.thrustertool.place_no_weld": "Установить (no weld)",
+    "tool.hint.thrustertool.toggle_axis": "Переключить ось",
+
+    "tool.hint.wheeltool.description": "Прикрепляет колесо к объекту",
+    "tool.hint.wheeltool.place": "Установить",
+    "tool.hint.wheeltool.toggle_axis": "Переключить ось",
+    "tool.hint.wheeltool.toggle_direction": "Переключить направление",
+
+    "tool.hint.rope.stage0": "Соединяет два объекта верёвкой",
+    "tool.hint.rope.stage1": "Выберите второй объект",
+    "tool.hint.rope.source": "Выбрать источник",
+    "tool.hint.rope.finish": "Завершить",
+    "tool.hint.rope.remove": "Удалить",
+
+    "tool.hint.elastic.stage0": "Соединяет два объекта эластиком",
+    "tool.hint.elastic.stage1": "Выберите второй объект",
+    "tool.hint.elastic.source": "Выбрать источник",
+    "tool.hint.elastic.finish": "Завершить",
+    "tool.hint.elastic.remove": "Удалить",
+
+    "tool.hint.ballsocket.stage0": "Соединяет два объекта шарниром",
+    "tool.hint.ballsocket.stage1": "Выберите второй объект",
+    "tool.hint.ballsocket.source": "Выбрать источник",
+    "tool.hint.ballsocket.finish": "Завершить",
+    "tool.hint.ballsocket.remove": "Удалить",
+
+    "tool.hint.slider.stage0": "Соединяет два объекта сдвигающимся креплением",
+    "tool.hint.slider.stage1": "Выберите второй объект",
+    "tool.hint.slider.source": "Выбрать источник",
+    "tool.hint.slider.secondary": "Вдоль плоскости",
+    "tool.hint.slider.secondary.stage1": "Отменить",
+    "tool.hint.slider.finish": "Завершить",
+    "tool.hint.slider.remove": "Удалить",
+
+    "tool.hint.remover.description": "Удаляет объекты из мира",
+    "tool.hint.remover.remove": "Удалить",
+
+    "tool.hint.resizer.description": "Изменяет размер объект",
+    "tool.hint.resizer.grow": "Увеличить",
+    "tool.hint.resizer.shrink": "Уменьшить",
+    "tool.hint.resizer.reset": "Сбросить",
+
+    "tool.hint.decaltool.description": "Наносит декали на поверхности",
+    "tool.hint.decaltool.place": "Установить",
+    "tool.hint.decaltool.paint": "Нанести",
+
+    "tool.hint.nocollide.stage0": "Выключает столкновения между двумя объектами",
+    "tool.hint.nocollide.stage1": "Выберите второй объект",
+    "tool.hint.nocollide.source": "Выбрать источник",
+    "tool.hint.nocollide.finish": "Завершить",
+    "tool.hint.nocollide.remove": "Удалить",
+
+    "tool.hint.mass.description": "Устанавливает массу объекта",
+    "tool.hint.mass.set": "Установить массу",
+    "tool.hint.mass.copy": "Скопировать массу",
+    "tool.hint.mass.reset": "Сбросить массу",
+
+    "tool.hint.unbreakable.description": "Делает объект невосприимчивым к урону",
+    "tool.hint.unbreakable.set": "Сделать неразрушимым",
+    "tool.hint.unbreakable.unset": "Сбросить",
+
+    "tool.hint.hydraulictool.stage0": "Соединяет два объекта гидравлическим поршнем",
+    "tool.hint.hydraulictool.stage1": "Выберите второй объект",
+    "tool.hint.hydraulictool.source": "Выбрать источник",
+    "tool.hint.hydraulictool.finish": "Завершить",
+    "tool.hint.hydraulictool.remove": "Удалить",
+
+    "tool.hint.linker.stage0": "Создаёт связь между двумя объектами так, чтобы они считались единой постройкой",
+    "tool.hint.linker.stage1": "Выберите второй объект для привязки",
+    "tool.hint.linker.source": "Выбрать источник",
+    "tool.hint.linker.finish": "Завершить",
+    "tool.hint.linker.remove": "Отвязать",
+
+    "tool.hint.hoverballtool.description": "Прикрепляет ховербол, который удерживает объекты на заданной высоте",
+    "tool.hint.hoverballtool.place": "Установить",
+
+    "tool.hint.emittertool.description": "Устанавливает настраиваемый излучатель частиц",
+    "tool.hint.emittertool.place": "Установить",
+
+    "tool.hint.keepupright.description": "Удерживает объект в вертикальном положении",
+    "tool.hint.keepupright.stage1": "Выберите второй объект для привязки",
+    "tool.hint.keepupright.apply_world": "Применить (привязка к миру)",
+    "tool.hint.keepupright.start_link": "Выбрать первый объект",
+    "tool.hint.keepupright.finish": "Завершить привязку",
+    "tool.hint.keepupright.cancel": "Отменить",
+    "tool.hint.keepupright.remove": "Удалить",
+
+    "tool.hint.stacker.description": "Дублирует объекты в указанному направлении с возможностью предпросмотра",
+    "tool.hint.stacker.stack": "Расставить",
+    "tool.hint.stacker.cycle_alignment": "Прокрутить выравнивание",
+    "tool.hint.stacker.cycle_direction": "Прокрутить направление"
+}
