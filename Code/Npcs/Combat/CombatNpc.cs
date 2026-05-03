@@ -4,6 +4,7 @@ namespace Sandbox.Npcs.CombatNpc;
 
 /// <summary>
 /// A combat NPC that searches for players, advances on them, fires in bursts, and repositions.
+/// When friendly, follows players and engages hostile NPCs instead.
 /// </summary>
 public class CombatNpc : Npc, Component.IDamageable
 {
@@ -22,6 +23,13 @@ public class CombatNpc : Npc, Component.IDamageable
 		"Not like this...",
 		"I can't...",
 	};
+
+	/// <summary>
+	/// When true, this NPC is friendly to players and will follow them, engaging hostile NPCs.
+	/// When false, this NPC targets players and friendly NPCs.
+	/// </summary>
+	[Property, ClientEditable, Sync]
+	public bool Friendly { get; set; } = false;
 
 	[Property, ClientEditable, Range( 1, 250 ), Sync]
 	public float Health { get; set; } = 100f;
@@ -53,12 +61,32 @@ public class CombatNpc : Npc, Component.IDamageable
 	[Property, Group( "Balance" )]
 	public float BurstPause { get; set; } = 0.8f;
 
+	/// <summary>
+	/// How far a friendly NPC will follow a player before stopping.
+	/// </summary>
+	[Property, Group( "Balance" )]
+	public float FollowDistance { get; set; } = 150f;
+
 	private Vector3? _lastKnownPosition;
 	private TimeSince _timeSinceLastSeen;
 
 	protected override void OnStart()
 	{
 		base.OnStart();
+
+		if ( !IsProxy )
+		{
+			if ( Friendly )
+			{
+				GameObject.Tags.Add( "friendly_npc" );
+				Senses.TargetTags = new TagSet { "hostile_npc" };
+			}
+			else
+			{
+				GameObject.Tags.Add( "hostile_npc" );
+				Senses.TargetTags = new TagSet { "player", "friendly_npc" };
+			}
+		}
 
 		if ( Weapon.IsValid() && Renderer.IsValid() )
 		{
@@ -88,12 +116,20 @@ public class CombatNpc : Npc, Component.IDamageable
 			return engage;
 		}
 
-		// Player not visible — search last known position if recent enough
+		// Search last known position if recent enough
 		if ( _lastKnownPosition.HasValue && _timeSinceLastSeen < SearchTimeout )
 		{
 			var search = GetSchedule<ScientistSearchSchedule>();
 			search.Target = _lastKnownPosition.Value;
 			return search;
+		}
+
+		// Friendly NPCs follow the nearest player when idle
+		if ( Friendly )
+		{
+			var follow = GetSchedule<CombatFollowSchedule>();
+			follow.FollowDistance = FollowDistance;
+			return follow;
 		}
 
 		// No intel — patrol

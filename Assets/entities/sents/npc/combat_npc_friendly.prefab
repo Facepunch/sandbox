@@ -3,7 +3,7 @@
     "__guid": "b52ecd8b-1950-45b0-8674-ebbaba9e636c",
     "__version": 2,
     "Flags": 0,
-    "Name": "combat_npc",
+    "Name": "combat_npc_friendly",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
@@ -48,8 +48,8 @@
         "BurstPause": 0.8,
         "DisplayName": "Army Guy",
         "EngageSpeed": 180,
-        "FollowDistance": 150,
-        "Friendly": false,
+        "FollowDistance": 256,
+        "Friendly": true,
         "Health": 100,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -261,10 +261,10 @@
                 "Clothing": "models/citizen_clothes/shoes/boots/black_boots.clothing"
               },
               {
-                "Clothing": "models/citizen_clothes/shirt/army_shirt/army_shirt.clothing"
+                "Clothing": "models/citizen_clothes/shirt/tshirt/tshirt.clothing"
               },
               {
-                "Clothing": "models/citizen_clothes/trousers/cargopants/cargo_pants_army.clothing"
+                "Clothing": "models/citizen_clothes/trousers/cargopants/brown_cargo_pants.clothing"
               },
               {
                 "Clothing": "models/citizen_clothes/hat/balaclava/balaclava.clothing"
@@ -2044,7 +2044,7 @@
             ]
           },
           {
-            "__guid": "e1c608a9-4bb1-4bf4-975a-34de50401fa7",
+            "__guid": "fbdd4598-fe58-464b-bc2c-83fa1cce3369",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - black_boots",
@@ -2061,7 +2061,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "f2738515-dd4f-4c70-b1b9-d1899ad3fb92",
+                "__guid": "0ddc65d7-a9f0-4c61-a50a-c45803c4850b",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2113,10 +2113,10 @@
             "Children": []
           },
           {
-            "__guid": "c6d1f724-7c99-4bc2-9143-c60d4fdb61b0",
+            "__guid": "e26586fd-b424-475d-aa6c-bb0bf47bc85c",
             "__version": 2,
             "Flags": 0,
-            "Name": "Clothing - army_shirt",
+            "Name": "Clothing - tshirt",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
@@ -2130,7 +2130,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "3c96f9f1-896a-40e2-bac5-be7deab5e02a",
+                "__guid": "4e7300fc-3d97-43be-8e04-a836eacff46c",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2147,7 +2147,7 @@
                 "MaterialGroup": null,
                 "MaterialOverride": null,
                 "Materials": null,
-                "Model": "models/citizen_clothes/shirt/army_shirt/model/army_shirt.vmdl",
+                "Model": "models/citizen_clothes/shirt/tshirt/models/tshirt.vmdl",
                 "Morphs": {},
                 "OnComponentDestroy": null,
                 "OnComponentDisabled": null,
@@ -2182,10 +2182,10 @@
             "Children": []
           },
           {
-            "__guid": "2d8b159c-ce83-47e9-9d3e-4c43ba7ffb67",
+            "__guid": "f601b344-9754-48de-b78c-8ee339140303",
             "__version": 2,
             "Flags": 0,
-            "Name": "Clothing - cargo_pants_army",
+            "Name": "Clothing - brown_cargo_pants",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
@@ -2199,7 +2199,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "bd36f895-9b13-4646-935d-9c1047ef8542",
+                "__guid": "304d3ab6-aee4-4fb1-ab7f-7507b2619f53",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2216,7 +2216,7 @@
                 "MaterialGroup": null,
                 "MaterialOverride": null,
                 "Materials": null,
-                "Model": "models/citizen_clothes/trousers/cargopants/models/cargo_pants.vmdl",
+                "Model": "models/citizen_clothes/trousers/cargopants/models/brown_cargo_pants.vmdl",
                 "Morphs": {},
                 "OnComponentDestroy": null,
                 "OnComponentDisabled": null,
@@ -2251,7 +2251,7 @@
             "Children": []
           },
           {
-            "__guid": "13fa8602-e2ab-45d6-bb74-58364d0e1ef2",
+            "__guid": "118fc43b-9097-4d6c-a505-ba3939609474",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - balaclava",
@@ -2268,7 +2268,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "abe6f8d1-0848-4353-af3a-8c54ad3066e9",
+                "__guid": "3c6664e0-5198-4044-a64f-20c178f8871d",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2320,7 +2320,7 @@
             "Children": []
           },
           {
-            "__guid": "6bfcc461-7e03-492d-b5f3-ee814243eb91",
+            "__guid": "6ffe49e2-5a59-47c2-8fef-fda5334af54b",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - tactical_vest",
@@ -2337,7 +2337,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "77abdbbe-4439-4dd4-a786-3992ef8b85ac",
+                "__guid": "7532edad-46d3-4b94-a7fb-2973b451ae17",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
