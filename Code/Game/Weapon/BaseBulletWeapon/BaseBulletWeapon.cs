@@ -141,7 +141,14 @@ public partial class BaseBulletWeapon : BaseWeapon
 		if ( !hit || !hitObject.IsValid() )
 			return;
 
-		var prefab = hitSurface.PrefabCollection.BulletImpact ?? hitSurface.GetBaseSurface()?.PrefabCollection.BulletImpact;
+		var baseSurface = hitSurface.GetBaseSurface();
+		var bulletSound = hitSurface.SoundCollection.Bullet ?? baseSurface?.SoundCollection.Bullet;
+		if ( bulletSound.IsValid() )
+		{
+			Sound.Play( bulletSound, hitpoint );
+		}
+
+		var prefab = hitSurface.PrefabCollection.BulletImpact ?? baseSurface?.PrefabCollection.BulletImpact;
 
 		// Still null?
 		if ( prefab is null )
