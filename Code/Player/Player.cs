@@ -14,7 +14,30 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	[RequireComponent] public PlayerController Controller { get; set; }
 	[Property] public GameObject Body { get; set; }
-	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )] public float Health { get; set; } = 100;
+
+	private float _health = 100;
+	private bool _isTakingDamage;
+	private bool _isDead;
+
+	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )]
+	public float Health
+	{
+		get => _health;
+		set
+		{
+			_health = value;
+			if ( Networking.IsHost && _health < 1 && !_isTakingDamage && !_isDead )
+			{
+				_isDead = true;
+				var dmg = new DamageInfo( float.MaxValue, GameObject, null );
+				if ( GameManager.Current != null )
+					GameManager.Current.OnDeath( this, dmg );
+				_health = 0;
+				Kill( dmg );
+			}
+		}
+	}
+
 	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )] public float MaxHealth { get; set; } = 100;
 
 	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )] public float Armour { get; set; } = 0;
@@ -402,7 +425,9 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			damage = Math.Max( 0, remainingDamage );
 		}
 
+		_isTakingDamage = true;
 		Health -= damage;
+		_isTakingDamage = false;
 
 		NotifyOnDamage( new PlayerDamageParams()
 		{
@@ -417,9 +442,13 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		// We didn't die
 		if ( Health >= 1 ) return;
 
-		GameManager.Current.OnDeath( this, dmg );
+		if ( _isDead ) return;
+		_isDead = true;
 
-		Health = 0;
+		if ( GameManager.Current != null )
+			GameManager.Current.OnDeath( this, dmg );
+
+		_health = 0;
 		Kill( dmg );
 	}
 
