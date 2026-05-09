@@ -89,6 +89,10 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	Vector2 currentInertia;
 	bool isFirstUpdate = true;
 
+	// Move bob cycle control: manually scrub the bob cycle (e.g. while noclipping), then wind down smoothly on exit
+	float bobCycleControl;
+	TimeSince bobCycleMoving;
+
 	protected override void OnStart()
 	{
 		foreach ( var renderer in GetComponentsInChildren<ModelRenderer>() )
@@ -158,8 +162,10 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		Renderer.Set( "deploy_type", UseFastAnimations ? 1 : 0 );
 		Renderer.Set( "reload_type", UseFastAnimations ? 1 : 0 );
 
-		Renderer.Set( "b_grounded", playerController.IsOnGround );
-		Renderer.Set( "move_bob", GamePreferences.ViewBobbing ? playerController.Velocity.Length.Remap( 0, playerController.RunSpeed * 2f ) : 0 );
+		var player = GetComponentInParent<Player>();
+
+		var isNoclipping = player.IsValid() && player.IsNoclipping;		// Treat noclip as grounded so the viewmodel doesn't play falling anims
+		Renderer.Set( "b_grounded", playerController.IsOnGround || isNoclipping );
 
 		Renderer.Set( "aim_pitch", rot.pitch );
 		Renderer.Set( "aim_pitch_inertia", currentInertia.x * InertiaScale.x );
@@ -184,6 +190,35 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 
 		var angle = MathF.Atan2( sideward, forward ).RadianToDegree().NormalizeDegrees();
 
+		var bobIntensity = GamePreferences.ViewBobbing ? velocity.Length.Remap( 0, playerController.RunSpeed * 2f ) : 0;
+		Renderer.Set( "move_bob", bobIntensity );
+
+		// While noclipping, take over bob cycle and scrub slowly (3s/loop).
+		// On exit, wind down to 0 via shortest path so there's no pop.
+		var wantsNoclipBob = isNoclipping && bobIntensity > 0f;
+
+		if ( wantsNoclipBob )
+		{
+			// Wait 100ms before taking over cycle control
+			if ( bobCycleMoving > 0.1f )
+				bobCycleControl = (bobCycleControl + Time.Delta / 3f) % 1f;
+		}
+		else
+		{
+			bobCycleMoving = 0f;
+			// Smoothly wind down to 0 via shortest path
+			if ( bobCycleControl != 0f )
+			{
+				var step = Time.Delta * 2f;
+
+				if ( bobCycleControl <= 0.5f )
+					bobCycleControl = MathF.Max( 0f, bobCycleControl - step );
+				else
+					bobCycleControl = (bobCycleControl + step) >= 1f ? 0f : bobCycleControl + step;
+			}
+		}
+
+		Renderer.Set( "move_bob_cycle_control", bobCycleControl );
 		Renderer.Set( "move_direction", angle );
 		Renderer.Set( "move_speed", velocity.Length );
 		Renderer.Set( "move_groundspeed", velocity.WithZ( 0 ).Length );
