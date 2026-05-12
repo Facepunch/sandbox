@@ -20,17 +20,17 @@ public class DynamiteEntity : Component, IPlayerControllable, Component.IDamagea
 	{
 		_isDead = true;
 
-		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
+		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/explosion_med.prefab" );
 		if ( explosionPrefab == null )
 		{
-			Log.Warning( "Can't find /prefabs/engine/explosion_med.prefab" );
+			Log.Warning( "Can't find /prefabs/explosion_med.prefab" );
 			return;
 		}
 
 		var go = GameObject.Clone( explosionPrefab, new CloneConfig { Transform = WorldTransform.WithScale( 1 ), StartEnabled = false } );
 		if ( !go.IsValid() ) return;
 
-		go.RunEvent<RadiusDamage>( x =>
+		go.RunEvent<RadiusDamage2>( x =>
 		{
 			x.Radius = Radius;
 			x.PhysicsForceScale = Force;

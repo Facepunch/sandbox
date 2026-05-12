@@ -153,31 +153,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		}
 	}
 
-	/// <summary>
-	/// Calculates the launch velocity for a ragdoll based on the damage source.
-	/// For explosions, uses the direction from the blast origin to this NPC.
-	/// Otherwise, falls back to the attacker's physical velocity.
-	/// </summary>
-	Vector3 GetDeathLaunchVelocity( in DamageInfo damage )
-	{
-		if ( damage.Tags.Contains( DamageTags.Explosion ) && damage.Origin != Vector3.Zero )
-		{
-
-			var dist = (WorldPosition - damage.Origin).Length;
-			var strength = MathX.Remap( dist, 0, 512, 1024, 2048, true );
-
-			var dir = (WorldPosition - damage.Origin).Normal;
-			dir += Vector3.Up * 1.0f;
-			dir = dir.Normal;
-
-			return dir * strength;
-		}
-
-		return 0;
-	}
-
 	[Rpc.Broadcast( NetFlags.HostOnly | NetFlags.Reliable )]
-	void CreateRagdoll( Vector3 velocity, Vector3 origin )
+	void CreateRagdoll()
 	{
 		if ( !Controller.Renderer.IsValid() )
 			return;
@@ -217,21 +194,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		corpse.Created = DateTime.Now;
 
 		CopyBoneScalesToRagdoll( go );
-
-		ApplyRagdollForce( physics, velocity, origin );
-	}
-
-	void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
-	{
-		if ( !physics.IsValid() ) return;
-		if ( force.Length < 1 ) return;
-
-		foreach ( var body in physics.Bodies )
-		{
-			var rb = body.Component;
-			if ( !rb.IsValid() ) continue;
-			rb.ApplyImpulse( Vector3.Direction( origin, rb.WorldPosition ) * force.Length * rb.Mass );
-		}
 	}
 
 	void CreateRagdollAndGhost()
@@ -293,7 +255,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			inventory.SwitchWeapon( null );
 		}
 
-		CreateRagdoll( GetDeathLaunchVelocity( d ), d.Origin );
+		CreateRagdoll();
 
 		//
 		// Ghost and say goodbye to the player

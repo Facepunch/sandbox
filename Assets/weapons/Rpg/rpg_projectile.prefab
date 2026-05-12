@@ -21,7 +21,7 @@
         "__enabled": true,
         "Flags": 0,
         "ExplosionDamage": 150,
-        "ExplosionForce": 1.5,
+        "ExplosionForce": 100000,
         "ExplosionRadius": 256,
         "LoopingSound": "weapons/rpg/sounds/rocket_loop.sound",
         "OnComponentDestroy": null,
@@ -63,6 +63,7 @@
         "OnComponentUpdate": null,
         "OverrideMassCenter": false,
         "RigidbodyFlags": 0,
+        "SleepThreshold": 2,
         "StartAsleep": false
       },
       {

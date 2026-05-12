@@ -83,7 +83,7 @@ public partial class Npc : Component, IKillSource
 	/// and optionally applies a launch velocity from the attacker.
 	/// </summary>
 	[Rpc.Broadcast( NetFlags.HostOnly )]
-	protected void CreateRagdoll( Vector3 velocity, Vector3 origin, float duration = 30 )
+	protected void CreateRagdoll( float duration = 30 )
 	{
 		if ( !Renderer.IsValid() )
 			return;
@@ -98,7 +98,6 @@ public partial class Npc : Component, IKillSource
 		mainBody.CopyFrom( Renderer );
 		mainBody.UseAnimGraph = false;
 
-		// copy the clothes
 		foreach ( var clothing in Renderer.GameObject.Children.SelectMany( x => x.Components.GetAll<SkinnedModelRenderer>() ) )
 		{
 			if ( !clothing.IsValid() ) continue;
@@ -118,62 +117,7 @@ public partial class Npc : Component, IKillSource
 
 		physics.CopyBonesFrom( Renderer, true );
 
-		ApplyRagdollForce( physics, velocity, origin );
-
-		//
-		// Destroy after a while
-		//
 		mainBody.Invoke( duration, mainBody.DestroyGameObject );
-	}
-
-	void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
-	{
-		if ( !physics.IsValid() ) return;
-		if ( force.Length < 1 ) return;
-
-		foreach ( var body in physics.Bodies )
-		{
-			var rb = body.Component;
-			if ( !rb.IsValid() ) continue;
-			rb.ApplyImpulse( Vector3.Direction( origin, rb.WorldPosition ) * force.Length * rb.Mass );
-		}
-	}
-
-	/// <summary>
-	/// Resolves the attacker's current velocity from whatever movement source it has.
-	/// </summary>
-	protected Vector3 GetAttackerVelocity( GameObject attacker )
-	{
-		if ( !attacker.IsValid() )
-			return Vector3.Zero;
-
-		if ( attacker.GetComponent<Rigidbody>() is { } rb )
-			return rb.Velocity;
-
-		return Vector3.Zero;
-	}
-
-	/// <summary>
-	/// Calculates the launch velocity for a ragdoll based on the damage source.
-	/// For explosions, uses the direction from the blast origin to this NPC.
-	/// Otherwise, falls back to the attacker's physical velocity.
-	/// </summary>
-	protected Vector3 GetDeathLaunchVelocity( in DamageInfo damage )
-	{
-		if ( damage.Tags.Contains( DamageTags.Explosion ) && damage.Origin != Vector3.Zero )
-		{
-
-			var dist = (WorldPosition - damage.Origin).Length;
-			var strength = MathX.Remap( dist, 0, 512, 500, 1500 ).Clamp( 500, 1500 );
-
-			var dir = (WorldPosition - damage.Origin).Normal;
-			dir += Vector3.Up * 1.0f;
-			dir = dir.Normal;
-
-			return dir * strength;
-		}
-
-		return GetAttackerVelocity( damage.Attacker );
 	}
 
 	/// <summary>
@@ -184,7 +128,7 @@ public partial class Npc : Component, IKillSource
 	protected virtual void Die( in DamageInfo damage )
 	{
 		GameManager.Current?.OnNpcDeath( DisplayName, damage );
-		CreateRagdoll( GetDeathLaunchVelocity( damage ), damage.Origin );
+		CreateRagdoll();
 		GameObject.Destroy();
 	}
 }

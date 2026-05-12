@@ -262,7 +262,7 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 	void ExplodeInHand()
 	{
 		// Spawn the explosion directly
-		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
+		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/explosion_med.prefab" );
 		if ( !explosionPrefab.IsValid() )
 			return;
 
@@ -271,7 +271,7 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 		if ( !explosion.IsValid() )
 			return;
 
-		explosion.RunEvent<RadiusDamage>( x =>
+		explosion.RunEvent<RadiusDamage2>( x =>
 		{
 			x.Radius = Radius;
 			x.PhysicsForceScale = Force;

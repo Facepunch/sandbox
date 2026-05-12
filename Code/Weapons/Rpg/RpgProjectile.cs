@@ -43,10 +43,10 @@ public partial class RpgProjectile : Projectile
 
 	void Explode()
 	{
-		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
+		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/explosion_med.prefab" );
 		if ( explosionPrefab == null )
 		{
-			Log.Warning( "RpgProjectile: Can't find /prefabs/engine/explosion_med.prefab" );
+			Log.Warning( "RpgProjectile: Can't find /prefabs/explosion_med.prefab" );
 			GameObject.Destroy();
 			return;
 		}
@@ -54,7 +54,7 @@ public partial class RpgProjectile : Projectile
 		var go = GameObject.Clone( explosionPrefab, new CloneConfig { Transform = WorldTransform.WithScale( 1 ), StartEnabled = false } );
 		if ( go.IsValid() )
 		{
-			go.RunEvent<RadiusDamage>( x =>
+			go.RunEvent<RadiusDamage2>( x =>
 			{
 				x.Radius = ExplosionRadius;
 				x.PhysicsForceScale = ExplosionForce;
