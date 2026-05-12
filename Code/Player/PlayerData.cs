@@ -82,6 +82,11 @@ public sealed partial class PlayerData : Component, Global.ISaveEvents
 
 	protected override void OnUpdate()
 	{
+		if ( !Networking.IsHost ) return;
+		if ( !_needsRespawn ) return;
+		if ( _timeSinceDied < 4f ) return;
+
+		RequestRespawn();
 	}
 
 	[Rpc.Broadcast]

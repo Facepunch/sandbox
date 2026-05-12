@@ -24,11 +24,16 @@ public sealed class PlayerObserver : Component
 
 	protected override void OnUpdate()
 	{
-		if ( !Input.Pressed( "attack1" ) )
+		// Don't allow immediate respawn
+		if ( timeSinceStarted < 1 )
 			return;
 
-		PlayerData.For( Network.Owner )?.RequestRespawn();
-		GameObject.Destroy();
+		// If pressed a button, or has been too long
+		if ( Input.Pressed( "attack1" ) || Input.Pressed( "jump" ) || timeSinceStarted > 4f )
+		{
+			PlayerData.For( Network.Owner )?.RequestRespawn();
+			GameObject.Destroy();
+		}
 	}
 
 	protected override void OnPreRender()
