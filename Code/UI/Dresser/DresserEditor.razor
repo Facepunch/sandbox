@@ -1,5 +1,6 @@
 @using Sandbox;
 @using Sandbox.UI;
+@using System.Collections.Generic;
 @attribute [InspectorEditor(typeof(Dresser))]
 @inherits Panel
 @namespace Sandbox
@@ -7,11 +8,36 @@
 
 <root>
     <div class="body">
-        <Label>todo: add / remove clothing resources</Label>
+        @if ( Target.IsValid() && Target.Clothing.Count > 0 )
+        {
+            @foreach ( var group in GetClothingGrouped() )
+            {
+                <div class="category-header">@GetCategoryLabel( group.Key )</div>
+
+                @foreach ( var entry in group.Value )
+                {
+                    var captured = entry;
+                    var clothing = entry.Clothing;
+                    var title = clothing != null ? clothing.Title : "Unknown";
+                    var thumbUrl = clothing != null ? $"thumb:{clothing.ResourcePath}" : "";
+
+                    <div class="clothing-row">
+                        <div class="clothing-thumb" style="background-image: url(@thumbUrl)"></div>
+                        <div class="clothing-name">@title</div>
+                        <div class="clothing-remove" @onclick="@(() => RemoveClothing( captured ))">✕</div>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <div class="empty-state">#spawnmenu.dresser.no_items</div>
+        }
     </div>
     <div class="footer">
-            <Button class="menu-action primary" Text="Randomize" Icon="🎲" onclick=@DoRandomize></Button>
-            <Button class="menu-action primary" Text="Clear" Icon="🧹" onclick=@DoClear></Button>
+            <Button class="menu-action primary" Text="#spawnmenu.dresser.add" Icon="➕" onclick=@DoAdd></Button>
+            <Button class="menu-action primary" Text="#spawnmenu.dresser.randomize" Icon="🎲" onclick=@DoRandomize></Button>
+            <Button class="menu-action primary" Text="#spawnmenu.dresser.clear" Icon="🧹" onclick=@DoClear></Button>
     </div>
 </root>
 
@@ -38,8 +64,162 @@
         return Target != null;
     }
 
+    struct ClothingGroup
+    {
+        public Clothing.ClothingCategory Key;
+        public List<ClothingContainer.ClothingEntry> Value;
+    }
+
+    /// <summary>
+    /// Groups the current clothing list by category for display.
+    /// </summary>
+    List<ClothingGroup> GetClothingGrouped()
+    {
+        var groups = new Dictionary<Clothing.ClothingCategory, List<ClothingContainer.ClothingEntry>>();
+
+        foreach ( var entry in Target.Clothing )
+        {
+            if ( entry.Clothing == null ) continue;
+
+            var cat = entry.Clothing.Category;
+            if ( !groups.ContainsKey( cat ) )
+                groups[cat] = new List<ClothingContainer.ClothingEntry>();
+
+            groups[cat].Add( entry );
+        }
+
+        var result = new List<ClothingGroup>();
+        foreach ( var kvp in groups )
+        {
+            result.Add( new ClothingGroup { Key = kvp.Key, Value = kvp.Value } );
+        }
+        result.Sort( ( a, b ) => ((int)a.Key).CompareTo( (int)b.Key ) );
+        return result;
+    }
+
+    static string GetCategoryLabel( Clothing.ClothingCategory category )
+    {
+        var key = (int)category;
+
+        if ( key == (int)Clothing.ClothingCategory.Hat ) return "Hats";
+        if ( key == (int)Clothing.ClothingCategory.HatCap ) return "Caps";
+        if ( key == (int)Clothing.ClothingCategory.HatBeanie ) return "Beanies";
+        if ( key == (int)Clothing.ClothingCategory.HatFormal ) return "Formal Hats";
+        if ( key == (int)Clothing.ClothingCategory.HatCostume ) return "Costume Hats";
+        if ( key == (int)Clothing.ClothingCategory.HatUniform ) return "Uniform Hats";
+        if ( key == (int)Clothing.ClothingCategory.Hair ) return "Hair";
+        if ( key == (int)Clothing.ClothingCategory.HairShort ) return "Short Hair";
+        if ( key == (int)Clothing.ClothingCategory.HairMedium ) return "Medium Hair";
+        if ( key == (int)Clothing.ClothingCategory.HairLong ) return "Long Hair";
+        if ( key == (int)Clothing.ClothingCategory.Facial ) return "Facial Hair";
+        if ( key == (int)Clothing.ClothingCategory.Eyewear ) return "Eyewear";
+        if ( key == (int)Clothing.ClothingCategory.Tops ) return "Tops";
+        if ( key == (int)Clothing.ClothingCategory.TShirt ) return "T-Shirts";
+        if ( key == (int)Clothing.ClothingCategory.Shirt ) return "Shirts";
+        if ( key == (int)Clothing.ClothingCategory.Hoodie ) return "Hoodies";
+        if ( key == (int)Clothing.ClothingCategory.Jacket ) return "Jackets";
+        if ( key == (int)Clothing.ClothingCategory.Coat ) return "Coats";
+        if ( key == (int)Clothing.ClothingCategory.Vest ) return "Vests";
+        if ( key == (int)Clothing.ClothingCategory.Bottoms ) return "Bottoms";
+        if ( key == (int)Clothing.ClothingCategory.Trousers ) return "Trousers";
+        if ( key == (int)Clothing.ClothingCategory.Jeans ) return "Jeans";
+        if ( key == (int)Clothing.ClothingCategory.Shorts ) return "Shorts";
+        if ( key == (int)Clothing.ClothingCategory.Skirt ) return "Skirts";
+        if ( key == (int)Clothing.ClothingCategory.Footwear ) return "Footwear";
+        if ( key == (int)Clothing.ClothingCategory.Shoes ) return "Shoes";
+        if ( key == (int)Clothing.ClothingCategory.Boots ) return "Boots";
+        if ( key == (int)Clothing.ClothingCategory.Trainers ) return "Trainers";
+        if ( key == (int)Clothing.ClothingCategory.Gloves ) return "Gloves";
+        if ( key == (int)Clothing.ClothingCategory.Skin ) return "Skin";
+        if ( key == (int)Clothing.ClothingCategory.Fullbody ) return "Full Body";
+        if ( key == (int)Clothing.ClothingCategory.Costume ) return "Costumes";
+        if ( key == (int)Clothing.ClothingCategory.Uniform ) return "Uniforms";
+
+        return category.ToString();
+    }
+
+    void DoAdd()
+    {
+        if ( !Target.IsValid() ) return;
+
+        var popup = new ClothingPickerPopup();
+        popup.Parent = FindPopupPanel();
+        popup.OnSelectedFiles = ( paths ) =>
+        {
+            if ( paths == null || paths.Count == 0 ) return;
+            TryBroadcastAddMultiple( Target.GameObject, paths );
+        };
+    }
+
+    void RemoveClothing( ClothingContainer.ClothingEntry entry )
+    {
+        if ( !Target.IsValid() || entry.Clothing == null ) return;
+        TryBroadcastRemove( Target.GameObject, entry.Clothing.ResourcePath );
+    }
+
     void DoRandomize() => TryBroadcastRandomize( Target.GameObject );
     void DoClear() => TryBroadcastClear( Target.GameObject );
+
+    [Rpc.Host]
+    private static async void TryBroadcastAddMultiple( GameObject go, List<string> clothingPaths )
+    {
+        if ( !go.IsValid() ) return;
+
+        var dresser = go.GetComponentInChildren<Dresser>();
+        if ( dresser is null ) return;
+
+        // Build a set of already-equipped paths to prevent duplicates
+        var equipped = new HashSet<string>();
+        foreach ( var existing in dresser.Clothing )
+        {
+            if ( existing.Clothing != null )
+                equipped.Add( existing.Clothing.ResourcePath );
+        }
+
+        foreach ( var path in clothingPaths )
+        {
+            // Skip if already equipped
+            if ( equipped.Contains( path ) ) continue;
+
+            var clothing = ResourceLibrary.Get<Clothing>( path );
+            if ( clothing is null ) continue;
+
+            // Only allow citizen-compatible clothing (has a Model for the citizen body)
+            if ( string.IsNullOrEmpty( clothing.Model ) ) continue;
+
+            dresser.Clothing.Add( new ClothingContainer.ClothingEntry( clothing ) );
+            equipped.Add( path );
+        }
+
+        await dresser.Apply();
+        go.Network.Refresh();
+    }
+
+    [Rpc.Host]
+    private static async void TryBroadcastRemove( GameObject go, string clothingPath )
+    {
+        if ( !go.IsValid() ) return;
+
+        var dresser = go.GetComponentInChildren<Dresser>();
+        if ( dresser is null ) return;
+
+        ClothingContainer.ClothingEntry found = null;
+        foreach ( var e in dresser.Clothing )
+        {
+            if ( e.Clothing != null && e.Clothing.ResourcePath == clothingPath )
+            {
+                found = e;
+                break;
+            }
+        }
+        if ( found is null ) return;
+
+        dresser.Clothing.Remove( found );
+        dresser.Clear();
+        await dresser.Apply();
+
+        go.Network.Refresh();
+    }
 
     [Rpc.Host]
     private static void TryBroadcastRandomize(GameObject go)
@@ -51,7 +231,6 @@
 
         dresser.Randomize();
 
-        // Refresh the object to update the clothing items for everyone
         go.Network.Refresh();
     }
 
@@ -67,7 +246,9 @@
         dresser.Clear();
         await dresser.Apply();
 
-        // Refresh the object to update the clothing items for everyone
         go.Network.Refresh();
     }
+
+    protected override int BuildHash() =>
+        HashCode.Combine( Target?.Clothing?.Count ?? 0 );
 }

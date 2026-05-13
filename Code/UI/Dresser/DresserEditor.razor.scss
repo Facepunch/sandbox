@@ -5,4 +5,70 @@ DresserEditor
     flex-direction: column;
     width: 100%;
     justify-content: flex-end;
+
+    .category-header
+    {
+        padding: 6px 8px 2px;
+        font-size: 11px;
+        font-weight: 600;
+        color: rgba(white, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .clothing-row
+    {
+        flex-direction: row;
+        align-items: center;
+        padding: 4px 8px;
+        gap: 8px;
+        border-bottom: 1px solid rgba(white, 0.05);
+
+        &:hover
+        {
+            background-color: rgba(white, 0.05);
+        }
+
+        .clothing-thumb
+        {
+            width: 32px;
+            height: 32px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .clothing-name
+        {
+            flex-grow: 1;
+            font-size: 12px;
+            color: rgba(white, 0.8);
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .clothing-remove
+        {
+            flex-shrink: 0;
+            font-size: 12px;
+            color: rgba(white, 0.4);
+            cursor: pointer;
+            padding: 4px;
+
+            &:hover
+            {
+                color: rgba(#ff4444, 1);
+            }
+        }
+    }
+
+    .empty-state
+    {
+        padding: 12px;
+        text-align: center;
+        font-size: 12px;
+        color: rgba(white, 0.4);
+    }
 }
