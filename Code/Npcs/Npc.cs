@@ -79,45 +79,24 @@ public partial class Npc : Component, IKillSource
 	}
 
 	/// <summary>
-	/// Spawns a ragdoll at the NPC's current position, copying the renderer and clothing,
-	/// and optionally applies a launch velocity from the attacker.
+	/// Spawns a ragdoll at the NPC's current position, copying the renderer and clothing.
+	/// Automatically destroyed after <paramref name="duration"/> seconds.
 	/// </summary>
-	[Rpc.Broadcast( NetFlags.HostOnly )]
-	protected void CreateRagdoll( float duration = 30 )
+	protected void CreateRagdoll( float duration = 30f )
 	{
 		if ( !Renderer.IsValid() )
 			return;
 
-		var batch = Scene.BatchGroup();
+		using var batch = Scene.BatchGroup();
 
-		var go = new GameObject( true, "Ragdoll" );
-		go.Tags.Add( "ragdoll" );
+		var go = new GameObject( false, "RagdollSpawner" );
 		go.WorldTransform = WorldTransform;
 
-		var mainBody = go.Components.Create<SkinnedModelRenderer>();
-		mainBody.CopyFrom( Renderer );
-		mainBody.UseAnimGraph = false;
+		var spawner = go.AddComponent<RagdollSpawner>();
+		spawner.Renderer = Renderer;
 
-		foreach ( var clothing in Renderer.GameObject.Children.SelectMany( x => x.Components.GetAll<SkinnedModelRenderer>() ) )
-		{
-			if ( !clothing.IsValid() ) continue;
-
-			var newClothing = new GameObject( true, clothing.GameObject.Name );
-			newClothing.Parent = go;
-
-			var item = newClothing.Components.Create<SkinnedModelRenderer>();
-			item.CopyFrom( clothing );
-			item.BoneMergeTarget = mainBody;
-		}
-
-		var physics = go.Components.Create<ModelPhysics>();
-		physics.Model = mainBody.Model;
-		physics.Renderer = mainBody;
-		batch.Dispose();
-
-		physics.CopyBonesFrom( Renderer, true );
-
-		mainBody.Invoke( duration, mainBody.DestroyGameObject );
+		go.NetworkSpawn();
+		spawner.Invoke( duration, spawner.DestroyGameObject );
 	}
 
 	/// <summary>
@@ -130,5 +109,64 @@ public partial class Npc : Component, IKillSource
 		GameManager.Current?.OnNpcDeath( DisplayName, damage );
 		CreateRagdoll();
 		GameObject.Destroy();
+	}
+}
+
+
+public class RagdollSpawner : Component
+{
+	[Sync]
+	public SkinnedModelRenderer Renderer { get; set; }
+
+	private GameObject _ragdoll;
+
+	protected override void OnDestroy()
+	{
+		_ragdoll?.Destroy();
+	}
+
+	protected override void OnEnabled()
+	{
+		if ( !Renderer.IsValid() )
+			return;
+
+		using var batch = Scene.BatchGroup();
+
+		_ragdoll = new GameObject( true, "Ragdoll" );
+		_ragdoll.Tags.Add( "ragdoll" );
+		_ragdoll.WorldTransform = WorldTransform;
+
+		var mainBody = _ragdoll.Components.Create<SkinnedModelRenderer>();
+		mainBody.CopyFrom( Renderer );
+		mainBody.UseAnimGraph = false;
+
+		CopyClothing( mainBody );
+
+		var physics = _ragdoll.Components.Create<ModelPhysics>();
+		physics.Model = mainBody.Model;
+		physics.Renderer = mainBody;
+
+		// Must dispose batch before copying bones so physics bodies exist
+		batch.Dispose();
+		physics.CopyBonesFrom( Renderer, true );
+	}
+
+	private void CopyClothing( SkinnedModelRenderer mainBody )
+	{
+		var clothingRenderers = Renderer.GameObject.Children
+			.SelectMany( x => x.Components.GetAll<SkinnedModelRenderer>() );
+
+		foreach ( var clothing in clothingRenderers )
+		{
+			if ( !clothing.IsValid() )
+				continue;
+
+			var clothingObject = new GameObject( true, clothing.GameObject.Name );
+			clothingObject.Parent = _ragdoll;
+
+			var item = clothingObject.Components.Create<SkinnedModelRenderer>();
+			item.CopyFrom( clothing );
+			item.BoneMergeTarget = mainBody;
+		}
 	}
 }
