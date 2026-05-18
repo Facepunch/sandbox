@@ -93,6 +93,9 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	float bobCycleControl;
 	TimeSince bobCycleMoving;
 
+	// Noclip positional offset (lowered weapon)
+	float noclipOffset;
+
 	protected override void OnStart()
 	{
 		foreach ( var renderer in GetComponentsInChildren<ModelRenderer>() )
@@ -136,7 +139,33 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		WorldRotation = cc.WorldRotation;
 
 		ApplyInertia();
+		ApplyNoclipOffset();
 		ApplyAnimationTransform( cc );
+	}
+
+	void ApplyNoclipOffset()
+	{
+		var player = GetComponentInParent<Player>();
+		var weapon = GetComponentInParent<IronSightsWeapon>();
+		var isAiming = weapon.IsValid() && weapon.IsAiming;
+		var wantsOffset = player.IsValid() && player.IsNoclipping && !isAiming;
+
+		var speed = isAiming ? 15f : 4f; // Fast transition if going into ironsights, slower otherwise.
+		noclipOffset = noclipOffset.LerpTo( wantsOffset ? 1f : 0f, Time.Delta * speed );
+
+		if ( noclipOffset > 0.001f )
+		{
+			var t = Time.Now * 0.3f;
+			var sway = new Vector3(
+				MathF.Sin( t * MathF.Tau ) * 0.15f,
+				MathF.Sin( t * MathF.Tau + 2f ) * 0.1f,
+				MathF.Sin( t * MathF.Tau + 4f ) * 0.1f
+			);
+
+			WorldPosition += WorldRotation.Down * noclipOffset * 1.6f;
+			WorldPosition += WorldRotation.Backward * noclipOffset * 0.9f;
+			WorldPosition += (WorldRotation.Right * sway.x + WorldRotation.Up * sway.y + WorldRotation.Forward * sway.z) * noclipOffset;
+		}
 	}
 
 	void ApplyAnimationTransform( CameraComponent cc )
