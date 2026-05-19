@@ -41,39 +41,57 @@ PS
     #include "common/pixel.hlsl"
 
 	Texture2D g_tSelfIllumMask < Attribute( "Emissive" ); >;
+	CreateInputTexture2D( TextureAmbientOcclusion, Linear, 8, "", "_ao", "Material,10/Ambient Occlusion", Default( 1.0 ) );
+	CreateInputTexture2D( TextureRoughness, Linear, 8, "", "_rough", "Material,10/Roughness", Default( 0.5 ) );
+	CreateInputTexture2D( TextureNormal, Linear, 8, "NormalizeNormals", "_normal", "Material,10/Normal", Default3( 0.5, 0.5, 1.0 ) );
+	CreateTexture2D( g_tAo ) < Channel( R, Box( TextureAmbientOcclusion ), Linear ); OutputFormat( BC7 ); SrgbRead( false ); >;
+	CreateTexture2D( g_tRoughness ) < Channel( R, Box( TextureRoughness ), Linear ); OutputFormat( BC7 ); SrgbRead( false ); >;
+	CreateTexture2D( g_tNormal ) < Channel( RGB, Box( TextureNormal ), Linear ); OutputFormat( DXT5 ); SrgbRead( false ); >;
 
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		Material m = Material::From( i );
 
-		float4 color = ShadingModelStandard::Shade( i, m );
+		// Dot matrix grid resolution
+		float2 grid = float2( 4, 1 ) * 8;
+		float2 uv = i.vTextureCoords.xy;
 
-		float2 grid = float2( 4, 1 ) * 32;
-		float2 uv = i.vTextureCoords.xy + ( 0.5 / grid );
-		float2 mod = 1 - distance( fmod( uv * grid + 0.5, 1 ), 0.5 );
+		// Snap UV to nearest dot center for pixelated sampling
+		float2 snappedUv = ( floor( uv * grid ) + 0.5 ) / grid;
 
-		uv = round( uv * grid ) / grid;
+		// Sample the emissive texture at the snapped dot center
+        float3 emissive = g_tSelfIllumMask.SampleLevel(g_sPointClamp, uv, 0).rgb;
+        emissive = max(emissive, float3(0.005,0.005,0.00f)); // Ensure a minimum glow for visible dots
 
-		color.rgb += g_tSelfIllumMask.SampleLevel( g_sPointClamp, uv, 0 ).rgb * 5;
-		color.rgb *= g_tSelfIllumMask.SampleLevel( g_sPointClamp, uv, 1 ).rgb * 2;
+		// Dot matrix cell coordinates [0,1] within each dot
+		float2 cell = frac( uv * grid );
+		float2 cellCentered = cell - 0.5;
 
-		float offs = 0.03;
-		color.gbr += g_tSelfIllumMask.SampleLevel( g_sPointClamp, i.vTextureCoords.xy + float2( sin(g_flTime * 200) * offs, sin(g_flTime * 65) * offs * 4 ), 1 ).rgb * 0.2;
-		color.brg += g_tSelfIllumMask.SampleLevel( g_sPointClamp, i.vTextureCoords.xy - float2( sin(g_flTime * 300) * offs, sin(g_flTime * 60) * offs * 4), 1 ).rgb * 0.2;
+		// Circular dot mask - each pixel is a soft round dot
+		float dotRadius = 0.38;
+		float dist = length( cellCentered );
+		float dot = 1.0 - smoothstep( dotRadius - 0.08, dotRadius + 0.08, dist );
 
-    	// Simulate strobing using a sine wave over time and screen Y
-    	float strobe = sin((i.vTextureCoords.y - g_flTime * 8.0) * 2.0) * 0.5 + 0.5;
+		// Subtle dome shading on each dot for that raised LCD bump look
+		float dome = 1.0 - smoothstep( 0.0, dotRadius, dist ) * 0.25;
 
-    	// Soften the strobe line
-    	strobe = smoothstep(0.1, 0.9, strobe);
+		// Build the LCD pixel color: emissive content on dot, dark between dots
+		float3 lcdColor = emissive * dot * dome * 5.0f;
 
-    	// Subtle scanline brightness
-    	color.rgb += lerp(0.01, 0.04, strobe) * float3( 1, 0.8, 1 );
-		
+		// Slow scanline refresh sweep - subtle brightness band rolling down
+		float scanline = sin( ( uv.y - g_flTime * 1.5 ) * 80.0 ) * 0.5 + 0.5;
+		scanline = smoothstep( 0.3, 0.7, scanline );
+		lcdColor *= lerp( 0.92, 1.0, scanline );
 
-		// round pixel
-		color.rgb *= saturate( mod.x - 0.2 );
+		// Very subtle horizontal line structure (LCD row gaps)
+		float rowLine = smoothstep( 0.0, 0.06, abs( cellCentered.y ) );
+		lcdColor *= lerp( 0.85, 1.0, rowLine );
 
-		return color;
+        m.Albedo = 0.0f;
+        m.AmbientOcclusion = g_tAo.Sample( g_sAniso, i.vTextureCoords.xy ).r;
+        m.Roughness = g_tRoughness.Sample( g_sAniso, i.vTextureCoords.xy ).r;
+        m.Normal = TransformNormal( DecodeNormal( g_tNormal.Sample( g_sAniso, i.vTextureCoords.xy ).rgb ), i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
+        m.Emission = lcdColor.rgb;
+		return ShadingModelStandard::Shade( i, m );
 	}
 }

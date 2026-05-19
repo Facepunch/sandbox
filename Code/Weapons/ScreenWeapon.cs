@@ -19,7 +19,7 @@ public partial class ScreenWeapon : BaseCarryable
 	/// </summary>
 	protected virtual string ScreenMaterialPath => "weapons/toolgun/toolgun-screen.vmat";
 
-	protected virtual Vector2Int ScreenTextureSize => new( 512, 128 );
+	protected virtual Vector2Int ScreenTextureSize => new( 32, 8 );
 
 	/// <summary>
 	/// Minimum time in seconds between screen redraws

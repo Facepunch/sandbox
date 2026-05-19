@@ -188,11 +188,9 @@ public abstract partial class ToolMode : Component, IToolInfo
 		var title = Game.Language.GetPhrase( TypeDescription.Title.TrimStart( '#' ) );
 		var t = $"{TypeDescription.Icon} {title}";
 
-		var text = new TextRendering.Scope( t, Color.White, 64 );
-		text.LineHeight = 0.75f;
-		text.FontName = "Poppins";
+		var text = new TextRendering.Scope( t, Color.White, 6 );
+		text.FontName = "Not Jam Chunky Sans 6";
 		text.TextColor = Color.Orange;
-		text.FontWeight = 700;
 
 		var measured = text.Measure();
 	    float textW = measured.x;
@@ -206,8 +204,8 @@ public abstract partial class ToolMode : Component, IToolInfo
 	
 	    // Marquee: scroll text right-to-left, looping seamlessly.
 	    // The render target viewport naturally clips anything outside [0, rect.Width].
-	    const float scrollSpeed = 80f;
-	    const float gap = 60f;
+	    const float scrollSpeed = 5f;
+	    const float gap = 4f;
 	    float cycle = textW + gap;
 	    float offset = (Time.Now * scrollSpeed) % cycle;
 	
