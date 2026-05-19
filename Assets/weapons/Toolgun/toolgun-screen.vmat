@@ -6,4 +6,9 @@ Layer0
 
 	//---- Fog ----
 	g_bFogEnabled "1"
+
+	//---- Material ----
+	TextureAmbientOcclusion "weapons/toolgun/v_toolgun_screen_ao.png"
+	TextureNormal "weapons/toolgun/v_toolgun_screen_normal.png"
+	TextureRoughness "weapons/toolgun/v_toolgun_screen_rough.png"
 }

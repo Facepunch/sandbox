@@ -204,13 +204,13 @@
 	public virtual void DrawScreen( Rect rect, Painter paint )
 	{
 		using var state = paint.Scope();
-		const float nameSize = 100f;
-		const float scrollSpeed = 120f;
+		const float nameSize = 6f;
+		const float scrollSpeed = 5f;
 
 		var look = HudStyle.For( Scene );
 		var title = Game.Language.GetPhrase( TypeDescription.Title.TrimStart( '#' ) ).ToUpperInvariant();
 
-		paint.TextStyle = new TextStyle( HudStyle.Font, nameSize, look.Glow( Color.White ) ) { FontWeight = 700, Alignment = TextFlag.LeftCenter | TextFlag.SingleLine };
+		paint.TextStyle = new TextStyle( "Not Jam Chunky Sans 6", nameSize, look.Glow( Color.White ) ) { Alignment = TextFlag.LeftCenter | TextFlag.SingleLine };
 		var textWidth = paint.MeasureText( title ).x;
 
 		// copies a half screen apart loop right-to-left, entering from the right edge
