@@ -50,48 +50,72 @@ PS
 
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
-		Material m = Material::From( i );
-
-		// Dot matrix grid resolution
-		float2 grid = float2( 4, 1 ) * 8;
 		float2 uv = i.vTextureCoords.xy;
 
-		// Snap UV to nearest dot center for pixelated sampling
-		float2 snappedUv = ( floor( uv * grid ) + 0.5 ) / grid;
+		//
+		// Pass 1: Outer layer - the physical screen surface
+		//
+		Material outer = Material::From( i );
+		outer.Albedo = 0.0f;
+		outer.AmbientOcclusion = g_tAo.Sample( g_sAniso, uv ).r;
+		outer.Roughness = g_tRoughness.Sample( g_sAniso, uv ).r;
+		outer.Normal = TransformNormal( DecodeNormal( g_tNormal.Sample( g_sAniso, uv ).rgb ), i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
+		outer.Emission = 0.0f;
 
-		// Sample the emissive texture at the snapped dot center
-        float3 emissive = g_tSelfIllumMask.SampleLevel(g_sPointClamp, uv, 0).rgb;
-        emissive = max(emissive, float3(0.005,0.005,0.00f)); // Ensure a minimum glow for visible dots
+		float4 outerShaded = ShadingModelStandard::Shade( i, outer );
 
-		// Dot matrix cell coordinates [0,1] within each dot
+		//
+		// Pass 2: Inner LCD layer - dot matrix with per-dot normals and roughness
+		//
+		float2 grid = float2( 4, 1 ) * 8;
+
+		// Sample emissive content
+		float3 emissive = g_tSelfIllumMask.SampleLevel( g_sPointClamp, uv, 0 ).rgb;
+
+		// Dot matrix cell coordinates
 		float2 cell = frac( uv * grid );
 		float2 cellCentered = cell - 0.5;
 
-		// Circular dot mask - each pixel is a soft round dot
 		float dotRadius = 0.38;
 		float dist = length( cellCentered );
-		float dot = 1.0 - smoothstep( dotRadius - 0.08, dotRadius + 0.08, dist );
+		float dotMask = 1.0 - smoothstep( dotRadius - 0.08, dotRadius + 0.08, dist );
 
-		// Subtle dome shading on each dot for that raised LCD bump look
+		// Per-dot hemisphere normals in tangent space
+		float2 nxy = cellCentered / dotRadius;
+		float nzSq = saturate( 1.0 - dot( nxy, nxy ) );
+		float3 domeNormalTs = float3( nxy.x, nxy.y, sqrt( nzSq ) );
+		domeNormalTs = normalize( domeNormalTs );
+
+		// Transform dome normal to world space, blend with flat normal outside dots
+		float3 domeNormalWs = TransformNormal( domeNormalTs, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
+		float3 lcdNormal = lerp( i.vNormalWs, domeNormalWs, dotMask );
+
+		// Dome shading falloff
 		float dome = 1.0 - smoothstep( 0.0, dotRadius, dist ) * 0.25;
 
-		// Build the LCD pixel color: emissive content on dot, dark between dots
-		float3 lcdColor = emissive * dot * dome * 5.0f;
+		// LCD emissive color
+		float3 lcdColor = emissive * dotMask * dome * 5.0f;
 
-		// Slow scanline refresh sweep - subtle brightness band rolling down
+		// Scanline refresh sweep
 		float scanline = sin( ( uv.y - g_flTime * 1.5 ) * 80.0 ) * 0.5 + 0.5;
 		scanline = smoothstep( 0.3, 0.7, scanline );
-		lcdColor *= lerp( 0.92, 1.0, scanline );
+		lcdColor *= lerp( 0.9, 1.0, scanline );
 
-		// Very subtle horizontal line structure (LCD row gaps)
+		// Horizontal row gaps
 		float rowLine = smoothstep( 0.0, 0.06, abs( cellCentered.y ) );
 		lcdColor *= lerp( 0.85, 1.0, rowLine );
 
-        m.Albedo = 0.0f;
-        m.AmbientOcclusion = g_tAo.Sample( g_sAniso, i.vTextureCoords.xy ).r;
-        m.Roughness = g_tRoughness.Sample( g_sAniso, i.vTextureCoords.xy ).r;
-        m.Normal = TransformNormal( DecodeNormal( g_tNormal.Sample( g_sAniso, i.vTextureCoords.xy ).rgb ), i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
-        m.Emission = lcdColor.rgb;
-		return ShadingModelStandard::Shade( i, m );
+		// LCD dots are glossy, gaps between are rough/invisible
+		Material lcd = Material::From( i );
+		lcd.Albedo = 0.0f;
+		lcd.AmbientOcclusion = 1.0f;
+		lcd.Roughness = lerp( 1.0, 0.25, dotMask );
+		lcd.Normal = lcdNormal;
+		lcd.Emission = lcdColor;
+
+		float4 lcdShaded = ShadingModelStandard::Shade( i, lcd );
+
+		// Composite: sum both layers
+		return outerShaded + lcdShaded;
 	}
 }
