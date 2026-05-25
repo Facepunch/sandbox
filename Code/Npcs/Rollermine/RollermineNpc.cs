@@ -196,6 +196,7 @@ public class RollermineNpc : Npc, Component.IDamageable, Component.ICollisionLis
 	void IDamageable.OnDamage( in DamageInfo damage )
 	{
 		if ( IsProxy ) return;
+		if ( Health <= 0f ) return;
 
 		Health -= damage.Damage;
 

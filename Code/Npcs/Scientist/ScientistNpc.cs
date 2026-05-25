@@ -129,6 +129,8 @@ public class ScientistNpc : Npc, Component.IDamageable
 	{
 		if ( IsProxy )
 			return;
+		if ( Health < 1f )
+			return;
 
 		Health -= damage.Damage;
 
