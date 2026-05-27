@@ -323,6 +323,8 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		var dmg = new DamageInfo( 999999, null, null );
 		dmg.Tags.Add( DamageTags.GibAlways );
+		dmg.Origin = prop.WorldPosition;
+		dmg.Force = Vector3.Up * 100f;
 		damageable.OnDamage( in dmg );
 	}
 

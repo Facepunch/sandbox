@@ -324,20 +324,29 @@ public partial class BaseCarryable : Component, IKillIcon
 		var attacker = EffectiveAttacker;
 
 		var damagable = attack.Target.GetComponentInParent<IDamageable>();
+		var rb = attack.Target.GetComponentInChildren<Rigidbody>();
+		var dir = Vector3.Direction( attack.Origin, attack.Position );
+
+		// Previous bullet force stuff, so the calculated force is the same as before. 
+		const float BulletVelocity = 100f;
+		var bulletForce = rb.IsValid() ? dir * rb.Mass * BulletVelocity : Vector3.Zero;
+
 		if ( damagable is not null )
 		{
 			var info = new DamageInfo( attack.Damage, attacker, GameObject, attack.Hitbox );
 			info.Position = attack.Position;
 			info.Origin = attack.Origin;
 			info.Tags = attack.Tags;
+			if ( bulletForce != Vector3.Zero )
+				info.Force = dir * BulletVelocity;
 
 			damagable.OnDamage( info );
 		}
 
-		if ( attack.Target.GetComponentInChildren<Rigidbody>() is var rb && rb.IsValid() )
+		if ( rb.IsValid() )
 		{
 			// TODO: Scale this based on damage?
-			rb.ApplyImpulseAt( attack.Position, Vector3.Direction( attack.Origin, attack.Position ) * rb.Mass * 100 );
+			rb.ApplyImpulseAt( attack.Position, bulletForce );
 		}
 	}
 
