@@ -86,7 +86,12 @@ public partial class BaseBulletWeapon : BaseWeapon
 			.UseHitboxes()
 			.Run();
 
-		ShootEffects( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface );
+		// Extract bone index from hitbox if available for accurate decal parenting
+		int boneIndex = -1;
+		if ( tr.Hitbox != null && tr.Hitbox.Bone != null )
+			boneIndex = tr.Hitbox.Bone.Index;
+
+		ShootEffects( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface, boneIndex );
 		TraceAttack( TraceAttackInfo.From( tr, config.Damage ) );
 		TimeSinceShoot = 0;
 
@@ -115,7 +120,7 @@ public partial class BaseBulletWeapon : BaseWeapon
 	}
 
 	[Rpc.Broadcast]
-	public void ShootEffects( Vector3 hitpoint, bool hit, Vector3 normal, GameObject hitObject, Surface hitSurface, Vector3? origin = null, bool noEvents = false )
+	public void ShootEffects( Vector3 hitpoint, bool hit, Vector3 normal, GameObject hitObject, Surface hitSurface, int boneIndex = -1, Vector3? origin = null, bool noEvents = false )
 	{
 		if ( Application.IsDedicatedServer ) return;
 		if ( !hitSurface.IsValid() ) return;
@@ -168,21 +173,35 @@ public partial class BaseBulletWeapon : BaseWeapon
 		if ( hitObject.GetComponentInChildren<SkinnedModelRenderer>() is not { CreateBoneObjects: true } skinned )
 			return;
 
-		// find closest bone
-		var bones = skinned.GetBoneTransforms( true );
+		// Note this does require bone objects to be enabled on the skinned model renderer
+		GameObject closestBone = null;
 
-		var closestDist = float.MaxValue;
-
-		for ( var i = 0; i < bones.Length; i++ )
+		// If we have a valid bone index from the hitbox, use that for accurate decal placement
+		if ( boneIndex >= 0 )
 		{
-			var bone = bones[i];
-			var dist = bone.Position.Distance( hitpoint );
-			if ( dist < closestDist )
+			closestBone = skinned.GetBoneObject( boneIndex );
+		}
+
+		// Else we use the closest bone to the hit point which is less accurate
+		if ( !closestBone.IsValid() )
+		{
+			var bones = skinned.GetBoneTransforms( true );
+			var closestDist = float.MaxValue;
+
+			for ( var i = 0; i < bones.Length; i++ )
 			{
-				closestDist = dist;
-				impact.SetParent( skinned.GetBoneObject( i ), true );
+				var bone = bones[i];
+				var dist = bone.Position.Distance( hitpoint );
+				if ( dist < closestDist )
+				{
+					closestDist = dist;
+					closestBone = skinned.GetBoneObject( i );
+				}
 			}
 		}
+
+		if ( closestBone.IsValid() )
+			impact.SetParent( closestBone, true );
 	}
 
 	public record struct BulletConfiguration
