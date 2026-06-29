@@ -319,6 +319,13 @@ public partial class BaseCarryable : Component, IKillIcon
 		if ( !attack.Target.IsValid() )
 			return;
 
+		// Impact before the damage, so the prop gets the impulse and can pass it down to gibs.
+		if ( attack.Target.GetComponentInChildren<Rigidbody>() is var rb && rb.IsValid() )
+		{
+			// TODO: Scale this based on damage?
+			rb.ApplyImpulseAt( attack.Position, Vector3.Direction( attack.Origin, attack.Position ) * rb.Mass * 100 );
+		}
+
 		// Use owner as attacker when held by a player, seated player when controlled from a
 		// contraption seat, or fall back to the weapon itself (standalone/world weapon)
 		var attacker = EffectiveAttacker;
@@ -334,12 +341,6 @@ public partial class BaseCarryable : Component, IKillIcon
 			};
 
 			dmg.OnDamage( info );
-		}
-
-		if ( attack.Target.GetComponentInChildren<Rigidbody>() is var rb && rb.IsValid() )
-		{
-			// TODO: Scale this based on damage?
-			rb.ApplyImpulseAt( attack.Position, Vector3.Direction( attack.Origin, attack.Position ) * rb.Mass * 100 );
 		}
 	}
 
