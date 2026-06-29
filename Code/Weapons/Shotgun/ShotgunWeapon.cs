@@ -61,7 +61,7 @@ public sealed class ShotgunWeapon : IronSightsWeapon
 		{
 			if ( ShootForce > 0f && GetComponent<Rigidbody>( true ) is var rb )
 			{
-				var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? WorldTransform;
+				var muzzle = WeaponModel?.MuzzleGameObject?.WorldTransform ?? WorldTransform;
 				rb.ApplyForce( muzzle.Rotation.Up * ShootForce );
 			}
 			return;

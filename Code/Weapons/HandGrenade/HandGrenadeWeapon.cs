@@ -10,7 +10,7 @@ public enum ThrowType
 /// A throwable grenade weapon
 /// Cooks while held — explodes in hand if held too long
 /// </summary>
-public sealed class HandGrenadeWeapon : BaseWeapon
+public sealed class HandGrenadeWeapon : BaseGun
 {
 	[Property] public GameObject Prefab { get; set; }
 	[Property] public float ThrowPower { get; set; } = 1200f;

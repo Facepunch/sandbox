@@ -104,7 +104,7 @@ public partial class Physgun
 
 		if ( _state.Active && !_state.Pulling )
 		{
-			var muzzle = HasOwner ? MuzzleTransform.WorldTransform : CurrentAimTransform;
+			var muzzle = HasOwner ? GetMuzzleTransform() : CurrentAimTransform;
 			UpdateBeam( muzzle, _state.EndPoint, _stateHovered.EndNormal, _state.IsValid() );
 		}
 		else
@@ -280,7 +280,7 @@ public partial class Physgun
 		{
 			ViewModel?.RunEvent<ViewModel>( x => x.OnAttack() );
 
-			var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? player.EyeTransform;
+			var muzzle = WeaponModel?.MuzzleGameObject?.WorldTransform ?? player.EyeTransform;
 
 			_state = _stateHovered with { Active = true, Pulling = false };
 

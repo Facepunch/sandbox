@@ -1,6 +1,6 @@
 using Sandbox.Citizen;
 
-public partial class BaseCarryable : Component
+public partial class BaseCarryable
 {
 	public interface IEvent : ISceneEvent<IEvent>
 	{
@@ -8,12 +8,13 @@ public partial class BaseCarryable : Component
 		public void OnDestroyWorldModel() { }
 	}
 
-	[Property, Feature( "WorldModel" )] public GameObject WorldModelPrefab { get; set; }
+	// WorldModelPrefab is inherited from the engine BaseWeapon (same serialized name). ParentBone is
+	// kept (engine uses "HoldBone") because the game's CreateWorldModel override reads it.
 	[Property, Feature( "WorldModel" )] public GameObject DroppedGameObject { get; set; }
 	[Property, Feature( "WorldModel" )] public CitizenAnimationHelper.HoldTypes HoldType { get; set; } = CitizenAnimationHelper.HoldTypes.HoldItem;
 	[Property, Feature( "WorldModel" )] public string ParentBone { get; set; } = "hold_r";
 
-	protected void CreateWorldModel()
+	protected override void CreateWorldModel()
 	{
 		var player = GetComponentInParent<PlayerController>();
 		if ( player?.Renderer is null ) return;
@@ -69,7 +70,7 @@ public partial class BaseCarryable : Component
 		}
 	}
 
-	protected void DestroyWorldModel()
+	protected override void DestroyWorldModel()
 	{
 		if ( WorldModel.IsValid() )
 			IEvent.PostToGameObject( WorldModel, x => x.OnDestroyWorldModel() );

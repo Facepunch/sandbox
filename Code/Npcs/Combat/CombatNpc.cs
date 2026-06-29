@@ -38,7 +38,7 @@ public class CombatNpc : Npc, Component.IDamageable
 	/// The weapon this NPC uses to attack.
 	/// </summary>
 	[Property]
-	public BaseWeapon Weapon { get; set; }
+	public BaseGun Weapon { get; set; }
 
 	[Property, Group( "Balance" ), Range( 512, 4096 ), Step( 1 ), ClientEditable, Sync]
 	public float AttackRange { get; set; } = 1024f;

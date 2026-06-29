@@ -26,7 +26,7 @@
           "_type": "gameobject",
           "prefab": "weapons/common/effects/eject_rifle.prefab"
         },
-        "EjectTransform": {
+        "ShellEjectGameObject": {
           "_type": "gameobject",
           "go": "f356ae8a-95fe-4a7b-9afe-dc337736eb24"
         },
@@ -38,7 +38,7 @@
           "_type": "gameobject",
           "prefab": "prefabs/weapon_effects/rifle_muzzleflash.prefab"
         },
-        "MuzzleTransform": {
+        "MuzzleGameObject": {
           "_type": "gameobject",
           "go": "cee08223-1f37-41fa-a57a-5ac8be70a8f9"
         },

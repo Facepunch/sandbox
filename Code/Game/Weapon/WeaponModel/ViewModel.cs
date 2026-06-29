@@ -192,12 +192,9 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		Renderer.Set( "move_z", velocity.z );
 	}
 
-	public override void OnAttack()
+	public override void OnAttack( Vector3? hitPoint = null, Vector3? origin = null )
 	{
-		Renderer?.Set( "b_attack", true );
-
-		DoMuzzleEffect();
-		DoEjectBrass();
+		base.OnAttack( hitPoint, origin );
 
 		if ( IsThrowable )
 		{
@@ -209,11 +206,6 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 				Renderer?.Set( "b_pull", false );
 			} );
 		}
-	}
-
-	public override void CreateRangedEffects( BaseWeapon weapon, Vector3 hitPoint, Vector3? origin )
-	{
-		DoTracerEffect( hitPoint, origin );
 	}
 
 	/// <summary>

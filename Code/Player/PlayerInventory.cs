@@ -1,43 +1,26 @@
 using Sandbox.Citizen;
 
-public sealed class PlayerInventory : Component, Local.IPlayerEvents
+public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 {
-	[Property] public int MaxSlots { get; private set; } = 6;
+	// MaxSlots, ActiveItem and the active-item enable/disable + equip/holster come from the engine
+	// InventoryComponent. SetDropped on equip moved to BaseCarryable.OnEquipped.
 
 	[RequireComponent] public Player Player { get; set; }
 
 	/// <summary>
-	/// All weapons currently in the inventory, ordered by slot.
+	/// All weapons currently in the inventory, ordered by slot. Narrowing shim over engine Items.
 	/// </summary>
-	public IEnumerable<BaseCarryable> Weapons => 
-		GetComponentsInChildren<BaseCarryable>( true ).OrderBy( x => x.InventorySlot );
+	public IEnumerable<BaseCarryable> Weapons => Items.OfType<BaseCarryable>();
 
-	[Sync( SyncFlags.FromHost ), Change] public BaseCarryable ActiveWeapon { get; private set; }
-
-	internal void OnActiveWeaponChanged( BaseCarryable oldWeapon, BaseCarryable newWeapon )
-	{
-		if ( oldWeapon.IsValid() )
-			oldWeapon.GameObject.Enabled = false;
-
-		if ( newWeapon.IsValid() )
-		{
-			newWeapon.GameObject.Enabled = true;
-			newWeapon.SetDropped( false );
-		}
-	}
+	/// <summary>
+	/// The currently active weapon. Narrowing shim over the engine's <see cref="InventoryComponent.ActiveItem"/>.
+	/// </summary>
+	public BaseCarryable ActiveWeapon => ActiveItem as BaseCarryable;
 
 	/// <summary>
 	/// Returns the weapon in the given slot, or null if the slot is empty.
 	/// </summary>
-	public BaseCarryable GetSlot( int slot )
-	{
-		if ( slot < 0 || slot >= MaxSlots ) return null;
-		foreach ( var w in Weapons )
-		{
-			if ( w.InventorySlot == slot ) return w;
-		}
-		return null;
-	}
+	public new BaseCarryable GetSlot( int slot ) => base.GetSlot( slot ) as BaseCarryable;
 
 	/// <summary>
 	/// Returns whether the given item could be inserted into the inventory.
@@ -52,7 +35,7 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		if ( existing.IsValid() )
 		{
 			// We already have this weapon — only allow if it can receive ammo
-			if ( existing is BaseWeapon existingWeapon && existingWeapon.UsesAmmo )
+			if ( existing is BaseGun existingWeapon && existingWeapon.UsesAmmo )
 				return existingWeapon.ReserveAmmo < existingWeapon.MaxReserveAmmo;
 
 			return false;
@@ -61,24 +44,7 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		return FindEmptySlot() >= 0;
 	}
 
-	/// <summary>
-	/// Returns the first empty slot index, or -1 if the inventory is full.
-	/// </summary>
-	public int FindEmptySlot()
-	{
-		var weapons = Weapons;
-		for ( int i = 0; i < MaxSlots; i++ )
-		{
-			bool occupied = false;
-			foreach ( var w in weapons )
-			{
-				if ( w.InventorySlot == i ) { occupied = true; break; }
-			}
-			if ( !occupied ) return i;
-		}
-
-		return -1;
-	}
+	// FindEmptySlot is inherited from the engine InventoryComponent.
 
 	internal void GiveDefaultWeapons()
 	{
@@ -131,7 +97,7 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		if ( !existing.IsValid() )
 			return false;
 
-		if ( existing is BaseWeapon existingWeapon && baseCarry is BaseWeapon pickupWeapon && existingWeapon.UsesAmmo )
+		if ( existing is BaseGun existingWeapon && baseCarry is BaseGun pickupWeapon && existingWeapon.UsesAmmo )
 		{
 			if ( existingWeapon.ReserveAmmo >= existingWeapon.MaxReserveAmmo )
 				return true;
@@ -282,7 +248,7 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		if ( !existing.IsValid() )
 			return false;
 
-		if ( existing is BaseWeapon existingWeapon && item is BaseWeapon pickupWeapon && existingWeapon.UsesAmmo )
+		if ( existing is BaseGun existingWeapon && item is BaseGun pickupWeapon && existingWeapon.UsesAmmo )
 		{
 			if ( existingWeapon.ReserveAmmo >= existingWeapon.MaxReserveAmmo )
 			{
@@ -471,7 +437,7 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		if ( ActiveWeapon.IsInUse() )
 			return false;
 
-		if ( item is BaseWeapon weapon && weapon.UsesAmmo )
+		if ( item is BaseGun weapon && weapon.UsesAmmo )
 		{
 			if ( !weapon.HasAmmo() && !weapon.CanReload() )
 			{
@@ -487,7 +453,7 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 	/// If both slots are occupied the items are swapped; if <paramref name="toSlot"/> is
 	/// empty the item is simply relocated.
 	/// </summary>
-	public void MoveSlot( int fromSlot, int toSlot )
+	public new void MoveSlot( int fromSlot, int toSlot )
 	{
 		if ( !Networking.IsHost )
 		{
@@ -522,42 +488,15 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		MoveSlot( fromSlot, toSlot );
 	}
 
-	public BaseCarryable GetBestWeapon()
-	{
-		return Weapons.OrderByDescending( x => x.Value ).FirstOrDefault();
-	}
+	public BaseCarryable GetBestWeapon() => GetBestItem() as BaseCarryable;
 
+	/// <summary>
+	/// Switches to the given weapon. Thin wrapper over the engine inventory's <see cref="InventoryComponent.Switch"/>
+	/// (which handles host-routing and the holster veto). Switch events had no consumers and were dropped.
+	/// </summary>
 	public void SwitchWeapon( BaseCarryable weapon, bool allowHolster = false )
 	{
-		if ( !Networking.IsHost )
-		{
-			HostSwitchWeapon( weapon, allowHolster );
-			return;
-		}
-
-		if ( weapon == ActiveWeapon )
-		{
-			if ( allowHolster )
-			{
-				ActiveWeapon = null;
-			}
-			return;
-		}
-
-		var switchEvent = new PlayerSwitchWeaponEvent { Player = Player, From = ActiveWeapon, To = weapon };
-		Local.IPlayerEvents.PostToGameObject( Player.GameObject, e => e.OnSwitchWeapon( switchEvent ) );
-		Global.IPlayerEvents.Post( e => e.OnPlayerSwitchWeapon( switchEvent ) );
-
-		if ( switchEvent.Cancelled )
-			return;
-
-		ActiveWeapon = weapon;
-	}
-
-	[Rpc.Host]
-	private void HostSwitchWeapon( BaseCarryable weapon, bool allowHolster = false )
-	{
-		SwitchWeapon( weapon, allowHolster );
+		Switch( weapon, allowHolster );
 	}
 
 	protected override void OnUpdate()

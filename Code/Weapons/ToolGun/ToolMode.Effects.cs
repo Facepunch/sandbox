@@ -16,7 +16,7 @@
 
 		Toolgun.SpinCoil();
 
-		var muzzle = Toolgun.MuzzleTransform;
+		var muzzle = Toolgun.GetMuzzleTransform();
 
 		if ( Toolgun.SuccessImpactEffect is GameObject impactPrefab )
 		{
@@ -31,7 +31,7 @@
 		{
 			var wt = target.WorldTransform();
 
-			var go = beamEffect.Clone( new Transform( muzzle.WorldTransform.Position ), null, false );
+			var go = beamEffect.Clone( new Transform( muzzle.Position ), null, false );
 
 			foreach ( var beam in go.GetComponentsInChildren<BeamEffect>( true ) )
 			{

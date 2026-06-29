@@ -1,4 +1,4 @@
-public partial class BaseWeapon
+public partial class BaseGun
 {
 	/// <summary>
 	/// Does this weapon consume ammo at all?

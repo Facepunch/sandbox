@@ -30,7 +30,7 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 
 	private bool HasInput()
 	{
-		var weapon = GetComponent<BaseWeapon>();
+		var weapon = GetComponent<BaseGun>();
 		if ( !weapon.IsValid() ) return false;
 		return weapon.ShootInput.IsEnabled || weapon.SecondaryInput.IsEnabled;
 	}

@@ -48,7 +48,7 @@
     [Property] public Texture AmmoIcon { get; set; }
 
     Player Player => Player.FindLocalPlayer();
-    BaseWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseWeapon;
+    BaseGun Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseGun;
 
     int DisplayHealth => (int)Player.Health;
     int DisplayArmour => (int)Player.Armour;

@@ -21,12 +21,12 @@
         "__enabled": true,
         "Flags": 0,
         "EjectBrass": null,
-        "EjectTransform": {
+        "ShellEjectGameObject": {
           "_type": "gameobject",
           "go": "997deebb-b176-46e1-b280-3c6a12f321f8"
         },
         "MuzzleEffect": null,
-        "MuzzleTransform": {
+        "MuzzleGameObject": {
           "_type": "gameobject",
           "go": "ee2db9cf-6e53-4ee3-82bd-3e1b6d054b8d"
         },

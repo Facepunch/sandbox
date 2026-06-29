@@ -1,6 +1,6 @@
 using Sandbox.Rendering;
 
-public partial class BaseWeapon : BaseCarryable, IPlayerControllable
+public partial class BaseGun : BaseCarryable, IPlayerControllable
 {
 	/// <summary>
 	/// How long after deploying a weapon can you not shoot a gun?

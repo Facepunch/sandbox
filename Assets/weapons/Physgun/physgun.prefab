@@ -591,9 +591,9 @@
             "__enabled": true,
             "Flags": 0,
             "EjectBrass": null,
-            "EjectTransform": null,
+            "ShellEjectGameObject": null,
             "MuzzleEffect": null,
-            "MuzzleTransform": {
+            "MuzzleGameObject": {
               "_type": "gameobject",
               "go": "6fb841db-2a8c-429c-9db2-6dd3298f18f7"
             },

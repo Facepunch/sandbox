@@ -172,7 +172,7 @@ public sealed partial class Player
 			}
 			else
 			{
-				var muzzle = weapon.MuzzleTransform.WorldTransform;
+				var muzzle = weapon.GetMuzzleTransform();
 				var tr = Scene.Trace.Ray( muzzle.Position, muzzle.Position + muzzle.Rotation.Forward * 4096f )
 					.IgnoreGameObjectHierarchy( weapon.GameObject.Root )
 					.Run();

@@ -27,24 +27,17 @@ public record struct TraceAttackInfo( GameObject Target, float Damage, TagSet Ta
 	}
 }
 
-public partial class BaseCarryable : Component, IKillIcon
+public partial class BaseCarryable : Sandbox.BaseWeapon, IKillIcon
 {
-	[Property, Feature( "Inventory" )] public string DisplayName { get; set; } = "My Weapon";
-	[Property, Feature( "Inventory" )] public Texture DisplayIcon { get; set; }
+	// DisplayName, DisplayIcon, Value, Slot, ViewModel and WorldModel are all inherited from the
+	// engine BaseWeapon / BaseInventoryItem. (DisplayIcon also satisfies IKillIcon.)
 
 	/// <summary>
 	/// The prefab to spawn in the world when this item is dropped from the inventory.
 	/// </summary>
 	[Property, Feature( "Inventory" )] public GameObject ItemPrefab { get; set; }
 
-	public GameObject ViewModel { get; protected set; }
-	public GameObject WorldModel { get; protected set; }
-
-	/// <summary>
-	/// Optional explicit muzzle point. Used when no WeaponModel is present (e.g. standalone/seat mode).
-	/// If unset, falls back to the WeaponModel muzzle or the weapon's own GameObject.
-	/// </summary>
-	[Property] public GameObject MuzzleGameObject { get; set; }
+	// MuzzleGameObject is inherited from the engine BaseWeapon.
 
 	/// <summary>
 	/// Used for overriding the display icon
@@ -60,11 +53,6 @@ public partial class BaseCarryable : Component, IKillIcon
 	/// If true the game should hide the hud when holding this weapon. Useful for cameras, or scopes.
 	/// </summary>
 	public virtual bool WantsHideHud => false;
-
-	/// <summary>
-	/// The value of this weapon, used for auto-switch.
-	/// </summary>
-	[Property, Feature( "Inventory" )] public int Value { get; set; } = 0;
 
 	/// <summary>
 	/// Gets a reference to the weapon model for this weapon - if there's a viewmodel, pick the viewmodel, if not, world model.
@@ -92,7 +80,9 @@ public partial class BaseCarryable : Component, IKillIcon
 	/// <summary>
 	/// The owner of this carriable
 	/// </summary>
-	public Player Owner
+	// Hides the engine BaseWeapon.Owner (a PlayerController) with the game's Player-based owner.
+	// Engine-internal code keeps using its own PlayerController owner; game code sees the Player.
+	public new Player Owner
 	{
 		get
 		{
@@ -109,27 +99,19 @@ public partial class BaseCarryable : Component, IKillIcon
 	public virtual bool IsTargetedAim => false;
 
 	/// <summary>
-	/// Unified aim ray for all weapons. Returns the correct ray based on context:
-	/// first-person held, third-person held, seated (targeted or muzzle), or standalone.
+	/// Aim when this weapon isn't held by a player. Controlled from a seat with targeted aim fires
+	/// where the camera looks; otherwise it fires from the muzzle. The held (player) cases - including
+	/// third-person camera aim - are handled by the engine <see cref="Sandbox.BaseWeapon.AimRay"/>.
 	/// </summary>
-	public Ray AimRay
+	protected override Ray UnheldAimRay
 	{
 		get
 		{
-			if ( HasOwner )
-			{
-				var owner = Owner;
-				if ( owner.Controller.IsValid() && owner.Controller.ThirdPerson && Scene.Camera.IsValid() )
-					return Scene.Camera.Transform.World.ForwardRay;
-
-				return owner.EyeTransform.ForwardRay;
-			}
-
 			var seated = ClientInput.Current;
 			if ( seated.IsValid() && IsTargetedAim && Scene.Camera.IsValid() )
 				return Scene.Camera.Transform.World.ForwardRay;
 
-			var muzzle = MuzzleTransform.WorldTransform;
+			var muzzle = GetMuzzleTransform();
 			return new Ray( muzzle.Position, muzzle.Rotation.Forward );
 		}
 	}
@@ -158,23 +140,23 @@ public partial class BaseCarryable : Component, IKillIcon
 	}
 
 	/// <summary>
-	/// Where shoot effects come from. Either the point on the world model or the viewmodel, whichever is currently being used.
+	/// Adds the weapon model's muzzle point on top of the engine's explicit-muzzle / self resolution
+	/// (<see cref="Sandbox.BaseWeapon.GetMuzzleTransform"/>).
 	/// </summary>
-	public GameObject MuzzleTransform
+	public override Transform GetMuzzleTransform()
 	{
-		get
-		{
-			if ( WeaponModel?.MuzzleTransform.IsValid() ?? false ) return WeaponModel.MuzzleTransform;
-			if ( MuzzleGameObject.IsValid() ) return MuzzleGameObject;
-			return GameObject;
-		}
+		var modelMuzzle = WeaponModel?.MuzzleGameObject;
+		if ( modelMuzzle.IsValid() )
+			return modelMuzzle.WorldTransform;
+
+		return base.GetMuzzleTransform();
 	}
 
 	/// <summary>
-	/// The inventory slot this item is assigned to, or -1 if unassigned.
-	/// Set at runtime when picked up.
+	/// The inventory slot this item is assigned to, or -1 if unassigned. Back-compat shim over the
+	/// engine inventory's <see cref="BaseInventoryItem.Slot"/>.
 	/// </summary>
-	[Sync( SyncFlags.FromHost )] public int InventorySlot { get; set; } = -1;
+	public int InventorySlot { get => Slot; set => Slot = value; }
 
 	/// <summary>
 	/// This is shite
@@ -197,15 +179,19 @@ public partial class BaseCarryable : Component, IKillIcon
 		return true;
 	}
 
-	protected override void OnEnabled()
-	{
-		CreateWorldModel();
-	}
+	/// <summary>
+	/// Bridges the game's <see cref="CanSwitch"/> into the engine inventory's switch gate.
+	/// </summary>
+	protected override bool OnCanSwitchTo() => CanSwitch();
 
-	protected override void OnDisabled()
+	/// <summary>
+	/// The engine creates the view/world models on equip and destroys them on holster. We additionally
+	/// disable the dropped/physics components while held.
+	/// </summary>
+	protected override void OnEquipped()
 	{
-		DestroyWorldModel();
-		DestroyViewModel();
+		base.OnEquipped();
+		SetDropped( false );
 	}
 
 	protected override void OnUpdate()

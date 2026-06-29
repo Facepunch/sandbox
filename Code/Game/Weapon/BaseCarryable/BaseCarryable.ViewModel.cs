@@ -1,8 +1,9 @@
-public partial class BaseCarryable : Component
+public partial class BaseCarryable
 {
-	[Property, Feature( "ViewModel" )] public GameObject ViewModelPrefab { get; set; }
+	// ViewModelPrefab is inherited from the engine BaseWeapon (same serialized name). We override the
+	// creation so we can call the game ViewModel component's Deploy().
 
-	protected void CreateViewModel()
+	protected override void CreateViewModel()
 	{
 		if ( ViewModel.IsValid() )
 			return;
@@ -23,10 +24,10 @@ public partial class BaseCarryable : Component
 		var vm = ViewModel.GetComponent<ViewModel>();
 
 		if ( vm.IsValid() )
-			vm.Deploy();
+			vm.OnDeploy();
 	}
 
-	protected void DestroyViewModel()
+	protected override void DestroyViewModel()
 	{
 		if ( !ViewModel.IsValid() )
 			return;

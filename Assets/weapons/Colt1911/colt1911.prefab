@@ -220,7 +220,7 @@
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "EjectTransform": {
+            "ShellEjectGameObject": {
               "_type": "gameobject",
               "go": "37ca82b9-6e0f-9bf5-f5a0-064d606f6f56"
             },
@@ -228,7 +228,7 @@
               "_type": "gameobject",
               "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
             },
-            "MuzzleTransform": {
+            "MuzzleGameObject": {
               "_type": "gameobject",
               "go": "26b971a8-5dfe-8ae4-e49f-f53c5f5e5e45"
             },

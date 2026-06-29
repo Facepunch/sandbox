@@ -1,4 +1,4 @@
-public partial class BaseBulletWeapon : BaseWeapon
+public partial class BaseBulletWeapon : BaseGun
 {
 	[Property]
 	public SoundEvent ShootSound { get; set; }
@@ -96,7 +96,7 @@ public partial class BaseBulletWeapon : BaseWeapon
 			// Simulate physical recoil by pushing the weapon opposite to its fire direction
 			if ( ShootForce > 0f && GetComponent<Rigidbody>( true ) is var rb )
 			{
-				var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? WorldTransform;
+				var muzzle = WeaponModel?.MuzzleGameObject?.WorldTransform ?? WorldTransform;
 				rb.ApplyForce( muzzle.Rotation.Up * ShootForce );
 			}
 			return;
@@ -126,8 +126,7 @@ public partial class BaseBulletWeapon : BaseWeapon
 		{
 			if ( WeaponModel.IsValid() )
 			{
-				WeaponModel.GameObject.RunEvent<WeaponModel>( x => x.OnAttack() );
-				WeaponModel.GameObject.RunEvent<WeaponModel>( x => x.CreateRangedEffects( this, hitpoint, origin ) );
+				WeaponModel.GameObject.RunEvent<WeaponModel>( x => x.OnAttack( hitpoint, origin ) );
 			}
 
 			if ( ShootSound.IsValid() )

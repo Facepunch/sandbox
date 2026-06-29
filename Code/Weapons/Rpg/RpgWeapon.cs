@@ -1,7 +1,7 @@
 ﻿using Sandbox.Rendering;
 using Sandbox.Utility;
 
-public sealed class RpgWeapon : BaseWeapon
+public sealed class RpgWeapon : BaseGun
 {
 	[Property] public float TimeBetweenShots { get; set; } = 2f;
 	[Property] public GameObject ProjectilePrefab { get; set; }
@@ -121,7 +121,7 @@ public sealed class RpgWeapon : BaseWeapon
 			GameObject.PlaySound( ShootSound );
 
 		var ray = AimRay;
-		var muzzlePos = MuzzleTransform.WorldTransform.Position;
+		var muzzlePos = GetMuzzleTransform().Position;
 		var spawnPos = muzzlePos + ray.Forward * 64f;
 
 		if ( HasOwner )

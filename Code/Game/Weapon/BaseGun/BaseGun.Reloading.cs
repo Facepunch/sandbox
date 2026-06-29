@@ -1,6 +1,6 @@
 using System.Threading;
 
-public partial class BaseWeapon
+public partial class BaseGun
 {
 	/// <summary>
 	/// Should we consume 1 bullet per reload instead of filling the clip?
@@ -86,8 +86,8 @@ public partial class BaseWeapon
 	{
 		if ( !HasOwner ) return;
 
-		Assert.True( Owner.Controller.IsValid(), "BaseWeapon::BroadcastReload - Player Controller is invalid!" );
-		Assert.True( Owner.Controller.Renderer.IsValid(), "BaseWeapon::BroadcastReload - Renderer is invalid!" );
+		Assert.True( Owner.Controller.IsValid(), "BaseGun::BroadcastReload - Player Controller is invalid!" );
+		Assert.True( Owner.Controller.Renderer.IsValid(), "BaseGun::BroadcastReload - Renderer is invalid!" );
 
 		Owner.Controller.Renderer.Set( "b_reload", true );
 	}

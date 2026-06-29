@@ -1,18 +1,5 @@
 public sealed class WorldModel : WeaponModel
 {
-	public override void OnAttack()
-	{
-		Renderer?.Set( "b_attack", true );
-
-		DoMuzzleEffect();
-		DoEjectBrass();
-	}
-
-	public override void CreateRangedEffects( BaseWeapon weapon, Vector3 hitPoint, Vector3? origin )
-	{
-		if ( weapon.ViewModel.IsValid() )
-			return;
-
-		DoTracerEffect( hitPoint, origin );
-	}
+	// OnAttack (muzzle flash, brass, tracer) is handled by the engine BaseWeaponModel. The weapon
+	// drives effects on whichever model is visible to each client, so no view-model dedup is needed.
 }
