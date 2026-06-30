@@ -74,22 +74,6 @@ public class CombatNpc : Npc, Component.IDamageable
 	{
 		base.OnStart();
 
-		if ( !IsProxy )
-		{
-			Senses.ScanTags = new TagSet { "player", "friendly_npc", "hostile_npc" };
-
-			if ( Friendly )
-			{
-				GameObject.Tags.Add( "friendly_npc" );
-				Senses.TargetTags = new TagSet { "hostile_npc" };
-			}
-			else
-			{
-				GameObject.Tags.Add( "hostile_npc" );
-				Senses.TargetTags = new TagSet { "player", "friendly_npc" };
-			}
-		}
-
 		if ( Weapon.IsValid() && Renderer.IsValid() )
 		{
 			Weapon.CreateWorldModel( Renderer );
@@ -98,6 +82,13 @@ public class CombatNpc : Npc, Component.IDamageable
 				Animation.SetHoldType( Weapon.HoldType );
 		}
 	}
+
+	// Friendly soldiers fight alongside the player; the rest attack everything living.
+	public override string Faction => Friendly ? "ally" : "enemy";
+
+	protected override Dispositions Dispositions => Friendly
+		? new Dispositions { Traits = { Trait.Living }, Friendly = { Trait.Player }, Hostile = { Trait.Threat } }
+		: new Dispositions { Traits = { Trait.Living, Trait.Threat }, Hostile = { Trait.Living } };
 
 	public override ScheduleBase GetSchedule()
 	{
@@ -145,7 +136,13 @@ public class CombatNpc : Npc, Component.IDamageable
 		if ( IsProxy )
 			return;
 
+		MarkDamaged();
 		Health -= damage.Damage;
+
+		// Turn on whoever hurt us, even a former ally -- this is the runtime
+		// "turn nasty" path the crime/aggro systems will reuse.
+		if ( damage.Attacker.IsValid() )
+			SetDisposition( damage.Attacker, Disposition.Hostile );
 
 		// If we can hear the attacker, treat their position as the last known location
 		if ( damage.Attacker.IsValid() )

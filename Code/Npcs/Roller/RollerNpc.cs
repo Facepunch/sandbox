@@ -156,6 +156,7 @@ public sealed class RollerNpc : Npc, Component.IDamageable, Component.ICollision
 	protected override void OnStart()
 	{
 		base.OnStart();
+
 		Rigidbody = GetComponent<Rigidbody>();
 		_collider = GetComponent<SphereCollider>();
 
@@ -184,6 +185,15 @@ public sealed class RollerNpc : Npc, Component.IDamageable, Component.ICollision
 		UpdateRollSound();
 	}
 
+	// Hunts players, ignores everything else.
+	public override string Faction => "monster";
+
+	protected override Dispositions Dispositions => new()
+	{
+		Traits = { Trait.Threat },
+		Hostile = { Trait.Player },
+	};
+
 	public override ScheduleBase GetSchedule()
 	{
 		var target = Senses.GetNearestVisible();
@@ -197,6 +207,7 @@ public sealed class RollerNpc : Npc, Component.IDamageable, Component.ICollision
 	{
 		if ( IsProxy ) return;
 
+		MarkDamaged();
 		Health -= damage.Damage;
 
 		if ( Health <= 0f )

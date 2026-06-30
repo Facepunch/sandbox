@@ -20,8 +20,8 @@ public sealed class ScientistWanderSchedule : ScheduleBase
 	{
 		var randomDir = Vector3.Random.WithZ( 0 ).Normal;
 
-		// Don't wander toward nearby players
-		var nearest = Npc.Senses.Nearest;
+		// Don't wander toward nearby players (a neutral scientist still shies away)
+		var nearest = Npc.Senses.GetNearestVisible( "player" );
 		if ( nearest.IsValid() )
 		{
 			var toPlayer = (nearest.WorldPosition - GameObject.WorldPosition).WithZ( 0 ).Normal;

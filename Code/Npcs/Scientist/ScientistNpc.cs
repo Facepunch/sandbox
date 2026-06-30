@@ -40,6 +40,25 @@ public sealed class ScientistNpc : Npc, Component.IDamageable
 	private TimeSince _timeSinceHurt;
 	private bool _isFleeing;
 
+	// Defenceless -- flees anything dangerous, indifferent to everyone else.
+	public override string Faction => "citizen";
+
+	protected override Dispositions Dispositions => new()
+	{
+		Traits = { Trait.Living, Trait.Civilian },
+		Fearful = { Trait.Threat, Trait.Predator },
+	};
+
+	protected override NpcAwareness GatherAwareness()
+	{
+		var a = base.GatherAwareness();
+
+		if ( AfraidLevel > 0f )
+			a |= NpcAwareness.Afraid;
+
+		return a;
+	}
+
 	public override ScheduleBase GetSchedule()
 	{
 		var fear = AfraidLevel;
@@ -64,6 +83,16 @@ public sealed class ScientistNpc : Npc, Component.IDamageable
 			flee.Source = _attacker;
 			flee.PanicLevel = fear;
 			return flee;
+		}
+
+		// Flee from anything we're scared of on sight, before it even hurts us.
+		var threat = Senses.GetNearestVisible( Disposition.Fearful );
+		if ( threat.IsValid() )
+		{
+			var sightFlee = GetSchedule<ScientistFleeSchedule>();
+			sightFlee.Source = threat;
+			sightFlee.PanicLevel = 0.5f;
+			return sightFlee;
 		}
 
 		_isFleeing = false;
@@ -130,6 +159,7 @@ public sealed class ScientistNpc : Npc, Component.IDamageable
 		if ( IsProxy )
 			return;
 
+		MarkDamaged();
 		Health -= damage.Damage;
 
 		// Escalate fear — each hit stacks, clamped to 1

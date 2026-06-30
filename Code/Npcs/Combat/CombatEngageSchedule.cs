@@ -66,6 +66,12 @@ public class CombatEngageSchedule : ScheduleBase
 	/// </summary>
 	public float FlankRadius { get; set; } = 250f;
 
+	public override int Priority => SchedulePriority.Combat;
+
+	// Stay focused while fighting -- we end via ShouldCancel (lost sight) or when the
+	// task sequence finishes, not because of incidental stimuli.
+	public override NpcAwareness InterruptedBy => NpcAwareness.None;
+
 	protected override void OnStart()
 	{
 		Npc.Navigation.WishSpeed = EngageSpeed;

@@ -8,6 +8,8 @@ namespace Sandbox.Npcs.Roller.Schedules;
 /// </summary>
 public sealed class RollerChaseSchedule : ScheduleBase
 {
+	public override int Priority => SchedulePriority.Combat;
+
 	protected override void OnStart()
 	{
 		(Npc as RollerNpc)?.SetHunting( true );

@@ -43,13 +43,11 @@ public class CombatFollowSchedule : ScheduleBase
 		AddTask( new Wait( Game.Random.Float( 0.5f, 1.5f ) ) );
 	}
 
+	public override int Priority => SchedulePriority.Ambient;
+
 	protected override void OnEnd()
 	{
 		Npc.Animation.ClearLookTarget();
 	}
 
-	protected override bool ShouldCancel()
-	{
-		return Npc.Senses.GetNearestVisible().IsValid();
-	}
 }

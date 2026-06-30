@@ -29,6 +29,12 @@ public sealed class ScientistFleeSchedule : ScheduleBase
 	/// </summary>
 	public float PanicLevel { get; set; } = 0.5f;
 
+	public override int Priority => SchedulePriority.Survival;
+
+	// Don't get distracted while panicking -- flee ends when the source is gone or we
+	// reach safety, then selection re-evaluates fear.
+	public override NpcAwareness InterruptedBy => NpcAwareness.None;
+
 	protected override void OnStart()
 	{
 		if ( !Source.IsValid() ) return;

@@ -6,6 +6,8 @@ public sealed class ScientistSearchSchedule : ScheduleBase
 {
 	public Vector3 Target { get; set; }
 
+	public override int Priority => SchedulePriority.Alert;
+
 	protected override void OnStart()
 	{
 		AddTask( new MoveTo( Target ) );
@@ -13,8 +15,4 @@ public sealed class ScientistSearchSchedule : ScheduleBase
 		AddTask( new Wait( 1f ) );
 	}
 
-	protected override bool ShouldCancel()
-	{
-		return Npc.Senses.GetNearestVisible().IsValid();
-	}
 }
