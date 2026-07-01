@@ -2,95 +2,44 @@ using Sandbox.Rendering;
 
 public partial class BaseGun : BaseCarryable, IPlayerControllable
 {
-	/// <summary>
-	/// How long after deploying a weapon can you not shoot a gun?
-	/// </summary>
-	[Property] public float DeployTime { get; set; } = 0.5f;
+	// Deploy time, dry fire, auto-reload, the fire/reload loop and the per-fire cooldown all live on the
+	// engine BaseWeapon now. What's left here is the sandbox glue: the AmmoResource layer (BaseGun.Ammo),
+	// the convar-aware ammo gates, seat control, and the HUD.
 
 	public override bool ShouldAvoid => !HasAmmo();
 
 	/// <summary>
-	/// How long until we can shoot again
+	/// Adds a delay before this weapon can fire again. Maps to the engine's per-fire cooldown; a shot
+	/// blocks both triggers (the sandbox uses a single shared cooldown).
 	/// </summary>
-	protected TimeUntil TimeUntilNextShotAllowed;
-
-	/// <summary>
-	/// Adds a delay, making it so we can't shoot for the specified time
-	/// </summary>
-	/// <param name="seconds"></param>
 	public void AddShootDelay( float seconds )
 	{
-		TimeUntilNextShotAllowed = seconds;
-	}
-
-	/// <summary>
-	/// The dry fire sound if we have no ammo
-	/// </summary>
-	private static SoundEvent DryFireSound = new SoundEvent( "sounds/dry_fire.sound" );
-
-	/// <summary>
-	/// Play a dry fire sound. You should only call this on weapons that can't auto reload - if they can, use <see cref="TryAutoReload"/> instead.
-	/// </summary>
-	public void DryFire()
-	{
-		if ( HasAmmo() )
-			return;
-
-		if ( IsReloading() )
-			return;
-
-		if ( TimeUntilNextShotAllowed > 0 )
-			return;
-
-		GameObject.PlaySound( DryFireSound );
-	}
-
-	/// <summary>
-	/// Player has fired an empty gun - play dry fire sound and start reloading. You should only call this on weapons that can reload - if they can't, use <see cref="DryFire"/> instead.
-	/// </summary>
-	public virtual void TryAutoReload()
-	{
-		if ( HasAmmo() )
-			return;
-
-		if ( IsReloading() )
-			return;
-
-		if ( TimeUntilNextShotAllowed > 0 )
-			return;
-
-		DryFire();
-
-		AddShootDelay( 0.1f );
-
-		if ( CanReload() )
-			OnReloadStart();
-	}
-
-	protected override void OnEnabled()
-	{
-		base.OnEnabled();
-
-		AddShootDelay( DeployTime );
+		SetNextPrimaryFire( seconds );
+		SetNextSecondaryFire( seconds );
 	}
 
 	public override void OnAdded( Player player )
 	{
 		base.OnAdded( player );
 
-		if ( !UsesAmmo )
+		if ( !Networking.IsHost )
 			return;
 
-		if ( AmmoType is not null )
+		// Seed the magazine full.
+		if ( UsesAmmo && UsesClips )
+			Clip1 = ClipMaxSize;
+
+		if ( !UsesAmmo || AmmoType is null )
+			return;
+
+		// Seed the shared reserve pool once - only when the player first gets a gun of this ammo type.
+		// Guarding on the pool being empty stops two guns that share a resource from double-seeding it
+		// (and pickup churn from inflating reserve over time).
+		if ( !Inventory.HasAmmo( AmmoType.ResourcePath ) )
 		{
-			// Seed the shared pool with the resource's default if the player has none yet
-			var inv = GetAmmoInventory();
-			if ( inv is not null && !inv.HasAmmo( AmmoType ) && AmmoType.DefaultStartingAmmo > 0 )
-				inv.AddAmmo( AmmoType, AmmoType.DefaultStartingAmmo );
-		}
-		else if ( StartingAmmo > 0 )
-		{
-			_reserveAmmo = Math.Min( StartingAmmo, _maxReserveAmmo );
+			var seed = AmmoType.DefaultStartingAmmo + StartingAmmo;
+			if ( seed > 0 )
+				AddReserveAmmo( seed );
 		}
 	}
 
@@ -99,110 +48,37 @@ public partial class BaseGun : BaseCarryable, IPlayerControllable
 		DrawCrosshair( painter, crosshair );
 	}
 
-	public override void OnPlayerUpdate( Player player )
-	{
-		if ( player is null ) return;
-
-		CreateViewModel();
-
-		GameObject.Network.Interpolation = false;
-
-		if ( !player.IsLocalPlayer )
-			return;
-
-		OnControl( player );
-	}
-
-	public override void OnControl( Player player )
-	{
-		bool wantsToCancelReload = Input.Pressed( "Attack1" ) || Input.Pressed( "Attack2" );
-		if ( CanCancelReload && IsReloading() && wantsToCancelReload && HasAmmo() )
-		{
-			CancelReload();
-		}
-
-		if ( CanReload() && Input.Pressed( "reload" ) )
-		{
-			OnReloadStart();
-		}
-
-		if ( CanPrimaryAttack() && WantsPrimaryAttack() )
-		{
-			PrimaryAttack();
-		}
-
-		if ( CanSecondaryAttack() && WantsSecondaryAttack() )
-		{
-			SecondaryAttack();
-		}
-	}
-
-	protected virtual bool WantsSecondaryAttack()
-	{
-		return Input.Down( "attack2" );
-	}
-
-	protected virtual bool WantsPrimaryAttack()
-	{
-		return Input.Down( "attack1" );
-	}
-
 	/// <summary>
-	/// Override to perform the weapon's primary attack. Default no-op.
+	/// Determines if the primary attack should trigger. Adds the convar-aware ammo gate on top of the
+	/// engine's cooldown / reload checks.
 	/// </summary>
-	public virtual void PrimaryAttack()
-	{
-	}
-
-	/// <summary>
-	/// Override to perform the weapon's secondary attack. Default no-op.
-	/// </summary>
-	public virtual void SecondaryAttack()
-	{
-	}
-
-	/// <summary>
-	/// Determines if the primary attack should trigger
-	/// </summary>
-	public virtual bool CanPrimaryAttack()
+	public override bool CanPrimaryAttack()
 	{
 		if ( HasOwner && !HasAmmo() ) return false;
-		if ( IsReloading() ) return false;
-		if ( TimeUntilNextShotAllowed > 0 ) return false;
+		if ( IsReloading ) return false;
+		if ( NextPrimaryFire > 0 ) return false;
 
 		return true;
 	}
 
-	/// <summary>
-	/// Determines if the secondary attack should trigger
-	/// </summary>
-	public virtual bool CanSecondaryAttack()
+	/// <inheritdoc cref="CanPrimaryAttack"/>
+	public override bool CanSecondaryAttack()
 	{
 		if ( HasOwner && !HasAmmo() ) return false;
-		if ( IsReloading() ) return false;
-		if ( TimeUntilNextShotAllowed > 0 ) return false;
+		if ( IsReloading ) return false;
+		if ( NextSecondaryFire > 0 ) return false;
 
 		return true;
 	}
 
-	/// <summary>
-	/// Override the primary fire rate
-	/// </summary>
-	protected virtual float GetPrimaryFireRate() => 0.1f;
+	//
+	// Seat / contraption control (IPlayerControllable) - sandbox specific.
+	//
 
-	/// <summary>
-	/// Override the secondary fire rate
-	/// </summary>
-	protected virtual float GetSecondaryFireRate() => 0.2f;
-
-	/// <summary>
-	/// The input that fires the primary attack when this weapon is controlled via a seat.
-	/// </summary>
+	/// <summary>The input that fires the primary attack when this weapon is controlled via a seat.</summary>
 	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput ShootInput { get; set; }
 
-	/// <summary>
-	/// The input that fires the secondary attack when this weapon is controlled via a seat.
-	/// </summary>
+	/// <summary>The input that fires the secondary attack when this weapon is controlled via a seat.</summary>
 	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput SecondaryInput { get; set; }
 
 	public bool CanControl( Player player )
@@ -215,10 +91,16 @@ public partial class BaseGun : BaseCarryable, IPlayerControllable
 
 	public void OnEndControl() { }
 
-	public virtual void OnControl()
+	// Seat / contraption control. Explicit interface impl so it doesn't clash with the engine's held-item
+	// OnControl pump; subclasses override OnSeatControl to change the seated behaviour.
+	void IPlayerControllable.OnControl() => OnSeatControl();
+
+	protected virtual void OnSeatControl()
 	{
 		if ( HasOwner ) return;
-		if ( IsProxy ) return;
+		// Seat fire is fully host-authoritative - the host reads the driver's synced ClientInput and runs
+		// the shot for real. No prediction on the driving client (unlike the held FirePrimary path).
+		if ( !Networking.IsHost ) return;
 
 		if ( ShootInput.Down() && CanPrimaryAttack() )
 			PrimaryAttack();
@@ -236,6 +118,7 @@ public partial class BaseGun : BaseCarryable, IPlayerControllable
 		hud.DrawLine( center + Vector2.Up * 32, center + Vector2.Up * 15, 3, color );
 		hud.DrawLine( center - Vector2.Up * 32, center - Vector2.Up * 15, 3, color );
 	}
+
 	protected Color CrosshairCanShoot => Color.White;
 	protected Color CrosshairNoShoot => Color.Red;
 }

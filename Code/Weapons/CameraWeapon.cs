@@ -96,10 +96,8 @@ public sealed class CameraWeapon : BaseGun
 		angles *= sensitivity;
 	}
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
-		base.OnControl( player );
-
 		if ( Input.Pressed( "reload" ) )
 		{
 			fov = 50;

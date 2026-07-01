@@ -52,14 +52,14 @@ public partial class BaseBulletWeapon : BaseGun
 	/// </summary>
 	protected void ShootBullet( float fireRate, in BulletConfiguration config )
 	{
-		if ( HasOwner && ( !HasAmmo() || IsReloading() ) )
+		if ( HasOwner && ( !HasAmmo() || IsReloading ) )
 		{
 			TryAutoReload();
 			return;
 		}
 
-		if ( TimeUntilNextShotAllowed > 0 )
-			return;
+		// Cooldown is gated by the caller (the engine fire loop / CanPrimaryAttack) before we get here -
+		// FirePrimary has already set NextPrimaryFire by this point, so we must not re-check it.
 
 		// Only consume ammo when held by a player
 		if ( HasOwner && !TakeAmmo( 1 ) )
@@ -86,15 +86,22 @@ public partial class BaseBulletWeapon : BaseGun
 			.UseHitboxes()
 			.Run();
 
-		ShootEffects( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface );
-		TraceAttack( TraceAttackInfo.From( tr, config.Damage ) );
+		// Damage and the effects broadcast are authoritative - only the host's run does them, or they'd
+		// double up (the owner's predicted run would route/broadcast as well). The owner still predicts
+		// ammo, recoil and the cooldown above.
+		if ( !Rpc.IsPredicting )
+		{
+			ShootEffects( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface );
+			TraceAttack( TraceAttackInfo.From( tr, config.Damage ) );
+		}
+
 		TimeSinceShoot = 0;
 
 		// Recoil only applies when held by a player
 		if ( !HasOwner )
 		{
 			// Simulate physical recoil by pushing the weapon opposite to its fire direction
-			if ( ShootForce > 0f && GetComponent<Rigidbody>( true ) is var rb )
+			if ( ShootForce > 0f && GetComponent<Rigidbody>( true ) is { } rb )
 			{
 				var muzzle = WeaponModel?.MuzzleGameObject?.WorldTransform ?? WorldTransform;
 				rb.ApplyForce( muzzle.Rotation.Up * ShootForce );
@@ -118,8 +125,9 @@ public partial class BaseBulletWeapon : BaseGun
 	public void ShootEffects( Vector3 hitpoint, bool hit, Vector3 normal, GameObject hitObject, Surface hitSurface, Vector3? origin = null, bool noEvents = false )
 	{
 		if ( Application.IsDedicatedServer ) return;
-		if ( !hitSurface.IsValid() ) return;
 
+		// Fire effects - muzzle flash, shoot sound, attack anim. These always play, regardless of whether
+		// (or what) the shot hit.
 		Owner?.Controller.Renderer.Set( "b_attack", true );
 
 		if ( !noEvents )
@@ -141,7 +149,8 @@ public partial class BaseBulletWeapon : BaseGun
 			}
 		}
 
-		if ( !hit || !hitObject.IsValid() )
+		// Impact effects - only when we hit a valid surface.
+		if ( !hit || !hitObject.IsValid() || !hitSurface.IsValid() )
 			return;
 
 		var baseSurface = hitSurface.GetBaseSurface();

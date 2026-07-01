@@ -144,9 +144,9 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 		};
 	}
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
-		base.OnControl( player );
+		var player = Owner;
 
 		UpdateViewmodelScreen();
 		ApplyCoilSpin();
@@ -353,7 +353,7 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 
 
 	string IToolInfo.Name => "Spawner";
-	string IToolInfo.Description => $"Placing {Spawner.DisplayName}";
+	string IToolInfo.Description => Spawner is null ? "Spawner" : $"Placing {Spawner.DisplayName}";
 	string IToolInfo.PrimaryAction => "Spawn";
 	string IToolInfo.SecondaryAction => "Clear";
 }

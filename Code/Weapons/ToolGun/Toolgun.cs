@@ -44,7 +44,7 @@ public partial class Toolgun : ScreenWeapon
 		Network.Refresh( GameObject );
 	}
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
 		var currentMode = GetCurrentMode();
 		if ( currentMode == null )
@@ -53,8 +53,6 @@ public partial class Toolgun : ScreenWeapon
 		currentMode.OnControl();
 
 		UpdateViewmodelScreen();
-
-		base.OnControl( player );
 
 		ApplyCoilSpin();
 	}

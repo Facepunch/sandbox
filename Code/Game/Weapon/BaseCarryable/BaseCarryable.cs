@@ -63,7 +63,7 @@ public partial class BaseCarryable : Sandbox.BaseWeapon, IKillIcon
 		{
 			var go = ViewModel;
 
-			if ( Scene.Camera.RenderExcludeTags.Contains( "firstperson" ) ) go = default;
+			if ( Scene.Camera.IsValid() && Scene.Camera.RenderExcludeTags.Contains( "firstperson" ) ) go = default;
 
 			if ( !go.IsValid() ) go = WorldModel;
 			if ( !go.IsValid() ) go = GameObject;
@@ -249,31 +249,6 @@ public partial class BaseCarryable : Sandbox.BaseWeapon, IKillIcon
 		CreateViewModel();
 
 		GameObject.Network.Interpolation = false;
-	}
-
-	/// <summary>
-	/// Called every frame, on the owning player's client.
-	/// </summary>
-	public virtual void OnPlayerUpdate( Player player )
-	{
-		Assert.True( !IsProxy );
-
-		try
-		{
-			OnControl( player );
-		}
-		catch ( System.Exception e )
-		{
-			Log.Error( e, $"{GetType().Name}.OnControl {e.Message}" );
-		}
-	}
-
-	/// <summary>
-	/// Called every update, scoped to the owning player
-	/// </summary>
-	/// <param name="player"></param>
-	public virtual void OnControl( Player player )
-	{
 	}
 
 	/// <summary>

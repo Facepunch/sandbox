@@ -211,7 +211,7 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	/// <summary>
 	/// Called when starting to reload a weapon.
 	/// </summary>
-	public void OnReloadStart()
+	public override void OnReloadStart()
 	{
 		_reloadFinishing = false; // cancel any pending incremental finish from a previous reload
 		Renderer?.Set( "speed_reload", AnimationSpeed );
@@ -226,7 +226,7 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	/// <summary>
 	/// Called when incrementally reloading a weapon.
 	/// </summary>
-	public void OnIncrementalReload( bool firstShell = false )
+	public override void OnIncrementalReload( bool firstShell = false )
 	{
 		Renderer?.Set( "speed_reload", IncrementalAnimationSpeed );
 
@@ -238,7 +238,7 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		StartSounds( IncrementalReloadSoundEvents, ref _reloadSoundCts );
 	}
 
-	public void OnReloadFinish()
+	public override void OnReloadFinish()
 	{
 		CancelSounds( ref _reloadSoundCts );
 
@@ -255,7 +255,7 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		}
 	}
 
-	public void OnReloadCancel()
+	public override void OnReloadCancel()
 	{
 		CancelSounds( ref _reloadSoundCts );
 		CancelSounds( ref _reloadFinishSoundCts );

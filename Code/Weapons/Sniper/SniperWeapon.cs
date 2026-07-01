@@ -16,8 +16,6 @@ public sealed class SniperWeapon : BaseBulletWeapon
 
 	public bool IsScoped => _isScoped;
 
-	protected override float GetPrimaryFireRate() => PrimaryFireRate;
-
 	protected override bool WantsPrimaryAttack()
 	{
 		return Input.Pressed( "attack1" );
@@ -96,9 +94,9 @@ public sealed class SniperWeapon : BaseBulletWeapon
 		ShowViewModel();
 	}
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
-		base.OnControl( player );
+		base.OnControl();
 
 		// Hold right mouse to scope
 		var wantsScope = Input.Down( "attack2" );
@@ -164,7 +162,7 @@ public sealed class SniperWeapon : BaseBulletWeapon
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
-		var color = !HasAmmo() || IsReloading() || TimeUntilNextShotAllowed > 0 ? CrosshairNoShoot : CrosshairCanShoot;
+		var color = !HasAmmo() || IsReloading || NextPrimaryFire > 0 ? CrosshairNoShoot : CrosshairCanShoot;
 
 		hud.SetBlendMode( BlendMode.Normal );
 		hud.DrawCircle( center, 5, Color.Black );

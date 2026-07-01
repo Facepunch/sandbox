@@ -58,6 +58,8 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 	{
 		if ( !presserObject.IsValid() ) return;
 
+		if ( !Enabled ) return;
+
 		var player = presserObject.Root.GetComponent<Player>();
 		if ( !player.IsValid() ) return;
 

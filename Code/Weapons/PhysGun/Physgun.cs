@@ -113,9 +113,9 @@ public partial class Physgun
 		}
 	}
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
-		base.OnControl( player );
+		var player = Owner;
 
 		_lastAimTransform = AimTransform;
 
@@ -308,11 +308,14 @@ public partial class Physgun
 	}
 
 	/// <summary>
-	/// Seat / standalone input — ShootInput grabs, SecondaryInput pulls.
+	/// Seat / standalone input — ShootInput grabs, SecondaryInput pulls. Explicit interface impl so it
+	/// doesn't clash with the engine's held-item OnControl pump.
 	/// </summary>
-	public void OnControl()
+	void IPlayerControllable.OnControl()
 	{
 		if ( HasOwner ) return;
+		// Seat control runs fully on the host - no prediction on the driving client.
+		if ( !Networking.IsHost ) return;
 
 		var aim = AimTransform;
 		_lastAimTransform = aim;

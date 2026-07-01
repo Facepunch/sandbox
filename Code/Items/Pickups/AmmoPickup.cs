@@ -16,25 +16,19 @@ public sealed class AmmoPickup : BasePickup
 
 	public override bool CanPickup( Player player, PlayerInventory inventory )
 	{
-		if ( AmmoType is not null )
-		{
-			var ammoInv = player.GetComponent<AmmoInventory>();
-			if ( ammoInv is null ) return false;
-			return ammoInv.GetAmmo( AmmoType ) < AmmoType.MaxReserve;
-		}
-
-		return false;
+		if ( AmmoType is null || inventory is null ) return false;
+		return inventory.GetAmmo( AmmoType.ResourcePath ) < AmmoType.MaxReserve;
 	}
 
 	protected override bool OnPickup( Player player, PlayerInventory inventory )
 	{
-		if ( AmmoType is not null )
-		{
-			var ammoInv = player.GetComponent<AmmoInventory>();
-			if ( ammoInv is null ) return false;
-			return ammoInv.AddAmmo( AmmoType, AmmoAmount ) > 0;
-		}
+		if ( AmmoType is null || inventory is null ) return false;
 
+		// The inventory pool isn't clamped, so cap to the resource's max here.
+		var space = AmmoType.MaxReserve - inventory.GetAmmo( AmmoType.ResourcePath );
+		if ( space <= 0 ) return false;
+
+		inventory.GiveAmmo( AmmoType.ResourcePath, Math.Min( AmmoAmount, space ) );
 		return true;
 	}
 }

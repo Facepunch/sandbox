@@ -30,10 +30,10 @@
             }
             else
             {
-                <label class="value">@(Weapon.UsesClips ? Weapon.ClipContents.ToString() : (WeaponConVars.InfiniteReserves ? "∞" : Weapon.ReserveAmmo.ToString()))</label>
+                <label class="value">@(Weapon.UsesClips ? Weapon.Clip1.ToString() : (WeaponConVars.InfiniteReserves ? "∞" : Weapon.Ammo1.ToString()))</label>
                 @if ( Weapon.UsesClips )
                 {
-                    <label class="alternate">@(WeaponConVars.InfiniteReserves ? "∞" : Weapon.ReserveAmmo.ToString())</label>
+                    <label class="alternate">@(WeaponConVars.InfiniteReserves ? "∞" : Weapon.Ammo1.ToString())</label>
                 }
             }
             <Image class="icon" Texture=@AmmoIcon />
@@ -68,6 +68,6 @@
     {
         if ( !Player.IsValid() || Player.WantsHideHud ) return 0;
 
-        return System.HashCode.Combine( Player.Health, Player.Armour, Weapon?.ClipContents, Weapon?.ReserveAmmo );
+        return System.HashCode.Combine( Player.Health, Player.Armour, Weapon?.Clip1, Weapon?.Ammo1 );
     }
 }

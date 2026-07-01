@@ -85,7 +85,7 @@ public sealed partial class GameManager
 			if ( prefab is not null && prefab.GetComponent<BaseCarryable>( true ) is not null )
 			{
 				var inventory = player.GetComponent<PlayerInventory>();
-				inventory.Pickup( prefab );
+				inventory.Pickup( prefab, true );
 				return;
 			}
 		}

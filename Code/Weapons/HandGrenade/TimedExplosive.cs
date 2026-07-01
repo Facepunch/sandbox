@@ -10,6 +10,9 @@ public sealed class TimedExplosive : Component
 	[Property] public float Damage { get; set; } = 125f;
 	[Property] public float Force { get; set; } = 1f;
 
+	/// <summary>Who gets credit/blame for the explosion (the thrower). Host-side only. Falls back to the explosion itself.</summary>
+	public GameObject Attacker { get; set; }
+
 	TimeSince TimeSinceCreated { get; set; }
 
 	protected override void OnEnabled()
@@ -43,7 +46,7 @@ public sealed class TimedExplosive : Component
 			x.Radius = Radius;
 			x.PhysicsForceScale = Force;
 			x.DamageAmount = Damage;
-			x.Attacker = go;
+			x.Attacker = Attacker.IsValid() ? Attacker : go;
 		}, FindMode.EverythingInSelfAndDescendants );
 
 		go.Enabled = true;

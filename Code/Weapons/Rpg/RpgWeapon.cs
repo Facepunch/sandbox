@@ -12,7 +12,9 @@ public sealed class RpgWeapon : BaseGun
 	/// When enabled, fired rockets will continuously track toward the player's crosshair.
 	/// Toggle with right-click (player) or SecondaryInput (standalone/seat).
 	/// </summary>
-	[Property, Sync, ClientEditable] public bool IsTrackedAim { get; set; } = false;
+	// Host-authoritative: toggled through the [Rpc.Host] ToggleTrackedAim (from the owner when held, or on
+	// the host directly for a seated RPG), so it must replicate FROM the host, not owner->everyone.
+	[Property, Sync( SyncFlags.FromHost ), ClientEditable] public bool IsTrackedAim { get; set; } = false;
 
 	public override bool IsTargetedAim => IsTrackedAim;
 
@@ -27,13 +29,11 @@ public sealed class RpgWeapon : BaseGun
 	/// </summary>
 	public bool IsGuiding => IsTrackedAim && Projectile.IsValid();
 
-	protected override float GetPrimaryFireRate() => TimeBetweenShots;
-
 	public override bool CanSecondaryAttack() => false;
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
-		base.OnControl( player );
+		base.OnControl();
 
 		if ( Input.Pressed( "attack2" ) )
 			ToggleTrackedAim();
@@ -46,7 +46,7 @@ public sealed class RpgWeapon : BaseGun
 			if ( IsGuiding )
 				_waitingForReload = true;
 			else if ( CanReload() )
-				OnReloadStart();
+				Reload();
 		}
 
 		if ( IsGuiding )
@@ -58,18 +58,18 @@ public sealed class RpgWeapon : BaseGun
 		{
 			_waitingForReload = false;
 			if ( CanReload() )
-				OnReloadStart();
+				Reload();
 		}
 	}
 
 	/// <summary>
 	/// Standalone / seat control — uses SecondaryInput to toggle tracking.
 	/// </summary>
-	public override void OnControl()
+	protected override void OnSeatControl()
 	{
-		base.OnControl();
+		base.OnSeatControl();
 
-		if ( HasOwner || IsProxy ) return;
+		if ( HasOwner || !Networking.IsHost ) return;
 
 		if ( SecondaryInput.Pressed() )
 			ToggleTrackedAim();
@@ -139,7 +139,10 @@ public sealed class RpgWeapon : BaseGun
 			}
 		}
 
-		CreateProjectile( spawnPos, ray.Forward, ProjectileSpeed );
+		// Spawning the rocket is authoritative - only the host's run does it, or the owner's predicted
+		// run would spawn a second one.
+		if ( !Rpc.IsPredicting )
+			CreateProjectile( spawnPos, ray.Forward, ProjectileSpeed );
 	}
 
 	private Vector3 CheckThrowPosition( Player player, Vector3 eyePosition, Vector3 grenadePosition )

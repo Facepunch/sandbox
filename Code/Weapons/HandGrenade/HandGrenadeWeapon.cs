@@ -75,16 +75,22 @@ public sealed class HandGrenadeWeapon : BaseGun
 			Throw( Owner, Vector3.Down, 0.2f );
 	}
 
-	public override void OnControl()
+	protected override void OnSeatControl()
 	{
+		if ( HasOwner ) return;
+		// Seat control runs fully on the host - no prediction, and DropGrenade (a host RPC) runs once.
+		if ( !Networking.IsHost ) return;
+
 		if ( ShootInput.Pressed() )
 		{
 			DropGrenade();
 		}
 	}
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
+		var player = Owner;
+
 		// Wait for throw animation to finish
 		if ( IsThrowing )
 		{
@@ -128,19 +134,11 @@ public sealed class HandGrenadeWeapon : BaseGun
 		// Update throw direction blend
 		UpdateThrowType();
 
-		// Cooked too long — explode in hand
+		// Cooked too long — explode in hand. Ammo spend + switch/destroy happen host-side in ExplodeInHand.
 		if ( TimeSinceCooked > Lifetime )
 		{
 			IsCooking = false;
-			TakeAmmo( 1 );
 			ExplodeInHand();
-
-			if ( !HasAmmo() )
-			{
-				SwitchToBestWeapon();
-				DestroyGameObject();
-			}
-
 			return;
 		}
 
@@ -168,7 +166,9 @@ public sealed class HandGrenadeWeapon : BaseGun
 	{
 		IsCooking = false;
 
-		if ( !TakeAmmo( 1 ) )
+		// Ammo is host-authoritative (spent in SpawnProjectile); here we only check we still have one so
+		// the owner-side reserve write can't be reverted by the host into an infinite-grenade dupe.
+		if ( !HasAmmo() )
 		{
 			SwitchToBestWeapon();
 			DestroyGameObject();
@@ -235,6 +235,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 			explosive.Radius = Radius;
 			explosive.Damage = MaxDamage;
 			explosive.Force = Force;
+			explosive.Attacker = EffectiveAttacker;
 		}
 
 		// Don't collide with the weapon we dropped from
@@ -251,6 +252,9 @@ public sealed class HandGrenadeWeapon : BaseGun
 		if ( !player.IsValid() ) return;
 		if ( !Prefab.IsValid() ) return;
 
+		// Host-authoritative ammo spend - the owner only predicted the throw, the host owns the count.
+		TakeAmmo( 1 );
+
 		var go = Prefab.Clone( startPos );
 
 		// Configure the timed explosive with remaining fuse
@@ -261,6 +265,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 			explosive.Radius = Radius;
 			explosive.Damage = MaxDamage;
 			explosive.Force = Force;
+			explosive.Attacker = player.GameObject;
 		}
 
 		var rb = go.GetComponent<Rigidbody>();
@@ -306,14 +311,20 @@ public sealed class HandGrenadeWeapon : BaseGun
 			x.Radius = Radius;
 			x.PhysicsForceScale = Force;
 			x.DamageAmount = MaxDamage;
-			x.Attacker = explosion;
+			x.Attacker = EffectiveAttacker;
 		}, FindMode.EverythingInSelfAndDescendants );
 
 		explosion.Enabled = true;
 		explosion.NetworkSpawn( true, null );
 
-		SwitchToBestWeapon();
-		DestroyGameObject();
+		// Spend one grenade host-side; only give up the weapon when the last one is gone (don't discard a
+		// remaining stack just because one cooked off in your hand).
+		TakeAmmo( 1 );
+		if ( !HasAmmo() )
+		{
+			SwitchToBestWeapon();
+			DestroyGameObject();
+		}
 	}
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )

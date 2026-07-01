@@ -5,8 +5,6 @@ public sealed class ShotgunWeapon : IronSightsWeapon
 	[Property] public float PrimaryFireRate { get; set; } = 0.8f;
 	[Property] public int PelletCount { get; set; } = 8;
 
-	protected override float GetPrimaryFireRate() => PrimaryFireRate;
-
 	protected override bool WantsPrimaryAttack()
 	{
 		return Input.Pressed( "attack1" );
@@ -14,14 +12,13 @@ public sealed class ShotgunWeapon : IronSightsWeapon
 
 	public override void PrimaryAttack()
 	{
-		if ( HasOwner && ( !HasAmmo() || IsReloading() ) )
+		if ( HasOwner && ( !HasAmmo() || IsReloading ) )
 		{
 			TryAutoReload();
 			return;
 		}
 
-		if ( TimeUntilNextShotAllowed > 0 )
-			return;
+		// Cooldown already gated by the caller before PrimaryAttack runs.
 
 		if ( HasOwner && !TakeAmmo( 1 ) )
 		{
@@ -51,15 +48,19 @@ public sealed class ShotgunWeapon : IronSightsWeapon
 				.UseHitboxes()
 				.Run();
 
-			ShootEffects( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface, noEvents: i > 0 );
-			TraceAttack( TraceAttackInfo.From( tr, Bullet.Damage ) );
+			// Authoritative: host's run only, or each pellet's damage/effects double up.
+			if ( !Rpc.IsPredicting )
+			{
+				ShootEffects( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface, noEvents: i > 0 );
+				TraceAttack( TraceAttackInfo.From( tr, Bullet.Damage ) );
+			}
 		}
 
 		TimeSinceShoot = 0;
 
 		if ( !HasOwner )
 		{
-			if ( ShootForce > 0f && GetComponent<Rigidbody>( true ) is var rb )
+			if ( ShootForce > 0f && GetComponent<Rigidbody>( true ) is { } rb )
 			{
 				var muzzle = WeaponModel?.MuzzleGameObject?.WorldTransform ?? WorldTransform;
 				rb.ApplyForce( muzzle.Rotation.Up * ShootForce );
@@ -84,7 +85,7 @@ public sealed class ShotgunWeapon : IronSightsWeapon
 		var spread = GetAimConeAmount();
 		var radius = 20 + spread * 40;
 
-		var color = !HasAmmo() || IsReloading() || TimeUntilNextShotAllowed > 0 ? CrosshairNoShoot : CrosshairCanShoot;
+		var color = !HasAmmo() || IsReloading || NextPrimaryFire > 0 ? CrosshairNoShoot : CrosshairCanShoot;
 
 		hud.SetBlendMode( BlendMode.Lighten );
 

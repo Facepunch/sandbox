@@ -36,7 +36,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		{
 			// We already have this weapon — only allow if it can receive ammo
 			if ( existing is BaseGun existingWeapon && existingWeapon.UsesAmmo )
-				return existingWeapon.ReserveAmmo < existingWeapon.MaxReserveAmmo;
+				return existingWeapon.Ammo1 < existingWeapon.MaxReserveAmmo;
 
 			return false;
 		}
@@ -99,10 +99,10 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 
 		if ( existing is BaseGun existingWeapon && baseCarry is BaseGun pickupWeapon && existingWeapon.UsesAmmo )
 		{
-			if ( existingWeapon.ReserveAmmo >= existingWeapon.MaxReserveAmmo )
+			if ( existingWeapon.Ammo1 >= existingWeapon.MaxReserveAmmo )
 				return true;
 
-			var ammoToGive = pickupWeapon.UsesClips ? pickupWeapon.ClipContents : pickupWeapon.StartingAmmo;
+			var ammoToGive = pickupWeapon.UsesClips ? pickupWeapon.ClipMaxSize : pickupWeapon.StartingAmmo;
 			existingWeapon.AddReserveAmmo( ammoToGive );
 
 			if ( notice )
@@ -250,13 +250,13 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 
 		if ( existing is BaseGun existingWeapon && item is BaseGun pickupWeapon && existingWeapon.UsesAmmo )
 		{
-			if ( existingWeapon.ReserveAmmo >= existingWeapon.MaxReserveAmmo )
+			if ( existingWeapon.Ammo1 >= existingWeapon.MaxReserveAmmo )
 			{
 				item.DestroyGameObject();
 				return true;
 			}
 
-			var ammoToGive = pickupWeapon.UsesClips ? pickupWeapon.ClipContents : pickupWeapon.StartingAmmo;
+			var ammoToGive = pickupWeapon.UsesClips ? pickupWeapon.ClipMaxSize : pickupWeapon.StartingAmmo;
 			existingWeapon.AddReserveAmmo( ammoToGive );
 
 			if ( notice )
@@ -488,7 +488,15 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		MoveSlot( fromSlot, toSlot );
 	}
 
-	public BaseCarryable GetBestWeapon() => GetBestItem() as BaseCarryable;
+	public BaseCarryable GetBestWeapon()
+	{
+		// Prefer a usable weapon by Value; only fall back to an avoid-flagged one (e.g. an empty gun) when
+		// there's nothing better. The engine's GetBestItem orders purely by Value and ignores ShouldAvoid.
+		var candidates = Weapons.Where( w => w.IsValid() && w.CanSwitch() ).ToList();
+
+		return candidates.Where( w => !w.ShouldAvoid ).OrderByDescending( w => w.Value ).FirstOrDefault()
+			?? candidates.OrderByDescending( w => w.Value ).FirstOrDefault();
+	}
 
 	/// <summary>
 	/// Switches to the given weapon. Thin wrapper over the engine inventory's <see cref="InventoryComponent.Switch"/>
@@ -531,8 +539,16 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 			return;
 		}
 
-		if ( ActiveWeapon.IsValid() && !ActiveWeapon.IsProxy )
-			ActiveWeapon.OnPlayerUpdate( Player );
+		// Drive the engine inventory pump - this runs the active item's per-tick control (fire, reload,
+		// ADS, tool dispatch) on the owning client. Wrapped so a throwing weapon can't kill the tick.
+		try
+		{
+			Pump();
+		}
+		catch ( System.Exception e )
+		{
+			Log.Error( e, $"Weapon control: {e.Message}" );
+		}
 	}
 
 	/// <summary>

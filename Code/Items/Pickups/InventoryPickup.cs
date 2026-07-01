@@ -43,7 +43,7 @@ public sealed class InventoryPickup : BasePickup, Component.IPressable
 		bool consumed = false;
 		foreach ( var prefab in Items )
 		{
-			if ( inventory.Pickup( prefab ) )
+			if ( inventory.Pickup( prefab, true ) )
 			{
 				consumed = true;
 				player.PlayerData.AddStat( $"pickup.inventory.{prefab.Name}" );
