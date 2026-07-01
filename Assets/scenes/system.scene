@@ -6,7 +6,7 @@
       "__version": 2,
       "Flags": 0,
       "Name": "Hud",
-      "Position": "-92.4604,-88.59669,125.7815",
+      "Position": "-92.4604034,-88.5966873,125.781502",
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
@@ -54,7 +54,7 @@
           "OwnerTransfer": 1,
           "Components": [
             {
-              "__type": "Sandbox.UI.Inventory.Inventory",
+              "__type": "Sandbox.Inventory",
               "__guid": "914de9bf-f622-410e-9e7d-d4f931dbaf6c",
               "__enabled": true,
               "Flags": 0,
@@ -88,37 +88,6 @@
             {
               "__type": "Sandbox.SpawnMenuHost",
               "__guid": "a943a50a-1002-4369-94c6-466a91b25a1e",
-              "__enabled": true,
-              "Flags": 0,
-              "OnComponentDestroy": null,
-              "OnComponentDisabled": null,
-              "OnComponentEnabled": null,
-              "OnComponentFixedUpdate": null,
-              "OnComponentStart": null,
-              "OnComponentUpdate": null
-            }
-          ],
-          "Children": []
-        },
-        {
-          "__guid": "f4db1e0e-10e2-4605-bc99-25e03b774b7f",
-          "__version": 2,
-          "Flags": 0,
-          "Name": "Chat",
-          "Position": "0,0,0",
-          "Rotation": "0,0,0,1",
-          "Scale": "1,1,1",
-          "Tags": "",
-          "Enabled": true,
-          "NetworkMode": 1,
-          "NetworkFlags": 0,
-          "NetworkOrphaned": 1,
-          "NetworkTransmit": true,
-          "OwnerTransfer": 1,
-          "Components": [
-            {
-              "__type": "Sandbox.UI.Chat",
-              "__guid": "9eba23b9-74cc-4d75-9f32-615a2060759c",
               "__enabled": true,
               "Flags": 0,
               "OnComponentDestroy": null,
@@ -582,8 +551,8 @@
       "__version": 2,
       "Flags": 0,
       "Name": "Camera",
-      "Position": "-267.452,-379.653,297.7903",
-      "Rotation": "-0.1448582,0.2860239,0.4279631,0.8450171",
+      "Position": "-267.451996,-379.653015,297.790314",
+      "Rotation": "-0.144858196,0.286023915,0.427963108,0.845017076",
       "Scale": "1,1,1",
       "Tags": "",
       "Enabled": true,
@@ -696,7 +665,6 @@
           "__enabled": true,
           "Flags": 0,
           "__version": 1,
-          "DenoiseMode": "Spatial",
           "FalloffRange": 1,
           "Intensity": 1,
           "OnComponentDestroy": null,
@@ -769,15 +737,18 @@
       "AgentMaxSlope": 40,
       "ExcludedBodies": "",
       "IncludedBodies": "",
+      "DeferGeneration": false,
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.MovieMaker.MovieRecorderSystem": {
-        "DisableClientRecording": false
-      },
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
           "$blob": "b4480286-f726-43b5-928b-af01786f9788"
+        }
+      },
+      "Sandbox.SelectionSetsSystem": {
+        "Data": {
+          "SelectionSets": []
         }
       }
     }
