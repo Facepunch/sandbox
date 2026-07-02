@@ -52,17 +52,11 @@ public class SpeechLayer : BaseNpcLayer
 		// Stop any existing speech
 		Stop();
 
-		// Resolve the next sound file from the event
+		// Resolve the sound file host-side so every client plays the same one.
 		var soundFile = Game.Random.FromList( sound.Sounds );
-;		if ( !soundFile.IsValid() ) return;
+		if ( !soundFile.IsValid() ) return;
 
-		// Play using the event's volume and pitch
-		_soundHandle = Sound.PlayFile( soundFile, sound.Volume.GetValue(), sound.Pitch.GetValue() );
-
-		if ( _soundHandle.IsValid() )
-		{
-			_soundHandle.Parent = Npc.GameObject;
-		}
+		PlaySound( soundFile, sound.Volume.GetValue(), sound.Pitch.GetValue() );
 
 		if ( !string.IsNullOrEmpty( subtitle ) )
 		{
@@ -71,6 +65,20 @@ public class SpeechLayer : BaseNpcLayer
 
 		_subtitleEnd = duration;
 		_lastSpoke = 0;
+	}
+
+	// AI runs host-side, so broadcast the sound to every client -- otherwise only the host hears it.
+	[Rpc.Broadcast]
+	private void PlaySound( SoundFile soundFile, float volume, float pitch )
+	{
+		if ( !soundFile.IsValid() ) return;
+
+		_soundHandle = Sound.PlayFile( soundFile, volume, pitch );
+
+		if ( _soundHandle.IsValid() )
+		{
+			_soundHandle.Parent = Npc.GameObject;
+		}
 	}
 
 	/// <summary>
