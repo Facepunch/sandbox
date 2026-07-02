@@ -3,114 +3,127 @@ namespace Sandbox.Npcs;
 public partial class Npc : Component
 {
 	/// <summary>
-	/// The faction this NPC belongs to -- its team identity, used for the "same team is
-	/// friendly" default. Always included in <see cref="GetTraits"/>. Override per NPC type.
+	/// The faction this NPC belongs to -- its identity to others, like a Source NPC's class.
+	/// Override per NPC type.
 	/// </summary>
 	public virtual string Faction => "neutral";
 
-	/// <summary>
-	/// What this NPC is and how it reacts to others, declared by trait. Override per NPC type.
-	/// </summary>
-	protected virtual Dispositions Dispositions => DefaultDispositions;
-	static readonly Dispositions DefaultDispositions = new();
+	// This NPC's default stance toward other factions, built once from SetupRelationships().
+	private Dictionary<string, Relationship> _factionRelationships;
 
-	private Dispositions _rules;
-	private HashSet<string> _traits;
-	readonly Dictionary<GameObject, Disposition> _dispositionOverrides = new();
+	// Per-entity overrides (the GMod AddEntityRelationship) -- win over faction defaults.
+	readonly Dictionary<GameObject, Relationship> _entityRelationships = new();
 
-	private Dispositions Rules => _rules ??= Dispositions;
-
-	/// <summary>
-	/// All traits describing this NPC, including its faction. Built once and cached.
-	/// </summary>
-	public IReadOnlySet<string> GetTraits()
+	private Dictionary<string, Relationship> FactionRelationships
 	{
-		_traits ??= new HashSet<string>( Rules.Traits ) { Faction };
-		return _traits;
+		get
+		{
+			if ( _factionRelationships is null )
+			{
+				_factionRelationships = new();
+				SetupRelationships();
+			}
+
+			return _factionRelationships;
+		}
 	}
 
 	/// <summary>
-	/// How this NPC reacts to an entity with the given traits. The default applies the
-	/// declarative <see cref="Dispositions"/> rules; override for fully custom logic.
+	/// Declare this NPC's relationships toward other factions with <see cref="Hates"/> /
+	/// <see cref="Fears"/> / <see cref="Likes"/>. Anything not listed is neutral (ignored).
+	/// Override per NPC type.
 	/// </summary>
-	protected virtual Disposition GetDispositionTo( IReadOnlySet<string> traits )
+	protected virtual void SetupRelationships() { }
+
+	/// <summary>Attack members of these factions.</summary>
+	protected void Hates( params string[] factions ) => SetFactionRelationship( Disposition.Hostile, 0, factions );
+
+	/// <summary>Attack members of a faction, with a target-selection priority.</summary>
+	protected void Hates( string faction, int priority ) => SetFactionRelationship( Disposition.Hostile, priority, faction );
+
+	/// <summary>Flee members of these factions.</summary>
+	protected void Fears( params string[] factions ) => SetFactionRelationship( Disposition.Fearful, 0, factions );
+
+	/// <summary>Treat members of these factions as allies.</summary>
+	protected void Likes( params string[] factions ) => SetFactionRelationship( Disposition.Friendly, 0, factions );
+
+	private void SetFactionRelationship( Disposition disposition, int priority, params string[] factions )
 	{
-		if ( traits.Contains( Faction ) )
-			return Disposition.Friendly;
-
-		var rules = Rules;
-		if ( MatchesAny( traits, rules.Hostile ) ) return Disposition.Hostile;
-		if ( MatchesAny( traits, rules.Fearful ) ) return Disposition.Fearful;
-		if ( MatchesAny( traits, rules.Friendly ) ) return Disposition.Friendly;
-
-		return Disposition.Neutral;
+		foreach ( var faction in factions )
+			_factionRelationships[faction] = new Relationship( disposition, priority );
 	}
 
 	/// <summary>
-	/// How this NPC currently regards another entity. A per-entity override wins; otherwise
-	/// it's decided by <see cref="GetDispositionTo"/> from the other's traits.
+	/// Override how this NPC regards a specific entity, ignoring faction defaults -- e.g. a
+	/// cop turning hostile toward someone it saw commit a crime.
 	/// </summary>
-	public Disposition GetDisposition( GameObject other )
-	{
-		if ( !other.IsValid() || other == GameObject )
-			return Disposition.Friendly;
-
-		if ( _dispositionOverrides.TryGetValue( other, out var over ) )
-			return over;
-
-		return GetDispositionTo( GetTraitsOf( other ) );
-	}
-
-	/// <summary>
-	/// Override how this NPC regards a specific entity, ignoring its trait rules --
-	/// e.g. a cop turning hostile toward someone it saw commit a crime.
-	/// </summary>
-	public void SetDisposition( GameObject other, Disposition disposition )
+	public void SetDisposition( GameObject other, Disposition disposition, int priority = 0 )
 	{
 		if ( !other.IsValid() )
 			return;
 
-		_dispositionOverrides[other] = disposition;
+		// Sweep out overrides for destroyed entities so this never grows unbounded.
+		List<GameObject> stale = null;
+		foreach ( var key in _entityRelationships.Keys )
+		{
+			if ( !key.IsValid() )
+				(stale ??= new()).Add( key );
+		}
+
+		if ( stale is not null )
+		{
+			foreach ( var key in stale )
+				_entityRelationships.Remove( key );
+		}
+
+		_entityRelationships[other] = new Relationship( disposition, priority );
 	}
 
-	/// <summary>
-	/// Remove a per-entity override, falling back to the trait rules.
-	/// </summary>
+	/// <summary>Remove a per-entity override, falling back to the faction default.</summary>
 	public void ClearDisposition( GameObject other )
 	{
-		_dispositionOverrides.Remove( other );
+		_entityRelationships.Remove( other );
 	}
 
 	/// <summary>
-	/// Resolve the traits of any entity -- an NPC's own traits, or a player's. Returns an
-	/// empty set for things that don't take part in relationships.
+	/// The full relationship (disposition + priority) this NPC has toward another entity.
+	/// Per-entity overrides win, then the faction default, then neutral. Override this for
+	/// fully dynamic relationships (the equivalent of Source's IRelationType).
 	/// </summary>
-	public static IReadOnlySet<string> GetTraitsOf( GameObject go )
+	public virtual Relationship GetRelationship( GameObject other )
+	{
+		if ( !other.IsValid() || other == GameObject )
+			return new Relationship( Disposition.Friendly );
+
+		if ( _entityRelationships.TryGetValue( other, out var entityRelationship ) )
+			return entityRelationship;
+
+		var faction = GetFactionOf( other );
+		if ( faction is not null && FactionRelationships.TryGetValue( faction, out var factionRelationship ) )
+			return factionRelationship;
+
+		return new Relationship( Disposition.Neutral );
+	}
+
+	/// <summary>How this NPC regards another entity.</summary>
+	public Disposition GetDisposition( GameObject other ) => GetRelationship( other ).Disposition;
+
+	/// <summary>
+	/// Resolve any entity's faction -- an NPC's own faction, or the player faction. Returns
+	/// null for things that don't take part in relationships.
+	/// </summary>
+	public static string GetFactionOf( GameObject go )
 	{
 		if ( !go.IsValid() )
-			return NoTraits;
+			return null;
 
 		var npc = go.GetComponent<Npc>() ?? go.Root?.GetComponent<Npc>();
 		if ( npc.IsValid() )
-			return npc.GetTraits();
+			return npc.Faction;
 
-		if ( go.Tags.Has( Trait.Player ) || (go.Root.IsValid() && go.Root.Tags.Has( Trait.Player )) )
-			return PlayerTraits;
+		if ( go.Tags.Has( Factions.Player ) || (go.Root.IsValid() && go.Root.Tags.Has( Factions.Player )) )
+			return Factions.Player;
 
-		return NoTraits;
-	}
-
-	static readonly HashSet<string> PlayerTraits = new() { Trait.Player, Trait.Living };
-	static readonly HashSet<string> NoTraits = new();
-
-	static bool MatchesAny( IReadOnlySet<string> traits, List<string> any )
-	{
-		foreach ( var trait in any )
-		{
-			if ( traits.Contains( trait ) )
-				return true;
-		}
-
-		return false;
+		return null;
 	}
 }

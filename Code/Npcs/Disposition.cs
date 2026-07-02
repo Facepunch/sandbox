@@ -18,3 +18,9 @@ public enum Disposition
 	/// <summary>A threat to avoid -- flee from them.</summary>
 	Fearful,
 }
+
+/// <summary>
+/// A disposition plus a priority. Priority breaks ties when an NPC must choose between
+/// several valid targets -- higher wins.
+/// </summary>
+public readonly record struct Relationship( Disposition Disposition, int Priority = 0 );
