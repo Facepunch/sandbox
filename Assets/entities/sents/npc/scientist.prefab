@@ -43,9 +43,14 @@
         "__guid": "9e7014a2-de94-4f9f-852e-871f9fd821ef",
         "__enabled": true,
         "Flags": 0,
-        "DisplayName": "Scientist",
+        "DisplayName": "Darren",
         "FearDecayRate": 0.15,
         "FearGracePeriod": 3,
+        "FollowVoice": "sounds/npc/darren/follow.sound",
+        "StayVoice": "sounds/npc/darren/stay.sound",
+        "ScaredVoice": "sounds/npc/darren/scared.sound",
+        "IdleVoice": "sounds/npc/darren/idle.sound",
+        "StuckVoice": "sounds/npc/darren/stuck.sound",
         "Health": 100,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -73,9 +78,8 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ScanTags": "player",
-        "SightRange": 500,
-        "TargetTags": "player"
+        "ScanTags": "player,npc",
+        "SightRange": 500
       },
       {
         "__type": "Sandbox.Npcs.Layers.NavigationLayer",
