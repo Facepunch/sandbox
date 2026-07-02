@@ -6,11 +6,8 @@ namespace Sandbox.Npcs.Roller;
 /// <summary>
 /// A physics-driven NPC that chases players, leaps at them, and bounces off dealing damage on contact.
 /// </summary>
-public sealed class RollerNpc : Npc, Component.IDamageable, Component.ICollisionListener
+public sealed class RollerNpc : Npc, Component.ICollisionListener
 {
-	[Property, ClientEditable, Range( 1f, 500f ), Sync]
-	public float Health { get; set; } = 35f;
-
 	/// <summary>
 	/// Continuous force applied per-frame while rolling toward a target.
 	/// </summary>
@@ -157,6 +154,10 @@ public sealed class RollerNpc : Npc, Component.IDamageable, Component.ICollision
 	{
 		base.OnStart();
 
+		// A spinning sphere has no stable "forward", so give it all-round sight
+		// (range + line-of-sight still filter) instead of a tumbling view cone.
+		Senses.FieldOfView = 360f;
+
 		Rigidbody = GetComponent<Rigidbody>();
 		_collider = GetComponent<SphereCollider>();
 
@@ -186,13 +187,9 @@ public sealed class RollerNpc : Npc, Component.IDamageable, Component.ICollision
 	}
 
 	// Hunts players, ignores everything else.
-	public override string Faction => "monster";
+	public override string Faction => Factions.Monster;
 
-	protected override Dispositions Dispositions => new()
-	{
-		Traits = { Trait.Threat },
-		Hostile = { Trait.Player },
-	};
+	protected override void SetupRelationships() => Hates( Factions.Player );
 
 	public override ScheduleBase GetSchedule()
 	{
@@ -203,19 +200,11 @@ public sealed class RollerNpc : Npc, Component.IDamageable, Component.ICollision
 		return GetSchedule<RollerIdleSchedule>();
 	}
 
-	void IDamageable.OnDamage( in DamageInfo damage )
-	{
-		if ( IsProxy ) return;
-
-		MarkDamaged();
-		Health -= damage.Damage;
-
-		if ( Health <= 0f )
-			Die( damage );
-	}
-
 	protected override void Die( in DamageInfo damage )
 	{
+		// Broadcast the death so nearby NPCs notice (base Die does this; we override it).
+		EmitStimulus( StimulusKind.Death, radius: 1024f, lifetime: 2f );
+
 		GameManager.Current?.OnNpcDeath( DisplayName, damage );
 
 		// TODO: explosion effect / sound
