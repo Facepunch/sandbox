@@ -3,7 +3,7 @@ using Sandbox.Npcs.Layers;
 namespace Sandbox.Npcs;
 
 [Hide]
-public partial class Npc : Component, IKillSource
+public partial class Npc : Component, IKillSource, Component.IDamageable
 {
 	[Property]
 	public bool ShowDebugOverlay { get; set; }
@@ -16,6 +16,10 @@ public partial class Npc : Component, IKillSource
 	/// </summary>
 	[Property]
 	public string DisplayName { get; set; } = "NPC";
+
+	/// <summary>Current health. The NPC dies when this drops below 1.</summary>
+	[Property, ClientEditable, Sync]
+	public float Health { get; set; } = 100f;
 
 	// IKillSource
 	string IKillSource.DisplayName => DisplayName;
@@ -177,12 +181,33 @@ public partial class Npc : Component, IKillSource
 	}
 
 	/// <summary>
-	/// Notifies the kill feed, spawns a ragdoll, and destroys this NPC.
-	/// Call from subclass OnDamage when health drops below zero.
-	/// Override to add NPC-specific behaviour before/after death.
+	/// Base damage handling: subtract health, let the subclass react via <see cref="OnHurt"/>,
+	/// and die at zero. Subclasses react by overriding OnHurt and Die -- they don't touch this.
+	/// </summary>
+	void IDamageable.OnDamage( in DamageInfo damage )
+	{
+		if ( IsProxy )
+			return;
+
+		Health -= damage.Damage;
+		OnHurt( damage );
+
+		if ( Health < 1f )
+			Die( damage );
+	}
+
+	/// <summary>Called when the NPC takes damage (before the death check). Override to react.</summary>
+	protected virtual void OnHurt( in DamageInfo damage ) { }
+
+	/// <summary>
+	/// Notifies the kill feed, spawns a ragdoll, and destroys this NPC. Called automatically
+	/// when health drops below 1. Override to add NPC-specific behaviour before/after death.
 	/// </summary>
 	protected virtual void Die( in DamageInfo damage )
 	{
+		// Broadcast the death so nearby NPCs notice and react.
+		EmitStimulus( StimulusKind.Death, radius: 1024f, lifetime: 2f );
+
 		GameManager.Current?.OnNpcDeath( DisplayName, damage );
 		CreateRagdoll( GetDeathLaunchVelocity( damage ), damage.Origin );
 		GameObject.Destroy();

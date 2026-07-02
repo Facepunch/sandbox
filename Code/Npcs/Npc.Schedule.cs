@@ -14,10 +14,6 @@ public partial class Npc : Component
 	public NpcAwareness Awareness { get; private set; }
 
 	private NpcAwareness _prevAwareness;
-	private TimeSince _timeSinceDamaged = 999f;
-
-	/// <summary>How long after taking damage the <see cref="NpcAwareness.Damaged"/> flag stays set.</summary>
-	private const float DamagedAwarenessTime = 0.2f;
 
 	readonly Dictionary<Type, ScheduleBase> _schedules = [];
 
@@ -61,29 +57,14 @@ public partial class Npc : Component
 			if ( Senses.VisibleTargets.Count > 0 )
 				a |= NpcAwareness.SeesHostile;
 
-			if ( Senses.AudibleTargets.Count > 0 )
-				a |= NpcAwareness.HearsHostile;
-
-			if ( Senses.Nearest.IsValid() && Senses.DistanceToNearest <= Senses.PersonalSpace )
-				a |= NpcAwareness.HostileInPersonalSpace;
-
 			if ( Senses.VisibleThreats.Count > 0 )
 				a |= NpcAwareness.SeesThreat;
+
+			if ( Senses.Disturbance.HasValue )
+				a |= NpcAwareness.HeardDisturbance;
 		}
 
-		if ( _timeSinceDamaged < DamagedAwarenessTime )
-			a |= NpcAwareness.Damaged;
-
 		return a;
-	}
-
-	/// <summary>
-	/// Record that the NPC just took damage, so schedules can react to it as a condition.
-	/// Call from subclass damage handlers.
-	/// </summary>
-	protected void MarkDamaged()
-	{
-		_timeSinceDamaged = 0f;
 	}
 
 	/// <summary>

@@ -20,7 +20,8 @@ public abstract class ScheduleBase
 	/// to the "drop everything and re-think" stimuli so ambient schedules yield to threats
 	/// for free; combat and flee schedules override this to stay focused.
 	/// </summary>
-	public virtual NpcAwareness InterruptedBy => NpcAwareness.SeesHostile | NpcAwareness.SeesThreat | NpcAwareness.Damaged;
+	public virtual NpcAwareness InterruptedBy =>
+		NpcAwareness.SeesHostile | NpcAwareness.SeesThreat | NpcAwareness.HeardDisturbance;
 
 	private List<TaskBase> _tasks = new();
 	private int _currentTaskIndex = 0;
@@ -77,21 +78,18 @@ public abstract class ScheduleBase
 		var currentTask = _tasks[_currentTaskIndex];
 		var status = currentTask.InternalUpdate();
 
-		if ( status is not TaskStatus.Running )
+		if ( status is TaskStatus.Success )
 		{
 			currentTask.InternalEnd();
-
-			if ( status is TaskStatus.Success )
-			{
-				_currentTaskIndex++;
-				StartCurrentTask();
-				return TaskStatus.Running;
-			}
-
-			return status;
+			_currentTaskIndex++;
+			StartCurrentTask();
+			return TaskStatus.Running;
 		}
 
-		return TaskStatus.Running;
+		// Running keeps going; Failed/Interrupted end the schedule. Either way don't end the
+		// task here -- InternalEnd() (via EndCurrentSchedule) closes it out once, so OnEnd/Reset
+		// don't run twice.
+		return status;
 	}
 
 	/// <summary>
