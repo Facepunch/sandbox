@@ -1,0 +1,30 @@
+{
+  "UI": false,
+  "Volume": "1",
+  "Pitch": "1",
+  "Decibels": 72,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sounds/npc/darren/follow/alright.vsnd",
+    "sounds/npc/darren/follow/ihopeyouknowwhereyouregoing.vsnd",
+    "sounds/npc/darren/follow/illfollowyou.vsnd",
+    "sounds/npc/darren/follow/leadtheway.vsnd",
+    "sounds/npc/darren/follow/okayleadtheway.vsnd",
+    "sounds/npc/darren/follow/rightbehindyou.vsnd",
+    "sounds/npc/darren/follow/yeahletsgo.vsnd",
+    "sounds/npc/darren/follow/yes.vsnd"
+  ],
+  "Occlusion": true,
+  "AirAbsorption": true,
+  "Transmission": true,
+  "OcclusionRadius": 64,
+  "DistanceAttenuation": true,
+  "Distance": 1500,
+  "Falloff": [
+    { "x": 0, "y": 1, "in": 0, "out": -1.8, "mode": "Mirrored" },
+    { "x": 0.4, "y": 0.4, "in": -0.5, "out": -0.5, "mode": "Mirrored" },
+    { "x": 1, "y": 0, "in": 0, "out": 0, "mode": "Mirrored" }
+  ],
+  "__references": [],
+  "__version": 1
+}

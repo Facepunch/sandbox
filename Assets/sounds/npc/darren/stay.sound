@@ -1,0 +1,32 @@
+{
+  "UI": false,
+  "Volume": "1",
+  "Pitch": "1",
+  "Decibels": 72,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sounds/npc/darren/stay/idontsupposeyoullreconsider.vsnd",
+    "sounds/npc/darren/stay/illbearoundhere.vsnd",
+    "sounds/npc/darren/stay/illbeherewhenyouneedme.vsnd",
+    "sounds/npc/darren/stay/illstayhere.vsnd",
+    "sounds/npc/darren/stay/illwait.vsnd",
+    "sounds/npc/darren/stay/illwaithere.vsnd",
+    "sounds/npc/darren/stay/imsorryimustbeslowingyoudown.vsnd",
+    "sounds/npc/darren/stay/okayillstayhere.vsnd",
+    "sounds/npc/darren/stay/whyyouleavingmehere.vsnd",
+    "sounds/npc/darren/stay/yeahcatchmeonthewayback.vsnd"
+  ],
+  "Occlusion": true,
+  "AirAbsorption": true,
+  "Transmission": true,
+  "OcclusionRadius": 64,
+  "DistanceAttenuation": true,
+  "Distance": 1500,
+  "Falloff": [
+    { "x": 0, "y": 1, "in": 0, "out": -1.8, "mode": "Mirrored" },
+    { "x": 0.4, "y": 0.4, "in": -0.5, "out": -0.5, "mode": "Mirrored" },
+    { "x": 1, "y": 0, "in": 0, "out": 0, "mode": "Mirrored" }
+  ],
+  "__references": [],
+  "__version": 1
+}

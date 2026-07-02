@@ -1,0 +1,35 @@
+{
+  "UI": false,
+  "Volume": "1",
+  "Pitch": "1",
+  "Decibels": 70,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sounds/npc/darren/idle/anicedayforit.vsnd",
+    "sounds/npc/darren/idle/canibeofanyuse.vsnd",
+    "sounds/npc/darren/idle/ihaditwhenigotcoffee.vsnd",
+    "sounds/npc/darren/idle/ineedamomenttothink.vsnd",
+    "sounds/npc/darren/idle/ithinkthisshirthasshrunk.vsnd",
+    "sounds/npc/darren/idle/itsgotapurplecasehaveyouseenit.vsnd",
+    "sounds/npc/darren/idle/iveleftmyphonesomwhere.vsnd",
+    "sounds/npc/darren/idle/iwishihadmyphone.vsnd",
+    "sounds/npc/darren/idle/somethingbadisgoingtohappeniknowit.vsnd",
+    "sounds/npc/darren/idle/thispanelshouldnotbewarm.vsnd",
+    "sounds/npc/darren/idle/wehavetheworstchairsintown.vsnd",
+    "sounds/npc/darren/idle/wererapidlyapproachingthepartoftheexperimentiobjecto.vsnd",
+    "sounds/npc/darren/idle/whosignedoffonthis.vsnd"
+  ],
+  "Occlusion": true,
+  "AirAbsorption": true,
+  "Transmission": true,
+  "OcclusionRadius": 64,
+  "DistanceAttenuation": true,
+  "Distance": 1200,
+  "Falloff": [
+    { "x": 0, "y": 1, "in": 0, "out": -1.8, "mode": "Mirrored" },
+    { "x": 0.4, "y": 0.4, "in": -0.5, "out": -0.5, "mode": "Mirrored" },
+    { "x": 1, "y": 0, "in": 0, "out": 0, "mode": "Mirrored" }
+  ],
+  "__references": [],
+  "__version": 1
+}
