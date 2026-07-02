@@ -5,7 +5,6 @@ public sealed class RpgWeapon : BaseGun
 {
 	[Property] public float TimeBetweenShots { get; set; } = 2f;
 	[Property] public GameObject ProjectilePrefab { get; set; }
-	[Property] public SoundEvent ShootSound { get; set; }
 	[Property] public float ProjectileSpeed { get; set; } = 1024f;
 
 	/// <summary>
@@ -146,13 +145,12 @@ public sealed class RpgWeapon : BaseGun
 	/// </summary>
 	protected override void OnShootEffects()
 	{
+		base.OnShootEffects();
+
 		if ( ViewModel.IsValid() )
 			ViewModel.RunEvent<ViewModel>( x => x.OnAttack() );
 		else if ( WorldModel.IsValid() )
 			WorldModel.RunEvent<WorldModel>( x => x.OnAttack() );
-
-		if ( ShootSound.IsValid() )
-			GameObject.PlaySound( ShootSound );
 	}
 
 	private Vector3 CheckThrowPosition( Player player, Vector3 eyePosition, Vector3 grenadePosition )

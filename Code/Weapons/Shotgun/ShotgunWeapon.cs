@@ -28,31 +28,16 @@ public sealed class ShotgunWeapon : IronSightsWeapon
 
 		AddShootDelay( PrimaryFireRate );
 
-		var eyeForward = AimRay.Forward;
-		var eyeRay = AimRay;
+		// One volley through the engine - a BulletTrace per pellet, damage host-authoritative
+		// (ShootBullets self-gates, the owner's predicted run just gets the traces for effects).
+		var pellets = ShootBullets( PelletCount, GetAimCone( Bullet ), Bullet.Range, Bullet.BulletRadius, Bullet.Damage, HitForce );
 
-		for ( var i = 0; i < PelletCount; i++ )
+		// Effects predict on the owner and are relayed by the host. Muzzle/anim events fire on the
+		// first pellet only - every pellet still gets its tracer and impact.
+		for ( var i = 0; i < pellets.Length; i++ )
 		{
-			var aimConeAmount = GetAimConeAmount();
-			var forward = eyeForward
-				.WithAimCone(
-					Bullet.AimConeBase.x + aimConeAmount * Bullet.AimConeSpread.x,
-					Bullet.AimConeBase.y + aimConeAmount * Bullet.AimConeSpread.y
-				);
-
-			var tr = Scene.Trace.Ray( eyeRay with { Forward = forward }, Bullet.Range )
-				.IgnoreGameObjectHierarchy( AimIgnoreRoot )
-				.WithCollisionRules( "bullet" )
-				.WithoutTags( "playercontroller" )
-				.Radius( Bullet.BulletRadius )
-				.UseHitboxes()
-				.Run();
-
-			// Effects predict on the owner and are relayed by the host; damage stays host-authoritative.
+			var tr = pellets[i];
 			ShootEffects( new ShotEffect( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface, NoEvents: i > 0 ) );
-
-			if ( !Rpc.IsPredicting )
-				TraceAttack( TraceAttackInfo.From( tr, Bullet.Damage ) );
 		}
 
 		TimeSinceShoot = 0;

@@ -151,7 +151,7 @@
           "IsEnabled": false,
           "Action": null
         },
-        "ShootSound": "weapons/rpg/sounds/rpg_shoot.sound",
+        "AttackSound": "weapons/rpg/sounds/rpg_shoot.sound",
         "StartingAmmo": 1,
         "TimeBetweenShots": 2,
         "UsesAmmo": true,

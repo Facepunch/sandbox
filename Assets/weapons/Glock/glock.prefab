@@ -109,7 +109,7 @@
           "IsEnabled": false,
           "Action": null
         },
-        "ShootSound": "weapons/glock/glock_shoot.sound",
+        "AttackSound": "weapons/glock/glock_shoot.sound",
         "StartingAmmo": 0,
         "UsesAmmo": true,
         "UsesClips": true,

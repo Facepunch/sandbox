@@ -21,11 +21,6 @@ public sealed class HandGrenadeWeapon : BaseGun
 	[Property] public SoundEvent PinPullSound { get; set; }
 
 	/// <summary>
-	/// Sound played when the grenade is thrown.
-	/// </summary>
-	[Property] public SoundEvent ThrowSound { get; set; }
-
-	/// <summary>
 	/// Sound played when deploying the next grenade after a throw.
 	/// </summary>
 	[Property] public SoundEvent DeploySound { get; set; }
@@ -187,9 +182,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 
 		SpawnProjectile( player, startPos, direction, powerScale );
 
-		// Play throw animation
-		if ( ThrowSound is not null )
-			GameObject.PlaySound( ThrowSound );
+		PlayAttackSound();
 
 		WeaponModel?.Renderer?.Set( "b_charge", false );
 		WeaponModel?.Renderer?.Set( "b_attack", true );
@@ -235,7 +228,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 			explosive.Radius = Radius;
 			explosive.Damage = MaxDamage;
 			explosive.Force = Force;
-			explosive.Attacker = EffectiveAttacker;
+			explosive.Attacker = Attacker;
 		}
 
 		// Don't collide with the weapon we dropped from
@@ -311,7 +304,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 			x.Radius = Radius;
 			x.PhysicsForceScale = Force;
 			x.DamageAmount = MaxDamage;
-			x.Attacker = EffectiveAttacker;
+			x.Attacker = Attacker;
 		}, FindMode.EverythingInSelfAndDescendants );
 
 		explosion.Enabled = true;

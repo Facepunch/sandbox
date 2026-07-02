@@ -106,7 +106,7 @@
           "IsEnabled": false,
           "Action": null
         },
-        "ShootSound": "weapons/mp5/sounds/mp5_shoot.sound",
+        "AttackSound": "weapons/mp5/sounds/mp5_shoot.sound",
         "StartingAmmo": 30,
         "TimeBetweenShots": 0.09,
         "UsesAmmo": true,

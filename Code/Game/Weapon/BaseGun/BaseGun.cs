@@ -43,11 +43,6 @@ public partial class BaseGun : BaseCarryable, IPlayerControllable
 		}
 	}
 
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
-	{
-		DrawCrosshair( painter, crosshair );
-	}
-
 	/// <summary>
 	/// Determines if the primary attack should trigger. Adds the convar-aware ammo gate on top of the
 	/// engine's cooldown / reload checks.
@@ -109,16 +104,6 @@ public partial class BaseGun : BaseCarryable, IPlayerControllable
 			SecondaryAttack();
 	}
 
-	public virtual void DrawCrosshair( HudPainter hud, Vector2 center )
-	{
-		var color = Color.Red;
-
-		hud.DrawLine( center + Vector2.Left * 32, center + Vector2.Left * 15, 3, color );
-		hud.DrawLine( center - Vector2.Left * 32, center - Vector2.Left * 15, 3, color );
-		hud.DrawLine( center + Vector2.Up * 32, center + Vector2.Up * 15, 3, color );
-		hud.DrawLine( center - Vector2.Up * 32, center - Vector2.Up * 15, 3, color );
-	}
-
-	protected Color CrosshairCanShoot => Color.White;
-	protected Color CrosshairNoShoot => Color.Red;
+	// DrawHud / DrawCrosshair and the CrosshairCanShoot/CrosshairNoShoot colours come from the engine
+	// BaseWeapon.
 }

@@ -21,7 +21,7 @@
         "__enabled": true,
         "Flags": 0,
         "AmmoType": null,
-        "CameraShoot": "weapons/camera/sounds/camera.shoot.sound",
+        "AttackSound": "weapons/camera/sounds/camera.shoot.sound",
         "CanCancelReload": true,
         "ClipContents": 20,
         "ClipMaxSize": 30,

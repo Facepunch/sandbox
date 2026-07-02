@@ -110,7 +110,7 @@
           "IsEnabled": false,
           "Action": null
         },
-        "ShootSound": "weapons/shotgun/sounds/shotgun_shoot.sound",
+        "AttackSound": "weapons/shotgun/sounds/shotgun_shoot.sound",
         "StartingAmmo": 6,
         "UsesAmmo": true,
         "UsesClips": true,

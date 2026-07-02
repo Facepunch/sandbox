@@ -101,7 +101,7 @@
         },
         "StartingAmmo": 4,
         "ThrowPower": 1200,
-        "ThrowSound": "weapons/m4a1/reload/gun_grab_foley.sound",
+        "AttackSound": "weapons/m4a1/reload/gun_grab_foley.sound",
         "UsesAmmo": true,
         "UsesClips": false,
         "Value": 2,

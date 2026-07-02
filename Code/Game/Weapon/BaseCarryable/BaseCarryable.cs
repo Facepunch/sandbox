@@ -1,32 +1,5 @@
 using Sandbox.Rendering;
 
-/// <summary>
-/// Info about a trace attack. It's a struct so we can add to it without updating params everywhere.
-/// </summary>
-/// <param name="Target"></param>
-/// <param name="Damage"></param>
-/// <param name="Tags"></param>
-/// <param name="Position"></param>
-/// <param name="Origin"></param>
-/// <param name="Hitbox"></param>
-public record struct TraceAttackInfo( GameObject Target, float Damage, TagSet Tags = null, Vector3 Position = default, Vector3 Origin = default )
-{
-	/// <summary>
-	/// Constructs a <see cref="TraceAttackInfo"/> from a trace and input damage.
-	/// </summary>
-	public static TraceAttackInfo From( SceneTraceResult tr, float damage, TagSet tags = default, bool localise = true )
-	{
-		tags ??= new();
-
-		if ( localise && tr.Hitbox?.Tags is not null )
-		{
-			tags.Add( tr.Hitbox?.Tags );
-		}
-
-		return new TraceAttackInfo( tr.GameObject, damage, tags, tr.HitPosition, tr.StartPosition );
-	}
-}
-
 public partial class BaseCarryable : Sandbox.BaseWeapon, IKillIcon
 {
 	// DisplayName, DisplayIcon, Value, Slot, ViewModel and WorldModel are all inherited from the
@@ -122,19 +95,22 @@ public partial class BaseCarryable : Sandbox.BaseWeapon, IKillIcon
 	public GameObject AimIgnoreRoot => HasOwner ? Owner.GameObject : GameObject;
 
 	/// <summary>
-	/// The effective attacker to use in damage attribution.
-	/// Returns the owning player's GameObject if held, the seated player's GameObject if
-	/// controlled from a contraption seat, or this weapon's own GameObject as a last resort.
+	/// Who gets credit for this weapon's damage (the engine's <see cref="Sandbox.BaseWeapon.Attacker"/>).
+	/// The owning player if held, the seated player if controlled from a contraption seat, otherwise
+	/// the nearest kill source or the weapon itself.
 	/// </summary>
-	protected GameObject EffectiveAttacker
+	protected override GameObject Attacker
 	{
 		get
 		{
 			if ( HasOwner ) return Owner.GameObject;
+
 			var seatedPlayer = ClientInput.Current;
 			if ( seatedPlayer.IsValid() ) return seatedPlayer.GameObject;
+
 			var killSource = GetComponentInParent<IKillSource>( true );
 			if ( killSource is Component c ) return c.GameObject;
+
 			return GameObject;
 		}
 	}
@@ -194,41 +170,7 @@ public partial class BaseCarryable : Sandbox.BaseWeapon, IKillIcon
 		SetDropped( false );
 	}
 
-	protected override void OnUpdate()
-	{
-		var player = Owner;
-		var controller = player?.Controller;
-		if ( controller is null ) return;
-
-		if ( player.IsLocalPlayer )
-		{
-			if ( Scene.Camera is null )
-				return;
-
-			var hud = Scene.Camera.Hud;
-
-			var aimPos = Screen.Size * 0.5f;
-
-			if ( controller.ThirdPerson )
-			{
-				var tr = Scene.Trace.Ray( AimRay, 4096 )
-									.IgnoreGameObjectHierarchy( AimIgnoreRoot )
-									.Run();
-
-				aimPos = Scene.Camera.PointToScreenPixels( tr.EndPosition );
-			}
-
-			if ( !Scene.Camera.RenderExcludeTags.Has( "ui" ) )
-			{
-				DrawHud( hud, aimPos );
-			}
-		}
-	}
-
-	public virtual void DrawHud( HudPainter painter, Vector2 crosshair )
-	{
-		// nothing
-	}
+	// DrawHud / DrawCrosshair and the per-frame crosshair positioning come from the engine BaseWeapon.
 
 	/// <summary>
 	/// Called when added to the player's inventory
@@ -267,41 +209,6 @@ public partial class BaseCarryable : Sandbox.BaseWeapon, IKillIcon
 	/// <param name="angles"></param>
 	public virtual void OnCameraMove( Player player, ref Angles angles )
 	{
-	}
-
-	/// <summary>
-	/// Run a trace related attack with some set information.
-	/// This is targeted to the host who then does things.
-	/// </summary>
-	/// <param name="attack"></param>
-	[Rpc.Host]
-	public void TraceAttack( TraceAttackInfo attack )
-	{
-		if ( !attack.Target.IsValid() )
-			return;
-
-		// Use owner as attacker when held by a player, seated player when controlled from a
-		// contraption seat, or fall back to the weapon itself (standalone/world weapon)
-		var attacker = EffectiveAttacker;
-
-		var dmg = attack.Target.GetComponentInParent<IDamageable>();
-		if ( dmg is not null )
-		{
-			var info = new DamageInfo( attack.Damage, attacker, GameObject )
-			{
-				Position = attack.Position,
-				Origin = attack.Origin,
-				Tags = attack.Tags
-			};
-
-			dmg.OnDamage( info );
-		}
-
-		if ( attack.Target.GetComponentInChildren<Rigidbody>() is var rb && rb.IsValid() )
-		{
-			// TODO: Scale this based on damage?
-			rb.ApplyImpulseAt( attack.Position, Vector3.Direction( attack.Origin, attack.Position ) * rb.Mass * 100 );
-		}
 	}
 
 	/// <summary>

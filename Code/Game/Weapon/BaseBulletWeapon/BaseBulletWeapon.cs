@@ -1,8 +1,5 @@
 public partial class BaseBulletWeapon : BaseGun
 {
-	[Property]
-	public SoundEvent ShootSound { get; set; }
-
 	[Property, Group( "Bullet" )]
 	public BulletConfiguration Bullet { get; set; } = new()
 	{
@@ -21,6 +18,12 @@ public partial class BaseBulletWeapon : BaseGun
 	[Property, Group( "Bullet" ), ClientEditable, Range( 0f, 500000f ), Step( 10f )]
 	public float ShootForce { get; set; } = 100000f;
 
+	/// <summary>
+	/// Impulse applied to the physics body a bullet hits, along the shot direction.
+	/// </summary>
+	[Property, Group( "Bullet" )]
+	public float HitForce { get; set; } = 3000f;
+
 	protected TimeSince TimeSinceShoot = 0;
 
 	/// <summary>
@@ -29,6 +32,32 @@ public partial class BaseBulletWeapon : BaseGun
 	protected float GetAimConeAmount( float recovery )
 	{
 		return TimeSinceShoot.Relative.Remap( 0, recovery, 1, 0 );
+	}
+
+	/// <summary>
+	/// The current spread cone in degrees - the base cone widened by how recently we fired.
+	/// </summary>
+	protected Vector2 GetAimCone( in BulletConfiguration config )
+	{
+		var amount = GetAimConeAmount( config.AimConeRecovery );
+
+		return new Vector2(
+			config.AimConeBase.x + amount * config.AimConeSpread.x,
+			config.AimConeBase.y + amount * config.AimConeSpread.y );
+	}
+
+	/// <summary>
+	/// Bullet trace for this gun - the sandbox's bullet collision rules, skipping player controller
+	/// colliders (players are hit through their hitboxes).
+	/// </summary>
+	protected override SceneTrace BulletTrace( Ray ray, float distance, float radius )
+	{
+		return Scene.Trace.Ray( ray, distance )
+			.IgnoreGameObjectHierarchy( AimIgnoreRoot )
+			.WithCollisionRules( "bullet" )
+			.WithoutTags( "playercontroller" )
+			.Radius( radius )
+			.UseHitboxes();
 	}
 
 	/// <summary>
@@ -70,28 +99,17 @@ public partial class BaseBulletWeapon : BaseGun
 
 		AddShootDelay( fireRate );
 
-		var aimConeAmount = GetAimConeAmount( config.AimConeRecovery );
-		var forward = AimRay.Forward
-			.WithAimCone(
-				config.AimConeBase.x + aimConeAmount * config.AimConeSpread.x,
-				config.AimConeBase.y + aimConeAmount * config.AimConeSpread.y
-			);
-		var traceRay = AimRay with { Forward = forward };
+		var spread = GetAimCone( config );
+		var traceRay = AimRay with { Forward = AimRay.Forward.WithAimCone( spread.x, spread.y ) };
 
-		var tr = Scene.Trace.Ray( traceRay, config.Range )
-			.IgnoreGameObjectHierarchy( AimIgnoreRoot )
-			.WithCollisionRules( "bullet" )
-			.WithoutTags( "playercontroller" )
-			.Radius( config.BulletRadius )
-			.UseHitboxes()
-			.Run();
+		var tr = BulletTrace( traceRay, config.Range, config.BulletRadius ).Run();
 
 		// Effects predict on the owner and are relayed by the host (BaseWeapon.ShootEffects owns that
-		// netcode). Damage stays host-authoritative.
+		// netcode). Damage and the prop push are host-authoritative - ShootBullet self-gates, so the
+		// owner's predicted run gets the trace back and deals nothing.
 		ShootEffects( new ShotEffect( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface ) );
 
-		if ( !Rpc.IsPredicting )
-			TraceAttack( TraceAttackInfo.From( tr, config.Damage ) );
+		ShootBullet( tr, config.Damage, HitForce, Attacker, GameObject );
 
 		TimeSinceShoot = 0;
 
@@ -123,27 +141,16 @@ public partial class BaseBulletWeapon : BaseGun
 	{
 		if ( Application.IsDedicatedServer ) return;
 
-		// Fire effects - muzzle flash, shoot sound, attack anim. These always play, regardless of whether
-		// (or what) the shot hit.
+		// Attack sound comes from the base.
+		base.OnShootEffects( shot );
+
+		// Fire effects - muzzle flash, attack anim. These always play, regardless of whether (or what)
+		// the shot hit.
 		Owner?.Controller.Renderer.Set( "b_attack", true );
 
-		if ( !shot.NoEvents )
+		if ( !shot.NoEvents && WeaponModel.IsValid() )
 		{
-			if ( WeaponModel.IsValid() )
-			{
-				WeaponModel.GameObject.RunEvent<WeaponModel>( x => x.OnAttack( shot.HitPosition, shot.Origin ) );
-			}
-
-			if ( ShootSound.IsValid() )
-			{
-				var snd = GameObject.PlaySound( ShootSound );
-
-				// If we're shooting, the sound should not be spatialized
-				if ( HasOwner && Owner.IsLocalPlayer && snd.IsValid() )
-				{
-					snd.SpacialBlend = 0;
-				}
-			}
+			WeaponModel.GameObject.RunEvent<WeaponModel>( x => x.OnAttack( shot.HitPosition, shot.Origin ) );
 		}
 
 		// Impact effects - only when we hit a valid surface.

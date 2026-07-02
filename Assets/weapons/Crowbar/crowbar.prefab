@@ -82,7 +82,7 @@
         "SwingDelay": 0.4,
         "SwingForce": 1000,
         "SwingRadius": 10,
-        "SwingSound": "weapons/crowbar/sounds/crowbar.swing.sound",
+        "AttackSound": "weapons/crowbar/sounds/crowbar.swing.sound",
         "Value": 1,
         "ViewModelPrefab": {
           "_type": "gameobject",

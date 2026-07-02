@@ -9,8 +9,6 @@ public sealed class CameraWeapon : BaseGun
 	bool focusing;
 	Vector3 focusPoint;
 
-	[Property] SoundEvent CameraShoot { get; set; }
-
 	/// <summary>
 	/// The RT camera's resolution 
 	/// </summary>
@@ -123,7 +121,7 @@ public sealed class CameraWeapon : BaseGun
 			Game.TakeScreenshot();
 			Sandbox.Services.Stats.Increment( "photos", 1 );
 
-			GameObject?.PlaySound( CameraShoot );
+			PlayAttackSound();
 		}
 
 		focusing = Input.Down( "attack1" );
