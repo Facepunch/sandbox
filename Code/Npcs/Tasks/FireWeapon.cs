@@ -31,6 +31,9 @@ public class FireWeapon : TaskBase
 	protected override void OnStart()
 	{
 		_burstEnd = BurstDuration;
+
+		// Let nearby NPCs hear the gunfire and come investigate.
+		Npc.EmitStimulus( StimulusKind.Gunshot, radius: 2048f, lifetime: 1.5f );
 	}
 
 	protected override TaskStatus OnUpdate()
