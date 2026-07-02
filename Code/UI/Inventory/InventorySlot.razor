@@ -74,9 +74,8 @@
         var mousePos = Mouse.Position * ScaleFromScreen;
         if ( Box.RectOuter.IsInside( mousePos ) ) return;
 
-        var weapon = GetWeapon();
-        if ( !Inventory.Drop( weapon ) && weapon.IsValid() )
-            Inventory.Remove( weapon );
+        // Every weapon can drop as a live pickup now - no remove fallback needed.
+        Inventory.Drop( GetWeapon() );
     }
 
     BaseSandboxWeapon GetWeapon()

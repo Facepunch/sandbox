@@ -15,12 +15,11 @@ public partial class Toolgun : ScreenWeapon
 		currentMode?.OnCameraMove( player, ref angles );
 	}
 
-	public override void OnAdded( Player player )
+	protected override void OnAdded( Sandbox.InventoryComponent inventory )
 	{
-		base.OnAdded( player );
+		base.OnAdded( inventory );
 
-		if ( Networking.IsHost )
-			CreateToolComponents();
+		CreateToolComponents();
 	}
 
 	public void CreateToolComponents()

@@ -17,28 +17,8 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	/// </summary>
 	public virtual bool WantsHideHud => false;
 
-	/// <summary>
-	/// Gets a reference to the weapon model for this weapon - if there's a viewmodel, pick the viewmodel, if not, world model.
-	/// </summary>
-	public Sandbox.BaseWeaponModel WeaponModel
-	{
-		get
-		{
-			var go = ViewModel;
-
-			if ( Scene.Camera.IsValid() && Scene.Camera.RenderExcludeTags.Contains( "firstperson" ) ) go = default;
-
-			if ( !go.IsValid() ) go = WorldModel;
-			if ( !go.IsValid() ) go = GameObject;
-
-			var wm = go.GetComponentInChildren<Sandbox.BaseWeaponModel>();
-			if ( wm.IsValid() )
-				return wm;
-
-			// Standalone weapons may have a world model in their hierarchy without the stored reference
-			return GameObject.GetComponentInChildren<Sandbox.BaseWeaponModel>();
-		}
-	}
+	// WeaponModel resolution (view model when drawn, else world model, else own hierarchy) comes from
+	// the engine BaseWeapon.
 
 	/// <summary>
 	/// The owner of this carriable
@@ -106,37 +86,6 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	}
 
 	/// <summary>
-	/// Adds the weapon model's muzzle point on top of the engine's explicit-muzzle / self resolution
-	/// (<see cref="Sandbox.BaseWeapon.GetMuzzleTransform"/>).
-	/// </summary>
-	public override Transform GetMuzzleTransform()
-	{
-		var modelMuzzle = WeaponModel?.MuzzleGameObject;
-		if ( modelMuzzle.IsValid() )
-			return modelMuzzle.WorldTransform;
-
-		return base.GetMuzzleTransform();
-	}
-
-	/// <summary>
-	/// The inventory slot this item is assigned to, or -1 if unassigned. Back-compat shim over the
-	/// engine inventory's <see cref="BaseInventoryItem.Slot"/>.
-	/// </summary>
-	public int InventorySlot { get => Slot; set => Slot = value; }
-
-	/// <summary>
-	/// This is shite
-	/// </summary>
-	[Sync( SyncFlags.FromHost ), Change( nameof( OnItemVisibility ) )]
-	public bool IsItem { get; set; } = true;
-
-	private void OnItemVisibility( bool oldVal, bool newVal )
-	{
-		if ( DroppedGameObject.IsValid() )
-			DroppedGameObject.Enabled = newVal;
-	}
-
-	/// <summary>
 	/// Can we switch to this?
 	/// </summary>
 	/// <returns></returns>
@@ -150,43 +99,30 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	/// </summary>
 	protected override bool OnCanSwitchTo() => CanSwitch();
 
-	/// <summary>
-	/// The engine creates the view/world models on equip and destroys them on holster. We additionally
-	/// disable the dropped/physics components while held.
-	/// </summary>
-	protected override void OnEquipped()
-	{
-		base.OnEquipped();
-		SetDropped( false );
-	}
 
 	// DrawHud / DrawCrosshair and the per-frame crosshair positioning come from the engine BaseWeapon.
 
 	/// <summary>
-	/// Called when added to the player's inventory. Base seeds the magazine and, on first pickup of
-	/// this ammo type, the shared reserve pool.
+	/// Runs on the host when added to an inventory. Seeds the shared reserve pool from the ammo
+	/// resource on first pickup of this ammo type; the engine base seeds the magazines - only when
+	/// they've never been filled, so a dropped gun keeps its rounds through a pickup.
 	/// </summary>
-	public virtual void OnAdded( Player player )
+	protected override void OnAdded( Sandbox.InventoryComponent inventory )
 	{
-		if ( !Networking.IsHost )
-			return;
-
-		// Seed the magazine full.
-		if ( UsesAmmo && UsesClips )
-			Clip1 = ClipMaxSize;
-
-		if ( !UsesAmmo || AmmoType is null )
-			return;
-
-		// Seed the shared reserve pool once - only when the player first gets a weapon of this ammo
-		// type. Guarding on the pool being empty stops two guns that share a resource from
+		// Seeded before the base so the resource's default wins over the engine's StartingAmmo-only
+		// seeding. Guarding on the pool being empty stops two guns that share a resource from
 		// double-seeding it (and pickup churn from inflating reserve over time).
-		if ( !Inventory.HasAmmo( AmmoType.ResourcePath ) )
+		if ( UsesAmmo && AmmoType is not null && !inventory.HasAmmo( AmmoType.ResourcePath ) )
 		{
 			var seed = AmmoType.DefaultStartingAmmo + StartingAmmo;
 			if ( seed > 0 )
 				AddReserveAmmo( seed );
 		}
+
+		// In an inventory - not a world pickup any more.
+		IsDropped = false;
+
+		base.OnAdded( inventory );
 	}
 
 	//
@@ -280,7 +216,7 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 		Ownable.Set( GameObject, owner );
 		GameObject.Tags.Add( "removable" );
 
-		SetDropped( true );
+		IsDropped = true;
 
 		if ( GetComponent<Rigidbody>( true ) is { } body )
 		{

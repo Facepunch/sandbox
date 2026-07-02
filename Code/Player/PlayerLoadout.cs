@@ -57,7 +57,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 			.Select( w => new LoadoutEntry
 			{
 				PrefabPath = w.GameObject.PrefabInstanceSource,
-				Slot = w.InventorySlot,
+				Slot = w.Slot,
 				SpawnerDataPayload = (w as SpawnerWeapon)?.SpawnerData
 			} )
 			.ToList();
@@ -155,7 +155,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 
 	private async Task SwitchToPresetAsync( string loadoutJson )
 	{
-		var previousSlot = Inventory.ActiveWeapon?.InventorySlot ?? 0;
+		var previousSlot = Inventory.ActiveWeapon?.Slot ?? 0;
 
 		foreach ( var weapon in Inventory.Weapons.ToList() )
 			weapon.DestroyGameObject();

@@ -44,7 +44,7 @@
     protected override void OnUpdate()
     {
         inventory = Game.ActiveScene.GetAllComponents<PlayerInventory>().Where(x => x.Network.IsOwner).FirstOrDefault();
-        activeSlot = inventory?.ActiveWeapon?.InventorySlot ?? -1;
+        activeSlot = inventory?.ActiveWeapon?.Slot ?? -1;
 
         Panel.SetClass( "spawnmenu-open", IsSpawnMenuOpen() );
     }

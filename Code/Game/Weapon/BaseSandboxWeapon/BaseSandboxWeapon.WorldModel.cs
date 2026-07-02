@@ -21,10 +21,16 @@ public partial class BaseSandboxWeapon
 
 	
 	/// <summary>
-	/// Enables or disables the physics/dropped components of this carryable.
-	/// Call with <c>false</c> when picking up/holding, <c>true</c> when dropping.
+	/// True while this weapon is loose in the world as a pickup rather than held. Host authoritative -
+	/// the change callback toggles the pickup components (physics, <see cref="DroppedWeapon"/>, the
+	/// standalone model) on every peer.
 	/// </summary>
-	public void SetDropped( bool dropped )
+	[Sync( SyncFlags.FromHost ), Change( nameof( OnIsDroppedChanged ) )]
+	public bool IsDropped { get; set; } = true;
+
+	private void OnIsDroppedChanged( bool oldValue, bool newValue ) => ApplyDroppedState( newValue );
+
+	private void ApplyDroppedState( bool dropped )
 	{
 		var rb = GetComponent<Rigidbody>( true );
 		if ( rb.IsValid() ) rb.Enabled = dropped;
@@ -47,11 +53,7 @@ public partial class BaseSandboxWeapon
 		if ( renderer is null ) return;
 
 		if ( Networking.IsHost )
-		{
-			IsItem = false;
-		}
-
-		SetDropped( false );
+			IsDropped = false;
 
 		var worldModel = WorldModelPrefab?.Clone( new CloneConfig
 		{
@@ -76,6 +78,6 @@ public partial class BaseSandboxWeapon
 		WorldModel = default;
 
 		if ( Networking.IsHost )
-			IsItem = true;
+			IsDropped = true;
 	}
 }
