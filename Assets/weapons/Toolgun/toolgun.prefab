@@ -59,10 +59,6 @@
         },
         "DisplayName": "Tool Gun",
         "HoldType": "Pistol",
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/toolgun/item_toolgun.prefab"
-        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,

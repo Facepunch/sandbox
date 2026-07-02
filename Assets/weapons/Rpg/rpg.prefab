@@ -122,7 +122,6 @@
         "HoldType": "RPG",
         "IncrementalReloading": false,
         "IsTrackedAim": false,
-        "ItemPrefab": null,
         "MaxReserveAmmo": 6,
         "MuzzleGameObject": {
           "_type": "gameobject",

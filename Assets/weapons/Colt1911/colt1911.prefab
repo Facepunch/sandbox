@@ -85,10 +85,6 @@
         "HoldType": "Pistol",
         "IncrementalReloading": false,
         "IronSightsFireScale": 0.2,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/colt1911/colt1911.prefab"
-        },
         "MaxReserveAmmo": 300,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,

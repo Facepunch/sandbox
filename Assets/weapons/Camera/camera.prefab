@@ -71,10 +71,6 @@
         "FirstShellReloadTime": 0,
         "HoldType": "HoldItem",
         "IncrementalReloading": false,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/camera/item_camera.prefab"
-        },
         "MaxReserveAmmo": 120,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,

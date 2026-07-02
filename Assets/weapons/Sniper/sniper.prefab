@@ -84,10 +84,6 @@
         },
         "HoldType": "Rifle",
         "IncrementalReloading": false,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/sniper/sniper.prefab"
-        },
         "MaxReserveAmmo": 80,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,

@@ -84,10 +84,6 @@
         "HoldType": "Rifle",
         "IncrementalReloading": false,
         "IronSightsFireScale": 0.2,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/mp5/mp5.prefab"
-        },
         "MaxReserveAmmo": 300,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,

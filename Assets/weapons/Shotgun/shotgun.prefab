@@ -85,10 +85,6 @@
         "HoldType": "Shotgun",
         "IncrementalReloading": true,
         "IronSightsFireScale": 0.2,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/shotgun/shotgun.prefab"
-        },
         "MaxReserveAmmo": 40,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,

@@ -5,11 +5,6 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	// DisplayName, DisplayIcon, Value, Slot, ViewModel and WorldModel are all inherited from the
 	// engine BaseWeapon / BaseInventoryItem. (DisplayIcon also satisfies IKillIcon.)
 
-	/// <summary>
-	/// The prefab to spawn in the world when this item is dropped from the inventory.
-	/// </summary>
-	[Property, Feature( "Inventory" )] public GameObject ItemPrefab { get; set; }
-
 	// MuzzleGameObject is inherited from the engine BaseWeapon.
 
 	/// <summary>
@@ -266,44 +261,55 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	}
 
 	/// <summary>
-	/// Spawns this weapon's world pickup and throws it - a fresh clone of its own prefab for weapons
-	/// with a <see cref="DroppedWeapon"/> component, otherwise <see cref="ItemPrefab"/>. A fresh clone
-	/// avoids carrying the held instance's ownership and state. Returns the pickup, or null when this
-	/// weapon has no pickup form. Host only.
+	/// Drops this weapon into the world as a pickup - the same live object, so it keeps its state
+	/// (ammo, tool modes). Unparents it, drops network ownership, enables the dropped components and
+	/// tags it cleanable. Host only.
 	/// </summary>
-	public GameObject SpawnDroppedPickup( Vector3 position, Vector3 velocity, Connection owner = null )
+	public void DropIntoWorld( Vector3 position, Vector3 velocity, Connection owner = null )
 	{
 		if ( !Networking.IsHost )
-			return null;
+			return;
 
-		GameObject prefab = null;
+		GameObject.SetParent( null, true );
+		GameObject.Enabled = true;
+		WorldPosition = position;
+		Slot = -1;
 
-		if ( GetComponent<DroppedWeapon>( true ).IsValid() )
+		Network.DropOwnership();
+
+		Ownable.Set( GameObject, owner );
+		GameObject.Tags.Add( "removable" );
+
+		SetDropped( true );
+
+		if ( GetComponent<Rigidbody>( true ) is { } body )
 		{
-			var source = GameObject.PrefabInstanceSource;
-			if ( !string.IsNullOrEmpty( source ) )
-				prefab = GameObject.GetPrefab( source );
+			body.Velocity = velocity;
+			body.AngularVelocity = Vector3.Random * 8.0f;
+		}
+	}
+
+	/// <summary>
+	/// The engine inventory is dropping this - throw the live object out in front of the dropper.
+	/// </summary>
+	protected override bool OnDrop()
+	{
+		var player = Owner;
+
+		if ( player.IsValid() )
+		{
+			var eye = player.EyeTransform;
+			var velocity = (player.Controller.IsValid() ? player.Controller.Velocity : Vector3.Zero)
+				+ eye.Forward * 200f + Vector3.Up * 100f;
+
+			DropIntoWorld( eye.Position + eye.Forward * 48f, velocity, player.Network.Owner );
+		}
+		else
+		{
+			DropIntoWorld( WorldPosition, Vector3.Up * 50f );
 		}
 
-		if ( !prefab.IsValid() )
-			prefab = ItemPrefab;
-
-		if ( !prefab.IsValid() )
-			return null;
-
-		var pickup = prefab.Clone( new CloneConfig { Transform = new Transform( position ), StartEnabled = true } );
-
-		Ownable.Set( pickup, owner );
-		pickup.Tags.Add( "removable" );
-		pickup.NetworkSpawn();
-
-		if ( pickup.GetComponent<Rigidbody>() is { } rb )
-		{
-			rb.Velocity = velocity;
-			rb.AngularVelocity = Vector3.Random * 8.0f;
-		}
-
-		return pickup;
+		return true;
 	}
 
 	/// <summary>

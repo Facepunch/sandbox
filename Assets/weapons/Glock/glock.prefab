@@ -85,10 +85,6 @@
         "HoldType": "Pistol",
         "IncrementalReloading": false,
         "IronSightsFireScale": 0.2,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/glock/glock.prefab"
-        },
         "MaxReserveAmmo": 300,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,

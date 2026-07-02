@@ -196,6 +196,6 @@ public class CombatNpc : Npc
 			? Weapon.WorldModel.WorldPosition
 			: WorldPosition + Vector3.Up * 32f;
 
-		Weapon.SpawnDroppedPickup( position, Vector3.Up * 50f );
+		Weapon.DropIntoWorld( position, Vector3.Up * 50f );
 	}
 }

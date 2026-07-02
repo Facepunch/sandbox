@@ -328,32 +328,11 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		if ( dropEvent.Cancelled )
 			return false;
 
-		var dropPosition = Player.EyeTransform.Position + Player.EyeTransform.Forward * 48f;
-		var dropVelocity = Player.EyeTransform.Forward * 200f + Vector3.Up * 100f;
-
-		// If this is the active weapon, holster first
-		if ( ActiveWeapon == weapon )
-		{
-			SwitchWeapon( null, true );
-		}
-
-		// The pickup is a fresh prefab clone - avoids ownership/state issues from the inventory copy.
-		weapon.SpawnDroppedPickup( dropPosition, Player.Controller.Velocity + dropVelocity, Player.Network.Owner );
-		weapon.DestroyGameObject();
-
-		_ = FinishDropAsync();
+		// Engine drop: force-holsters, the weapon places itself in the world (see
+		// BaseSandboxWeapon.OnDrop), then we switch to the best remaining item.
+		base.Drop( weapon );
 
 		return true;
-	}
-
-	private async Task FinishDropAsync()
-	{
-		await Task.Yield();
-		var best = GetBestWeapon();
-		if ( best.IsValid() )
-		{
-			SwitchWeapon( best );
-		}
 	}
 
 	private static SoundEvent AmmoPickupSound = ResourceLibrary.Get<SoundEvent>( "sounds/weapons/ammo_pickup.sound" );

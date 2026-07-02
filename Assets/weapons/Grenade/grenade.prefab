@@ -71,7 +71,6 @@
         "Force": 1,
         "HoldType": "HoldItem",
         "IncrementalReloading": false,
-        "ItemPrefab": null,
         "Lifetime": 3,
         "MaxDamage": 125,
         "MaxReserveAmmo": 4,

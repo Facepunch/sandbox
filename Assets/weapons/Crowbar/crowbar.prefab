@@ -65,10 +65,6 @@
         },
         "HitSound": "weapons/crowbar/sounds/crowbar.hit.sound",
         "HoldType": "melee_weapons",
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/crowbar/crowbar.prefab"
-        },
         "MissSwingDelay": 0.4,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
