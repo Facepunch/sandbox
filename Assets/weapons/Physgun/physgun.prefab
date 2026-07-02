@@ -586,7 +586,7 @@
             "UseAnimGraph": true
           },
           {
-            "__type": "WorldModel",
+            "__type": "Sandbox.BaseWeaponModel",
             "__guid": "5d90b75d-4489-449b-93e4-8de1007de4e7",
             "__enabled": true,
             "Flags": 0,

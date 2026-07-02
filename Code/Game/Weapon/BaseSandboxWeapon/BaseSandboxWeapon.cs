@@ -25,7 +25,7 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	/// <summary>
 	/// Gets a reference to the weapon model for this weapon - if there's a viewmodel, pick the viewmodel, if not, world model.
 	/// </summary>
-	public WeaponModel WeaponModel
+	public Sandbox.BaseWeaponModel WeaponModel
 	{
 		get
 		{
@@ -36,12 +36,12 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 			if ( !go.IsValid() ) go = WorldModel;
 			if ( !go.IsValid() ) go = GameObject;
 
-			var wm = go.GetComponentInChildren<WeaponModel>();
+			var wm = go.GetComponentInChildren<Sandbox.BaseWeaponModel>();
 			if ( wm.IsValid() )
 				return wm;
 
-			// Standalone weapons may have a WorldModel in their hierarchy without the stored reference
-			return GameObject.GetComponentInChildren<WeaponModel>();
+			// Standalone weapons may have a world model in their hierarchy without the stored reference
+			return GameObject.GetComponentInChildren<Sandbox.BaseWeaponModel>();
 		}
 	}
 

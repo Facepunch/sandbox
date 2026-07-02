@@ -214,7 +214,7 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "WorldModel",
+            "__type": "Sandbox.BaseWeaponModel",
             "__guid": "f3864e75-2acb-57b1-b16c-c2092c2b2b12",
             "__enabled": true,
             "Flags": 0,
