@@ -178,6 +178,24 @@ public class CombatNpc : Npc
 		if ( Speech.CanSpeak )
 			Speech.Say( Game.Random.FromArray( DeathLines ), 2f );
 
+		DropWeapon();
+
 		base.Die( damage );
+	}
+
+	/// <summary>
+	/// Drop the held weapon into the world where the hand was, so it survives the NPC's death and can
+	/// be picked up.
+	/// </summary>
+	private void DropWeapon()
+	{
+		if ( !Weapon.IsValid() )
+			return;
+
+		var position = Weapon.WorldModel.IsValid()
+			? Weapon.WorldModel.WorldPosition
+			: WorldPosition + Vector3.Up * 32f;
+
+		Weapon.SpawnDroppedPickup( position, Vector3.Up * 50f );
 	}
 }
