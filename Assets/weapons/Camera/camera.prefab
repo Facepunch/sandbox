@@ -83,7 +83,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_R",
+        "HoldBone": "hold_R",
         "ReloadStartTime": 0,
         "ReloadTime": 2.5,
         "ReserveAmmo": 0,

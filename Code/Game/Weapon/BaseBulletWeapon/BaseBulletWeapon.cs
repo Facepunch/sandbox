@@ -68,18 +68,18 @@ public partial class BaseBulletWeapon : BaseGun
 		return GetAimConeAmount( Bullet.AimConeRecovery );
 	}
 
-	/// <inheritdoc cref="ShootBullet(float, in BulletConfiguration)"/>
-	protected void ShootBullet( float fireRate )
+	/// <inheritdoc cref="ShootBullet(in BulletConfiguration)"/>
+	protected void ShootBullet()
 	{
-		ShootBullet( fireRate, Bullet );
+		ShootBullet( Bullet );
 	}
 
 	/// <summary>
-	/// Shoot a bullet out of the front of the gun.
+	/// Shoot a bullet out of the front of the gun. Fire rate comes from the engine's PrimaryDelay.
 	/// When held by a player, fires from the player's eye with aim cone and recoil.
 	/// When standalone (no owner), fires straight from the weapon's muzzle.
 	/// </summary>
-	protected void ShootBullet( float fireRate, in BulletConfiguration config )
+	protected void ShootBullet( in BulletConfiguration config )
 	{
 		if ( HasOwner && ( !HasAmmo() || IsReloading ) )
 		{
@@ -97,7 +97,7 @@ public partial class BaseBulletWeapon : BaseGun
 			return;
 		}
 
-		AddShootDelay( fireRate );
+		AddShootDelay( PrimaryDelay );
 
 		var spread = GetAimCone( config );
 		var traceRay = AimRay with { Forward = AimRay.Forward.WithAimCone( spread.x, spread.y ) };
@@ -139,62 +139,11 @@ public partial class BaseBulletWeapon : BaseGun
 
 	protected override void OnShootEffects( ShotEffect shot )
 	{
-		if ( Application.IsDedicatedServer ) return;
-
-		// Attack sound comes from the base.
+		// Attack sound, holder anim and the weapon model's muzzle/brass/tracer come from the base.
 		base.OnShootEffects( shot );
 
-		// Fire effects - muzzle flash, attack anim. These always play, regardless of whether (or what)
-		// the shot hit.
-		Owner?.Controller.Renderer.Set( "b_attack", true );
-
-		if ( !shot.NoEvents && WeaponModel.IsValid() )
-		{
-			WeaponModel.GameObject.RunEvent<WeaponModel>( x => x.OnAttack( shot.HitPosition, shot.Origin ) );
-		}
-
-		// Impact effects - only when we hit a valid surface.
-		if ( !shot.Hit || !shot.HitObject.IsValid() || !shot.Surface.IsValid() )
-			return;
-
-		var baseSurface = shot.Surface.GetBaseSurface();
-		var bulletSound = shot.Surface.SoundCollection.Bullet ?? baseSurface?.SoundCollection.Bullet;
-		if ( bulletSound.IsValid() )
-		{
-			Sound.Play( bulletSound, shot.HitPosition );
-		}
-
-		var prefab = shot.Surface.PrefabCollection.BulletImpact ?? baseSurface?.PrefabCollection.BulletImpact;
-
-		// Still null?
-		if ( prefab is null )
-			return;
-
-		var fwd = Rotation.LookAt( shot.Normal * -1.0f, Vector3.Random );
-
-		var impact = prefab.Clone();
-		impact.WorldPosition = shot.HitPosition;
-		impact.WorldRotation = fwd;
-		impact.SetParent( shot.HitObject, true );
-
-		if ( shot.HitObject.GetComponentInChildren<SkinnedModelRenderer>() is not { CreateBoneObjects: true } skinned )
-			return;
-
-		// find closest bone
-		var bones = skinned.GetBoneTransforms( true );
-
-		var closestDist = float.MaxValue;
-
-		for ( var i = 0; i < bones.Length; i++ )
-		{
-			var bone = bones[i];
-			var dist = bone.Position.Distance( shot.HitPosition );
-			if ( dist < closestDist )
-			{
-				closestDist = dist;
-				impact.SetParent( skinned.GetBoneObject( i ), true );
-			}
-		}
+		// Surface impact at the hit - every pellet leaves one.
+		ImpactEffect( shot );
 	}
 
 	public record struct BulletConfiguration

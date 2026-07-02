@@ -8,11 +8,9 @@ public partial class BaseCarryable
 		public void OnDestroyWorldModel() { }
 	}
 
-	// WorldModelPrefab is inherited from the engine BaseWeapon (same serialized name). ParentBone is
-	// kept (engine uses "HoldBone") because the game's CreateWorldModel override reads it.
+	// WorldModelPrefab and HoldBone are inherited from the engine BaseWeapon.
 	[Property, Feature( "WorldModel" )] public GameObject DroppedGameObject { get; set; }
 	[Property, Feature( "WorldModel" )] public CitizenAnimationHelper.HoldTypes HoldType { get; set; } = CitizenAnimationHelper.HoldTypes.HoldItem;
-	[Property, Feature( "WorldModel" )] public string ParentBone { get; set; } = "hold_r";
 
 	protected override void CreateWorldModel()
 	{
@@ -58,7 +56,7 @@ public partial class BaseCarryable
 
 		var worldModel = WorldModelPrefab?.Clone( new CloneConfig
 		{
-			Parent = renderer.GetBoneObject( ParentBone ) ?? GameObject,
+			Parent = renderer.GetBoneObject( HoldBone ) ?? GameObject,
 			StartEnabled = true,
 			Transform = global::Transform.Zero
 		} );

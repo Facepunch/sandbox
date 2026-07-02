@@ -82,7 +82,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
+        "HoldBone": "hold_r",
         "PinPullSound": "weapons/grenade/sounds/grenade_pin_pull.sound",
         "Prefab": {
           "_type": "gameobject",

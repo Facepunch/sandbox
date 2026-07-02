@@ -69,7 +69,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
+        "HoldBone": "hold_r",
         "SuccessBeamEffect": {
           "_type": "gameobject",
           "prefab": "weapons/toolgun/effects/beam-success.prefab"

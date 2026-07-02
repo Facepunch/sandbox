@@ -89,15 +89,8 @@ public class MeleeWeapon : BaseCarryable
 	{
 		if ( Application.IsDedicatedServer ) return;
 
-		// Swing sound comes from the base.
+		// Swing sound, holder anim and the model's attack anim come from the base.
 		base.OnShootEffects( shot );
-
-		Owner?.Controller.Renderer.Set( "b_attack", true );
-
-		if ( ViewModel.IsValid() )
-			ViewModel.RunEvent<ViewModel>( x => x.OnAttack() );
-		else if ( WorldModel.IsValid() )
-			WorldModel.RunEvent<WorldModel>( x => x.OnAttack() );
 
 		if ( !shot.Hit || !shot.HitObject.IsValid() )
 			return;
@@ -105,39 +98,12 @@ public class MeleeWeapon : BaseCarryable
 		if ( ViewModel.IsValid() )
 			ViewModel.RunEvent<ViewModel>( x => x.Renderer.Set( "b_attack_has_hit", true ) );
 
+		// A melee thunk instead of the surface's bullet ricochet, so the impact prefab is spawned soundless.
 		shot.HitObject.PlaySound(
 			shot.Surface.SoundCollection.ImpactHard ?? shot.Surface.GetBaseSurface()?.SoundCollection.ImpactHard ?? HitSound,
 			shot.HitObject.WorldTransform.PointToLocal( shot.HitPosition ) );
 
-		var prefab = shot.Surface.PrefabCollection.BulletImpact ?? shot.Surface.GetBaseSurface()?.PrefabCollection.BulletImpact;
-		if ( prefab is null )
-			return;
-
-		var fwd = Rotation.LookAt( shot.Normal * -1.0f, Vector3.Random );
-
-		var impact = prefab.Clone();
-		impact.WorldPosition = shot.HitPosition;
-		impact.WorldRotation = fwd;
-		impact.SetParent( shot.HitObject, true );
-
-		if ( shot.HitObject.GetComponentInChildren<SkinnedModelRenderer>() is not { CreateBoneObjects: true } skinned )
-			return;
-
-		// find closest bone
-		var bones = skinned.GetBoneTransforms( true );
-
-		var closestDist = float.MaxValue;
-
-		for ( var i = 0; i < bones.Length; i++ )
-		{
-			var bone = bones[i];
-			var dist = bone.Position.Distance( shot.HitPosition );
-			if ( dist < closestDist )
-			{
-				closestDist = dist;
-				impact.SetParent( skinned.GetBoneObject( i ), true );
-			}
-		}
+		ImpactPrefab( shot.HitObject, shot.Surface, shot.HitPosition, shot.Normal );
 	}
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )

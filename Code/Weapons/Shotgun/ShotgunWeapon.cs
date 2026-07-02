@@ -2,7 +2,6 @@
 
 public sealed class ShotgunWeapon : IronSightsWeapon
 {
-	[Property] public float PrimaryFireRate { get; set; } = 0.8f;
 	[Property] public int PelletCount { get; set; } = 8;
 
 	protected override bool WantsPrimaryAttack()
@@ -26,7 +25,7 @@ public sealed class ShotgunWeapon : IronSightsWeapon
 			return;
 		}
 
-		AddShootDelay( PrimaryFireRate );
+		AddShootDelay( PrimaryDelay );
 
 		// One volley through the engine - a BulletTrace per pellet, damage host-authoritative
 		// (ShootBullets self-gates, the owner's predicted run just gets the traces for effects).

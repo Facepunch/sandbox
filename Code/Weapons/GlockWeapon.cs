@@ -2,8 +2,6 @@
 
 public sealed class GlockWeapon : IronSightsWeapon
 {
-	[Property] public float PrimaryFireRate { get; set; } = 0.15f;
-
 	protected override bool WantsPrimaryAttack()
 	{
 		return Input.Pressed( "attack1" );
@@ -11,7 +9,7 @@ public sealed class GlockWeapon : IronSightsWeapon
 
 	public override void PrimaryAttack()
 	{
-		ShootBullet( PrimaryFireRate, GetBullet() );
+		ShootBullet( GetBullet() );
 	}
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )

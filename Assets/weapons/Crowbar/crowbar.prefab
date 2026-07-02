@@ -77,7 +77,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
+        "HoldBone": "hold_r",
         "Range": 128,
         "SwingDelay": 0.4,
         "SwingForce": 1000,

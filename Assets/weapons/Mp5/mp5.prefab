@@ -94,7 +94,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
+        "HoldBone": "hold_r",
         "ReloadTime": 1.8,
         "ReserveAmmo": 0,
         "SecondaryInput": {
@@ -108,7 +108,7 @@
         },
         "AttackSound": "weapons/mp5/sounds/mp5_shoot.sound",
         "StartingAmmo": 30,
-        "TimeBetweenShots": 0.09,
+        "PrimaryDelay": 0.09,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 10,

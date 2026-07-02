@@ -3,7 +3,6 @@ using Sandbox.Utility;
 
 public sealed class RpgWeapon : BaseGun
 {
-	[Property] public float TimeBetweenShots { get; set; } = 2f;
 	[Property] public GameObject ProjectilePrefab { get; set; }
 	[Property] public float ProjectileSpeed { get; set; } = 1024f;
 
@@ -109,7 +108,7 @@ public sealed class RpgWeapon : BaseGun
 		}
 
 		TimeSinceShoot = 0;
-		AddShootDelay( TimeBetweenShots );
+		AddShootDelay( PrimaryDelay );
 
 		// Fire presentation - predicted on the owner for instant feedback, relayed by the host to everyone
 		// else. See OnShootEffects.
@@ -143,15 +142,6 @@ public sealed class RpgWeapon : BaseGun
 	/// <summary>
 	/// Muzzle flash + launch sound. Plays for the shooter (predicted) and, via the host relay, everyone else.
 	/// </summary>
-	protected override void OnShootEffects()
-	{
-		base.OnShootEffects();
-
-		if ( ViewModel.IsValid() )
-			ViewModel.RunEvent<ViewModel>( x => x.OnAttack() );
-		else if ( WorldModel.IsValid() )
-			WorldModel.RunEvent<WorldModel>( x => x.OnAttack() );
-	}
 
 	private Vector3 CheckThrowPosition( Player player, Vector3 eyePosition, Vector3 grenadePosition )
 	{

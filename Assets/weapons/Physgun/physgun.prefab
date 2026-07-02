@@ -100,7 +100,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
+        "HoldBone": "hold_r",
         "PowerMaxDistance": 512,
         "PowerMaxFraction": 1,
         "PowerMinDistance": 64,

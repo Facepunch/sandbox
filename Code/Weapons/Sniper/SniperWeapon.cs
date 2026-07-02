@@ -2,7 +2,6 @@ using Sandbox.Rendering;
 
 public sealed class SniperWeapon : BaseBulletWeapon
 {
-	[Property] public float PrimaryFireRate { get; set; } = 1.2f;
 	[Property] public float ScopedFov { get; set; } = 20f;
 	[Property] public float ScopeSensitivity { get; set; } = 0.3f;
 	[Property] public SoundEvent BoltPullSound { get; set; }
@@ -33,7 +32,7 @@ public sealed class SniperWeapon : BaseBulletWeapon
 
 	public override void PrimaryAttack()
 	{
-		ShootBullet( PrimaryFireRate );
+		ShootBullet();
 		_hasFired = true;
 	}
 
