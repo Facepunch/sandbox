@@ -45,14 +45,6 @@ public abstract class IronSightsWeapon : BaseBulletWeapon
 		IsAiming = false;
 	}
 
-	protected BulletConfiguration GetBullet()
-	{
-		if ( !IsAiming )
-			return Bullet;
-
-		var config = Bullet;
-		config.AimConeBase *= IronSightsFireScale;
-		config.AimConeSpread *= IronSightsFireScale;
-		return config;
-	}
+	/// <summary>Aiming down sights narrows the spread cone.</summary>
+	public override Vector2 CurrentSpread => base.CurrentSpread * (IsAiming ? IronSightsFireScale : 1f);
 }

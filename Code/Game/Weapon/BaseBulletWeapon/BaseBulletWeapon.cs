@@ -1,49 +1,61 @@
 public partial class BaseBulletWeapon : BaseSandboxWeapon
 {
-	[Property, Group( "Bullet" )]
-	public BulletConfiguration Bullet { get; set; } = new()
-	{
-		Damage = 12f,
-		BulletRadius = 1f,
-		Range = 4096f,
-		AimConeBase = new Vector2( 0.5f, 0.25f ),
-		AimConeSpread = new Vector2( 3f, 3f ),
-		AimConeRecovery = 0.2f,
-		RecoilPitch = new Vector2( -0.3f, -0.1f ),
-		RecoilYaw = new Vector2( -0.1f, 0.1f ),
-		CameraRecoilStrength = 1f,
-		CameraRecoilFrequency = 1f,
-	};
+	//
+	// Ballistics (damage, pellets, spread, reach) and the attack itself live on the engine BaseWeapon.
+	// What's left here is the game feel - recoil and camera shake - and the sandbox's bullet collision
+	// rules.
+	//
 
-	[Property, Group( "Bullet" ), ClientEditable, Range( 0f, 500000f ), Step( 10f )]
+	/// <summary>Random pitch punch per shot (min, max degrees).</summary>
+	[Property, Group( "Recoil" )] public Vector2 RecoilPitch { get; set; } = new( -0.3f, -0.1f );
+
+	/// <summary>Random yaw punch per shot (min, max degrees).</summary>
+	[Property, Group( "Recoil" )] public Vector2 RecoilYaw { get; set; } = new( -0.1f, 0.1f );
+
+	/// <summary>First-person camera shake strength per shot.</summary>
+	[Property, Group( "Recoil" )] public float CameraRecoilStrength { get; set; } = 1f;
+
+	/// <summary>First-person camera shake frequency per shot.</summary>
+	[Property, Group( "Recoil" )] public float CameraRecoilFrequency { get; set; } = 1f;
+
+	/// <summary>Physical kick applied to a standalone (unheld) gun when it fires.</summary>
+	[Property, Group( "Recoil" ), ClientEditable, Range( 0f, 500000f ), Step( 10f )]
 	public float ShootForce { get; set; } = 100000f;
 
-	/// <summary>
-	/// Impulse applied to the physics body a bullet hits, along the shot direction.
-	/// </summary>
-	[Property, Group( "Bullet" )]
-	public float HitForce { get; set; } = 3000f;
-
-	protected TimeSince TimeSinceShoot = 0;
-
-	/// <summary>
-	/// Returns 0 for no aim spread, 1 for full aim cone, based on time since last shot.
-	/// </summary>
-	protected float GetAimConeAmount( float recovery )
+	public override void PrimaryAttack()
 	{
-		return TimeSinceShoot.Relative.Remap( 0, recovery, 1, 0 );
+		base.PrimaryAttack();
+
+		DoRecoil();
 	}
 
 	/// <summary>
-	/// The current spread cone in degrees - the base cone widened by how recently we fired.
+	/// The per-shot kick - eye punch and camera shake for a held gun, a physical shove for a
+	/// standalone one.
 	/// </summary>
-	protected Vector2 GetAimCone( in BulletConfiguration config )
+	protected virtual void DoRecoil()
 	{
-		var amount = GetAimConeAmount( config.AimConeRecovery );
+		if ( !HasOwner )
+		{
+			// Simulate physical recoil by pushing the weapon opposite to its fire direction
+			if ( ShootForce > 0f && GetComponent<Rigidbody>( true ) is { } rb )
+			{
+				var muzzle = WeaponModel?.MuzzleGameObject?.WorldTransform ?? WorldTransform;
+				rb.ApplyForce( muzzle.Rotation.Up * ShootForce );
+			}
 
-		return new Vector2(
-			config.AimConeBase.x + amount * config.AimConeSpread.x,
-			config.AimConeBase.y + amount * config.AimConeSpread.y );
+			return;
+		}
+
+		Owner.Controller.EyeAngles += new Angles(
+			Random.Shared.Float( RecoilPitch.x, RecoilPitch.y ),
+			Random.Shared.Float( RecoilYaw.x, RecoilYaw.y ),
+			0 );
+
+		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
+		{
+			_ = new Sandbox.CameraNoise.Recoil( CameraRecoilStrength, CameraRecoilFrequency );
+		}
 	}
 
 	/// <summary>
@@ -60,83 +72,6 @@ public partial class BaseBulletWeapon : BaseSandboxWeapon
 			.UseHitboxes();
 	}
 
-	/// <summary>
-	/// Returns the aim cone amount using the configured recovery time
-	/// </summary>
-	protected float GetAimConeAmount()
-	{
-		return GetAimConeAmount( Bullet.AimConeRecovery );
-	}
-
-	/// <inheritdoc cref="ShootBullet(in BulletConfiguration)"/>
-	protected void ShootBullet()
-	{
-		ShootBullet( Bullet );
-	}
-
-	/// <summary>
-	/// Shoot a bullet out of the front of the gun. Fire rate comes from the engine's PrimaryDelay.
-	/// When held by a player, fires from the player's eye with aim cone and recoil.
-	/// When standalone (no owner), fires straight from the weapon's muzzle.
-	/// </summary>
-	protected void ShootBullet( in BulletConfiguration config )
-	{
-		if ( HasOwner && ( !HasPrimaryAmmo() || IsReloading ) )
-		{
-			TryAutoReload();
-			return;
-		}
-
-		// Cooldown is gated by the caller (the engine fire loop / CanPrimaryAttack) before we get here -
-		// FirePrimary has already set NextPrimaryFire by this point, so we must not re-check it.
-
-		// Only consume ammo when held by a player
-		if ( HasOwner && !TakePrimaryAmmo( 1 ) )
-		{
-			SetNextFire( 0.2f );
-			return;
-		}
-
-		SetNextFire( PrimaryDelay );
-
-		var spread = GetAimCone( config );
-		var traceRay = AimRay with { Forward = AimRay.Forward.WithAimCone( spread.x, spread.y ) };
-
-		var tr = BulletTrace( traceRay, config.Range, config.BulletRadius ).Run();
-
-		// Effects play here and relay through the host to everyone else (BaseWeapon.ShootEffects owns
-		// that netcode). Our trace decides the hit - the engine claims it to the host, which applies
-		// the damage and prop push.
-		ShootEffects( new ShotEffect( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface ) );
-
-		ShootBullet( tr, config.Damage, HitForce );
-
-		TimeSinceShoot = 0;
-
-		// Recoil only applies when held by a player
-		if ( !HasOwner )
-		{
-			// Simulate physical recoil by pushing the weapon opposite to its fire direction
-			if ( ShootForce > 0f && GetComponent<Rigidbody>( true ) is { } rb )
-			{
-				var muzzle = WeaponModel?.MuzzleGameObject?.WorldTransform ?? WorldTransform;
-				rb.ApplyForce( muzzle.Rotation.Up * ShootForce );
-			}
-			return;
-		}
-
-		Owner.Controller.EyeAngles += new Angles(
-			Random.Shared.Float( config.RecoilPitch.x, config.RecoilPitch.y ),
-			Random.Shared.Float( config.RecoilYaw.x, config.RecoilYaw.y ),
-			0
-		);
-
-		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
-		{
-			_ = new Sandbox.CameraNoise.Recoil( config.CameraRecoilStrength, config.CameraRecoilFrequency );
-		}
-	}
-
 	protected override void OnShootEffects( ShotEffect shot )
 	{
 		// Attack sound, holder anim and the weapon model's muzzle/brass/tracer come from the base.
@@ -144,19 +79,5 @@ public partial class BaseBulletWeapon : BaseSandboxWeapon
 
 		// Surface impact at the hit - every pellet leaves one.
 		ImpactEffect( shot );
-	}
-
-	public record struct BulletConfiguration
-	{
-		public float Damage { get; set; }
-		public float BulletRadius { get; set; }
-		public Vector2 AimConeBase { get; set; }
-		public Vector2 AimConeSpread { get; set; }
-		public float AimConeRecovery { get; set; }
-		public Vector2 RecoilPitch { get; set; }
-		public Vector2 RecoilYaw { get; set; }
-		public float CameraRecoilStrength { get; set; }
-		public float CameraRecoilFrequency { get; set; }
-		public float Range { get; set; }
 	}
 }

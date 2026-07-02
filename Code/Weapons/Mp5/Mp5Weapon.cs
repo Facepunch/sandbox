@@ -2,14 +2,9 @@
 
 public sealed class Mp5Weapon : IronSightsWeapon
 {
-	public override void PrimaryAttack()
-	{
-		ShootBullet( GetBullet() );
-	}
-
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
-		var gap = 16 + GetAimConeAmount() * 32;
+		var gap = 16 + SpreadBloom * 32;
 		var len = 12;
 		var w = 2f;
 

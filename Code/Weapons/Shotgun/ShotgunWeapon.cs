@@ -2,70 +2,17 @@
 
 public sealed class ShotgunWeapon : IronSightsWeapon
 {
-	[Property] public int PelletCount { get; set; } = 8;
+	// The volley (pellet count, spread, damage) comes from the engine Ballistics; recoil from
+	// BaseBulletWeapon.
 
 	protected override bool WantsPrimaryAttack()
 	{
 		return Input.Pressed( "attack1" );
 	}
 
-	public override void PrimaryAttack()
-	{
-		if ( HasOwner && ( !HasPrimaryAmmo() || IsReloading ) )
-		{
-			TryAutoReload();
-			return;
-		}
-
-		// Cooldown already gated by the caller before PrimaryAttack runs.
-
-		if ( HasOwner && !TakePrimaryAmmo( 1 ) )
-		{
-			SetNextFire( 0.2f );
-			return;
-		}
-
-		SetNextFire( PrimaryDelay );
-
-		// One volley through the engine - a BulletTrace per pellet. Our traces decide the hits; the
-		// engine claims each one to the host, which applies the damage.
-		var pellets = ShootBullets( PelletCount, GetAimCone( Bullet ), Bullet.Range, Bullet.BulletRadius, Bullet.Damage, HitForce );
-
-		// Effects play here and relay through the host to everyone else. Muzzle/anim events fire on
-		// the first pellet only - every pellet still gets its tracer and impact.
-		for ( var i = 0; i < pellets.Length; i++ )
-		{
-			var tr = pellets[i];
-			ShootEffects( new ShotEffect( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface, NoEvents: i > 0 ) );
-		}
-
-		TimeSinceShoot = 0;
-
-		if ( !HasOwner )
-		{
-			if ( ShootForce > 0f && GetComponent<Rigidbody>( true ) is { } rb )
-			{
-				var muzzle = WeaponModel?.MuzzleGameObject?.WorldTransform ?? WorldTransform;
-				rb.ApplyForce( muzzle.Rotation.Up * ShootForce );
-			}
-			return;
-		}
-
-		Owner.Controller.EyeAngles += new Angles(
-			Random.Shared.Float( Bullet.RecoilPitch.x, Bullet.RecoilPitch.y ),
-			Random.Shared.Float( Bullet.RecoilYaw.x, Bullet.RecoilYaw.y ),
-			0
-		);
-
-		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
-		{
-			_ = new Sandbox.CameraNoise.Recoil( Bullet.CameraRecoilStrength, Bullet.CameraRecoilFrequency );
-		}
-	}
-
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
-		var spread = GetAimConeAmount();
+		var spread = SpreadBloom;
 		var radius = 20 + spread * 40;
 
 		var color = !HasPrimaryAmmo() || IsReloading || NextPrimaryFire > 0 ? CrosshairNoShoot : CrosshairCanShoot;

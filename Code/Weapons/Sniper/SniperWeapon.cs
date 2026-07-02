@@ -32,7 +32,7 @@ public sealed class SniperWeapon : BaseBulletWeapon
 
 	public override void PrimaryAttack()
 	{
-		ShootBullet();
+		base.PrimaryAttack();
 		_hasFired = true;
 	}
 

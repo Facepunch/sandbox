@@ -18,7 +18,6 @@ public sealed class RpgWeapon : BaseSandboxWeapon
 
 	[Sync( SyncFlags.FromHost )] RpgProjectile Projectile { get; set; }
 
-	TimeSince TimeSinceShoot;
 	private bool _hasFired;
 	private bool _waitingForReload;
 
