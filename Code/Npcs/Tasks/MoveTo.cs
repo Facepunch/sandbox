@@ -14,7 +14,6 @@ public class MoveTo : TaskBase
 	public GameObject TargetObject { get; set; }
 	public float StopDistance { get; set; } = 10f;
 	public float ReevaluateInterval { get; set; } = 0.5f;
-	public float LateralThreshold { get; set; } = 60f;
 
 	private TimeSince _lastReevaluate;
 
@@ -52,22 +51,6 @@ public class MoveTo : TaskBase
 			if ( pos.HasValue )
 				Npc.Navigation.MoveTo( pos.Value, StopDistance );
 			_lastReevaluate = 0;
-		}
-
-		var agent = Npc.Navigation.Agent;
-		if ( agent.IsValid() && agent.Velocity.WithZ( 0 ).Length > 1f )
-		{
-			var moveDir = agent.Velocity.WithZ( 0 ).Normal;
-			var fwd = Npc.WorldRotation.Forward.WithZ( 0 ).Normal;
-			var angle = Vector3.GetAngle( fwd, moveDir );
-
-			if ( angle > LateralThreshold && !Npc.Animation.LookTarget.HasValue )
-			{
-				// No look target — face the movement direction
-				var targetRot = Rotation.LookAt( moveDir, Vector3.Up );
-				Npc.GameObject.WorldRotation = Rotation.Lerp(
-					Npc.WorldRotation, targetRot, Npc.Animation.LookSpeed * Time.Delta );
-			}
 		}
 
 		return Npc.Navigation.GetStatus();

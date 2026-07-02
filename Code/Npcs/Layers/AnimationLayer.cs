@@ -18,6 +18,16 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	public float AimStrengthHead { get; set; } = 1.0f;
 	public float AimStrengthBody { get; set; } = 1.0f;
 
+	/// <summary>Play footstep sounds from the model's footstep animation events.</summary>
+	[Property]
+	public bool EnableFootsteps { get; set; } = true;
+
+	/// <summary>Overall footstep volume multiplier.</summary>
+	[Property]
+	public float FootstepVolume { get; set; } = 1f;
+
+	private TimeSince _timeSinceStep;
+
 	/// <summary>
 	/// Current world-space target the Npc is looking at (if any). Host-only.
 	/// </summary>
@@ -38,9 +48,61 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	[Sync] public bool IsLooking { get; set; }
 	[Sync] public int HoldType { get; set; }
 
-	protected override void OnStart()
+	protected override void OnEnabled()
 	{
 		_lastYaw = float.NaN;
+
+		// Footstep animation events fire on every client, so each hears them locally (like the player).
+		if ( _renderer.IsValid() )
+		{
+			_renderer.OnFootstepEvent -= OnFootstepEvent;
+			_renderer.OnFootstepEvent += OnFootstepEvent;
+		}
+	}
+
+	protected override void OnDisabled()
+	{
+		if ( _renderer.IsValid() )
+			_renderer.OnFootstepEvent -= OnFootstepEvent;
+	}
+
+	// Play a footstep when the model's animation hits a footstep event -- same as the player:
+	// find the surface underfoot and play its footstep sound, scaled by speed.
+	private void OnFootstepEvent( SceneModel.FootstepEvent e )
+	{
+		if ( !EnableFootsteps ) return;
+		if ( _timeSinceStep < 0.2f ) return;
+
+		var volume = e.Volume * MoveVelocity.Length.Remap( 0, 400, 0, 1 );
+		if ( volume <= 0.1f ) return;
+
+		_timeSinceStep = 0;
+		PlayFootstepSound( e.Transform.Position, volume, e.FootId );
+	}
+
+	private void PlayFootstepSound( Vector3 position, float volume, int foot )
+	{
+		var trace = Scene.Trace
+			.Ray( position + Vector3.Up * 20f, position - Vector3.Up * 20f )
+			.IgnoreGameObjectHierarchy( Npc.GameObject )
+			.Run();
+
+		if ( !trace.Hit || trace.Surface is null )
+			return;
+
+		var soundEvent = foot == 0
+			? trace.Surface.SoundCollection.FootLeft
+			: trace.Surface.SoundCollection.FootRight;
+
+		if ( soundEvent is null )
+			return;
+
+		var handle = GameObject.PlaySound( soundEvent, 0 );
+		if ( !handle.IsValid() )
+			return;
+
+		handle.FollowParent = false;
+		handle.Volume *= volume * FootstepVolume;
 	}
 
 	protected override void OnUpdate()
@@ -134,6 +196,12 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		_renderer.SetLookDirection( "aim_eyes", fullDirection, AimStrengthEyes );
 		_renderer.SetLookDirection( "aim_head", fullDirection, AimStrengthHead );
 		_renderer.SetLookDirection( "aim_body", fullDirection, AimStrengthBody );
+
+		// While travelling, NavigationLayer faces the body along the movement direction, so the
+		// look-at just tracks with the head/eyes. Only turn the whole body to face the target
+		// when we're aiming rather than moving (combat) -- otherwise it runs sideways.
+		if ( Npc.Navigation.IsValid() && Npc.Navigation.FaceMovementDirection )
+			return;
 
 		var angleToTarget = Vector3.GetAngle( Npc.WorldRotation.Forward, flatDirection );
 
