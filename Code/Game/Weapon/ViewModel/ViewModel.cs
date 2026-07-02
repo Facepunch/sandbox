@@ -226,14 +226,10 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel, ICameraSetup
 	/// <summary>
 	/// Called when incrementally reloading a weapon.
 	/// </summary>
-	public override void OnIncrementalReload( bool firstShell = false )
+	public override void OnIncrementalReload()
 	{
 		Renderer?.Set( "speed_reload", IncrementalAnimationSpeed );
-
-		if ( firstShell )
-			Renderer?.Set( "b_reloading_first_shell", true );
-		else
-			Renderer?.Set( "b_reloading_shell", true );
+		Renderer?.Set( "b_reloading_shell", true );
 
 		StartSounds( IncrementalReloadSoundEvents, ref _reloadSoundCts );
 	}
