@@ -15,6 +15,14 @@ public class SensesLayer : BaseNpcLayer
 
 	[Property]
 	public float HearingRange { get; set; } = 300f;
+
+	/// <summary>
+	/// Total horizontal field of view in degrees. Targets outside this cone aren't seen
+	/// (they can still be heard, or noticed if they're right next to the NPC).
+	/// </summary>
+	[Property]
+	public float FieldOfView { get; set; } = 200f;
+
 	public float PersonalSpace { get; set; } = 80f;
 
 	/// <summary>
@@ -42,6 +50,11 @@ public class SensesLayer : BaseNpcLayer
 
 	private TimeSince _lastScan;
 
+	/// <summary>
+	/// The most relevant disturbance (gunshot, death, etc.) this NPC currently senses, if any.
+	/// </summary>
+	public Stimulus? Disturbance { get; private set; }
+
 	protected override void OnUpdate()
 	{
 		if ( IsProxy ) return;
@@ -49,7 +62,35 @@ public class SensesLayer : BaseNpcLayer
 		if ( _lastScan > ScanInterval )
 		{
 			ScanEnvironment();
+			PerceiveStimuli();
 			_lastScan = 0;
+		}
+	}
+
+	/// <summary>
+	/// Find the nearest world stimulus this NPC can sense (ignoring its own noise).
+	/// </summary>
+	private void PerceiveStimuli()
+	{
+		Disturbance = null;
+
+		var system = Npc.Scene?.GetSystem<NpcStimulusSystem>();
+		if ( system is null )
+			return;
+
+		float nearestDist = float.MaxValue;
+
+		foreach ( var stimulus in system.Near( Npc.WorldPosition ) )
+		{
+			if ( stimulus.Source == Npc.GameObject )
+				continue;
+
+			var dist = Npc.WorldPosition.Distance( stimulus.Position );
+			if ( dist < nearestDist )
+			{
+				nearestDist = dist;
+				Disturbance = stimulus;
+			}
 		}
 	}
 
@@ -78,7 +119,8 @@ public class SensesLayer : BaseNpcLayer
 		if ( NpcConVars.NoTarget )
 			return;
 
-		var nearbyObjects = Npc.Scene.FindInPhysics( new Sphere( Npc.WorldPosition, HearingRange ) );
+		var senseRange = MathF.Max( SightRange, HearingRange );
+		var nearbyObjects = Npc.Scene.FindInPhysics( new Sphere( Npc.WorldPosition, senseRange ) );
 
 		foreach ( var obj in nearbyObjects )
 		{
@@ -98,7 +140,7 @@ public class SensesLayer : BaseNpcLayer
 			}
 
 			bool isAudible = distance <= HearingRange;
-			bool isVisible = distance <= SightRange && HasLineOfSight( obj );
+			bool isVisible = distance <= SightRange && IsInViewCone( obj, distance ) && HasLineOfSight( obj );
 
 			if ( isAudible )
 			{
@@ -133,11 +175,58 @@ public class SensesLayer : BaseNpcLayer
 	}
 
 	/// <summary>
+	/// True if a target is within the NPC's forward field of view. Anything inside personal
+	/// space is always in view -- you notice someone right next to you, even behind.
+	/// </summary>
+	private bool IsInViewCone( GameObject target, float distance )
+	{
+		if ( distance <= PersonalSpace )
+			return true;
+
+		var toTarget = (target.WorldPosition - Npc.WorldPosition).WithZ( 0 );
+		if ( toTarget.LengthSquared < 0.01f )
+			return true;
+
+		var forward = Npc.WorldRotation.Forward.WithZ( 0 ).Normal;
+		var dot = forward.Dot( toTarget.Normal );
+		var threshold = MathF.Cos( FieldOfView * 0.5f * MathF.PI / 180f );
+		return dot >= threshold;
+	}
+
+	/// <summary>
 	/// Get the nearest visible hostile target (anything this NPC is disposed Hostile toward).
 	/// </summary>
 	public GameObject GetNearestVisible()
 	{
 		return GetNearestIn( VisibleTargets );
+	}
+
+	/// <summary>
+	/// Get the visible hostile this NPC should engage first: highest relationship priority,
+	/// nearest breaking ties.
+	/// </summary>
+	public GameObject GetBestTarget()
+	{
+		GameObject best = null;
+		int bestPriority = int.MinValue;
+		float bestDist = float.MaxValue;
+
+		foreach ( var obj in VisibleTargets )
+		{
+			if ( !obj.IsValid() ) continue;
+
+			var priority = Npc.GetRelationship( obj ).Priority;
+			var dist = Npc.WorldPosition.Distance( obj.WorldPosition );
+
+			if ( priority > bestPriority || (priority == bestPriority && dist < bestDist) )
+			{
+				best = obj;
+				bestPriority = priority;
+				bestDist = dist;
+			}
+		}
+
+		return best;
 	}
 
 	/// <summary>
@@ -199,6 +288,7 @@ public class SensesLayer : BaseNpcLayer
 		ClearTagCache( _audibleByTag );
 		Nearest = null;
 		DistanceToNearest = float.MaxValue;
+		Disturbance = null;
 	}
 
 	private GameObject GetNearestIn( List<GameObject> list )
@@ -208,6 +298,8 @@ public class SensesLayer : BaseNpcLayer
 
 		foreach ( var obj in list )
 		{
+			if ( !obj.IsValid() ) continue; // target may have been destroyed since the last scan
+
 			var dist = Npc.WorldPosition.Distance( obj.WorldPosition );
 			if ( dist < nearestDist )
 			{
