@@ -8,9 +8,8 @@ public partial class BaseCarryable
 		public void OnDestroyWorldModel() { }
 	}
 
-	// WorldModelPrefab and HoldBone are inherited from the engine BaseWeapon.
+	// WorldModelPrefab, HoldBone and HoldType are inherited from the engine BaseWeapon.
 	[Property, Feature( "WorldModel" )] public GameObject DroppedGameObject { get; set; }
-	[Property, Feature( "WorldModel" )] public CitizenAnimationHelper.HoldTypes HoldType { get; set; } = CitizenAnimationHelper.HoldTypes.HoldItem;
 
 	protected override void CreateWorldModel()
 	{

@@ -46,7 +46,7 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	[Sync] public bool Grounded { get; set; } = true;
 	[Sync] public Vector3 LookWorldPos { get; set; }
 	[Sync] public bool IsLooking { get; set; }
-	[Sync] public int HoldType { get; set; }
+	[Sync] public string HoldType { get; set; } = "none";
 
 	protected override void OnEnabled()
 	{
@@ -129,7 +129,10 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		}
 
 		ApplyMoveToRenderer( MoveVelocity, MoveRotation );
-		_renderer?.Set( "holdtype", HoldType );
+
+		if ( !string.IsNullOrEmpty( HoldType ) )
+			_renderer?.Set( "holdtype", HoldType );
+
 		_renderer?.Set( "b_grounded", Grounded );
 	}
 
@@ -286,12 +289,12 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	}
 
 	/// <summary>
-	/// Sets the holdtype so the NPC poses its arms for the held item.
-	/// Synced to all clients via HoldType.
+	/// Sets the holdtype so the NPC poses its arms for the held item - an option name on the
+	/// animgraph's holdtype enum (e.g. "pistol"). Synced to all clients via HoldType.
 	/// </summary>
-	public void SetHoldType( CitizenAnimationHelper.HoldTypes holdType )
+	public void SetHoldType( string holdType )
 	{
-		HoldType = (int)holdType;
+		HoldType = string.IsNullOrEmpty( holdType ) ? "none" : holdType;
 	}
 
 	public override void ResetLayer()
@@ -304,13 +307,13 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		LookTargetObject = null;
 		IsLooking = false;
 		MoveVelocity = default;
-		HoldType = 0;
+		HoldType = "none";
 		_lastYaw = float.NaN;
 
 		ClearHeldProp();
 
 		_renderer.Set( "b_attack", false );
-		_renderer.Set( "holdtype", 0 );
+		_renderer.Set( "holdtype", "none" );
 		_renderer.Set( "move_speed", 0f );
 		_renderer.Set( "move_groundspeed", 0f );
 		_renderer.Set( "move_y", 0f );
