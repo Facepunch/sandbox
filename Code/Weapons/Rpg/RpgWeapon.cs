@@ -112,13 +112,9 @@ public sealed class RpgWeapon : BaseGun
 		TimeSinceShoot = 0;
 		AddShootDelay( TimeBetweenShots );
 
-		if ( ViewModel.IsValid() )
-			ViewModel.RunEvent<ViewModel>( x => x.OnAttack() );
-		else if ( WorldModel.IsValid() )
-			WorldModel.RunEvent<WorldModel>( x => x.OnAttack() );
-
-		if ( ShootSound.IsValid() )
-			GameObject.PlaySound( ShootSound );
+		// Fire presentation - predicted on the owner for instant feedback, relayed by the host to everyone
+		// else. See OnShootEffects.
+		ShootEffects();
 
 		var ray = AimRay;
 		var muzzlePos = GetMuzzleTransform().Position;
@@ -143,6 +139,20 @@ public sealed class RpgWeapon : BaseGun
 		// run would spawn a second one.
 		if ( !Rpc.IsPredicting )
 			CreateProjectile( spawnPos, ray.Forward, ProjectileSpeed );
+	}
+
+	/// <summary>
+	/// Muzzle flash + launch sound. Plays for the shooter (predicted) and, via the host relay, everyone else.
+	/// </summary>
+	protected override void OnShootEffects()
+	{
+		if ( ViewModel.IsValid() )
+			ViewModel.RunEvent<ViewModel>( x => x.OnAttack() );
+		else if ( WorldModel.IsValid() )
+			WorldModel.RunEvent<WorldModel>( x => x.OnAttack() );
+
+		if ( ShootSound.IsValid() )
+			GameObject.PlaySound( ShootSound );
 	}
 
 	private Vector3 CheckThrowPosition( Player player, Vector3 eyePosition, Vector3 grenadePosition )

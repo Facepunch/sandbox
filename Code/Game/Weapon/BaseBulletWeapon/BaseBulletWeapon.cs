@@ -86,14 +86,12 @@ public partial class BaseBulletWeapon : BaseGun
 			.UseHitboxes()
 			.Run();
 
-		// Damage and the effects broadcast are authoritative - only the host's run does them, or they'd
-		// double up (the owner's predicted run would route/broadcast as well). The owner still predicts
-		// ammo, recoil and the cooldown above.
+		// Effects predict on the owner and are relayed by the host (BaseWeapon.ShootEffects owns that
+		// netcode). Damage stays host-authoritative.
+		ShootEffects( new ShotEffect( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface ) );
+
 		if ( !Rpc.IsPredicting )
-		{
-			ShootEffects( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface );
 			TraceAttack( TraceAttackInfo.From( tr, config.Damage ) );
-		}
 
 		TimeSinceShoot = 0;
 
@@ -121,8 +119,7 @@ public partial class BaseBulletWeapon : BaseGun
 		}
 	}
 
-	[Rpc.Broadcast]
-	public void ShootEffects( Vector3 hitpoint, bool hit, Vector3 normal, GameObject hitObject, Surface hitSurface, Vector3? origin = null, bool noEvents = false )
+	protected override void OnShootEffects( ShotEffect shot )
 	{
 		if ( Application.IsDedicatedServer ) return;
 
@@ -130,11 +127,11 @@ public partial class BaseBulletWeapon : BaseGun
 		// (or what) the shot hit.
 		Owner?.Controller.Renderer.Set( "b_attack", true );
 
-		if ( !noEvents )
+		if ( !shot.NoEvents )
 		{
 			if ( WeaponModel.IsValid() )
 			{
-				WeaponModel.GameObject.RunEvent<WeaponModel>( x => x.OnAttack( hitpoint, origin ) );
+				WeaponModel.GameObject.RunEvent<WeaponModel>( x => x.OnAttack( shot.HitPosition, shot.Origin ) );
 			}
 
 			if ( ShootSound.IsValid() )
@@ -150,30 +147,30 @@ public partial class BaseBulletWeapon : BaseGun
 		}
 
 		// Impact effects - only when we hit a valid surface.
-		if ( !hit || !hitObject.IsValid() || !hitSurface.IsValid() )
+		if ( !shot.Hit || !shot.HitObject.IsValid() || !shot.Surface.IsValid() )
 			return;
 
-		var baseSurface = hitSurface.GetBaseSurface();
-		var bulletSound = hitSurface.SoundCollection.Bullet ?? baseSurface?.SoundCollection.Bullet;
+		var baseSurface = shot.Surface.GetBaseSurface();
+		var bulletSound = shot.Surface.SoundCollection.Bullet ?? baseSurface?.SoundCollection.Bullet;
 		if ( bulletSound.IsValid() )
 		{
-			Sound.Play( bulletSound, hitpoint );
+			Sound.Play( bulletSound, shot.HitPosition );
 		}
 
-		var prefab = hitSurface.PrefabCollection.BulletImpact ?? baseSurface?.PrefabCollection.BulletImpact;
+		var prefab = shot.Surface.PrefabCollection.BulletImpact ?? baseSurface?.PrefabCollection.BulletImpact;
 
 		// Still null?
 		if ( prefab is null )
 			return;
 
-		var fwd = Rotation.LookAt( normal * -1.0f, Vector3.Random );
+		var fwd = Rotation.LookAt( shot.Normal * -1.0f, Vector3.Random );
 
 		var impact = prefab.Clone();
-		impact.WorldPosition = hitpoint;
+		impact.WorldPosition = shot.HitPosition;
 		impact.WorldRotation = fwd;
-		impact.SetParent( hitObject, true );
+		impact.SetParent( shot.HitObject, true );
 
-		if ( hitObject.GetComponentInChildren<SkinnedModelRenderer>() is not { CreateBoneObjects: true } skinned )
+		if ( shot.HitObject.GetComponentInChildren<SkinnedModelRenderer>() is not { CreateBoneObjects: true } skinned )
 			return;
 
 		// find closest bone
@@ -184,7 +181,7 @@ public partial class BaseBulletWeapon : BaseGun
 		for ( var i = 0; i < bones.Length; i++ )
 		{
 			var bone = bones[i];
-			var dist = bone.Position.Distance( hitpoint );
+			var dist = bone.Position.Distance( shot.HitPosition );
 			if ( dist < closestDist )
 			{
 				closestDist = dist;

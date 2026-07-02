@@ -48,12 +48,11 @@ public sealed class ShotgunWeapon : IronSightsWeapon
 				.UseHitboxes()
 				.Run();
 
-			// Authoritative: host's run only, or each pellet's damage/effects double up.
+			// Effects predict on the owner and are relayed by the host; damage stays host-authoritative.
+			ShootEffects( new ShotEffect( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface, NoEvents: i > 0 ) );
+
 			if ( !Rpc.IsPredicting )
-			{
-				ShootEffects( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface, noEvents: i > 0 );
 				TraceAttack( TraceAttackInfo.From( tr, Bullet.Damage ) );
-			}
 		}
 
 		TimeSinceShoot = 0;
