@@ -64,7 +64,7 @@
           "go": "ef4d5a6b-7f8e-9012-def0-123456789013"
         },
         "HitSound": "weapons/crowbar/sounds/crowbar.hit.sound",
-        "HoldType": "Swing",
+        "HoldType": "melee_weapons",
         "ItemPrefab": {
           "_type": "gameobject",
           "prefab": "weapons/crowbar/crowbar.prefab"

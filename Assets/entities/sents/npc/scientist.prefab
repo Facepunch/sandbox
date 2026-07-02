@@ -51,7 +51,7 @@
         "ScaredVoice": "sounds/npc/darren/scared.sound",
         "IdleVoice": "sounds/npc/darren/idle.sound",
         "StuckVoice": "sounds/npc/darren/stuck.sound",
-        "Health": 100,
+        "Health": 20,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
