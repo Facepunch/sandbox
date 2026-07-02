@@ -81,7 +81,7 @@ public partial class BaseBulletWeapon : BaseGun
 	/// </summary>
 	protected void ShootBullet( in BulletConfiguration config )
 	{
-		if ( HasOwner && ( !HasAmmo() || IsReloading ) )
+		if ( HasOwner && ( !HasPrimaryAmmo() || IsReloading ) )
 		{
 			TryAutoReload();
 			return;
@@ -93,23 +93,23 @@ public partial class BaseBulletWeapon : BaseGun
 		// Only consume ammo when held by a player
 		if ( HasOwner && !TakeAmmo( 1 ) )
 		{
-			AddShootDelay( 0.2f );
+			SetNextFire( 0.2f );
 			return;
 		}
 
-		AddShootDelay( PrimaryDelay );
+		SetNextFire( PrimaryDelay );
 
 		var spread = GetAimCone( config );
 		var traceRay = AimRay with { Forward = AimRay.Forward.WithAimCone( spread.x, spread.y ) };
 
 		var tr = BulletTrace( traceRay, config.Range, config.BulletRadius ).Run();
 
-		// Effects predict on the owner and are relayed by the host (BaseWeapon.ShootEffects owns that
-		// netcode). Damage and the prop push are host-authoritative - ShootBullet self-gates, so the
-		// owner's predicted run gets the trace back and deals nothing.
+		// Effects play here and relay through the host to everyone else (BaseWeapon.ShootEffects owns
+		// that netcode). Our trace decides the hit - the engine claims it to the host, which applies
+		// the damage and prop push.
 		ShootEffects( new ShotEffect( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface ) );
 
-		ShootBullet( tr, config.Damage, HitForce, Attacker, GameObject );
+		ShootBullet( tr, config.Damage, HitForce );
 
 		TimeSinceShoot = 0;
 

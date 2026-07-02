@@ -45,8 +45,8 @@ public class MeleeWeapon : BaseCarryable
 	public override bool CanSecondaryAttack() => false;
 
 	/// <summary>
-	/// The swing. Runs through the engine's predicted fire loop - the owner predicts the swing (instant
-	/// feedback) and the host runs it authoritatively; damage is host-only.
+	/// The swing. Runs once on the owning client - our trace decides what we hit, the engine claims it
+	/// to the host, and the host applies the damage.
 	/// </summary>
 	public override void PrimaryAttack()
 	{
@@ -69,9 +69,9 @@ public class MeleeWeapon : BaseCarryable
 		// Swing presentation - predicted on the owner, relayed to everyone else by the host.
 		ShootEffects( new ShotEffect( tr.HitPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface ) );
 
-		// Damage stays host-authoritative (ShootBullet self-gates, the predicted run deals nothing).
+		// Our trace decides the hit - the engine claims it to the host, which applies the damage.
 		// Melee doesn't count hitgroups - no headshot tags on the damage.
-		ShootBullet( tr, Damage, SwingForce, Attacker, GameObject, hitboxTags: false );
+		ShootBullet( tr, Damage, SwingForce, hitboxTags: false );
 
 		if ( !HasOwner )
 			return;

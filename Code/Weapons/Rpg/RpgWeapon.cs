@@ -108,7 +108,7 @@ public sealed class RpgWeapon : BaseGun
 		}
 
 		TimeSinceShoot = 0;
-		AddShootDelay( PrimaryDelay );
+		SetNextFire( PrimaryDelay );
 
 		// Fire presentation - predicted on the owner for instant feedback, relayed by the host to everyone
 		// else. See OnShootEffects.
@@ -133,10 +133,9 @@ public sealed class RpgWeapon : BaseGun
 			}
 		}
 
-		// Spawning the rocket is authoritative - only the host's run does it, or the owner's predicted
-		// run would spawn a second one.
-		if ( !Rpc.IsPredicting )
-			CreateProjectile( spawnPos, ray.Forward, ProjectileSpeed );
+		// The attack runs once on the owner - CreateProjectile is a host RPC, so the rocket spawns
+		// exactly once, on the host.
+		CreateProjectile( spawnPos, ray.Forward, ProjectileSpeed );
 	}
 
 	/// <summary>

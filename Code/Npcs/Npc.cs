@@ -189,7 +189,13 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 		if ( IsProxy )
 			return;
 
-		Health -= damage.Damage;
+		var amount = damage.Damage;
+
+		// Same hitgroup rule as players - headshots hurt double.
+		if ( damage.Tags.Contains( DamageTags.Headshot ) )
+			amount *= 2f;
+
+		Health -= amount;
 		OnHurt( damage );
 
 		if ( Health < 1f )

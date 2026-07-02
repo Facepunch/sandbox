@@ -6,17 +6,7 @@ public partial class BaseGun : BaseCarryable, IPlayerControllable
 	// engine BaseWeapon now. What's left here is the sandbox glue: the AmmoResource layer (BaseGun.Ammo),
 	// the convar-aware ammo gates, seat control, and the HUD.
 
-	public override bool ShouldAvoid => !HasAmmo();
-
-	/// <summary>
-	/// Adds a delay before this weapon can fire again. Maps to the engine's per-fire cooldown; a shot
-	/// blocks both triggers (the sandbox uses a single shared cooldown).
-	/// </summary>
-	public void AddShootDelay( float seconds )
-	{
-		SetNextPrimaryFire( seconds );
-		SetNextSecondaryFire( seconds );
-	}
+	public override bool ShouldAvoid => !HasPrimaryAmmo();
 
 	public override void OnAdded( Player player )
 	{
@@ -43,27 +33,14 @@ public partial class BaseGun : BaseCarryable, IPlayerControllable
 		}
 	}
 
-	/// <summary>
-	/// Determines if the primary attack should trigger. Adds the convar-aware ammo gate on top of the
-	/// engine's cooldown / reload checks.
-	/// </summary>
-	public override bool CanPrimaryAttack()
+	// The engine's CanPrimaryAttack/CanSecondaryAttack gates are enough - they route through our
+	// convar-aware HasPrimaryAmmo. Sandbox guns auto-reload on an empty trigger.
+	public override void DryFire()
 	{
-		if ( HasOwner && !HasAmmo() ) return false;
-		if ( IsReloading ) return false;
-		if ( NextPrimaryFire > 0 ) return false;
+		base.DryFire();
 
-		return true;
-	}
-
-	/// <inheritdoc cref="CanPrimaryAttack"/>
-	public override bool CanSecondaryAttack()
-	{
-		if ( HasOwner && !HasAmmo() ) return false;
-		if ( IsReloading ) return false;
-		if ( NextSecondaryFire > 0 ) return false;
-
-		return true;
+		if ( CanReload() )
+			Reload();
 	}
 
 	//
@@ -93,8 +70,9 @@ public partial class BaseGun : BaseCarryable, IPlayerControllable
 	protected virtual void OnSeatControl()
 	{
 		if ( HasOwner ) return;
-		// Seat fire is fully host-authoritative - the host reads the driver's synced ClientInput and runs
-		// the shot for real. No prediction on the driving client (unlike the held FirePrimary path).
+		// Seat fire is fully host-authoritative - the host reads the driver's synced ClientInput and
+		// runs the shot for real, damage applying directly (no hit claims). The driving client doesn't
+		// run the attack at all.
 		if ( !Networking.IsHost ) return;
 
 		if ( ShootInput.Down() && CanPrimaryAttack() )

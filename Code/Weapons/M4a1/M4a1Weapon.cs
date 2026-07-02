@@ -13,7 +13,7 @@ public sealed class M4a1Weapon : IronSightsWeapon
 		var len = 12;
 		var w = 2f;
 
-		var color = !HasAmmo() || IsReloading || NextPrimaryFire > 0 ? CrosshairNoShoot : CrosshairCanShoot;
+		var color = !HasPrimaryAmmo() || IsReloading || NextPrimaryFire > 0 ? CrosshairNoShoot : CrosshairCanShoot;
 
 		hud.SetBlendMode( BlendMode.Lighten );
 		hud.DrawLine( center + Vector2.Left * (len + gap), center + Vector2.Left * gap, w, color );

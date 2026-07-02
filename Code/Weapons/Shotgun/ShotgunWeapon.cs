@@ -11,7 +11,7 @@ public sealed class ShotgunWeapon : IronSightsWeapon
 
 	public override void PrimaryAttack()
 	{
-		if ( HasOwner && ( !HasAmmo() || IsReloading ) )
+		if ( HasOwner && ( !HasPrimaryAmmo() || IsReloading ) )
 		{
 			TryAutoReload();
 			return;
@@ -21,18 +21,18 @@ public sealed class ShotgunWeapon : IronSightsWeapon
 
 		if ( HasOwner && !TakeAmmo( 1 ) )
 		{
-			AddShootDelay( 0.2f );
+			SetNextFire( 0.2f );
 			return;
 		}
 
-		AddShootDelay( PrimaryDelay );
+		SetNextFire( PrimaryDelay );
 
-		// One volley through the engine - a BulletTrace per pellet, damage host-authoritative
-		// (ShootBullets self-gates, the owner's predicted run just gets the traces for effects).
+		// One volley through the engine - a BulletTrace per pellet. Our traces decide the hits; the
+		// engine claims each one to the host, which applies the damage.
 		var pellets = ShootBullets( PelletCount, GetAimCone( Bullet ), Bullet.Range, Bullet.BulletRadius, Bullet.Damage, HitForce );
 
-		// Effects predict on the owner and are relayed by the host. Muzzle/anim events fire on the
-		// first pellet only - every pellet still gets its tracer and impact.
+		// Effects play here and relay through the host to everyone else. Muzzle/anim events fire on
+		// the first pellet only - every pellet still gets its tracer and impact.
 		for ( var i = 0; i < pellets.Length; i++ )
 		{
 			var tr = pellets[i];
@@ -68,7 +68,7 @@ public sealed class ShotgunWeapon : IronSightsWeapon
 		var spread = GetAimConeAmount();
 		var radius = 20 + spread * 40;
 
-		var color = !HasAmmo() || IsReloading || NextPrimaryFire > 0 ? CrosshairNoShoot : CrosshairCanShoot;
+		var color = !HasPrimaryAmmo() || IsReloading || NextPrimaryFire > 0 ? CrosshairNoShoot : CrosshairCanShoot;
 
 		hud.SetBlendMode( BlendMode.Lighten );
 

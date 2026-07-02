@@ -129,6 +129,10 @@ public class SpeechLayer : BaseNpcLayer
 
 	protected override void OnUpdate()
 	{
+		// The Npc can be gone while we're being torn down (death destroys the hierarchy).
+		if ( !Npc.IsValid() )
+			return;
+
 		// Only the host manages speech state (sound playback, duration tracking)
 		if ( !IsProxy && CurrentSpeech is not null && IsFinished )
 		{

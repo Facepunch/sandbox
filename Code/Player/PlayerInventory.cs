@@ -308,28 +308,6 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	}
 
 	/// <summary>
-	/// Spawns a dropped item into the world from a prefab, assigns ownership, and applies velocity.
-	/// </summary>
-	private void SpawnDroppedItem( GameObject prefab, Vector3 position, Vector3 velocity )
-	{
-		var pickup = prefab.Clone( new CloneConfig
-		{
-			Transform = new Transform( position ),
-			StartEnabled = true
-		} );
-
-		Ownable.Set( pickup, Player.Network.Owner );
-		pickup.Tags.Add( "removable" );
-		pickup.NetworkSpawn();
-
-		if ( pickup.GetComponent<Rigidbody>() is { } rb )
-		{
-			rb.Velocity = Player.Controller.Velocity + velocity;
-			rb.AngularVelocity = Vector3.Random * 8.0f;
-		}
-	}
-
-	/// <summary>
 	/// Drops the given weapon from the inventory.
 	/// </summary>
 	public bool Drop( BaseCarryable weapon )
@@ -359,35 +337,9 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 			SwitchWeapon( null, true );
 		}
 
-		// Weapons with a DroppedWeapon component: spawn a fresh prefab clone as server.
-		// This avoids all ownership/state issues from the inventory copy.
-		var droppedWeapon = weapon.GetComponent<DroppedWeapon>( true );
-		if ( droppedWeapon.IsValid() )
-		{
-			var prefabSource = weapon.GameObject.PrefabInstanceSource;
-			if ( !string.IsNullOrEmpty( prefabSource ) )
-			{
-				var prefab = GameObject.GetPrefab( prefabSource );
-				if ( prefab.IsValid() )
-				{
-					SpawnDroppedItem( prefab, dropPosition, dropVelocity );
-				}
-			}
-
-			weapon.DestroyGameObject();
-		}
-		else
-		{
-			if ( !weapon.ItemPrefab.IsValid() )
-			{
-				weapon.DestroyGameObject();
-				_ = FinishDropAsync();
-				return true;
-			}
-
-			SpawnDroppedItem( weapon.ItemPrefab, dropPosition, dropVelocity );
-			weapon.DestroyGameObject();
-		}
+		// The pickup is a fresh prefab clone - avoids ownership/state issues from the inventory copy.
+		weapon.SpawnDroppedPickup( dropPosition, Player.Controller.Velocity + dropVelocity, Player.Network.Owner );
+		weapon.DestroyGameObject();
 
 		_ = FinishDropAsync();
 
@@ -439,7 +391,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 
 		if ( item is BaseGun weapon && weapon.UsesAmmo )
 		{
-			if ( !weapon.HasAmmo() && !weapon.CanReload() )
+			if ( !weapon.HasPrimaryAmmo() && !weapon.CanReload() )
 			{
 				return false;
 			}
@@ -507,25 +459,13 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		Switch( weapon, allowHolster );
 	}
 
+	// Hold type is driven by the engine BaseWeapon - set on the holder when equipped, back to "none"
+	// when holstered.
 	protected override void OnUpdate()
 	{
-		var renderer = Player?.Controller?.Renderer;
-
 		if ( ActiveWeapon.IsValid() )
 		{
 			ActiveWeapon.OnFrameUpdate( Player );
-
-			if ( renderer.IsValid() )
-			{
-				renderer.Set( "holdtype", (int)ActiveWeapon.HoldType );
-			}
-		}
-		else
-		{
-			if ( renderer.IsValid() )
-			{
-				renderer.Set( "holdtype", (int)CitizenAnimationHelper.HoldTypes.None );
-			}
 		}
 	}
 

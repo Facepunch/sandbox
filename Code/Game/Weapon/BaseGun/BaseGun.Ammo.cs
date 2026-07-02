@@ -26,25 +26,22 @@ public partial class BaseGun
 		if ( WeaponConVars.UnlimitedAmmo )
 			return true;
 
-		if ( UsesPrimaryClip )
-		{
-			if ( Clip1 < count ) return false;
-			Clip1 -= count;
-			return true;
-		}
-
-		if ( WeaponConVars.InfiniteReserves )
+		if ( !UsesPrimaryClip && WeaponConVars.InfiniteReserves )
 			return true;
 
+		// The engine spends locally and mirrors the spend to the host, which owns the counts.
 		return TakePrimaryAmmo( count );
 	}
 
 	/// <summary>
-	/// Convar-aware ammo check. Overrides the engine's so the host's FirePrimary gate honours the cheat
-	/// convars too (not just the pump's CanPrimaryAttack).
+	/// Convar-aware ammo check - all the engine's fire gates route through this. Unheld guns
+	/// (seats, world) never run dry; their magazine is never seeded.
 	/// </summary>
 	public override bool HasPrimaryAmmo()
 	{
+		if ( !HasOwner )
+			return true;
+
 		if ( WeaponConVars.UnlimitedAmmo )
 			return true;
 
@@ -56,9 +53,6 @@ public partial class BaseGun
 
 		return base.HasPrimaryAmmo();
 	}
-
-	/// <summary>Do we have a round ready to fire? Alias for the convar-aware <see cref="HasPrimaryAmmo"/>.</summary>
-	public bool HasAmmo() => HasPrimaryAmmo();
 
 	/// <summary>Add reserve ammo to the shared pool, clamped to the resource's max. Returns the amount added.</summary>
 	public int AddReserveAmmo( int count )

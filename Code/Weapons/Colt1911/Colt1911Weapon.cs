@@ -14,7 +14,7 @@ public sealed class Colt1911Weapon : IronSightsWeapon
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
-		var color = !HasAmmo() || IsReloading || NextPrimaryFire > 0 ? CrosshairNoShoot : CrosshairCanShoot;
+		var color = !HasPrimaryAmmo() || IsReloading || NextPrimaryFire > 0 ? CrosshairNoShoot : CrosshairCanShoot;
 
 		hud.SetBlendMode( BlendMode.Normal );
 		hud.DrawCircle( center, 5, Color.Black );

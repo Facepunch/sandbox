@@ -58,7 +58,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 	protected override void OnEnabled()
 	{
 		base.OnEnabled();
-		AddShootDelay( 0.5f );
+		SetNextFire( 0.5f );
 	}
 
 	public override void OnPlayerDeath( PlayerDiedParams args )
@@ -93,7 +93,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 			{
 				IsThrowing = false;
 
-				if ( !HasAmmo() )
+				if ( !HasPrimaryAmmo() )
 				{
 					SwitchToBestWeapon();
 					DestroyGameObject();
@@ -163,7 +163,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 
 		// Ammo is host-authoritative (spent in SpawnProjectile); here we only check we still have one so
 		// the owner-side reserve write can't be reverted by the host into an infinite-grenade dupe.
-		if ( !HasAmmo() )
+		if ( !HasPrimaryAmmo() )
 		{
 			SwitchToBestWeapon();
 			DestroyGameObject();
@@ -187,7 +187,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 		WeaponModel?.Renderer?.Set( "b_charge", false );
 		WeaponModel?.Renderer?.Set( "b_attack", true );
 
-		AddShootDelay( 1f );
+		SetNextFire( 1f );
 		IsThrowing = true;
 		TimeUntilThrown = 0.5f;
 	}
@@ -313,7 +313,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 		// Spend one grenade host-side; only give up the weapon when the last one is gone (don't discard a
 		// remaining stack just because one cooked off in your hand).
 		TakeAmmo( 1 );
-		if ( !HasAmmo() )
+		if ( !HasPrimaryAmmo() )
 		{
 			SwitchToBestWeapon();
 			DestroyGameObject();
@@ -322,7 +322,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
-		var color = !HasAmmo() ? CrosshairNoShoot : CrosshairCanShoot;
+		var color = !HasPrimaryAmmo() ? CrosshairNoShoot : CrosshairCanShoot;
 		hud.SetBlendMode( BlendMode.Lighten );
 		hud.DrawCircle( center, 6, color );
 	}

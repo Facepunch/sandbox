@@ -212,6 +212,47 @@ public partial class BaseCarryable : Sandbox.BaseWeapon, IKillIcon
 	}
 
 	/// <summary>
+	/// Spawns this weapon's world pickup and throws it - a fresh clone of its own prefab for weapons
+	/// with a <see cref="DroppedWeapon"/> component, otherwise <see cref="ItemPrefab"/>. A fresh clone
+	/// avoids carrying the held instance's ownership and state. Returns the pickup, or null when this
+	/// weapon has no pickup form. Host only.
+	/// </summary>
+	public GameObject SpawnDroppedPickup( Vector3 position, Vector3 velocity, Connection owner = null )
+	{
+		if ( !Networking.IsHost )
+			return null;
+
+		GameObject prefab = null;
+
+		if ( GetComponent<DroppedWeapon>( true ).IsValid() )
+		{
+			var source = GameObject.PrefabInstanceSource;
+			if ( !string.IsNullOrEmpty( source ) )
+				prefab = GameObject.GetPrefab( source );
+		}
+
+		if ( !prefab.IsValid() )
+			prefab = ItemPrefab;
+
+		if ( !prefab.IsValid() )
+			return null;
+
+		var pickup = prefab.Clone( new CloneConfig { Transform = new Transform( position ), StartEnabled = true } );
+
+		Ownable.Set( pickup, owner );
+		pickup.Tags.Add( "removable" );
+		pickup.NetworkSpawn();
+
+		if ( pickup.GetComponent<Rigidbody>() is { } rb )
+		{
+			rb.Velocity = velocity;
+			rb.AngularVelocity = Vector3.Random * 8.0f;
+		}
+
+		return pickup;
+	}
+
+	/// <summary>
 	/// Is this item currently being used? When true, prevents auto-switching away on item pickup etc.
 	/// </summary>
 	public virtual bool IsInUse()
