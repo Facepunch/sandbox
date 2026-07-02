@@ -6,7 +6,7 @@ namespace Sandbox.Npcs.CombatNpc;
 /// A combat NPC that searches for players, advances on them, fires in bursts, and repositions.
 /// When friendly, follows players and engages hostile NPCs instead.
 /// </summary>
-public class CombatNpc : Npc, Component.IDamageable
+public class CombatNpc : Npc
 {
 	private static readonly string[] PainLines =
 	{
@@ -30,9 +30,6 @@ public class CombatNpc : Npc, Component.IDamageable
 	/// </summary>
 	[Property, ClientEditable, Sync]
 	public bool Friendly { get; set; } = false;
-
-	[Property, ClientEditable, Range( 1, 250 ), Sync]
-	public float Health { get; set; } = 100f;
 
 	/// <summary>
 	/// The weapon this NPC uses to attack.
@@ -83,16 +80,25 @@ public class CombatNpc : Npc, Component.IDamageable
 		}
 	}
 
-	// Friendly soldiers fight alongside the player; the rest attack everything living.
-	public override string Faction => Friendly ? "ally" : "enemy";
+	// Friendly soldiers fight alongside the player; the rest are enemies.
+	public override string Faction => Friendly ? Factions.Ally : Factions.Enemy;
 
-	protected override Dispositions Dispositions => Friendly
-		? new Dispositions { Traits = { Trait.Living }, Friendly = { Trait.Player }, Hostile = { Trait.Threat } }
-		: new Dispositions { Traits = { Trait.Living, Trait.Threat }, Hostile = { Trait.Living } };
+	protected override void SetupRelationships()
+	{
+		if ( Friendly )
+		{
+			Likes( Factions.Player );
+			Hates( Factions.Enemy, Factions.Monster );
+		}
+		else
+		{
+			Hates( Factions.Player, Factions.Ally, Factions.Citizen );
+		}
+	}
 
 	public override ScheduleBase GetSchedule()
 	{
-		var visible = Senses.GetNearestVisible();
+		var visible = Senses.GetBestTarget();
 
 		if ( visible.IsValid() )
 		{
@@ -112,17 +118,30 @@ public class CombatNpc : Npc, Component.IDamageable
 		// Search last known position if recent enough
 		if ( _lastKnownPosition.HasValue && _timeSinceLastSeen < SearchTimeout )
 		{
-			var search = GetSchedule<ScientistSearchSchedule>();
+			var search = GetSchedule<InvestigateSchedule>();
 			search.Target = _lastKnownPosition.Value;
 			return search;
+		}
+
+		// Heard gunfire or some other disturbance but can't see the source -- go check it out.
+		if ( Senses.Disturbance is { } disturbance )
+		{
+			var investigate = GetSchedule<InvestigateSchedule>();
+			investigate.Target = disturbance.Position;
+			return investigate;
 		}
 
 		// Friendly NPCs follow the nearest player when idle
 		if ( Friendly )
 		{
-			var follow = GetSchedule<CombatFollowSchedule>();
-			follow.FollowDistance = FollowDistance;
-			return follow;
+			var player = Senses.GetNearestVisible( "player" );
+			if ( player.IsValid() )
+			{
+				var follow = GetSchedule<FollowSchedule>();
+				follow.Target = player;
+				follow.FollowDistance = FollowDistance;
+				return follow;
+			}
 		}
 
 		// No intel — patrol
@@ -131,43 +150,34 @@ public class CombatNpc : Npc, Component.IDamageable
 		return patrol;
 	}
 
-	void IDamageable.OnDamage( in DamageInfo damage )
+	protected override void OnHurt( in DamageInfo damage )
 	{
-		if ( IsProxy )
-			return;
-
-		MarkDamaged();
-		Health -= damage.Damage;
-
-		// Turn on whoever hurt us, even a former ally -- this is the runtime
-		// "turn nasty" path the crime/aggro systems will reuse.
-		if ( damage.Attacker.IsValid() )
-			SetDisposition( damage.Attacker, Disposition.Hostile );
-
-		// If we can hear the attacker, treat their position as the last known location
 		if ( damage.Attacker.IsValid() )
 		{
-			var dist = WorldPosition.Distance( damage.Attacker.WorldPosition );
-			if ( dist <= Senses.HearingRange )
+			// Turn on whoever hurt us, even a former ally, and prioritise them as a target.
+			// This is the runtime "turn nasty" path the crime/aggro systems reuse.
+			SetDisposition( damage.Attacker, Disposition.Hostile, priority: 10 );
+
+			// If we can hear the attacker, treat their position as the last known location.
+			if ( WorldPosition.Distance( damage.Attacker.WorldPosition ) <= Senses.HearingRange )
 			{
 				_lastKnownPosition = damage.Attacker.WorldPosition;
 				_timeSinceLastSeen = 0;
 			}
 		}
 
-		if ( Health < 1f )
-		{
-			if ( Speech.CanSpeak )
-				Speech.Say( Game.Random.FromArray( DeathLines ), 2f );
-
-			Die( damage );
-			return;
-		}
-
-		if ( Speech.CanSpeak && Game.Random.Float() < 0.5f )
+		if ( Health >= 1f && Speech.CanSpeak && Game.Random.Float() < 0.5f )
 			Speech.Say( Game.Random.FromArray( PainLines ), 1.5f );
 
-		// Interrupt current schedule so we react immediately
+		// React immediately.
 		EndCurrentSchedule();
+	}
+
+	protected override void Die( in DamageInfo damage )
+	{
+		if ( Speech.CanSpeak )
+			Speech.Say( Game.Random.FromArray( DeathLines ), 2f );
+
+		base.Die( damage );
 	}
 }

@@ -76,6 +76,9 @@ public class CombatEngageSchedule : ScheduleBase
 	{
 		Npc.Navigation.WishSpeed = EngageSpeed;
 
+		// Strafe: face the target while moving, rather than facing the movement direction.
+		Npc.Navigation.FaceMovementDirection = false;
+
 		// Set look target now so the NPC tracks the player through all tasks,
 		// movement, firing, waiting, and repositioning.
 		Npc.Animation.SetLookTarget( Target );
@@ -100,6 +103,7 @@ public class CombatEngageSchedule : ScheduleBase
 	protected override void OnEnd()
 	{
 		Npc.Navigation.WishSpeed = 100f;
+		Npc.Navigation.FaceMovementDirection = true;
 		Npc.Animation.ClearLookTarget();
 	}
 
