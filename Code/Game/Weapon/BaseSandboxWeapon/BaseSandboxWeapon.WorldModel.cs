@@ -1,6 +1,6 @@
 using Sandbox.Citizen;
 
-public partial class BaseCarryable
+public partial class BaseSandboxWeapon
 {
 	public interface IEvent : ISceneEvent<IEvent>
 	{

@@ -483,12 +483,12 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		new Punch( new Vector3( -20, 0, 0 ), 0.5f, 2.0f, 1.0f );
 	}
 
-	public T GetWeapon<T>() where T : BaseCarryable
+	public T GetWeapon<T>() where T : BaseSandboxWeapon
 	{
 		return GetComponent<PlayerInventory>().GetWeapon<T>();
 	}
 
-	public void SwitchWeapon<T>() where T : BaseCarryable
+	public void SwitchWeapon<T>() where T : BaseSandboxWeapon
 	{
 		var weapon = GetWeapon<T>();
 		if ( weapon == null ) return;

@@ -4,7 +4,7 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 {
 	IPressable.Tooltip? IPressable.GetTooltip( IPressable.Event e )
 	{
-		var weapon = GetComponent<BaseCarryable>();
+		var weapon = GetComponent<BaseSandboxWeapon>();
 		if ( !weapon.IsValid() ) return null;
 
 		var name = weapon.DisplayName.ToUpper();
@@ -22,7 +22,7 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 		var inventory = player.GetComponent<PlayerInventory>();
 		if ( !inventory.IsValid() ) return false;
 
-		var weapon = GetComponent<BaseCarryable>();
+		var weapon = GetComponent<BaseSandboxWeapon>();
 		if ( !weapon.IsValid() ) return false;
 
 		return !inventory.CanTake( weapon );
@@ -30,7 +30,7 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 
 	private bool HasInput()
 	{
-		var weapon = GetComponent<BaseGun>();
+		var weapon = GetComponent<BaseSandboxWeapon>();
 		if ( !weapon.IsValid() ) return false;
 		return weapon.ShootInput.IsEnabled || weapon.SecondaryInput.IsEnabled;
 	}
@@ -74,7 +74,7 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 	/// </summary>
 	private void TakeIntoInventory( PlayerInventory inventory )
 	{
-		var weapon = GetComponent<BaseCarryable>();
+		var weapon = GetComponent<BaseSandboxWeapon>();
 		if ( !weapon.IsValid() ) return;
 
 		if ( !inventory.Take( weapon, true ) )

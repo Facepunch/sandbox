@@ -8,7 +8,7 @@ namespace Sandbox.Npcs.Tasks;
 public class FireWeapon : TaskBase
 {
 	/// <summary>The weapon component to fire.</summary>
-	public BaseGun Weapon { get; }
+	public BaseSandboxWeapon Weapon { get; }
 
 	/// <summary>The GameObject to aim at.</summary>
 	public GameObject Target { get; }
@@ -21,7 +21,7 @@ public class FireWeapon : TaskBase
 
 	private TimeUntil _burstEnd;
 
-	public FireWeapon( BaseGun weapon, GameObject target, float burstDuration = 1.5f )
+	public FireWeapon( BaseSandboxWeapon weapon, GameObject target, float burstDuration = 1.5f )
 	{
 		Weapon = weapon;
 		Target = target;

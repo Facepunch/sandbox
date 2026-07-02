@@ -1,6 +1,6 @@
 ﻿using Sandbox.Rendering;
 
-public partial class ScreenWeapon : BaseCarryable
+public partial class ScreenWeapon : BaseSandboxWeapon
 {
 	private Material _screenMaterialCopy;
 	private Texture _screenTexture;

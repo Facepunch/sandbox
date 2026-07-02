@@ -19,7 +19,7 @@ public sealed class ShotgunWeapon : IronSightsWeapon
 
 		// Cooldown already gated by the caller before PrimaryAttack runs.
 
-		if ( HasOwner && !TakeAmmo( 1 ) )
+		if ( HasOwner && !TakePrimaryAmmo( 1 ) )
 		{
 			SetNextFire( 0.2f );
 			return;

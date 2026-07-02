@@ -1,6 +1,6 @@
 using Sandbox.Rendering;
 
-public class MeleeWeapon : BaseCarryable
+public class MeleeWeapon : BaseSandboxWeapon
 {
 	/// <summary>
 	/// Cooldown after a hit connects.

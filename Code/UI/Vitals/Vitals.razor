@@ -24,17 +24,10 @@
     @if ( Weapon.IsValid() && Weapon.UsesAmmo )
     {
         <div class="ammo hud-panel">
-            @if ( WeaponConVars.UnlimitedAmmo )
+            <label class="value">@(Weapon.UsesClips ? Weapon.Clip1.ToString() : Weapon.Ammo1.ToString())</label>
+            @if ( Weapon.UsesClips )
             {
-                <label class="value">∞</label>
-            }
-            else
-            {
-                <label class="value">@(Weapon.UsesClips ? Weapon.Clip1.ToString() : (WeaponConVars.InfiniteReserves ? "∞" : Weapon.Ammo1.ToString()))</label>
-                @if ( Weapon.UsesClips )
-                {
-                    <label class="alternate">@(WeaponConVars.InfiniteReserves ? "∞" : Weapon.Ammo1.ToString())</label>
-                }
+                <label class="alternate">@(Weapon.Ammo1.ToString())</label>
             }
             <Image class="icon" Texture=@AmmoIcon />
         </div>
@@ -48,7 +41,7 @@
     [Property] public Texture AmmoIcon { get; set; }
 
     Player Player => Player.FindLocalPlayer();
-    BaseGun Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseGun;
+    BaseSandboxWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseSandboxWeapon;
 
     int DisplayHealth => (int)Player.Health;
     int DisplayArmour => (int)Player.Armour;

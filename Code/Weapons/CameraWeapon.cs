@@ -1,6 +1,6 @@
 ﻿using Sandbox.Rendering;
 
-public sealed class CameraWeapon : BaseGun
+public sealed class CameraWeapon : BaseSandboxWeapon
 {
 	float fov = 50;
 	float roll = 0;

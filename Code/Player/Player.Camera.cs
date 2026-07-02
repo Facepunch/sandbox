@@ -13,7 +13,7 @@ public sealed partial class Player
 	private float _smoothedDistance;
 	private Angles _seatedAngles;
 	private Vector3 _lastSeatWorldPos;
-	private List<BaseCarryable> _seatedWeapons;
+	private List<BaseSandboxWeapon> _seatedWeapons;
 
 	private float roll;
 
@@ -138,12 +138,12 @@ public sealed partial class Player
 		var builder = new LinkedGameObjectBuilder();
 		builder.AddConnected( seatGo );
 
-		_seatedWeapons ??= new List<BaseCarryable>();
+		_seatedWeapons ??= new List<BaseSandboxWeapon>();
 		_seatedWeapons.Clear();
 
 		foreach ( var obj in builder.Objects )
 		{
-			foreach ( var weapon in obj.GetComponentsInChildren<BaseCarryable>() )
+			foreach ( var weapon in obj.GetComponentsInChildren<BaseSandboxWeapon>() )
 			{
 				if ( !weapon.HasOwner )
 					_seatedWeapons.Add( weapon );

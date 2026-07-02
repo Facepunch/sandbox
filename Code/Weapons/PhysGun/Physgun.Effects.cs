@@ -1,7 +1,7 @@
 ﻿using Sandbox.Rendering;
 using Sandbox.Utility;
 
-public partial class Physgun : ScreenWeapon, IPlayerControllable
+public partial class Physgun : ScreenWeapon
 {
 	[Property] public LineRenderer BeamRenderer { get; set; }
 	[Property] public GameObject EndPointEffectPrefab { get; set; }
@@ -9,13 +9,9 @@ public partial class Physgun : ScreenWeapon, IPlayerControllable
 	[Property] public GameObject UnFreezeEffectPrefab { get; set; }
 	[Property] public GameObject GrabEffectPrefab { get; set; }
 
-	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput ShootInput { get; set; }
-	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput SecondaryInput { get; set; }
+	// ShootInput and SecondaryInput come from BaseSandboxWeapon's seat control.
 	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput ExtendInput { get; set; }
 	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput RetractInput { get; set; }
-
-	public void OnStartControl() { }
-	public void OnEndControl() { }
 
 	[Property, Group( "Screen" )] public float PowerMinDistance { get; set; } = 64f;
 	[Property, Group( "Screen" )] public float PowerMaxDistance { get; set; } = 512f;

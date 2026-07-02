@@ -35,7 +35,7 @@ public class CombatNpc : Npc
 	/// The weapon this NPC uses to attack.
 	/// </summary>
 	[Property]
-	public BaseGun Weapon { get; set; }
+	public BaseSandboxWeapon Weapon { get; set; }
 
 	[Property, Group( "Balance" ), Range( 512, 4096 ), Step( 1 ), ClientEditable, Sync]
 	public float AttackRange { get; set; } = 1024f;

@@ -83,7 +83,7 @@ public sealed class EntitySpawner : ISpawner
 
 	public void PopulateContextMenu( MenuPanel menu, string ident, string metadata )
 	{
-		if ( Prefab?.GetComponent<BaseCarryable>( true ) is not null )
+		if ( Prefab?.GetComponent<BaseSandboxWeapon>( true ) is not null )
 		{
 			menu.AddOption( "public", "Spawn in World", () => GameManager.Spawn( ident, metadata, forceWorld: true ) );
 			menu.AddSpacer();

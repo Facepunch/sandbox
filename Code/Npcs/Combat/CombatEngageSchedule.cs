@@ -39,7 +39,7 @@ public class CombatEngageSchedule : ScheduleBase
 	/// <summary>
 	/// Weapon to fire. Should be a child component on the NPC's GameObject.
 	/// </summary>
-	public BaseGun Weapon { get; set; }
+	public BaseSandboxWeapon Weapon { get; set; }
 
 	/// <summary>
 	/// Distance at which the NPC stops advancing and begins shooting.

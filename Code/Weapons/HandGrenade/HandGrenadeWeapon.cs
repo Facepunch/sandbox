@@ -10,7 +10,7 @@ public enum ThrowType
 /// A throwable grenade weapon
 /// Cooks while held — explodes in hand if held too long
 /// </summary>
-public sealed class HandGrenadeWeapon : BaseGun
+public sealed class HandGrenadeWeapon : BaseSandboxWeapon
 {
 	[Property] public GameObject Prefab { get; set; }
 	[Property] public float ThrowPower { get; set; } = 1200f;
@@ -246,7 +246,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 		if ( !Prefab.IsValid() ) return;
 
 		// Host-authoritative ammo spend - the owner only predicted the throw, the host owns the count.
-		TakeAmmo( 1 );
+		TakePrimaryAmmo( 1 );
 
 		var go = Prefab.Clone( startPos );
 
@@ -312,7 +312,7 @@ public sealed class HandGrenadeWeapon : BaseGun
 
 		// Spend one grenade host-side; only give up the weapon when the last one is gone (don't discard a
 		// remaining stack just because one cooked off in your hand).
-		TakeAmmo( 1 );
+		TakePrimaryAmmo( 1 );
 		if ( !HasPrimaryAmmo() )
 		{
 			SwitchToBestWeapon();

@@ -1,4 +1,4 @@
-public partial class BaseBulletWeapon : BaseGun
+public partial class BaseBulletWeapon : BaseSandboxWeapon
 {
 	[Property, Group( "Bullet" )]
 	public BulletConfiguration Bullet { get; set; } = new()
@@ -91,7 +91,7 @@ public partial class BaseBulletWeapon : BaseGun
 		// FirePrimary has already set NextPrimaryFire by this point, so we must not re-check it.
 
 		// Only consume ammo when held by a player
-		if ( HasOwner && !TakeAmmo( 1 ) )
+		if ( HasOwner && !TakePrimaryAmmo( 1 ) )
 		{
 			SetNextFire( 0.2f );
 			return;

@@ -3,30 +3,30 @@ using Sandbox.Citizen;
 public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 {
 	// MaxSlots, ActiveItem and the active-item enable/disable + equip/holster come from the engine
-	// InventoryComponent. SetDropped on equip moved to BaseCarryable.OnEquipped.
+	// InventoryComponent. SetDropped on equip moved to BaseSandboxWeapon.OnEquipped.
 
 	[RequireComponent] public Player Player { get; set; }
 
 	/// <summary>
 	/// All weapons currently in the inventory, ordered by slot. Narrowing shim over engine Items.
 	/// </summary>
-	public IEnumerable<BaseCarryable> Weapons => Items.OfType<BaseCarryable>();
+	public IEnumerable<BaseSandboxWeapon> Weapons => Items.OfType<BaseSandboxWeapon>();
 
 	/// <summary>
 	/// The currently active weapon. Narrowing shim over the engine's <see cref="InventoryComponent.ActiveItem"/>.
 	/// </summary>
-	public BaseCarryable ActiveWeapon => ActiveItem as BaseCarryable;
+	public BaseSandboxWeapon ActiveWeapon => ActiveItem as BaseSandboxWeapon;
 
 	/// <summary>
 	/// Returns the weapon in the given slot, or null if the slot is empty.
 	/// </summary>
-	public new BaseCarryable GetSlot( int slot ) => base.GetSlot( slot ) as BaseCarryable;
+	public new BaseSandboxWeapon GetSlot( int slot ) => base.GetSlot( slot ) as BaseSandboxWeapon;
 
 	/// <summary>
 	/// Returns whether the given item could be inserted into the inventory.
 	/// Checks for existing weapons that can receive ammo, and empty slots.
 	/// </summary>
-	public bool CanTake( BaseCarryable item )
+	public bool CanTake( BaseSandboxWeapon item )
 	{
 		if ( !item.IsValid() )
 			return false;
@@ -35,7 +35,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		if ( existing.IsValid() )
 		{
 			// We already have this weapon — only allow if it can receive ammo
-			if ( existing is BaseGun existingWeapon && existingWeapon.UsesAmmo )
+			if ( existing is BaseSandboxWeapon existingWeapon && existingWeapon.UsesAmmo )
 				return existingWeapon.Ammo1 < existingWeapon.MaxReserveAmmo;
 
 			return false;
@@ -89,7 +89,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	/// </summary>
 	private bool TryGiveAmmoToExisting( GameObject prefab, bool notice )
 	{
-		var baseCarry = prefab.Components.Get<BaseCarryable>( true );
+		var baseCarry = prefab.Components.Get<BaseSandboxWeapon>( true );
 		if ( !baseCarry.IsValid() )
 			return false;
 
@@ -97,7 +97,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		if ( !existing.IsValid() )
 			return false;
 
-		if ( existing is BaseGun existingWeapon && baseCarry is BaseGun pickupWeapon && existingWeapon.UsesAmmo )
+		if ( existing is BaseSandboxWeapon existingWeapon && baseCarry is BaseSandboxWeapon pickupWeapon && existingWeapon.UsesAmmo )
 		{
 			if ( existingWeapon.Ammo1 >= existingWeapon.MaxReserveAmmo )
 				return true;
@@ -136,7 +136,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 
 	public bool HasWeapon( GameObject prefab )
 	{
-		var baseCarry = prefab.GetComponent<BaseCarryable>( true );
+		var baseCarry = prefab.GetComponent<BaseSandboxWeapon>( true );
 		if ( !baseCarry.IsValid() )
 			return false;
 
@@ -145,12 +145,12 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 			.IsValid();
 	}
 
-	public bool HasWeapon<T>() where T : BaseCarryable
+	public bool HasWeapon<T>() where T : BaseSandboxWeapon
 	{
 		return GetWeapon<T>().IsValid();
 	}
 
-	public T GetWeapon<T>() where T : BaseCarryable
+	public T GetWeapon<T>() where T : BaseSandboxWeapon
 	{
 		return Weapons.OfType<T>().FirstOrDefault();
 	}
@@ -193,7 +193,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		if ( targetSlot < 0 || targetSlot >= MaxSlots )
 			return false;
 
-		var baseCarry = prefab.Components.Get<BaseCarryable>( true );
+		var baseCarry = prefab.Components.Get<BaseSandboxWeapon>( true );
 		if ( !baseCarry.IsValid() )
 			return false;
 
@@ -212,11 +212,11 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		// Dropped variant components
 		//
 		{
-			var cloneCarryable = clone.GetComponent<BaseCarryable>( true );
+			var cloneCarryable = clone.GetComponent<BaseSandboxWeapon>( true );
 			cloneCarryable?.SetDropped( false );
 		}
 
-		var weapon = clone.GetComponent<BaseCarryable>( true );
+		var weapon = clone.GetComponent<BaseSandboxWeapon>( true );
 		Assert.NotNull( weapon );
 
 		weapon.InventorySlot = targetSlot;
@@ -242,13 +242,13 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	/// If we already own a weapon of the same type as this live item, try to transfer its ammo.
 	/// Returns true if handled (caller should stop). False means no existing weapon found.
 	/// </summary>
-	private bool TryGiveAmmoFromItem( BaseCarryable item, bool notice )
+	private bool TryGiveAmmoFromItem( BaseSandboxWeapon item, bool notice )
 	{
 		var existing = Weapons.FirstOrDefault( x => x.GetType() == item.GetType() );
 		if ( !existing.IsValid() )
 			return false;
 
-		if ( existing is BaseGun existingWeapon && item is BaseGun pickupWeapon && existingWeapon.UsesAmmo )
+		if ( existing is BaseSandboxWeapon existingWeapon && item is BaseSandboxWeapon pickupWeapon && existingWeapon.UsesAmmo )
 		{
 			if ( existingWeapon.Ammo1 >= existingWeapon.MaxReserveAmmo )
 			{
@@ -269,7 +269,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		return true;
 	}
 
-	public bool Take( BaseCarryable item, bool includeNotices )
+	public bool Take( BaseSandboxWeapon item, bool includeNotices )
 	{
 		if ( !CanTake( item ) )
 			return false;
@@ -310,7 +310,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	/// <summary>
 	/// Drops the given weapon from the inventory.
 	/// </summary>
-	public bool Drop( BaseCarryable weapon )
+	public bool Drop( BaseSandboxWeapon weapon )
 	{
 		if ( !Networking.IsHost )
 		{
@@ -360,7 +360,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	private static SoundEvent GunPickupSound = ResourceLibrary.Get<SoundEvent>( "sounds/weapons/gun_pickup.sound" );
 
 	[Rpc.Owner]
-	private void OnClientPickup( BaseCarryable weapon, bool justAmmo = false )
+	private void OnClientPickup( BaseSandboxWeapon weapon, bool justAmmo = false )
 	{
 		if ( !weapon.IsValid() ) return;
 
@@ -376,7 +376,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		}
 	}
 
-	private bool ShouldAutoswitchTo( BaseCarryable item )
+	private bool ShouldAutoswitchTo( BaseSandboxWeapon item )
 	{
 		Assert.True( item.IsValid(), "item invalid" );
 
@@ -389,7 +389,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		if ( ActiveWeapon.IsInUse() )
 			return false;
 
-		if ( item is BaseGun weapon && weapon.UsesAmmo )
+		if ( item is BaseSandboxWeapon weapon && weapon.UsesAmmo )
 		{
 			if ( !weapon.HasPrimaryAmmo() && !weapon.CanReload() )
 			{
@@ -440,21 +440,17 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		MoveSlot( fromSlot, toSlot );
 	}
 
-	public BaseCarryable GetBestWeapon()
-	{
-		// Prefer a usable weapon by Value; only fall back to an avoid-flagged one (e.g. an empty gun) when
-		// there's nothing better. The engine's GetBestItem orders purely by Value and ignores ShouldAvoid.
-		var candidates = Weapons.Where( w => w.IsValid() && w.CanSwitch() ).ToList();
-
-		return candidates.Where( w => !w.ShouldAvoid ).OrderByDescending( w => w.Value ).FirstOrDefault()
-			?? candidates.OrderByDescending( w => w.Value ).FirstOrDefault();
-	}
+	/// <summary>
+	/// The weapon the inventory would auto-switch to. The engine's <see cref="InventoryComponent.GetBestItem"/>
+	/// handles the Value ordering and the avoid-empty-guns fallback.
+	/// </summary>
+	public BaseSandboxWeapon GetBestWeapon() => GetBestItem() as BaseSandboxWeapon;
 
 	/// <summary>
 	/// Switches to the given weapon. Thin wrapper over the engine inventory's <see cref="InventoryComponent.Switch"/>
 	/// (which handles host-routing and the holster veto). Switch events had no consumers and were dropped.
 	/// </summary>
-	public void SwitchWeapon( BaseCarryable weapon, bool allowHolster = false )
+	public void SwitchWeapon( BaseSandboxWeapon weapon, bool allowHolster = false )
 	{
 		Switch( weapon, allowHolster );
 	}
@@ -502,7 +498,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	}
 
 	[Rpc.Host]
-	private void HostDrop( BaseCarryable weapon )
+	private void HostDrop( BaseSandboxWeapon weapon )
 	{
 		Drop( weapon );
 	}
@@ -510,7 +506,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	/// <summary>
 	/// Removes a weapon from the inventory and destroys it without dropping it into the world.
 	/// </summary>
-	public void Remove( BaseCarryable weapon )
+	public void Remove( BaseSandboxWeapon weapon )
 	{
 		if ( !Networking.IsHost )
 		{
@@ -520,7 +516,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		_ = RemoveAsync( weapon );
 	}
 
-	private async Task RemoveAsync( BaseCarryable weapon )
+	private async Task RemoveAsync( BaseSandboxWeapon weapon )
 	{
 		if ( !weapon.IsValid() ) return;
 		if ( weapon.Owner != Player ) return;
@@ -544,7 +540,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	}
 
 	[Rpc.Host]
-	private void HostRemove( BaseCarryable weapon )
+	private void HostRemove( BaseSandboxWeapon weapon )
 	{
 		Remove( weapon );
 	}

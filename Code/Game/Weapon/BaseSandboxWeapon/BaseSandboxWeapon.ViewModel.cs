@@ -1,4 +1,4 @@
-public partial class BaseCarryable
+public partial class BaseSandboxWeapon
 {
 	// ViewModelPrefab is inherited from the engine BaseWeapon (same serialized name). We override the
 	// creation so we can call the game ViewModel component's Deploy().

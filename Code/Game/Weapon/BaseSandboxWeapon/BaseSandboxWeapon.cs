@@ -1,6 +1,6 @@
 using Sandbox.Rendering;
 
-public partial class BaseCarryable : Sandbox.BaseWeapon, IKillIcon
+public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerControllable
 {
 	// DisplayName, DisplayIcon, Value, Slot, ViewModel and WorldModel are all inherited from the
 	// engine BaseWeapon / BaseInventoryItem. (DisplayIcon also satisfies IKillIcon.)
@@ -16,11 +16,6 @@ public partial class BaseCarryable : Sandbox.BaseWeapon, IKillIcon
 	/// Used for overriding the display icon
 	/// </summary>
 	public virtual string InventoryIconOverride => null;
-
-	/// <summary>
-	/// Whether this weapon should be avoided when determining an item to swap to
-	/// </summary>
-	public virtual bool ShouldAvoid => false;
 
 	/// <summary>
 	/// If true the game should hide the hud when holding this weapon. Useful for cameras, or scopes.
@@ -173,12 +168,71 @@ public partial class BaseCarryable : Sandbox.BaseWeapon, IKillIcon
 	// DrawHud / DrawCrosshair and the per-frame crosshair positioning come from the engine BaseWeapon.
 
 	/// <summary>
-	/// Called when added to the player's inventory
+	/// Called when added to the player's inventory. Base seeds the magazine and, on first pickup of
+	/// this ammo type, the shared reserve pool.
 	/// </summary>
-	/// <param name="player"></param>
 	public virtual void OnAdded( Player player )
 	{
-		// nothing
+		if ( !Networking.IsHost )
+			return;
+
+		// Seed the magazine full.
+		if ( UsesAmmo && UsesClips )
+			Clip1 = ClipMaxSize;
+
+		if ( !UsesAmmo || AmmoType is null )
+			return;
+
+		// Seed the shared reserve pool once - only when the player first gets a weapon of this ammo
+		// type. Guarding on the pool being empty stops two guns that share a resource from
+		// double-seeding it (and pickup churn from inflating reserve over time).
+		if ( !Inventory.HasAmmo( AmmoType.ResourcePath ) )
+		{
+			var seed = AmmoType.DefaultStartingAmmo + StartingAmmo;
+			if ( seed > 0 )
+				AddReserveAmmo( seed );
+		}
+	}
+
+	//
+	// Seat / contraption control (IPlayerControllable) - a weapon mounted on a contraption fires from
+	// the driver's inputs.
+	//
+
+	/// <summary>The input that fires the primary attack when this weapon is controlled via a seat.</summary>
+	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput ShootInput { get; set; }
+
+	/// <summary>The input that fires the secondary attack when this weapon is controlled via a seat.</summary>
+	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput SecondaryInput { get; set; }
+
+	/// <summary>A seated player can only control this while not holding a weapon of their own.</summary>
+	public virtual bool CanControl( Player player )
+	{
+		var inventory = player.GetComponent<PlayerInventory>();
+		return inventory is null || !inventory.ActiveWeapon.IsValid();
+	}
+
+	public virtual void OnStartControl() { }
+
+	public virtual void OnEndControl() { }
+
+	// Explicit interface impl so it doesn't clash with the engine's held-item OnControl pump;
+	// subclasses override OnSeatControl to change the seated behaviour.
+	void IPlayerControllable.OnControl() => OnSeatControl();
+
+	protected virtual void OnSeatControl()
+	{
+		if ( HasOwner ) return;
+		// Seat fire is fully host-authoritative - the host reads the driver's synced ClientInput and
+		// runs the shot for real, damage applying directly (no hit claims). The driving client doesn't
+		// run the attack at all.
+		if ( !Networking.IsHost ) return;
+
+		if ( ShootInput.Down() && CanPrimaryAttack() )
+			PrimaryAttack();
+
+		if ( SecondaryInput.Down() && CanSecondaryAttack() )
+			SecondaryAttack();
 	}
 
 	/// <summary>

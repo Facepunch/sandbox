@@ -47,9 +47,9 @@ public class ScriptedEmitter : GameResource, IDefinitionResource
 			return;
 		}
 
-		if ( scene.GetAllComponents<BaseCarryable>().Any() )
+		if ( scene.GetAllComponents<BaseSandboxWeapon>().Any() )
 		{
-			context.SetPublishingDisabled( "Invalid: emitter prefab must not contain a BaseCarryable" );
+			context.SetPublishingDisabled( "Invalid: emitter prefab must not contain a BaseSandboxWeapon" );
 			return;
 		}
 	}

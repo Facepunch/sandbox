@@ -1,7 +1,7 @@
 ﻿using Sandbox.Rendering;
 using Sandbox.Utility;
 
-public sealed class RpgWeapon : BaseGun
+public sealed class RpgWeapon : BaseSandboxWeapon
 {
 	[Property] public GameObject ProjectilePrefab { get; set; }
 	[Property] public float ProjectileSpeed { get; set; } = 1024f;
@@ -101,7 +101,7 @@ public sealed class RpgWeapon : BaseGun
 
 	public override void PrimaryAttack()
 	{
-		if ( HasOwner && !TakeAmmo( 1 ) )
+		if ( HasOwner && !TakePrimaryAmmo( 1 ) )
 		{
 			TryAutoReload();
 			return;

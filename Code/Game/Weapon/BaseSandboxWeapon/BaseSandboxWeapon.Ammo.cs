@@ -1,9 +1,9 @@
-public partial class BaseGun
+public partial class BaseSandboxWeapon
 {
 	//
-	// The generic ammo config (UsesAmmo, UsesClips, ClipMaxSize, StartingAmmo) and the magazine/reserve
-	// plumbing live on the engine BaseWeapon now. This is just the sandbox AmmoResource layer mapped onto
-	// it, plus the cheat convars.
+	// The sandbox AmmoResource layer mapped onto the engine's ammo plumbing. The generic config
+	// (UsesAmmo, UsesClips, ClipMaxSize, StartingAmmo) and the magazine/reserve live on the engine
+	// BaseWeapon.
 	//
 
 	/// <summary>The ammo resource this weapon's reserve draws from. Weapons sharing a resource share reserve.</summary>
@@ -20,35 +20,12 @@ public partial class BaseGun
 		PrimaryAmmoType = (UsesAmmo && AmmoType is not null) ? AmmoType.ResourcePath : "";
 	}
 
-	/// <summary>Take ammo for a shot - from the magazine, or reserve for a clipless weapon. Honours the cheat convars.</summary>
-	public bool TakeAmmo( int count )
-	{
-		if ( WeaponConVars.UnlimitedAmmo )
-			return true;
-
-		if ( !UsesPrimaryClip && WeaponConVars.InfiniteReserves )
-			return true;
-
-		// The engine spends locally and mirrors the spend to the host, which owns the counts.
-		return TakePrimaryAmmo( count );
-	}
-
 	/// <summary>
-	/// Convar-aware ammo check - all the engine's fire gates route through this. Unheld guns
-	/// (seats, world) never run dry; their magazine is never seeded.
+	/// Unheld weapons (seats, world) never run dry - their magazine is never seeded.
 	/// </summary>
 	public override bool HasPrimaryAmmo()
 	{
 		if ( !HasOwner )
-			return true;
-
-		if ( WeaponConVars.UnlimitedAmmo )
-			return true;
-
-		if ( UsesPrimaryClip )
-			return Clip1 > 0;
-
-		if ( WeaponConVars.InfiniteReserves )
 			return true;
 
 		return base.HasPrimaryAmmo();
