@@ -3,7 +3,6 @@
 /// Shakes nearby cameras with continuous angular noise while enabled - rumbling machinery, engines,
 /// earthquakes. Strength falls off with distance, and optionally over time.
 /// </summary>
-[Alias( "EnvShake" )]
 public sealed class EnvironmentShake : Component, Component.ITemporaryEffect
 {
 	[Property] public float Rate { get; set; } = 10.0f;
