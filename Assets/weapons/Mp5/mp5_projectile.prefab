@@ -204,7 +204,6 @@
           {
             "__type": "Sandbox.Mapping.EnvShake",
             "__guid": "0df95323-c5c4-4a1a-80c8-9e7184d6d9fd",
-            "AirShake": true,
             "Amplitude": [
               {
                 "y": 2
