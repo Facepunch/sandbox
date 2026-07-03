@@ -183,6 +183,7 @@
         "Flags": 0,
         "GiveOnStart": false,
         "MaxSlots": 9,
+        "PickupMode": "Touch",
         "StartingItems": [
           {
             "_type": "gameobject",
