@@ -41,7 +41,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	public bool IsLocalPlayer => !IsProxy;
 
 	string IKillSource.DisplayName => Network.Owner?.DisplayName ?? "Unknown";
-	long IKillSource.SteamId => (long)(Network.Owner?.SteamId ?? 0);
+	long IKillSource.SteamId => (long)(Network.Owner?.SteamId ?? default);
 	void IKillSource.OnKill( GameObject victim )
 	{
 		PlayerData.Kills++;
@@ -116,6 +116,14 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		if ( Controller.IsValid() && Controller.Renderer.IsValid() )
 		{
 			Controller.Renderer.Set( "b_noclip", IsNoclipping );
+		}
+
+		// Seated weapon bookkeeping and HUD paint in the update stage - the camera modifier
+		// (Player.Camera) only composes the view.
+		if ( IsLocalPlayer )
+		{
+			UpdateSeatedWeapons();
+			DrawSeatedWeaponHud();
 		}
 	}
 

@@ -170,6 +170,10 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	{
 	}
 
+	// The game's ViewModel component places itself (ICameraSetup) with its own bob and offsets -
+	// don't double-place from the engine's camera chain.
+	protected override void PlaceViewModel( CameraComponent camera, in CameraView view ) { }
+
 	/// <summary>
 	/// Drops this weapon into the world as a pickup - the same live object, so it keeps its state
 	/// (ammo, tool modes). Unparents it, drops network ownership, enables the dropped components and

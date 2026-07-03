@@ -29,7 +29,7 @@ public partial class Npc : Component
 	}
 
 	/// <summary>
-	/// Declare this NPC's relationships toward other factions with <see cref="Hates"/> /
+	/// Declare this NPC's relationships toward other factions with <see cref="Hates(string[])"/> /
 	/// <see cref="Fears"/> / <see cref="Likes"/>. Anything not listed is neutral (ignored).
 	/// Override per NPC type.
 	/// </summary>

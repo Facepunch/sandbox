@@ -297,7 +297,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 	{
 		if ( !Networking.IsHost ) return;
 
-		var steamId = (long)(Player.Network.Owner?.SteamId ?? 0);
+		var steamId = (long)(Player.Network.Owner?.SteamId ?? default);
 		if ( steamId == 0 ) return;
 
 		var json = SerializeLoadout();
@@ -310,7 +310,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 	{
 		if ( !Networking.IsHost ) return;
 
-		var steamId = (long)(Player.Network.Owner?.SteamId ?? 0);
+		var steamId = (long)(Player.Network.Owner?.SteamId ?? default);
 		if ( steamId == 0 ) return;
 
 		var json = SaveSystem.Current?.GetMetadata( $"Loadout_{steamId}" );

@@ -49,7 +49,7 @@
 
 @code
 {
-    TextEntry SaveNameEntry;
+    TextEntry SaveNameEntry { get; set; }
     List<SaveFileEntry> SaveFiles = new();
 
     record SaveFileEntry( string FileName, string DisplayName, string Timestamp, Texture Thumbnail, bool IsCompatible );

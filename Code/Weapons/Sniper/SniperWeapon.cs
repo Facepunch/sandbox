@@ -128,13 +128,15 @@ public sealed class SniperWeapon : BaseBulletWeapon
 		}
 	}
 
-	public override void OnCameraSetup( Player player, CameraComponent camera )
+	/// <summary>
+	/// Scoped zoom goes through the engine's camera modifier chain - one owner for the FOV, no
+	/// fighting the player's preference FOV write.
+	/// </summary>
+	protected override void ModifyCamera( CameraComponent camera, ref CameraView view )
 	{
-		if ( !player.Network.IsOwner || !Network.IsOwner ) return;
-
 		if ( _isScoped && _viewModelHidden )
 		{
-			camera.FieldOfView = ScopedFov;
+			view.FieldOfView = ScopedFov;
 		}
 	}
 
