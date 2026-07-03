@@ -47,12 +47,8 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 
 	// FindEmptySlot is inherited from the engine InventoryComponent.
 
-	internal void GiveDefaultWeapons()
-	{
-		Pickup( "weapons/physgun/physgun.prefab", false );
-		Pickup( "weapons/toolgun/toolgun.prefab", false );
-		Pickup( "weapons/camera/camera.prefab", 8, false );
-	}
+	// The default weapons come from the engine's Loadout feature, configured on the player prefab -
+	// PlayerLoadout calls GiveLoadout() when there's no saved hotbar to restore.
 
 	/// <summary>
 	/// Activates the named tool mode, giving and equipping the toolgun first if the player doesn't have one.

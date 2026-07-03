@@ -179,7 +179,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 
 		await Task.Yield();
 
-		Inventory.GiveDefaultWeapons();
+		Inventory.GiveLoadout();
 		Inventory.SwitchWeapon( Inventory.GetBestWeapon() );
 		SaveLoadout();
 	}
@@ -247,7 +247,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 			return;
 		}
 
-		Inventory.GiveDefaultWeapons();
+		Inventory.GiveLoadout();
 		var bestWeapon = Inventory.GetBestWeapon();
 		if ( bestWeapon.IsValid() )
 			Inventory.SwitchWeapon( bestWeapon );

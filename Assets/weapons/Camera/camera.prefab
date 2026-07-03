@@ -79,6 +79,7 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "HoldBone": "hold_R",
+        "PreferredSlot": 8,
         "ReloadStartTime": 0,
         "ReloadTime": 2.5,
         "SecondaryInput": {
