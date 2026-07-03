@@ -22,7 +22,6 @@
         "Flags": 0,
         "PrimaryAmmoType": "ammo/grenade.ammo",
         "CanCancelReload": false,
-        "ClipContents": 17,
         "ClipMaxSize": 17,
         "DeploySound": null,
         "DeployTime": 0.5,

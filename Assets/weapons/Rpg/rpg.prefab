@@ -94,7 +94,6 @@
         "Flags": 0,
         "PrimaryAmmoType": "ammo/rocket.ammo",
         "CanCancelReload": false,
-        "ClipContents": 1,
         "ClipMaxSize": 1,
         "DeployTime": 0.5,
         "DisplayIcon": {

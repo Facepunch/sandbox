@@ -36,7 +36,6 @@
         "RecoilPitch": "-0.300000012,-0.100000001",
         "RecoilYaw": "-0.100000001,0.100000001",
         "CanCancelReload": false,
-        "ClipContents": 30,
         "ClipMaxSize": 30,
         "DeployTime": 0.5,
         "DisplayIcon": {
