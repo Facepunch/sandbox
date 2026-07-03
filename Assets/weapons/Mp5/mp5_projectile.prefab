@@ -202,58 +202,18 @@
         "Enabled": true,
         "Components": [
           {
-            "__type": "EnvironmentShake",
+            "__type": "Sandbox.Mapping.EnvShake",
             "__guid": "0df95323-c5c4-4a1a-80c8-9e7184d6d9fd",
-            "DistanceCurve": [
-              {
-                "x": 0,
-                "y": 1,
-                "in": 0.78787863,
-                "out": -0.78787863,
-                "mode": "Mirrored"
-              },
-              {
-                "x": 0.29141104,
-                "y": 0.15041846,
-                "in": 0.4924444,
-                "out": -0.4924444,
-                "mode": "Mirrored"
-              },
-              {
-                "x": 1,
-                "y": 0,
-                "in": 0,
-                "out": 0,
-                "mode": "Mirrored"
-              }
-            ],
-            "MaxDistance": 1024,
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "Rate": 600,
-            "Scale": "1,1,0.2",
-            "TimeCurve": [
-              {
-                "x": 0,
-                "y": 1,
-                "in": 0,
-                "out": 0,
-                "mode": "Mirrored"
-              },
-              {
-                "x": 1,
-                "y": 0,
-                "in": 0,
-                "out": 0,
-                "mode": "Mirrored"
-              }
-            ],
-            "TimeLength": 5,
-            "TimeLimited": false
+            "AirShake": true,
+            "Amplitude": 2,
+            "Duration": 0,
+            "Frequency": 40,
+            "GlobalShake": false,
+            "Radius": 1024,
+            "Rumble": false,
+            "ShakeOnStart": true,
+            "ShakePhysics": false,
+            "ShakeView": true
           }
         ]
       }
