@@ -20,7 +20,7 @@
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
-        "AmmoType": "ammotype/9mm.ammo",
+        "PrimaryAmmoType": "ammo/9mm.ammo",
         "Ballistics": {
           "Damage": 12,
           "Pellets": 1,
@@ -85,7 +85,6 @@
         "HoldType": "Pistol",
         "IncrementalReloading": false,
         "IronSightsFireScale": 0.2,
-        "MaxReserveAmmo": 300,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,

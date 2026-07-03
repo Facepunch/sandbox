@@ -20,7 +20,7 @@
         "__guid": "a1b2c3d4-1112-4aaa-b112-111111111112",
         "__enabled": true,
         "Flags": 0,
-        "AmmoType": "ammotype/sniper.ammo",
+        "PrimaryAmmoType": "ammo/sniper.ammo",
         "BoltPullSound": "weapons/sniper/sounds/sniper_bolt_pull.sound",
         "Ballistics": {
           "Damage": 100,
@@ -84,7 +84,6 @@
         },
         "HoldType": "Rifle",
         "IncrementalReloading": false,
-        "MaxReserveAmmo": 80,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,

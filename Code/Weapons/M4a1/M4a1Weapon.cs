@@ -24,7 +24,7 @@ public sealed class M4a1Weapon : BaseBulletWeapon
 	protected override void OnAdded( Sandbox.InventoryComponent inventory )
 	{
 		// Seed the grenade reserve once, like the bullet reserve.
-		if ( StartingGrenades > 0 && !string.IsNullOrEmpty( SecondaryAmmoType ) && !inventory.HasAmmo( SecondaryAmmoType ) )
+		if ( StartingGrenades > 0 && SecondaryAmmoType is not null && !inventory.HasAmmo( SecondaryAmmoType ) )
 			inventory.GiveAmmo( SecondaryAmmoType, StartingGrenades );
 
 		base.OnAdded( inventory );

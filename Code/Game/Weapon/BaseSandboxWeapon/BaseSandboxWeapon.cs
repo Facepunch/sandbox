@@ -89,22 +89,12 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	// DrawHud / DrawCrosshair and the per-frame crosshair positioning come from the engine BaseWeapon.
 
 	/// <summary>
-	/// Runs on the host when added to an inventory. Seeds the shared reserve pool from the ammo
-	/// resource on first pickup of this ammo type; the engine base seeds the magazines - only when
-	/// they've never been filled, so a dropped gun keeps its rounds through a pickup.
+	/// Runs on the host when added to an inventory. The engine base seeds the magazines and the
+	/// shared reserve pool - only when they've never been filled, so a dropped gun keeps its rounds
+	/// through a pickup.
 	/// </summary>
 	protected override void OnAdded( Sandbox.InventoryComponent inventory )
 	{
-		// Seeded before the base so the resource's default wins over the engine's StartingAmmo-only
-		// seeding. Guarding on the pool being empty stops two guns that share a resource from
-		// double-seeding it (and pickup churn from inflating reserve over time).
-		if ( UsesAmmo && AmmoType is not null && !inventory.HasAmmo( AmmoType.ResourcePath ) )
-		{
-			var seed = AmmoType.DefaultStartingAmmo + StartingAmmo;
-			if ( seed > 0 )
-				AddReserveAmmo( seed );
-		}
-
 		// In an inventory - not a world pickup any more.
 		IsDropped = false;
 

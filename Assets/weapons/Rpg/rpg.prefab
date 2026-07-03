@@ -92,7 +92,7 @@
         "__guid": "ab522638-2fd4-40a8-b165-36922f5ec630",
         "__enabled": true,
         "Flags": 0,
-        "AmmoType": "ammotype/rocket.ammo",
+        "PrimaryAmmoType": "ammo/rocket.ammo",
         "CanCancelReload": false,
         "ClipContents": 1,
         "ClipMaxSize": 1,
@@ -122,7 +122,6 @@
         "HoldType": "RPG",
         "IncrementalReloading": false,
         "IsTrackedAim": false,
-        "MaxReserveAmmo": 6,
         "MuzzleGameObject": {
           "_type": "gameobject",
           "go": "6efc4b36-63ca-4285-89ff-d811da6362fa"

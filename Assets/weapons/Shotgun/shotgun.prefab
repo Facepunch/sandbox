@@ -20,7 +20,7 @@
         "__guid": "a1b2c3d4-2222-4aaa-b222-222222222222",
         "__enabled": true,
         "Flags": 0,
-        "AmmoType": "ammotype/shotgun.ammo",
+        "PrimaryAmmoType": "ammo/shotgun.ammo",
         "Ballistics": {
           "Damage": 8,
           "Pellets": 8,
@@ -85,7 +85,6 @@
         "HoldType": "Shotgun",
         "IncrementalReloading": true,
         "IronSightsFireScale": 0.2,
-        "MaxReserveAmmo": 40,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,

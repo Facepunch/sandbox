@@ -95,7 +95,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 
 		if ( existing.UsesAmmo && existing.Ammo1 < existing.MaxReserveAmmo )
 		{
-			existing.AddReserveAmmo( pickup.UsesClips ? pickup.ClipMaxSize : pickup.StartingAmmo );
+			GiveAmmo( existing.PrimaryAmmoType, pickup.UsesClips ? pickup.ClipMaxSize : pickup.StartingAmmo );
 
 			if ( notice )
 				OnClientPickup( existing, true );
