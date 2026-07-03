@@ -94,7 +94,6 @@
         "OnComponentUpdate": null,
         "HoldBone": "hold_r",
         "ReloadTime": 1.8,
-        "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null

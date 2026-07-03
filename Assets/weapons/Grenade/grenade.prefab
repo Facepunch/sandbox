@@ -89,7 +89,6 @@
         },
         "Radius": 512,
         "ReloadTime": 1.5,
-        "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null

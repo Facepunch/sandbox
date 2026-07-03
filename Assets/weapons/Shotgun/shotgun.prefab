@@ -97,7 +97,6 @@
         "PrimaryDelay": 0.35,
         "ReloadStartTime": 0,
         "ReloadTime": 0.5,
-        "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null

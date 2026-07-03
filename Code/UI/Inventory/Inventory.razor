@@ -85,7 +85,7 @@
     {
         var weapon = inventory.GetSlot( slot );
 
-        if ( weapon.IsValid() && !weapon.CanSwitch() )
+        if ( weapon.IsValid() && !weapon.CanSwitchTo() )
             return;
 
         prev = inventory.ActiveWeapon;
@@ -99,7 +99,7 @@
         if ( delta == 0 )
             return;
 
-        var weapons = inventory.Weapons.Where( x => x.CanSwitch() ).ToList();
+        var weapons = inventory.Weapons.Where( x => x.CanSwitchTo() ).ToList();
 
         if ( weapons.Count == 0 )
             return;

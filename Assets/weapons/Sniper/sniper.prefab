@@ -95,7 +95,6 @@
         "HoldBone": "hold_r",
         "PrimaryDelay": 1.2,
         "ReloadTime": 2.5,
-        "ReserveAmmo": 0,
         "ScopedFov": 10,
         "ScopeSensitivity": 0.15,
         "SecondaryInput": {

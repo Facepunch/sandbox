@@ -32,6 +32,10 @@ public partial class BaseSandboxWeapon
 
 	private void ApplyDroppedState( bool dropped )
 	{
+		// Carried weapons follow their parent exactly; dropped ones are physics objects that want
+		// interpolated network transforms.
+		GameObject.Network.Interpolation = dropped;
+
 		var rb = GetComponent<Rigidbody>( true );
 		if ( rb.IsValid() ) rb.Enabled = dropped;
 

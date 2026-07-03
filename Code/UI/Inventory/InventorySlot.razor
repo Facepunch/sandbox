@@ -105,7 +105,7 @@
         SetClass("empty", !hasWeapon);
         SetClass("selected", Active && hasWeapon);
         SetClass("hovered", Hovered && hasWeapon);
-        SetClass("switchable", hasWeapon && weapon.CanSwitch());
+        SetClass("switchable", hasWeapon && weapon.CanSwitchTo());
         SetClass("no-tint", hasWeapon && weapon is SpawnerWeapon);
 
         if (hasWeapon && IconPanel is not null)

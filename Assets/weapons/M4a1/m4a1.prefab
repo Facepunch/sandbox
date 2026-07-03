@@ -101,7 +101,6 @@
         "HoldBone": "hold_r",
         "ReloadStartTime": 0,
         "ReloadTime": 2,
-        "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null

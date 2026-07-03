@@ -154,33 +154,15 @@ public sealed partial class Player
 	private void DrawSeatedWeaponHud()
 	{
 		if ( _seatedWeapons == null || _seatedWeapons.Count == 0 ) return;
-		if ( Scene.Camera is null ) return;
-		if ( Scene.Camera.RenderExcludeTags.Has( "ui" ) ) return;
-
-		var hud = Scene.Camera.Hud;
 
 		foreach ( var weapon in _seatedWeapons )
 		{
 			if ( !weapon.IsValid() ) continue;
 			if ( weapon is IPlayerControllable controllable && !controllable.CanControl( this ) ) continue;
 
-			Vector2 aimPos;
-
-			if ( weapon.IsTargetedAim )
-			{
-				aimPos = Screen.Size * 0.5f;
-			}
-			else
-			{
-				var muzzle = weapon.GetMuzzleTransform();
-				var tr = Scene.Trace.Ray( muzzle.Position, muzzle.Position + muzzle.Rotation.Forward * 4096f )
-					.IgnoreGameObjectHierarchy( weapon.GameObject.Root )
-					.Run();
-
-				aimPos = Scene.Camera.PointToScreenPixels( tr.EndPosition );
-			}
-
-			weapon.DrawHud( hud, aimPos );
+			// The engine projects the weapon's aim point onto the screen (targeted aim resolves to a
+			// camera ray, which projects to centre).
+			weapon.DrawHud( Scene.Camera );
 		}
 	}
 }

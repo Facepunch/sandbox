@@ -42,9 +42,8 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	public virtual bool IsTargetedAim => false;
 
 	/// <summary>
-	/// Aim when this weapon isn't held by a player. Controlled from a seat with targeted aim fires
-	/// where the camera looks; otherwise it fires from the muzzle. The held (player) cases - including
-	/// third-person camera aim - are handled by the engine <see cref="Sandbox.BaseWeapon.AimRay"/>.
+	/// Controlled from a seat with targeted aim fires where the camera looks; otherwise the engine's
+	/// muzzle-based unheld aim applies.
 	/// </summary>
 	protected override Ray UnheldAimRay
 	{
@@ -54,8 +53,7 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 			if ( seated.IsValid() && IsTargetedAim && Scene.Camera.IsValid() )
 				return Scene.Camera.Transform.World.ForwardRay;
 
-			var muzzle = GetMuzzleTransform();
-			return new Ray( muzzle.Position, muzzle.Rotation.Forward );
+			return base.UnheldAimRay;
 		}
 	}
 
@@ -85,19 +83,7 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 		}
 	}
 
-	/// <summary>
-	/// Can we switch to this?
-	/// </summary>
-	/// <returns></returns>
-	public virtual bool CanSwitch()
-	{
-		return true;
-	}
-
-	/// <summary>
-	/// Bridges the game's <see cref="CanSwitch"/> into the engine inventory's switch gate.
-	/// </summary>
-	protected override bool OnCanSwitchTo() => CanSwitch();
+	// The switch gate is the engine's - query with CanSwitchTo(), override OnCanSwitchTo() to gate.
 
 
 	// DrawHud / DrawCrosshair and the per-frame crosshair positioning come from the engine BaseWeapon.
@@ -164,18 +150,6 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 
 		if ( SecondaryInput.Down() && CanSecondaryAttack() )
 			SecondaryAttack();
-	}
-
-	/// <summary>
-	/// Called every frame, when active
-	/// </summary>
-	public virtual void OnFrameUpdate( Player player )
-	{
-		if ( player is null ) return;
-
-		CreateViewModel();
-
-		GameObject.Network.Interpolation = false;
 	}
 
 	/// <summary>

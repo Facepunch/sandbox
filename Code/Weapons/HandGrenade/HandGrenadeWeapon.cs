@@ -95,7 +95,7 @@ public sealed class HandGrenadeWeapon : BaseSandboxWeapon
 
 				if ( !HasPrimaryAmmo() )
 				{
-					SwitchToBestWeapon();
+					Inventory?.SwitchToBest();
 					DestroyGameObject();
 					return;
 				}
@@ -165,7 +165,7 @@ public sealed class HandGrenadeWeapon : BaseSandboxWeapon
 		// the owner-side reserve write can't be reverted by the host into an infinite-grenade dupe.
 		if ( !HasPrimaryAmmo() )
 		{
-			SwitchToBestWeapon();
+			Inventory?.SwitchToBest();
 			DestroyGameObject();
 			return;
 		}
@@ -276,16 +276,6 @@ public sealed class HandGrenadeWeapon : BaseSandboxWeapon
 		go.NetworkSpawn();
 	}
 
-	void SwitchToBestWeapon()
-	{
-		var inventory = Owner?.GetComponent<PlayerInventory>();
-		if ( !inventory.IsValid() ) return;
-
-		var best = inventory.GetBestWeapon();
-		if ( best.IsValid() )
-			inventory.SwitchWeapon( best );
-	}
-
 	[Rpc.Host]
 	void ExplodeInHand()
 	{
@@ -315,7 +305,7 @@ public sealed class HandGrenadeWeapon : BaseSandboxWeapon
 		TakePrimaryAmmo( 1 );
 		if ( !HasPrimaryAmmo() )
 		{
-			SwitchToBestWeapon();
+			Inventory?.SwitchToBest();
 			DestroyGameObject();
 		}
 	}

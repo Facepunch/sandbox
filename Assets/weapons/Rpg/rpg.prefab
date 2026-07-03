@@ -141,7 +141,6 @@
         "ProjectileSpeed": 1024,
         "ReloadStartTime": 0,
         "ReloadTime": 4,
-        "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null

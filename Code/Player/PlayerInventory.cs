@@ -323,36 +323,10 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		Switch( weapon, allowHolster );
 	}
 
-	// Hold type is driven by the engine BaseWeapon - set on the holder when equipped, back to "none"
-	// when holstered.
-	protected override void OnUpdate()
-	{
-		if ( ActiveWeapon.IsValid() )
-		{
-			ActiveWeapon.OnFrameUpdate( Player );
-		}
-	}
-
 	public void OnControl()
 	{
-		if ( Input.Pressed( "drop" ) )
-		{
-			if ( ActiveWeapon.IsValid() )
-				DropActiveWeapon();
-
-			return;
-		}
-
-		// Drive the engine inventory pump - this runs the active item's per-tick control (fire, reload,
-		// ADS, tool dispatch) on the owning client. Wrapped so a throwing weapon can't kill the tick.
-		try
-		{
-			Pump();
-		}
-		catch ( System.Exception e )
-		{
-			Log.Error( e, $"Weapon control: {e.Message}" );
-		}
+		if ( Input.Pressed( "drop" ) && ActiveWeapon.IsValid() )
+			DropActiveWeapon();
 	}
 
 	/// <summary>

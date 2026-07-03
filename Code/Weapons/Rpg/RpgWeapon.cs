@@ -102,7 +102,7 @@ public sealed class RpgWeapon : BaseSandboxWeapon
 	{
 		if ( HasOwner && !TakePrimaryAmmo( 1 ) )
 		{
-			TryAutoReload();
+			DryFire();
 			return;
 		}
 
@@ -125,8 +125,9 @@ public sealed class RpgWeapon : BaseSandboxWeapon
 
 			if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
 			{
-				new Sandbox.CameraNoise.Punch( new Vector3( Random.Shared.Float( 45, 35 ), Random.Shared.Float( -10, -5 ), 0 ), 1.5f, 2, 0.5f );
-				new Sandbox.CameraNoise.Shake( 1f, 0.6f );
+				// The launch throws the view up hard and rattles it.
+				Scene.Camera?.AddPunch( new Angles( Random.Shared.Float( 45, 35 ), Random.Shared.Float( -10, -5 ), 0 ), 2f, 1.5f );
+				Scene.Camera?.AddShake( 3f, 40f, 0.6f );
 
 				_hasFired = true;
 			}
