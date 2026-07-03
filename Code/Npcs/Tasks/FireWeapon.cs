@@ -52,9 +52,9 @@ public class FireWeapon : TaskBase
 		RotateBodyTowardTarget();
 
 		// Only fire once we're facing the target and it's inside the weapon's engagement band.
-		if ( Npc.Animation.IsFacingTarget() && InRange() && Weapon.CanPrimaryAttack() )
+		// FirePrimary respects the weapon's fire rate - the burst paces itself.
+		if ( Npc.Animation.IsFacingTarget() && InRange() && Weapon.FirePrimary() )
 		{
-			Weapon.PrimaryAttack();
 			Npc.Animation.TriggerAttack();
 			_shotsLeft--;
 		}
