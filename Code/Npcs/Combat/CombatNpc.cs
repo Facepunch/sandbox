@@ -32,13 +32,17 @@ public class CombatNpc : Npc
 	public bool Friendly { get; set; } = false;
 
 	/// <summary>
-	/// The weapon this NPC uses to attack.
+	/// The weapon this NPC uses to attack. Its NPC usage decides the engagement range and burst
+	/// cadence - the same soldier fights differently with a shotgun than an SMG.
 	/// </summary>
 	[Property]
 	public BaseSandboxWeapon Weapon { get; set; }
 
-	[Property, Group( "Balance" ), Range( 512, 4096 ), Step( 1 ), ClientEditable, Sync]
-	public float AttackRange { get; set; } = 1024f;
+	/// <summary>
+	/// Skill multiplier on the weapon's NPC spread - 1 is a average shot, lower is more accurate.
+	/// </summary>
+	[Property, Group( "Balance" )]
+	public float AimSpreadScale { get; set; } = 1f;
 
 	[Property, Group( "Balance" ), Range( 90, 250f ), Step( 1 ), ClientEditable, Sync]
 	public float EngageSpeed { get; set; } = 180f;
@@ -51,12 +55,6 @@ public class CombatNpc : Npc
 
 	[Property, Group( "Balance" )]
 	public float PatrolRadius { get; set; } = 400f;
-
-	[Property, Group( "Balance" )]
-	public float BurstDuration { get; set; } = 1.5f;
-
-	[Property, Group( "Balance" )]
-	public float BurstPause { get; set; } = 0.8f;
 
 	/// <summary>
 	/// How far a friendly NPC will follow a player before stopping.
@@ -74,6 +72,9 @@ public class CombatNpc : Npc
 		if ( Weapon.IsValid() && Renderer.IsValid() )
 		{
 			Weapon.CreateWorldModel( Renderer );
+
+			// The weapon says how forgiving it is in NPC hands; we say how good we are with it.
+			Weapon.SpreadScale = Weapon.Npc.SpreadScale * AimSpreadScale;
 
 			if ( !IsProxy )
 				Animation.SetHoldType( Weapon.HoldType );
@@ -108,10 +109,7 @@ public class CombatNpc : Npc
 			var engage = GetSchedule<CombatEngageSchedule>();
 			engage.Target = visible;
 			engage.Weapon = Weapon;
-			engage.AttackRange = AttackRange;
 			engage.EngageSpeed = EngageSpeed;
-			engage.BurstDuration = BurstDuration;
-			engage.BurstPause = BurstPause;
 			return engage;
 		}
 
