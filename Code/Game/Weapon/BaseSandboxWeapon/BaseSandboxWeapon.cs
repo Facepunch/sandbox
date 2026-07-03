@@ -135,11 +135,11 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 		// run the attack at all.
 		if ( !Networking.IsHost ) return;
 
-		if ( ShootInput.Down() && CanPrimaryAttack() )
-			PrimaryAttack();
+		if ( ShootInput.Down() )
+			FirePrimary();
 
-		if ( SecondaryInput.Down() && CanSecondaryAttack() )
-			SecondaryAttack();
+		if ( SecondaryInput.Down() )
+			FireSecondary();
 	}
 
 	/// <summary>
