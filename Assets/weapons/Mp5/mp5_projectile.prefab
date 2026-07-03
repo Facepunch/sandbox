@@ -204,16 +204,8 @@
           {
             "__type": "Sandbox.Mapping.EnvShake",
             "__guid": "0df95323-c5c4-4a1a-80c8-9e7184d6d9fd",
-            "Amplitude": [
-              {
-                "y": 2
-              }
-            ],
-            "Frequency": [
-              {
-                "y": 40
-              }
-            ],
+            "Amplitude": 2,
+            "Frequency": 40,
             "GlobalShake": false,
             "Loop": true,
             "On": true,
