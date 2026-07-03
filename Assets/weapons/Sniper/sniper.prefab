@@ -106,7 +106,7 @@
           "Action": null
         },
         "AttackSound": "weapons/sniper/sounds/m700_shot.sound",
-        "StartingAmmo": 0,
+        "StartingAmmo": 10,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 5,

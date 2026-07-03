@@ -103,7 +103,7 @@
           "Action": null
         },
         "AttackSound": "weapons/mp5/sounds/mp5_shoot.sound",
-        "StartingAmmo": 30,
+        "StartingAmmo": 90,
         "PrimaryDelay": 0.09,
         "UsesAmmo": true,
         "UsesClips": true,

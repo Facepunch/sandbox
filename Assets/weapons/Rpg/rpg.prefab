@@ -149,7 +149,7 @@
           "Action": null
         },
         "AttackSound": "weapons/rpg/sounds/rpg_shoot.sound",
-        "StartingAmmo": 1,
+        "StartingAmmo": 2,
         "PrimaryDelay": 2,
         "UsesAmmo": true,
         "UsesClips": true,

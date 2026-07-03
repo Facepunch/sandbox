@@ -106,7 +106,7 @@
           "Action": null
         },
         "AttackSound": "weapons/shotgun/sounds/shotgun_shoot.sound",
-        "StartingAmmo": 6,
+        "StartingAmmo": 18,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 10,

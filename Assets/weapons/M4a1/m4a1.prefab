@@ -110,7 +110,7 @@
           "Action": null
         },
         "AttackSound": "weapons/m4a1/m4a1_shoot.sound",
-        "StartingAmmo": 30,
+        "StartingAmmo": 150,
         "PrimaryDelay": 0.1,
         "SecondaryClipSize": 3,
         "SecondaryDefaultClip": -1,

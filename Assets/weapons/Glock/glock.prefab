@@ -106,7 +106,7 @@
           "Action": null
         },
         "AttackSound": "weapons/glock/glock_shoot.sound",
-        "StartingAmmo": 0,
+        "StartingAmmo": 60,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 2,
