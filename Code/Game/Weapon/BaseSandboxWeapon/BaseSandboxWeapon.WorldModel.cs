@@ -22,8 +22,7 @@ public partial class BaseSandboxWeapon
 	
 	/// <summary>
 	/// True while this weapon is loose in the world as a pickup rather than held. Host authoritative -
-	/// the change callback toggles the pickup components (physics, <see cref="DroppedWeapon"/>, the
-	/// standalone model) on every peer.
+	/// the change callback toggles the pickup components (physics, the standalone model) on every peer.
 	/// </summary>
 	[Sync( SyncFlags.FromHost ), Change( nameof( OnIsDroppedChanged ) )]
 	public bool IsDropped { get; set; } = true;
@@ -41,9 +40,6 @@ public partial class BaseSandboxWeapon
 
 		var col = GetComponent<ModelCollider>( true );
 		if ( col.IsValid() ) col.Enabled = dropped;
-
-		var droppedWeapon = GetComponent<DroppedWeapon>( true );
-		if ( droppedWeapon.IsValid() ) droppedWeapon.Enabled = dropped;
 
 		if ( DroppedGameObject.IsValid() ) DroppedGameObject.Enabled = dropped;
 	}

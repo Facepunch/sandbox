@@ -41,10 +41,6 @@
           "component_id": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
           "go": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
           "component_type": "SkinnedModelRenderer"
-        },
-        "TracerEffect": {
-          "_type": "gameobject",
-          "prefab": "weapons/tracer_9mm.prefab"
         }
       }
     ],

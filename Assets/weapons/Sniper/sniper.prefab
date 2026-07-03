@@ -119,18 +119,6 @@
         }
       },
       {
-        "__type": "DroppedWeapon",
-        "__guid": "a1b2c3d4-4442-4aaa-b442-444444444442",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
-      },
-      {
         "__type": "Sandbox.ModelCollider",
         "__guid": "5da08e48-006a-734b-ef55-a73a2aa2bd31",
         "__enabled": true,
@@ -219,10 +207,6 @@
               "_type": "gameobject",
               "go": "7fc2a06a-228c-956d-0177-c95c4cc4df53"
             },
-            "MuzzleEffect": {
-              "_type": "gameobject",
-              "prefab": "prefabs/weapon_effects/rifle_muzzleflash.prefab"
-            },
             "MuzzleGameObject": {
               "_type": "gameobject",
               "go": "6eb19f59-117b-845c-f066-b84b3bb3ce42"
@@ -238,10 +222,6 @@
               "component_id": "4cf97d37-f95f-623a-de44-96291991ac20",
               "go": "2ad75b15-d73d-4018-bc22-7407f67f909e",
               "component_type": "SkinnedModelRenderer"
-            },
-            "TracerEffect": {
-              "_type": "gameobject",
-              "prefab": "weapons/tracer_rifle.prefab"
             }
           },
           {

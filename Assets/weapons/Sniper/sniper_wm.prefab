@@ -20,17 +20,9 @@
         "__guid": "a1b2c3d4-3332-4aaa-b332-333333333332",
         "__enabled": true,
         "Flags": 0,
-        "EjectBrass": {
-          "_type": "gameobject",
-          "prefab": "weapons/common/effects/eject_rifle.prefab"
-        },
         "ShellEjectGameObject": {
           "_type": "gameobject",
           "go": "a1b2c3d4-3336-4aaa-b336-333333333336"
-        },
-        "MuzzleEffect": {
-          "_type": "gameobject",
-          "prefab": "prefabs/weapon_effects/rifle_muzzleflash.prefab"
         },
         "MuzzleGameObject": {
           "_type": "gameobject",
@@ -47,10 +39,6 @@
           "component_id": "a1b2c3d4-3334-4aaa-b334-333333333334",
           "go": "a1b2c3d4-3333-4aaa-b333-333333333333",
           "component_type": "SkinnedModelRenderer"
-        },
-        "TracerEffect": {
-          "_type": "gameobject",
-          "prefab": "weapons/tracer_rifle.prefab"
         }
       }
     ],

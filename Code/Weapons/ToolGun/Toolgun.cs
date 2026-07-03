@@ -2,6 +2,12 @@
 
 public partial class Toolgun : ScreenWeapon
 {
+	public Toolgun()
+	{
+		// Tools don't use ammo (the engine default is on, which would show an ammo indicator).
+		UsesAmmo = false;
+	}
+
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
 		base.OnCameraMove( player, ref angles );

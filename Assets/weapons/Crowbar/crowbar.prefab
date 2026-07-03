@@ -90,18 +90,6 @@
         }
       },
       {
-        "__type": "DroppedWeapon",
-        "__guid": "f05e6b7c-8a9f-0123-ef01-234567890124",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
-      },
-      {
         "__type": "Sandbox.ModelCollider",
         "__guid": "a16f7c8d-9b0a-1234-f012-345678901235",
         "__enabled": true,

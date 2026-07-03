@@ -149,18 +149,6 @@
         "Width": 0.25
       },
       {
-        "__type": "DroppedWeapon",
-        "__guid": "ad4301b1-c0bf-49e5-bfdc-9b3deee7aae8",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
-      },
-      {
         "__type": "Sandbox.ModelCollider",
         "__guid": "578d9c80-7f3c-4a8e-bdbe-5c2ecfdaa70c",
         "__enabled": true,

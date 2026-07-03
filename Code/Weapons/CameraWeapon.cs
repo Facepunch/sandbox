@@ -2,6 +2,12 @@
 
 public sealed class CameraWeapon : BaseSandboxWeapon
 {
+	public CameraWeapon()
+	{
+		// The camera doesn't use ammo (the engine default is on, which would show an ammo indicator).
+		UsesAmmo = false;
+	}
+
 	float fov = 50;
 	float roll = 0;
 

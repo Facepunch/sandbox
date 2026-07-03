@@ -22,10 +22,6 @@
         "Flags": 0,
         "AnimationSpeed": 1,
         "DeploySound": null,
-        "EjectBrass": {
-          "_type": "gameobject",
-          "prefab": "weapons/common/effects/eject_rifle.prefab"
-        },
         "ShellEjectGameObject": {
           "_type": "gameobject",
           "go": "a1b2c3d4-2223-4aaa-b223-222222222223"
@@ -37,10 +33,6 @@
         "InertiaScale": "2,2",
         "IsIncremental": false,
         "IsThrowable": false,
-        "MuzzleEffect": {
-          "_type": "gameobject",
-          "prefab": "prefabs/weapon_effects/rifle_muzzleflash.prefab"
-        },
         "MuzzleGameObject": {
           "_type": "gameobject",
           "go": "a1b2c3d4-2224-4aaa-b224-222222222224"
@@ -68,10 +60,6 @@
           "component_type": "SkinnedModelRenderer"
         },
         "ThrowableType": "HEGrenade",
-        "TracerEffect": {
-          "_type": "gameobject",
-          "prefab": "weapons/tracer_rifle.prefab"
-        },
         "UseFastAnimations": false
       },
       {

@@ -3,6 +3,12 @@ using Sandbox.Rendering;
 
 public partial class Physgun
 {
+	public Physgun()
+	{
+		// Tools don't use ammo (the engine default is on, which would show an ammo indicator).
+		UsesAmmo = false;
+	}
+
 	[Property, RequireComponent] public HighlightOutline BeamHighlight { get; set; }
 
 	[Property, Group( "Sound" )] SoundEvent ReleasedSound { get; set; }

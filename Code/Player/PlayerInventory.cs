@@ -210,6 +210,31 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	}
 
 	/// <summary>
+	/// Engine Touch pickup lands here (see <see cref="InventoryComponent.PickupMode"/>). Routes into
+	/// <see cref="Take"/>, so duplicates donate their ammo and the pickup notices fire.
+	/// </summary>
+	public override void PickupWorldItem( Sandbox.BaseInventoryItem item )
+	{
+		if ( !Networking.IsHost )
+		{
+			base.PickupWorldItem( item );
+			return;
+		}
+
+		if ( item is not BaseSandboxWeapon weapon )
+			return;
+
+		if ( !CanPickupWorldItem( weapon ) )
+			return;
+
+		// Weapons wired into a contraption stay put.
+		if ( weapon.ShootInput.IsEnabled || weapon.SecondaryInput.IsEnabled )
+			return;
+
+		Take( weapon, true );
+	}
+
+	/// <summary>
 	/// Fires the cancellable pickup events before the engine adds an item.
 	/// </summary>
 	protected override bool OnAdding( Sandbox.BaseInventoryItem item, int slot )
