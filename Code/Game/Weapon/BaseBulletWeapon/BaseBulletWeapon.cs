@@ -73,12 +73,4 @@ public partial class BaseBulletWeapon : BaseSandboxWeapon
 			.UseHitboxes();
 	}
 
-	protected override void OnShootEffects( ShotEffect shot )
-	{
-		// Attack sound, holder anim and the weapon model's muzzle/brass/tracer come from the base.
-		base.OnShootEffects( shot );
-
-		// Surface impact at the hit - every pellet leaves one.
-		ImpactEffect( shot );
-	}
 }

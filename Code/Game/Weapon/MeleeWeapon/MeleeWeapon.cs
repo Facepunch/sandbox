@@ -90,14 +90,17 @@ public class MeleeWeapon : BaseSandboxWeapon
 	{
 		if ( Application.IsDedicatedServer ) return;
 
-		// Swing sound, holder anim and the model's attack anim come from the base.
+		// Swing sound, holder anim, the model's attack anim and the impact come from the base.
 		base.OnShootEffects( shot );
 
+		if ( shot.Hit && shot.HitObject.IsValid() && ViewModel.IsValid() )
+			ViewModel.RunEvent<ViewModel>( x => x.Renderer.Set( "b_attack_has_hit", true ) );
+	}
+
+	protected override void OnShootImpact( in ShotEffect shot )
+	{
 		if ( !shot.Hit || !shot.HitObject.IsValid() )
 			return;
-
-		if ( ViewModel.IsValid() )
-			ViewModel.RunEvent<ViewModel>( x => x.Renderer.Set( "b_attack_has_hit", true ) );
 
 		// A melee thunk instead of the surface's bullet ricochet, so the impact prefab is spawned soundless.
 		shot.HitObject.PlaySound(
