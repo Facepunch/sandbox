@@ -592,18 +592,6 @@
           "ZNear": 1
         },
         {
-          "__type": "CameraSetup",
-          "__guid": "49f96722-638d-49d2-8e93-8c97628e1586",
-          "__enabled": true,
-          "Flags": 0,
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null
-        },
-        {
           "__type": "Sandbox.Tonemapping",
           "__guid": "bd9c104f-4e42-4301-a6e0-705144ee0cb7",
           "__enabled": true,

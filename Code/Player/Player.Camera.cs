@@ -33,6 +33,10 @@ public sealed partial class Player : ICameraModifier
 		if ( IsProxy || Scene.Camera != camera ) return;
 		if ( !Controller.IsValid() ) return;
 
+		// Keep the engine's camera effects scaled by the player's screenshake preference.
+		if ( CameraEffectSystem.Get( Scene ) is { } effects )
+			effects.Scale = GamePreferences.Screenshake;
+
 		camera.FovAxis = CameraComponent.Axis.Vertical;
 		view.FieldOfView = Screen.CreateVerticalFieldOfView( Preferences.FieldOfView, 9.0f / 16.0f );
 

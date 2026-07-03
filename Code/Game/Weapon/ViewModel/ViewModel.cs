@@ -1,6 +1,6 @@
 using System.Threading;
 
-public sealed partial class ViewModel : Sandbox.BaseWeaponModel, ICameraSetup
+public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 {
 	[ConVar( "sbdm.hideviewmodel", ConVarFlags.Cheat )]
 	private static bool HideViewModel { get; set; } = false;
@@ -103,15 +103,13 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel, ICameraSetup
 		UpdateAnimation();
 	}
 
-	void ApplyInertia()
+	void ApplyInertia( Rotation rotation )
 	{
-		var rot = Scene.Camera.WorldRotation.Angles();
+		var rot = rotation.Angles();
 
 		// Need to fetch data from the camera for the first frame
 		if ( isFirstUpdate )
 		{
-
-
 			lastInertia = new Vector2( rot.pitch, rot.yaw );
 			currentInertia = Vector2.Zero;
 			isFirstUpdate = false;
@@ -124,27 +122,34 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel, ICameraSetup
 		lastInertia = new( newPitch, newYaw );
 	}
 
-	void ICameraSetup.Setup( CameraComponent cc )
-	{
-		Renderer.Enabled = !HideViewModel;
-
-		WorldPosition = cc.WorldPosition;
-		WorldRotation = cc.WorldRotation;
-
-		ApplyInertia();
-		ApplyAnimationTransform( cc );
-	}
-
-	void ApplyAnimationTransform( CameraComponent cc )
+	/// <summary>
+	/// Called by the weapon while the camera composes - feeds the aim inertia and lets the
+	/// animation's camera bone drive the view (reload sway and kicks authored in the anim).
+	/// </summary>
+	public void UpdateCameraBone( ref CameraView view )
 	{
 		if ( !Renderer.IsValid() ) return;
+
+		Renderer.Enabled = !HideViewModel;
+
+		ApplyInertia( view.Rotation );
 
 		if ( Renderer.TryGetBoneTransformLocal( "camera", out var bone ) )
 		{
 			var scale = 0.5f;
-			cc.WorldPosition += cc.WorldRotation * bone.Position * scale;
-			cc.WorldRotation *= bone.Rotation * scale;
+			view.Position += view.Rotation * bone.Position * scale;
+			view.Rotation *= bone.Rotation * scale;
 		}
+	}
+
+	/// <summary>
+	/// Place the view model - called by the weapon's <c>PlaceViewModel</c> with the pre-bone view,
+	/// so the camera bone moves the camera around the gun rather than dragging the gun with it.
+	/// </summary>
+	public void Place( in CameraView view )
+	{
+		WorldPosition = view.Position;
+		WorldRotation = view.Rotation;
 	}
 
 	void UpdateAnimation()
@@ -152,7 +157,8 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel, ICameraSetup
 		var playerController = GetComponentInParent<PlayerController>();
 		if ( !playerController.IsValid() ) return;
 
-		var rot = Scene.Camera.WorldRotation.Angles();
+		// Eye angles, not the camera - the camera's transform is composed later in the frame.
+		var rot = playerController.EyeAngles;
 
 		Renderer.Set( "b_twohanded", true );
 		Renderer.Set( "deploy_type", UseFastAnimations ? 1 : 0 );
@@ -179,8 +185,9 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel, ICameraSetup
 		var velocity = playerController.Velocity;
 
 		var dir = velocity;
-		var forward = Scene.Camera.WorldRotation.Forward.Dot( dir );
-		var sideward = Scene.Camera.WorldRotation.Right.Dot( dir );
+		var eyeRotation = rot.ToRotation();
+		var forward = eyeRotation.Forward.Dot( dir );
+		var sideward = eyeRotation.Right.Dot( dir );
 
 		var angle = MathF.Atan2( sideward, forward ).RadianToDegree().NormalizeDegrees();
 

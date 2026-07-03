@@ -138,6 +138,9 @@ public sealed class SniperWeapon : BaseBulletWeapon
 		{
 			view.FieldOfView = ScopedFov;
 		}
+
+		// The base drives the view model's camera bone and placement.
+		base.ModifyCamera( camera, ref view );
 	}
 
 	public override void OnCameraMove( Player player, ref Angles angles )

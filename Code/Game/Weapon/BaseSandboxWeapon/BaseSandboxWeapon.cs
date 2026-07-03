@@ -170,9 +170,23 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	{
 	}
 
-	// The game's ViewModel component places itself (ICameraSetup) with its own bob and offsets -
-	// don't double-place from the engine's camera chain.
-	protected override void PlaceViewModel( CameraComponent camera, in CameraView view ) { }
+	// The view the gun is placed at - captured before the camera bone offsets the view, so authored
+	// camera animation moves the camera around the gun, not the gun with it.
+	CameraView _viewModelView;
+
+	protected override void ModifyCamera( CameraComponent camera, ref CameraView view )
+	{
+		base.ModifyCamera( camera, ref view );
+
+		_viewModelView = view;
+
+		ViewModel?.GetComponentInChildren<ViewModel>()?.UpdateCameraBone( ref view );
+	}
+
+	protected override void PlaceViewModel( CameraComponent camera, in CameraView view )
+	{
+		ViewModel?.GetComponentInChildren<ViewModel>()?.Place( _viewModelView );
+	}
 
 	/// <summary>
 	/// Drops this weapon into the world as a pickup - the same live object, so it keeps its state
