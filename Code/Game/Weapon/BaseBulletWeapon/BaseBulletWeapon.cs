@@ -54,7 +54,8 @@ public partial class BaseBulletWeapon : BaseSandboxWeapon
 
 		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
 		{
-			_ = new Sandbox.CameraNoise.Recoil( CameraRecoilStrength, CameraRecoilFrequency );
+			// A quick roll wobble per shot.
+			Scene.Camera?.AddPunch( new Angles( 0f, 0f, 0.5f * CameraRecoilStrength ), CameraRecoilFrequency * 2f, 0.3f );
 		}
 	}
 

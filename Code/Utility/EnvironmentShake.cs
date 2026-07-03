@@ -1,6 +1,10 @@
 
+/// <summary>
+/// Shakes nearby cameras with continuous angular noise while enabled - rumbling machinery, engines,
+/// earthquakes. Strength falls off with distance, and optionally over time.
+/// </summary>
 [Alias( "EnvShake" )]
-public sealed class EnvironmentShake : Component, Component.ITemporaryEffect, ICameraSetup
+public sealed class EnvironmentShake : Component, Component.ITemporaryEffect
 {
 	[Property] public float Rate { get; set; } = 10.0f;
 	[Property] public Angles Scale { get; set; } = new Angles( 100, 100, 0 );
@@ -13,32 +17,57 @@ public sealed class EnvironmentShake : Component, Component.ITemporaryEffect, IC
 
 	public bool IsActive => !TimeLimited || EndTime > 0;
 
+	Effect _effect;
+
 	protected override void OnEnabled()
 	{
 		EndTime = TimeLength;
+		_effect = CameraEffectSystem.Current?.Add( new Effect { Source = this, Duration = 0 } );
 	}
 
-	void ICameraSetup.PostSetup( CameraComponent camera )
+	protected override void OnDisabled()
 	{
-		var distance = camera.WorldPosition.Distance( WorldPosition );
-		var distanceDelta = (distance / MaxDistance).Clamp( 0, 1 );
+		_effect?.Stop();
+		_effect = null;
+	}
 
-		var amount = DistanceCurve.EvaluateDelta( distanceDelta ) * GamePreferences.Screenshake;
+	/// <summary>
+	/// Perlin angular noise radiating from the component, faded by its distance and time curves.
+	/// </summary>
+	sealed class Effect : CameraEffectSystem.BaseEffect
+	{
+		public EnvironmentShake Source { get; init; }
 
-		var noisex = Sandbox.Utility.Noise.Perlin( Time.Now * Rate, 0 ).Remap( 0, 1, -1, 1 );
-		var noisey = Sandbox.Utility.Noise.Perlin( Time.Now * Rate + 830, 0 ).Remap( 0, 1, -1, 1 );
-		var noisez = Sandbox.Utility.Noise.Perlin( Time.Now * Rate + 340, 0 ).Remap( 0, 1, -1, 1 );
+		public override bool IsDone => base.IsDone || !Source.IsValid();
 
-		if ( TimeLimited )
+		public override float ScaleFor( CameraComponent camera )
 		{
-			var timeDelta = (EndTime.Relative / TimeLength).Remap( 1, 0 );
+			if ( !Source.IsValid() )
+				return 0f;
 
-			if ( timeDelta >= 1 )
-				return;
+			var distanceDelta = (camera.WorldPosition.Distance( Source.WorldPosition ) / Source.MaxDistance).Clamp( 0f, 1f );
+			var amount = Source.DistanceCurve.EvaluateDelta( distanceDelta );
 
-			amount *= TimeCurve.Evaluate( timeDelta );
+			if ( Source.TimeLimited )
+			{
+				var timeDelta = (Source.EndTime.Relative / Source.TimeLength).Remap( 1, 0 );
+
+				if ( timeDelta >= 1f )
+					return 0f;
+
+				amount *= Source.TimeCurve.Evaluate( timeDelta );
+			}
+
+			return amount;
 		}
 
-		camera.LocalRotation *= Rotation.From( noisex * Scale.pitch, noisey * Scale.yaw, noisez * Scale.roll ) * amount;
+		public override void Evaluate( float scale, ref Vector3 position, ref Angles angles, ref float fieldOfView )
+		{
+			var noisex = Sandbox.Utility.Noise.Perlin( Time.Now * Source.Rate, 0 ).Remap( 0, 1, -1, 1 );
+			var noisey = Sandbox.Utility.Noise.Perlin( Time.Now * Source.Rate + 830, 0 ).Remap( 0, 1, -1, 1 );
+			var noisez = Sandbox.Utility.Noise.Perlin( Time.Now * Source.Rate + 340, 0 ).Remap( 0, 1, -1, 1 );
+
+			angles += new Angles( noisex * Source.Scale.pitch, noisey * Source.Scale.yaw, noisez * Source.Scale.roll ) * scale;
+		}
 	}
 }

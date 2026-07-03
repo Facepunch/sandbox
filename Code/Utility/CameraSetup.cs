@@ -9,6 +9,10 @@ public sealed class CameraSetup : Component
 		var cc = GetComponent<CameraComponent>();
 		if ( cc is null ) return;
 
+		// Keep the engine's camera effects scaled by the player's screenshake preference.
+		if ( CameraEffectSystem.Current is { } effects )
+			effects.Scale = GamePreferences.Screenshake;
+
 		ICameraSetup.Post( x => x.PreSetup( cc ) );
 		ICameraSetup.Post( x => x.Setup( cc ) );
 		ICameraSetup.Post( x => x.PostSetup( cc ) );

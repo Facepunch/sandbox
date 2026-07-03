@@ -80,8 +80,9 @@ public class MeleeWeapon : BaseSandboxWeapon
 
 		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
 		{
-			new Sandbox.CameraNoise.Punch( new Vector3( Random.Shared.Float( -10, -15 ), Random.Shared.Float( -10, 0 ), 0 ), 1.0f, 3, 0.5f );
-			new Sandbox.CameraNoise.Shake( 0.3f, 1.2f );
+			// The swing kicks the view down-left and bounces back, with a little rumble on top.
+			Scene.Camera?.AddPunch( new Angles( Random.Shared.Float( -10, -15 ), Random.Shared.Float( -10, 0 ), 0 ), 2f, 1f );
+			Scene.Camera?.AddShake( 1f, 40f, 1.2f );
 		}
 	}
 
