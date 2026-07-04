@@ -394,6 +394,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 		if ( IsLocalPlayer )
 		{
+			Scene.Camera?.AddShake( (args.Damage * 0.05f).Clamp( 0.5f, 3f ), 40f, 0.4f );
+
 			_dmgSound?.Stop();
 
 			if ( args.Tags.Contains( DamageTags.Shock ) )
