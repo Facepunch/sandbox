@@ -24,26 +24,12 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	public new BaseSandboxWeapon GetSlot( int slot ) => base.GetSlot( slot ) as BaseSandboxWeapon;
 
 	/// <summary>
-	/// Returns whether the given item could be inserted into the inventory.
-	/// Checks for existing weapons that can receive ammo, and empty slots.
+	/// A weapon of the same class we already carry, if any. Duplicate handling itself is the
+	/// engine's (a duplicate donates its magazine to the reserve, see BaseWeapon.OnAdding) - this
+	/// just finds the weapon the donation lands on, for the pickup notices.
 	/// </summary>
-	public bool CanTake( BaseSandboxWeapon item )
-	{
-		if ( !item.IsValid() )
-			return false;
-
-		var existing = Weapons.FirstOrDefault( x => x.GetType() == item.GetType() );
-		if ( existing.IsValid() )
-		{
-			// We already have this weapon — only allow if it can receive ammo
-			if ( existing is BaseSandboxWeapon existingWeapon && existingWeapon.UsesAmmo )
-				return existingWeapon.Ammo1 < existingWeapon.MaxReserveAmmo;
-
-			return false;
-		}
-
-		return FindEmptySlot() >= 0;
-	}
+	private BaseSandboxWeapon FindExistingWeapon( BaseSandboxWeapon like )
+		=> like.IsValid() ? Weapons.FirstOrDefault( x => x.GetType() == like.GetType() ) : null;
 
 	// FindEmptySlot is inherited from the engine InventoryComponent.
 
@@ -78,40 +64,6 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	private void HostSetToolMode( string toolModeName )
 	{
 		SetToolMode( toolModeName );
-	}
-
-	/// <summary>
-	/// Tops up an owned weapon's reserve from a duplicate pickup and notifies. Returns true when there
-	/// is an existing weapon (the pickup is consumed either way); false when we don't own one.
-	/// </summary>
-	private bool TryGiveAmmo( BaseSandboxWeapon existing, BaseSandboxWeapon pickup, bool notice )
-	{
-		if ( !existing.IsValid() )
-			return false;
-
-		if ( existing.UsesAmmo && existing.Ammo1 < existing.MaxReserveAmmo )
-		{
-			GiveAmmo( existing.PrimaryAmmoType, pickup.UsesClips ? pickup.ClipMaxSize : pickup.StartingAmmo );
-
-			if ( notice )
-				OnClientPickup( existing, true );
-		}
-
-		return true;
-	}
-
-	/// <summary>
-	/// If we already own a weapon matching this prefab, give it the pickup's ammo instead.
-	/// Returns true if handled (caller should stop). False means no existing weapon found.
-	/// </summary>
-	private bool TryGiveAmmoToExisting( GameObject prefab, bool notice )
-	{
-		var pickup = prefab.Components.Get<BaseSandboxWeapon>( true );
-		if ( !pickup.IsValid() )
-			return false;
-
-		var existing = Weapons.FirstOrDefault( x => x.GameObject.Name == prefab.Name );
-		return TryGiveAmmo( existing, pickup, notice );
 	}
 
 	public bool Pickup( string prefabName, bool notice = true ) => Pickup( prefabName, -1, notice );
@@ -159,59 +111,70 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		if ( !Networking.IsHost )
 			return false;
 
-		// Already own one of these? Give its ammo instead of a second copy.
-		if ( TryGiveAmmoToExisting( prefab, notice ) )
-			return true;
+		// The engine consumes a duplicate as an ammo donation (see BaseWeapon.OnAdding) - watch the
+		// pool so the ammo notice can fire.
+		var existing = FindExistingWeapon( prefab.GetComponent<BaseSandboxWeapon>( true ) );
+		var ammoBefore = existing.IsValid() ? existing.Ammo1 : 0;
 
 		// Engine pickup: clone, network spawn, parent, slot, ownership. The cancellable pickup event
 		// fires from OnAdding; the engine destroys the clone if it's refused.
-		if ( base.Pickup( prefab, targetSlot ) is not BaseSandboxWeapon weapon )
-			return false;
+		if ( base.Pickup( prefab, targetSlot ) is BaseSandboxWeapon weapon )
+		{
+			if ( notice )
+				OnClientPickup( weapon );
 
-		if ( notice )
-			OnClientPickup( weapon );
+			return true;
+		}
 
-		return true;
-	}
+		// Refused as a duplicate - donated or already topped up, either way it counts as taken.
+		if ( existing.IsValid() )
+		{
+			if ( notice && existing.Ammo1 > ammoBefore )
+				OnClientPickup( existing, true );
 
-	/// <summary>
-	/// If we already own a weapon of the same type as this live item, transfer its ammo and consume
-	/// it. Returns true if handled (caller should stop). False means no existing weapon found.
-	/// </summary>
-	private bool TryGiveAmmoFromItem( BaseSandboxWeapon item, bool notice )
-	{
-		var existing = Weapons.FirstOrDefault( x => x.GetType() == item.GetType() );
-		if ( !TryGiveAmmo( existing, item, notice ) )
-			return false;
+			return true;
+		}
 
-		item.DestroyGameObject();
-		return true;
+		return false;
 	}
 
 	public bool Take( BaseSandboxWeapon item, bool includeNotices )
 	{
-		if ( !CanTake( item ) )
+		if ( !item.IsValid() )
 			return false;
 
-		if ( TryGiveAmmoFromItem( item, includeNotices ) )
+		var existing = FindExistingWeapon( item );
+		var ammoBefore = existing.IsValid() ? existing.Ammo1 : 0;
+
+		// Engine add: parent, slot, ownership, disable. The cancellable pickup event fires from
+		// OnAdding, and a duplicate donates its magazine to the reserve and is consumed there.
+		if ( Add( item ) )
+		{
+			// Remove from undo stacks so the weapon can't be undone out of our hands
+			UndoSystem.Current.Remove( item.GameObject );
+
+			if ( includeNotices )
+				OnClientPickup( item );
+
 			return true;
+		}
 
-		// Remove from undo stacks so the weapon can't be undone out of our hands
-		UndoSystem.Current.Remove( item.GameObject );
+		// Consumed by the donation - that's a take too. A refused item stays in the world.
+		if ( item.GameObject.IsDestroyed )
+		{
+			if ( includeNotices && existing.IsValid() && existing.Ammo1 > ammoBefore )
+				OnClientPickup( existing, true );
 
-		// Engine add: parent, slot, ownership, disable. The cancellable pickup event fires from OnAdding.
-		if ( !Add( item ) )
-			return false;
+			return true;
+		}
 
-		if ( includeNotices )
-			OnClientPickup( item );
-
-		return true;
+		return false;
 	}
 
 	/// <summary>
 	/// Engine Touch pickup lands here (see <see cref="InventoryComponent.PickupMode"/>). Routes into
-	/// <see cref="Take"/>, so duplicates donate their ammo and the pickup notices fire.
+	/// <see cref="Take"/>, so duplicates donate their ammo and the pickup notices fire. Contraption-
+	/// wired weapons refuse themselves (see <see cref="BaseSandboxWeapon"/>'s OnCanPickup).
 	/// </summary>
 	public override void PickupWorldItem( Sandbox.BaseInventoryItem item )
 	{
@@ -225,10 +188,6 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 			return;
 
 		if ( !CanPickupWorldItem( weapon ) )
-			return;
-
-		// Weapons wired into a contraption stay put.
-		if ( weapon.ShootInput.IsEnabled || weapon.SecondaryInput.IsEnabled )
 			return;
 
 		Take( weapon, true );
@@ -307,13 +266,9 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		if ( ActiveWeapon.IsInUse() )
 			return false;
 
-		if ( item is BaseSandboxWeapon weapon && weapon.UsesAmmo )
-		{
-			if ( !weapon.HasPrimaryAmmo() && !weapon.CanReload() )
-			{
-				return false;
-			}
-		}
+		// Nothing to fire or load - the engine flags spent guns.
+		if ( item.ShouldAvoid )
+			return false;
 
 		return item.Value > ActiveWeapon.Value;
 	}

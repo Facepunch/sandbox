@@ -112,6 +112,12 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	/// <summary>The input that fires the secondary attack when this weapon is controlled via a seat.</summary>
 	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput SecondaryInput { get; set; }
 
+	/// <summary>Weapons wired into a contraption stay put - no pickup prompt, no Touch pickup.</summary>
+	protected override bool OnCanPickup( Sandbox.InventoryComponent inventory )
+	{
+		return !ShootInput.IsEnabled && !SecondaryInput.IsEnabled;
+	}
+
 	/// <summary>A seated player can only control this while not holding a weapon of their own.</summary>
 	public virtual bool CanControl( Player player )
 	{
