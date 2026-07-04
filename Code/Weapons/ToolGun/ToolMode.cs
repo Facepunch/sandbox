@@ -55,7 +55,11 @@ public abstract partial class ToolMode : Component, IToolInfo
 	/// </summary>
 	public virtual bool TraceHitboxes => false;
 
-	public TypeDescription TypeDescription { get; protected set; }
+	/// <summary>
+	/// Reflection info for this tool's type. Lazy so it's valid before the component starts.
+	/// </summary>
+	public TypeDescription TypeDescription => _typeDescription ??= TypeLibrary.GetType( GetType() );
+	private TypeDescription _typeDescription;
 
 	private readonly List<ToolActionEntry> _actions = new();
 	private readonly List<GameObject> _createdObjects = new();
@@ -158,11 +162,6 @@ public abstract partial class ToolMode : Component, IToolInfo
 				FirePostToolAction( action.Input );
 			}
 		}
-	}
-
-	protected override void OnStart()
-	{
-		TypeDescription = TypeLibrary.GetType( GetType() );
 	}
 
 	protected override void OnEnabled()
