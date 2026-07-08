@@ -7,7 +7,7 @@ public sealed class AmmoPickup : BasePickup
 	/// The ammo resource this pickup gives ammo for.
 	/// When set, ammo is added directly to the player's shared pool for that resource.
 	/// </summary>
-	[Property, Group( "Ammo" )] public AmmoResource AmmoType { get; set; }
+	[Property, Group( "Ammo" )] public BaseAmmoResource AmmoType { get; set; }
 
 	/// <summary>
 	/// The quantity of ammo to give.

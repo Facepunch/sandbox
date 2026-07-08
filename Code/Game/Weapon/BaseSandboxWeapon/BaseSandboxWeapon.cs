@@ -1,11 +1,11 @@
 using Sandbox.Rendering;
 
-public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerControllable
+public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IPlayerControllable
 {
 	// DisplayName, DisplayIcon, Value, Slot, ViewModel and WorldModel are all inherited from the
-	// engine BaseWeapon / BaseInventoryItem. (DisplayIcon also satisfies IKillIcon.)
+	// engine BaseCombatWeapon / BaseInventoryItem. (DisplayIcon also satisfies IKillIcon.)
 
-	// MuzzleGameObject is inherited from the engine BaseWeapon.
+	// MuzzleGameObject is inherited from the engine BaseCombatWeapon.
 
 	/// <summary>
 	/// Used for overriding the display icon
@@ -18,12 +18,12 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	public virtual bool WantsHideHud => false;
 
 	// WeaponModel resolution (view model when drawn, else world model, else own hierarchy) comes from
-	// the engine BaseWeapon.
+	// the engine BaseCombatWeapon.
 
 	/// <summary>
 	/// The owner of this carriable
 	/// </summary>
-	// Hides the engine BaseWeapon.Owner (a PlayerController) with the game's Player-based owner.
+	// Hides the engine BaseCombatWeapon.Owner (a PlayerController) with the game's Player-based owner.
 	// Engine-internal code keeps using its own PlayerController owner; game code sees the Player.
 	public new Player Owner
 	{
@@ -63,7 +63,7 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	public GameObject AimIgnoreRoot => HasOwner ? Owner.GameObject : GameObject;
 
 	/// <summary>
-	/// Who gets credit for this weapon's damage (the engine's <see cref="Sandbox.BaseWeapon.Attacker"/>).
+	/// Who gets credit for this weapon's damage (the engine's <see cref="Sandbox.BaseCombatWeapon.Attacker"/>).
 	/// The owning player if held, the seated player if controlled from a contraption seat, otherwise
 	/// the nearest kill source or the weapon itself.
 	/// </summary>
@@ -86,14 +86,14 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	// The switch gate is the engine's - query with CanSwitchTo(), override OnCanSwitchTo() to gate.
 
 
-	// DrawHud / DrawCrosshair and the per-frame crosshair positioning come from the engine BaseWeapon.
+	// DrawHud / DrawCrosshair and the per-frame crosshair positioning come from the engine BaseCombatWeapon.
 
 	/// <summary>
 	/// Runs on the host when added to an inventory. The engine base seeds the magazines and the
 	/// shared reserve pool - only when they've never been filled, so a dropped gun keeps its rounds
 	/// through a pickup.
 	/// </summary>
-	protected override void OnAdded( Sandbox.InventoryComponent inventory )
+	protected override void OnAdded( Sandbox.BaseInventoryComponent inventory )
 	{
 		// In an inventory - not a world pickup any more.
 		IsDropped = false;
@@ -113,7 +113,7 @@ public partial class BaseSandboxWeapon : Sandbox.BaseWeapon, IKillIcon, IPlayerC
 	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput SecondaryInput { get; set; }
 
 	/// <summary>Weapons wired into a contraption stay put - no pickup prompt, no Touch pickup.</summary>
-	protected override bool OnCanPickup( Sandbox.InventoryComponent inventory )
+	protected override bool OnCanPickup( Sandbox.BaseInventoryComponent inventory )
 	{
 		return !ShootInput.IsEnabled && !SecondaryInput.IsEnabled;
 	}

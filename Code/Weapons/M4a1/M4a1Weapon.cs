@@ -21,7 +21,7 @@ public sealed class M4a1Weapon : BaseBulletWeapon
 	/// </summary>
 	[Property, Feature( "Grenade Launcher" )] public int StartingGrenades { get; set; } = 6;
 
-	protected override void OnAdded( Sandbox.InventoryComponent inventory )
+	protected override void OnAdded( Sandbox.BaseInventoryComponent inventory )
 	{
 		// Seed the grenade reserve once, like the bullet reserve.
 		if ( StartingGrenades > 0 && SecondaryAmmoType is not null && !inventory.HasAmmo( SecondaryAmmoType ) )

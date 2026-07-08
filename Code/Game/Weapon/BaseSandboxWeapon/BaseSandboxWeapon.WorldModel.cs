@@ -8,7 +8,7 @@ public partial class BaseSandboxWeapon
 		public void OnDestroyWorldModel() { }
 	}
 
-	// WorldModelPrefab, HoldBone and HoldType are inherited from the engine BaseWeapon.
+	// WorldModelPrefab, HoldBone and HoldType are inherited from the engine BaseCombatWeapon.
 	[Property, Feature( "WorldModel" )] public GameObject DroppedGameObject { get; set; }
 
 	protected override void CreateWorldModel()

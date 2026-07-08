@@ -1,7 +1,7 @@
 public partial class BaseBulletWeapon : BaseSandboxWeapon
 {
 	//
-	// Ballistics (damage, pellets, spread, reach) and the attack itself live on the engine BaseWeapon.
+	// Ballistics (damage, pellets, spread, reach) and the attack itself live on the engine BaseCombatWeapon.
 	// What's left here is the game feel - recoil and camera shake - and the sandbox's bullet collision
 	// rules.
 	//

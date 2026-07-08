@@ -1,9 +1,9 @@
 using Sandbox.Citizen;
 
-public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
+public sealed class PlayerInventory : BaseInventoryComponent, Local.IPlayerEvents
 {
 	// MaxSlots, ActiveItem, the active-item enable/disable + equip/holster and the add/remove/drop/
-	// move-slot flows come from the engine InventoryComponent. This adds the sandbox's events, ammo
+	// move-slot flows come from the engine BaseInventoryComponent. This adds the sandbox's events, ammo
 	// merging, notices and undo handling through the engine's hooks.
 
 	[RequireComponent] public Player Player { get; set; }
@@ -14,7 +14,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	public IEnumerable<BaseSandboxWeapon> Weapons => Items.OfType<BaseSandboxWeapon>();
 
 	/// <summary>
-	/// The currently active weapon. Narrowing shim over the engine's <see cref="InventoryComponent.ActiveItem"/>.
+	/// The currently active weapon. Narrowing shim over the engine's <see cref="BaseInventoryComponent.ActiveItem"/>.
 	/// </summary>
 	public BaseSandboxWeapon ActiveWeapon => ActiveItem as BaseSandboxWeapon;
 
@@ -25,13 +25,13 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 
 	/// <summary>
 	/// A weapon of the same class we already carry, if any. Duplicate handling itself is the
-	/// engine's (a duplicate donates its magazine to the reserve, see BaseWeapon.OnAdding) - this
+	/// engine's (a duplicate donates its magazine to the reserve, see BaseCombatWeapon.OnAdding) - this
 	/// just finds the weapon the donation lands on, for the pickup notices.
 	/// </summary>
 	private BaseSandboxWeapon FindExistingWeapon( BaseSandboxWeapon like )
 		=> like.IsValid() ? Weapons.FirstOrDefault( x => x.GetType() == like.GetType() ) : null;
 
-	// FindEmptySlot is inherited from the engine InventoryComponent.
+	// FindEmptySlot is inherited from the engine BaseInventoryComponent.
 
 	// The default weapons come from the engine's Loadout feature, configured on the player prefab -
 	// PlayerLoadout calls GiveLoadout() when there's no saved hotbar to restore.
@@ -111,7 +111,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		if ( !Networking.IsHost )
 			return false;
 
-		// The engine consumes a duplicate as an ammo donation (see BaseWeapon.OnAdding) - watch the
+		// The engine consumes a duplicate as an ammo donation (see BaseCombatWeapon.OnAdding) - watch the
 		// pool so the ammo notice can fire.
 		var existing = FindExistingWeapon( prefab.GetComponent<BaseSandboxWeapon>( true ) );
 		var ammoBefore = existing.IsValid() ? existing.Ammo1 : 0;
@@ -172,7 +172,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	}
 
 	/// <summary>
-	/// Engine Touch pickup lands here (see <see cref="InventoryComponent.PickupMode"/>). Routes into
+	/// Engine Touch pickup lands here (see <see cref="BaseInventoryComponent.PickupMode"/>). Routes into
 	/// <see cref="Take"/>, so duplicates donate their ammo and the pickup notices fire. Contraption-
 	/// wired weapons refuse themselves (see <see cref="BaseSandboxWeapon"/>'s OnCanPickup).
 	/// </summary>
@@ -273,7 +273,7 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 		return item.Value > ActiveWeapon.Value;
 	}
 
-	// MoveSlot comes from the engine InventoryComponent - the cancellable move event fires from this
+	// MoveSlot comes from the engine BaseInventoryComponent - the cancellable move event fires from this
 	// hook.
 	protected override bool OnMovingSlot( int fromSlot, int toSlot )
 	{
@@ -285,13 +285,13 @@ public sealed class PlayerInventory : InventoryComponent, Local.IPlayerEvents
 	}
 
 	/// <summary>
-	/// The weapon the inventory would auto-switch to. The engine's <see cref="InventoryComponent.GetBestItem"/>
+	/// The weapon the inventory would auto-switch to. The engine's <see cref="BaseInventoryComponent.GetBestItem"/>
 	/// handles the Value ordering and the avoid-empty-guns fallback.
 	/// </summary>
 	public BaseSandboxWeapon GetBestWeapon() => GetBestItem() as BaseSandboxWeapon;
 
 	/// <summary>
-	/// Switches to the given weapon. Thin wrapper over the engine inventory's <see cref="InventoryComponent.Switch"/>
+	/// Switches to the given weapon. Thin wrapper over the engine inventory's <see cref="BaseInventoryComponent.Switch"/>
 	/// (which handles host-routing and the holster veto). Switch events had no consumers and were dropped.
 	/// </summary>
 	public void SwitchWeapon( BaseSandboxWeapon weapon, bool allowHolster = false )

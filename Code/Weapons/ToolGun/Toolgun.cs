@@ -21,7 +21,7 @@ public partial class Toolgun : ScreenWeapon
 		currentMode?.OnCameraMove( player, ref angles );
 	}
 
-	protected override void OnAdded( Sandbox.InventoryComponent inventory )
+	protected override void OnAdded( Sandbox.BaseInventoryComponent inventory )
 	{
 		base.OnAdded( inventory );
 
