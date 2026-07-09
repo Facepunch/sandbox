@@ -5,11 +5,11 @@
   "Decibels": 72,
   "SelectionMode": "Random",
   "Sounds": [
-    "sounds/npc/darren/stuck/imstayinghere.vsnd",
-    "sounds/npc/darren/stuck/ineedtomakeaphonecall.vsnd",
-    "sounds/npc/darren/stuck/leavemehere.vsnd",
-    "sounds/npc/darren/stuck/mylegsaregettingtired.vsnd",
-    "sounds/npc/darren/stuck/thatsitforme.vsnd"
+    "sounds/npc/darren/stuck/stuck_01.vsnd",
+    "sounds/npc/darren/stuck/stuck_02.vsnd",
+    "sounds/npc/darren/stuck/stuck_03.vsnd",
+    "sounds/npc/darren/stuck/stuck_04.vsnd",
+    "sounds/npc/darren/stuck/stuck_05.vsnd"
   ],
   "Occlusion": true,
   "AirAbsorption": true,

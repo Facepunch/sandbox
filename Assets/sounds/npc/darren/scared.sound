@@ -5,12 +5,12 @@
   "Decibels": 78,
   "SelectionMode": "Random",
   "Sounds": [
-    "sounds/npc/darren/scared/aghh.vsnd",
-    "sounds/npc/darren/scared/icanttakeit.vsnd",
-    "sounds/npc/darren/scared/noplease.vsnd",
-    "sounds/npc/darren/scared/raggh.vsnd",
-    "sounds/npc/darren/scared/thatsit.vsnd",
-    "sounds/npc/darren/scared/what.vsnd"
+    "sounds/npc/darren/scared/scared_01.vsnd",
+    "sounds/npc/darren/scared/scared_02.vsnd",
+    "sounds/npc/darren/scared/scared_03.vsnd",
+    "sounds/npc/darren/scared/scared_04.vsnd",
+    "sounds/npc/darren/scared/scared_05.vsnd",
+    "sounds/npc/darren/scared/scared_06.vsnd"
   ],
   "Occlusion": true,
   "AirAbsorption": true,

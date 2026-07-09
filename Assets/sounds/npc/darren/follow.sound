@@ -5,14 +5,14 @@
   "Decibels": 72,
   "SelectionMode": "Random",
   "Sounds": [
-    "sounds/npc/darren/follow/alright.vsnd",
-    "sounds/npc/darren/follow/ihopeyouknowwhereyouregoing.vsnd",
-    "sounds/npc/darren/follow/illfollowyou.vsnd",
-    "sounds/npc/darren/follow/leadtheway.vsnd",
-    "sounds/npc/darren/follow/okayleadtheway.vsnd",
-    "sounds/npc/darren/follow/rightbehindyou.vsnd",
-    "sounds/npc/darren/follow/yeahletsgo.vsnd",
-    "sounds/npc/darren/follow/yes.vsnd"
+    "sounds/npc/darren/follow/follow_01.vsnd",
+    "sounds/npc/darren/follow/follow_02.vsnd",
+    "sounds/npc/darren/follow/follow_03.vsnd",
+    "sounds/npc/darren/follow/follow_04.vsnd",
+    "sounds/npc/darren/follow/follow_05.vsnd",
+    "sounds/npc/darren/follow/follow_06.vsnd",
+    "sounds/npc/darren/follow/follow_07.vsnd",
+    "sounds/npc/darren/follow/follow_08.vsnd"
   ],
   "Occlusion": true,
   "AirAbsorption": true,
