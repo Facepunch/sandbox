@@ -15,7 +15,15 @@ public class MoveTo : TaskBase
 	public float StopDistance { get; set; } = 10f;
 	public float ReevaluateInterval { get; set; } = 0.5f;
 
+	/// <summary>
+	/// Keep facing this object while moving instead of turning into the movement
+	/// direction. The NPC backpedals or strafes -- short moves away from someone
+	/// happen without turning our back on them.
+	/// </summary>
+	public GameObject FaceTarget { get; set; }
+
 	private TimeSince _lastReevaluate;
+	private bool _restoreFaceMovement;
 
 	public MoveTo( Vector3 targetPosition, float stopDistance = 10f )
 	{
@@ -31,6 +39,12 @@ public class MoveTo : TaskBase
 
 	protected override void OnStart()
 	{
+		if ( FaceTarget.IsValid() && Npc.Navigation.FaceMovementDirection )
+		{
+			Npc.Navigation.FaceMovementDirection = false;
+			_restoreFaceMovement = true;
+		}
+
 		var pos = GetTargetPosition();
 		if ( !pos.HasValue ) return;
 
@@ -53,7 +67,27 @@ public class MoveTo : TaskBase
 			_lastReevaluate = 0;
 		}
 
+		// Turn toward whoever we're keeping our front to while we move
+		if ( FaceTarget.IsValid() )
+		{
+			var dir = (FaceTarget.WorldPosition - Npc.WorldPosition).WithZ( 0 );
+			if ( dir.Length > 1f )
+			{
+				var targetRotation = Rotation.LookAt( dir.Normal, Vector3.Up );
+				Npc.WorldRotation = Rotation.Slerp( Npc.WorldRotation, targetRotation, Npc.Navigation.TurnSpeed * Time.Delta );
+			}
+		}
+
 		return Npc.Navigation.GetStatus();
+	}
+
+	protected override void OnEnd()
+	{
+		if ( _restoreFaceMovement )
+		{
+			Npc.Navigation.FaceMovementDirection = true;
+			_restoreFaceMovement = false;
+		}
 	}
 
 	private Vector3? GetTargetPosition()

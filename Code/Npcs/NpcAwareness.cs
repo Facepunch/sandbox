@@ -18,4 +18,7 @@ public enum NpcAwareness
 
 	/// <summary>A notable disturbance was sensed nearby -- a gunshot, a death, a scream.</summary>
 	HeardDisturbance = 1 << 2,
+
+	/// <summary>A player is walking into us -- they want to get past and we're in the way.</summary>
+	PlayerPushing = 1 << 3,
 }

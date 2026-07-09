@@ -263,6 +263,47 @@ public class SensesLayer : BaseNpcLayer
 	}
 
 	/// <summary>
+	/// A player inside our personal space who's moving toward us -- they're trying to
+	/// get past and we're in their way. Returns null when nobody is barging in.
+	/// </summary>
+	public GameObject GetPushingPlayer()
+	{
+		foreach ( var obj in GetVisible( "player" ) )
+		{
+			if ( !obj.IsValid() ) continue;
+
+			var toUs = (Npc.WorldPosition - obj.WorldPosition).WithZ( 0 );
+			if ( toUs.Length > PersonalSpace ) continue;
+
+			// They have to actually be walking at us -- someone stood close doesn't count
+			var velocity = GetVelocity( obj ).WithZ( 0 );
+			if ( velocity.Length < 100f ) continue;
+			if ( velocity.Normal.Dot( toUs.Normal ) < 0.5f ) continue;
+
+			return obj;
+		}
+
+		return null;
+	}
+
+	/// <summary>
+	/// Resolve a scanned object's velocity from whatever movement source it has.
+	/// </summary>
+	public static Vector3 GetVelocity( GameObject obj )
+	{
+		if ( !obj.IsValid() )
+			return Vector3.Zero;
+
+		if ( obj.Root.GetComponent<PlayerController>() is { } controller )
+			return controller.Velocity;
+
+		if ( obj.GetComponent<Rigidbody>() is { } rb )
+			return rb.Velocity;
+
+		return Vector3.Zero;
+	}
+
+	/// <summary>
 	/// Get all visible objects with a specific tag from the cache.
 	/// </summary>
 	public List<GameObject> GetVisible( string tag )

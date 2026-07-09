@@ -37,6 +37,7 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 	private TimeSince _timeSinceHurt;
 	private bool _isFleeing;
 	private TimeSince _timeSinceStruggling;
+	private GameObject _farewellTarget;
 
 	// Voice lines by situation. Each SoundEvent picks a random clip. These replace the old
 	// on-screen text -- the scientist speaks instead.
@@ -79,14 +80,16 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 
 		if ( Leader == player.GameObject )
 		{
+			// Say goodbye to their face before wandering off - the farewell
+			// schedule stands still, looks at them and delivers the line
 			Leader = null;
-			SayVoice( StayVoice, force: true );
+			_farewellTarget = player.GameObject;
 		}
 		else
 		{
 			Leader = player.GameObject;
 			_timeSinceStruggling = 0;
-			SayVoice( FollowVoice, force: true );
+			SayVoice( FollowVoice, force: true, lookAt: player.GameObject );
 		}
 
 		// Re-think now so following starts/stops immediately.
@@ -94,12 +97,13 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 	}
 
 	// Play a voice line. Ambient lines respect the speech cooldown; USE responses force through.
-	private void SayVoice( SoundEvent voice, bool force = false )
+	// If lookAt is given, the scientist looks them in the eyes while talking.
+	private void SayVoice( SoundEvent voice, bool force = false, GameObject lookAt = null )
 	{
 		if ( voice is null ) return;
 		if ( !force && !Speech.CanSpeak ) return;
 
-		Speech.Say( voice );
+		Speech.Say( voice, lookAt: lookAt );
 	}
 
 	// Defenceless -- flees anything dangerous, indifferent to everyone else.
@@ -127,7 +131,7 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 				_attacker.GetComponent<Player>()?.PlayerData?.AddStat( "npc.scientist.scare" );
 			}
 
-			SayVoice( ScaredVoice );
+			SayVoice( ScaredVoice, lookAt: _attacker );
 
 			var flee = GetSchedule<ScientistFleeSchedule>();
 			flee.Source = _attacker;
@@ -139,7 +143,7 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 		var threat = Senses.GetNearestVisible( Disposition.Fearful );
 		if ( threat.IsValid() )
 		{
-			SayVoice( ScaredVoice );
+			SayVoice( ScaredVoice, lookAt: threat );
 
 			var sightFlee = GetSchedule<ScientistFleeSchedule>();
 			sightFlee.Source = threat;
@@ -149,6 +153,26 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 
 		// Not fleeing anything.
 		_isFleeing = false;
+
+		// A player is walking into us - they want to get past, step out of their way
+		var pusher = Senses.GetPushingPlayer();
+		if ( pusher.IsValid() )
+		{
+			var moveAside = GetSchedule<MoveAsideSchedule>();
+			moveAside.Blocker = pusher;
+			return moveAside;
+		}
+
+		// Someone just dismissed us - stand, face them, say goodbye, then move on.
+		// Fear above still preempts; no goodbyes mid panic.
+		if ( _farewellTarget.IsValid() )
+		{
+			var farewell = GetSchedule<ScientistFarewellSchedule>();
+			farewell.Target = _farewellTarget;
+			farewell.Voice = StayVoice;
+			_farewellTarget = null;
+			return farewell;
+		}
 
 		// Following a player who recruited us with USE. (Fear above takes priority, so we
 		// still cower from danger, then resume following once it passes.)
@@ -161,8 +185,9 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 
 			if ( _timeSinceStruggling > 6f )
 			{
+				var leader = Leader;
 				Leader = null;
-				SayVoice( StuckVoice, force: true );
+				SayVoice( StuckVoice, force: true, lookAt: leader );
 				return GetIdleSchedule();
 			}
 

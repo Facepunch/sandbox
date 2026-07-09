@@ -62,6 +62,9 @@ public partial class Npc : Component
 
 			if ( Senses.Disturbance.HasValue )
 				a |= NpcAwareness.HeardDisturbance;
+
+			if ( Senses.GetPushingPlayer().IsValid() )
+				a |= NpcAwareness.PlayerPushing;
 		}
 
 		return a;

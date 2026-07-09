@@ -37,7 +37,13 @@ public class NavigationLayer : BaseNpcLayer
 
 	/// <summary>How quickly the body turns to face the movement direction.</summary>
 	[Property]
-	public float TurnSpeed { get; set; } = 8f;
+	public float TurnSpeed { get; set; } = 4f;
+
+	/// <summary>
+	/// True while the agent is actually travelling. Standing NPCs are free to turn
+	/// their body toward whatever they're looking at.
+	/// </summary>
+	public bool IsMoving => Agent.IsValid() && Agent.Velocity.WithZ( 0 ).Length > 20f;
 
 	private bool _running;
 
@@ -70,6 +76,17 @@ public class NavigationLayer : BaseNpcLayer
 		{
 			MoveTarget = Agent.TargetPosition.Value;
 		}
+	}
+
+	/// <summary>
+	/// Stop moving and forget the current move target.
+	/// </summary>
+	public void Stop()
+	{
+		MoveTarget = null;
+
+		if ( Agent.IsValid() )
+			Agent.Stop();
 	}
 
 	protected override void OnUpdate()

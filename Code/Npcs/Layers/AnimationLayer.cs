@@ -11,12 +11,25 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 {
 	public float Speed { get; set; } = 1.0f;
 	public bool IsGrounded { get; set; } = true;
-	public float LookSpeed { get; set; } = 3f;
+
+	/// <summary>
+	/// How fast the body turns to face a look target, in degrees per second.
+	/// Constant rate - an exponential turn covers most of a half-circle in its
+	/// first moments, which reads as a jolting spin.
+	/// </summary>
+	public float BodyTurnSpeed { get; set; } = 120f;
+
 	public float MaxHeadAngle { get; set; } = 45f;
 
 	public float AimStrengthEyes { get; set; } = 1.0f;
 	public float AimStrengthHead { get; set; } = 1.0f;
 	public float AimStrengthBody { get; set; } = 1.0f;
+
+	/// <summary>How far the head can aim away from the body, in degrees of yaw.</summary>
+	public float MaxAimYaw { get; set; } = 80f;
+
+	/// <summary>How quickly the head sweeps onto (and lets go of) a look target.</summary>
+	public float AimSmoothSpeed { get; set; } = 6f;
 
 	/// <summary>Play footstep sounds from the model's footstep animation events.</summary>
 	[Property]
@@ -38,8 +51,26 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	/// </summary>
 	public GameObject LookTargetObject { get; private set; }
 
+	// A temporary look target that overrides the persistent one until it expires,
+	// like HL2's AddLookTarget. Speech uses this to look whoever we're talking to
+	// in the eyes for the duration of the line.
+	private GameObject _addedLookTarget;
+	private TimeUntil _addedLookExpires;
+
 	private SkinnedModelRenderer _renderer => Npc.IsValid() ? Npc.Renderer : null;
 	private float _lastYaw = float.NaN;
+	private bool _turningToTarget;
+
+	// The aim we're actually feeding the animgraph. Look targets appear out of
+	// nowhere (senses noticing someone) and jump around; the neck eases toward
+	// them and releases the same way, instead of teleporting.
+	private Vector3 _aimDirection;
+	private float _aimWeight;
+
+	// Which side the head swung for a target directly behind us. Straight behind,
+	// the shortest way round is ambiguous and noise flips it left/right every
+	// frame -- pick a side and stay on it until the target comes back around.
+	private int _aimSide;
 
 	[Sync] public Vector3 MoveVelocity { get; set; }
 	[Sync] public Rotation MoveRotation { get; set; }
@@ -47,6 +78,12 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	[Sync] public Vector3 LookWorldPos { get; set; }
 	[Sync] public bool IsLooking { get; set; }
 	[Sync] public string HoldType { get; set; } = "none";
+
+	// The object being looked at, if the look target is an object. Synced so every
+	// client resolves the eye position locally - that way the player being looked
+	// at sees the NPC looking at their camera, while everyone else sees it looking
+	// at that player's avatar's eyes.
+	[Sync] public GameObject LookObject { get; set; }
 
 	protected override void OnEnabled()
 	{
@@ -109,14 +146,28 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	{
 		if ( !IsProxy )
 		{
-			if ( LookTargetObject.IsValid() )
-				LookTarget = LookTargetObject.WorldPosition;
+			// A timed look target wins while it's active (eg speech looking at
+			// whoever we're talking to), then we fall back to the persistent one
+			LookObject = _addedLookTarget.IsValid() && !_addedLookExpires
+				? _addedLookTarget
+				: LookTargetObject;
 
-			IsLooking = LookTarget.HasValue;
-			if ( LookTarget.HasValue )
+			if ( LookTargetObject.IsValid() )
+				LookTarget = GetEyePosition( LookTargetObject );
+
+			var lookPos = LookObject.IsValid() ? (Vector3?)GetEyePosition( LookObject ) : LookTarget;
+
+			IsLooking = lookPos.HasValue;
+			if ( lookPos.HasValue )
 			{
-				LookWorldPos = LookTarget.Value;
-				UpdateLookDirection( LookTarget.Value );
+				LookWorldPos = lookPos.Value;
+				UpdateLookDirection( lookPos.Value );
+			}
+			else
+			{
+				// No target - release the head, or it stays stuck wherever the
+				// last glance left it
+				ClearAim();
 			}
 
 			if ( _heldProp.IsValid() )
@@ -124,8 +175,14 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		}
 		else
 		{
-			if ( IsLooking )
+			// Resolve object targets locally, so this client's own view of the
+			// target (first person camera vs avatar eyes) is what gets looked at
+			if ( LookObject.IsValid() )
+				ApplyLookToRenderer( GetEyePosition( LookObject ) );
+			else if ( IsLooking )
 				ApplyLookToRenderer( LookWorldPos );
+			else
+				ClearAim();
 		}
 
 		ApplyMoveToRenderer( MoveVelocity, MoveRotation );
@@ -134,6 +191,106 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 			_renderer?.Set( "holdtype", HoldType );
 
 		_renderer?.Set( "b_grounded", Grounded );
+
+		if ( DebugJitter )
+			DrawJitterDebug();
+	}
+
+	/// <summary>
+	/// Shows what's feeding the head every frame, to hunt down rhythmic jitter.
+	/// Watch which value pulses: body yaw (someone rotating the object), aim
+	/// (look target moving or flickering), or move params (animgraph input).
+	/// </summary>
+	[ConVar( "npc_debug_jitter" )]
+	public static bool DebugJitter { get; set; }
+
+	float _dbgLastBodyYaw = float.NaN;
+	Vector3 _dbgLastAimDir;
+	bool _dbgLastHadAim;
+	TimeSince _dbgLastYawSpike;
+	TimeSince _dbgLastAimSpike;
+	TimeSince _dbgLastAimToggle;
+
+	private void DrawJitterDebug()
+	{
+		if ( !Npc.IsValid() || !_renderer.IsValid() )
+			return;
+
+		var camera = Npc.Scene.Camera;
+		if ( !camera.IsValid() ) return;
+
+		// Body rotation changes
+		var yaw = Npc.WorldRotation.Angles().yaw;
+		var yawDelta = float.IsNaN( _dbgLastBodyYaw ) ? 0f : MathF.Abs( Angles.NormalizeAngle( yaw - _dbgLastBodyYaw ) );
+		_dbgLastBodyYaw = yaw;
+		if ( yawDelta > 0.1f ) _dbgLastYawSpike = 0;
+
+		// Aim direction changes and set/released flicker
+		var hasAim = LookObject.IsValid() || IsLooking;
+		var aimDir = hasAim ? (LookWorldPos - Npc.WorldPosition).Normal : Npc.WorldRotation.Forward;
+		var aimDelta = Vector3.GetAngle( _dbgLastAimDir, aimDir );
+		_dbgLastAimDir = aimDir;
+		if ( aimDelta > 1f ) _dbgLastAimSpike = 0;
+		if ( hasAim != _dbgLastHadAim ) _dbgLastAimToggle = 0;
+		_dbgLastHadAim = hasAim;
+
+		var worldPos = Npc.WorldPosition + Vector3.Up * 90f;
+		var screenPos = camera.PointToScreenPixels( worldPos, out var behind );
+		if ( behind ) return;
+
+		var text = TextRendering.Scope.Default;
+		text.Text =
+			$"yaw {yaw:F1}  d {yawDelta:F2}  spike {_dbgLastYawSpike.Relative:F2}s ago\n" +
+			$"aim {(hasAim ? "on" : "off")}  d {aimDelta:F2}  spike {_dbgLastAimSpike.Relative:F2}s ago  toggle {_dbgLastAimToggle.Relative:F1}s ago\n" +
+			$"vel {MoveVelocity.Length:F1}  turning {_turningToTarget}";
+		text.FontSize = 12;
+		text.TextColor = Color.Yellow;
+
+		Npc.DebugOverlay.ScreenText( screenPos, text, TextFlag.CenterBottom );
+	}
+
+	/// <summary>
+	/// Look at a target for a limited time, overriding the persistent look target.
+	/// The NPC aims at the target's eyes. Call again to extend - when it expires we
+	/// fall back to the persistent target, if any.
+	/// </summary>
+	public void AddLookTarget( GameObject target, float duration )
+	{
+		_addedLookTarget = target;
+		_addedLookExpires = duration;
+	}
+
+	/// <summary>
+	/// Where a GameObject's eyes are - the "eyes" attachment if it has a model with
+	/// one (players, NPCs), otherwise roughly head height above its position.
+	/// The local player in first person is really "at" their camera, so on their
+	/// own screen we look straight down the lens.
+	/// </summary>
+	public static Vector3 GetEyePosition( GameObject go )
+	{
+		if ( !go.IsValid() )
+			return default;
+
+		var controller = go.GetComponentInChildren<PlayerController>();
+		if ( controller.IsValid() && !controller.IsProxy && !controller.ThirdPerson && go.Scene?.Camera.IsValid() == true )
+			return go.Scene.Camera.WorldPosition;
+
+		var renderer = go.GetComponentInChildren<SkinnedModelRenderer>();
+		if ( renderer.IsValid() && renderer.GetAttachment( "eyes" ) is { } eyes )
+			return eyes.Position;
+
+		return go.WorldPosition + Vector3.Up * 60f;
+	}
+
+	/// <summary>
+	/// Where this NPC looks from.
+	/// </summary>
+	private Vector3 GetOwnEyePosition()
+	{
+		if ( _renderer.IsValid() && _renderer.GetAttachment( "eyes" ) is { } eyes )
+			return eyes.Position;
+
+		return Npc.WorldPosition + Vector3.Up * 60f;
 	}
 
 	/// <summary>
@@ -161,11 +318,100 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	{
 		LookTargetObject = null;
 		LookTarget = null;
+		LookObject = null;
 		IsLooking = false;
 
-		_renderer?.SetLookDirection( "aim_eyes", Vector3.Zero, 0f );
-		_renderer?.SetLookDirection( "aim_head", Vector3.Zero, 0f );
-		_renderer?.SetLookDirection( "aim_body", Vector3.Zero, 0f );
+		ClearAim();
+	}
+
+	// Release the aim back to the animation - ease the weight off toward body
+	// forward rather than dropping it, so the head settles instead of popping.
+	// Called every frame while there's no target, which is what drives the ease.
+	private void ClearAim()
+	{
+		if ( _aimWeight <= 0.01f )
+		{
+			ResetAim();
+			return;
+		}
+
+		if ( Npc.IsValid() )
+			ApplyAim( Npc.WorldRotation.Forward, 0f );
+	}
+
+	// Hard-drop the aim with no easing. Uses body forward rather than a zero
+	// vector - zero isn't a direction, and the graph does strange things with it.
+	private void ResetAim()
+	{
+		_aimWeight = 0f;
+		_aimSide = 0;
+
+		if ( !_renderer.IsValid() || !Npc.IsValid() )
+			return;
+
+		var forward = Npc.WorldRotation.Forward;
+		_aimDirection = forward;
+
+		_renderer.SetLookDirection( "aim_eyes", forward, 0f );
+		_renderer.SetLookDirection( "aim_head", forward, 0f );
+		_renderer.SetLookDirection( "aim_body", forward, 0f );
+	}
+
+	/// <summary>
+	/// Ease the applied aim toward a desired direction and weight, clamped to what
+	/// a neck can actually do. Every look path feeds through here, so the head
+	/// sweeps onto targets instead of snapping, and never flip-flops on a target
+	/// directly behind us.
+	/// </summary>
+	private void ApplyAim( Vector3 desiredDirection, float desiredWeight )
+	{
+		if ( !_renderer.IsValid() || !Npc.IsValid() )
+			return;
+
+		desiredDirection = ClampAimYaw( desiredDirection );
+
+		// Starting to look from rest - sweep out from where the head naturally sits
+		if ( _aimWeight <= 0.01f && desiredWeight > 0f )
+			_aimDirection = Npc.WorldRotation.Forward;
+
+		var t = 1f - MathF.Exp( -AimSmoothSpeed * Time.Delta );
+		_aimDirection = Vector3.Slerp( _aimDirection, desiredDirection, t, clamp: false ).Normal;
+		_aimWeight = _aimWeight.LerpTo( desiredWeight, t );
+
+		_renderer.SetLookDirection( "aim_eyes", _aimDirection, AimStrengthEyes * _aimWeight );
+		_renderer.SetLookDirection( "aim_head", _aimDirection, AimStrengthHead * _aimWeight );
+		_renderer.SetLookDirection( "aim_body", _aimDirection, AimStrengthBody * _aimWeight );
+	}
+
+	// Keep the aim within reach of the neck. A target beyond MaxAimYaw pins the
+	// head at the limit on that side while the body turns to catch up; directly
+	// behind, the side is ambiguous, so we stick with the one we already chose.
+	private Vector3 ClampAimYaw( Vector3 direction )
+	{
+		var forward = Npc.WorldRotation.Forward.WithZ( 0 ).Normal;
+		var flat = direction.WithZ( 0 );
+
+		if ( flat.Length < 0.001f )
+			return direction;
+
+		var flatNormal = flat.Normal;
+		var yaw = MathF.Atan2( forward.Cross( flatNormal ).z, forward.Dot( flatNormal ) ).RadianToDegree();
+
+		if ( MathF.Abs( yaw ) > 150f )
+		{
+			if ( _aimSide == 0 )
+				_aimSide = yaw >= 0f ? 1 : -1;
+
+			yaw = _aimSide * MaxAimYaw;
+		}
+		else
+		{
+			_aimSide = yaw >= 0f ? 1 : -1;
+			yaw = Math.Clamp( yaw, -MaxAimYaw, MaxAimYaw );
+		}
+
+		var clampedFlat = Rotation.FromAxis( Vector3.Up, yaw ) * forward * flat.Length;
+		return (clampedFlat + Vector3.Up * direction.z).Normal;
 	}
 
 	/// <summary>
@@ -193,25 +439,40 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	{
 		if ( _renderer is null ) return;
 
-		var fullDirection = (targetPosition - Npc.WorldPosition).Normal;
+		// Aim eyes and head from our eyes, so we meet the target's gaze rather
+		// than tilting at them from our feet
+		var fullDirection = (targetPosition - GetOwnEyePosition()).Normal;
 		var flatDirection = (targetPosition - Npc.WorldPosition).WithZ( 0 ).Normal;
 
-		_renderer.SetLookDirection( "aim_eyes", fullDirection, AimStrengthEyes );
-		_renderer.SetLookDirection( "aim_head", fullDirection, AimStrengthHead );
-		_renderer.SetLookDirection( "aim_body", fullDirection, AimStrengthBody );
+		ApplyAim( fullDirection, 1f );
 
 		// While travelling, NavigationLayer faces the body along the movement direction, so the
-		// look-at just tracks with the head/eyes. Only turn the whole body to face the target
-		// when we're aiming rather than moving (combat) -- otherwise it runs sideways.
-		if ( Npc.Navigation.IsValid() && Npc.Navigation.FaceMovementDirection )
+		// look-at just tracks with the head/eyes -- turning the body too would make it run
+		// sideways. Standing still (or strafing, in combat) the body is ours to turn.
+		if ( Npc.Navigation.IsValid() && Npc.Navigation.FaceMovementDirection && Npc.Navigation.IsMoving )
 			return;
 
 		var angleToTarget = Vector3.GetAngle( Npc.WorldRotation.Forward, flatDirection );
 
+		// Hysteresis: start turning when the target is beyond what the head can
+		// reach, and keep turning until we're comfortably facing it. If we stop
+		// exactly at the threshold, the turn-in-place animation nudges the body
+		// back across it and we shuffle-step forever - a rhythmic head jitter.
 		if ( angleToTarget > MaxHeadAngle )
+			_turningToTarget = true;
+		else if ( angleToTarget < MaxHeadAngle * 0.5f )
+			_turningToTarget = false;
+
+		if ( _turningToTarget )
 		{
 			var targetRotation = Rotation.LookAt( flatDirection, Vector3.Up );
-			Npc.GameObject.WorldRotation = Rotation.Lerp( Npc.WorldRotation, targetRotation, LookSpeed * Time.Delta );
+			var remaining = Npc.WorldRotation.Distance( targetRotation );
+
+			if ( remaining > 0.1f )
+			{
+				var step = MathF.Min( 1f, BodyTurnSpeed * Time.Delta / remaining );
+				Npc.GameObject.WorldRotation = Rotation.Slerp( Npc.WorldRotation, targetRotation, step );
+			}
 		}
 	}
 
@@ -219,11 +480,9 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	{
 		if ( !_renderer.IsValid() || !Npc.IsValid() ) return;
 
-		var fullDirection = (lookWorldPos - Npc.WorldPosition).Normal;
+		var fullDirection = (lookWorldPos - GetOwnEyePosition()).Normal;
 
-		_renderer.SetLookDirection( "aim_eyes", fullDirection, AimStrengthEyes );
-		_renderer.SetLookDirection( "aim_head", fullDirection, AimStrengthHead );
-		_renderer.SetLookDirection( "aim_body", fullDirection, AimStrengthBody );
+		ApplyAim( fullDirection, 1f );
 	}
 
 	public void SetAim( Vector3 direction )
@@ -305,6 +564,7 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		Speed = 1.0f;
 		LookTarget = null;
 		LookTargetObject = null;
+		LookObject = null;
 		IsLooking = false;
 		MoveVelocity = default;
 		HoldType = "none";
@@ -322,8 +582,7 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		_renderer.Set( "b_grounded", false );
 		_renderer.Set( "speed_move", 1f );
 		_renderer.Set( "move_rotationspeed", 0f );
-		_renderer.SetLookDirection( "aim_eyes", Vector3.Zero, 0f );
-		_renderer.SetLookDirection( "aim_head", Vector3.Zero, 0f );
-		_renderer.SetLookDirection( "aim_body", Vector3.Zero, 0f );
+
+		ResetAim();
 	}
 }

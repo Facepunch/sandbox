@@ -21,7 +21,8 @@ public abstract class ScheduleBase
 	/// for free; combat and flee schedules override this to stay focused.
 	/// </summary>
 	public virtual NpcAwareness InterruptedBy =>
-		NpcAwareness.SeesHostile | NpcAwareness.SeesThreat | NpcAwareness.HeardDisturbance;
+		NpcAwareness.SeesHostile | NpcAwareness.SeesThreat | NpcAwareness.HeardDisturbance
+		| NpcAwareness.PlayerPushing;
 
 	private List<TaskBase> _tasks = new();
 	private int _currentTaskIndex = 0;
