@@ -74,12 +74,11 @@
         var mousePos = Mouse.Position * ScaleFromScreen;
         if ( Box.RectOuter.IsInside( mousePos ) ) return;
 
-        var weapon = GetWeapon();
-        if ( !Inventory.Drop( weapon ) && weapon.IsValid() )
-            Inventory.Remove( weapon );
+        // Every weapon can drop as a live pickup now - no remove fallback needed.
+        Inventory.Drop( GetWeapon() );
     }
 
-    BaseCarryable GetWeapon()
+    BaseSandboxWeapon GetWeapon()
     {
         if (!Inventory.IsValid()) return null;
 
@@ -106,7 +105,7 @@
         SetClass("empty", !hasWeapon);
         SetClass("selected", Active && hasWeapon);
         SetClass("hovered", Hovered && hasWeapon);
-        SetClass("switchable", hasWeapon && weapon.CanSwitch());
+        SetClass("switchable", hasWeapon && weapon.CanSwitchTo());
         SetClass("no-tint", hasWeapon && weapon is SpawnerWeapon);
 
         if (hasWeapon && IconPanel is not null)

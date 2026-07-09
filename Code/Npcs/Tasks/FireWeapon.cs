@@ -3,34 +3,39 @@ using Sandbox.Npcs.Layers;
 namespace Sandbox.Npcs.Tasks;
 
 /// <summary>
-/// Shoots a weapon at a target for a specific duration
+/// Fires a burst at a target. The burst length comes from the weapon's NPC usage - a random shot
+/// count between its burst min and max. Shots only fire while the target is inside the weapon's
+/// engagement band.
 /// </summary>
 public class FireWeapon : TaskBase
 {
 	/// <summary>The weapon component to fire.</summary>
-	public BaseWeapon Weapon { get; }
+	public BaseSandboxWeapon Weapon { get; }
 
 	/// <summary>The GameObject to aim at.</summary>
 	public GameObject Target { get; }
 
-	/// <summary>How long (seconds) to keep firing before the task completes.</summary>
-	public float BurstDuration { get; }
-
 	/// <summary>Body rotation speed (degrees/s scale) used while actively aiming. Higher than the default look speed.</summary>
 	public float AimTurnSpeed { get; set; } = 8f;
 
-	private TimeUntil _burstEnd;
+	private int _shotsLeft;
+	private TimeUntil _timeout;
 
-	public FireWeapon( BaseWeapon weapon, GameObject target, float burstDuration = 1.5f )
+	public FireWeapon( BaseSandboxWeapon weapon, GameObject target )
 	{
 		Weapon = weapon;
 		Target = target;
-		BurstDuration = burstDuration;
 	}
 
 	protected override void OnStart()
 	{
-		_burstEnd = BurstDuration;
+		_shotsLeft = Game.Random.Int( Weapon.Npc.BurstMin, Weapon.Npc.BurstMax );
+
+		// A burst that can't land its shots (target keeps out of range) gives up rather than stall.
+		_timeout = 4f;
+
+		// Let nearby NPCs hear the gunfire and come investigate.
+		Npc.EmitStimulus( StimulusKind.Gunshot, radius: 2048f, lifetime: 1.5f );
 	}
 
 	protected override TaskStatus OnUpdate()
@@ -41,16 +46,26 @@ public class FireWeapon : TaskBase
 		if ( !Target.IsValid() )
 			return TaskStatus.Failed;
 
+		if ( _timeout )
+			return TaskStatus.Failed;
+
 		RotateBodyTowardTarget();
 
-		// Only fire once we're actually facing the target
-		if ( Npc.Animation.IsFacingTarget() && Weapon.CanPrimaryAttack() )
+		// Only fire once we're facing the target and it's inside the weapon's engagement band.
+		// FirePrimary respects the weapon's fire rate - the burst paces itself.
+		if ( Npc.Animation.IsFacingTarget() && InRange() && Weapon.FirePrimary() )
 		{
-			Weapon.PrimaryAttack();
 			Npc.Animation.TriggerAttack();
+			_shotsLeft--;
 		}
 
-		return _burstEnd ? TaskStatus.Success : TaskStatus.Running;
+		return _shotsLeft <= 0 ? TaskStatus.Success : TaskStatus.Running;
+	}
+
+	private bool InRange()
+	{
+		var distance = Npc.WorldPosition.Distance( Target.WorldPosition );
+		return distance >= Weapon.Npc.MinRange && distance <= Weapon.Npc.MaxRange;
 	}
 
 	private void RotateBodyTowardTarget()

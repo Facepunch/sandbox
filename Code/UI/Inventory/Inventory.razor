@@ -26,7 +26,7 @@
 
     PlayerInventory inventory;
     int activeSlot = -1;
-    BaseCarryable prev;
+    BaseSandboxWeapon prev;
 
     protected override int BuildHash() => HashCode.Combine( inventory, activeSlot, Player?.WantsHideHud );
 
@@ -44,7 +44,7 @@
     protected override void OnUpdate()
     {
         inventory = Game.ActiveScene.GetAllComponents<PlayerInventory>().Where(x => x.Network.IsOwner).FirstOrDefault();
-        activeSlot = inventory?.ActiveWeapon?.InventorySlot ?? -1;
+        activeSlot = inventory?.ActiveWeapon?.Slot ?? -1;
 
         Panel.SetClass( "spawnmenu-open", IsSpawnMenuOpen() );
     }
@@ -85,7 +85,7 @@
     {
         var weapon = inventory.GetSlot( slot );
 
-        if ( weapon.IsValid() && !weapon.CanSwitch() )
+        if ( weapon.IsValid() && !weapon.CanSwitchTo() )
             return;
 
         prev = inventory.ActiveWeapon;
@@ -99,13 +99,13 @@
         if ( delta == 0 )
             return;
 
-        var weapons = inventory.Weapons.Where( x => x.CanSwitch() ).ToList();
+        var weapons = inventory.Weapons.Where( x => x.CanSwitchTo() ).ToList();
 
         if ( weapons.Count == 0 )
             return;
 
         // Find current position in the ordered weapon list
-        BaseCarryable current = inventory.ActiveWeapon ?? weapons.FirstOrDefault();
+        BaseSandboxWeapon current = inventory.ActiveWeapon ?? weapons.FirstOrDefault();
 
         int currentIndex = weapons.IndexOf( current );
         currentIndex += delta;

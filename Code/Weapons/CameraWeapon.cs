@@ -1,15 +1,19 @@
 ﻿using Sandbox.Rendering;
 
-public sealed class CameraWeapon : BaseWeapon
+public sealed class CameraWeapon : BaseSandboxWeapon
 {
+	public CameraWeapon()
+	{
+		// The camera doesn't use ammo (the engine default is on, which would show an ammo indicator).
+		UsesAmmo = false;
+	}
+
 	float fov = 50;
 	float roll = 0;
 
 	DepthOfField dof;
 	bool focusing;
 	Vector3 focusPoint;
-
-	[Property] SoundEvent CameraShoot { get; set; }
 
 	/// <summary>
 	/// The RT camera's resolution 
@@ -96,10 +100,8 @@ public sealed class CameraWeapon : BaseWeapon
 		angles *= sensitivity;
 	}
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
-		base.OnControl( player );
-
 		if ( Input.Pressed( "reload" ) )
 		{
 			fov = 50;
@@ -125,7 +127,7 @@ public sealed class CameraWeapon : BaseWeapon
 			Game.TakeScreenshot();
 			Sandbox.Services.Stats.Increment( "photos", 1 );
 
-			GameObject?.PlaySound( CameraShoot );
+			PlayAttackSound();
 		}
 
 		focusing = Input.Down( "attack1" );

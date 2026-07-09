@@ -1,24 +1,23 @@
 ﻿using Sandbox.Rendering;
 using Sandbox.Utility;
 
-public sealed class RpgWeapon : BaseWeapon
+public sealed class RpgWeapon : BaseSandboxWeapon
 {
-	[Property] public float TimeBetweenShots { get; set; } = 2f;
 	[Property] public GameObject ProjectilePrefab { get; set; }
-	[Property] public SoundEvent ShootSound { get; set; }
 	[Property] public float ProjectileSpeed { get; set; } = 1024f;
 
 	/// <summary>
 	/// When enabled, fired rockets will continuously track toward the player's crosshair.
 	/// Toggle with right-click (player) or SecondaryInput (standalone/seat).
 	/// </summary>
-	[Property, Sync, ClientEditable] public bool IsTrackedAim { get; set; } = false;
+	// Host-authoritative: toggled through the [Rpc.Host] ToggleTrackedAim (from the owner when held, or on
+	// the host directly for a seated RPG), so it must replicate FROM the host, not owner->everyone.
+	[Property, Sync( SyncFlags.FromHost ), ClientEditable] public bool IsTrackedAim { get; set; } = false;
 
 	public override bool IsTargetedAim => IsTrackedAim;
 
 	[Sync( SyncFlags.FromHost )] RpgProjectile Projectile { get; set; }
 
-	TimeSince TimeSinceShoot;
 	private bool _hasFired;
 	private bool _waitingForReload;
 
@@ -27,13 +26,11 @@ public sealed class RpgWeapon : BaseWeapon
 	/// </summary>
 	public bool IsGuiding => IsTrackedAim && Projectile.IsValid();
 
-	protected override float GetPrimaryFireRate() => TimeBetweenShots;
-
 	public override bool CanSecondaryAttack() => false;
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
-		base.OnControl( player );
+		base.OnControl();
 
 		if ( Input.Pressed( "attack2" ) )
 			ToggleTrackedAim();
@@ -46,7 +43,7 @@ public sealed class RpgWeapon : BaseWeapon
 			if ( IsGuiding )
 				_waitingForReload = true;
 			else if ( CanReload() )
-				OnReloadStart();
+				Reload();
 		}
 
 		if ( IsGuiding )
@@ -58,18 +55,18 @@ public sealed class RpgWeapon : BaseWeapon
 		{
 			_waitingForReload = false;
 			if ( CanReload() )
-				OnReloadStart();
+				Reload();
 		}
 	}
 
 	/// <summary>
 	/// Standalone / seat control — uses SecondaryInput to toggle tracking.
 	/// </summary>
-	public override void OnControl()
+	protected override void OnSeatControl()
 	{
-		base.OnControl();
+		base.OnSeatControl();
 
-		if ( HasOwner || IsProxy ) return;
+		if ( HasOwner || !Networking.IsHost ) return;
 
 		if ( SecondaryInput.Pressed() )
 			ToggleTrackedAim();
@@ -103,25 +100,21 @@ public sealed class RpgWeapon : BaseWeapon
 
 	public override void PrimaryAttack()
 	{
-		if ( HasOwner && !TakeAmmo( 1 ) )
+		if ( HasOwner && !TakePrimaryAmmo( 1 ) )
 		{
-			TryAutoReload();
+			DryFire();
 			return;
 		}
 
 		TimeSinceShoot = 0;
-		AddShootDelay( TimeBetweenShots );
+		SetNextFire( PrimaryDelay );
 
-		if ( ViewModel.IsValid() )
-			ViewModel.RunEvent<ViewModel>( x => x.OnAttack() );
-		else if ( WorldModel.IsValid() )
-			WorldModel.RunEvent<WorldModel>( x => x.OnAttack() );
-
-		if ( ShootSound.IsValid() )
-			GameObject.PlaySound( ShootSound );
+		// Fire presentation - predicted on the owner for instant feedback, relayed by the host to everyone
+		// else. See OnShootEffects.
+		ShootEffects();
 
 		var ray = AimRay;
-		var muzzlePos = MuzzleTransform.WorldTransform.Position;
+		var muzzlePos = GetMuzzleTransform().Position;
 		var spawnPos = muzzlePos + ray.Forward * 64f;
 
 		if ( HasOwner )
@@ -132,15 +125,22 @@ public sealed class RpgWeapon : BaseWeapon
 
 			if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
 			{
-				new Sandbox.CameraNoise.Punch( new Vector3( Random.Shared.Float( 45, 35 ), Random.Shared.Float( -10, -5 ), 0 ), 1.5f, 2, 0.5f );
-				new Sandbox.CameraNoise.Shake( 1f, 0.6f );
+				// The launch throws the view up hard and rattles it.
+				Scene.Camera?.AddPunch( new Angles( Random.Shared.Float( 45, 35 ), Random.Shared.Float( -10, -5 ), 0 ), 2f, 1.5f );
+				Scene.Camera?.AddShake( 3f, 40f, 0.6f );
 
 				_hasFired = true;
 			}
 		}
 
+		// The attack runs once on the owner - CreateProjectile is a host RPC, so the rocket spawns
+		// exactly once, on the host.
 		CreateProjectile( spawnPos, ray.Forward, ProjectileSpeed );
 	}
+
+	/// <summary>
+	/// Muzzle flash + launch sound. Plays for the shooter (predicted) and, via the host relay, everyone else.
+	/// </summary>
 
 	private Vector3 CheckThrowPosition( Player player, Vector3 eyePosition, Vector3 grenadePosition )
 	{

@@ -16,14 +16,14 @@
     "OwnerTransfer": 1,
     "Components": [
       {
-        "__type": "WorldModel",
+        "__type": "Sandbox.BaseWeaponModel",
         "__guid": "ab2b3c4d-5e6f-7890-bcde-f01234567812",
         "__enabled": true,
         "Flags": 0,
         "EjectBrass": null,
-        "EjectTransform": null,
+        "ShellEjectGameObject": null,
         "MuzzleEffect": null,
-        "MuzzleTransform": null,
+        "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,

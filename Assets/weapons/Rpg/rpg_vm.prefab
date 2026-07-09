@@ -23,7 +23,7 @@
         "AnimationSpeed": 1,
         "DeploySound": "weapons/common/foley/foley_deploy_weapon_02.sound",
         "EjectBrass": null,
-        "EjectTransform": {
+        "ShellEjectGameObject": {
           "_type": "gameobject",
           "go": "33f8c517-fd02-4032-ac3c-367ab3411139"
         },
@@ -35,7 +35,7 @@
         "IsIncremental": false,
         "IsThrowable": false,
         "MuzzleEffect": null,
-        "MuzzleTransform": {
+        "MuzzleGameObject": {
           "_type": "gameobject",
           "go": "d26f7c72-b26a-4f4e-a41d-d06b54cd5050"
         },

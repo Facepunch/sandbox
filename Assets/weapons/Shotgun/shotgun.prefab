@@ -20,21 +20,22 @@
         "__guid": "a1b2c3d4-2222-4aaa-b222-222222222222",
         "__enabled": true,
         "Flags": 0,
-        "AmmoType": "ammotype/shotgun.ammo",
-        "Bullet": {
+        "PrimaryAmmoType": "ammo/shotgun.ammo",
+        "Ballistics": {
           "Damage": 8,
-          "BulletRadius": 1,
-          "AimConeBase": "3,3",
-          "AimConeSpread": "2,2",
-          "AimConeRecovery": 0.8,
-          "RecoilPitch": "-1.5,-0.800000012",
-          "RecoilYaw": "-0.5,0.5",
-          "CameraRecoilStrength": 2,
-          "CameraRecoilFrequency": 1,
-          "Range": 2048
+          "Pellets": 8,
+          "Range": 2048,
+          "Radius": 1,
+          "Force": 3000,
+          "SpreadBase": "3,3",
+          "SpreadGrowth": "2,2",
+          "SpreadRecovery": 0.8
         },
+        "CameraRecoilFrequency": 1,
+        "CameraRecoilStrength": 2,
+        "RecoilPitch": "-1.5,-0.800000012",
+        "RecoilYaw": "-0.5,0.5",
         "CanCancelReload": true,
-        "ClipContents": 6,
         "ClipMaxSize": 6,
         "DeployTime": 0.5,
         "DisplayIcon": {
@@ -83,11 +84,6 @@
         "HoldType": "Shotgun",
         "IncrementalReloading": true,
         "IronSightsFireScale": 0.2,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/shotgun/shotgun.prefab"
-        },
-        "MaxReserveAmmo": 40,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -95,12 +91,10 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
-        "PelletCount": 8,
-        "PrimaryFireRate": 0.35,
+        "HoldBone": "hold_r",
+        "PrimaryDelay": 0.35,
         "ReloadStartTime": 0,
         "ReloadTime": 0.5,
-        "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null
@@ -110,8 +104,8 @@
           "IsEnabled": false,
           "Action": null
         },
-        "ShootSound": "weapons/shotgun/sounds/shotgun_shoot.sound",
-        "StartingAmmo": 6,
+        "AttackSound": "weapons/shotgun/sounds/shotgun_shoot.sound",
+        "StartingAmmo": 18,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 10,
@@ -123,18 +117,6 @@
           "_type": "gameobject",
           "prefab": "weapons/shotgun/shotgun_wm.prefab"
         }
-      },
-      {
-        "__type": "DroppedWeapon",
-        "__guid": "a1b2c3d4-5556-4aaa-b556-555555555556",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
       },
       {
         "__type": "Sandbox.ModelCollider",
@@ -215,21 +197,17 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "WorldModel",
+            "__type": "Sandbox.BaseWeaponModel",
             "__guid": "eb836dba-2c75-51cb-b3d3-0be488700cbd",
             "__enabled": true,
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "EjectTransform": {
+            "ShellEjectGameObject": {
               "_type": "gameobject",
               "go": "2fc7abfe-6fb9-95af-f717-4fc8ccc140e1"
             },
-            "MuzzleEffect": {
-              "_type": "gameobject",
-              "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
-            },
-            "MuzzleTransform": {
+            "MuzzleGameObject": {
               "_type": "gameobject",
               "go": "1eb69aed-5fa8-84fe-e606-3eb7bbb03f00"
             },
@@ -244,10 +222,6 @@
               "component_id": "fc947ecb-3d86-62dc-c4e4-1cf599881dce",
               "go": "da725ca9-1b64-40ba-a2c2-fad3776e75be",
               "component_type": "SkinnedModelRenderer"
-            },
-            "TracerEffect": {
-              "_type": "gameobject",
-              "prefab": "weapons/tracer_9mm.prefab"
             }
           },
           {

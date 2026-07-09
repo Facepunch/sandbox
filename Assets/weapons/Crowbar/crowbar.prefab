@@ -64,11 +64,7 @@
           "go": "ef4d5a6b-7f8e-9012-def0-123456789013"
         },
         "HitSound": "weapons/crowbar/sounds/crowbar.hit.sound",
-        "HoldType": "Swing",
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/crowbar/crowbar.prefab"
-        },
+        "HoldType": "melee_weapons",
         "MissSwingDelay": 0.4,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
@@ -77,12 +73,12 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
+        "HoldBone": "hold_r",
         "Range": 128,
         "SwingDelay": 0.4,
         "SwingForce": 1000,
         "SwingRadius": 10,
-        "SwingSound": "weapons/crowbar/sounds/crowbar.swing.sound",
+        "AttackSound": "weapons/crowbar/sounds/crowbar.swing.sound",
         "Value": 1,
         "ViewModelPrefab": {
           "_type": "gameobject",
@@ -92,18 +88,6 @@
           "_type": "gameobject",
           "prefab": "weapons/crowbar/crowbar_wm.prefab"
         }
-      },
-      {
-        "__type": "DroppedWeapon",
-        "__guid": "f05e6b7c-8a9f-0123-ef01-234567890124",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
       },
       {
         "__type": "Sandbox.ModelCollider",
@@ -184,15 +168,15 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "WorldModel",
+            "__type": "Sandbox.BaseWeaponModel",
             "__guid": "f05e6b7c-8a9f-0124-ef01-234567890125",
             "__enabled": true,
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "EjectTransform": null,
+            "ShellEjectGameObject": null,
             "MuzzleEffect": null,
-            "MuzzleTransform": null,
+            "MuzzleGameObject": null,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,

@@ -3,6 +3,12 @@ using Sandbox.Rendering;
 
 public partial class Physgun
 {
+	public Physgun()
+	{
+		// Tools don't use ammo (the engine default is on, which would show an ammo indicator).
+		UsesAmmo = false;
+	}
+
 	[Property, RequireComponent] public HighlightOutline BeamHighlight { get; set; }
 
 	[Property, Group( "Sound" )] SoundEvent ReleasedSound { get; set; }
@@ -104,7 +110,7 @@ public partial class Physgun
 
 		if ( _state.Active && !_state.Pulling )
 		{
-			var muzzle = HasOwner ? MuzzleTransform.WorldTransform : CurrentAimTransform;
+			var muzzle = HasOwner ? GetMuzzleTransform() : CurrentAimTransform;
 			UpdateBeam( muzzle, _state.EndPoint, _stateHovered.EndNormal, _state.IsValid() );
 		}
 		else
@@ -113,9 +119,9 @@ public partial class Physgun
 		}
 	}
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
-		base.OnControl( player );
+		var player = Owner;
 
 		_lastAimTransform = AimTransform;
 
@@ -280,7 +286,7 @@ public partial class Physgun
 		{
 			ViewModel?.RunEvent<ViewModel>( x => x.OnAttack() );
 
-			var muzzle = WeaponModel?.MuzzleTransform?.WorldTransform ?? player.EyeTransform;
+			var muzzle = WeaponModel?.MuzzleGameObject?.WorldTransform ?? player.EyeTransform;
 
 			_state = _stateHovered with { Active = true, Pulling = false };
 
@@ -310,9 +316,11 @@ public partial class Physgun
 	/// <summary>
 	/// Seat / standalone input — ShootInput grabs, SecondaryInput pulls.
 	/// </summary>
-	public void OnControl()
+	protected override void OnSeatControl()
 	{
 		if ( HasOwner ) return;
+		// Seat control runs fully on the host - no prediction on the driving client.
+		if ( !Networking.IsHost ) return;
 
 		var aim = AimTransform;
 		_lastAimTransform = aim;

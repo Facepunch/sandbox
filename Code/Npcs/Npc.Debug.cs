@@ -13,6 +13,11 @@ public partial class Npc : Component
 
 		var str = $"{ActiveSchedule?.GetDebugString()}";
 
+		str += $"\nFaction: {Faction}";
+
+		if ( Awareness != NpcAwareness.None )
+			str += $"\nAwareness: {Awareness}";
+
 		// Collect debug output from all layers
 		foreach ( var layer in GetComponents<BaseNpcLayer>() )
 		{

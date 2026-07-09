@@ -20,22 +20,23 @@
         "__guid": "a1b2c3d4-1112-4aaa-b112-111111111112",
         "__enabled": true,
         "Flags": 0,
-        "AmmoType": "ammotype/sniper.ammo",
+        "PrimaryAmmoType": "ammo/sniper.ammo",
         "BoltPullSound": "weapons/sniper/sounds/sniper_bolt_pull.sound",
-        "Bullet": {
+        "Ballistics": {
           "Damage": 100,
-          "BulletRadius": 1,
-          "AimConeBase": "0.100000001,0.100000001",
-          "AimConeSpread": "1,1",
-          "AimConeRecovery": 0.5,
-          "RecoilPitch": "-1.5,-0.800000012",
-          "RecoilYaw": "-0.300000012,0.300000012",
-          "CameraRecoilStrength": 10,
-          "CameraRecoilFrequency": 0.8,
-          "Range": 8192
+          "Pellets": 1,
+          "Range": 8192,
+          "Radius": 1,
+          "Force": 3000,
+          "SpreadBase": "0.100000001,0.100000001",
+          "SpreadGrowth": "1,1",
+          "SpreadRecovery": 0.5
         },
+        "CameraRecoilFrequency": 0.8,
+        "CameraRecoilStrength": 10,
+        "RecoilPitch": "-1.5,-0.800000012",
+        "RecoilYaw": "-0.300000012,0.300000012",
         "CanCancelReload": false,
-        "ClipContents": 5,
         "ClipMaxSize": 5,
         "DeployTime": 0.8,
         "DisplayIcon": {
@@ -82,11 +83,6 @@
         },
         "HoldType": "Rifle",
         "IncrementalReloading": false,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/sniper/sniper.prefab"
-        },
-        "MaxReserveAmmo": 80,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -94,10 +90,9 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
-        "PrimaryFireRate": 1.2,
+        "HoldBone": "hold_r",
+        "PrimaryDelay": 1.2,
         "ReloadTime": 2.5,
-        "ReserveAmmo": 0,
         "ScopedFov": 10,
         "ScopeSensitivity": 0.15,
         "SecondaryInput": {
@@ -109,8 +104,8 @@
           "IsEnabled": false,
           "Action": null
         },
-        "ShootSound": "weapons/sniper/sounds/m700_shot.sound",
-        "StartingAmmo": 0,
+        "AttackSound": "weapons/sniper/sounds/m700_shot.sound",
+        "StartingAmmo": 10,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 5,
@@ -122,18 +117,6 @@
           "_type": "gameobject",
           "prefab": "weapons/sniper/sniper_wm.prefab"
         }
-      },
-      {
-        "__type": "DroppedWeapon",
-        "__guid": "a1b2c3d4-4442-4aaa-b442-444444444442",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
       },
       {
         "__type": "Sandbox.ModelCollider",
@@ -214,21 +197,17 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "WorldModel",
+            "__type": "Sandbox.BaseWeaponModel",
             "__guid": "3be86c26-e84e-5129-cd33-851808809b1f",
             "__enabled": true,
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "EjectTransform": {
+            "ShellEjectGameObject": {
               "_type": "gameobject",
               "go": "7fc2a06a-228c-956d-0177-c95c4cc4df53"
             },
-            "MuzzleEffect": {
-              "_type": "gameobject",
-              "prefab": "prefabs/weapon_effects/rifle_muzzleflash.prefab"
-            },
-            "MuzzleTransform": {
+            "MuzzleGameObject": {
               "_type": "gameobject",
               "go": "6eb19f59-117b-845c-f066-b84b3bb3ce42"
             },
@@ -243,10 +222,6 @@
               "component_id": "4cf97d37-f95f-623a-de44-96291991ac20",
               "go": "2ad75b15-d73d-4018-bc22-7407f67f909e",
               "component_type": "SkinnedModelRenderer"
-            },
-            "TracerEffect": {
-              "_type": "gameobject",
-              "prefab": "weapons/tracer_rifle.prefab"
             }
           },
           {

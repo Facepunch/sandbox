@@ -47,7 +47,7 @@
         "__enabled": true,
         "Flags": 0,
         "AmmoAmount": 60,
-        "AmmoType": "ammotype/rifle.ammo",
+        "AmmoType": "ammo/rifle.ammo",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,

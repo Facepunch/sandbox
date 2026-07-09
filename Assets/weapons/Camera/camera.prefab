@@ -20,10 +20,9 @@
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
-        "AmmoType": null,
-        "CameraShoot": "weapons/camera/sounds/camera.shoot.sound",
+        "PrimaryAmmoType": null,
+        "AttackSound": "weapons/camera/sounds/camera.shoot.sound",
         "CanCancelReload": true,
-        "ClipContents": 20,
         "ClipMaxSize": 30,
         "DeployTime": 0.5,
         "DisplayIcon": {
@@ -71,11 +70,6 @@
         "FirstShellReloadTime": 0,
         "HoldType": "HoldItem",
         "IncrementalReloading": false,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/camera/item_camera.prefab"
-        },
-        "MaxReserveAmmo": 120,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -83,10 +77,10 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_R",
+        "HoldBone": "hold_R",
+        "PreferredSlot": 8,
         "ReloadStartTime": 0,
         "ReloadTime": 2.5,
-        "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null
@@ -104,18 +98,6 @@
           "_type": "gameobject",
           "prefab": "weapons/camera/camera_wm.prefab"
         }
-      },
-      {
-        "__type": "DroppedWeapon",
-        "__guid": "c2bcd5f4-8eac-4aa6-87b2-4ad13086e901",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
       },
       {
         "__type": "Sandbox.ModelCollider",

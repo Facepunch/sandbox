@@ -16,18 +16,6 @@
     "OwnerTransfer": 1,
     "Components": [
       {
-        "__type": "DroppedWeapon",
-        "__guid": "a1de1dfd-9845-4552-9477-8c0a2271becf",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
-      },
-      {
         "__type": "Sandbox.ModelCollider",
         "__guid": "1cff94b3-d53f-4e31-968e-7783caeb8d36",
         "__enabled": true,
@@ -92,9 +80,8 @@
         "__guid": "ab522638-2fd4-40a8-b165-36922f5ec630",
         "__enabled": true,
         "Flags": 0,
-        "AmmoType": "ammotype/rocket.ammo",
+        "PrimaryAmmoType": "ammo/rocket.ammo",
         "CanCancelReload": false,
-        "ClipContents": 1,
         "ClipMaxSize": 1,
         "DeployTime": 0.5,
         "DisplayIcon": {
@@ -122,8 +109,6 @@
         "HoldType": "RPG",
         "IncrementalReloading": false,
         "IsTrackedAim": false,
-        "ItemPrefab": null,
-        "MaxReserveAmmo": 6,
         "MuzzleGameObject": {
           "_type": "gameobject",
           "go": "6efc4b36-63ca-4285-89ff-d811da6362fa"
@@ -134,7 +119,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
+        "HoldBone": "hold_r",
         "ProjectilePrefab": {
           "_type": "gameobject",
           "prefab": "weapons/rpg/rpg_projectile.prefab"
@@ -142,7 +127,6 @@
         "ProjectileSpeed": 1024,
         "ReloadStartTime": 0,
         "ReloadTime": 4,
-        "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null
@@ -151,9 +135,9 @@
           "IsEnabled": false,
           "Action": null
         },
-        "ShootSound": "weapons/rpg/sounds/rpg_shoot.sound",
-        "StartingAmmo": 1,
-        "TimeBetweenShots": 2,
+        "AttackSound": "weapons/rpg/sounds/rpg_shoot.sound",
+        "StartingAmmo": 2,
+        "PrimaryDelay": 2,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 2,
@@ -185,15 +169,15 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "WorldModel",
+            "__type": "Sandbox.BaseWeaponModel",
             "__guid": "3dd2497e-bb05-416d-81fe-0c469d0ff591",
             "__enabled": true,
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "EjectTransform": null,
+            "ShellEjectGameObject": null,
             "MuzzleEffect": null,
-            "MuzzleTransform": null,
+            "MuzzleGameObject": null,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,

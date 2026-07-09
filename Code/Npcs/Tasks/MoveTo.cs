@@ -14,9 +14,16 @@ public class MoveTo : TaskBase
 	public GameObject TargetObject { get; set; }
 	public float StopDistance { get; set; } = 10f;
 	public float ReevaluateInterval { get; set; } = 0.5f;
-	public float LateralThreshold { get; set; } = 60f;
+
+	/// <summary>
+	/// Keep facing this object while moving instead of turning into the movement
+	/// direction. The NPC backpedals or strafes -- short moves away from someone
+	/// happen without turning our back on them.
+	/// </summary>
+	public GameObject FaceTarget { get; set; }
 
 	private TimeSince _lastReevaluate;
+	private bool _restoreFaceMovement;
 
 	public MoveTo( Vector3 targetPosition, float stopDistance = 10f )
 	{
@@ -32,6 +39,12 @@ public class MoveTo : TaskBase
 
 	protected override void OnStart()
 	{
+		if ( FaceTarget.IsValid() && Npc.Navigation.FaceMovementDirection )
+		{
+			Npc.Navigation.FaceMovementDirection = false;
+			_restoreFaceMovement = true;
+		}
+
 		var pos = GetTargetPosition();
 		if ( !pos.HasValue ) return;
 
@@ -54,23 +67,27 @@ public class MoveTo : TaskBase
 			_lastReevaluate = 0;
 		}
 
-		var agent = Npc.Navigation.Agent;
-		if ( agent.IsValid() && agent.Velocity.WithZ( 0 ).Length > 1f )
+		// Turn toward whoever we're keeping our front to while we move
+		if ( FaceTarget.IsValid() )
 		{
-			var moveDir = agent.Velocity.WithZ( 0 ).Normal;
-			var fwd = Npc.WorldRotation.Forward.WithZ( 0 ).Normal;
-			var angle = Vector3.GetAngle( fwd, moveDir );
-
-			if ( angle > LateralThreshold && !Npc.Animation.LookTarget.HasValue )
+			var dir = (FaceTarget.WorldPosition - Npc.WorldPosition).WithZ( 0 );
+			if ( dir.Length > 1f )
 			{
-				// No look target — face the movement direction
-				var targetRot = Rotation.LookAt( moveDir, Vector3.Up );
-				Npc.GameObject.WorldRotation = Rotation.Lerp(
-					Npc.WorldRotation, targetRot, Npc.Animation.LookSpeed * Time.Delta );
+				var targetRotation = Rotation.LookAt( dir.Normal, Vector3.Up );
+				Npc.WorldRotation = Rotation.Slerp( Npc.WorldRotation, targetRotation, Npc.Navigation.TurnSpeed * Time.Delta );
 			}
 		}
 
 		return Npc.Navigation.GetStatus();
+	}
+
+	protected override void OnEnd()
+	{
+		if ( _restoreFaceMovement )
+		{
+			Npc.Navigation.FaceMovementDirection = true;
+			_restoreFaceMovement = false;
+		}
 	}
 
 	private Vector3? GetTargetPosition()

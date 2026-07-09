@@ -181,7 +181,24 @@
         "__guid": "7a0edd28-8894-48d5-8ba4-ba5aadaef5be",
         "__enabled": true,
         "Flags": 0,
+        "GiveOnStart": false,
         "MaxSlots": 9,
+        "PickupMode": "Touch",
+        "StartingItems": [
+          {
+            "_type": "gameobject",
+            "prefab": "weapons/physgun/physgun.prefab"
+          },
+          {
+            "_type": "gameobject",
+            "prefab": "weapons/toolgun/toolgun.prefab"
+          },
+          {
+            "_type": "gameobject",
+            "prefab": "weapons/camera/camera.prefab"
+          }
+        ],
+        "UsesLoadout": true,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -298,18 +315,6 @@
       {
         "__type": "Sandbox.Movement.SitMoveMode",
         "__guid": "b50161a7-01f2-4249-9102-efbc916e97d1",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
-      },
-      {
-        "__type": "AmmoInventory",
-        "__guid": "8fb19f14-699d-44d5-9cfe-77fd1aee679e",
         "__enabled": true,
         "Flags": 0,
         "OnComponentDestroy": null,

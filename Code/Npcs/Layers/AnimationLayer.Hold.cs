@@ -108,7 +108,7 @@ public sealed partial class AnimationLayer
 			prop.SetParent( parent, true );
 		}
 
-		_renderer?.Set( "holdtype", (int)CitizenAnimationHelper.HoldTypes.HoldItem );
+		_renderer?.Set( "holdtype", "holditem" );
 		_renderer?.Set( "holdtype_pose", _holdPose );
 		_renderer?.Set( "holdtype_pose_hand", 0.005f );
 		_renderer?.Set( "holdtype_handedness",
@@ -124,7 +124,7 @@ public sealed partial class AnimationLayer
 	{
 		if ( _renderer is not null )
 		{
-			_renderer.Set( "holdtype", 0 );
+			_renderer.Set( "holdtype", "none" );
 			_renderer.Set( "holdtype_pose", 0f );
 			_renderer.Set( "holdtype_handedness", 0 );
 			_renderer.ClearIk( "hand_right" );

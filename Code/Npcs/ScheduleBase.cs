@@ -8,6 +8,22 @@ public abstract class ScheduleBase
 	public Npc Npc { get; private set; }
 	protected GameObject GameObject => Npc.GameObject;
 
+	/// <summary>
+	/// Selection priority. A running schedule is only preempted by one with a strictly
+	/// higher priority. Use <see cref="SchedulePriority"/> for the common tiers.
+	/// </summary>
+	public virtual int Priority => SchedulePriority.Idle;
+
+	/// <summary>
+	/// Stimuli that should make this schedule reconsider mid-run. When one of these newly
+	/// appears, the NPC re-selects and a higher-priority schedule can take over. Defaults
+	/// to the "drop everything and re-think" stimuli so ambient schedules yield to threats
+	/// for free; combat and flee schedules override this to stay focused.
+	/// </summary>
+	public virtual NpcAwareness InterruptedBy =>
+		NpcAwareness.SeesHostile | NpcAwareness.SeesThreat | NpcAwareness.HeardDisturbance
+		| NpcAwareness.PlayerPushing;
+
 	private List<TaskBase> _tasks = new();
 	private int _currentTaskIndex = 0;
 
@@ -63,21 +79,18 @@ public abstract class ScheduleBase
 		var currentTask = _tasks[_currentTaskIndex];
 		var status = currentTask.InternalUpdate();
 
-		if ( status is not TaskStatus.Running )
+		if ( status is TaskStatus.Success )
 		{
 			currentTask.InternalEnd();
-
-			if ( status is TaskStatus.Success )
-			{
-				_currentTaskIndex++;
-				StartCurrentTask();
-				return TaskStatus.Running;
-			}
-
-			return status;
+			_currentTaskIndex++;
+			StartCurrentTask();
+			return TaskStatus.Running;
 		}
 
-		return TaskStatus.Running;
+		// Running keeps going; Failed/Interrupted end the schedule. Either way don't end the
+		// task here -- InternalEnd() (via EndCurrentSchedule) closes it out once, so OnEnd/Reset
+		// don't run twice.
+		return status;
 	}
 
 	/// <summary>
@@ -132,10 +145,10 @@ public abstract class ScheduleBase
 	public string GetDebugString()
 	{
 		if ( _currentTaskIndex >= _tasks.Count )
-			return $"{GetType().Name}/(none)";
+			return $"{GetType().Name} [P{Priority}]/(none)";
 
 		var task = _tasks[_currentTaskIndex];
 
-		return $"{GetType().Name}/{task.GetType().Name}";
+		return $"{GetType().Name} [P{Priority}]/{task.GetType().Name}";
 	}
 }

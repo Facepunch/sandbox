@@ -47,7 +47,7 @@
         "__enabled": true,
         "Flags": 0,
         "AmmoAmount": 30,
-        "AmmoType": "ammotype/9mm.ammo",
+        "AmmoType": "ammo/9mm.ammo",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,

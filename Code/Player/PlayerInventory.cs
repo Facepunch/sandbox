@@ -1,91 +1,40 @@
 using Sandbox.Citizen;
 
-public sealed class PlayerInventory : Component, Local.IPlayerEvents
+public sealed class PlayerInventory : BaseInventoryComponent, Local.IPlayerEvents
 {
-	[Property] public int MaxSlots { get; private set; } = 6;
+	// MaxSlots, ActiveItem, the active-item enable/disable + equip/holster and the add/remove/drop/
+	// move-slot flows come from the engine BaseInventoryComponent. This adds the sandbox's events, ammo
+	// merging, notices and undo handling through the engine's hooks.
 
 	[RequireComponent] public Player Player { get; set; }
 
 	/// <summary>
-	/// All weapons currently in the inventory, ordered by slot.
+	/// All weapons currently in the inventory, ordered by slot. Narrowing shim over engine Items.
 	/// </summary>
-	public IEnumerable<BaseCarryable> Weapons => 
-		GetComponentsInChildren<BaseCarryable>( true ).OrderBy( x => x.InventorySlot );
+	public IEnumerable<BaseSandboxWeapon> Weapons => Items.OfType<BaseSandboxWeapon>();
 
-	[Sync( SyncFlags.FromHost ), Change] public BaseCarryable ActiveWeapon { get; private set; }
-
-	internal void OnActiveWeaponChanged( BaseCarryable oldWeapon, BaseCarryable newWeapon )
-	{
-		if ( oldWeapon.IsValid() )
-			oldWeapon.GameObject.Enabled = false;
-
-		if ( newWeapon.IsValid() )
-		{
-			newWeapon.GameObject.Enabled = true;
-			newWeapon.SetDropped( false );
-		}
-	}
+	/// <summary>
+	/// The currently active weapon. Narrowing shim over the engine's <see cref="BaseInventoryComponent.ActiveItem"/>.
+	/// </summary>
+	public BaseSandboxWeapon ActiveWeapon => ActiveItem as BaseSandboxWeapon;
 
 	/// <summary>
 	/// Returns the weapon in the given slot, or null if the slot is empty.
 	/// </summary>
-	public BaseCarryable GetSlot( int slot )
-	{
-		if ( slot < 0 || slot >= MaxSlots ) return null;
-		foreach ( var w in Weapons )
-		{
-			if ( w.InventorySlot == slot ) return w;
-		}
-		return null;
-	}
+	public new BaseSandboxWeapon GetSlot( int slot ) => base.GetSlot( slot ) as BaseSandboxWeapon;
 
 	/// <summary>
-	/// Returns whether the given item could be inserted into the inventory.
-	/// Checks for existing weapons that can receive ammo, and empty slots.
+	/// A weapon of the same class we already carry, if any. Duplicate handling itself is the
+	/// engine's (a duplicate donates its magazine to the reserve, see BaseCombatWeapon.OnAdding) - this
+	/// just finds the weapon the donation lands on, for the pickup notices.
 	/// </summary>
-	public bool CanTake( BaseCarryable item )
-	{
-		if ( !item.IsValid() )
-			return false;
+	private BaseSandboxWeapon FindExistingWeapon( BaseSandboxWeapon like )
+		=> like.IsValid() ? Weapons.FirstOrDefault( x => x.GetType() == like.GetType() ) : null;
 
-		var existing = Weapons.FirstOrDefault( x => x.GetType() == item.GetType() );
-		if ( existing.IsValid() )
-		{
-			// We already have this weapon — only allow if it can receive ammo
-			if ( existing is BaseWeapon existingWeapon && existingWeapon.UsesAmmo )
-				return existingWeapon.ReserveAmmo < existingWeapon.MaxReserveAmmo;
+	// FindEmptySlot is inherited from the engine BaseInventoryComponent.
 
-			return false;
-		}
-
-		return FindEmptySlot() >= 0;
-	}
-
-	/// <summary>
-	/// Returns the first empty slot index, or -1 if the inventory is full.
-	/// </summary>
-	public int FindEmptySlot()
-	{
-		var weapons = Weapons;
-		for ( int i = 0; i < MaxSlots; i++ )
-		{
-			bool occupied = false;
-			foreach ( var w in weapons )
-			{
-				if ( w.InventorySlot == i ) { occupied = true; break; }
-			}
-			if ( !occupied ) return i;
-		}
-
-		return -1;
-	}
-
-	internal void GiveDefaultWeapons()
-	{
-		Pickup( "weapons/physgun/physgun.prefab", false );
-		Pickup( "weapons/toolgun/toolgun.prefab", false );
-		Pickup( "weapons/camera/camera.prefab", 8, false );
-	}
+	// The default weapons come from the engine's Loadout feature, configured on the player prefab -
+	// PlayerLoadout calls GiveLoadout() when there's no saved hotbar to restore.
 
 	/// <summary>
 	/// Activates the named tool mode, giving and equipping the toolgun first if the player doesn't have one.
@@ -117,60 +66,11 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		SetToolMode( toolModeName );
 	}
 
-	/// <summary>
-	/// If we already own a weapon matching this prefab, try to give it ammo.
-	/// Returns true if handled (caller should stop). False means no existing weapon found.
-	/// </summary>
-	private bool TryGiveAmmoToExisting( GameObject prefab, bool notice )
-	{
-		var baseCarry = prefab.Components.Get<BaseCarryable>( true );
-		if ( !baseCarry.IsValid() )
-			return false;
-
-		var existing = Weapons.FirstOrDefault( x => x.GameObject.Name == prefab.Name );
-		if ( !existing.IsValid() )
-			return false;
-
-		if ( existing is BaseWeapon existingWeapon && baseCarry is BaseWeapon pickupWeapon && existingWeapon.UsesAmmo )
-		{
-			if ( existingWeapon.ReserveAmmo >= existingWeapon.MaxReserveAmmo )
-				return true;
-
-			var ammoToGive = pickupWeapon.UsesClips ? pickupWeapon.ClipContents : pickupWeapon.StartingAmmo;
-			existingWeapon.AddReserveAmmo( ammoToGive );
-
-			if ( notice )
-				OnClientPickup( existing, true );
-		}
-
-		return true;
-	}
-
-	public bool Pickup( string prefabName, bool notice = true )
-	{
-		if ( !Networking.IsHost )
-			return false;
-
-		var prefab = GameObject.GetPrefab( prefabName );
-		if ( prefab is null )
-		{
-			Log.Warning( $"Prefab not found: {prefabName}" );
-			return false;
-		}
-
-		if ( TryGiveAmmoToExisting( prefab, notice ) )
-			return true;
-
-		var slot = FindEmptySlot();
-		if ( slot < 0 )
-			return false;
-
-		return Pickup( prefabName, slot, notice );
-	}
+	public bool Pickup( string prefabName, bool notice = true ) => Pickup( prefabName, -1, notice );
 
 	public bool HasWeapon( GameObject prefab )
 	{
-		var baseCarry = prefab.GetComponent<BaseCarryable>( true );
+		var baseCarry = prefab.GetComponent<BaseSandboxWeapon>( true );
 		if ( !baseCarry.IsValid() )
 			return false;
 
@@ -179,27 +79,17 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 			.IsValid();
 	}
 
-	public bool HasWeapon<T>() where T : BaseCarryable
+	public bool HasWeapon<T>() where T : BaseSandboxWeapon
 	{
 		return GetWeapon<T>().IsValid();
 	}
 
-	public T GetWeapon<T>() where T : BaseCarryable
+	public T GetWeapon<T>() where T : BaseSandboxWeapon
 	{
 		return Weapons.OfType<T>().FirstOrDefault();
 	}
 
-	public bool Pickup( GameObject prefab, bool notice = true )
-	{
-		if ( TryGiveAmmoToExisting( prefab, notice ) )
-			return true;
-
-		var slot = FindEmptySlot();
-		if ( slot < 0 )
-			return false;
-
-		return Pickup( prefab, slot, notice );
-	}
+	public bool Pickup( GameObject prefab, bool notice = true ) => Pickup( prefab, -1, notice );
 
 	public bool Pickup( string prefabName, int targetSlot, bool notice = true )
 	{
@@ -213,10 +103,7 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 			return false;
 		}
 
-		if ( !Pickup( prefab, targetSlot, notice ) )
-			return false;
-
-		return true;
+		return Pickup( prefab, targetSlot, notice );
 	}
 
 	public bool Pickup( GameObject prefab, int targetSlot, bool notice = true )
@@ -224,225 +111,133 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		if ( !Networking.IsHost )
 			return false;
 
-		if ( targetSlot < 0 || targetSlot >= MaxSlots )
-			return false;
+		// The engine consumes a duplicate as an ammo donation (see BaseCombatWeapon.OnAdding) - watch the
+		// pool so the ammo notice can fire.
+		var existing = FindExistingWeapon( prefab.GetComponent<BaseSandboxWeapon>( true ) );
+		var ammoBefore = existing.IsValid() ? existing.Ammo1 : 0;
 
-		var baseCarry = prefab.Components.Get<BaseCarryable>( true );
-		if ( !baseCarry.IsValid() )
-			return false;
-
-		if ( TryGiveAmmoToExisting( prefab, notice ) )
-			return true;
-
-		// Reject if the target slot is already occupied
-		var occupant = GetSlot( targetSlot );
-		if ( occupant.IsValid() )
-			return false;
-
-		var clone = prefab.Clone( new CloneConfig { Parent = GameObject, StartEnabled = false } );
-		clone.NetworkSpawn( false, Network.Owner );
-
-		//
-		// Dropped variant components
-		//
+		// Engine pickup: clone, network spawn, parent, slot, ownership. The cancellable pickup event
+		// fires from OnAdding; the engine destroys the clone if it's refused.
+		if ( base.Pickup( prefab, targetSlot ) is BaseSandboxWeapon weapon )
 		{
-			var cloneCarryable = clone.GetComponent<BaseCarryable>( true );
-			cloneCarryable?.SetDropped( false );
-		}
-
-		var weapon = clone.GetComponent<BaseCarryable>( true );
-		Assert.NotNull( weapon );
-
-		weapon.InventorySlot = targetSlot;
-		weapon.OnAdded( Player );
-
-		var pickupEvent = new PlayerPickupEvent { Player = Player, Weapon = weapon, Slot = targetSlot };
-		Local.IPlayerEvents.PostToGameObject( Player.GameObject, e => e.OnPickup( pickupEvent ) );
-		Global.IPlayerEvents.Post( e => e.OnPlayerPickup( pickupEvent ) );
-
-		if ( pickupEvent.Cancelled )
-		{
-			weapon.DestroyGameObject();
-			return false;
-		}
-
-		if ( notice )
-			OnClientPickup( weapon );
-
-		return true;
-	}
-
-	/// <summary>
-	/// If we already own a weapon of the same type as this live item, try to transfer its ammo.
-	/// Returns true if handled (caller should stop). False means no existing weapon found.
-	/// </summary>
-	private bool TryGiveAmmoFromItem( BaseCarryable item, bool notice )
-	{
-		var existing = Weapons.FirstOrDefault( x => x.GetType() == item.GetType() );
-		if ( !existing.IsValid() )
-			return false;
-
-		if ( existing is BaseWeapon existingWeapon && item is BaseWeapon pickupWeapon && existingWeapon.UsesAmmo )
-		{
-			if ( existingWeapon.ReserveAmmo >= existingWeapon.MaxReserveAmmo )
-			{
-				item.DestroyGameObject();
-				return true;
-			}
-
-			var ammoToGive = pickupWeapon.UsesClips ? pickupWeapon.ClipContents : pickupWeapon.StartingAmmo;
-			existingWeapon.AddReserveAmmo( ammoToGive );
-
 			if ( notice )
+				OnClientPickup( weapon );
+
+			return true;
+		}
+
+		// Refused as a duplicate - donated or already topped up, either way it counts as taken.
+		if ( existing.IsValid() )
+		{
+			if ( notice && existing.Ammo1 > ammoBefore )
 				OnClientPickup( existing, true );
 
-			item.DestroyGameObject();
 			return true;
 		}
 
-		return true;
+		return false;
 	}
 
-	public bool Take( BaseCarryable item, bool includeNotices )
+	public bool Take( BaseSandboxWeapon item, bool includeNotices )
 	{
-		if ( !CanTake( item ) )
+		if ( !item.IsValid() )
 			return false;
 
-		if ( TryGiveAmmoFromItem( item, includeNotices ) )
+		var existing = FindExistingWeapon( item );
+		var ammoBefore = existing.IsValid() ? existing.Ammo1 : 0;
+
+		// Engine add: parent, slot, ownership, disable. The cancellable pickup event fires from
+		// OnAdding, and a duplicate donates its magazine to the reserve and is consumed there.
+		if ( Add( item ) )
+		{
+			// Remove from undo stacks so the weapon can't be undone out of our hands
+			UndoSystem.Current.Remove( item.GameObject );
+
+			if ( includeNotices )
+				OnClientPickup( item );
+
 			return true;
-
-		var slot = FindEmptySlot();
-		item.GameObject.SetParent( GameObject, false );
-		item.LocalTransform = global::Transform.Zero;
-		item.InventorySlot = slot;
-		item.GameObject.Enabled = false;
-
-		// Remove from undo stacks so the weapon can't be undone out of our hands
-		UndoSystem.Current.Remove( item.GameObject );
-
-		if ( Network.Owner is not null )
-			item.Network.AssignOwnership( Network.Owner );
-		else
-			item.Network.DropOwnership();
-
-		item.OnAdded( Player );
-
-		var pickupEvent = new PlayerPickupEvent { Player = Player, Weapon = item, Slot = slot };
-		Local.IPlayerEvents.PostToGameObject( GameObject, e => e.OnPickup( pickupEvent ) );
-		Global.IPlayerEvents.Post( e => e.OnPlayerPickup( pickupEvent ) );
-
-		if ( pickupEvent.Cancelled )
-		{
-			item.DestroyGameObject();
-			return false;
 		}
 
-		OnClientPickup( item );
-		return true;
+		// Consumed by the donation - that's a take too. A refused item stays in the world.
+		if ( item.GameObject.IsDestroyed )
+		{
+			if ( includeNotices && existing.IsValid() && existing.Ammo1 > ammoBefore )
+				OnClientPickup( existing, true );
+
+			return true;
+		}
+
+		return false;
 	}
 
 	/// <summary>
-	/// Spawns a dropped item into the world from a prefab, assigns ownership, and applies velocity.
+	/// Engine Touch pickup lands here (see <see cref="BaseInventoryComponent.PickupMode"/>). Routes into
+	/// <see cref="Take"/>, so duplicates donate their ammo and the pickup notices fire. Contraption-
+	/// wired weapons refuse themselves (see <see cref="BaseSandboxWeapon"/>'s OnCanPickup).
 	/// </summary>
-	private void SpawnDroppedItem( GameObject prefab, Vector3 position, Vector3 velocity )
-	{
-		var pickup = prefab.Clone( new CloneConfig
-		{
-			Transform = new Transform( position ),
-			StartEnabled = true
-		} );
-
-		Ownable.Set( pickup, Player.Network.Owner );
-		pickup.Tags.Add( "removable" );
-		pickup.NetworkSpawn();
-
-		if ( pickup.GetComponent<Rigidbody>() is { } rb )
-		{
-			rb.Velocity = Player.Controller.Velocity + velocity;
-			rb.AngularVelocity = Vector3.Random * 8.0f;
-		}
-	}
-
-	/// <summary>
-	/// Drops the given weapon from the inventory.
-	/// </summary>
-	public bool Drop( BaseCarryable weapon )
+	public override void PickupWorldItem( Sandbox.BaseInventoryItem item )
 	{
 		if ( !Networking.IsHost )
 		{
-			HostDrop( weapon );
-			return true;
+			base.PickupWorldItem( item );
+			return;
 		}
 
-		if ( !weapon.IsValid() ) return false;
-		if ( weapon.Owner != Player ) return false;
+		if ( item is not BaseSandboxWeapon weapon )
+			return;
+
+		if ( !CanPickupWorldItem( weapon ) )
+			return;
+
+		Take( weapon, true );
+	}
+
+	/// <summary>
+	/// Fires the cancellable pickup events before the engine adds an item.
+	/// </summary>
+	protected override bool OnAdding( Sandbox.BaseInventoryItem item, int slot )
+	{
+		if ( item is not BaseSandboxWeapon weapon )
+			return true;
+
+		var pickupEvent = new PlayerPickupEvent { Player = Player, Weapon = weapon, Slot = slot };
+		Local.IPlayerEvents.PostToGameObject( Player.GameObject, e => e.OnPickup( pickupEvent ) );
+		Global.IPlayerEvents.Post( e => e.OnPlayerPickup( pickupEvent ) );
+
+		return !pickupEvent.Cancelled;
+	}
+
+	/// <summary>
+	/// Drops the given weapon from the inventory. The engine holsters it, the weapon throws itself
+	/// into the world (see <see cref="BaseSandboxWeapon.OnDrop"/>) and we switch to the best remaining
+	/// weapon. The cancellable drop event fires from <see cref="OnDropping"/>.
+	/// </summary>
+	public void Drop( BaseSandboxWeapon weapon )
+	{
+		if ( weapon.IsValid() && weapon.Owner != Player )
+			return;
+
+		base.Drop( weapon );
+	}
+
+	protected override bool OnDropping( Sandbox.BaseInventoryItem item )
+	{
+		if ( item is not BaseSandboxWeapon weapon )
+			return true;
 
 		var dropEvent = new PlayerDropEvent { Player = Player, Weapon = weapon };
 		Local.IPlayerEvents.PostToGameObject( Player.GameObject, e => e.OnDrop( dropEvent ) );
 		Global.IPlayerEvents.Post( e => e.OnPlayerDrop( dropEvent ) );
 
-		if ( dropEvent.Cancelled )
-			return false;
-
-		var dropPosition = Player.EyeTransform.Position + Player.EyeTransform.Forward * 48f;
-		var dropVelocity = Player.EyeTransform.Forward * 200f + Vector3.Up * 100f;
-
-		// If this is the active weapon, holster first
-		if ( ActiveWeapon == weapon )
-		{
-			SwitchWeapon( null, true );
-		}
-
-		// Weapons with a DroppedWeapon component: spawn a fresh prefab clone as server.
-		// This avoids all ownership/state issues from the inventory copy.
-		var droppedWeapon = weapon.GetComponent<DroppedWeapon>( true );
-		if ( droppedWeapon.IsValid() )
-		{
-			var prefabSource = weapon.GameObject.PrefabInstanceSource;
-			if ( !string.IsNullOrEmpty( prefabSource ) )
-			{
-				var prefab = GameObject.GetPrefab( prefabSource );
-				if ( prefab.IsValid() )
-				{
-					SpawnDroppedItem( prefab, dropPosition, dropVelocity );
-				}
-			}
-
-			weapon.DestroyGameObject();
-		}
-		else
-		{
-			if ( !weapon.ItemPrefab.IsValid() )
-			{
-				weapon.DestroyGameObject();
-				_ = FinishDropAsync();
-				return true;
-			}
-
-			SpawnDroppedItem( weapon.ItemPrefab, dropPosition, dropVelocity );
-			weapon.DestroyGameObject();
-		}
-
-		_ = FinishDropAsync();
-
-		return true;
-	}
-
-	private async Task FinishDropAsync()
-	{
-		await Task.Yield();
-		var best = GetBestWeapon();
-		if ( best.IsValid() )
-		{
-			SwitchWeapon( best );
-		}
+		return !dropEvent.Cancelled;
 	}
 
 	private static SoundEvent AmmoPickupSound = ResourceLibrary.Get<SoundEvent>( "sounds/weapons/ammo_pickup.sound" );
 	private static SoundEvent GunPickupSound = ResourceLibrary.Get<SoundEvent>( "sounds/weapons/gun_pickup.sound" );
 
 	[Rpc.Owner]
-	private void OnClientPickup( BaseCarryable weapon, bool justAmmo = false )
+	private void OnClientPickup( BaseSandboxWeapon weapon, bool justAmmo = false )
 	{
 		if ( !weapon.IsValid() ) return;
 
@@ -454,11 +249,11 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		if ( Player.IsLocalPlayer )
 		{
 			GameObject.PlaySound( justAmmo ? AmmoPickupSound : GunPickupSound );
-			Global.IPlayerEvents.Post( e => e.OnPlayerPickup( new PlayerPickupEvent { Player = Player, Weapon = weapon, Slot = weapon.InventorySlot } ) );
+			Global.IPlayerEvents.Post( e => e.OnPlayerPickup( new PlayerPickupEvent { Player = Player, Weapon = weapon, Slot = weapon.Slot } ) );
 		}
 	}
 
-	private bool ShouldAutoswitchTo( BaseCarryable item )
+	private bool ShouldAutoswitchTo( BaseSandboxWeapon item )
 	{
 		Assert.True( item.IsValid(), "item invalid" );
 
@@ -471,129 +266,43 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		if ( ActiveWeapon.IsInUse() )
 			return false;
 
-		if ( item is BaseWeapon weapon && weapon.UsesAmmo )
-		{
-			if ( !weapon.HasAmmo() && !weapon.CanReload() )
-			{
-				return false;
-			}
-		}
+		// Nothing to fire or load - the engine flags spent guns.
+		if ( item.ShouldAvoid )
+			return false;
 
 		return item.Value > ActiveWeapon.Value;
 	}
 
-	/// <summary>
-	/// Moves the item in <paramref name="fromSlot"/> to <paramref name="toSlot"/>.
-	/// If both slots are occupied the items are swapped; if <paramref name="toSlot"/> is
-	/// empty the item is simply relocated.
-	/// </summary>
-	public void MoveSlot( int fromSlot, int toSlot )
+	// MoveSlot comes from the engine BaseInventoryComponent - the cancellable move event fires from this
+	// hook.
+	protected override bool OnMovingSlot( int fromSlot, int toSlot )
 	{
-		if ( !Networking.IsHost )
-		{
-			HostMoveSlot( fromSlot, toSlot );
-			return;
-		}
-
-		if ( fromSlot == toSlot ) return;
-		if ( fromSlot < 0 || fromSlot >= MaxSlots ) return;
-		if ( toSlot < 0 || toSlot >= MaxSlots ) return;
-
-		var fromWeapon = GetSlot( fromSlot );
-		if ( !fromWeapon.IsValid() ) return;
-
 		var moveEvent = new PlayerMoveSlotEvent { Player = Player, FromSlot = fromSlot, ToSlot = toSlot };
 		Local.IPlayerEvents.PostToGameObject( Player.GameObject, e => e.OnMoveSlot( moveEvent ) );
 		Global.IPlayerEvents.Post( e => e.OnPlayerMoveSlot( moveEvent ) );
 
-		if ( moveEvent.Cancelled )
-			return;
-
-		var toWeapon = GetSlot( toSlot );
-
-		fromWeapon.InventorySlot = toSlot;
-		if ( toWeapon.IsValid() )
-			toWeapon.InventorySlot = fromSlot;
+		return !moveEvent.Cancelled;
 	}
 
-	[Rpc.Host]
-	private void HostMoveSlot( int fromSlot, int toSlot )
+	/// <summary>
+	/// The weapon the inventory would auto-switch to. The engine's <see cref="BaseInventoryComponent.GetBestItem"/>
+	/// handles the Value ordering and the avoid-empty-guns fallback.
+	/// </summary>
+	public BaseSandboxWeapon GetBestWeapon() => GetBestItem() as BaseSandboxWeapon;
+
+	/// <summary>
+	/// Switches to the given weapon. Thin wrapper over the engine inventory's <see cref="BaseInventoryComponent.Switch"/>
+	/// (which handles host-routing and the holster veto). Switch events had no consumers and were dropped.
+	/// </summary>
+	public void SwitchWeapon( BaseSandboxWeapon weapon, bool allowHolster = false )
 	{
-		MoveSlot( fromSlot, toSlot );
-	}
-
-	public BaseCarryable GetBestWeapon()
-	{
-		return Weapons.OrderByDescending( x => x.Value ).FirstOrDefault();
-	}
-
-	public void SwitchWeapon( BaseCarryable weapon, bool allowHolster = false )
-	{
-		if ( !Networking.IsHost )
-		{
-			HostSwitchWeapon( weapon, allowHolster );
-			return;
-		}
-
-		if ( weapon == ActiveWeapon )
-		{
-			if ( allowHolster )
-			{
-				ActiveWeapon = null;
-			}
-			return;
-		}
-
-		var switchEvent = new PlayerSwitchWeaponEvent { Player = Player, From = ActiveWeapon, To = weapon };
-		Local.IPlayerEvents.PostToGameObject( Player.GameObject, e => e.OnSwitchWeapon( switchEvent ) );
-		Global.IPlayerEvents.Post( e => e.OnPlayerSwitchWeapon( switchEvent ) );
-
-		if ( switchEvent.Cancelled )
-			return;
-
-		ActiveWeapon = weapon;
-	}
-
-	[Rpc.Host]
-	private void HostSwitchWeapon( BaseCarryable weapon, bool allowHolster = false )
-	{
-		SwitchWeapon( weapon, allowHolster );
-	}
-
-	protected override void OnUpdate()
-	{
-		var renderer = Player?.Controller?.Renderer;
-
-		if ( ActiveWeapon.IsValid() )
-		{
-			ActiveWeapon.OnFrameUpdate( Player );
-
-			if ( renderer.IsValid() )
-			{
-				renderer.Set( "holdtype", (int)ActiveWeapon.HoldType );
-			}
-		}
-		else
-		{
-			if ( renderer.IsValid() )
-			{
-				renderer.Set( "holdtype", (int)CitizenAnimationHelper.HoldTypes.None );
-			}
-		}
+		Switch( weapon, allowHolster );
 	}
 
 	public void OnControl()
 	{
-		if ( Input.Pressed( "drop" ) )
-		{
-			if ( ActiveWeapon.IsValid() )
-				DropActiveWeapon();
-
-			return;
-		}
-
-		if ( ActiveWeapon.IsValid() && !ActiveWeapon.IsProxy )
-			ActiveWeapon.OnPlayerUpdate( Player );
+		if ( Input.Pressed( "drop" ) && ActiveWeapon.IsValid() )
+			DropActiveWeapon();
 	}
 
 	/// <summary>
@@ -606,52 +315,29 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		Drop( ActiveWeapon );
 	}
 
-	[Rpc.Host]
-	private void HostDrop( BaseCarryable weapon )
-	{
-		Drop( weapon );
-	}
-
 	/// <summary>
-	/// Removes a weapon from the inventory and destroys it without dropping it into the world.
+	/// Removes a weapon from the inventory and destroys it without dropping it into the world. The
+	/// engine holsters it, destroys it and switches to the best remaining weapon. The cancellable
+	/// remove event fires from <see cref="OnRemoving"/>.
 	/// </summary>
-	public void Remove( BaseCarryable weapon )
+	public void Remove( BaseSandboxWeapon weapon )
 	{
-		if ( !Networking.IsHost )
-		{
-			HostRemove( weapon );
+		if ( weapon.IsValid() && weapon.Owner != Player )
 			return;
-		}
-		_ = RemoveAsync( weapon );
+
+		base.Remove( weapon );
 	}
 
-	private async Task RemoveAsync( BaseCarryable weapon )
+	protected override bool OnRemoving( Sandbox.BaseInventoryItem item )
 	{
-		if ( !weapon.IsValid() ) return;
-		if ( weapon.Owner != Player ) return;
+		if ( item is not BaseSandboxWeapon weapon )
+			return true;
 
 		var removeEvent = new PlayerRemoveWeaponEvent { Player = Player, Weapon = weapon };
 		Local.IPlayerEvents.PostToGameObject( Player.GameObject, e => e.OnRemoveWeapon( removeEvent ) );
 		Global.IPlayerEvents.Post( e => e.OnPlayerRemoveWeapon( removeEvent ) );
 
-		if ( removeEvent.Cancelled )
-			return;
-
-		if ( ActiveWeapon == weapon )
-			SwitchWeapon( null, true );
-
-		weapon.DestroyGameObject();
-		await Task.Yield();
-
-		var best = GetBestWeapon();
-		if ( best.IsValid() )
-			SwitchWeapon( best );
-	}
-
-	[Rpc.Host]
-	private void HostRemove( BaseCarryable weapon )
-	{
-		Remove( weapon );
+		return !removeEvent.Cancelled;
 	}
 
 	void Local.IPlayerEvents.OnDied( PlayerDiedParams args )

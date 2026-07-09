@@ -22,11 +22,7 @@
         "Flags": 0,
         "AnimationSpeed": 1,
         "DeploySound": "weapons/common/foley/foley_deploy_weapon_02.sound",
-        "EjectBrass": {
-          "_type": "gameobject",
-          "prefab": "weapons/common/effects/eject_9mm.prefab"
-        },
-        "EjectTransform": {
+        "ShellEjectGameObject": {
           "_type": "gameobject",
           "go": "f356ae8a-95fe-4a7b-9afe-dc337736eb24"
         },
@@ -34,11 +30,7 @@
         "InertiaScale": "2,2",
         "IsIncremental": false,
         "IsThrowable": false,
-        "MuzzleEffect": {
-          "_type": "gameobject",
-          "prefab": "prefabs/weapon_effects/rifle_muzzleflash.prefab"
-        },
-        "MuzzleTransform": {
+        "MuzzleGameObject": {
           "_type": "gameobject",
           "go": "71ca31da-3c1d-41d2-8061-f4b1d307d635"
         },
@@ -65,10 +57,6 @@
           "component_type": "SkinnedModelRenderer"
         },
         "ThrowableType": "HEGrenade",
-        "TracerEffect": {
-          "_type": "gameobject",
-          "prefab": "weapons/tracer_9mm.prefab"
-        },
         "UseFastAnimations": false
       }
     ],

@@ -3,7 +3,8 @@ namespace Sandbox.Npcs.Layers;
 /// <summary>
 /// Handles awareness and environmental scanning.
 /// Scans for all objects matching <see cref="ScanTags"/> and caches them by tag.
-/// <see cref="TargetTags"/> filters which cached objects are treated as hostile targets.
+/// Whether a scanned object is a hostile target is decided by the NPC's disposition
+/// toward it (see <see cref="Npc.GetDisposition"/>), not by tags.
 /// </summary>
 public class SensesLayer : BaseNpcLayer
 {
@@ -14,32 +15,45 @@ public class SensesLayer : BaseNpcLayer
 
 	[Property]
 	public float HearingRange { get; set; } = 300f;
+
+	/// <summary>
+	/// Total horizontal field of view in degrees. Targets outside this cone aren't seen
+	/// (they can still be heard, or noticed if they're right next to the NPC).
+	/// </summary>
+	[Property]
+	public float FieldOfView { get; set; } = 200f;
+
 	public float PersonalSpace { get; set; } = 80f;
 
 	/// <summary>
-	/// All tags the NPC should scan for and cache. Results are bucketed by tag.
+	/// All tags the NPC should scan for and cache. This is just the broad-phase filter --
+	/// disposition decides who counts as hostile. Defaults to other agents.
 	/// </summary>
 	[Property]
-	public TagSet ScanTags { get; set; } = ["player"];
+	public TagSet ScanTags { get; set; } = ["player", "npc"];
 
-	/// <summary>
-	/// Tags that are treated as hostile targets. <see cref="VisibleTargets"/> and
-	/// <see cref="AudibleTargets"/> only contain objects matching these tags.
-	/// </summary>
-	[Property]
-	public TagSet TargetTags { get; set; } = ["player"];
-
-	// Hostile-only lists (backward compat)
+	// Hostile-only lists (entities this NPC is disposed Hostile toward)
 	public GameObject Nearest { get; private set; }
 	public float DistanceToNearest { get; private set; } = float.MaxValue;
 	public List<GameObject> VisibleTargets { get; private set; } = new();
 	public List<GameObject> AudibleTargets { get; private set; } = new();
+
+	/// <summary>Visible entities this NPC is disposed Fearful toward (things to flee from).</summary>
+	public List<GameObject> VisibleThreats { get; private set; } = new();
+
+	// All visible scanned entities, regardless of disposition.
+	private readonly List<GameObject> _visibleAll = new();
 
 	// Tag-bucketed caches
 	private readonly Dictionary<string, List<GameObject>> _visibleByTag = new();
 	private readonly Dictionary<string, List<GameObject>> _audibleByTag = new();
 
 	private TimeSince _lastScan;
+
+	/// <summary>
+	/// The most relevant disturbance (gunshot, death, etc.) this NPC currently senses, if any.
+	/// </summary>
+	public Stimulus? Disturbance { get; private set; }
 
 	protected override void OnUpdate()
 	{
@@ -48,7 +62,35 @@ public class SensesLayer : BaseNpcLayer
 		if ( _lastScan > ScanInterval )
 		{
 			ScanEnvironment();
+			PerceiveStimuli();
 			_lastScan = 0;
+		}
+	}
+
+	/// <summary>
+	/// Find the nearest world stimulus this NPC can sense (ignoring its own noise).
+	/// </summary>
+	private void PerceiveStimuli()
+	{
+		Disturbance = null;
+
+		var system = Npc.Scene?.GetSystem<NpcStimulusSystem>();
+		if ( system is null )
+			return;
+
+		float nearestDist = float.MaxValue;
+
+		foreach ( var stimulus in system.Near( Npc.WorldPosition ) )
+		{
+			if ( stimulus.Source == Npc.GameObject )
+				continue;
+
+			var dist = Npc.WorldPosition.Distance( stimulus.Position );
+			if ( dist < nearestDist )
+			{
+				nearestDist = dist;
+				Disturbance = stimulus;
+			}
 		}
 	}
 
@@ -59,13 +101,16 @@ public class SensesLayer : BaseNpcLayer
 	}
 
 	/// <summary>
-	/// Scan for all objects matching <see cref="ScanTags"/>, bucket by tag,
-	/// and populate the hostile-filtered <see cref="VisibleTargets"/>/<see cref="AudibleTargets"/>.
+	/// Scan for all objects matching <see cref="ScanTags"/>, bucket by tag, and populate
+	/// the hostile-filtered <see cref="VisibleTargets"/>/<see cref="AudibleTargets"/> using
+	/// the NPC's disposition toward each.
 	/// </summary>
 	private void ScanEnvironment()
 	{
 		VisibleTargets.Clear();
 		AudibleTargets.Clear();
+		VisibleThreats.Clear();
+		_visibleAll.Clear();
 		ClearTagCache( _visibleByTag );
 		ClearTagCache( _audibleByTag );
 		Nearest = null;
@@ -74,35 +119,41 @@ public class SensesLayer : BaseNpcLayer
 		if ( NpcConVars.NoTarget )
 			return;
 
-		var nearbyObjects = Npc.Scene.FindInPhysics( new Sphere( Npc.WorldPosition, HearingRange ) );
+		var senseRange = MathF.Max( SightRange, HearingRange );
+		var nearbyObjects = Npc.Scene.FindInPhysics( new Sphere( Npc.WorldPosition, senseRange ) );
 
 		foreach ( var obj in nearbyObjects )
 		{
+			if ( obj == Npc.GameObject ) continue;
 			if ( !obj.Tags.HasAny( ScanTags ) ) continue;
 
 			var distance = Npc.WorldPosition.Distance( obj.WorldPosition );
-			bool isTarget = obj.Tags.HasAny( TargetTags );
+			var disposition = Npc.GetDisposition( obj );
+			bool isHostile = disposition == Disposition.Hostile;
+			bool isFeared = disposition == Disposition.Fearful;
 
 			// Track nearest hostile target
-			if ( isTarget && distance < DistanceToNearest )
+			if ( isHostile && distance < DistanceToNearest )
 			{
 				DistanceToNearest = distance;
 				Nearest = obj;
 			}
 
 			bool isAudible = distance <= HearingRange;
-			bool isVisible = distance <= SightRange && HasLineOfSight( obj );
+			bool isVisible = distance <= SightRange && IsInViewCone( obj, distance ) && HasLineOfSight( obj );
 
 			if ( isAudible )
 			{
 				AddToTagCache( _audibleByTag, obj );
-				if ( isTarget ) AudibleTargets.Add( obj );
+				if ( isHostile ) AudibleTargets.Add( obj );
 			}
 
 			if ( isVisible )
 			{
+				_visibleAll.Add( obj );
 				AddToTagCache( _visibleByTag, obj );
-				if ( isTarget ) VisibleTargets.Add( obj );
+				if ( isHostile ) VisibleTargets.Add( obj );
+				if ( isFeared ) VisibleThreats.Add( obj );
 			}
 		}
 	}
@@ -124,11 +175,58 @@ public class SensesLayer : BaseNpcLayer
 	}
 
 	/// <summary>
-	/// Get the nearest visible hostile target (matching <see cref="TargetTags"/>).
+	/// True if a target is within the NPC's forward field of view. Anything inside personal
+	/// space is always in view -- you notice someone right next to you, even behind.
+	/// </summary>
+	private bool IsInViewCone( GameObject target, float distance )
+	{
+		if ( distance <= PersonalSpace )
+			return true;
+
+		var toTarget = (target.WorldPosition - Npc.WorldPosition).WithZ( 0 );
+		if ( toTarget.LengthSquared < 0.01f )
+			return true;
+
+		var forward = Npc.WorldRotation.Forward.WithZ( 0 ).Normal;
+		var dot = forward.Dot( toTarget.Normal );
+		var threshold = MathF.Cos( FieldOfView * 0.5f * MathF.PI / 180f );
+		return dot >= threshold;
+	}
+
+	/// <summary>
+	/// Get the nearest visible hostile target (anything this NPC is disposed Hostile toward).
 	/// </summary>
 	public GameObject GetNearestVisible()
 	{
 		return GetNearestIn( VisibleTargets );
+	}
+
+	/// <summary>
+	/// Get the visible hostile this NPC should engage first: highest relationship priority,
+	/// nearest breaking ties.
+	/// </summary>
+	public GameObject GetBestTarget()
+	{
+		GameObject best = null;
+		int bestPriority = int.MinValue;
+		float bestDist = float.MaxValue;
+
+		foreach ( var obj in VisibleTargets )
+		{
+			if ( !obj.IsValid() ) continue;
+
+			var priority = Npc.GetRelationship( obj ).Priority;
+			var dist = Npc.WorldPosition.Distance( obj.WorldPosition );
+
+			if ( priority > bestPriority || (priority == bestPriority && dist < bestDist) )
+			{
+				best = obj;
+				bestPriority = priority;
+				bestDist = dist;
+			}
+		}
+
+		return best;
 	}
 
 	/// <summary>
@@ -137,6 +235,72 @@ public class SensesLayer : BaseNpcLayer
 	public GameObject GetNearestVisible( string tag )
 	{
 		return GetNearestIn( GetVisible( tag ) );
+	}
+
+	/// <summary>
+	/// Get the nearest visible entity this NPC regards with the given disposition
+	/// (e.g. the nearest thing it's afraid of).
+	/// </summary>
+	public GameObject GetNearestVisible( Disposition disposition )
+	{
+		GameObject nearest = null;
+		float nearestDist = float.MaxValue;
+
+		foreach ( var obj in _visibleAll )
+		{
+			if ( !obj.IsValid() ) continue;
+			if ( Npc.GetDisposition( obj ) != disposition ) continue;
+
+			var dist = Npc.WorldPosition.Distance( obj.WorldPosition );
+			if ( dist < nearestDist )
+			{
+				nearestDist = dist;
+				nearest = obj;
+			}
+		}
+
+		return nearest;
+	}
+
+	/// <summary>
+	/// A player inside our personal space who's moving toward us -- they're trying to
+	/// get past and we're in their way. Returns null when nobody is barging in.
+	/// </summary>
+	public GameObject GetPushingPlayer()
+	{
+		foreach ( var obj in GetVisible( "player" ) )
+		{
+			if ( !obj.IsValid() ) continue;
+
+			var toUs = (Npc.WorldPosition - obj.WorldPosition).WithZ( 0 );
+			if ( toUs.Length > PersonalSpace ) continue;
+
+			// They have to actually be walking at us -- someone stood close doesn't count
+			var velocity = GetVelocity( obj ).WithZ( 0 );
+			if ( velocity.Length < 100f ) continue;
+			if ( velocity.Normal.Dot( toUs.Normal ) < 0.5f ) continue;
+
+			return obj;
+		}
+
+		return null;
+	}
+
+	/// <summary>
+	/// Resolve a scanned object's velocity from whatever movement source it has.
+	/// </summary>
+	public static Vector3 GetVelocity( GameObject obj )
+	{
+		if ( !obj.IsValid() )
+			return Vector3.Zero;
+
+		if ( obj.Root.GetComponent<PlayerController>() is { } controller )
+			return controller.Velocity;
+
+		if ( obj.GetComponent<Rigidbody>() is { } rb )
+			return rb.Velocity;
+
+		return Vector3.Zero;
 	}
 
 	/// <summary>
@@ -159,10 +323,13 @@ public class SensesLayer : BaseNpcLayer
 	{
 		VisibleTargets.Clear();
 		AudibleTargets.Clear();
+		VisibleThreats.Clear();
+		_visibleAll.Clear();
 		ClearTagCache( _visibleByTag );
 		ClearTagCache( _audibleByTag );
 		Nearest = null;
 		DistanceToNearest = float.MaxValue;
+		Disturbance = null;
 	}
 
 	private GameObject GetNearestIn( List<GameObject> list )
@@ -172,6 +339,8 @@ public class SensesLayer : BaseNpcLayer
 
 		foreach ( var obj in list )
 		{
+			if ( !obj.IsValid() ) continue; // target may have been destroyed since the last scan
+
 			var dist = Npc.WorldPosition.Distance( obj.WorldPosition );
 			if ( dist < nearestDist )
 			{

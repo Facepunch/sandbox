@@ -47,7 +47,7 @@
         "__enabled": true,
         "Flags": 0,
         "AmmoAmount": 18,
-        "AmmoType": "ammotype/shotgun.ammo",
+        "AmmoType": "ammo/shotgun.ammo",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,

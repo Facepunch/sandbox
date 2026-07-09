@@ -20,21 +20,22 @@
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
-        "AmmoType": "ammotype/rifle.ammo",
-        "Bullet": {
-          "Damage": 12,
-          "BulletRadius": 1,
-          "AimConeBase": "0.5,0.25",
-          "AimConeSpread": "3,3",
-          "AimConeRecovery": 0.2,
-          "RecoilPitch": "-0.300000012,-0.100000001",
-          "RecoilYaw": "-0.100000001,0.100000001",
-          "CameraRecoilStrength": 1,
-          "CameraRecoilFrequency": 1,
-          "Range": 4096
+        "PrimaryAmmoType": "ammo/rifle.ammo",
+        "Ballistics": {
+          "Damage": 16,
+          "Pellets": 1,
+          "Range": 4096,
+          "Radius": 1,
+          "Force": 3000,
+          "SpreadBase": "0.2,0.2",
+          "SpreadGrowth": "1.5,1.5",
+          "SpreadRecovery": 0.2
         },
+        "CameraRecoilFrequency": 1,
+        "CameraRecoilStrength": 1,
+        "RecoilPitch": "-0.300000012,-0.100000001",
+        "RecoilYaw": "-0.100000001,0.100000001",
         "CanCancelReload": false,
-        "ClipContents": 30,
         "ClipMaxSize": 30,
         "DeployTime": 0.8,
         "DisplayIcon": {
@@ -80,14 +81,14 @@
           "go": "e7dc7a22-b5a7-41c9-9aa9-ed48c0a053e8"
         },
         "FirstShellReloadTime": 0,
+        "GrenadePrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/grenade/thrown_grenade.prefab"
+        },
+        "GrenadeSpeed": 1500,
+        "StartingGrenades": 6,
         "HoldType": "Rifle",
         "IncrementalReloading": false,
-        "IronSightsFireScale": 0.2,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/m4a1/m4a1.prefab"
-        },
-        "MaxReserveAmmo": 300,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -95,10 +96,9 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
+        "HoldBone": "hold_r",
         "ReloadStartTime": 0,
         "ReloadTime": 2,
-        "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null
@@ -108,9 +108,13 @@
           "IsEnabled": false,
           "Action": null
         },
-        "ShootSound": "weapons/m4a1/m4a1_shoot.sound",
-        "StartingAmmo": 30,
-        "TimeBetweenShots": 0.1,
+        "AttackSound": "weapons/m4a1/m4a1_shoot.sound",
+        "StartingAmmo": 150,
+        "PrimaryDelay": 0.1,
+        "SecondaryClipSize": 3,
+        "SecondaryDefaultClip": -1,
+        "SecondaryAmmoType": "ammo/grenade.ammo",
+        "SecondaryDelay": 1,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 10,
@@ -122,18 +126,6 @@
           "_type": "gameobject",
           "prefab": "weapons/m4a1/m4a1_wm.prefab"
         }
-      },
-      {
-        "__type": "DroppedWeapon",
-        "__guid": "68f31dea-403a-4788-8c4b-7416c88f28ed",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
       },
       {
         "__type": "Sandbox.ModelCollider",
@@ -214,21 +206,17 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "WorldModel",
+            "__type": "Sandbox.BaseWeaponModel",
             "__guid": "f8ed8b33-c6b8-52da-aaba-fe59d1b164f9",
             "__enabled": true,
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "EjectTransform": {
+            "ShellEjectGameObject": {
               "_type": "gameobject",
               "go": "3c2bcf77-0afc-96be-eefe-3c9d15f5a8d3"
             },
-            "MuzzleEffect": {
-              "_type": "gameobject",
-              "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
-            },
-            "MuzzleTransform": {
+            "MuzzleGameObject": {
               "_type": "gameobject",
               "go": "2b1abe66-f9eb-85ad-dded-2b8c04e497c2"
             },
@@ -243,10 +231,6 @@
               "component_id": "09fe9c44-d7c9-63eb-bbcb-0f6ae2c275a0",
               "go": "e7dc7a22-b5a7-41c9-9aa9-ed48c0a053e8",
               "component_type": "SkinnedModelRenderer"
-            },
-            "TracerEffect": {
-              "_type": "gameobject",
-              "prefab": "weapons/tracer_rifle.prefab"
             }
           },
           {

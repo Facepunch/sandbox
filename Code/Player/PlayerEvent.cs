@@ -19,7 +19,7 @@ public struct PlayerDamageParams
 public class PlayerPickupEvent
 {
 	public Player Player { get; init; }
-	public BaseCarryable Weapon { get; init; }
+	public BaseSandboxWeapon Weapon { get; init; }
 	public int Slot { get; init; }
 	public bool Cancelled { get; set; }
 }
@@ -30,7 +30,7 @@ public class PlayerPickupEvent
 public class PlayerDropEvent
 {
 	public Player Player { get; init; }
-	public BaseCarryable Weapon { get; init; }
+	public BaseSandboxWeapon Weapon { get; init; }
 	public bool Cancelled { get; set; }
 }
 
@@ -40,8 +40,8 @@ public class PlayerDropEvent
 public class PlayerSwitchWeaponEvent
 {
 	public Player Player { get; init; }
-	public BaseCarryable From { get; init; }
-	public BaseCarryable To { get; init; }
+	public BaseSandboxWeapon From { get; init; }
+	public BaseSandboxWeapon To { get; init; }
 	public bool Cancelled { get; set; }
 }
 
@@ -51,7 +51,7 @@ public class PlayerSwitchWeaponEvent
 public class PlayerRemoveWeaponEvent
 {
 	public Player Player { get; init; }
-	public BaseCarryable Weapon { get; init; }
+	public BaseSandboxWeapon Weapon { get; init; }
 	public bool Cancelled { get; set; }
 }
 

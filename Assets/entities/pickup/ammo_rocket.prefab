@@ -21,7 +21,7 @@
         "__enabled": true,
         "Flags": 0,
         "AmmoAmount": 2,
-        "AmmoType": "ammotype/rocket.ammo",
+        "AmmoType": "ammo/rocket.ammo",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,

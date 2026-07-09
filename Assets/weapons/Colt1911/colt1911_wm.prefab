@@ -16,23 +16,15 @@
     "OwnerTransfer": 1,
     "Components": [
       {
-        "__type": "WorldModel",
+        "__type": "Sandbox.BaseWeaponModel",
         "__guid": "765ebd37-c91f-4058-8815-f4b7df6f24b0",
         "__enabled": true,
         "Flags": 0,
-        "EjectBrass": {
-          "_type": "gameobject",
-          "prefab": "weapons/common/effects/eject_9mm.prefab"
-        },
-        "EjectTransform": {
+        "ShellEjectGameObject": {
           "_type": "gameobject",
           "go": "1d5347e0-820c-4015-96dc-4efd0679eca3"
         },
-        "MuzzleEffect": {
-          "_type": "gameobject",
-          "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
-        },
-        "MuzzleTransform": {
+        "MuzzleGameObject": {
           "_type": "gameobject",
           "go": "e4312b65-c2f9-4ab7-bdb5-2e6bc4b67507"
         },
@@ -47,10 +39,6 @@
           "component_id": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
           "go": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
           "component_type": "SkinnedModelRenderer"
-        },
-        "TracerEffect": {
-          "_type": "gameobject",
-          "prefab": "weapons/tracer_9mm.prefab"
         }
       }
     ],

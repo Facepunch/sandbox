@@ -35,10 +35,6 @@ public class CombatPatrolSchedule : ScheduleBase
 			AddTask( new Wait( Game.Random.Float( 1f, 2.5f ) ) );
 	}
 
-	protected override bool ShouldCancel()
-	{
-		return Npc.Senses.GetNearestVisible().IsValid();
-	}
 
 	private Vector3 GetPatrolDestination()
 	{

@@ -1,6 +1,6 @@
 using Sandbox.Rendering;
 
-public class MeleeWeapon : BaseCarryable
+public class MeleeWeapon : BaseSandboxWeapon
 {
 	/// <summary>
 	/// Cooldown after a hit connects.
@@ -32,28 +32,24 @@ public class MeleeWeapon : BaseCarryable
 	/// </summary>
 	[Property] public float SwingForce { get; set; } = 1000f;
 
-	[Property] public SoundEvent SwingSound { get; set; }
 	[Property] public SoundEvent HitSound { get; set; }
 
-	TimeUntil timeUntilSwing = 0;
-
-	public bool CanAttack() => timeUntilSwing <= 0;
-
-	protected virtual bool WantsPrimaryAttack() => Input.Down( "attack1" );
-
-	public override void OnControl( Player player )
+	public MeleeWeapon()
 	{
-		base.OnControl( player );
-
-		if ( WantsPrimaryAttack() )
-			Swing( player );
+		// Melee doesn't use ammo (the engine default is on, which would leave us dry-firing an empty clip).
+		UsesAmmo = false;
 	}
 
-	public void Swing( Player player )
-	{
-		if ( !CanAttack() )
-			return;
+	public bool CanAttack() => NextPrimaryFire <= 0;
 
+	public override bool CanSecondaryAttack() => false;
+
+	/// <summary>
+	/// The swing. Runs once on the owning client - our trace decides what we hit, the engine claims it
+	/// to the host, and the host applies the damage.
+	/// </summary>
+	public override void PrimaryAttack()
+	{
 		var forward = AimRay.Forward;
 
 		var trace = Scene.Trace.Ray( AimRay with { Forward = forward }, Range )
@@ -67,83 +63,54 @@ public class MeleeWeapon : BaseCarryable
 			tr = trace.Radius( SwingRadius ).Run();
 		}
 
-		timeUntilSwing = tr.GameObject.IsValid() ? SwingDelay : MissSwingDelay;
+		// Hit and miss recover at different speeds - replace the flat cooldown FirePrimary set.
+		SetNextPrimaryFire( tr.GameObject.IsValid() ? SwingDelay : MissSwingDelay );
 
-		SwingEffects( tr.HitPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface );
-		TraceAttack( TraceAttackInfo.From( tr, Damage, localise: false ) );
+		// Swing presentation - predicted on the owner, relayed to everyone else by the host.
+		ShootEffects( new ShotEffect( tr.HitPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface ) );
 
-		player.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
+		// Our trace decides the hit - the engine claims it to the host, which applies the damage.
+		// Melee doesn't count hitgroups - no headshot tags on the damage.
+		ShootBullet( tr, Damage, SwingForce, hitboxTags: false );
 
-		if ( !player.Controller.ThirdPerson && player.IsLocalPlayer )
+		if ( !HasOwner )
+			return;
+
+		Owner.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
+
+		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
 		{
-			new Sandbox.CameraNoise.Punch( new Vector3( Random.Shared.Float( -10, -15 ), Random.Shared.Float( -10, 0 ), 0 ), 1.0f, 3, 0.5f );
-			new Sandbox.CameraNoise.Shake( 0.3f, 1.2f );
+			// The swing kicks the view down-left and bounces back, with a little rumble on top.
+			Scene.Camera?.AddPunch( new Angles( Random.Shared.Float( -10, -15 ), Random.Shared.Float( -10, 0 ), 0 ), 2f, 1f );
+			Scene.Camera?.AddShake( 1f, 40f, 1.2f );
 		}
 	}
 
-	[Rpc.Broadcast]
-	public void SwingEffects( Vector3 hitpoint, bool hit, Vector3 normal, GameObject hitObject, Surface hitSurface )
+	protected override void OnShootEffects( ShotEffect shot )
 	{
 		if ( Application.IsDedicatedServer ) return;
 
-		var player = Owner;
-		if ( player.IsValid() )
-			player.Controller.Renderer.Set( "b_attack", true );
+		// Swing sound, holder anim, the model's attack anim and the impact come from the base.
+		base.OnShootEffects( shot );
 
-		if ( ViewModel.IsValid() )
-			ViewModel.RunEvent<ViewModel>( x => x.OnAttack() );
-		else if ( WorldModel.IsValid() )
-			WorldModel.RunEvent<WorldModel>( x => x.OnAttack() );
-
-		GameObject.PlaySound( SwingSound );
-
-		if ( !hit || !hitObject.IsValid() )
-			return;
-
-		if ( ViewModel.IsValid() )
+		if ( shot.Hit && shot.HitObject.IsValid() && ViewModel.IsValid() )
 			ViewModel.RunEvent<ViewModel>( x => x.Renderer.Set( "b_attack_has_hit", true ) );
-
-		hitObject.PlaySound(
-			hitSurface.SoundCollection.ImpactHard ?? hitSurface.GetBaseSurface()?.SoundCollection.ImpactHard ?? HitSound,
-			hitObject.WorldTransform.PointToLocal( hitpoint ) );
-
-		var prefab = hitSurface.PrefabCollection.BulletImpact ?? hitSurface.GetBaseSurface()?.PrefabCollection.BulletImpact;
-		if ( prefab is null )
-			return;
-
-		var fwd = Rotation.LookAt( normal * -1.0f, Vector3.Random );
-
-		var impact = prefab.Clone();
-		impact.WorldPosition = hitpoint;
-		impact.WorldRotation = fwd;
-		impact.SetParent( hitObject, true );
-
-		if ( hitObject.GetComponentInChildren<SkinnedModelRenderer>() is not { CreateBoneObjects: true } skinned )
-			return;
-
-		// find closest bone
-		var bones = skinned.GetBoneTransforms( true );
-
-		var closestDist = float.MaxValue;
-
-		for ( var i = 0; i < bones.Length; i++ )
-		{
-			var bone = bones[i];
-			var dist = bone.Position.Distance( hitpoint );
-			if ( dist < closestDist )
-			{
-				closestDist = dist;
-				impact.SetParent( skinned.GetBoneObject( i ), true );
-			}
-		}
 	}
 
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
+	protected override void OnShootImpact( in ShotEffect shot )
 	{
-		DrawCrosshair( painter, crosshair );
+		if ( !shot.Hit || !shot.HitObject.IsValid() )
+			return;
+
+		// A melee thunk instead of the surface's bullet ricochet, so the impact prefab is spawned soundless.
+		shot.HitObject.PlaySound(
+			shot.Surface.SoundCollection.ImpactHard ?? shot.Surface.GetBaseSurface()?.SoundCollection.ImpactHard ?? HitSound,
+			shot.HitObject.WorldTransform.PointToLocal( shot.HitPosition ) );
+
+		ImpactPrefab( shot.HitObject, shot.Surface, shot.HitPosition, shot.Normal );
 	}
 
-	public virtual void DrawCrosshair( HudPainter hud, Vector2 center )
+	public override void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
 		var len = 6;
 		Color color = CanAttack() ? Color.White : Color.Red;

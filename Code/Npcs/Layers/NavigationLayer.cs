@@ -13,9 +13,39 @@ public class NavigationLayer : BaseNpcLayer
 	public float StopDistance { get; private set; } = 10f;
 
 	/// <summary>
-	/// The desired movement speed for the agent. Schedules can raise this to make the NPC run.
+	/// The desired movement speed for the agent (its normal walk). Schedules can raise this.
 	/// </summary>
 	public float WishSpeed { get; set; } = 100f;
+
+	/// <summary>
+	/// Speed used to run when the destination is far away -- HL-style: walk when close, run
+	/// when there's ground to cover. Acts as a floor, so a schedule that sets a higher
+	/// <see cref="WishSpeed"/> (fleeing, charging) is never slowed down.
+	/// </summary>
+	[Property]
+	public float RunSpeed { get; set; } = 190f;
+
+	/// <summary>Distance beyond which the NPC breaks into a run.</summary>
+	[Property]
+	public float RunDistance { get; set; } = 200f;
+
+	/// <summary>
+	/// When true (the default) the NPC turns to face the direction it's moving, so it runs
+	/// forward. Combat schedules set this false to strafe -- face a target while moving.
+	/// </summary>
+	public bool FaceMovementDirection { get; set; } = true;
+
+	/// <summary>How quickly the body turns to face the movement direction.</summary>
+	[Property]
+	public float TurnSpeed { get; set; } = 4f;
+
+	/// <summary>
+	/// True while the agent is actually travelling. Standing NPCs are free to turn
+	/// their body toward whatever they're looking at.
+	/// </summary>
+	public bool IsMoving => Agent.IsValid() && Agent.Velocity.WithZ( 0 ).Length > 20f;
+
+	private bool _running;
 
 	protected override void OnStart()
 	{
@@ -32,27 +62,76 @@ public class NavigationLayer : BaseNpcLayer
 		MoveTarget = target;
 		StopDistance = stopDistance;
 
-		if ( Agent.IsValid() )
+		if ( !Agent.IsValid() )
 		{
-			Agent.MoveTo( target );
-
-			// Use the agent's resolved navmesh position so distance checks are accurate
-			if ( Agent.TargetPosition.HasValue )
-			{
-				MoveTarget = Agent.TargetPosition.Value;
-			}
+			// Loud failure beats a silent freeze: an NPC that moves needs a NavMeshAgent.
+			Log.Warning( $"NPC '{Npc.DisplayName}' tried to move but has no NavMeshAgent component." );
+			return;
 		}
+
+		Agent.MoveTo( target );
+
+		// Use the agent's resolved navmesh position so distance checks are accurate
+		if ( Agent.TargetPosition.HasValue )
+		{
+			MoveTarget = Agent.TargetPosition.Value;
+		}
+	}
+
+	/// <summary>
+	/// Stop moving and forget the current move target.
+	/// </summary>
+	public void Stop()
+	{
+		MoveTarget = null;
+
+		if ( Agent.IsValid() )
+			Agent.Stop();
 	}
 
 	protected override void OnUpdate()
 	{
 		if ( IsProxy ) return;
+		if ( !Agent.IsValid() ) return;
 
-		if ( Agent.IsValid() )
-		{
-			Agent.MaxSpeed = WishSpeed;
-			Npc.Animation.SetMove( Agent.Velocity, Agent.WorldRotation );
-		}
+		Agent.MaxSpeed = ResolveSpeed();
+		FaceMovement();
+
+		// Reference the (now movement-facing) body rotation so the anim blends to a forward
+		// run rather than a sideways strafe.
+		Npc.Animation.SetMove( Agent.Velocity, Npc.WorldRotation );
+	}
+
+	// Turn the body to face the way we're actually moving, so the NPC runs forward instead of
+	// sliding sideways. Disabled while strafing (combat).
+	private void FaceMovement()
+	{
+		if ( !FaceMovementDirection )
+			return;
+
+		var velocity = Agent.Velocity.WithZ( 0 );
+		if ( velocity.Length < 20f )
+			return;
+
+		var targetRotation = Rotation.LookAt( velocity.Normal, Vector3.Up );
+		Npc.WorldRotation = Rotation.Slerp( Npc.WorldRotation, targetRotation, TurnSpeed * Time.Delta );
+	}
+
+	// Walk normally; break into a run when the destination is a good distance off. Hysteresis
+	// stops it flickering between walk and run near the threshold.
+	private float ResolveSpeed()
+	{
+		if ( !MoveTarget.HasValue )
+			return WishSpeed;
+
+		var distance = Npc.WorldPosition.Distance( MoveTarget.Value );
+
+		if ( _running && distance < RunDistance * 0.6f )
+			_running = false;
+		else if ( !_running && distance > RunDistance )
+			_running = true;
+
+		return _running ? MathF.Max( WishSpeed, RunSpeed ) : WishSpeed;
 	}
 
 	public override string GetDebugString()
@@ -71,14 +150,15 @@ public class NavigationLayer : BaseNpcLayer
 	{
 		if ( !MoveTarget.HasValue ) return TaskStatus.Success;
 
-		var distance = Npc.WorldPosition.Distance( MoveTarget.Value );
+		// No agent means we can never get there -- fail instead of hanging on Running forever.
+		if ( !Agent.IsValid() ) return TaskStatus.Failed;
 
-		// Npc.DebugOverlay.Sphere( new Sphere( MoveTarget.Value, 16 ), Color.Green, 0.1f );
+		var distance = Npc.WorldPosition.Distance( MoveTarget.Value );
 
 		if ( distance <= StopDistance )
 			return TaskStatus.Success;
 
-		if ( Agent.IsValid() && !Agent.IsNavigating )
+		if ( !Agent.IsNavigating )
 			return TaskStatus.Failed;
 
 		return TaskStatus.Running;

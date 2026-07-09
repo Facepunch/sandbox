@@ -1,8 +1,0 @@
-{
-  "Title": "Pistol Ammo",
-  "Icon": null,
-  "MaxReserve": 300,
-  "DefaultStartingAmmo": 60,
-  "__references": [],
-  "__version": 0
-}

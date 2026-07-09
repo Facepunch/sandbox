@@ -1,15 +1,18 @@
 /// <summary>
 /// Sniper viewmodel helper. Moves the weapon down during scope transitions.
 /// </summary>
-public sealed class SniperViewModel : Component, ICameraSetup
+public sealed class SniperViewModel : Component, ICameraModifier
 {
 	[Property] public float LowerAmount { get; set; } = 1.5f;
 	[Property] public float LowerSpeed { get; set; } = 10f;
 
 	private float _offset;
 
-	void ICameraSetup.PostSetup( CameraComponent cc )
+	// The post pass runs after the ViewModel has placed itself against the final view.
+	void ICameraModifier.PostCameraSetup( CameraComponent camera, in CameraView view )
 	{
+		if ( camera != Scene.Camera ) return;
+
 		var weapon = GetComponentInParent<SniperWeapon>();
 		if ( !weapon.IsValid() ) return;
 
@@ -19,7 +22,7 @@ public sealed class SniperViewModel : Component, ICameraSetup
 
 		if ( _offset > 0.01f )
 		{
-			WorldPosition += cc.WorldRotation.Down * _offset;
+			WorldPosition += view.Rotation.Down * _offset;
 		}
 	}
 }

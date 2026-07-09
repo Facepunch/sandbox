@@ -3,11 +3,8 @@ using Sandbox.Npcs.Schedules;
 
 namespace Sandbox.Npcs.Scientist;
 
-public sealed class ScientistNpc : Npc, Component.IDamageable
+public sealed class ScientistNpc : Npc, Component.IPressable
 {
-	[Property, ClientEditable, Range( 1, 100 ), Sync]
-	public float Health { get; set; } = 100f;
-
 	/// <summary>
 	/// Current fear level (0–1). Computed from peak fear and time since last hurt.
 	/// </summary>
@@ -39,6 +36,80 @@ public sealed class ScientistNpc : Npc, Component.IDamageable
 	private GameObject _attacker;
 	private TimeSince _timeSinceHurt;
 	private bool _isFleeing;
+	private TimeSince _timeSinceStruggling;
+	private GameObject _farewellTarget;
+
+	// Voice lines by situation. Each SoundEvent picks a random clip. These replace the old
+	// on-screen text -- the scientist speaks instead.
+	[Property, Group( "Voice" )] public SoundEvent FollowVoice { get; set; }
+	[Property, Group( "Voice" )] public SoundEvent StayVoice { get; set; }
+	[Property, Group( "Voice" )] public SoundEvent ScaredVoice { get; set; }
+	[Property, Group( "Voice" )] public SoundEvent IdleVoice { get; set; }
+	[Property, Group( "Voice" )] public SoundEvent StuckVoice { get; set; }
+
+	/// <summary>
+	/// The player this scientist is following, if any. Press USE on the scientist to toggle.
+	/// </summary>
+	[Sync]
+	public GameObject Leader { get; set; }
+
+	IPressable.Tooltip? IPressable.GetTooltip( IPressable.Event e )
+	{
+		return Leader.IsValid()
+			? new IPressable.Tooltip( "Stop following", "person_off", DisplayName )
+			: new IPressable.Tooltip( "Follow me", "follow_the_signs", DisplayName );
+	}
+
+	bool IPressable.CanPress( IPressable.Event e ) => true;
+
+	bool IPressable.Press( IPressable.Event e )
+	{
+		ToggleFollow( e.Source.GameObject );
+		return true;
+	}
+
+	[Rpc.Host]
+	private void ToggleFollow( GameObject presserObject )
+	{
+		if ( !presserObject.IsValid() )
+			return;
+
+		var player = presserObject.Root.GetComponent<Player>();
+		if ( !player.IsValid() )
+			return;
+
+		if ( Leader == player.GameObject )
+		{
+			// Say goodbye to their face before wandering off - the farewell
+			// schedule stands still, looks at them and delivers the line
+			Leader = null;
+			_farewellTarget = player.GameObject;
+		}
+		else
+		{
+			Leader = player.GameObject;
+			_timeSinceStruggling = 0;
+			SayVoice( FollowVoice, force: true, lookAt: player.GameObject );
+		}
+
+		// Re-think now so following starts/stops immediately.
+		EndCurrentSchedule();
+	}
+
+	// Play a voice line. Ambient lines respect the speech cooldown; USE responses force through.
+	// If lookAt is given, the scientist looks them in the eyes while talking.
+	private void SayVoice( SoundEvent voice, bool force = false, GameObject lookAt = null )
+	{
+		if ( voice is null ) return;
+		if ( !force && !Speech.CanSpeak ) return;
+
+		Speech.Say( voice, lookAt: lookAt );
+	}
+
+	// Defenceless -- flees anything dangerous, indifferent to everyone else.
+	public override string Faction => Factions.Citizen;
+
+	protected override void SetupRelationships() => Fears( Factions.Enemy, Factions.Monster );
 
 	public override ScheduleBase GetSchedule()
 	{
@@ -60,13 +131,70 @@ public sealed class ScientistNpc : Npc, Component.IDamageable
 				_attacker.GetComponent<Player>()?.PlayerData?.AddStat( "npc.scientist.scare" );
 			}
 
+			SayVoice( ScaredVoice, lookAt: _attacker );
+
 			var flee = GetSchedule<ScientistFleeSchedule>();
 			flee.Source = _attacker;
 			flee.PanicLevel = fear;
 			return flee;
 		}
 
+		// Flee from anything we're scared of on sight, before it even hurts us.
+		var threat = Senses.GetNearestVisible( Disposition.Fearful );
+		if ( threat.IsValid() )
+		{
+			SayVoice( ScaredVoice, lookAt: threat );
+
+			var sightFlee = GetSchedule<ScientistFleeSchedule>();
+			sightFlee.Source = threat;
+			sightFlee.PanicLevel = 0.5f;
+			return sightFlee;
+		}
+
+		// Not fleeing anything.
 		_isFleeing = false;
+
+		// A player is walking into us - they want to get past, step out of their way
+		var pusher = Senses.GetPushingPlayer();
+		if ( pusher.IsValid() )
+		{
+			var moveAside = GetSchedule<MoveAsideSchedule>();
+			moveAside.Blocker = pusher;
+			return moveAside;
+		}
+
+		// Someone just dismissed us - stand, face them, say goodbye, then move on.
+		// Fear above still preempts; no goodbyes mid panic.
+		if ( _farewellTarget.IsValid() )
+		{
+			var farewell = GetSchedule<ScientistFarewellSchedule>();
+			farewell.Target = _farewellTarget;
+			farewell.Voice = StayVoice;
+			_farewellTarget = null;
+			return farewell;
+		}
+
+		// Following a player who recruited us with USE. (Fear above takes priority, so we
+		// still cower from danger, then resume following once it passes.)
+		if ( Leader.IsValid() )
+		{
+			// Keep track of whether we're keeping up; if we fall too far behind for too long,
+			// give up and stay put.
+			if ( WorldPosition.Distance( Leader.WorldPosition ) < 350f )
+				_timeSinceStruggling = 0;
+
+			if ( _timeSinceStruggling > 6f )
+			{
+				var leader = Leader;
+				Leader = null;
+				SayVoice( StuckVoice, force: true, lookAt: leader );
+				return GetIdleSchedule();
+			}
+
+			var follow = GetSchedule<FollowSchedule>();
+			follow.Target = Leader;
+			return follow;
+		}
 
 		return GetIdleSchedule();
 	}
@@ -76,6 +204,9 @@ public sealed class ScientistNpc : Npc, Component.IDamageable
 	/// </summary>
 	private ScheduleBase GetIdleSchedule()
 	{
+		// Occasionally mutter something while pottering about.
+		SayVoice( IdleVoice );
+
 		var roll = Game.Random.Float();
 
 		if ( roll < 0.35f )
@@ -125,25 +256,20 @@ public sealed class ScientistNpc : Npc, Component.IDamageable
 		return best;
 	}
 
-	void IDamageable.OnDamage( in DamageInfo damage )
+	protected override void OnHurt( in DamageInfo damage )
 	{
-		if ( IsProxy )
-			return;
-
-		Health -= damage.Damage;
-
-		// Escalate fear — each hit stacks, clamped to 1
+		// Escalate fear — each hit stacks, clamped to 1.
 		_peakFear = MathF.Min( _peakFear + damage.Damage / 50f, 1f );
 		_attacker = damage.Attacker;
 		_timeSinceHurt = 0;
 
-		// Interrupt whatever we're doing so flee picks up immediately
+		// React immediately so flee picks up.
 		EndCurrentSchedule();
+	}
 
-		if ( Health < 1 )
-		{
-			_attacker?.GetComponent<Player>()?.PlayerData?.AddStat( "npc.scientist.kill" );
-			Die( damage );
-		}
+	protected override void Die( in DamageInfo damage )
+	{
+		damage.Attacker?.GetComponent<Player>()?.PlayerData?.AddStat( "npc.scientist.kill" );
+		base.Die( damage );
 	}
 }

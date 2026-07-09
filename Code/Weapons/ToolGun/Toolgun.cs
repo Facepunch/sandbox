@@ -2,6 +2,12 @@
 
 public partial class Toolgun : ScreenWeapon
 {
+	public Toolgun()
+	{
+		// Tools don't use ammo (the engine default is on, which would show an ammo indicator).
+		UsesAmmo = false;
+	}
+
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
 		base.OnCameraMove( player, ref angles );
@@ -15,12 +21,11 @@ public partial class Toolgun : ScreenWeapon
 		currentMode?.OnCameraMove( player, ref angles );
 	}
 
-	public override void OnAdded( Player player )
+	protected override void OnAdded( Sandbox.BaseInventoryComponent inventory )
 	{
-		base.OnAdded( player );
+		base.OnAdded( inventory );
 
-		if ( Networking.IsHost )
-			CreateToolComponents();
+		CreateToolComponents();
 	}
 
 	public void CreateToolComponents()
@@ -44,7 +49,7 @@ public partial class Toolgun : ScreenWeapon
 		Network.Refresh( GameObject );
 	}
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
 		var currentMode = GetCurrentMode();
 		if ( currentMode == null )
@@ -53,8 +58,6 @@ public partial class Toolgun : ScreenWeapon
 		currentMode.OnControl();
 
 		UpdateViewmodelScreen();
-
-		base.OnControl( player );
 
 		ApplyCoilSpin();
 	}

@@ -37,24 +37,10 @@ public class CombatEngageSchedule : ScheduleBase
 	public GameObject Target { get; set; }
 
 	/// <summary>
-	/// Weapon to fire. Should be a child component on the NPC's GameObject.
+	/// Weapon to fire. Should be a child component on the NPC's GameObject. Its NPC usage decides
+	/// the engagement range, burst length and the rest between bursts.
 	/// </summary>
-	public BaseWeapon Weapon { get; set; }
-
-	/// <summary>
-	/// Distance at which the NPC stops advancing and begins shooting.
-	/// </summary>
-	public float AttackRange { get; set; } = 300f;
-
-	/// <summary>
-	/// How long each shooting burst lasts.
-	/// </summary>
-	public float BurstDuration { get; set; } = 1.5f;
-
-	/// <summary>
-	/// Pause between burst end and repositioning.
-	/// </summary>
-	public float BurstPause { get; set; } = 0.8f;
+	public BaseSandboxWeapon Weapon { get; set; }
 
 	/// <summary>
 	/// Speed the NPC moves when engaging.
@@ -66,9 +52,18 @@ public class CombatEngageSchedule : ScheduleBase
 	/// </summary>
 	public float FlankRadius { get; set; } = 250f;
 
+	public override int Priority => SchedulePriority.Combat;
+
+	// Stay focused while fighting -- we end via ShouldCancel (lost sight) or when the
+	// task sequence finishes, not because of incidental stimuli.
+	public override NpcAwareness InterruptedBy => NpcAwareness.None;
+
 	protected override void OnStart()
 	{
 		Npc.Navigation.WishSpeed = EngageSpeed;
+
+		// Strafe: face the target while moving, rather than facing the movement direction.
+		Npc.Navigation.FaceMovementDirection = false;
 
 		// Set look target now so the NPC tracks the player through all tasks,
 		// movement, firing, waiting, and repositioning.
@@ -76,17 +71,20 @@ public class CombatEngageSchedule : ScheduleBase
 
 		// Spot the target on engage start
 		if ( Npc.Speech.CanSpeak )
-			AddTask( new Say( Game.Random.FromArray( SpotLines ), 1.5f ) );
+			AddTask( new Say( Game.Random.FromArray( SpotLines ), 1.5f, Target ) );
 
 		AddTask( new LookAt( Target ) );
-		AddTask( new MoveTo( Target, AttackRange ) );
-		AddTask( new FireWeapon( Weapon, Target, BurstDuration ) );
 
-		// Random combat taunt during the pause after firing
+		// Advance to comfortably inside the weapon's reach, not right on the edge of it.
+		AddTask( new MoveTo( Target, Weapon.Npc.MaxRange * 0.8f ) );
+		AddTask( new FireWeapon( Weapon, Target ) );
+
+		// Rest between bursts, as the weapon dictates - with a random combat taunt sometimes
+		var rest = Game.Random.Float( Weapon.Npc.RestMin, Weapon.Npc.RestMax );
 		if ( Npc.Speech.CanSpeak && Game.Random.Float() < 0.4f )
-			AddTask( new Say( Game.Random.FromArray( TauntLines ), BurstPause ) );
+			AddTask( new Say( Game.Random.FromArray( TauntLines ), rest, Target ) );
 		else
-			AddTask( new Wait( BurstPause ) );
+			AddTask( new Wait( rest ) );
 
 		AddTask( new MoveTo( GetFlankPosition(), 20f ) );
 	}
@@ -94,6 +92,7 @@ public class CombatEngageSchedule : ScheduleBase
 	protected override void OnEnd()
 	{
 		Npc.Navigation.WishSpeed = 100f;
+		Npc.Navigation.FaceMovementDirection = true;
 		Npc.Animation.ClearLookTarget();
 	}
 

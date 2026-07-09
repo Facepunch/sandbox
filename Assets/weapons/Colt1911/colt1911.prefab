@@ -20,21 +20,22 @@
         "__guid": "b2c3d4e5-6667-4bbb-a667-666666666667",
         "__enabled": true,
         "Flags": 0,
-        "AmmoType": "ammotype/9mm.ammo",
-        "Bullet": {
+        "PrimaryAmmoType": "ammo/9mm.ammo",
+        "Ballistics": {
           "Damage": 18,
-          "BulletRadius": 1,
-          "AimConeBase": "0.5,0.25",
-          "AimConeSpread": "3,3",
-          "AimConeRecovery": 0.25,
-          "RecoilPitch": "-0.5,-0.200000003",
-          "RecoilYaw": "-0.150000006,0.150000006",
-          "CameraRecoilStrength": 1.2,
-          "CameraRecoilFrequency": 1,
-          "Range": 4096
+          "Pellets": 1,
+          "Range": 4096,
+          "Radius": 1,
+          "Force": 3000,
+          "SpreadBase": "0.5,0.25",
+          "SpreadGrowth": "3,3",
+          "SpreadRecovery": 0.25
         },
+        "CameraRecoilFrequency": 1,
+        "CameraRecoilStrength": 1.2,
+        "RecoilPitch": "-0.5,-0.200000003",
+        "RecoilYaw": "-0.150000006,0.150000006",
         "CanCancelReload": false,
-        "ClipContents": 7,
         "ClipMaxSize": 7,
         "DeployTime": 0.5,
         "DisplayIcon": {
@@ -83,11 +84,6 @@
         "HoldType": "Pistol",
         "IncrementalReloading": false,
         "IronSightsFireScale": 0.2,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/colt1911/colt1911.prefab"
-        },
-        "MaxReserveAmmo": 300,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -95,11 +91,10 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
-        "PrimaryFireRate": 0.1,
+        "HoldBone": "hold_r",
+        "PrimaryDelay": 0.1,
         "ReloadStartTime": 0,
         "ReloadTime": 1.5,
-        "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null
@@ -109,8 +104,8 @@
           "IsEnabled": false,
           "Action": null
         },
-        "ShootSound": "weapons/glock/glock_shoot.sound",
-        "StartingAmmo": 0,
+        "AttackSound": "weapons/glock/glock_shoot.sound",
+        "StartingAmmo": 60,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 2,
@@ -122,18 +117,6 @@
           "_type": "gameobject",
           "prefab": "weapons/colt1911/colt1911_wm.prefab"
         }
-      },
-      {
-        "__type": "DroppedWeapon",
-        "__guid": "b2c3d4e5-999a-4bbb-a99a-99999999999a",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
       },
       {
         "__type": "Sandbox.ModelCollider",
@@ -214,21 +197,17 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "WorldModel",
+            "__type": "Sandbox.BaseWeaponModel",
             "__guid": "f3864e75-2acb-57b1-b16c-c2092c2b2b12",
             "__enabled": true,
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "EjectTransform": {
+            "ShellEjectGameObject": {
               "_type": "gameobject",
               "go": "37ca82b9-6e0f-9bf5-f5a0-064d606f6f56"
             },
-            "MuzzleEffect": {
-              "_type": "gameobject",
-              "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
-            },
-            "MuzzleTransform": {
+            "MuzzleGameObject": {
               "_type": "gameobject",
               "go": "26b971a8-5dfe-8ae4-e49f-f53c5f5e5e45"
             },
@@ -243,10 +222,6 @@
               "component_id": "04975f86-3bdc-68c2-c27d-d31a3d3c3c23",
               "go": "e2753d64-19ba-46a0-a05b-b1f8115a1a01",
               "component_type": "SkinnedModelRenderer"
-            },
-            "TracerEffect": {
-              "_type": "gameobject",
-              "prefab": "weapons/tracer_9mm.prefab"
             }
           },
           {

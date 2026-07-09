@@ -20,21 +20,22 @@
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
-        "AmmoType": "ammotype/9mm.ammo",
-        "Bullet": {
+        "PrimaryAmmoType": "ammo/9mm.ammo",
+        "Ballistics": {
           "Damage": 12,
-          "BulletRadius": 1,
-          "AimConeBase": "0.5,0.25",
-          "AimConeSpread": "3,3",
-          "AimConeRecovery": 0.2,
-          "RecoilPitch": "-0.300000012,-0.100000001",
-          "RecoilYaw": "-0.100000001,0.100000001",
-          "CameraRecoilStrength": 1,
-          "CameraRecoilFrequency": 1,
-          "Range": 4096
+          "Pellets": 1,
+          "Range": 4096,
+          "Radius": 1,
+          "Force": 3000,
+          "SpreadBase": "0.2,0.2",
+          "SpreadGrowth": "1.5,1.5",
+          "SpreadRecovery": 0.2
         },
+        "CameraRecoilFrequency": 1,
+        "CameraRecoilStrength": 1,
+        "RecoilPitch": "-0.300000012,-0.100000001",
+        "RecoilYaw": "-0.100000001,0.100000001",
         "CanCancelReload": false,
-        "ClipContents": 30,
         "ClipMaxSize": 30,
         "DeployTime": 0.5,
         "DisplayIcon": {
@@ -82,11 +83,6 @@
         "HoldType": "Rifle",
         "IncrementalReloading": false,
         "IronSightsFireScale": 0.2,
-        "ItemPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/mp5/mp5.prefab"
-        },
-        "MaxReserveAmmo": 300,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -94,9 +90,8 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
+        "HoldBone": "hold_r",
         "ReloadTime": 1.8,
-        "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null
@@ -106,9 +101,9 @@
           "IsEnabled": false,
           "Action": null
         },
-        "ShootSound": "weapons/mp5/sounds/mp5_shoot.sound",
-        "StartingAmmo": 30,
-        "TimeBetweenShots": 0.09,
+        "AttackSound": "weapons/mp5/sounds/mp5_shoot.sound",
+        "StartingAmmo": 90,
+        "PrimaryDelay": 0.09,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 10,
@@ -120,18 +115,6 @@
           "_type": "gameobject",
           "prefab": "weapons/mp5/mp5_wm.prefab"
         }
-      },
-      {
-        "__type": "DroppedWeapon",
-        "__guid": "68f31dea-403a-4788-8c4b-7416c88f28ed",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
       },
       {
         "__type": "Sandbox.ModelCollider",
@@ -211,20 +194,16 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "WorldModel",
+            "__type": "Sandbox.BaseWeaponModel",
             "__guid": "5d1f91ab-beeb-548a-a03d-68eaeed96a02",
             "__enabled": true,
             "Flags": 0,
             "EjectBrass": null,
-            "EjectTransform": {
+            "ShellEjectGameObject": {
               "_type": "gameobject",
               "go": "9b5d35ef-f22f-98ce-e471-ac2e2223bae6"
             },
-            "MuzzleEffect": {
-              "_type": "gameobject",
-              "prefab": "prefabs/weapon_effects/pistol_muzzleflash.prefab"
-            },
-            "MuzzleTransform": {
+            "MuzzleGameObject": {
               "_type": "gameobject",
               "go": "8a4c24de-e11e-87bd-d360-9b1d1112a9d5"
             },

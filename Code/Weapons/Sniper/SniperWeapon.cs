@@ -2,7 +2,6 @@ using Sandbox.Rendering;
 
 public sealed class SniperWeapon : BaseBulletWeapon
 {
-	[Property] public float PrimaryFireRate { get; set; } = 1.2f;
 	[Property] public float ScopedFov { get; set; } = 20f;
 	[Property] public float ScopeSensitivity { get; set; } = 0.3f;
 	[Property] public SoundEvent BoltPullSound { get; set; }
@@ -15,8 +14,6 @@ public sealed class SniperWeapon : BaseBulletWeapon
 	private bool _viewModelHidden;
 
 	public bool IsScoped => _isScoped;
-
-	protected override float GetPrimaryFireRate() => PrimaryFireRate;
 
 	protected override bool WantsPrimaryAttack()
 	{
@@ -35,7 +32,7 @@ public sealed class SniperWeapon : BaseBulletWeapon
 
 	public override void PrimaryAttack()
 	{
-		ShootBullet( PrimaryFireRate );
+		base.PrimaryAttack();
 		_hasFired = true;
 	}
 
@@ -96,9 +93,9 @@ public sealed class SniperWeapon : BaseBulletWeapon
 		ShowViewModel();
 	}
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
-		base.OnControl( player );
+		base.OnControl();
 
 		// Hold right mouse to scope
 		var wantsScope = Input.Down( "attack2" );
@@ -131,14 +128,19 @@ public sealed class SniperWeapon : BaseBulletWeapon
 		}
 	}
 
-	public override void OnCameraSetup( Player player, CameraComponent camera )
+	/// <summary>
+	/// Scoped zoom goes through the engine's camera modifier chain - one owner for the FOV, no
+	/// fighting the player's preference FOV write.
+	/// </summary>
+	protected override void ModifyCamera( CameraComponent camera, ref CameraView view )
 	{
-		if ( !player.Network.IsOwner || !Network.IsOwner ) return;
-
 		if ( _isScoped && _viewModelHidden )
 		{
-			camera.FieldOfView = ScopedFov;
+			view.FieldOfView = ScopedFov;
 		}
+
+		// The base drives the view model's camera bone and placement.
+		base.ModifyCamera( camera, ref view );
 	}
 
 	public override void OnCameraMove( Player player, ref Angles angles )
@@ -164,7 +166,7 @@ public sealed class SniperWeapon : BaseBulletWeapon
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
-		var color = !HasAmmo() || IsReloading() || TimeUntilNextShotAllowed > 0 ? CrosshairNoShoot : CrosshairCanShoot;
+		var color = !HasPrimaryAmmo() || IsReloading || NextPrimaryFire > 0 ? CrosshairNoShoot : CrosshairCanShoot;
 
 		hud.SetBlendMode( BlendMode.Normal );
 		hud.DrawCircle( center, 5, Color.Black );

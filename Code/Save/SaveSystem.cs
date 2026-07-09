@@ -122,7 +122,9 @@ internal sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEv
 		}
 	}
 
-	/// This means any changes made to the those original scenes are preserved when loading an older save.
+	/// <summary>
+	/// Saves the current world to the given path. This means any changes made to the those original
+	/// scenes are preserved when loading an older save.
 	/// </summary>
 	/// <returns>True if the save was successful.</returns>
 	public bool Save( string path )

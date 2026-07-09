@@ -57,7 +57,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 			.Select( w => new LoadoutEntry
 			{
 				PrefabPath = w.GameObject.PrefabInstanceSource,
-				Slot = w.InventorySlot,
+				Slot = w.Slot,
 				SpawnerDataPayload = (w as SpawnerWeapon)?.SpawnerData
 			} )
 			.ToList();
@@ -155,7 +155,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 
 	private async Task SwitchToPresetAsync( string loadoutJson )
 	{
-		var previousSlot = Inventory.ActiveWeapon?.InventorySlot ?? 0;
+		var previousSlot = Inventory.ActiveWeapon?.Slot ?? 0;
 
 		foreach ( var weapon in Inventory.Weapons.ToList() )
 			weapon.DestroyGameObject();
@@ -179,7 +179,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 
 		await Task.Yield();
 
-		Inventory.GiveDefaultWeapons();
+		Inventory.GiveLoadout();
 		Inventory.SwitchWeapon( Inventory.GetBestWeapon() );
 		SaveLoadout();
 	}
@@ -247,7 +247,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 			return;
 		}
 
-		Inventory.GiveDefaultWeapons();
+		Inventory.GiveLoadout();
 		var bestWeapon = Inventory.GetBestWeapon();
 		if ( bestWeapon.IsValid() )
 			Inventory.SwitchWeapon( bestWeapon );
@@ -297,7 +297,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 	{
 		if ( !Networking.IsHost ) return;
 
-		var steamId = (long)(Player.Network.Owner?.SteamId ?? 0);
+		var steamId = (long)(Player.Network.Owner?.SteamId ?? default);
 		if ( steamId == 0 ) return;
 
 		var json = SerializeLoadout();
@@ -310,7 +310,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 	{
 		if ( !Networking.IsHost ) return;
 
-		var steamId = (long)(Player.Network.Owner?.SteamId ?? 0);
+		var steamId = (long)(Player.Network.Owner?.SteamId ?? default);
 		if ( steamId == 0 ) return;
 
 		var json = SaveSystem.Current?.GetMetadata( $"Loadout_{steamId}" );

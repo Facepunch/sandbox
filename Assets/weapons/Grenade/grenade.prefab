@@ -20,9 +20,8 @@
         "__guid": "ab522638-2fd4-40a8-b165-36922f5ec630",
         "__enabled": true,
         "Flags": 0,
-        "AmmoType": "ammotype/grenade.ammo",
+        "PrimaryAmmoType": "ammo/grenade.ammo",
         "CanCancelReload": false,
-        "ClipContents": 17,
         "ClipMaxSize": 17,
         "DeploySound": null,
         "DeployTime": 0.5,
@@ -71,10 +70,8 @@
         "Force": 1,
         "HoldType": "HoldItem",
         "IncrementalReloading": false,
-        "ItemPrefab": null,
         "Lifetime": 3,
         "MaxDamage": 125,
-        "MaxReserveAmmo": 4,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -82,7 +79,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
+        "HoldBone": "hold_r",
         "PinPullSound": "weapons/grenade/sounds/grenade_pin_pull.sound",
         "Prefab": {
           "_type": "gameobject",
@@ -90,7 +87,6 @@
         },
         "Radius": 512,
         "ReloadTime": 1.5,
-        "ReserveAmmo": 0,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null
@@ -99,9 +95,9 @@
           "IsEnabled": false,
           "Action": null
         },
-        "StartingAmmo": 4,
+        "StartingAmmo": 5,
         "ThrowPower": 1200,
-        "ThrowSound": "weapons/m4a1/reload/gun_grab_foley.sound",
+        "AttackSound": "weapons/m4a1/reload/gun_grab_foley.sound",
         "UsesAmmo": true,
         "UsesClips": false,
         "Value": 2,
@@ -113,18 +109,6 @@
           "_type": "gameobject",
           "prefab": "weapons/grenade/grenade_wm.prefab"
         }
-      },
-      {
-        "__type": "DroppedWeapon",
-        "__guid": "a1de1dfd-9845-4552-9477-8c0a2271becf",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
       },
       {
         "__type": "Sandbox.ModelCollider",
@@ -205,15 +189,15 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "WorldModel",
+            "__type": "Sandbox.BaseWeaponModel",
             "__guid": "3dd2497e-bb05-416d-81fe-0c469d0ff591",
             "__enabled": true,
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "EjectTransform": null,
+            "ShellEjectGameObject": null,
             "MuzzleEffect": null,
-            "MuzzleTransform": null,
+            "MuzzleGameObject": null,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,

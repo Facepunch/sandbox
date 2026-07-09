@@ -89,7 +89,6 @@
           "prefab": "weapons/physgun/effects/grab.prefab"
         },
         "HoldType": "Physgun",
-        "ItemPrefab": null,
         "MuzzleGameObject": {
           "_type": "gameobject",
           "go": "6fb841db-2a8c-429c-9db2-6dd3298f18f7"
@@ -100,7 +99,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ParentBone": "hold_r",
+        "HoldBone": "hold_r",
         "PowerMaxDistance": 512,
         "PowerMaxFraction": 1,
         "PowerMinDistance": 64,
@@ -148,18 +147,6 @@
         "OverrideTargets": true,
         "Targets": [],
         "Width": 0.25
-      },
-      {
-        "__type": "DroppedWeapon",
-        "__guid": "ad4301b1-c0bf-49e5-bfdc-9b3deee7aae8",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
       },
       {
         "__type": "Sandbox.ModelCollider",
@@ -586,14 +573,14 @@
             "UseAnimGraph": true
           },
           {
-            "__type": "WorldModel",
+            "__type": "Sandbox.BaseWeaponModel",
             "__guid": "5d90b75d-4489-449b-93e4-8de1007de4e7",
             "__enabled": true,
             "Flags": 0,
             "EjectBrass": null,
-            "EjectTransform": null,
+            "ShellEjectGameObject": null,
             "MuzzleEffect": null,
-            "MuzzleTransform": {
+            "MuzzleGameObject": {
               "_type": "gameobject",
               "go": "6fb841db-2a8c-429c-9db2-6dd3298f18f7"
             },

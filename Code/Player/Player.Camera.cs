@@ -1,6 +1,6 @@
 using Sandbox.Movement;
 
-public sealed partial class Player
+public sealed partial class Player : ICameraModifier
 {
 	[Property, Group( "Camera" )] public float SeatedCameraDistance { get; set; } = 200f;
 	[Property, Group( "Camera" )] public float SeatedCameraHeight { get; set; } = 40f;
@@ -13,7 +13,7 @@ public sealed partial class Player
 	private float _smoothedDistance;
 	private Angles _seatedAngles;
 	private Vector3 _lastSeatWorldPos;
-	private List<BaseCarryable> _seatedWeapons;
+	private List<BaseSandboxWeapon> _seatedWeapons;
 
 	private float roll;
 
@@ -24,27 +24,50 @@ public sealed partial class Player
 		ang = angles;
 	}
 
-	void PlayerController.IEvents.PostCameraSetup( CameraComponent camera )
+	int ICameraModifier.CameraOrder => 50;
+
+	// Runs in the camera's modifier chain right after the engine PlayerController (order 0) - the
+	// game's view pass: preference FOV, first person tags, movement roll and the seated camera.
+	void ICameraModifier.ModifyCamera( CameraComponent camera, ref CameraView view )
 	{
+		if ( IsProxy || Scene.Camera != camera ) return;
+		if ( !Controller.IsValid() ) return;
+
+		// Keep the engine's camera effects scaled by the player's screenshake preference.
+		if ( CameraEffectSystem.Get( Scene ) is { } effects )
+			effects.Scale = GamePreferences.Screenshake;
+
 		camera.FovAxis = CameraComponent.Axis.Vertical;
-		camera.FieldOfView = Screen.CreateVerticalFieldOfView( Preferences.FieldOfView, 9.0f / 16.0f );
+		view.FieldOfView = Screen.CreateVerticalFieldOfView( Preferences.FieldOfView, 9.0f / 16.0f );
 
 		if ( Controller.ThirdPerson )
 			camera.RenderExcludeTags.Add( "firstperson" );
 		else
 			camera.RenderExcludeTags.Remove( "firstperson" );
 
-		Local.IPlayerEvents.Post( x => x.OnCameraSetup( camera ) );
+		// Legacy game events still receive the camera - write the view out, let them run, fold back.
+		BridgeCameraEvent( camera, ref view, c => Local.IPlayerEvents.Post( x => x.OnCameraSetup( c ) ) );
 
-		ApplyMovementCameraEffects( camera );
-		UpdateSeatedWeapons();
-		ApplySeatedCameraSetup( camera );
-		DrawSeatedWeaponHud();
+		ApplyMovementCameraEffects( ref view );
+		ApplySeatedCameraSetup( ref view );
 
-		Local.IPlayerEvents.Post( x => x.OnCameraPostSetup( camera ) );
+		BridgeCameraEvent( camera, ref view, c => Local.IPlayerEvents.Post( x => x.OnCameraPostSetup( c ) ) );
 	}
 
-	private void ApplyMovementCameraEffects( CameraComponent camera )
+	private static void BridgeCameraEvent( CameraComponent camera, ref CameraView view, Action<CameraComponent> post )
+	{
+		camera.WorldPosition = view.Position;
+		camera.WorldRotation = view.Rotation;
+		camera.FieldOfView = view.FieldOfView;
+
+		post( camera );
+
+		view.Position = camera.WorldPosition;
+		view.Rotation = camera.WorldRotation;
+		view.FieldOfView = camera.FieldOfView;
+	}
+
+	private void ApplyMovementCameraEffects( ref CameraView view )
 	{
 		if ( Controller.ThirdPerson ) return;
 		if ( !GamePreferences.ViewBobbing ) return;
@@ -52,7 +75,7 @@ public sealed partial class Player
 		var r = Controller.WishVelocity.Dot( EyeTransform.Left ) / -250.0f;
 		roll = MathX.Lerp( roll, r, Time.Delta * 10.0f, true );
 
-		camera.WorldRotation *= new Angles( 0, 0, roll );
+		view.Rotation *= new Angles( 0, 0, roll );
 	}
 
 	private void UpdateSeatedWeapons()
@@ -73,7 +96,7 @@ public sealed partial class Player
 		}
 	}
 
-	private void ApplySeatedCameraSetup( CameraComponent camera )
+	private void ApplySeatedCameraSetup( ref CameraView view )
 	{
 		if ( !Controller.ThirdPerson )
 			return;
@@ -88,7 +111,7 @@ public sealed partial class Player
 		{
 			_seatCameraInitialized = true;
 			_minCameraDistance = MathF.Max( SeatedCameraDistance, RebuildContraptionBounds( seatGo ) );
-			_seatedAngles = camera.WorldRotation.Angles();
+			_seatedAngles = view.Rotation.Angles();
 			_lastSeatWorldPos = seatPos;
 			_smoothedDistance = _minCameraDistance;
 		}
@@ -111,8 +134,8 @@ public sealed partial class Player
 		var tr = Scene.Trace.FromTo( seatPos, desiredPos ).Radius( 8f ).WithTag( "world" ).IgnoreGameObjectHierarchy( GameObject.Root ).Run();
 		var camPos = tr.Hit ? tr.HitPosition + (seatPos - desiredPos).Normal * 4f : desiredPos;
 
-		camera.WorldPosition = camPos;
-		camera.WorldRotation = Rotation.LookAt( seatPos - camPos, Vector3.Up );
+		view.Position = camPos;
+		view.Rotation = Rotation.LookAt( seatPos - camPos, Vector3.Up );
 	}
 
 	private float RebuildContraptionBounds( GameObject seatGo )
@@ -138,12 +161,12 @@ public sealed partial class Player
 		var builder = new LinkedGameObjectBuilder();
 		builder.AddConnected( seatGo );
 
-		_seatedWeapons ??= new List<BaseCarryable>();
+		_seatedWeapons ??= new List<BaseSandboxWeapon>();
 		_seatedWeapons.Clear();
 
 		foreach ( var obj in builder.Objects )
 		{
-			foreach ( var weapon in obj.GetComponentsInChildren<BaseCarryable>() )
+			foreach ( var weapon in obj.GetComponentsInChildren<BaseSandboxWeapon>() )
 			{
 				if ( !weapon.HasOwner )
 					_seatedWeapons.Add( weapon );
@@ -154,33 +177,15 @@ public sealed partial class Player
 	private void DrawSeatedWeaponHud()
 	{
 		if ( _seatedWeapons == null || _seatedWeapons.Count == 0 ) return;
-		if ( Scene.Camera is null ) return;
-		if ( Scene.Camera.RenderExcludeTags.Has( "ui" ) ) return;
-
-		var hud = Scene.Camera.Hud;
 
 		foreach ( var weapon in _seatedWeapons )
 		{
 			if ( !weapon.IsValid() ) continue;
 			if ( weapon is IPlayerControllable controllable && !controllable.CanControl( this ) ) continue;
 
-			Vector2 aimPos;
-
-			if ( weapon.IsTargetedAim )
-			{
-				aimPos = Screen.Size * 0.5f;
-			}
-			else
-			{
-				var muzzle = weapon.MuzzleTransform.WorldTransform;
-				var tr = Scene.Trace.Ray( muzzle.Position, muzzle.Position + muzzle.Rotation.Forward * 4096f )
-					.IgnoreGameObjectHierarchy( weapon.GameObject.Root )
-					.Run();
-
-				aimPos = Scene.Camera.PointToScreenPixels( tr.EndPosition );
-			}
-
-			weapon.DrawHud( hud, aimPos );
+			// The engine projects the weapon's aim point onto the screen (targeted aim resolves to a
+			// camera ray, which projects to centre).
+			weapon.DrawHud( Scene.Camera );
 		}
 	}
 }

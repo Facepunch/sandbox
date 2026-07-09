@@ -10,7 +10,7 @@ public enum ThrowType
 /// A throwable grenade weapon
 /// Cooks while held — explodes in hand if held too long
 /// </summary>
-public sealed class HandGrenadeWeapon : BaseWeapon
+public sealed class HandGrenadeWeapon : BaseSandboxWeapon
 {
 	[Property] public GameObject Prefab { get; set; }
 	[Property] public float ThrowPower { get; set; } = 1200f;
@@ -19,11 +19,6 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 	/// Sound played when the pin is pulled and cooking starts.
 	/// </summary>
 	[Property] public SoundEvent PinPullSound { get; set; }
-
-	/// <summary>
-	/// Sound played when the grenade is thrown.
-	/// </summary>
-	[Property] public SoundEvent ThrowSound { get; set; }
 
 	/// <summary>
 	/// Sound played when deploying the next grenade after a throw.
@@ -63,7 +58,7 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 	protected override void OnEnabled()
 	{
 		base.OnEnabled();
-		AddShootDelay( 0.5f );
+		SetNextFire( 0.5f );
 	}
 
 	public override void OnPlayerDeath( PlayerDiedParams args )
@@ -75,16 +70,22 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 			Throw( Owner, Vector3.Down, 0.2f );
 	}
 
-	public override void OnControl()
+	protected override void OnSeatControl()
 	{
+		if ( HasOwner ) return;
+		// Seat control runs fully on the host - no prediction, and DropGrenade (a host RPC) runs once.
+		if ( !Networking.IsHost ) return;
+
 		if ( ShootInput.Pressed() )
 		{
 			DropGrenade();
 		}
 	}
 
-	public override void OnControl( Player player )
+	protected override void OnControl()
 	{
+		var player = Owner;
+
 		// Wait for throw animation to finish
 		if ( IsThrowing )
 		{
@@ -92,9 +93,9 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 			{
 				IsThrowing = false;
 
-				if ( !HasAmmo() )
+				if ( !HasPrimaryAmmo() )
 				{
-					SwitchToBestWeapon();
+					Inventory?.SwitchToBest();
 					DestroyGameObject();
 					return;
 				}
@@ -128,19 +129,11 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 		// Update throw direction blend
 		UpdateThrowType();
 
-		// Cooked too long — explode in hand
+		// Cooked too long — explode in hand. Ammo spend + switch/destroy happen host-side in ExplodeInHand.
 		if ( TimeSinceCooked > Lifetime )
 		{
 			IsCooking = false;
-			TakeAmmo( 1 );
 			ExplodeInHand();
-
-			if ( !HasAmmo() )
-			{
-				SwitchToBestWeapon();
-				DestroyGameObject();
-			}
-
 			return;
 		}
 
@@ -168,9 +161,11 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 	{
 		IsCooking = false;
 
-		if ( !TakeAmmo( 1 ) )
+		// Ammo is host-authoritative (spent in SpawnProjectile); here we only check we still have one so
+		// the owner-side reserve write can't be reverted by the host into an infinite-grenade dupe.
+		if ( !HasPrimaryAmmo() )
 		{
-			SwitchToBestWeapon();
+			Inventory?.SwitchToBest();
 			DestroyGameObject();
 			return;
 		}
@@ -187,14 +182,12 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 
 		SpawnProjectile( player, startPos, direction, powerScale );
 
-		// Play throw animation
-		if ( ThrowSound is not null )
-			GameObject.PlaySound( ThrowSound );
+		PlayAttackSound();
 
 		WeaponModel?.Renderer?.Set( "b_charge", false );
 		WeaponModel?.Renderer?.Set( "b_attack", true );
 
-		AddShootDelay( 1f );
+		SetNextFire( 1f );
 		IsThrowing = true;
 		TimeUntilThrown = 0.5f;
 	}
@@ -235,6 +228,7 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 			explosive.Radius = Radius;
 			explosive.Damage = MaxDamage;
 			explosive.Force = Force;
+			explosive.Attacker = Attacker;
 		}
 
 		// Don't collide with the weapon we dropped from
@@ -251,6 +245,9 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 		if ( !player.IsValid() ) return;
 		if ( !Prefab.IsValid() ) return;
 
+		// Host-authoritative ammo spend - the owner only predicted the throw, the host owns the count.
+		TakePrimaryAmmo( 1 );
+
 		var go = Prefab.Clone( startPos );
 
 		// Configure the timed explosive with remaining fuse
@@ -261,6 +258,7 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 			explosive.Radius = Radius;
 			explosive.Damage = MaxDamage;
 			explosive.Force = Force;
+			explosive.Attacker = player.GameObject;
 		}
 
 		var rb = go.GetComponent<Rigidbody>();
@@ -276,16 +274,6 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 		filter.Body = GameObject;
 
 		go.NetworkSpawn();
-	}
-
-	void SwitchToBestWeapon()
-	{
-		var inventory = Owner?.GetComponent<PlayerInventory>();
-		if ( !inventory.IsValid() ) return;
-
-		var best = inventory.GetBestWeapon();
-		if ( best.IsValid() )
-			inventory.SwitchWeapon( best );
 	}
 
 	[Rpc.Host]
@@ -306,19 +294,25 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 			x.Radius = Radius;
 			x.PhysicsForceScale = Force;
 			x.DamageAmount = MaxDamage;
-			x.Attacker = explosion;
+			x.Attacker = Attacker;
 		}, FindMode.EverythingInSelfAndDescendants );
 
 		explosion.Enabled = true;
 		explosion.NetworkSpawn( true, null );
 
-		SwitchToBestWeapon();
-		DestroyGameObject();
+		// Spend one grenade host-side; only give up the weapon when the last one is gone (don't discard a
+		// remaining stack just because one cooked off in your hand).
+		TakePrimaryAmmo( 1 );
+		if ( !HasPrimaryAmmo() )
+		{
+			Inventory?.SwitchToBest();
+			DestroyGameObject();
+		}
 	}
 
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
-		var color = !HasAmmo() ? CrosshairNoShoot : CrosshairCanShoot;
+		var color = !HasPrimaryAmmo() ? CrosshairNoShoot : CrosshairCanShoot;
 		hud.SetBlendMode( BlendMode.Lighten );
 		hud.DrawCircle( center, 6, color );
 	}
