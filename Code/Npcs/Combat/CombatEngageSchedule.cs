@@ -60,6 +60,9 @@ public class CombatEngageSchedule : ScheduleBase
 
 	protected override void OnStart()
 	{
+		if ( !Target.IsValid() || !Weapon.IsValid() )
+			return;
+
 		Npc.Navigation.WishSpeed = EngageSpeed;
 
 		// Strafe: face the target while moving, rather than facing the movement direction.
@@ -98,7 +101,7 @@ public class CombatEngageSchedule : ScheduleBase
 
 	protected override bool ShouldCancel()
 	{
-		if ( !Target.IsValid() )
+		if ( !Target.IsValid() || !Weapon.IsValid() )
 			return true;
 
 		return !Npc.Senses.VisibleTargets.Contains( Target );

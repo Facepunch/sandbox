@@ -101,7 +101,7 @@ public class CombatNpc : Npc
 	{
 		var visible = Senses.GetBestTarget();
 
-		if ( visible.IsValid() )
+		if ( visible.IsValid() && Weapon.IsValid() )
 		{
 			_lastKnownPosition = visible.WorldPosition;
 			_timeSinceLastSeen = 0;

@@ -29,6 +29,9 @@ public class FireWeapon : TaskBase
 
 	protected override void OnStart()
 	{
+		if ( !Weapon.IsValid() )
+			return;
+
 		_shotsLeft = Game.Random.Int( Weapon.Npc.BurstMin, Weapon.Npc.BurstMax );
 
 		// A burst that can't land its shots (target keeps out of range) gives up rather than stall.
