@@ -1,3 +1,4 @@
+using Sandbox.Npcs;
 using Sandbox.UI;
 
 public sealed partial class GameManager : GameObjectSystem<GameManager>, Component.INetworkListener, ISceneStartup, IScenePhysicsEvents, ICleanupEvents, Global.ISaveEvents
@@ -216,19 +217,20 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	/// <summary>
 	/// Called on the host when an NPC is killed. Credits the attacker and adds a kill feed entry.
 	/// </summary>
-	internal void OnNpcDeath( string npcName, DamageInfo dmg )
+	internal void OnNpcDeath( Npc victim, DamageInfo dmg )
 	{
 		Assert.True( Networking.IsHost );
+		Assert.True( victim.IsValid(), "NPC invalid" );
 
 		var source = dmg.Attacker?.GetComponent<IKillSource>();
-		source?.OnKill( dmg.Attacker );
+		source?.OnKill( victim.GameObject );
 
 		var w = dmg.Weapon.IsValid() ? dmg.Weapon.GetComponentInChildren<IKillIcon>() : null;
 		var attackerName = source?.DisplayName;
 		var attackerSteamId = source?.SteamId ?? 0L;
 		var attackerTags = source?.Tags ?? "";
 
-		Scene.RunEvent<Feed>( x => x.NotifyKill( npcName, attackerName, attackerSteamId, dmg.Tags.ToString(), attackerTags, "npc", w?.DisplayIcon ) );
+		Scene.RunEvent<Feed>( x => x.NotifyKill( victim.DisplayName, attackerName, attackerSteamId, dmg.Tags.ToString(), attackerTags, "npc", w?.DisplayIcon ) );
 	}
 
 	/// <summary>

@@ -205,7 +205,7 @@ public sealed class RollerNpc : Npc, Component.ICollisionListener
 		// Broadcast the death so nearby NPCs notice (base Die does this; we override it).
 		EmitStimulus( StimulusKind.Death, radius: 1024f, lifetime: 2f );
 
-		GameManager.Current?.OnNpcDeath( DisplayName, damage );
+		GameManager.Current?.OnNpcDeath( this, damage );
 
 		// TODO: explosion effect / sound
 

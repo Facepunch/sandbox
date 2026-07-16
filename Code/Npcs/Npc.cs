@@ -214,7 +214,7 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 		// Broadcast the death so nearby NPCs notice and react.
 		EmitStimulus( StimulusKind.Death, radius: 1024f, lifetime: 2f );
 
-		GameManager.Current?.OnNpcDeath( DisplayName, damage );
+		GameManager.Current?.OnNpcDeath( this, damage );
 		CreateRagdoll( GetDeathLaunchVelocity( damage ), damage.Origin );
 		GameObject.Destroy();
 	}
