@@ -186,7 +186,7 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 	/// </summary>
 	void IDamageable.OnDamage( in DamageInfo damage )
 	{
-		if ( IsProxy )
+		if ( IsProxy || Health < 1f )
 			return;
 
 		var amount = damage.Damage;
