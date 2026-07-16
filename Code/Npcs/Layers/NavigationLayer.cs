@@ -46,6 +46,8 @@ public class NavigationLayer : BaseNpcLayer
 	public bool IsMoving => Agent.IsValid() && Agent.Velocity.WithZ( 0 ).Length > 20f;
 
 	private bool _running;
+	private float? _moveSpeed;
+	private GameObject _moveFaceTarget;
 
 	protected override void OnStart()
 	{
@@ -57,10 +59,12 @@ public class NavigationLayer : BaseNpcLayer
 	/// <summary>
 	/// Command this layer to move to a target
 	/// </summary>
-	public void MoveTo( Vector3 target, float stopDistance = 10f )
+	public void MoveTo( Vector3 target, float stopDistance = 10f, float? speed = null, GameObject faceTarget = null )
 	{
 		MoveTarget = target;
 		StopDistance = stopDistance;
+		_moveSpeed = speed;
+		_moveFaceTarget = faceTarget;
 
 		if ( !Agent.IsValid() )
 		{
@@ -84,6 +88,9 @@ public class NavigationLayer : BaseNpcLayer
 	public void Stop()
 	{
 		MoveTarget = null;
+		_moveSpeed = null;
+		_moveFaceTarget = null;
+		_running = false;
 
 		if ( Agent.IsValid() )
 			Agent.Stop();
@@ -106,6 +113,18 @@ public class NavigationLayer : BaseNpcLayer
 	// sliding sideways. Disabled while strafing (combat).
 	private void FaceMovement()
 	{
+		if ( _moveFaceTarget.IsValid() )
+		{
+			var direction = (_moveFaceTarget.WorldPosition - Npc.WorldPosition).WithZ( 0 );
+			if ( direction.Length > 1f )
+			{
+				var faceRotation = Rotation.LookAt( direction.Normal, Vector3.Up );
+				Npc.WorldRotation = Rotation.Slerp( Npc.WorldRotation, faceRotation, TurnSpeed * Time.Delta );
+			}
+
+			return;
+		}
+
 		if ( !FaceMovementDirection )
 			return;
 
@@ -121,8 +140,10 @@ public class NavigationLayer : BaseNpcLayer
 	// stops it flickering between walk and run near the threshold.
 	private float ResolveSpeed()
 	{
+		var speed = _moveSpeed ?? WishSpeed;
+
 		if ( !MoveTarget.HasValue )
-			return WishSpeed;
+			return speed;
 
 		var distance = Npc.WorldPosition.Distance( MoveTarget.Value );
 
@@ -131,7 +152,7 @@ public class NavigationLayer : BaseNpcLayer
 		else if ( !_running && distance > RunDistance )
 			_running = true;
 
-		return _running ? MathF.Max( WishSpeed, RunSpeed ) : WishSpeed;
+		return _running ? MathF.Max( speed, RunSpeed ) : speed;
 	}
 
 	public override string GetDebugString()
@@ -166,11 +187,6 @@ public class NavigationLayer : BaseNpcLayer
 
 	public override void ResetLayer()
 	{
-		MoveTarget = null;
-
-		if ( Agent.IsValid() )
-		{
-			Agent.Stop();
-		}
+		Stop();
 	}
 }

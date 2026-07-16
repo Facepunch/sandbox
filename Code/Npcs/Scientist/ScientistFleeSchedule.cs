@@ -26,7 +26,7 @@ public sealed class ScientistFleeSchedule : ScheduleBase
 		if ( !Source.IsValid() ) return;
 
 		// Sprint speed scales with panic (200–350)
-		Npc.Navigation.WishSpeed = 200f + 150f * PanicLevel;
+		var speed = 200f + 150f * PanicLevel;
 
 		// Don't stare at the player — look where we're running
 		Npc.Animation.ClearLookTarget();
@@ -45,19 +45,12 @@ public sealed class ScientistFleeSchedule : ScheduleBase
 		// Snap to navmesh
 		if ( Npc.Scene.NavMesh.GetClosestPoint( fleeTarget ) is { } navPoint )
 		{
-			AddTask( new MoveTo( navPoint, 15f ) );
+			AddTask( new MoveTo( navPoint, 15f ) { Speed = speed } );
 		}
 		else
 		{
-			AddTask( new MoveTo( fleeTarget, 15f ) );
+			AddTask( new MoveTo( fleeTarget, 15f ) { Speed = speed } );
 		}
-	}
-
-	protected override void OnEnd()
-	{
-		// Reset to normal walk speed
-		// TODO: this is shit, can we scope these somehow so the IDisposable handles all this ?
-		Npc.Navigation.WishSpeed = 100f;
 	}
 
 	protected override bool ShouldCancel()

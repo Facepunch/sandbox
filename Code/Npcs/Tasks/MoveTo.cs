@@ -15,6 +15,9 @@ public class MoveTo : TaskBase
 	public float StopDistance { get; set; } = 10f;
 	public float ReevaluateInterval { get; set; } = 0.5f;
 
+	/// <summary>Movement speed for this task. Null uses the NPC's configured speed.</summary>
+	public float? Speed { get; set; }
+
 	/// <summary>
 	/// Keep facing this object while moving instead of turning into the movement
 	/// direction. The NPC backpedals or strafes -- short moves away from someone
@@ -23,7 +26,6 @@ public class MoveTo : TaskBase
 	public GameObject FaceTarget { get; set; }
 
 	private TimeSince _lastReevaluate;
-	private bool _restoreFaceMovement;
 
 	public MoveTo( Vector3 targetPosition, float stopDistance = 10f )
 	{
@@ -39,16 +41,10 @@ public class MoveTo : TaskBase
 
 	protected override void OnStart()
 	{
-		if ( FaceTarget.IsValid() && Npc.Navigation.FaceMovementDirection )
-		{
-			Npc.Navigation.FaceMovementDirection = false;
-			_restoreFaceMovement = true;
-		}
-
 		var pos = GetTargetPosition();
 		if ( !pos.HasValue ) return;
 
-		Npc.Navigation.MoveTo( pos.Value, StopDistance );
+		Npc.Navigation.MoveTo( pos.Value, StopDistance, Speed, FaceTarget );
 		_lastReevaluate = 0;
 	}
 
@@ -63,19 +59,8 @@ public class MoveTo : TaskBase
 		{
 			var pos = GetTargetPosition();
 			if ( pos.HasValue )
-				Npc.Navigation.MoveTo( pos.Value, StopDistance );
+				Npc.Navigation.MoveTo( pos.Value, StopDistance, Speed, FaceTarget );
 			_lastReevaluate = 0;
-		}
-
-		// Turn toward whoever we're keeping our front to while we move
-		if ( FaceTarget.IsValid() )
-		{
-			var dir = (FaceTarget.WorldPosition - Npc.WorldPosition).WithZ( 0 );
-			if ( dir.Length > 1f )
-			{
-				var targetRotation = Rotation.LookAt( dir.Normal, Vector3.Up );
-				Npc.WorldRotation = Rotation.Slerp( Npc.WorldRotation, targetRotation, Npc.Navigation.TurnSpeed * Time.Delta );
-			}
 		}
 
 		return Npc.Navigation.GetStatus();
@@ -83,11 +68,7 @@ public class MoveTo : TaskBase
 
 	protected override void OnEnd()
 	{
-		if ( _restoreFaceMovement )
-		{
-			Npc.Navigation.FaceMovementDirection = true;
-			_restoreFaceMovement = false;
-		}
+		Npc.Navigation.Stop();
 	}
 
 	private Vector3? GetTargetPosition()
