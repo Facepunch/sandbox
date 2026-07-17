@@ -47,9 +47,20 @@ public sealed class EntitySpawner : ISpawner
 		return size.x > size.y ? 90f : 0f;
 	}
 
+	private static Transform AlignUpright( Transform transform )
+	{
+		var forward = transform.Rotation.Forward.WithZ( 0 );
+		if ( forward.LengthSquared < 0.01f )
+			forward = Vector3.Forward;
+
+		transform.Rotation = Rotation.LookAt( forward.Normal, Vector3.Up );
+		return transform;
+	}
+
 	public void DrawPreview( Transform transform, Material overrideMaterial )
 	{
 		if ( !IsReady ) return;
+		transform = AlignUpright( transform );
 
 		// Draw a bounding box cube as a placeholder preview
 		var size = Bounds.Size;
@@ -64,6 +75,7 @@ public sealed class EntitySpawner : ISpawner
 
 	public Task<List<GameObject>> Spawn( Transform transform, Player player )
 	{
+		transform = AlignUpright( transform );
 		var depth = -Bounds.Mins.z;
 		transform.Position += transform.Up * depth;
 		transform.Rotation *= Rotation.FromYaw( GetYawCorrection() );
