@@ -69,7 +69,11 @@ public class CombatEngageSchedule : ScheduleBase
 
 		// Spot the target on engage start
 		if ( Npc.Speech.CanSpeak )
-			AddTask( new Say( Game.Random.FromArray( SpotLines ), 1.5f, Target ) );
+			AddTask( new Say( Game.Random.FromArray( SpotLines ), 1.5f, Target )
+			{
+				Tags = ["combat", "spot"],
+				Priority = 2000
+			} );
 
 		AddTask( new LookAt( Target ) );
 
@@ -80,7 +84,10 @@ public class CombatEngageSchedule : ScheduleBase
 		// Rest between bursts, as the weapon dictates - with a random combat taunt sometimes
 		var rest = Game.Random.Float( Weapon.Npc.RestMin, Weapon.Npc.RestMax );
 		if ( Npc.Speech.CanSpeak && Game.Random.Float() < 0.4f )
-			AddTask( new Say( Game.Random.FromArray( TauntLines ), rest, Target ) );
+			AddTask( new Say( Game.Random.FromArray( TauntLines ), rest, Target )
+			{
+				Tags = ["combat", "taunt"]
+			} );
 		else
 			AddTask( new Wait( rest ) );
 

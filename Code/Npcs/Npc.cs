@@ -34,6 +34,13 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 		GameObject.Tags.Add( "npc" );
 		_rigidbody = GetComponent<Rigidbody>();
 		_navAgent = GetComponent<NavMeshAgent>();
+		Scene.GetSystem<NpcSystem>().Register( this );
+	}
+
+	protected override void OnDestroy()
+	{
+		Scene?.GetSystem<NpcSystem>()?.Unregister( this );
+		base.OnDestroy();
 	}
 
 	protected override void OnFixedUpdate()
@@ -199,7 +206,10 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 		OnHurt( damage );
 
 		if ( Health < 1f )
+		{
+			Speech.Stop();
 			Die( damage );
+		}
 	}
 
 	/// <summary>Called when the NPC takes damage (before the death check). Override to react.</summary>

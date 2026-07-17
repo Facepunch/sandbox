@@ -89,21 +89,22 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 		{
 			Leader = player.GameObject;
 			_timeSinceStruggling = 0;
-			SayVoice( FollowVoice, force: true, lookAt: player.GameObject );
+			SayVoice( FollowVoice, ["reaction", "acknowledgement"], int.MaxValue, player.GameObject );
 		}
 
 		// Re-think now so following starts/stops immediately.
 		EndCurrentSchedule();
 	}
 
-	// Play a voice line. Ambient lines respect the speech cooldown; USE responses force through.
+	// Normal lines respect the personal cooldown. Max priority always speaks.
 	// If lookAt is given, the scientist looks them in the eyes while talking.
-	private void SayVoice( SoundEvent voice, bool force = false, GameObject lookAt = null )
+	private void SayVoice( SoundEvent voice, TagSet tags = null,
+		int priority = 1000, GameObject lookAt = null )
 	{
 		if ( voice is null ) return;
-		if ( !force && !Speech.CanSpeak ) return;
+		if ( priority <= 1000 && !Speech.CanSpeak ) return;
 
-		Speech.Say( voice, lookAt: lookAt );
+		Speech.TrySay( voice, lookAt: lookAt, tags: tags, priority: priority );
 	}
 
 	// Defenceless -- flees anything dangerous, indifferent to everyone else.
@@ -131,7 +132,7 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 				_attacker.GetComponent<Player>()?.PlayerData?.AddStat( "npc.scientist.scare" );
 			}
 
-			SayVoice( ScaredVoice, lookAt: _attacker );
+			SayVoice( ScaredVoice, ["reaction", "fear"], 2000, _attacker );
 
 			var flee = GetSchedule<ScientistFleeSchedule>();
 			flee.Source = _attacker;
@@ -143,7 +144,7 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 		var threat = Senses.GetNearestVisible( Disposition.Fearful );
 		if ( threat.IsValid() )
 		{
-			SayVoice( ScaredVoice, lookAt: threat );
+			SayVoice( ScaredVoice, ["reaction", "fear"], 2000, threat );
 
 			var sightFlee = GetSchedule<ScientistFleeSchedule>();
 			sightFlee.Source = threat;
@@ -187,7 +188,7 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 			{
 				var leader = Leader;
 				Leader = null;
-				SayVoice( StuckVoice, force: true, lookAt: leader );
+				SayVoice( StuckVoice, ["reaction", "stuck"], 2000, leader );
 				return GetIdleSchedule();
 			}
 

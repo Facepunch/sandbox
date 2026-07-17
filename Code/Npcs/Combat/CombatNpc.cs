@@ -165,7 +165,7 @@ public class CombatNpc : Npc
 		}
 
 		if ( Health >= 1f && Speech.CanSpeak && Game.Random.Float() < 0.5f )
-			Speech.Say( Game.Random.FromArray( PainLines ), 1.5f );
+			Speech.TrySay( Game.Random.FromArray( PainLines ), 1.5f, tags: ["reaction", "pain"], priority: 2000 );
 
 		// React immediately.
 		EndCurrentSchedule();
@@ -174,7 +174,7 @@ public class CombatNpc : Npc
 	protected override void Die( in DamageInfo damage )
 	{
 		if ( Speech.CanSpeak )
-			Speech.Say( Game.Random.FromArray( DeathLines ), 2f );
+			Speech.TrySay( Game.Random.FromArray( DeathLines ), 2f, tags: ["reaction", "death"], priority: 3000 );
 
 		DropWeapon();
 

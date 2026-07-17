@@ -26,7 +26,11 @@ public sealed class ScientistFarewellSchedule : ScheduleBase
 		// Face them first, then say the line - Say waits for the speech to
 		// finish, so we stand our ground until the sentence is done
 		AddTask( new LookAt( Target ) );
-		AddTask( new Say( Voice, 0f, Target ) );
+		AddTask( new Say( Voice, 0f, Target )
+		{
+			Tags = ["reaction", "acknowledgement"],
+			Priority = int.MaxValue
+		} );
 	}
 
 	protected override void OnEnd()

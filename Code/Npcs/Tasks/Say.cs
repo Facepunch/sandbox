@@ -14,6 +14,15 @@ public class Say : TaskBase
 	public float Duration { get; set; }
 	public GameObject LookAt { get; set; }
 
+	/// <summary>Tags describing the line and its shared cooldown groups.</summary>
+	public TagSet Tags { get; set; }
+
+	/// <summary>Admission and interruption priority for this line.</summary>
+	public int Priority { get; set; } = 1000;
+
+	/// <summary>Distance within which this line coordinates with other NPC speech.</summary>
+	public float Radius { get; set; } = 1500f;
+
 	public Say( SoundEvent sound, float duration = 0f, GameObject lookAt = null )
 	{
 		Sound = sound;
@@ -34,11 +43,11 @@ public class Say : TaskBase
 
 		if ( Sound is not null )
 		{
-			speech.Say( Sound, Duration, LookAt );
+			speech.TrySay( Sound, Duration, LookAt, Tags, Priority, Radius );
 		}
 		else if ( !string.IsNullOrEmpty( Message ) )
 		{
-			speech.Say( Message, Duration, LookAt );
+			speech.TrySay( Message, Duration, LookAt, Tags, Priority, Radius );
 		}
 	}
 
