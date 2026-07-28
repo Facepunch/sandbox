@@ -7,7 +7,7 @@
     "tool.hint.weld.stage1": "Sabitlenecek ikinci nesneyi seçin",
     "tool.hint.weld.stage2": "Nesneyi döndür",
     "tool.hint.weld.source": "Kaynak seç",
-    "tool.hint.weld.finish": "Sonlandır",
+    "tool.hint.weld.finish": "Tamamla",
     "tool.hint.weld.remove": "Sabitlemeyi kaldır",
     "tool.hint.weld.confirm": "Onayla",
 
@@ -29,19 +29,19 @@
     "tool.hint.rope.stage0": "İki nesneyi bir halat ile bağlar",
     "tool.hint.rope.stage1": "İkinci nesneyi seçin",
     "tool.hint.rope.source": "Kaynak seç",
-    "tool.hint.rope.finish": "Sonlandır",
+    "tool.hint.rope.finish": "Tamamla",
     "tool.hint.rope.remove": "Kaldır",
 
     "tool.hint.elastic.stage0": "Elastik ile iki nesneyi birbirine bağlar",
     "tool.hint.elastic.stage1": "İkinci nesneyi seçin",
     "tool.hint.elastic.source": "Kaynak seç",
-    "tool.hint.elastic.finish": "Sonlandır",
+    "tool.hint.elastic.finish": "Tamamla",
     "tool.hint.elastic.remove": "Kaldır",
 
     "tool.hint.ballsocket.stage0": "İki nesneyi bir mafsala bağlar",
     "tool.hint.ballsocket.stage1": "İkinci nesneyi seçin",
     "tool.hint.ballsocket.source": "Kaynak seç",
-    "tool.hint.ballsocket.finish": "Sonlandır",
+    "tool.hint.ballsocket.finish": "Tamamla",
     "tool.hint.ballsocket.remove": "Kaldır",
 
     "tool.hint.slider.stage0": "İki nesneyi kayar mafsalla birleştirir",
@@ -49,7 +49,7 @@
     "tool.hint.slider.source": "Kaynak seç",
     "tool.hint.slider.secondary": "Normal boyunca",
     "tool.hint.slider.secondary.stage1": "İptal et",
-    "tool.hint.slider.finish": "Sonlandır",
+    "tool.hint.slider.finish": "Tamamla",
     "tool.hint.slider.remove": "Kaldır",
 
     "tool.hint.remover.description": "Nesneleri dünyadan kaldırır",
@@ -67,7 +67,7 @@
     "tool.hint.nocollide.stage0": "İki nesne arasındaki çarpışmayı devre dışı bırakır",
     "tool.hint.nocollide.stage1": "İkinci nesneyi seçin",
     "tool.hint.nocollide.source": "Kaynak seç",
-    "tool.hint.nocollide.finish": "Sonlandır",
+    "tool.hint.nocollide.finish": "Tamamla",
     "tool.hint.nocollide.remove": "Kaldır",
 
     "tool.hint.mass.description": "Bir nesnenin kütlesini ayarlar",
@@ -82,13 +82,13 @@
     "tool.hint.hydraulictool.stage0": "İki nesneyi bir hidrolik pistona bağlar",
     "tool.hint.hydraulictool.stage1": "İkinci nesneyi seçin",
     "tool.hint.hydraulictool.source": "Kaynak seç",
-    "tool.hint.hydraulictool.finish": "Sonlandır",
+    "tool.hint.hydraulictool.finish": "Tamamla",
     "tool.hint.hydraulictool.remove": "Kaldır",
 
     "tool.hint.linker.stage0": "İki nesne arasında bir bağlantı oluşturur, böylece tek bir mekanizma olarak kabul edilirler",
     "tool.hint.linker.stage1": "Bağlanılacak ikinci nesneyi seçin",
     "tool.hint.linker.source": "Kaynak seç",
-    "tool.hint.linker.finish": "Sonlandır",
+    "tool.hint.linker.finish": "Tamamla",
     "tool.hint.linker.remove": "Bağlantıyı kaldır",
 
     "tool.hint.hoverballtool.description": "Nesneleri belirli bir yükseklikte tutan bir \"Süzülen Top\" ekler",
