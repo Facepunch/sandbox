@@ -32,7 +32,7 @@
     "spawnmenu.common.no_results": "Sonuç yok.",
 
     "spawnmenu.tab.tools": "Aletler",
-    "spawnmenu.tab.utilities": "Yararlı Şeyler",
+    "spawnmenu.tab.utilities": "Araçlar",
 
     "spawnmenu.section.workshop": "Atölye",
     "spawnmenu.section.local": "Yerel",
@@ -96,8 +96,8 @@
     "spawnmenu.spawnlist.by": "Oluşturan",
     "spawnmenu.spawnlist.items": "ögeler",
 
-    "spawnmenu.utility.utilities": "Yararlı Şeyler",
-    "spawnmenu.utility.group.utilities": "Yararlı Şeyler",
+    "spawnmenu.utility.utilities": "Araçlar",
+    "spawnmenu.utility.group.utilities": "Araçlar",
     "spawnmenu.utility.group.world": "Dünya",
     "spawnmenu.utility.kill_me": "Beni Öldür",
     "spawnmenu.utility.cleanup": "Temizlik",
