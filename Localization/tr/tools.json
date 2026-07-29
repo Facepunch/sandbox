@@ -108,8 +108,8 @@
 
     "tool.hint.stacker.description": "Canlı ön izleme ile nesneleri bir yönde çoğaltır",
     "tool.hint.stacker.stack": "Çoğalt",
-    "tool.hint.stacker.cycle_alignment": "Döngü Hizalaması",
-    "tool.hint.stacker.cycle_direction": "Döngü Yönü",
+    "tool.hint.stacker.cycle_alignment": "Dizme Hizası",
+    "tool.hint.stacker.cycle_direction": "Dizme Yönü",
 
     "tool.name.weld": "Sabitleme",
     "tool.name.rope": "Halat",
