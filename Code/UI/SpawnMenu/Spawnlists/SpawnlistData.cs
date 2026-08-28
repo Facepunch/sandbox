@@ -166,7 +166,7 @@ public class SpawnlistData
 
 		if ( !string.IsNullOrEmpty( fullIdent ) )
 		{
-			menu.AddOption( "🌐", "sbox.game", () =>
+			menu.AddOption( "🌐", "Open in Workshop", () =>
 			{
 				Game.Overlay.ShowPackageModal( fullIdent );
 			} );
