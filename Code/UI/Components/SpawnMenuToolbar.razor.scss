@@ -1,7 +1,7 @@
 SpawnMenuToolbar
 {
 	width: 100%;
-	padding: 1px 1px 8px 1px;
+	padding: 1px 1px 2px 1px;
 	gap: 0.5rem;
 }
 
@@ -14,19 +14,41 @@ SpawnMenuToolbar
 
 TextEntry
 {
+	border: 1px solid rgba( white, 0.07 );
+	transition: border-color 0.1s ease;
+
+	&:hover, &:focus
+	{
+		border-color: rgba( white, 0.13 );
+	}
 	min-width: 256px;
 }
 
 DropDown
 {
-	padding: 10px;
-	gap: 16px;
+	min-height: 36px;
+	padding: 0 8px 0 10px;
+	gap: 8px;
 	align-items: center;
 	justify-content: center;
+	background-color: rgba( black, 0.2 );
+	border: 1px solid rgba( white, 0.07 );
+	border-radius: 6px;
+	transition: background-color 0.1s ease, border-color 0.1s ease;
 
-	IconPanel
+	&:hover
 	{
+		background-color: rgba( white, 0.06 );
+		border-color: rgba( white, 0.13 );
+	}
+
+	.dropdown_indicator
+	{
+		width: 16px;
 		height: 16px;
+		margin-left: 4px;
+		justify-content: center;
+		align-items: center;
 	}
 }
 

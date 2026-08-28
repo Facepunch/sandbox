@@ -27,7 +27,7 @@
     </Header>
 
     <Body>
-        <VirtualGrid Items=@Entries ItemSize=@(160)>
+        <VirtualGrid Items=@Entries ItemSize=@(new Vector2( 160, 120 ))>
             <Item Context="item">
                 @if (item is ScriptedEntity local)
                 {

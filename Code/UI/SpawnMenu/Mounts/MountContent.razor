@@ -32,14 +32,13 @@
 			</Body>
 			<Right>
 				<SpawnMenuFilter Query:bind="@Filter"></SpawnMenuFilter>
-				<SpawnMenuIconOptions Size:bind="@ItemSize"></SpawnMenuIconOptions>
 			</Right>
 		</SpawnMenuToolbar>
     </Header>
 
     <Body>
 		
-        <VirtualGrid Items=@( GetData() ) ItemSize=@ItemSize>
+        <VirtualGrid Items=@( GetData() ) ItemSize=@(new Vector2( 160, 120 ))>
             <Item Context="item">
 
 				@if (item is ResourceFolder dir)
@@ -53,7 +52,7 @@
                 @if (item is ResourceLoader loader)
                 {
                     var nameWithoutExt = System.IO.Path.GetFileNameWithoutExtension(loader.Name);
-                    <SpawnMenuIcon HideText=@(ItemSize <= 60) Ident=@($"mount:{loader.Path}") Title="@nameWithoutExt" Metadata=@MountSpawner.SerializeMetadata( mount.Title )></SpawnMenuIcon>
+                    <SpawnMenuIcon Ident=@($"mount:{loader.Path}") Title="@nameWithoutExt" Metadata=@MountSpawner.SerializeMetadata( mount.Title )></SpawnMenuIcon>
                 }
 
             </Item>
@@ -67,13 +66,11 @@
     public string Ident { get; set; }
     public string Filter { get; set; }
 
-    public static int ItemSize { get; set; } = 120;
-
 	ResourceFolder currentDir;
 
     BaseGameMount mount;
 
-	protected override int BuildHash() => HashCode.Combine(Ident, ItemSize, Filter);
+	protected override int BuildHash() => HashCode.Combine(Ident, Filter);
 
     protected override void OnParametersSet()
     {

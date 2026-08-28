@@ -7,7 +7,7 @@
 <SpawnMenuContent>
 
     <Body>
-        <VirtualGrid Items=@( GetData() ) ItemSize=@ItemSize>
+        <VirtualGrid Items=@( GetData() ) ItemSize=@(new Vector2( 240, 180 ))>
             <Item Context="item">
 
 				@if (item is Storage.Entry content)
@@ -23,10 +23,6 @@
 
 @code
 {
-    public static int ItemSize { get; set; } = 120;
-
-	protected override int BuildHash() => HashCode.Combine(ItemSize);
-
     protected override async Task OnParametersSetAsync()
     {
 

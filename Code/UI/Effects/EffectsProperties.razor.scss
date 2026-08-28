@@ -2,9 +2,11 @@
 
 EffectsProperties
 {
-    background-color: $menu-panel-bg;
-    backdrop-filter: blur( 2px );
+    background-color: rgba( 9, 21, 31, 0.88 );
+    backdrop-filter: blur( 8px );
+    border: 1px solid rgba( white, 0.06 );
     border-radius: 8px;
+    box-shadow: 0 8px 24px rgba( black, 0.5 );
     flex-direction: column;
     overflow: hidden;
 

@@ -19,7 +19,7 @@
 
     <Body>
 		
-        <VirtualGrid Items=@Items ItemSize=@(200) OnLastCell="@(() => { _ = QueryNext(); })">
+        <VirtualGrid Items=@Items ItemSize=@(new Vector2( 240, 180 )) OnLastCell="@(() => { _ = QueryNext(); })">
             <Item Context="context">
 
 				@if (context is Storage.QueryItem item)

@@ -52,7 +52,7 @@
         }
         else
         {
-            <VirtualGrid Items=@data.Items ItemSize=@(120)>
+            <VirtualGrid Items=@data.Items ItemSize=@(new Vector2( 160, 120 ))>
                 <Item Context="item">
                     @if ( item is SpawnlistItem spawnItem )
                     {
