@@ -7,7 +7,7 @@
 @if ( mount is null || !mount.IsMounted )
 {
     <root>
-		<label>#spawnmenu.mounts.error</label>
+        <SpawnMenuEmptyState Icon="error_outline" Title="#spawnmenu.mounts.error" Subtitle="#spawnmenu.empty.mount_unavailable" />
     </root>
     return;
 }
@@ -22,7 +22,7 @@
 				<Button Icon="home" @onclick="@GoHome"></Button>
 				<Button Icon="arrow_upward" Disabled=@( currentDir?.Parent == null ) @onclick="@GoUp"></Button>
 				*@
-			</left>
+			</Left>
 			<Body>
 				@*
 				<SpawnMenuPath Path=@CurrentPath></SpawnMenuPath>

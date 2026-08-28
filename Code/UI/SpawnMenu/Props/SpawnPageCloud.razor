@@ -20,18 +20,25 @@
     </Header>
 
     <Body>
-<VirtualGrid Items=@Entries ItemSize=@(new Vector2( 160, 120 ))>
-    <Item Context="item">
-        @if (item is LocalProps.Entry local)
+        @if ( Entries.Count == 0 && !Loading )
         {
-            <SpawnMenuIcon Ident=@($"prop:{local.Path}") Title=@local.DisplayName Verified=@(true) />
+            <SpawnMenuEmptyState Icon="search_off" Subtitle="#spawnmenu.empty.try_another_category" />
         }
-        else if (item is Package entry)
+        else
         {
-            <SpawnMenuIcon Ident=@($"prop:{entry.FullIdent}") Title=@entry.Title Verified=@(IsVerified(entry)) />
+            <VirtualGrid Items=@Entries ItemSize=@(new Vector2( 160, 120 ))>
+                <Item Context="item">
+                    @if (item is LocalProps.Entry local)
+                    {
+                        <SpawnMenuIcon Ident=@($"prop:{local.Path}") Title=@local.DisplayName Verified=@(true) />
+                    }
+                    else if (item is Package entry)
+                    {
+                        <SpawnMenuIcon Ident=@($"prop:{entry.FullIdent}") Title=@entry.Title Verified=@(IsVerified(entry)) />
+                    }
+                </Item>
+            </VirtualGrid>
         }
-    </Item>
-</VirtualGrid>
     </Body>
 
 </SpawnMenuContent>
@@ -61,11 +68,13 @@
     }
 
     List<object> Entries = [];
+    bool Loading;
 
     async void Rebuild()
     {
         var localEntries = FindLocalEntries().Cast<object>().ToList();
         Entries = localEntries;
+        Loading = true;
         StateHasChanged();
 
         var query = $"sort:{SortOrder.ToIdentifier()} type:model";
@@ -75,6 +84,7 @@
         var result = await Package.FindAsync( query );
         localEntries.AddRange( result.Packages.Cast<object>() );
         Entries = localEntries;
+        Loading = false;
         StateHasChanged();
     }
     static bool IsVerified( Package package ) => string.Equals( package.Org?.Title, "Facepunch", StringComparison.OrdinalIgnoreCase );

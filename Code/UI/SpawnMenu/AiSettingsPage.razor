@@ -14,13 +14,13 @@
         <div class="control-row" Tooltip=@EnabledDescription>
             <div class="left"><label>#spawnmenu.utility.ai_enabled</label></div>
             <div style="flex-grow: 1;"></div>
-            <SwitchControl Value="@NpcConVars.Enabled" OnValueChanged=@SetAiEnabled />
+            <SwitchControl Value="@NpcConVars.Enabled" OnValueChanged=@( (bool value) => SetAiEnabled( value ) ) />
         </div>
 
         <div class="control-row" Tooltip=@NoTargetDescription>
             <div class="left"><label>#spawnmenu.utility.no_target</label></div>
             <div style="flex-grow: 1;"></div>
-            <SwitchControl Value="@NpcConVars.NoTarget" OnValueChanged=@SetNoTarget />
+            <SwitchControl Value="@NpcConVars.NoTarget" OnValueChanged=@( (bool value) => SetNoTarget( value ) ) />
         </div>
     }
     else

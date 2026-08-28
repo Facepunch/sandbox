@@ -34,6 +34,8 @@
 
     "spawnmenu.common.loading": "Loading...",
     "spawnmenu.common.no_results": "No results.",
+    "spawnmenu.empty.try_another_category": "Try another category or adjust your search.",
+    "spawnmenu.empty.mount_unavailable": "This mount may no longer be available.",
 
     "spawnmenu.tab.tools": "Tools",
     "spawnmenu.tab.utilities": "Utilities",

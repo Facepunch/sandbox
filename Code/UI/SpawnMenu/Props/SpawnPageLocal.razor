@@ -15,14 +15,21 @@
     </Header>
 
     <Body>
-                <VirtualGrid Items=@Entries ItemSize=@(new Vector2( 160, 120 ))>
-            <Item Context="item">
-                @if ( item is LocalProps.Entry entry )
-                {
-                    <SpawnMenuIcon Ident=@($"prop:{entry.Path}") Title=@entry.DisplayName />
-                }
-            </Item>
-        </VirtualGrid>
+        @if ( Entries.Count == 0 )
+        {
+            <SpawnMenuEmptyState Icon="search_off" Subtitle="#spawnmenu.empty.try_another_category" />
+        }
+        else
+        {
+            <VirtualGrid Items=@Entries ItemSize=@(new Vector2( 160, 120 ))>
+                <Item Context="item">
+                    @if ( item is LocalProps.Entry entry )
+                    {
+                        <SpawnMenuIcon Ident=@($"prop:{entry.Path}") Title=@entry.DisplayName />
+                    }
+                </Item>
+            </VirtualGrid>
+        }
     </Body>
 
 </SpawnMenuContent>

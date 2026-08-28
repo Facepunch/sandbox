@@ -45,10 +45,7 @@
     <Body>
         @if ( data.Items.Count == 0 )
         {
-            <div class="empty-state">
-                <p>#spawnmenu.spawnlist.empty_title</p>
-                <p>#spawnmenu.spawnlist.empty_instructions</p>
-            </div>
+            <SpawnMenuEmptyState Icon="format_list_bulleted" Title="#spawnmenu.spawnlist.empty_title" Subtitle="#spawnmenu.spawnlist.empty_instructions" />
         }
         else
         {

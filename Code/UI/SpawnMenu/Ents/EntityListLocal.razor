@@ -4,6 +4,12 @@
 @namespace Sandbox
 
 
+@if ( Entities.Count == 0 )
+{
+    <SpawnMenuEmptyState Icon="search_off" Title="#spawnmenu.entity.no_results" Subtitle="#spawnmenu.empty.try_another_category" />
+    return;
+}
+
 <VirtualGrid Items=@Entities ItemSize=@(new Vector2( 160, 120 ))>
     <Item Context="item">
         @if (item is ScriptedEntity entry)
