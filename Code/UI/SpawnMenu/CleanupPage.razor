@@ -8,13 +8,13 @@
 @attribute [Order( 0 )]
 
 <root class="page" style="flex-direction: column;">
-    <div class="control-row" @onclick=@(() =>CleanUpMine() )>
+    <div class="control-row action" @onclick=@(() =>CleanUpMine() )>
         <div class="left"><label>🧼 </label><label>#spawnmenu.utility.cleanup_mine</label></div>
     </div>
 
     @if ( Connection.Local.HasPermission( "admin" ) )
     {
-        <div class="control-row" @onclick=@(() =>CleanUpAll() )>
+        <div class="control-row action" @onclick=@(() =>CleanUpAll() )>
             <div class="left"><label>🧹 </label><label>#spawnmenu.utility.cleanup_all</label></div>
         </div>
 
@@ -23,7 +23,7 @@
         @foreach ( var connection in Connection.All )
         {
             var c = connection;
-            <div class="control-row" @onclick=@(() => CleanUpPlayer( c ))>
+            <div class="control-row action" @onclick=@(() => CleanUpPlayer( c ))>
                 <label class="left">🗑️ @c.DisplayName</label>
             </div>
         }

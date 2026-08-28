@@ -255,10 +255,12 @@ SpawnMenuHost.open SpawnMenu
         {
             width: 100%;
             background-color: #53698111;
+            border: 1px solid transparent;
             padding: 8px;
             border-radius: 4px;
             max-height: auto;
             gap: 4px;
+            transition: background-color 0.1s ease, border-color 0.1s ease;
 
             &:hover
             {
@@ -267,6 +269,22 @@ SpawnMenuHost.open SpawnMenu
                 > .left
                 {
                     color: #fff;
+                }
+            }
+
+            &.action
+            {
+                cursor: pointer;
+
+                &:hover
+                {
+                    background-color: $menu-accent-soft;
+                    border-color: rgba( $color-accent, 0.4 );
+                }
+
+                &:active
+                {
+                    background-color: $menu-accent;
                 }
             }
 

@@ -11,16 +11,16 @@
 <root class="page" style="flex-direction: column;">
     @if ( Connection.Local.HasPermission( "admin" ) )
     {
-        <div class="control-row" Tooltip=@EnabledDescription @onclick=@ToggleAiEnabled>
-            <div class="left"><label>@(NpcConVars.Enabled ? "🟢" : "🔴") </label><label>#spawnmenu.utility.ai_enabled</label></div>
+        <div class="control-row" Tooltip=@EnabledDescription>
+            <div class="left"><label>#spawnmenu.utility.ai_enabled</label></div>
             <div style="flex-grow: 1;"></div>
-            <label class="right">@(NpcConVars.Enabled ? "#spawnmenu.common.on" : "#spawnmenu.common.off")</label>
+            <SwitchControl Value="@NpcConVars.Enabled" OnValueChanged=@SetAiEnabled />
         </div>
 
-        <div class="control-row" Tooltip=@NoTargetDescription @onclick=@ToggleNoTarget>
-            <div class="left"><label>@(NpcConVars.NoTarget ? "🟢" : "⚪") </label><label>#spawnmenu.utility.no_target</label></div>
+        <div class="control-row" Tooltip=@NoTargetDescription>
+            <div class="left"><label>#spawnmenu.utility.no_target</label></div>
             <div style="flex-grow: 1;"></div>
-            <label class="right">@(NpcConVars.NoTarget ? "#spawnmenu.common.on" : "#spawnmenu.common.off")</label>
+            <SwitchControl Value="@NpcConVars.NoTarget" OnValueChanged=@SetNoTarget />
         </div>
     }
     else
@@ -38,6 +38,6 @@
     static readonly string EnabledDescription = "#spawnmenu.utility.ai_enabled_description";
     static readonly string NoTargetDescription = "#spawnmenu.utility.no_target_description";
 
-    void ToggleAiEnabled() => GameManager.SetConVar( "sb.ai.enabled", !NpcConVars.Enabled );
-    void ToggleNoTarget() => GameManager.SetConVar( "sb.ai.notarget", !NpcConVars.NoTarget );
+    void SetAiEnabled( bool enabled ) => GameManager.SetConVar( "sb.ai.enabled", enabled );
+    void SetNoTarget( bool noTarget ) => GameManager.SetConVar( "sb.ai.notarget", noTarget );
 }
