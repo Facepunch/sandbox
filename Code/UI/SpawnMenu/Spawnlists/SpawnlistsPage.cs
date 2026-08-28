@@ -5,7 +5,7 @@ namespace Sandbox;
 /// <summary>
 /// Top-level spawn menu tab for user-created spawnlists.
 /// </summary>
-[Title( "#spawnmenu.tab.spawnlists" ), Order( 1000 ), Icon( "📋" )]
+[Title( "#spawnmenu.tab.spawnlists" ), Order( 4000 ), Icon( "📋" )]
 public class SpawnlistsPage : BaseSpawnMenu
 {
 	public SpawnlistCollection Collection { get; } = new();

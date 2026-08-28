@@ -10,7 +10,7 @@
     return;
 }
 
-@if ( LastResult.Packages.Count() == 0 )
+@if ( Packages.Count == 0 )
 {
     <p>#spawnmenu.entity.no_results</p>
     return;
@@ -33,7 +33,7 @@
     </Header>
 
     <Body>
-        <VirtualGrid Items=@(LastResult.Packages) ItemSize=@(160)>
+        <VirtualGrid Items=@Packages ItemSize=@(160)>
             <Item Context="item">
                 @if (item is Package entry)
                 {
@@ -48,6 +48,8 @@
 @code
 {
     public string Query { get; set; } = "";
+    public string ExcludedCategoryRoot { get; set; }
+    public string IncludedCategoryRoot { get; set; }
 
     private string Filter
     {
@@ -68,6 +70,8 @@
     }
 
     Package.FindResult LastResult;
+    List<Package> Packages = [];
+    readonly Dictionary<string, string> CategoryPaths = [];
 
     async void Rebuild()
     {
@@ -76,7 +80,37 @@
         if ( !string.IsNullOrEmpty( Filter ) ) query += $" {Filter}";
 
         LastResult = await Package.FindAsync( query );
+        var packages = LastResult.Packages.ToList();
+
+        if ( !string.IsNullOrWhiteSpace( IncludedCategoryRoot ) || !string.IsNullOrWhiteSpace( ExcludedCategoryRoot ) )
+        {
+            var categorized = await Task.WhenAll( packages.Select( async package => new { Package = package, Category = await GetCategoryPath( package ) } ) );
+            packages = categorized
+                .Where( x =>
+                {
+                    var root = SpawnMenuCategory.Root( x.Category );
+                    var isIncluded = string.IsNullOrWhiteSpace( IncludedCategoryRoot ) || string.Equals( root, IncludedCategoryRoot, StringComparison.OrdinalIgnoreCase );
+                    var isExcluded = !string.IsNullOrWhiteSpace( ExcludedCategoryRoot ) && string.Equals( root, ExcludedCategoryRoot, StringComparison.OrdinalIgnoreCase );
+                    return isIncluded && !isExcluded;
+                } )
+                .Select( x => x.Package )
+                .ToList();
+        }
+
+        Packages = packages;
         StateHasChanged();
     }
+
+    async Task<string> GetCategoryPath( Package package )
+    {
+        if ( CategoryPaths.TryGetValue( package.FullIdent, out var category ) ) return category;
+
+        var entity = await Cloud.Load<ScriptedEntity>( package.FullIdent, true );
+        category = entity?.Category ?? "";
+        CategoryPaths[package.FullIdent] = category;
+
+        return category;
+    }
+
     
 }

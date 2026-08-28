@@ -14,6 +14,7 @@ public class ScriptedEntity : GameResource, IDefinitionResource
 
 	/// <summary>
 	/// Used to group this entity under a named category in the spawn menu (e.g. "Chair", "Weapon", "Npc", "World").
+	/// Categories can be nested with <c>/</c>, such as <c>Weapon/Melee</c>.
 	/// Leave blank to place it under "Other".
 	/// </summary>
 	[Property]

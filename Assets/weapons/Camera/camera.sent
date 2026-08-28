@@ -2,7 +2,7 @@
   "Prefab": "weapons/camera/camera.prefab",
   "Title": "Camera",
   "Description": "\uD83D\uDCF7\uD83D\uDCF7\uD83D\uDCF7",
-  "Category": "Weapon",
+  "Category": "Weapon/Utility",
   "IncludeCode": false,
   "Developer": false,
   "__references": [],

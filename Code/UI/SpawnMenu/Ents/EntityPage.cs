@@ -21,7 +21,8 @@ public class EntityPage : BaseSpawnMenu
 
 		var categories = ResourceLibrary.GetAll<ScriptedEntity>()
 			.Where( e => !e.Developer || ServerSettings.ShowDeveloperEntities )
-			.Select( e => string.IsNullOrWhiteSpace( e.Category ) ? "Other" : e.Category )
+			.Select( e => SpawnMenuCategory.Root( e.Category ) )
+			.Where( category => !string.Equals( category, "Weapon", StringComparison.OrdinalIgnoreCase ) )
 			.Distinct()
 			.OrderBy( c => c == "Other" ? "\xFF" : c ); // sort Other last
 
@@ -33,7 +34,7 @@ public class EntityPage : BaseSpawnMenu
 		}
 
 		AddHeader( "#spawnmenu.section.workshop" );
-		AddOption( "\U0001f9e0", "#spawnmenu.entity.all", () => new EntityListCloud() { Query = "" } );
+		AddOption( "\U0001f9e0", "#spawnmenu.entity.all", () => new EntityListCloud { ExcludedCategoryRoot = "Weapon" } );
 		AddOption( "🐵", "#spawnmenu.entity.animals", () => new EntityListCloud() { Query = "cat:animal" } );
 		AddOption( "🥁", "#spawnmenu.entity.audio", () => new EntityListCloud() { Query = "cat:audio" } );
 		AddOption( "✨", "#spawnmenu.entity.effect", () => new EntityListCloud() { Query = "cat:effect" } );

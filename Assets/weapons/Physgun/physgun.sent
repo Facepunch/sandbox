@@ -2,7 +2,7 @@
   "Prefab": "weapons/physgun/physgun.prefab",
   "Title": "Physics Gun",
   "Description": "bzzzzt...",
-  "Category": "Weapon",
+  "Category": "Weapon/Utility",
   "IncludeCode": false,
   "Developer": false,
   "__references": [],

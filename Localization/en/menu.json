@@ -2,8 +2,12 @@
     "spawnmenu.tab.spawn": "Spawn",
     "spawnmenu.tab.props": "Props",
     "spawnmenu.tab.entity": "Entities",
+    "spawnmenu.tab.weapons": "Weapons",
+    "spawnmenu.weapon.melee": "Melee",
+    "spawnmenu.weapon.utility": "Utility",
+    "spawnmenu.weapon.weapons": "Weapons",
     "spawnmenu.tab.dupes": "Dupes",
-    "spawnmenu.tab.games": "Games",
+    "spawnmenu.tab.games": "Mounts",
     "spawnmenu.tab.spawnlists": "Spawnlists",
     "spawnmenu.tab.saves": "Saves",
 

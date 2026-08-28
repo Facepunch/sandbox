@@ -16,6 +16,7 @@
 @code
 {
     public string Category { get; set; }
+    public bool IncludeSubcategories { get; set; } = true;
 
     List<ScriptedEntity> Entities = [];
 
@@ -28,7 +29,7 @@
 
         Entities = (Category is null
             ? all
-            : all.Where( e => (string.IsNullOrWhiteSpace( e.Category ) ? "Other" : e.Category) == Category )
+            : all.Where( e => SpawnMenuCategory.Matches( e.Category, Category, IncludeSubcategories ) )
         ).ToList();
     }
 }
