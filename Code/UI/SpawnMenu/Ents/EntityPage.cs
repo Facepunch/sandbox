@@ -17,7 +17,8 @@ public class EntityPage : BaseSpawnMenu
 
 	protected override void Rebuild()
 	{
-		AddHeader( "#spawnmenu.section.local" );
+		AddHeader( "#spawnmenu.section.categories" );
+		AddOption( "\U0001f9e0", "#spawnmenu.entity.all", () => new EntityListCloud { IncludeLocalEntities = true, ExcludedLocalCategoryRoot = "Weapon", Query = "-category:weapon" } );
 
 		var categories = ResourceLibrary.GetAll<ScriptedEntity>()
 			.Where( e => !e.Developer || ServerSettings.ShowDeveloperEntities )
@@ -26,23 +27,29 @@ public class EntityPage : BaseSpawnMenu
 			.Distinct()
 			.OrderBy( c => c == "Other" ? "\xFF" : c ); // sort Other last
 
+		var addedCategories = new HashSet<string>( StringComparer.OrdinalIgnoreCase );
 		foreach ( var category in categories )
 		{
 			var cat = category; // capture for lambda
 			var icon = CategoryIcons.GetValueOrDefault( cat, "📦" );
-			AddOption( icon, cat, () => new EntityListLocal { Category = cat } );
+			addedCategories.Add( cat );
+			AddOption( icon, cat, () => new EntityListCloud { LocalCategory = cat, Query = $"category:{cat.ToLowerInvariant()}" } );
 		}
 
-		AddHeader( "#spawnmenu.section.workshop" );
-		AddOption( "\U0001f9e0", "#spawnmenu.entity.all", () => new EntityListCloud { ExcludedCategoryRoot = "Weapon" } );
-		AddOption( "🐵", "#spawnmenu.entity.animals", () => new EntityListCloud() { Query = "cat:animal" } );
-		AddOption( "🥁", "#spawnmenu.entity.audio", () => new EntityListCloud() { Query = "cat:audio" } );
-		AddOption( "✨", "#spawnmenu.entity.effect", () => new EntityListCloud() { Query = "cat:effect" } );
-		AddOption( "🥼", "#spawnmenu.entity.npc", () => new EntityListCloud() { Query = "cat:npc" } );
-		AddOption( "🎈", "#spawnmenu.entity.other", () => new EntityListCloud() { Query = "cat:other" } );
-		AddOption( "💪", "#spawnmenu.entity.showcase", () => new EntityListCloud() { Query = "cat:showcase" } );
-		AddOption( "🧸", "#spawnmenu.entity.toys_and_fun", () => new EntityListCloud() { Query = "cat:toyfun" } );
-		AddOption( "🚚", "#spawnmenu.entity.vehicle", () => new EntityListCloud() { Query = "cat:vehicle" } );
+		void AddCloudCategory( string icon, string name, string category )
+		{
+			if ( !addedCategories.Add( category ) ) return;
+			AddOption( icon, name, () => new EntityListCloud { Query = $"category:{category}" } );
+		}
+
+		AddCloudCategory( "🐵", "#spawnmenu.entity.animals", "animal" );
+		AddCloudCategory( "🥁", "#spawnmenu.entity.audio", "audio" );
+		AddCloudCategory( "✨", "#spawnmenu.entity.effect", "effect" );
+		AddCloudCategory( "🥼", "#spawnmenu.entity.npc", "npc" );
+		AddCloudCategory( "🎈", "#spawnmenu.entity.other", "other" );
+		AddCloudCategory( "💪", "#spawnmenu.entity.showcase", "showcase" );
+		AddCloudCategory( "🧸", "#spawnmenu.entity.toys_and_fun", "toyfun" );
+		AddCloudCategory( "🚚", "#spawnmenu.entity.vehicle", "vehicle" );
 		// AddOption( "⭐", "Favourites", () => new EntityListCloud() { Query = "sort:favourite" } );
 	}
 }

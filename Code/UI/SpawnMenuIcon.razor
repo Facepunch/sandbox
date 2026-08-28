@@ -8,6 +8,13 @@
     {
         <div class="developer-badge">🪲</div>
     }
+    @if ( Verified )
+    {
+        <div class="verified-badge" style="position: absolute; top: 3px; right: 6px; z-index: 1; opacity: 0.5;">
+            <IconPanel Text="verified" Tooltip="This is a verified item published by Facepunch" style="width: 20px; height: 20px; font-size: 1.35rem;" />
+        </div>
+    }
+
 
     @if ( !string.IsNullOrWhiteSpace( Title ) && !HideText )
     {
@@ -24,6 +31,7 @@
     [Parameter] public bool HideText { get; set; }
     [Parameter] public string Metadata { get; set; }
     [Parameter] public bool Developer { get; set; }
+    [Parameter] public bool Verified { get; set; }
 
     string Type;
     string Path;
@@ -50,7 +58,7 @@
 
     protected override int BuildHash()
     {
-        return HashCode.Combine( Ident, Icon, Title, HideText, Developer );
+        return HashCode.Combine( Ident, Icon, Title, HideText, Developer, Verified );
     }
 
     protected override async void OnDragStart( DragEvent e )

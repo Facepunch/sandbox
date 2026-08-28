@@ -16,10 +16,25 @@ SpawnMenuIcon
 	.developer-badge
 	{
 		position: absolute;
-		top: 3px;
+		top: 6px;
 		right: 6px;
 		font-size: 1.2rem;
 		pointer-events: none;
+	}
+
+	.verified-badge
+	{
+		position: absolute;
+		top: 6px;
+		right: 6px;
+		opacity: 0.5;
+		font-size: 1.35rem;
+
+		.iconpanel
+		{
+			width: 20px;
+			height: 20px;
+		}
 	}
 
 	.title

@@ -4,11 +4,6 @@
 @inherits Panel
 @namespace Sandbox
 
-@if ( LastResult is null )
-{
-    // loading
-    return;
-}
 
 <SpawnMenuContent>
 
@@ -25,11 +20,15 @@
     </Header>
 
     <Body>
-<VirtualGrid Items=@( LastResult.Packages ) ItemSize=@(120)>
+<VirtualGrid Items=@Entries ItemSize=@(120)>
     <Item Context="item">
-        @if (item is Package entry)
+        @if (item is LocalProps.Entry local)
         {
-            <SpawnMenuIcon Ident=@($"prop:{entry.FullIdent}") Title="@entry.Title"></SpawnMenuIcon>
+            <SpawnMenuIcon Ident=@($"prop:{local.Path}") Title=@local.DisplayName Verified=@(true) />
+        }
+        else if (item is Package entry)
+        {
+            <SpawnMenuIcon Ident=@($"prop:{entry.FullIdent}") Title=@entry.Title Verified=@(IsVerified(entry)) />
         }
     </Item>
 </VirtualGrid>
@@ -40,6 +39,8 @@
 @code
 {
     public string Category { get; set; } = "";
+    public string LocalCategory { get; set; }
+    public bool IncludeLocalProps { get; set; }
 
     private string Filter
     {
@@ -59,15 +60,38 @@
         Rebuild();
     }
 
-    Package.FindResult LastResult;
+    List<object> Entries = [];
 
     async void Rebuild()
     {
+        var localEntries = FindLocalEntries().Cast<object>().ToList();
+        Entries = localEntries;
+        StateHasChanged();
+
         var query = $"sort:{SortOrder.ToIdentifier()} type:model";
         if ( !string.IsNullOrEmpty( Filter ) ) query += $" {Filter} ";
         if ( !string.IsNullOrEmpty( Category ) ) query += $" category:{Category}";
 
-        LastResult = await Package.FindAsync( query );
+        var result = await Package.FindAsync( query );
+        localEntries.AddRange( result.Packages.Cast<object>() );
+        Entries = localEntries;
         StateHasChanged();
+    }
+    static bool IsVerified( Package package ) => string.Equals( package.Org?.Title, "Facepunch", StringComparison.OrdinalIgnoreCase );
+
+
+    string LocalFilterCategory => string.IsNullOrWhiteSpace( LocalCategory ) ? Category : LocalCategory;
+    IEnumerable<LocalProps.Entry> FindLocalEntries()
+    {
+        if ( !IncludeLocalProps && string.IsNullOrWhiteSpace( LocalFilterCategory ) ) return Enumerable.Empty<LocalProps.Entry>();
+
+        var entries = string.IsNullOrWhiteSpace( LocalFilterCategory )
+            ? LocalProps.All
+            : LocalProps.All.Where( entry => string.Equals( entry.Category, LocalFilterCategory, StringComparison.OrdinalIgnoreCase ) );
+
+        if ( !string.IsNullOrWhiteSpace( Filter ) )
+            entries = entries.Where( entry => entry.DisplayName.Contains( Filter, StringComparison.OrdinalIgnoreCase ) || entry.Path.Contains( Filter, StringComparison.OrdinalIgnoreCase ) );
+
+        return entries.OrderBy( entry => entry.DisplayName ).ThenBy( entry => entry.Path );
     }
 }

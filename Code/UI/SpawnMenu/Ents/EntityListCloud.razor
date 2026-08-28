@@ -4,13 +4,7 @@
 @namespace Sandbox
 
 
-@if ( LastResult is null )
-{
-    // loading
-    return;
-}
-
-@if ( Packages.Count == 0 )
+@if ( Entries.Count == 0 && !Loading )
 {
     <p>#spawnmenu.entity.no_results</p>
     return;
@@ -33,11 +27,15 @@
     </Header>
 
     <Body>
-        <VirtualGrid Items=@Packages ItemSize=@(160)>
+        <VirtualGrid Items=@Entries ItemSize=@(160)>
             <Item Context="item">
-                @if (item is Package entry)
+                @if (item is ScriptedEntity local)
                 {
-                    <SpawnMenuIcon Ident=@($"{entry.TypeName}:{entry.FullIdent}") Title=@entry.Title></SpawnMenuIcon>
+                    <SpawnMenuIcon Ident=@($"entity:{local.ResourcePath}") Title=@local.Title Developer=@local.Developer Verified=@(true)></SpawnMenuIcon>
+                }
+                else if (item is Package entry)
+                {
+                    <SpawnMenuIcon Ident=@($"{entry.TypeName}:{entry.FullIdent}") Title=@entry.Title Verified=@(IsVerified(entry))></SpawnMenuIcon>
                 }
             </Item>
         </VirtualGrid>
@@ -48,8 +46,10 @@
 @code
 {
     public string Query { get; set; } = "";
-    public string ExcludedCategoryRoot { get; set; }
-    public string IncludedCategoryRoot { get; set; }
+    public string LocalCategory { get; set; }
+    public bool IncludeLocalSubcategories { get; set; } = true;
+    public bool IncludeLocalEntities { get; set; }
+    public string ExcludedLocalCategoryRoot { get; set; }
 
     private string Filter
     {
@@ -70,11 +70,16 @@
     }
 
     Package.FindResult LastResult;
-    List<Package> Packages = [];
-    readonly Dictionary<string, string> CategoryPaths = [];
+    List<object> Entries = [];
+    bool Loading;
 
     async void Rebuild()
     {
+        var localEntries = FindLocalEntries().Cast<object>().ToList();
+        Entries = localEntries;
+        Loading = true;
+        StateHasChanged();
+
         var query = $"sort:{SortOrder.ToIdentifier()} type:sent";
         if ( !string.IsNullOrEmpty( Query ) ) query += $" {Query}";
         if ( !string.IsNullOrEmpty( Filter ) ) query += $" {Filter}";
@@ -82,35 +87,34 @@
         LastResult = await Package.FindAsync( query );
         var packages = LastResult.Packages.ToList();
 
-        if ( !string.IsNullOrWhiteSpace( IncludedCategoryRoot ) || !string.IsNullOrWhiteSpace( ExcludedCategoryRoot ) )
-        {
-            var categorized = await Task.WhenAll( packages.Select( async package => new { Package = package, Category = await GetCategoryPath( package ) } ) );
-            packages = categorized
-                .Where( x =>
-                {
-                    var root = SpawnMenuCategory.Root( x.Category );
-                    var isIncluded = string.IsNullOrWhiteSpace( IncludedCategoryRoot ) || string.Equals( root, IncludedCategoryRoot, StringComparison.OrdinalIgnoreCase );
-                    var isExcluded = !string.IsNullOrWhiteSpace( ExcludedCategoryRoot ) && string.Equals( root, ExcludedCategoryRoot, StringComparison.OrdinalIgnoreCase );
-                    return isIncluded && !isExcluded;
-                } )
-                .Select( x => x.Package )
-                .ToList();
-        }
-
-        Packages = packages;
+        localEntries.AddRange( packages.Cast<object>() );
+        Entries = localEntries;
+        Loading = false;
         StateHasChanged();
     }
 
-    async Task<string> GetCategoryPath( Package package )
+    static bool IsVerified( Package package ) => string.Equals( package.Org?.Title, "Facepunch", StringComparison.OrdinalIgnoreCase );
+
+    IEnumerable<ScriptedEntity> FindLocalEntries()
     {
-        if ( CategoryPaths.TryGetValue( package.FullIdent, out var category ) ) return category;
+        if ( !IncludeLocalEntities && string.IsNullOrWhiteSpace( LocalCategory ) ) return Enumerable.Empty<ScriptedEntity>();
 
-        var entity = await Cloud.Load<ScriptedEntity>( package.FullIdent, true );
-        category = entity?.Category ?? "";
-        CategoryPaths[package.FullIdent] = category;
+        var entities = ResourceLibrary.GetAll<ScriptedEntity>()
+            .Where( entity => !entity.Developer || ServerSettings.ShowDeveloperEntities );
 
-        return category;
+        if ( !string.IsNullOrWhiteSpace( LocalCategory ) )
+            entities = entities.Where( entity => SpawnMenuCategory.Matches( entity.Category, LocalCategory, IncludeLocalSubcategories ) );
+        if ( !string.IsNullOrWhiteSpace( ExcludedLocalCategoryRoot ) )
+            entities = entities.Where( entity => !string.Equals( SpawnMenuCategory.Root( entity.Category ), ExcludedLocalCategoryRoot, StringComparison.OrdinalIgnoreCase ) );
+
+        if ( !string.IsNullOrWhiteSpace( Filter ) )
+        {
+            entities = entities.Where( entity => (entity.Title ?? "").Contains( Filter, StringComparison.OrdinalIgnoreCase ) || entity.ResourcePath.Contains( Filter, StringComparison.OrdinalIgnoreCase ) );
+        }
+
+        return entities.OrderBy( entity => entity.Title ).ThenBy( entity => entity.ResourcePath );
     }
+
 
     
 }
