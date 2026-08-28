@@ -479,8 +479,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 		if ( Controller.ThirdPerson || !player.IsLocalPlayer ) return;
 
-		// Landing thump - pitch dips with the fall, bounces back.
-		Scene.Camera?.AddPunch( new Angles( 0.3f * distance, Random.Shared.Float( -1, 1 ), Random.Shared.Float( -1, 1 ) ), 1f, 1f );
+		Scene.Camera?.AddPunch( new Angles( 0.105f * distance, Random.Shared.Float( -0.35f, 0.35f ), Random.Shared.Float( -0.35f, 0.35f ) ), 0.5f, 0.75f );
 	}
 
 	void PlayerController.IEvents.OnJumped()
@@ -490,7 +489,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 		if ( Controller.ThirdPerson || !IsLocalPlayer ) return;
 
-		Scene.Camera?.AddPunch( new Angles( -20f, 0f, 0f ), 0.7f, 0.5f );
+		Scene.Camera?.AddPunch( new Angles( -10f, 0f, 0f ), 0.25f, 1f );
 	}
 
 	public T GetWeapon<T>() where T : BaseSandboxWeapon

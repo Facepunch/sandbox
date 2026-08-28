@@ -16,7 +16,8 @@
       "Mounts": null,
       "IsStandaloneOnly": false,
       "Metadata": {
-        "SingleAssetSource": "hydraulics/tool_engine_spring_25.vmdl"
+        "SingleAssetSource": "hydraulics/tool_engine_spring_25.vmdl",
+        "ParentPackage": "facepunch.sandbox"
       }
     }
   }
