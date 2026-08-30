@@ -27,7 +27,7 @@
           "Pellets": 1,
           "Range": 8192,
           "Radius": 1,
-          "Force": 3000,
+          "Force": 300,
           "SpreadBase": "0.100000001,0.100000001",
           "SpreadGrowth": "1,1",
           "SpreadRecovery": 0.5

@@ -184,6 +184,12 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 			return dir * strength;
 		}
 
+		var ballisticForce = damage.Weapon?.GetComponent<BaseCombatWeapon>()?.Ballistics.Force ?? 0f;
+		if ( ballisticForce > 0 && damage.Position != damage.Origin )
+		{
+			return Vector3.Direction( damage.Origin, damage.Position ) * ballisticForce;
+		}
+
 		return GetAttackerVelocity( damage.Attacker );
 	}
 
