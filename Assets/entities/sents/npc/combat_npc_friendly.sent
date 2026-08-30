@@ -2,7 +2,7 @@
   "Prefab": "entities/sents/npc/combat_npc_friendly.prefab",
   "Title": "Army Guy (Friendly)",
   "Description": "",
-  "Category": "Npc",
+  "Category": "Npc/Humanoid",
   "IncludeCode": false,
   "Developer": false,
   "__references": [],

@@ -49,7 +49,7 @@
     public string LocalCategory { get; set; }
     public bool IncludeLocalSubcategories { get; set; } = true;
     public bool IncludeLocalEntities { get; set; }
-    public string ExcludedLocalCategoryRoot { get; set; }
+    public IReadOnlyCollection<string> ExcludedLocalCategoryRoots { get; set; } = [];
 
     private string Filter
     {
@@ -104,8 +104,9 @@
 
         if ( !string.IsNullOrWhiteSpace( LocalCategory ) )
             entities = entities.Where( entity => SpawnMenuCategory.Matches( entity.Category, LocalCategory, IncludeLocalSubcategories ) );
-        if ( !string.IsNullOrWhiteSpace( ExcludedLocalCategoryRoot ) )
-            entities = entities.Where( entity => !string.Equals( SpawnMenuCategory.Root( entity.Category ), ExcludedLocalCategoryRoot, StringComparison.OrdinalIgnoreCase ) );
+        if ( ExcludedLocalCategoryRoots?.Count > 0 )
+            entities = entities.Where( entity => !ExcludedLocalCategoryRoots.Any( category =>
+                string.Equals( SpawnMenuCategory.Root( entity.Category ), category, StringComparison.OrdinalIgnoreCase ) ) );
 
         if ( !string.IsNullOrWhiteSpace( Filter ) )
         {

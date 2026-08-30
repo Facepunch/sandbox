@@ -2,7 +2,7 @@
   "Prefab": "entities/sents/npc/combat_npc.prefab",
   "Title": "Army Guy",
   "Description": "",
-  "Category": "Npc",
+  "Category": "Npc/Humanoid",
   "IncludeCode": false,
   "__references": [],
   "__version": 0
