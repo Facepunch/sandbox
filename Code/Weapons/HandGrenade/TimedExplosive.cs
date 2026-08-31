@@ -3,7 +3,7 @@ using Sandbox;
 /// <summary>
 /// Explodes after a set time. Spawns an explosion prefab with configurable radius, damage, and force.
 /// </summary>
-public sealed class TimedExplosive : Component
+public sealed class TimedExplosive : Component, Component.IDamageable
 {
 	[Property] public float Lifetime { get; set; } = 3f;
 	[Property] public float Radius { get; set; } = 256f;
@@ -15,9 +15,12 @@ public sealed class TimedExplosive : Component
 
 	TimeSince TimeSinceCreated { get; set; }
 
+	bool HasExploded { get; set; }
+
 	protected override void OnEnabled()
 	{
 		TimeSinceCreated = 0;
+		HasExploded = false;
 	}
 
 	protected override void OnFixedUpdate()
@@ -31,6 +34,8 @@ public sealed class TimedExplosive : Component
 	[Rpc.Host]
 	public void Explode()
 	{
+		if ( HasExploded ) return;
+
 		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
 		if ( explosionPrefab == null )
 		{
@@ -38,8 +43,14 @@ public sealed class TimedExplosive : Component
 			return;
 		}
 
+		HasExploded = true;
+
 		var go = GameObject.Clone( explosionPrefab, new CloneConfig { Transform = WorldTransform.WithScale( 1 ), StartEnabled = false } );
-		if ( !go.IsValid() ) return;
+		if ( !go.IsValid() )
+		{
+			HasExploded = false;
+			return;
+		}
 
 		go.RunEvent<RadiusDamage>( x =>
 		{
@@ -54,4 +65,14 @@ public sealed class TimedExplosive : Component
 
 		GameObject.Destroy();
 	}
+
+	void Component.IDamageable.OnDamage( in DamageInfo damage )
+	{
+		if ( IsProxy || !Networking.IsHost || HasExploded || damage.Damage <= 0f ) return;
+		if ( damage.Tags.Contains( DamageTags.Crush ) ) return;
+		if ( damage.Tags.Contains( DamageTags.Impact ) ) return;
+
+		Explode();
+	}
+
 }
