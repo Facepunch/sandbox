@@ -4,14 +4,6 @@
 @namespace Sandbox
 
 
-@if ( Entries.Count == 0 && !Loading )
-{
-    <SpawnMenuEmptyState Icon="search_off" Title="#spawnmenu.entity.no_results" Subtitle="#spawnmenu.empty.try_another_category" />
-    return;
-}
-
-
-
 <SpawnMenuContent>
 
     <Header>
@@ -21,24 +13,32 @@
             </Left>
 
             <Right>
+                <Button Icon="verified" Active=@VerifiedOnly Tooltip="Show verified items only" class="verified-filter" @onclick=@ToggleVerified />
                 <DropDown Value:bind=@SortOrder />
             </Right>
         </SpawnMenuToolbar>
     </Header>
 
     <Body>
-        <VirtualGrid Items=@Entries ItemSize=@(new Vector2( 160, 120 ))>
-            <Item Context="item">
-                @if (item is ScriptedEntity local)
-                {
-                    <SpawnMenuIcon Ident=@($"entity:{local.ResourcePath}") Title=@local.Title Developer=@local.Developer Verified=@(true)></SpawnMenuIcon>
-                }
-                else if (item is Package entry)
-                {
-                    <SpawnMenuIcon Ident=@($"{entry.TypeName}:{entry.FullIdent}") Title=@entry.Title Verified=@(IsVerified(entry))></SpawnMenuIcon>
-                }
-            </Item>
-        </VirtualGrid>
+        @if ( Entries.Count == 0 && !Loading )
+        {
+            <SpawnMenuEmptyState Icon="search_off" Title="#spawnmenu.entity.no_results" Subtitle="#spawnmenu.empty.try_another_category" />
+        }
+        else
+        {
+            <VirtualGrid Items=@Entries ItemSize=@(new Vector2( 160, 120 ))>
+                <Item Context="item">
+                    @if (item is ScriptedEntity local)
+                    {
+                        <SpawnMenuIcon Ident=@($"entity:{local.ResourcePath}") Title=@local.Title Developer=@local.Developer Verified=@(true)></SpawnMenuIcon>
+                    }
+                    else if (item is Package entry)
+                    {
+                        <SpawnMenuIcon Ident=@($"{entry.TypeName}:{entry.FullIdent}") Title=@entry.Title Verified=@(IsVerified(entry))></SpawnMenuIcon>
+                    }
+                </Item>
+            </VirtualGrid>
+        }
     </Body>
 
 </SpawnMenuContent>
@@ -73,6 +73,27 @@
     List<object> Entries = [];
     bool Loading;
 
+    const string VerifiedOnlyCookie = "spawnmenu.verified_only";
+    bool VerifiedOnly => Game.Cookies.Get( VerifiedOnlyCookie, false );
+    bool _lastVerifiedOnly;
+
+    void ToggleVerified()
+    {
+        Game.Cookies.Set( VerifiedOnlyCookie, !VerifiedOnly );
+        _lastVerifiedOnly = VerifiedOnly;
+        Rebuild();
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if ( _lastVerifiedOnly == VerifiedOnly ) return;
+
+        _lastVerifiedOnly = VerifiedOnly;
+        Rebuild();
+    }
+
     async void Rebuild()
     {
         var localEntries = FindLocalEntries().Cast<object>().ToList();
@@ -86,6 +107,8 @@
 
         LastResult = await Package.FindAsync( query );
         var packages = LastResult.Packages.ToList();
+        if ( VerifiedOnly )
+            packages = packages.Where( IsVerified ).ToList();
 
         localEntries.AddRange( packages.Cast<object>() );
         Entries = localEntries;

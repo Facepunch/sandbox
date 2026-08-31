@@ -14,6 +14,7 @@
             </Left>
 
             <Right>
+                <Button Icon="verified" Active=@VerifiedOnly Tooltip="Show verified items only" class="verified-filter" @onclick=@ToggleVerified />
                 <DropDown Value:bind=@SortOrder />
             </Right>
         </SpawnMenuToolbar>
@@ -70,6 +71,27 @@
     List<object> Entries = [];
     bool Loading;
 
+    const string VerifiedOnlyCookie = "spawnmenu.verified_only";
+    bool VerifiedOnly => Game.Cookies.Get( VerifiedOnlyCookie, false );
+    bool _lastVerifiedOnly;
+
+    void ToggleVerified()
+    {
+        Game.Cookies.Set( VerifiedOnlyCookie, !VerifiedOnly );
+        _lastVerifiedOnly = VerifiedOnly;
+        Rebuild();
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if ( _lastVerifiedOnly == VerifiedOnly ) return;
+
+        _lastVerifiedOnly = VerifiedOnly;
+        Rebuild();
+    }
+
     async void Rebuild()
     {
         var localEntries = FindLocalEntries().Cast<object>().ToList();
@@ -82,7 +104,11 @@
         if ( !string.IsNullOrEmpty( Category ) ) query += $" category:{Category}";
 
         var result = await Package.FindAsync( query );
-        localEntries.AddRange( result.Packages.Cast<object>() );
+        var packages = result.Packages.ToList();
+        if ( VerifiedOnly )
+            packages = packages.Where( IsVerified ).ToList();
+
+        localEntries.AddRange( packages.Cast<object>() );
         Entries = localEntries;
         Loading = false;
         StateHasChanged();

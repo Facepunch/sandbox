@@ -4,6 +4,7 @@ public static class DamageTags
 {
 	public const string Headshot = "head";
 	public const string Crush = "crush";
+	public const string Impact = "impact";
 	public const string Explosion = "explosion";
 	public const string Shock = "shock";
 	public const string Fall = "fall";
