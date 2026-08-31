@@ -2,12 +2,12 @@
 /// <summary>
 /// This component has a kill icon that can be used in the killfeed, or somewhere else.
 /// </summary>
-[Title( "#spawnmenu.tab.props" ), Order( 0 ), Icon( "📦" )]
-public class PropsPage : BaseSpawnMenu
+[Title( "#spawnmenu.tab.spawnlists" ), Order( 0 ), Icon( "📦" )]
+public class PropsPage : SpawnlistsPage
 {
 	protected override void Rebuild()
 	{
-		AddHeader( "#spawnmenu.section.categories" );
+		AddHeader( "#spawnmenu.section.props" );
 		AddOption( "🧠", "#spawnmenu.props.all", () => new SpawnPageCloud { IncludeLocalProps = true } );
 		AddOption( "🥸", "#spawnmenu.props.humans", () => new SpawnPageCloud() { Category = "human" } );
 		AddOption( "🌲", "#spawnmenu.props.nature", () => new SpawnPageCloud() { Category = "nature" } );
@@ -19,5 +19,7 @@ public class PropsPage : BaseSpawnMenu
 		AddOption( "🔫", "#spawnmenu.props.guns", () => new SpawnPageCloud() { Category = "weapon" } );
 
 		AddOption( "🙎", "#spawnmenu.props.characters", () => new SpawnPageCloud { Category = "characters" } );
+
+		AddSpawnlistOptions();
 	}
 }

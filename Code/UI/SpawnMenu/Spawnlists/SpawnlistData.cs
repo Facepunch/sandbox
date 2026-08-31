@@ -79,7 +79,15 @@ public class SpawnlistData
 	{
 		entry.Files.WriteJson( "/spawnlist.json", data );
 		entry.SetMeta( "name", data.Name );
-		entry.SetMeta( "item_count", data.Items.Count.ToString() );
+		entry.SetMeta( "item_count", data.Items.Count );
+		entry.SetMeta( "metadata_version", 1 );
+		entry.SetMeta( "preview_items", Json.Serialize( data.Items.Take( 6 ).ToList() ) );
+
+		var contentTypes = data.Items
+			.Select( item => SpawnlistItem.ParseIdent( item.Ident ).Type ?? "other" )
+			.GroupBy( type => type, StringComparer.OrdinalIgnoreCase )
+			.ToDictionary( group => group.Key.ToLowerInvariant(), group => group.Count() );
+		entry.SetMeta( "content_types", Json.Serialize( contentTypes ) );
 	}
 
 	public static SpawnlistData Load( Storage.Entry entry )
@@ -110,6 +118,10 @@ public class SpawnlistData
 
 	public static void Publish( Storage.Entry entry )
 	{
+		// Refresh the public metadata manifest before every publish/sync so older
+		// local spawnlists gain content previews without needing to be edited first.
+		Save( entry, Load( entry ) );
+
 		var options = new Modals.WorkshopPublishOptions { Title = "#spawnmenu.spawnlist.publish_title" };
 		entry.Publish( options );
 	}

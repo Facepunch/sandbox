@@ -17,28 +17,106 @@
     </Header>
 
     <Body>
-        <VirtualList Items=@Items.Where( x => GetItemCount( x ) > 0 ) ItemHeight=@(48) OnLastCell="@(() => { _ = QueryNext(); })">
-            <Item Context="context">
-                @if (context is Storage.QueryItem item)
-                {
-                    <div class="spawnlist-row" onclick=@( () => _ = OnInstall( item ) )>
-                        <div class="avatar" style="background-image: url('@item.Owner.Avatar');"></div>
-                        <div class="info">
-                            <div class="name">@item.Title</div>
-                            <div class="author"><label>#spawnmenu.spawnlist.by</label> @item.Owner.Name</div>
-                        </div>
+        @if ( Items.Count == 0 && !Loading )
+        {
+            <SpawnMenuEmptyState Icon="search_off" Subtitle="#spawnmenu.empty.try_another_category" />
+        }
+        else
+        {
+            <VirtualGrid Items=@Items ItemSize=@(new Vector2( 340, 170 )) OnLastCell="@(() => { _ = QueryNext(); })">
+                <Item Context="context">
+                    @if ( context is WorkshopSpawnlist entry )
+                    {
+                        <div class="workshop-spawnlist" @onclick="@(() => _ = OnInstall( entry.Item ))">
+                            <div class="content-preview">
+                                @if ( entry.PreviewItems.Count > 0 )
+                                {
+                                    var visibleCount = Math.Min( entry.PreviewItems.Count, 3 );
+                                    var hiddenCount = Math.Max( entry.ItemCount, entry.PreviewItems.Count ) - visibleCount;
 
-                        <div class="item-count">@GetItemCount( item ) <label>#spawnmenu.common.items</label></div>
-                    </div>
-                }
-            </Item>
-        </VirtualList>
+                                    <div class="preview-collage">
+                                        @for ( var index = 0; index < visibleCount; index++ )
+                                        {
+                                            var preview = entry.PreviewItems[index];
+                                            <div class="preview-item" style="@GetPreviewStyle( preview )">
+                                                <label class="preview-title">@preview.Title</label>
+                                                @if ( index == visibleCount - 1 && hiddenCount > 0 )
+                                                {
+                                                    <div class="more-count">+@hiddenCount</div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="workshop-preview" style="@GetWorkshopPreviewStyle( entry.Item )">
+                                        @if ( string.IsNullOrWhiteSpace( entry.Item.Preview ) )
+                                        {
+                                            <div class="placeholder-art">
+                                                <div class="placeholder-sheet back"></div>
+                                                <div class="placeholder-sheet middle"></div>
+                                                <div class="placeholder-sheet front"><i>collections_bookmark</i></div>
+                                            </div>
+                                            <label>#spawnmenu.spawnlist.preview_unavailable</label>
+                                        }
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="card-details">
+                                <div class="title-row">
+                                    <div class="name">@entry.Item.Title</div>
+                                    @if ( entry.ItemCount > 0 )
+                                    {
+                                        <div class="item-count"><i>widgets</i> @entry.ItemCount</div>
+                                    }
+                                </div>
+
+                                @if ( !string.IsNullOrWhiteSpace( entry.TypeSummary ) )
+                                {
+                                    <div class="type-summary">@entry.TypeSummary</div>
+                                }
+                                @if ( !string.IsNullOrWhiteSpace( entry.Item.Description ) )
+                                {
+                                    <div class="description">@entry.Item.Description</div>
+                                }
+
+                                <div class="card-footer">
+                                    <div class="author">
+                                        <div class="avatar" style="background-image: url('@entry.Item.Owner.Avatar');"></div>
+                                        <div class="author-name">@entry.Item.Owner.Name</div>
+                                    </div>
+
+                                    <div class="workshop-stats">
+                                        @if ( entry.Item.VotesUp > 0 )
+                                        {
+                                            <span><i>thumb_up</i> @entry.Item.VotesUp</span>
+                                        }
+                                        <span Tooltip="@entry.Item.Updated.ToString()"><i>schedule</i> @entry.Item.Updated.Humanize()</span>
+                                    </div>
+
+                                    <div class="install-button"><i>download</i> <label>#spawnmenu.spawnlist.install</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </Item>
+            </VirtualGrid>
+        }
     </Body>
 
 </SpawnMenuContent>
 
 @code
 {
+    sealed record WorkshopSpawnlist(
+        Storage.QueryItem Item,
+        int ItemCount,
+        List<SpawnlistItem> PreviewItems,
+        string TypeSummary
+    );
+
     string _filter;
     public string Filter
     {
@@ -70,20 +148,25 @@
         await QueryNext();
     }
 
-    List<Storage.QueryItem> Items = new();
+    List<WorkshopSpawnlist> Items = new();
     Storage.QueryResult LastResult;
+    bool Loading;
 
     async Task QueryNext()
     {
+        Loading = true;
+
         if ( LastResult != null )
         {
             if ( !LastResult.HasMoreResults() )
+            {
+                Loading = false;
                 return;
+            }
 
             LastResult = await LastResult.GetNextResults();
-            if ( LastResult.Items == null ) return;
-
-            Items.AddRange( LastResult.Items );
+            AddItems( LastResult?.Items );
+            Loading = false;
             StateHasChanged();
             return;
         }
@@ -97,10 +180,118 @@
             query.SearchText = Filter;
 
         LastResult = await query.Run();
-        if ( LastResult.Items == null ) return;
-
-        Items.AddRange( LastResult.Items );
+        AddItems( LastResult?.Items );
+        Loading = false;
         StateHasChanged();
+    }
+
+    void AddItems( IEnumerable<Storage.QueryItem> queryItems )
+    {
+        if ( queryItems is null ) return;
+
+        Items.AddRange( queryItems.Select( CreateViewModel ) );
+    }
+
+    static WorkshopSpawnlist CreateViewModel( Storage.QueryItem item )
+    {
+        var previewItems = ReadMetaJson<List<SpawnlistItem>>( item, "preview_items" ) ?? [];
+        var contentTypes = ReadMetaJson<Dictionary<string, int>>( item, "content_types" ) ?? [];
+        var itemCount = ReadMetaInt( item, "item_count" );
+
+        return new WorkshopSpawnlist(
+            item,
+            itemCount,
+            previewItems.Take( 6 ).ToList(),
+            FormatTypeSummary( contentTypes )
+        );
+    }
+
+    static string ReadMeta( Storage.QueryItem item, string key )
+    {
+        try
+        {
+            var raw = Json.ParseToJsonObject( item.Metadata )?["Meta"]?[key]?.ToString();
+            if ( string.IsNullOrWhiteSpace( raw ) ) return null;
+
+            // Storage metadata has existed in both native JSON-value and
+            // JSON-encoded string forms. Normalize either shape here.
+            if ( raw.Length >= 2 && raw[0] == '"' && raw[^1] == '"' )
+            {
+                try
+                {
+                    return Json.Deserialize<string>( raw );
+                }
+                catch
+                {
+                    return raw.Trim( '"' );
+                }
+            }
+
+            return raw;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    static T ReadMetaJson<T>( Storage.QueryItem item, string key )
+    {
+        try
+        {
+            var value = ReadMeta( item, key );
+            return string.IsNullOrWhiteSpace( value ) ? default : Json.Deserialize<T>( value );
+        }
+        catch
+        {
+            return default;
+        }
+    }
+
+    static int ReadMetaInt( Storage.QueryItem item, string key )
+    {
+        return int.TryParse( ReadMeta( item, key ), out var value ) ? value : 0;
+    }
+
+    static string FormatTypeSummary( Dictionary<string, int> types )
+    {
+        if ( types is null || types.Count == 0 ) return null;
+
+        return string.Join( "  ·  ", types
+            .OrderByDescending( pair => pair.Value )
+            .Take( 4 )
+            .Select( pair => $"{pair.Value} {FriendlyTypeName( pair.Key, pair.Value )}" ) );
+    }
+
+    static string FriendlyTypeName( string type, int count )
+    {
+        var plural = count != 1;
+        return type?.ToLowerInvariant() switch
+        {
+            "prop" => plural ? "props" : "prop",
+            "dupe" => plural ? "dupes" : "dupe",
+            "entity" => plural ? "entities" : "entity",
+            "npc" => plural ? "NPCs" : "NPC",
+            "weapon" => plural ? "weapons" : "weapon",
+            _ => plural ? $"{type}s" : type
+        };
+    }
+
+    static string GetPreviewStyle( SpawnlistItem item )
+    {
+        var icon = item.Icon;
+        if ( string.IsNullOrWhiteSpace( icon ) )
+        {
+            var (_, path, _) = SpawnlistItem.ParseIdent( item.Ident );
+            if ( !string.IsNullOrWhiteSpace( path ) ) icon = $"thumb:{path}";
+        }
+
+        return string.IsNullOrWhiteSpace( icon ) ? null : $"background-image: url('{icon}');";
+    }
+
+    static string GetWorkshopPreviewStyle( Storage.QueryItem item )
+    {
+        return string.IsNullOrWhiteSpace( item.Preview ) ? null : $"background-image: url('{item.Preview}');";
     }
 
     async void Rebuild()
@@ -116,17 +307,5 @@
         if ( page is null ) return;
 
         await page.Collection.InstallAsync( item );
-    }
-
-    int GetItemCount( Storage.QueryItem item )
-    {
-        try
-        {
-            var doc = Json.ParseToJsonObject( item.Metadata );
-            return int.Parse( doc["Meta"]["item_count"]?.ToString()?.Trim( '"' ) ?? "0" );
-        }
-        catch { }
-
-        return 0;
     }
 }
