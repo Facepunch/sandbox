@@ -20,22 +20,21 @@
         "__guid": "a1b2c3d4-1112-4aaa-b112-111111111112",
         "__enabled": true,
         "Flags": 0,
-        "PrimaryAmmoType": "ammo/sniper.ammo",
-        "BoltPullSound": "weapons/sniper/sounds/sniper_bolt_pull.sound",
+        "AttackSound": "weapons/sniper/sounds/m700_shot.sound",
+        "AutoReload": true,
         "Ballistics": {
           "Damage": 100,
           "Pellets": 1,
           "Range": 8192,
           "Radius": 1,
-          "Force": 300,
+          "Force": 750,
           "SpreadBase": "0.100000001,0.100000001",
           "SpreadGrowth": "1,1",
           "SpreadRecovery": 0.5
         },
+        "BoltPullSound": "weapons/sniper/sounds/sniper_bolt_pull.sound",
         "CameraRecoilFrequency": 0.8,
         "CameraRecoilStrength": 10,
-        "RecoilPitch": "-1.5,-0.800000012",
-        "RecoilYaw": "-0.300000012,0.300000012",
         "CanCancelReload": false,
         "ClipMaxSize": 5,
         "DeployTime": 0.8,
@@ -72,29 +71,53 @@
             "Hue": 0,
             "Colorize": false,
             "TargetColor": "1,1,1,1",
-            "CacheToDisk": true
+            "CacheToDisk": true,
+            "FormatOverride": "RGBA8888"
           },
-          "compiled": "textures/generated/imagefile/91f409238f4c7e11.vtex"
+          "compiled": null
         },
         "DisplayName": "Sniper",
         "DroppedGameObject": {
           "_type": "gameobject",
           "go": "2ad75b15-d73d-4018-bc22-7407f67f909e"
         },
+        "DryFireSound": null,
+        "FirstShellReloadTime": 0,
+        "Handedness": "Both",
+        "HoldBone": "hold_r",
         "HoldType": "Rifle",
         "IncrementalReloading": false,
-        "MuzzleGameObject": null,
+        "Npc": {
+          "MinRange": 0,
+          "MaxRange": 1400,
+          "BurstMin": 2,
+          "BurstMax": 5,
+          "RestMin": 0.3,
+          "RestMax": 0.6,
+          "SpreadScale": 3,
+          "CanBePickedUp": true
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "HoldBone": "hold_r",
+        "PreferredSlot": -1,
+        "PrimaryAmmoType": "ammo/sniper.ammo",
+        "PrimaryAutomatic": true,
         "PrimaryDelay": 1.2,
+        "RecoilPitch": "-1.5,-0.800000012",
+        "RecoilYaw": "-0.300000012,0.300000012",
+        "ReloadStartTime": 0,
         "ReloadTime": 2.5,
         "ScopedFov": 10,
         "ScopeSensitivity": 0.15,
+        "SecondaryAmmoType": null,
+        "SecondaryAutomatic": false,
+        "SecondaryClipSize": -1,
+        "SecondaryDefaultClip": -1,
+        "SecondaryDelay": 0.5,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null
@@ -104,8 +127,9 @@
           "IsEnabled": false,
           "Action": null
         },
-        "AttackSound": "weapons/sniper/sounds/m700_shot.sound",
+        "SlotOrder": 0,
         "StartingAmmo": 10,
+        "UsableByNpcs": true,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 5,
@@ -203,9 +227,9 @@
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "ShellEjectGameObject": {
+            "MuzzleEffect": {
               "_type": "gameobject",
-              "go": "7fc2a06a-228c-956d-0177-c95c4cc4df53"
+              "prefab": "prefabs/effects/default_muzzleflash.prefab"
             },
             "MuzzleGameObject": {
               "_type": "gameobject",
@@ -222,6 +246,14 @@
               "component_id": "4cf97d37-f95f-623a-de44-96291991ac20",
               "go": "2ad75b15-d73d-4018-bc22-7407f67f909e",
               "component_type": "SkinnedModelRenderer"
+            },
+            "ShellEjectGameObject": {
+              "_type": "gameobject",
+              "go": "7fc2a06a-228c-956d-0177-c95c4cc4df53"
+            },
+            "TracerEffect": {
+              "_type": "gameobject",
+              "prefab": "prefabs/effects/default_tracer.prefab"
             }
           },
           {
@@ -274,7 +306,7 @@
           {
             "__guid": "6eb19f59-117b-845c-f066-b84b3bb3ce42",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "muzzle",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -292,7 +324,7 @@
           {
             "__guid": "7fc2a06a-228c-956d-0177-c95c4cc4df53",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "eject",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -338,7 +370,6 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.rifle_muzzleflash#76090",
     "facepunch.w_m700#144907"
   ],
   "__version": 2

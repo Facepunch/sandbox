@@ -20,21 +20,20 @@
         "__guid": "a1b2c3d4-2222-4aaa-b222-222222222222",
         "__enabled": true,
         "Flags": 0,
-        "PrimaryAmmoType": "ammo/shotgun.ammo",
+        "AttackSound": "weapons/shotgun/sounds/shotgun_shoot.sound",
+        "AutoReload": true,
         "Ballistics": {
           "Damage": 8,
           "Pellets": 8,
           "Range": 2048,
           "Radius": 1,
-          "Force": 300,
+          "Force": 500,
           "SpreadBase": "3,3",
           "SpreadGrowth": "2,2",
           "SpreadRecovery": 0.8
         },
         "CameraRecoilFrequency": 1,
         "CameraRecoilStrength": 2,
-        "RecoilPitch": "-1.5,-0.800000012",
-        "RecoilYaw": "-0.5,0.5",
         "CanCancelReload": true,
         "ClipMaxSize": 6,
         "DeployTime": 0.5,
@@ -71,30 +70,52 @@
             "Hue": 0,
             "Colorize": false,
             "TargetColor": "1,1,1,1",
-            "CacheToDisk": true
+            "CacheToDisk": true,
+            "FormatOverride": "RGBA8888"
           },
-          "compiled": "textures/generated/imagefile/870a2e4a74d246e0.vtex"
+          "compiled": null
         },
         "DisplayName": "Shotgun",
         "DroppedGameObject": {
           "_type": "gameobject",
           "go": "da725ca9-1b64-40ba-a2c2-fad3776e75be"
         },
+        "DryFireSound": null,
         "FirstShellReloadTime": 0,
+        "Handedness": "Both",
+        "HoldBone": "hold_r",
         "HoldType": "Shotgun",
         "IncrementalReloading": true,
         "IronSightsFireScale": 0.2,
-        "MuzzleGameObject": null,
+        "Npc": {
+          "MinRange": 0,
+          "MaxRange": 1400,
+          "BurstMin": 2,
+          "BurstMax": 5,
+          "RestMin": 0.3,
+          "RestMax": 0.6,
+          "SpreadScale": 3,
+          "CanBePickedUp": true
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "HoldBone": "hold_r",
+        "PreferredSlot": -1,
+        "PrimaryAmmoType": "ammo/shotgun.ammo",
+        "PrimaryAutomatic": true,
         "PrimaryDelay": 0.35,
+        "RecoilPitch": "-1.5,-0.800000012",
+        "RecoilYaw": "-0.5,0.5",
         "ReloadStartTime": 0,
         "ReloadTime": 0.5,
+        "SecondaryAmmoType": null,
+        "SecondaryAutomatic": false,
+        "SecondaryClipSize": -1,
+        "SecondaryDefaultClip": -1,
+        "SecondaryDelay": 0.5,
         "SecondaryInput": {
           "IsEnabled": false,
           "Action": null
@@ -104,8 +125,9 @@
           "IsEnabled": false,
           "Action": null
         },
-        "AttackSound": "weapons/shotgun/sounds/shotgun_shoot.sound",
+        "SlotOrder": 0,
         "StartingAmmo": 18,
+        "UsableByNpcs": true,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 10,
@@ -203,9 +225,9 @@
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "ShellEjectGameObject": {
+            "MuzzleEffect": {
               "_type": "gameobject",
-              "go": "2fc7abfe-6fb9-95af-f717-4fc8ccc140e1"
+              "prefab": "prefabs/effects/default_muzzleflash.prefab"
             },
             "MuzzleGameObject": {
               "_type": "gameobject",
@@ -222,6 +244,14 @@
               "component_id": "fc947ecb-3d86-62dc-c4e4-1cf599881dce",
               "go": "da725ca9-1b64-40ba-a2c2-fad3776e75be",
               "component_type": "SkinnedModelRenderer"
+            },
+            "ShellEjectGameObject": {
+              "_type": "gameobject",
+              "go": "2fc7abfe-6fb9-95af-f717-4fc8ccc140e1"
+            },
+            "TracerEffect": {
+              "_type": "gameobject",
+              "prefab": "prefabs/effects/default_tracer.prefab"
             }
           },
           {
@@ -274,7 +304,7 @@
           {
             "__guid": "1eb69aed-5fa8-84fe-e606-3eb7bbb03f00",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "muzzle",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -292,7 +322,7 @@
           {
             "__guid": "2fc7abfe-6fb9-95af-f717-4fc8ccc140e1",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "eject",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -338,7 +368,6 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.pistol_muzzleflash#76089",
     "facepunch.w_spaghellim4#144906"
   ],
   "__version": 2
