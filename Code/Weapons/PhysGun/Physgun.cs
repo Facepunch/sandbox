@@ -79,6 +79,8 @@ public partial class Physgun
 
 	bool _launched;
 
+	TimeSince _lastReloadPress = 1000;
+
 	/// <summary>
 	/// The force applied to pull objects to us.
 	/// </summary>
@@ -93,6 +95,11 @@ public partial class Physgun
 	/// The distance at which we'll grab an object when pulling it towards us.
 	/// </summary>
 	static float PullDistance => 200.0f;
+
+	/// <summary>
+	/// Max time between reload presses to count as a double-tap.
+	/// </summary>
+	static float DoubleTapWindow => 0.4f;
 
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
@@ -187,7 +194,7 @@ public partial class Physgun
 
 				if ( Input.Down( "attack2" ) )
 				{
-					Freeze( _state.Body );
+					Freeze( _state.Body, player.Network.Owner.Id );
 					_state = default;
 					_preventReselect = true;
 					ViewModel?.PlaySound( ReleasedSound );
@@ -301,10 +308,16 @@ public partial class Physgun
 		}
 		else if ( Input.Pressed( "reload" ) )
 		{
-			if ( _stateHovered.IsValid() )
+			if ( _lastReloadPress < DoubleTapWindow )
+			{
+				UnfreezeAllFrozen( player.Network.Owner.Id );
+			}
+			else if ( _stateHovered.IsValid() )
 			{
 				UnfreezeAll( _stateHovered.Body );
 			}
+
+			_lastReloadPress = 0;
 		}
 		else
 		{
@@ -641,7 +654,7 @@ public partial class Physgun
 	}
 
 	[Rpc.Broadcast]
-	void Freeze( Rigidbody body )
+	void Freeze( Rigidbody body, Guid freezerId )
 	{
 		if ( !body.IsValid() ) return;
 
@@ -657,6 +670,7 @@ public partial class Physgun
 		if ( Networking.IsHost )
 		{
 			body.MotionEnabled = false;
+			FrozenBy.Set( body.GameObject, freezerId );
 		}
 	}
 
@@ -667,6 +681,7 @@ public partial class Physgun
 		if ( body.IsProxy ) return;
 
 		body.MotionEnabled = true;
+		FrozenBy.Clear( body.GameObject );
 	}
 
 	[Rpc.Broadcast]
@@ -688,6 +703,33 @@ public partial class Physgun
 		foreach ( var rb in bodies )
 		{
 			Unfreeze( rb );
+		}
+	}
+
+	[Rpc.Broadcast]
+	void UnfreezeAllFrozen( Guid freezerId )
+	{
+		if ( freezerId == Guid.Empty ) return;
+
+		foreach ( var rb in GetFrozenBodies( freezerId ) )
+		{
+			var effect = UnFreezeEffectPrefab.Clone( rb.WorldTransform );
+			foreach ( var emitter in effect.GetComponentsInChildren<ParticleModelEmitter>() )
+			{
+				emitter.Target = rb.GameObject;
+			}
+
+			Unfreeze( rb );
+		}
+	}
+
+	static IEnumerable<Rigidbody> GetFrozenBodies( Guid freezerId )
+	{
+		foreach ( var frozen in Game.ActiveScene.GetAllComponents<FrozenBy>() )
+		{
+			if ( frozen.FreezerId != freezerId ) continue;
+			if ( frozen.Components.TryGet<Rigidbody>( out var rb ) )
+				yield return rb;
 		}
 	}
 
