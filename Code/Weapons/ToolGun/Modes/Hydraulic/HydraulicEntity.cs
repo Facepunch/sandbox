@@ -18,26 +18,26 @@ public sealed class HydraulicEntity : Component, IPlayerControllable
 	[Property, Range( 0, 1 ), ClientEditable]
 	public float Speed { get; set; } = 0.25f;
 
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput Push { get; set; }
 
 	[Property, Range( 0, 1 ), ClientEditable]
 	public float PushSpeed { get; set; } = 0.25f;
 
 
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput Pull { get; set; }
 
 	[Property, Range( 0, 1 ), ClientEditable]
 	public float PullSpeed { get; set; } = 0.25f;
 
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput Toggle { get; set; }
 
 	/// <summary>
-	/// While the client input is active we'll apply thrust
+	/// While the input is active we'll extend towards full length
 	/// </summary>
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput Activate { get; set; }
 
 	[Property]
@@ -86,44 +86,12 @@ public sealed class HydraulicEntity : Component, IPlayerControllable
 
 	}
 
-	public void OnStartControl()
-	{
-	}
-
-	public void OnEndControl()
-	{
-	}
-
 	float? _lastTargetValue;
 	float? _targetValue;
 
-	public void OnControl()
+	protected override void OnFixedUpdate()
 	{
-		if ( Activate.Down() )
-		{
-			Length += Speed * Time.Delta;
-
-		}
-		else if ( Activate.Released() )
-		{
-			Length = 0;
-		}
-
-		if ( Push.Down() )
-		{
-			Length += PushSpeed * Time.Delta * 5.0f;
-		}
-
-		if ( Pull.Down() )
-		{
-			Length -= PullSpeed * Time.Delta * 5.0f;
-		}
-
-		if ( Toggle.Pressed() )
-		{
-			_targetValue = _lastTargetValue.HasValue ? (_lastTargetValue > 0.5f ? 0.0f : 1.0f) : 1;
-			_lastTargetValue = _targetValue;
-		}
+		if ( !Networking.IsHost ) return;
 
 		if ( _targetValue.HasValue )
 		{
@@ -148,8 +116,51 @@ public sealed class HydraulicEntity : Component, IPlayerControllable
 		}
 
 		Length = Length.Clamp( 0, 1 );
+	}
 
-		var analog = Activate.GetAnalog();
+	[SignalInput( Id = nameof( Push ), Default = true )]
+	public void PushSignal( float amount ) => PushLength( amount );
+
+	[SignalInput( Id = nameof( Pull ) )]
+	public void PullSignal( float amount ) => PullLength( amount );
+
+	[SignalInput( Id = nameof( Toggle ) )]
+	public void ToggleSignal() => ToggleTarget();
+
+	[SignalInput( Id = nameof( Activate ) )]
+	public void ActivateSignal( SignalEvent value ) => ActivateLength( value.Analog, value.Released );
+
+	public void OnControl()
+	{
+		PushLength( Push.GetAnalog() );
+		PullLength( Pull.GetAnalog() );
+		ActivateLength( Activate.GetAnalog(), Activate.Released() );
+		if ( Toggle.Pressed() ) ToggleTarget();
+	}
+
+	private void PushLength( float amount )
+	{
+		if ( Networking.IsHost && amount > 0.5f )
+			Length = (Length + PushSpeed * Time.Delta * 5f).Clamp( 0f, 1f );
+	}
+
+	private void PullLength( float amount )
+	{
+		if ( Networking.IsHost && amount > 0.5f )
+			Length = (Length - PullSpeed * Time.Delta * 5f).Clamp( 0f, 1f );
+	}
+
+	private void ActivateLength( float amount, bool released )
+	{
+		if ( !Networking.IsHost ) return;
+		if ( amount > 0.5f ) Length = (Length + Speed * Time.Delta).Clamp( 0f, 1f );
+		else if ( released ) Length = 0f;
+	}
+
+	private void ToggleTarget()
+	{
+		_targetValue = _lastTargetValue.HasValue ? (_lastTargetValue > 0.5f ? 0f : 1f) : 1f;
+		_lastTargetValue = _targetValue;
 	}
 
 	float _animTime = 0;

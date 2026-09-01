@@ -30,6 +30,8 @@ public sealed class LinkerTool : BaseConstraintToolMode
 		go2.NetworkSpawn();
 		go1.NetworkSpawn();
 
+		SignalSystem.TryAutoConnect( point1.GameObject, point2.GameObject );
+
 		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();

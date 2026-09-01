@@ -1,5 +1,5 @@
 ﻿[Alias( "dynamite" )]
-public sealed class DynamiteEntity : Component, IPlayerControllable, Component.IDamageable
+public sealed class DynamiteEntity : Component, Component.IDamageable, IPlayerControllable
 {
 	[Property, Range( 1, 500 ), Step( 1 ), ClientEditable]
 	public float Damage { get; set; } = 128;
@@ -10,7 +10,7 @@ public sealed class DynamiteEntity : Component, IPlayerControllable, Component.I
 	[Property, Range( 1, 100 ), Step( 1 ), ClientEditable]
 	public float Force { get; set; } = 1;
 
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput Activate { get; set; }
 
 	bool _isDead = false;
@@ -52,21 +52,14 @@ public sealed class DynamiteEntity : Component, IPlayerControllable, Component.I
 		Explode();
 	}
 
-	void IPlayerControllable.OnControl()
+	[SignalInput( Id = nameof( Activate ), Default = true )]
+	public void ActivateSignal()
 	{
-		if ( Activate.Pressed() )
-		{
-			Explode();
-		}
+		if ( !_isDead ) Explode();
 	}
 
-	void IPlayerControllable.OnEndControl()
+	public void OnControl()
 	{
-		// nothing to do
-	}
-
-	void IPlayerControllable.OnStartControl()
-	{
-		// nothing to do
+		if ( !_isDead && Activate.Pressed() ) Explode();
 	}
 }

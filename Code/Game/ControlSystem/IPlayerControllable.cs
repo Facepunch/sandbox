@@ -1,10 +1,9 @@
+/// <summary>
+/// A component that can be driven by the player occupying a linked seat.
+/// <see cref="OnControl"/> runs once per fixed update with the player's input connection active.
+/// </summary>
 public interface IPlayerControllable
 {
-	/// <summary>
-	/// Whether this controllable can currently be controlled by a seated player.
-	/// </summary>
-	public bool CanControl( Player player ) => true;
-	public void OnStartControl() { }
-	public void OnEndControl() { }
-	public void OnControl();
+	bool CanControl( Player player ) => true;
+	void OnControl();
 }

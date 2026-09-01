@@ -16,7 +16,7 @@ public sealed class EntitySpawnerEntity : Component, IPlayerControllable
 	/// <summary>
 	/// Input binding that triggers a manual spawn when the player uses this entity.
 	/// </summary>
-	[Property, Sync, ClientEditable, Group( "Input" )]
+	[Property, ClientEditable, Group( "Input" )]
 	public ClientInput SpawnInput { get; set; }
 
 	/// <summary>
@@ -50,14 +50,13 @@ public sealed class EntitySpawnerEntity : Component, IPlayerControllable
 		DoSpawn();
 	}
 
-	void IPlayerControllable.OnControl()
-	{
-		if ( SpawnInput.Pressed() )
-			DoSpawn();
-	}
+	[SignalInput( Id = nameof( SpawnInput ), Default = true )]
+	public void SpawnSignal() => DoSpawn();
 
-	void IPlayerControllable.OnStartControl() { }
-	void IPlayerControllable.OnEndControl() { }
+	public void OnControl()
+	{
+		if ( SpawnInput.Pressed() ) DoSpawn();
+	}
 
 	[Rpc.Host]
 	private void DoSpawn()

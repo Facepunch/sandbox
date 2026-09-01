@@ -2,7 +2,7 @@
 
 public sealed class PointLightEntity : Component, IPlayerControllable
 {
-	[Property, ClientEditable, Group( "Light" )]
+	[Property, ClientEditable, Group( "Light" ), SignalInput( Default = true )]
 	public bool On { get; set { field = value; UpdateLight(); } } = true;
 
 	[Property, ClientEditable, Group( "Light" )]
@@ -21,13 +21,13 @@ public sealed class PointLightEntity : Component, IPlayerControllable
 	public float Attenuation { get; set { field = value; UpdateLight(); } } = 2.4f;
 
 
-	[Property, Sync, ClientEditable, Group( "State" )]
+	[Property, ClientEditable, Group( "State" )]
 	public ClientInput TurnOn { get; set; }
 
-	[Property, Sync, ClientEditable, Group( "State" )]
+	[Property, ClientEditable, Group( "State" )]
 	public ClientInput TurnOff { get; set; }
 
-	[Property, Sync, ClientEditable, Group( "State" )]
+	[Property, ClientEditable, Group( "State" )]
 	public ClientInput Toggle { get; set; }
 
 	[Property]
@@ -36,33 +36,15 @@ public sealed class PointLightEntity : Component, IPlayerControllable
 	[Property]
 	public GameObject OffGameObject { get; set; }
 
-	void IPlayerControllable.OnControl()
+	[SignalInput( Id = nameof( Toggle ) )] public void ToggleSignal() => On = !On;
+	[SignalInput( Id = nameof( TurnOn ) )] public void TurnOnSignal() => On = true;
+	[SignalInput( Id = nameof( TurnOff ) )] public void TurnOffSignal() => On = false;
+
+	public void OnControl()
 	{
-
-		if ( Toggle.Pressed() )
-		{
-			On = !On;
-		}
-
-		if ( TurnOn.Pressed() )
-		{
-			On = true;
-		}
-
-		if ( TurnOff.Pressed() )
-		{
-			On = false;
-		}
-	}
-
-	void IPlayerControllable.OnEndControl()
-	{
-
-	}
-
-	void IPlayerControllable.OnStartControl()
-	{
-
+		if ( Toggle.Pressed() ) On = !On;
+		if ( TurnOn.Pressed() ) On = true;
+		if ( TurnOff.Pressed() ) On = false;
 	}
 
 	void UpdateLight()

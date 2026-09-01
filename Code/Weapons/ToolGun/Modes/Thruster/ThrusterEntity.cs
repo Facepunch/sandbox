@@ -1,4 +1,4 @@
-﻿[Alias( "thruster" )]
+[Alias( "thruster" )]
 public sealed class ThrusterEntity : Component, IPlayerControllable
 {
 	[Property, Range( 0, 1 )]
@@ -14,15 +14,15 @@ public sealed class ThrusterEntity : Component, IPlayerControllable
 	public bool HideEffects { get; set; } = false;
 
 	/// <summary>
-	/// While the client input is active we'll apply thrust
+	/// While this input is active we'll apply thrust
 	/// </summary>
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput Activate { get; set; }
 
 	/// <summary>
 	/// While this input is active we'll apply thrust in the opposite direction
 	/// </summary>
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput Reverse { get; set; }
 
 	/// <summary>
@@ -70,6 +70,24 @@ public sealed class ThrusterEntity : Component, IPlayerControllable
 		}
 	}
 
+	[SignalInput( Id = nameof( Activate ), Default = true )]
+	public void ActivateSignal( float amount ) => ApplyThrust( amount );
+
+	[SignalInput( Id = nameof( Reverse ) )]
+	public void ReverseSignal( float amount ) => ApplyThrust( -amount );
+
+	public void OnControl()
+	{
+		var thrust = (Activate.GetAnalog() - Reverse.GetAnalog()).Clamp( -1f, 1f );
+		ApplyThrust( thrust );
+	}
+
+	private void ApplyThrust( float thrust )
+	{
+		AddThrust( thrust );
+		UpdateThrustState( thrust );
+	}
+
 	void AddThrust( float amount )
 	{
 		if ( amount.AlmostEqual( 0.0f ) ) return;
@@ -113,19 +131,11 @@ public sealed class ThrusterEntity : Component, IPlayerControllable
 		}
 	}
 
-	public void OnControl()
+	private void UpdateThrustState( float analog )
 	{
-		if ( !Networking.IsHost ) return;
-
-		var forward = Activate.GetAnalog();
-		var backward = Reverse.GetAnalog();
-		var analog = forward - backward;
 		ThrustAmount = analog;
 
-		AddThrust( analog );
-
 		var active = MathF.Abs( analog ) > 0.1f;
-
 		if ( active != _state )
 		{
 			if ( active )

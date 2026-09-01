@@ -1,7 +1,7 @@
-﻿public sealed class WheelEntity : Component, IPlayerControllable
+public sealed class WheelEntity : Component, IPlayerControllable
 {
 	[Property, Range( 0, 1 ), ClientEditable]
-	public bool Reversed { get; set; } = false;
+	public bool Reversed { get; set; }
 
 	[Property, Range( 0, 1 ), ClientEditable]
 	public float Speed { get; set; } = 0.5f;
@@ -9,23 +9,23 @@
 	[Property, Range( 0, 1 ), ClientEditable]
 	public float Power { get; set; } = 0.5f;
 
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput Forward { get; set; }
 
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput Reverse { get; set; }
 
-	[Property, Sync, ClientEditable]
-	public ClientInput Break { get; set; }
+	[Property, ClientEditable]
+	public ClientInput Brake { get; set; }
 
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput TurnLeft { get; set; }
 
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput TurnRight { get; set; }
 
-	Vector3 _localAxle;
-	Vector3 _localUp;
+	private Vector3 _localAxle;
+	private Vector3 _localUp;
 
 	protected override void OnEnabled()
 	{
@@ -42,17 +42,14 @@
 
 	protected override void OnUpdate()
 	{
-		if ( SpawnMenuHost.GetActiveMode() is not ContextMenuHost )
-			return;
+		if ( SpawnMenuHost.GetActiveMode() is not ContextMenuHost ) return;
 
 		var renderers = GameObject.GetComponentsInChildren<Renderer>();
 		var outlines = Game.ActiveScene.GetAllComponents<HighlightOutline>();
-		if ( !outlines.Any( o => o.Targets?.Any( t => renderers.Contains( t ) ) == true ) )
-			return;
+		if ( !outlines.Any( outline => outline.Targets?.Any( target => renderers.Contains( target ) ) == true ) ) return;
 
 		var joint = GetComponentInChildren<WheelJoint>();
-		if ( !joint.IsValid() || !joint.Body.IsValid() || _localAxle == Vector3.Zero )
-			return;
+		if ( !joint.IsValid() || !joint.Body.IsValid() || _localAxle == Vector3.Zero ) return;
 
 		var spinAxis = joint.Body.WorldRotation * _localAxle;
 		var stableUp = joint.Body.WorldRotation * _localUp;
@@ -68,30 +65,22 @@
 		WheelOverlay.DrawDirection( WorldPosition, spinAxis, stableUp, overlayRadius, Reversed );
 	}
 
-	public void OnStartControl()
+	private void ApplyInput( float forward, float reverse, float brake, float turnLeft, float turnRight )
 	{
-	}
+		if ( !Networking.IsHost ) return;
 
-	public void OnEndControl()
-	{
-	}
-
-	public void OnControl()
-	{
 		var joint = GetComponentInChildren<WheelJoint>();
 		if ( !joint.IsValid() ) return;
 
-		var forward = Forward.GetAnalog();
-		var reverse = Reverse.GetAnalog();
 		var speed = (forward - reverse).Clamp( -1, 1 );
 
-		if ( Break.GetAnalog() > 0.1f )
+		if ( brake > 0.1f )
 		{
 			joint.EnableSpinMotor = true;
 			joint.SpinMotorSpeed = 0;
 			joint.MaxSpinTorque = 500000 * Power;
 		}
-		else if ( speed.AlmostEqual( 0.0f ) )
+		else if ( speed.AlmostEqual( 0f ) )
 		{
 			joint.EnableSpinMotor = false;
 		}
@@ -104,22 +93,52 @@
 			joint.MaxSpinTorque = 200000 * Power;
 		}
 
-		var left = TurnLeft.GetAnalog();
-		var right = TurnRight.GetAnalog();
-		var dir = (right - left).Clamp( -1, 1 );
-
-		if ( !dir.AlmostEqual( 0.0f ) )
+		var direction = (turnRight - turnLeft).Clamp( -1, 1 );
+		if ( !direction.AlmostEqual( 0f ) )
 		{
 			joint.EnableSteering = true;
-			joint.SteeringDampingRatio = 1.0f;
+			joint.SteeringDampingRatio = 1f;
 			joint.MaxSteeringTorque = 500000;
 			joint.SteeringLimits = new Vector2( -45, 45 );
-			joint.TargetSteeringAngle = 30 * dir;
+			joint.TargetSteeringAngle = 30 * direction;
 		}
 		else
 		{
 			joint.TargetSteeringAngle = 0;
 		}
 	}
-}
 
+	[SignalInput( Id = nameof( Forward ), Default = true )]
+	public void ForwardSignal( float amount ) => ApplyDrive( amount );
+
+	[SignalInput( Id = nameof( Reverse ) )]
+	public void ReverseSignal( float amount ) => ApplyDrive( -amount );
+
+	[SignalInput( Id = nameof( Brake ) )]
+	public void BrakeSignal( bool active ) => ApplyInput( 0f, 0f, active ? 1f : 0f, 0f, 0f );
+
+	[SignalInput( Id = nameof( TurnLeft ) )]
+	public void TurnLeftSignal( float amount ) => ApplySteering( -amount );
+
+	[SignalInput( Id = nameof( TurnRight ) )]
+	public void TurnRightSignal( float amount ) => ApplySteering( amount );
+
+	public void OnControl()
+	{
+		ApplyInput( Forward.GetAnalog(), Reverse.GetAnalog(), Brake.GetAnalog(), TurnLeft.GetAnalog(), TurnRight.GetAnalog() );
+	}
+
+	private void ApplyDrive( float speed ) => ApplyInput( speed, 0f, 0f, 0f, 0f );
+
+	private void ApplySteering( float direction )
+	{
+		var joint = GetComponentInChildren<WheelJoint>();
+		if ( !joint.IsValid() ) return;
+
+		joint.EnableSteering = true;
+		joint.SteeringDampingRatio = 1f;
+		joint.MaxSteeringTorque = 500000;
+		joint.SteeringLimits = new Vector2( -45, 45 );
+		joint.TargetSteeringAngle = 30 * direction.Clamp( -1f, 1f );
+	}
+}

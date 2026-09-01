@@ -28,19 +28,19 @@ public sealed class HoverballEntity : Component, IPlayerControllable
 	/// <summary>
 	/// While held, raises the hover target.
 	/// </summary>
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput Up { get; set; }
 
 	/// <summary>
 	/// While held, lowers the hover target.
 	/// </summary>
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput Down { get; set; }
 
 	/// <summary>
 	/// Toggles the hoverball on/off
 	/// </summary>
-	[Property, Sync, ClientEditable]
+	[Property, ClientEditable]
 	public ClientInput Toggle { get; set; }
 
 	[Property]
@@ -48,9 +48,6 @@ public sealed class HoverballEntity : Component, IPlayerControllable
 
 	[Property, ClientEditable, Metadata( SoundDefinition.Hoverball )] public SoundDefinition EnableSound { get; set; }
 	[Property, ClientEditable, Metadata( SoundDefinition.Hoverball )] public SoundDefinition DisableSound { get; set; }
-
-	private float _zVelocity;
-	private bool _toggleWasHeld;
 
 	protected override void OnStart()
 	{
@@ -69,30 +66,6 @@ public sealed class HoverballEntity : Component, IPlayerControllable
 			OnEffect.Enabled = IsEnabled;
 	}
 
-	public void OnStartControl() { }
-
-	public void OnEndControl()
-	{
-		_zVelocity = 0f;
-	}
-
-	public void OnControl()
-	{
-		var toggleHeld = Toggle.GetAnalog() > 0.5f;
-		if ( toggleHeld && !_toggleWasHeld )
-		{
-			DoToggle();
-		}
-
-		_toggleWasHeld = toggleHeld;
-
-		// Accumulate velocity
-		var upAnalog = Up.GetAnalog();
-		var downAnalog = Down.GetAnalog();
-		var zDir = upAnalog - downAnalog;
-		_zVelocity = zDir != 0f ? zDir * Time.Delta * 5000f : 0f;
-	}
-
 	protected override void OnFixedUpdate()
 	{
 		if ( !Networking.IsHost ) return;
@@ -101,12 +74,6 @@ public sealed class HoverballEntity : Component, IPlayerControllable
 		if ( !rb.IsValid() ) return;
 
 		if ( !IsEnabled ) return;
-
-		// Shift target height from held inputs
-		if ( _zVelocity != 0f )
-		{
-			TargetZ += _zVelocity * Time.Delta * Speed;
-		}
 
 		var pos = WorldPosition;
 		var vel = rb.Velocity;
@@ -126,6 +93,27 @@ public sealed class HoverballEntity : Component, IPlayerControllable
 		}
 
 		rb.Velocity = newVel;
+	}
+
+	[SignalInput( Id = nameof( Up ), Default = true )]
+	public void UpSignal( float amount ) => MoveTarget( amount );
+
+	[SignalInput( Id = nameof( Down ) )]
+	public void DownSignal( float amount ) => MoveTarget( -amount );
+
+	[SignalInput( Id = nameof( Toggle ) )]
+	public void ToggleSignal() => DoToggle();
+
+	public void OnControl()
+	{
+		if ( Toggle.Pressed() ) DoToggle();
+		MoveTarget( Up.GetAnalog() - Down.GetAnalog() );
+	}
+
+	private void MoveTarget( float amount )
+	{
+		if ( !IsEnabled ) return;
+		TargetZ += amount.Clamp( -1f, 1f ) * Time.Delta * Time.Delta * 5000f * Speed;
 	}
 
 	private void DoToggle()

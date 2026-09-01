@@ -106,7 +106,7 @@
         "__guid": "714e06a2-0fa9-4918-b3ec-778318a10378",
         "__enabled": true,
         "Flags": 0,
-        "Break": {
+        "Brake": {
           "IsEnabled": false,
           "Action": null
         },

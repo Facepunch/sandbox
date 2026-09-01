@@ -49,7 +49,7 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 	{
 		get
 		{
-			var seated = ClientInput.Current;
+			var seated = ControlContext.Player;
 			if ( seated.IsValid() && IsTargetedAim && Scene.Camera.IsValid() )
 				return Scene.Camera.Transform.World.ForwardRay;
 
@@ -73,7 +73,7 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 		{
 			if ( HasOwner ) return Owner.GameObject;
 
-			var seatedPlayer = ClientInput.Current;
+			var seatedPlayer = ControlContext.Player;
 			if ( seatedPlayer.IsValid() ) return seatedPlayer.GameObject;
 
 			var killSource = GetComponentInParent<IKillSource>( true );
@@ -102,20 +102,22 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 	}
 
 	//
-	// Seat / contraption control (IPlayerControllable) - a weapon mounted on a contraption fires from
-	// the driver's inputs.
+	// Seat / contraption inputs - a mounted weapon fires from the driver's configured bindings.
 	//
 
 	/// <summary>The input that fires the primary attack when this weapon is controlled via a seat.</summary>
-	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput ShootInput { get; set; }
+	[Property, ClientEditable, Group( "Inputs" )]
+	public ClientInput ShootInput { get; set; }
 
 	/// <summary>The input that fires the secondary attack when this weapon is controlled via a seat.</summary>
-	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput SecondaryInput { get; set; }
+	[Property, ClientEditable, Group( "Inputs" )]
+	public ClientInput SecondaryInput { get; set; }
 
 	/// <summary>Weapons wired into a contraption stay put - no pickup prompt, no Touch pickup.</summary>
 	protected override bool OnCanPickup( Sandbox.BaseInventoryComponent inventory )
 	{
-		return !ShootInput.IsEnabled && !SecondaryInput.IsEnabled;
+		var isLinked = GameObject.Root.GetComponentsInChildren<ManualLink>( true ).Any();
+		return !isLinked && !ShootInput.IsEnabled && !SecondaryInput.IsEnabled;
 	}
 
 	/// <summary>A seated player can only control this while not holding a weapon of their own.</summary>
@@ -125,28 +127,53 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 		return inventory is null || !inventory.ActiveWeapon.IsValid();
 	}
 
-	public virtual void OnStartControl() { }
+	[SignalInput( Id = nameof( ShootInput ), Default = true )]
+	public void ShootSignal( SignalEvent input )
+	{
+		if ( HasOwner || !Networking.IsHost ) return;
+		DispatchPrimary( input.Pressed, input.Down, input.Released );
+	}
 
-	public virtual void OnEndControl() { }
+	[SignalInput( Id = nameof( SecondaryInput ) )]
+	public void SecondarySignal( SignalEvent input )
+	{
+		if ( HasOwner || !Networking.IsHost ) return;
+		DispatchSecondary( input.Pressed, input.Down, input.Released );
+	}
 
-	// Explicit interface impl so it doesn't clash with the engine's held-item OnControl pump;
-	// subclasses override OnSeatControl to change the seated behaviour.
-	void IPlayerControllable.OnControl() => OnSeatControl();
-
-	protected virtual void OnSeatControl()
+	void IPlayerControllable.OnControl()
 	{
 		if ( HasOwner ) return;
-		// Seat fire is fully host-authoritative - the host reads the driver's synced ClientInput and
-		// runs the shot for real, damage applying directly (no hit claims). The driving client doesn't
-		// run the attack at all.
-		if ( !Networking.IsHost ) return;
-
-		if ( ShootInput.Down() )
-			FirePrimary();
-
-		if ( SecondaryInput.Down() )
-			FireSecondary();
+		OnContraptionControl();
 	}
+
+	protected virtual void OnContraptionControl()
+	{
+		DispatchPrimary( ShootInput.Pressed(), ShootInput.Down(), ShootInput.Released() );
+		DispatchSecondary( SecondaryInput.Pressed(), SecondaryInput.Down(), SecondaryInput.Released() );
+	}
+
+	private void DispatchPrimary( bool pressed, bool down, bool released )
+	{
+		if ( pressed ) OnPrimaryPressed();
+		if ( down ) OnPrimaryDown();
+		if ( released ) OnPrimaryReleased();
+	}
+
+	private void DispatchSecondary( bool pressed, bool down, bool released )
+	{
+		if ( pressed ) OnSecondaryPressed();
+		if ( down ) OnSecondaryDown();
+		if ( released ) OnSecondaryReleased();
+	}
+
+	protected virtual void OnPrimaryPressed() { }
+	protected virtual void OnPrimaryDown() => FirePrimary();
+	protected virtual void OnPrimaryReleased() { }
+
+	protected virtual void OnSecondaryPressed() { }
+	protected virtual void OnSecondaryDown() => FireSecondary();
+	protected virtual void OnSecondaryReleased() { }
 
 	/// <summary>
 	/// Called when setting up the camera - use this to apply effects on the camera based on this carriable

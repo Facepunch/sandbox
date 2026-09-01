@@ -35,13 +35,13 @@ public sealed class EmitterEntity : Component, IPlayerControllable
 	/// <summary>
 	/// Used when <see cref="Mode"/> is <see cref="EmitMode.Toggle"/>.
 	/// </summary>
-	[Property, Sync, ClientEditable, Group( "Input" )]
+	[Property, ClientEditable, Group( "Input" )]
 	public ClientInput ToggleInput { get; set; }
 
 	/// <summary>
 	/// Used when <see cref="Mode"/> is <see cref="EmitMode.Hold"/>.
 	/// </summary>
-	[Property, Sync, ClientEditable, Group( "Input" )]
+	[Property, ClientEditable, Group( "Input" )]
 	public ClientInput HoldInput { get; set; }
 
 	/// <summary>
@@ -53,7 +53,7 @@ public sealed class EmitterEntity : Component, IPlayerControllable
 	/// When enabled, forces the emitter on regardless of input or mode.
 	/// Can be set from the editor or wired up externally.
 	/// </summary>
-	[Property, ClientEditable]
+	[Property, ClientEditable, SignalInput( Default = true )]
 	public bool ManualOn
 	{
 		get => _manualOn;
@@ -81,35 +81,37 @@ public sealed class EmitterEntity : Component, IPlayerControllable
 			DestroyParticle();
 	}
 
-	void IPlayerControllable.OnStartControl() { }
-	void IPlayerControllable.OnEndControl()
+	[SignalInput( Id = nameof( ToggleInput ) )]
+	public void ToggleSignal()
 	{
-		if ( Mode == EmitMode.Hold )
-		{
-			_inputEmitting = false;
-			UpdateEmitState();
-		}
+		if ( Mode == EmitMode.Toggle ) ToggleEmitting();
 	}
 
-	void IPlayerControllable.OnControl()
+	[SignalInput( Id = nameof( HoldInput ) )]
+	public void HoldSignal( bool active )
+	{
+		if ( Mode == EmitMode.Hold ) SetInputEmitting( active );
+	}
+
+	public void OnControl()
 	{
 		if ( Mode == EmitMode.Toggle )
 		{
-			if ( ToggleInput.Pressed() )
-			{
-				_inputEmitting = !_inputEmitting;
-				UpdateEmitState();
-			}
+			if ( ToggleInput.Pressed() ) ToggleEmitting();
 		}
 		else
 		{
-			var held = HoldInput.Down();
-			if ( held != _inputEmitting )
-			{
-				_inputEmitting = held;
-				UpdateEmitState();
-			}
+			SetInputEmitting( HoldInput.Down() );
 		}
+	}
+
+	private void ToggleEmitting() => SetInputEmitting( !_inputEmitting );
+
+	private void SetInputEmitting( bool active )
+	{
+		if ( active == _inputEmitting ) return;
+		_inputEmitting = active;
+		UpdateEmitState();
 	}
 
 	private void UpdateEmitState() => SetEmitting( _inputEmitting || _manualOn );

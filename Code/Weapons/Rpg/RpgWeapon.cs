@@ -62,15 +62,21 @@ public sealed class RpgWeapon : BaseSandboxWeapon
 	/// <summary>
 	/// Standalone / seat control — uses SecondaryInput to toggle tracking.
 	/// </summary>
-	protected override void OnSeatControl()
+	protected override void OnPrimaryDown()
 	{
-		base.OnSeatControl();
+		base.OnPrimaryDown();
+		UpdateGuidance();
+	}
 
-		if ( HasOwner || !Networking.IsHost ) return;
+	protected override void OnSecondaryPressed() => ToggleTrackedAim();
 
-		if ( SecondaryInput.Pressed() )
-			ToggleTrackedAim();
+	protected override void OnSecondaryDown()
+	{
+		UpdateGuidance();
+	}
 
+	private void UpdateGuidance()
+	{
 		if ( IsGuiding )
 		{
 			var target = GetAimTarget();
@@ -168,8 +174,8 @@ public sealed class RpgWeapon : BaseSandboxWeapon
 
 		if ( Owner.IsValid() )
 			projectile.Instigator = Owner;
-		else if ( ClientInput.Current.IsValid() )
-			projectile.Instigator = ClientInput.Current;
+		else if ( ControlContext.Player.IsValid() )
+			projectile.Instigator = ControlContext.Player;
 
 		go.NetworkSpawn();
 

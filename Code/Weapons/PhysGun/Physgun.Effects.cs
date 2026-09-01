@@ -10,8 +10,8 @@ public partial class Physgun : ScreenWeapon
 	[Property] public GameObject GrabEffectPrefab { get; set; }
 
 	// ShootInput and SecondaryInput come from BaseSandboxWeapon's seat control.
-	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput ExtendInput { get; set; }
-	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput RetractInput { get; set; }
+	[Property, ClientEditable, Group( "Inputs" )] public ClientInput ExtendInput { get; set; }
+	[Property, ClientEditable, Group( "Inputs" )] public ClientInput RetractInput { get; set; }
 
 	[Property, Group( "Screen" )] public float PowerMinDistance { get; set; } = 64f;
 	[Property, Group( "Screen" )] public float PowerMaxDistance { get; set; } = 512f;

@@ -70,17 +70,8 @@ public sealed class HandGrenadeWeapon : BaseSandboxWeapon
 			Throw( Owner, Vector3.Down, 0.2f );
 	}
 
-	protected override void OnSeatControl()
-	{
-		if ( HasOwner ) return;
-		// Seat control runs fully on the host - no prediction, and DropGrenade (a host RPC) runs once.
-		if ( !Networking.IsHost ) return;
-
-		if ( ShootInput.Pressed() )
-		{
-			DropGrenade();
-		}
-	}
+	protected override void OnPrimaryPressed() => DropGrenade();
+	protected override void OnPrimaryDown() { }
 
 	protected override void OnControl()
 	{

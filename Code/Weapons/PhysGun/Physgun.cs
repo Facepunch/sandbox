@@ -313,80 +313,128 @@ public partial class Physgun
 		}
 	}
 
-	/// <summary>
-	/// Seat / standalone input — ShootInput grabs, SecondaryInput pulls.
-	/// </summary>
-	protected override void OnSeatControl()
+	private bool _primaryControlDown;
+	private bool _secondaryControlDown;
+
+	protected override void OnPrimaryPressed()
 	{
-		if ( HasOwner ) return;
-		// Seat control runs fully on the host - no prediction on the driving client.
-		if ( !Networking.IsHost ) return;
+		if ( !_state.IsValid() || !_state.Pulling ) return;
 
-		var aim = AimTransform;
-		_lastAimTransform = aim;
-		var isPulling = SecondaryInput.Down() && !_preventReselect;
+		var force = AimTransform.Rotation.Forward * LaunchForce;
+		Launch( _state.Body, force );
+		_state = default;
+		_preventReselect = true;
+	}
 
-		_stateHovered = default;
+	protected override void OnPrimaryDown()
+	{
+		_primaryControlDown = true;
+
+		if ( _state.IsValid() )
+			return;
+
+		if ( ConsumeReselectBlock() ) return;
+		UpdateGrab();
+	}
+
+	protected override void OnPrimaryReleased()
+	{
+		_primaryControlDown = false;
 
 		if ( _state.IsValid() )
 		{
-			if ( _state.Pulling )
+			if ( !_state.Pulling )
 			{
-				// Left-click while pulling punts the object forward
-				if ( ShootInput.Pressed() )
-				{
-					var force = aim.Rotation.Forward * LaunchForce;
-					Launch( _state.Body, force );
-					_state = default;
-					_preventReselect = true;
-				}
-				// Right-click cancels the pull
-				else if ( SecondaryInput.Pressed() )
-				{
-					_state = default;
-					_preventReselect = true;
-				}
-			}
-			else
-			{
-				// Release grab when primary is let go
-				if ( !ShootInput.Down() )
-				{
-					_state = default;
-					_preventReselect = true;
-					GameObject.PlaySound( ReleasedSound );
-					return;
-				}
-
-				// Retract / extend grabbed object
-				if ( ExtendInput.Down() || RetractInput.Down() )
-				{
-					var state = _state;
-					if ( ExtendInput.Down() ) state.GrabDistance += 200.0f * Time.Delta;
-					if ( RetractInput.Down() ) state.GrabDistance -= 200.0f * Time.Delta;
-					state.GrabDistance = MathF.Max( 0.0f, state.GrabDistance );
-
-					_state = default;
-					_state = state;
-				}
+				_state = default;
+				_preventReselect = true;
+				GameObject.PlaySound( ReleasedSound );
 			}
 
 			return;
+		}
+
+		if ( ConsumeReselectBlock() ) return;
+
+		if ( _secondaryControlDown )
+		{
+			UpdateGrab();
 		}
 		else
 		{
-			_state = default;
+			_stateHovered = default;
+			GameObject.PlaySound( ReleasedSound );
 		}
+	}
 
-		if ( _preventReselect )
-		{
-			if ( !ShootInput.Down() && !SecondaryInput.Down() )
-				_preventReselect = false;
+	protected override void OnSecondaryPressed()
+	{
+		if ( !_state.IsValid() || !_state.Pulling ) return;
 
+		_state = default;
+		_preventReselect = true;
+	}
+
+	protected override void OnSecondaryDown()
+	{
+		_secondaryControlDown = true;
+
+		if ( _state.IsValid() )
 			return;
-		}
 
-		FindGrabbedBody( out var sh, aim, aim.Rotation.Yaw(), isPulling );
+		if ( ConsumeReselectBlock() ) return;
+		UpdateGrab();
+	}
+
+	protected override void OnSecondaryReleased()
+	{
+		_secondaryControlDown = false;
+
+		if ( _state.IsValid() || ConsumeReselectBlock() ) return;
+
+		if ( _primaryControlDown )
+			UpdateGrab();
+		else
+			_stateHovered = default;
+	}
+
+	private bool ConsumeReselectBlock()
+	{
+		if ( !_preventReselect ) return false;
+		if ( !_primaryControlDown && !_secondaryControlDown ) _preventReselect = false;
+		return true;
+	}
+
+	private void AdjustGrabDistance( float amount )
+	{
+		if ( HasOwner || !Networking.IsHost || !_state.IsValid() || _state.Pulling ) return;
+
+		var state = _state;
+		state.GrabDistance = MathF.Max( 0f, state.GrabDistance + amount );
+		_state = default;
+		_state = state;
+	}
+
+	[SignalInput( Id = nameof( ExtendInput ) )]
+	public void ExtendSignal( float amount ) => AdjustGrabDistance( amount * 200f * Time.Delta );
+
+	[SignalInput( Id = nameof( RetractInput ) )]
+	public void RetractSignal( float amount ) => AdjustGrabDistance( -amount * 200f * Time.Delta );
+
+	protected override void OnContraptionControl()
+	{
+		base.OnContraptionControl();
+
+		if ( ExtendInput.Down() ) AdjustGrabDistance( 200f * Time.Delta );
+		if ( RetractInput.Down() ) AdjustGrabDistance( -200f * Time.Delta );
+	}
+
+	private void UpdateGrab()
+	{
+		var aim = AimTransform;
+		_lastAimTransform = aim;
+
+		_stateHovered = default;
+		FindGrabbedBody( out var sh, aim, aim.Rotation.Yaw(), _secondaryControlDown );
 		_stateHovered = sh;
 
 		if ( sh.IsValid() && sh.Pulling && sh.Body.MotionEnabled )
@@ -401,21 +449,16 @@ public partial class Physgun
 		if ( _state.Pulling || _stateHovered.Pulling )
 			return;
 
-		if ( ShootInput.Down() )
+		if ( _primaryControlDown )
 		{
 			_state = _stateHovered with { Active = true, Pulling = false };
 
 			if ( _state.IsValid() )
 				Unfreeze( _state.Body );
 		}
-		else if ( ShootInput.Released() )
-		{
-			GameObject.PlaySound( ReleasedSound );
-		}
 		else
 		{
 			_state = default;
-			_preventReselect = false;
 		}
 	}
 
@@ -457,6 +500,8 @@ public partial class Physgun
 		_state = default;
 		_stateHovered = default;
 		_launched = default;
+		_primaryControlDown = false;
+		_secondaryControlDown = false;
 	}
 
 	protected override void OnFixedUpdate()

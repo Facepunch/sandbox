@@ -1,6 +1,9 @@
-public class ControlSystem : GameObjectSystem<ControlSystem>
+/// <summary>
+/// Lets players drive contraptions from a seat. Every tick, this finds who's sitting in each
+/// chair and calls <see cref="IPlayerControllable.OnControl"/> on the attached contraption.
+/// </summary>
+public sealed class ControlSystem : GameObjectSystem<ControlSystem>
 {
-	// When each chair first became occupied. Used to sort seats so the earliest occupant is in charge
 	private readonly Dictionary<BaseChair, RealTimeSince> _occupiedSince = new();
 
 	public ControlSystem( Scene scene ) : base( scene )
@@ -8,25 +11,28 @@ public class ControlSystem : GameObjectSystem<ControlSystem>
 		Listen( Stage.StartFixedUpdate, 10, OnTick, "ControlSystem" );
 	}
 
-	void OnTick()
+	private void OnTick()
 	{
-		// TODO this should be more generic, some kind of interface?
+		if ( Scene != Game.ActiveScene ) return;
+
+		if ( !Networking.IsHost ) return;
+
+		// Whoever sat down first claims the contraption — a second seat on the same vehicle does nothing.
 		var driven = new HashSet<GameObject>();
 
 		foreach ( var chair in GetSortedSeats() )
 		{
-			var builder = new LinkedGameObjectBuilder();
-			builder.AddConnected( chair.GameObject );
+			var linked = new LinkedGameObjectBuilder();
+			linked.AddConnected( chair.GameObject );
 
-			// Skip if a seat occupied earlier already claimed this
-			if ( builder.Objects.Any( driven.Contains ) ) continue;
-			driven.UnionWith( builder.Objects );
+			if ( linked.Objects.Any( driven.Contains ) ) continue;
+			driven.UnionWith( linked.Objects );
 
-			RunControl( chair, builder );
+			RunControl( chair, linked );
 		}
 	}
 
-	IEnumerable<BaseChair> GetSortedSeats()
+	private IEnumerable<BaseChair> GetSortedSeats()
 	{
 		var chairs = Scene.GetAll<BaseChair>();
 
@@ -39,25 +45,26 @@ public class ControlSystem : GameObjectSystem<ControlSystem>
 		}
 
 		return chairs
-			.Where( c => c.IsValid() && c.IsOccupied )
-			.OrderBy( c => (float)_occupiedSince.GetValueOrDefault( c, default ) );
+			.Where( chair => chair.IsValid() && chair.IsOccupied )
+			.OrderBy( chair => (float)_occupiedSince.GetValueOrDefault( chair, default ) );
 	}
 
-	void RunControl( BaseChair chair, LinkedGameObjectBuilder builder )
+	private static void RunControl( BaseChair chair, LinkedGameObjectBuilder linked )
 	{
-		var controller = chair.GetOccupant();
-		if ( !controller.IsValid() ) return;
-
-		var player = controller.GetComponent<Player>();
+		var player = chair.GetOccupant()?.GetComponent<Player>();
 		if ( !player.IsValid() ) return;
 
-		using var scope = ClientInput.PushScope( player );
+		var connection = player.Network?.Owner;
+		if ( connection is null ) return;
 
-		foreach ( var o in builder.Objects )
+		using var scope = ControlContext.Push( player, connection );
+
+		foreach ( var gameObject in linked.Objects )
 		{
-			foreach ( var controllable in o.GetComponentsInChildren<IPlayerControllable>() )
+			foreach ( var component in gameObject.GetComponentsInChildren<Component>() )
 			{
-				if ( controllable is null ) continue;
+				if ( !component.IsValid() ) continue;
+				if ( component is not IPlayerControllable controllable ) continue;
 				if ( !controllable.CanControl( player ) ) continue;
 
 				controllable.OnControl();

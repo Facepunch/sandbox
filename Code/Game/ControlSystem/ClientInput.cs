@@ -1,69 +1,20 @@
-﻿
+using System.Text.Json.Serialization;
 
-using Sandbox.Utility;
-
+/// <summary>
+/// A configurable input action for contraptions driven from a seat. This contains no state:
+/// it reads the active driver's connection while <see cref="IPlayerControllable.OnControl"/>
+/// is running. Wired inputs are ordinary <see cref="SignalInputAttribute"/> handlers instead.
+/// </summary>
 public struct ClientInput
 {
-	readonly record struct State( Connection connection, Player player );
-
-	static State _currentState;
-
-	static Connection Connection => _currentState.connection;
-
-	public readonly bool IsEnabled => !string.IsNullOrWhiteSpace( Action );
-
+	[Property]
 	public string Action { get; set; }
 
-	/// <summary>
-	/// Returns an analog value between 0 and 1 representing how much the input is pressed
-	/// </summary>
-	public readonly float GetAnalog()
-	{
-		if ( !IsEnabled ) return 0;
-		return Down() ? 1 : 0;
-	}
+	[JsonIgnore, Hide]
+	public readonly bool IsEnabled => !string.IsNullOrWhiteSpace( Action );
 
-	/// <summary>
-	/// Returns true if button is currently held down
-	/// </summary>
-	public readonly bool Down()
-	{
-		if ( !IsEnabled ) return false;
-
-		return Connection?.Down( Action ) ?? false;
-	}
-
-	/// <summary>
-	/// Returns true if button was released
-	/// </summary>
-	public readonly bool Released()
-	{
-		if ( !IsEnabled ) return false;
-
-		return Connection?.Released( Action ) ?? false;
-	}
-
-	/// <summary>
-	/// Returns true if button was pressed
-	/// </summary>
-	public readonly bool Pressed()
-	{
-		if ( !IsEnabled ) return false;
-
-		return Connection?.Pressed( Action ) ?? false;
-	}
-
-	internal static IDisposable PushScope( Player player )
-	{
-		var previousState = _currentState;
-		_currentState = new State( player?.Network?.Owner, player );
-
-		return DisposeAction.Create( () => _currentState = previousState );
-	}
-
-	/// <summary>
-	/// The player currently running an <see cref="IPlayerControllable.OnControl"/> tick,
-	/// or null when not inside a control scope (e.g. during regular player input).
-	/// </summary>
-	public static Player Current => _currentState.player;
+	public readonly bool Down() => IsEnabled && ControlContext.Connection?.Down( Action ) == true;
+	public readonly bool Pressed() => IsEnabled && ControlContext.Connection?.Pressed( Action ) == true;
+	public readonly bool Released() => IsEnabled && ControlContext.Connection?.Released( Action ) == true;
+	public readonly float GetAnalog() => Down() ? 1f : 0f;
 }

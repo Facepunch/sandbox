@@ -21,6 +21,10 @@
     "tool.hint.thrustertool.place_no_weld": "Place (no weld)",
     "tool.hint.thrustertool.toggle_axis": "Toggle axis",
 
+    "tool.hint.buttontool.description": "Places a button that drives linked inputs",
+    "tool.hint.buttontool.place": "Place",
+    "tool.hint.buttontool.place_no_weld": "Place (no weld)",
+
     "tool.hint.wheeltool.description": "Attaches a wheel to an object",
     "tool.hint.wheeltool.place": "Place",
     "tool.hint.wheeltool.toggle_axis": "Toggle axis",
@@ -125,6 +129,7 @@
     "tool.name.unbreakable": "Unbreakable",
     "tool.name.balloon": "Balloon",
     "tool.name.thruster": "Thruster",
+    "tool.name.button": "Button",
     "tool.name.wheel": "Wheel",
     "tool.name.hoverball": "Hoverball",
     "tool.name.hydraulic": "Hydraulic",
