@@ -5,6 +5,9 @@ ToolInfoPanel
 	position: absolute;
 	left: 2vw;
 	top: 2vw;
+	width: 280px;
+	flex-direction: column;
+	align-items: flex-start;
 	justify-content: flex-start;
 	pointer-events: none;
 	opacity: 0;
@@ -19,59 +22,79 @@ ToolInfoPanel
 	{
 		flex-direction: column;
 		align-items: flex-start;
-		gap: 4px;
-		font-family: $title-font;
-		padding: 16px;
-		background-color: $hud-element-bg;
-		border-radius: $hud-radius;
+		gap: 6px;
+		width: 100%;
+		padding: 8px;
+		background-color: rgba( 9, 21, 31, 0.88 );
+		backdrop-filter: blur( 8px );
+		border: 1px solid rgba( white, 0.06 );
+		border-radius: 8px;
+		box-shadow: 0 8px 24px rgba( black, 0.5 );
 	}
 
 	.actions
 	{
-		gap: 16px;
+		width: 100%;
+		flex-direction: column;
+		gap: 2px;
 	}
 
 	.name
 	{
-		font-size: 32px;
-		font-weight: 700;
-		color: $color-accent;
-		margin-bottom: 2px;
+		margin-bottom: 8px;
+		padding: 0.45rem 0.8rem;
+		font-family: $subtitle-font;
+		font-size: 14px;
+		font-weight: 650;
+		color: $menu-text-strong;
+		gap: 7px;
+		align-items: center;
+		background-color: rgba( 6, 16, 24, 0.82 );
+		backdrop-filter: blur( 8px );
+		border: 1px solid rgba( white, 0.06 );
+		border-radius: 8px;
+		box-shadow: 0 4px 12px rgba( black, 0.25 );
+
+		.icon
+		{
+			color: $menu-accent;
+			font-size: 16px;
+		}
 	}
 
 	.description
 	{
-		font-size: 16px;
-		font-weight: 400;
-		font-family: $subtitle-font;
-		color: $hud-text;
-		margin-bottom: 4px;
-	}
-
-	.divider
-	{
 		width: 100%;
-		height: 1px;
-		background-color: rgba($color-accent, 0.15);
-		margin-bottom: 4px;
+		padding: 2px 5px 4px;
+		font-family: $body-font;
+		font-size: 13px;
+		font-weight: 500;
+		color: $menu-text;
 	}
 
 	.action
 	{
+		width: 100%;
 		flex-direction: row;
 		align-items: center;
-		gap: 10px;
+		gap: 8px;
+		padding: 5px 6px;
+		border: 1px solid transparent;
+		border-radius: 5px;
+		background-color: rgba( white, 0.03 );
 	}
 
 	.key
 	{
-		width: 48px;
+		width: 34px;
+		height: 20px;
 	}
 
 	.text
 	{
-		font-size: 16px;
-		font-weight: 500;
-		color: $hud-text;
+		font-family: $subtitle-font;
+		font-size: 13px;
+		font-weight: 600;
+		color: $menu-text-strong;
 	}
 }

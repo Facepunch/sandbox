@@ -10,40 +10,41 @@
     return;
 
 <root>
- <div class="panel">
+ <div class="name">
+  <span class="icon">@InfoIcon</span>
+  <span>@Info?.Name</span>
+ </div>
 
-  <div class="name">@Info?.Name</div>
+ <div class="panel">
 
   @if ( !string.IsNullOrEmpty( Info?.Description ) )
   {
    <div class="description">@Info.Description</div>
   }
 
-  <div class="divider"></div>
-
-        <div class="actions">
-            @if (!string.IsNullOrEmpty(Info?.PrimaryAction))
-            {
-                <div class="action">
-                    <InputHint Action="attack1" class="key" />
-                    <span class="text">@Info.PrimaryAction</span>
-                </div>
-            }
-            @if (!string.IsNullOrEmpty(Info?.SecondaryAction))
-            {
-                <div class="action">
-                    <InputHint Action="attack2" class="key" />
-                    <span class="text">@Info.SecondaryAction</span>
-                </div>
-            }
-            @if (!string.IsNullOrEmpty(Info?.ReloadAction))
-            {
-                <div class="action">
-                    <InputHint Action="reload" class="key" />
-                    <span class="text">@Info.ReloadAction</span>
-                </div>
-            }
-        </div>
+  <div class="actions">
+   @if (!string.IsNullOrEmpty(Info?.PrimaryAction))
+   {
+    <div class="action">
+     <InputHint Action="attack1" class="key" />
+     <span class="text">@Info.PrimaryAction</span>
+    </div>
+   }
+   @if (!string.IsNullOrEmpty(Info?.SecondaryAction))
+   {
+    <div class="action">
+     <InputHint Action="attack2" class="key" />
+     <span class="text">@Info.SecondaryAction</span>
+    </div>
+   }
+   @if (!string.IsNullOrEmpty(Info?.ReloadAction))
+   {
+    <div class="action">
+     <InputHint Action="reload" class="key" />
+     <span class="text">@Info.ReloadAction</span>
+    </div>
+   }
+  </div>
  </div>
 </root>
 
@@ -68,6 +69,7 @@
 	Player Player => Player.FindLocalPlayer();
 
 	IToolInfo Info => CurrentToolInfo;
+	string InfoIcon => Info is null ? "build" : Game.TypeLibrary.GetType( Info.GetType() )?.Icon ?? "build";
 
 	bool HasAnyAction => !string.IsNullOrEmpty( Info?.PrimaryAction )
 	                     || !string.IsNullOrEmpty( Info?.SecondaryAction )
@@ -78,5 +80,5 @@
 		SetClass( "visible", CurrentToolInfo is not null );
 	}
 
-	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Player?.WantsHideHud );
+	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, InfoIcon, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Player?.WantsHideHud );
 }
