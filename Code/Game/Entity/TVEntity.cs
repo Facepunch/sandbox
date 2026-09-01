@@ -1,11 +1,19 @@
 /// <summary>
 /// A TV screen entity that displays the feed from a linked <see cref="CameraWeapon"/>.
-/// Use the Linker tool to connect a Camera to this TV.
+/// Use the Linker tool to wire a Camera's video feed to this TV's display input.
 /// </summary>
+[Title( "Television" )]
 public sealed class TVEntity : Component
 {
 	[Property]
 	public string ScreenMaterialName { get; set; } = "screen";
+
+	/// <summary>
+	/// The camera whose view is on the screen. A component input: only a Camera
+	/// can be linked here, and linking just sets this reference.
+	/// </summary>
+	[Property, Hide, Icon( "connected_tv" ), SignalInput( Default = true )]
+	public CameraWeapon Display { get; set; }
 
 	[Property, Range( 0.5f, 10 ), Step( 0.5f ), ClientEditable, Group( "Screen" )]
 	public float Brightness { get; set; } = 1f;
@@ -18,11 +26,9 @@ public sealed class TVEntity : Component
 	/// <summary>
 	/// True when a linked camera is actively providing a render texture.
 	/// </summary>
-	public bool HasLinkedCamera => _linkedWeapon is not null && _linkedWeapon.Enabled && _linkedWeapon.RenderTexture is not null;
+	public bool HasLinkedCamera => Display.IsValid() && Display.Enabled && Display.RenderTexture is not null;
 
-	private Texture _linkedTexture;
 	private Texture _lastTexture;
-	private CameraWeapon _linkedWeapon;
 	private Material _materialCopy;
 	private ModelRenderer _renderer;
 	private bool _hasSignal;
@@ -39,7 +45,8 @@ public sealed class TVEntity : Component
 
 	protected override void OnUpdate()
 	{
-		FindLinkedTexture();
+		var linkedWeapon = Display.IsValid() ? Display : null;
+		var linkedTexture = linkedWeapon?.RenderTexture;
 
 		// Distance-based fade and RT camera culling
 		float distanceToCamera = Vector3.DistanceBetween( WorldPosition, Scene.Camera.WorldPosition );
@@ -48,13 +55,13 @@ public sealed class TVEntity : Component
 		bool tooFar = distanceFade <= 0f;
 
 		// Enable/disable the linked RT camera based on distance
-		if ( _linkedWeapon is not null )
+		if ( linkedWeapon is not null )
 		{
-			var camera = _linkedWeapon.GetComponentInChildren<CameraComponent>( true );
+			var camera = linkedWeapon.GetComponentInChildren<CameraComponent>( true );
 			camera?.Enabled = !tooFar;
 		}
 
-		var newSignal = On && _linkedTexture is not null && !tooFar;
+		var newSignal = On && linkedTexture is not null && !tooFar;
 
 		if ( newSignal != _hasSignal )
 		{
@@ -64,11 +71,11 @@ public sealed class TVEntity : Component
 
 		// Keep the last known texture alive during the off-transition,
 		// but only if the linked weapon still has a valid render target.
-		if ( _linkedTexture is not null )
+		if ( linkedTexture is not null )
 		{
-			_lastTexture = _linkedTexture;
+			_lastTexture = linkedTexture;
 		}
-		else if ( _linkedWeapon is null || !_linkedWeapon.Enabled || _linkedWeapon.RenderTexture is null )
+		else
 		{
 			// Weapon gone or disabled — its texture was disposed, don't use the cached copy.
 			_lastTexture = null;
@@ -79,7 +86,7 @@ public sealed class TVEntity : Component
 		if ( _materialCopy is null || _renderer is null ) return;
 
 		var inTransition = _timeSinceSignalChange < TransitionDuration;
-		var textureToUse = _linkedTexture ?? ( inTransition ? _lastTexture : null );
+		var textureToUse = linkedTexture ?? ( inTransition ? _lastTexture : null );
 
 		_renderer.Attributes.Set( "Color", textureToUse is not null ? textureToUse : Texture.Black );
 
@@ -98,32 +105,7 @@ public sealed class TVEntity : Component
 	protected override void OnDestroy()
 	{
 		_materialCopy = null;
-		_linkedTexture = null;
 		base.OnDestroy();
-	}
-
-	/// <summary>
-	/// Resolves the linked render texture each frame by walking ManualLink components.
-	/// Looks for a CameraWeapon on the linked object.
-	/// </summary>
-	private void FindLinkedTexture()
-	{
-		_linkedTexture = null;
-		_linkedWeapon = null;
-
-		foreach ( var link in GameObject.GetComponentsInChildren<ManualLink>() )
-		{
-			var target = link.Body?.Root;
-			if ( target is null ) continue;
-
-			if ( target.GetComponentInChildren<CameraWeapon>() is CameraWeapon weapon
-				&& weapon.RenderTexture is not null )
-			{
-				_linkedTexture = weapon.RenderTexture;
-				_linkedWeapon = weapon;
-				return;
-			}
-		}
 	}
 
 	private static readonly string ShaderPath = "entities/sents/tv/materials/tv_crt_screen.shader";

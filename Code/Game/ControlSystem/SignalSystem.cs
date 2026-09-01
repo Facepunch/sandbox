@@ -8,6 +8,9 @@ public readonly record struct SignalEvent( float Analog, bool Down, bool Pressed
 /// Makes a method or property wireable as an input. Works on: a parameterless method (fires
 /// once when the signal turns on), a method taking a <c>bool</c> or <c>float</c>, or a writable
 /// <c>bool</c>/<c>float</c> property.
+/// On a writable property of a Component type it becomes a component input instead: linking
+/// sets the property to the source component directly, and only components of that type
+/// (marked <see cref="SignalOutputAttribute"/> on their class) can be linked to it.
 /// The member's name is the wire's name — renaming it breaks saved contraptions.
 /// </summary>
 [AttributeUsage( AttributeTargets.Method | AttributeTargets.Property )]
@@ -24,8 +27,12 @@ public sealed class SignalInputAttribute : Attribute
 /// <summary>
 /// Makes a <see cref="SignalOutput"/> property wireable as an output.
 /// The member's name is the wire's name — renaming it breaks saved contraptions.
+/// On a class it exposes the component itself as a linkable reference instead: players can
+/// wire it into any component input (<see cref="SignalInputAttribute"/> on a property of a
+/// matching type) and the input receives the component directly. Wired into a boolean
+/// input instead, it holds the input on for as long as the link exists.
 /// </summary>
-[AttributeUsage( AttributeTargets.Property )]
+[AttributeUsage( AttributeTargets.Property | AttributeTargets.Class )]
 public sealed class SignalOutputAttribute : Attribute
 {
 	public string Name { get; set; }
@@ -142,6 +149,9 @@ internal readonly record struct SignalInputBinding(
 			case SignalInputKind.FloatProperty:
 				Property.SetValue( component, value.Analog );
 				break;
+			case SignalInputKind.ComponentProperty:
+				// Direct component link — nothing travels through it, the wire set the property.
+				break;
 			case SignalInputKind.Custom:
 				Custom?.Invoke( component, value );
 				break;
@@ -157,6 +167,7 @@ internal enum SignalInputKind
 	FloatMethod,
 	BoolProperty,
 	FloatProperty,
+	ComponentProperty,
 	Custom
 }
 
@@ -171,22 +182,50 @@ internal interface ISignalAdapter
 }
 
 /// <summary>
-/// An output port found on a component: its name and how to reach it.
+/// The shared metadata exposed by both ends of a signal connection.
 /// </summary>
-internal sealed class SignalOutputDescription
+internal abstract class SignalPortDescription
 {
 	public Component Component { get; }
 	public string Id { get; }
 	public string Title { get; }
+	public string ComponentTitle { get; }
+	public string Description { get; }
+	public string Icon => string.IsNullOrWhiteSpace( _icon ) ? Kind : _icon;
 	public bool IsDefault { get; }
-	public SignalOutput Port { get; }
+	public int Order { get; }
 
-	internal SignalOutputDescription( Component component, SignalPort port, SignalOutput output )
+	/// <summary>
+	/// Component ports: the component type this port provides or accepts. Null for signal ports.
+	/// </summary>
+	public Type ComponentType { get; }
+	public string Kind => this is SignalOutputDescription ? "output" : "input";
+
+	private readonly string _icon;
+
+	protected SignalPortDescription( Component component, SignalPort port )
 	{
 		Component = component;
 		Id = port.Id;
 		Title = port.Title;
+		ComponentTitle = SignalSystem.GetComponentTitle( component );
+		Description = port.Description;
+		_icon = port.Icon;
 		IsDefault = port.IsDefault;
+		Order = port.Order;
+		ComponentType = port.ComponentType;
+	}
+}
+
+/// <summary>
+/// An output port found on a component: its name and how to reach it.
+/// </summary>
+internal sealed class SignalOutputDescription : SignalPortDescription
+{
+	public SignalOutput Port { get; }
+
+	internal SignalOutputDescription( Component component, SignalPort port, SignalOutput output ) : base( component, port )
+	{
 		Port = output;
 	}
 }
@@ -194,26 +233,20 @@ internal sealed class SignalOutputDescription
 /// <summary>
 /// An input port found on a component: its name and how to reach it.
 /// </summary>
-internal sealed class SignalInputDescription
+internal sealed class SignalInputDescription : SignalPortDescription
 {
-	public Component Component { get; }
-	public string Id { get; }
-	public string Title { get; }
-	public bool IsDefault { get; }
-
-	internal SignalInputDescription( Component component, SignalPort port )
+	internal SignalInputDescription( Component component, SignalPort port ) : base( component, port )
 	{
-		Component = component;
-		Id = port.Id;
-		Title = port.Title;
-		IsDefault = port.IsDefault;
+		Binding = port.Binding;
 	}
+
+	internal SignalInputBinding Binding { get; }
 }
 
 /// <summary>
 /// One input or output declared on a component type.
 /// </summary>
-internal readonly record struct SignalPort( string Id, string Title, bool IsDefault )
+internal readonly record struct SignalPort( string Id, string Title, string Description, string Icon, bool IsDefault, int Order )
 {
 	/// <summary>
 	/// Outputs: the property holding the SignalOutput.
@@ -224,6 +257,11 @@ internal readonly record struct SignalPort( string Id, string Title, bool IsDefa
 	/// Inputs: what to run when a signal arrives.
 	/// </summary>
 	public SignalInputBinding Binding { get; init; }
+
+	/// <summary>
+	/// Component ports: the component type this port provides or accepts.
+	/// </summary>
+	public Type ComponentType { get; init; }
 }
 
 /// <summary>
@@ -231,11 +269,74 @@ internal readonly record struct SignalPort( string Id, string Title, bool IsDefa
 /// clients just see the results through normal networking. TypeLibrary owns member caching and
 /// hotload invalidation; this system resolves ports from its current descriptions when needed.
 /// </summary>
-internal static class SignalSystem
+internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMenuEvent
 {
+	/// <summary>
+	/// Port id of the synthetic output a class-level <see cref="SignalOutputAttribute"/> creates.
+	/// Can't collide with member names — C# identifiers can't contain '$'.
+	/// </summary>
+	internal const string ComponentOutputId = "$component";
+
+	private SignalPortDescription _contextSource;
+
 	// Who last pressed or signaled each component, so gates that re-emit later still
 	// pass the credit along without hand-carrying it. Pruned as components die.
 	private static readonly Dictionary<Component, Player> _instigators = new();
+
+	public SignalSystem( Scene scene ) : base( scene )
+	{
+	}
+
+	void IContextMenuEvent.PopulateContextMenu( IContextMenuEvent.Event e )
+	{
+		if ( !e.Target.IsValid() ) return;
+		if ( _contextSource?.Component.IsValid() != true ) _contextSource = null;
+
+		if ( _contextSource is null )
+		{
+			AddContextPorts( e.Menu, e.Target );
+			return;
+		}
+
+		var ports = GetCompatiblePorts( e.Target, _contextSource ).ToArray();
+
+		if ( ports.Length > 0 && e.Target.Root != _contextSource.Component.GameObject.Root )
+		{
+			e.Menu.AddSubmenu( "link", "Link", submenu =>
+			{
+				foreach ( var port in ports )
+					submenu.AddOption( port.Icon, port.Title, () => CompleteContextLink( port ) );
+			} );
+		}
+
+		e.Menu.AddOption( "link_off", "Cancel Link", () => _contextSource = null );
+	}
+
+	private void AddContextPorts( MenuPanel menu, GameObject target )
+	{
+		var ports = GetPorts( target ).ToArray();
+		if ( ports.Length == 0 ) return;
+
+		var defaults = ports.Where( port => port.IsDefault ).ToArray();
+		if ( ports.Length == 1 || defaults.Length == 1 )
+		{
+			var port = ports.Length == 1 ? ports[0] : defaults[0];
+			menu.AddOption( "link", "Link", () => _contextSource = port );
+			return;
+		}
+
+		menu.AddSubmenu( "link", "Link", submenu =>
+		{
+			foreach ( var port in ports )
+				submenu.AddOption( port.Icon, port.Title, () => _contextSource = port );
+		} );
+	}
+
+	private void CompleteContextLink( SignalPortDescription target )
+	{
+		CreateLink( _contextSource, target );
+		_contextSource = null;
+	}
 
 	/// <summary>
 	/// The player who last pressed or signaled this component, or null.
@@ -268,7 +369,9 @@ internal static class SignalSystem
 
 		foreach ( var port in GetOutputPorts( component ) )
 		{
-			if ( port.Property.GetValue( component ) is SignalOutput output )
+			if ( port.ComponentType is not null )
+				yield return new SignalOutputDescription( component, port, null );
+			else if ( port.Property.GetValue( component ) is SignalOutput output )
 				yield return new SignalOutputDescription( component, port, output );
 		}
 	}
@@ -282,17 +385,77 @@ internal static class SignalSystem
 	}
 
 	/// <summary>
-	/// Any output can wire to any input
+	/// Every output under this object's root. Unsorted — UI that lists ports uses <see cref="GetPorts"/>.
+	/// </summary>
+	public static IEnumerable<SignalOutputDescription> GetOutputs( GameObject gameObject )
+	{
+		if ( !gameObject.IsValid() ) return [];
+
+		return gameObject.Root.GetComponentsInChildren<Component>( true )
+			.Where( component => component.Enabled )
+			.SelectMany( GetOutputs );
+	}
+
+	public static IEnumerable<SignalPortDescription> GetPorts( GameObject gameObject )
+	{
+		if ( !gameObject.IsValid() ) return [];
+
+		return gameObject.Root.GetComponentsInChildren<Component>( true )
+			.Where( component => component.Enabled )
+			.SelectMany( component => GetOutputs( component ).Cast<SignalPortDescription>().Concat( GetInputs( component ) ) )
+			.OrderBy( port => port.Order )
+			.ThenByDescending( port => port.IsDefault )
+			.ThenBy( port => port.ComponentTitle, StringComparer.OrdinalIgnoreCase )
+			.ThenBy( port => port.Title, StringComparer.OrdinalIgnoreCase );
+	}
+
+	public static IEnumerable<SignalPortDescription> GetCompatiblePorts( GameObject gameObject, SignalPortDescription source )
+	{
+		return GetPorts( gameObject ).Where( port => AreCompatible( source, port ) );
+	}
+
+	internal static string GetComponentTitle( Component component )
+	{
+		var title = Game.TypeLibrary.GetType( component.GetType() )?.Title ?? component.GetType().Name;
+		return Game.Language.GetPhrase( title.TrimStart( '#' ) );
+	}
+
+	/// <summary>
+	/// Any signal output can wire to any signal input. Component outputs wire to component
+	/// inputs whose property type the component satisfies — or to boolean inputs, which they
+	/// hold on for as long as the link exists.
 	/// </summary>
 	public static bool AreCompatible( SignalOutputDescription output, SignalInputDescription input )
 	{
-		return output is not null && input is not null;
+		if ( output is null || input is null ) return false;
+
+		if ( output.ComponentType is null )
+			return input.ComponentType is null;
+
+		if ( input.ComponentType is not null )
+			return output.Component.GetType().IsAssignableTo( input.ComponentType );
+
+		return IsPresenceBindable( input.Binding );
+	}
+
+	private static bool IsPresenceBindable( SignalInputBinding binding )
+	{
+		return binding.Kind is SignalInputKind.BoolProperty or SignalInputKind.BoolMethod;
+	}
+
+	public static bool AreCompatible( SignalPortDescription first, SignalPortDescription second )
+	{
+		return TryResolve( first, second, out _, out _ );
 	}
 
 	public static bool IsConnected( SignalOutputDescription output, SignalInputDescription input )
 	{
-		if ( output?.Port?.Connections is null || input is null ) return false;
-		return output.Port.Connections.Any( connection => connection?.Target == input.Component && connection.Input == input.Id );
+		if ( output is null || input is null ) return false;
+
+		if ( input.ComponentType is not null )
+			return input.Binding.Property?.GetValue( input.Component ) as Component == output.Component;
+
+		return HasConnection( output.Port, input.Component, input.Id );
 	}
 
 	public static void SetConnected( SignalOutputDescription output, SignalInputDescription input, bool connected )
@@ -301,8 +464,73 @@ internal static class SignalSystem
 		SetConnectionRpc( output.Component, output.Id, input.Component, input.Id, connected );
 	}
 
+	public static void SetConnected( SignalPortDescription first, SignalPortDescription second, bool connected )
+	{
+		if ( TryResolve( first, second, out var output, out var input ) )
+			SetConnected( output, input, connected );
+	}
+
+	/// <summary>
+	/// Create a logical object link and connect the selected signal ports in one host operation.
+	/// </summary>
+	public static void CreateLink( SignalOutputDescription output, SignalInputDescription input )
+	{
+		if ( output is null || input is null ) return;
+		CreateLinkRpc( output.Component, output.Id, input.Component, input.Id );
+	}
+
+	public static void CreateLink( SignalPortDescription first, SignalPortDescription second )
+	{
+		if ( TryResolve( first, second, out var output, out var input ) )
+			CreateLink( output, input );
+	}
+
+	private static bool TryResolve( SignalPortDescription first, SignalPortDescription second, out SignalOutputDescription output, out SignalInputDescription input )
+	{
+		output = first as SignalOutputDescription ?? second as SignalOutputDescription;
+		input = first as SignalInputDescription ?? second as SignalInputDescription;
+		return AreCompatible( output, input );
+	}
+
 	[Rpc.Host]
-	private static void SetConnectionRpc( Component source, string output, Component target, string input, bool connected )
+	private static void CreateLinkRpc( Component source, string outputId, Component target, string inputId )
+	{
+		if ( !source.IsValid() || !target.IsValid() ) return;
+		if ( !source.GameObject.HasAccess( Rpc.Caller ) || !target.GameObject.HasAccess( Rpc.Caller ) ) return;
+		if ( !TryFindOutput( source, outputId, out var output ) || !TryFindInput( target, inputId, out var input ) ) return;
+		if ( IsConnectedInternal( source, output, target, input ) ) return;
+
+		var sourceRoot = source.GameObject.Root;
+		var targetRoot = target.GameObject.Root;
+		if ( !sourceRoot.IsValid() || !targetRoot.IsValid() || sourceRoot == targetRoot ) return;
+
+		// A component input holds one reference — relinking replaces the old wire entirely.
+		if ( input.ComponentType is not null )
+			DestroyStampedWires( target, input.Id );
+
+		var player = Player.FindForConnection( Rpc.Caller );
+		var links = ManualLink.CreatePair( sourceRoot, targetRoot );
+
+		if ( !SetConnectedInternal( source, output, target, input, true, player ) )
+		{
+			links[0].Destroy();
+			return;
+		}
+
+		links[0].GetComponent<ManualLink>()?.SetWire( source, outputId, target, inputId );
+
+		SendConnectionNotice( Rpc.Caller, source, output, target, input, true );
+
+		if ( player.IsValid() )
+		{
+			var undo = player.Undo.Create();
+			undo.Name = "Link";
+			undo.Add( links[0] );
+		}
+	}
+
+	[Rpc.Host]
+	private static void SetConnectionRpc( Component source, string outputId, Component target, string inputId, bool connected )
 	{
 		if ( !source.IsValid() || !target.IsValid() ) return;
 
@@ -313,28 +541,197 @@ internal static class SignalSystem
 		linked.AddConnected( source.GameObject );
 		if ( !linked.Objects.Contains( target.GameObject.Root ) ) return;
 
-		SetConnectedInternal( source, output, target, input, connected );
+		if ( !TryFindOutput( source, outputId, out var output ) || !TryFindInput( target, inputId, out var input ) ) return;
+
+		// A component input holds one reference — relinking replaces the old wire entirely.
+		if ( connected && input.ComponentType is not null )
+			DestroyStampedWires( target, input.Id );
+
+		if ( !SetConnectedInternal( source, output, target, input, connected, Player.FindForConnection( Rpc.Caller ) ) ) return;
+
+		if ( connected )
+			StampWire( source, outputId, target, inputId );
+
+		SendConnectionNotice( Rpc.Caller, source, output, target, input, connected );
 	}
 
-	private static bool SetConnectedInternal( Component source, string outputId, Component target, string inputId, bool connected )
+	/// <summary>
+	/// Record the wire on the ManualLink pair that carries it, so destroying the link
+	/// (undo, the linker's unlink) also disconnects the wire. Wires between objects
+	/// joined some other way (welds, same root) have no pair — that's fine.
+	/// </summary>
+	private static void StampWire( Component source, string outputId, Component target, string inputId )
+	{
+		var targetRoot = target.GameObject.Root;
+
+		foreach ( var link in source.GameObject.Root.GetComponentsInChildren<ManualLink>( true ) )
+		{
+			if ( link.HasWire || link.Body?.Root != targetRoot ) continue;
+
+			link.SetWire( source, outputId, target, inputId );
+			return;
+		}
+	}
+
+	/// <summary>
+	/// Disconnect the wire a dying ManualLink was carrying.
+	/// </summary>
+	internal static void DisconnectWire( ManualLink link )
+	{
+		if ( !Networking.IsHost || !link.HasWire ) return;
+		if ( !link.SignalTarget.IsValid() ) return;
+
+		// Component wires can let go of a dead source; signal wires need a live one to prune.
+		if ( !link.IsComponentWire && !link.SignalSource.IsValid() ) return;
+
+		SetConnectedInternal( link.SignalSource, link.SignalOutputId, link.SignalTarget, link.SignalInputId, false, dying: link );
+	}
+
+	private static void SendConnectionNotice( Connection caller, Component source, SignalPort output, Component target, SignalPort input, bool connected )
+	{
+		var sourceName = GetComponentTitle( source );
+		var targetName = GetComponentTitle( target );
+		var action = connected ? "Linked" : "Unlinked";
+		var preposition = connected ? "to" : "from";
+
+		Sandbox.UI.Notices.SendNotice(
+			caller,
+			connected ? "link" : "link_off",
+			connected ? Color.Green : Color.Yellow,
+			$"{action} {sourceName}: {output.Title} {preposition} {targetName}: {input.Title}",
+			3f );
+	}
+
+	private static bool SetConnectedInternal( Component source, string outputId, Component target, string inputId, bool connected, Player instigator = null, ManualLink dying = null )
 	{
 		if ( !TryFindOutput( source, outputId, out var output ) ) return false;
 		if ( !TryFindInput( target, inputId, out var input ) ) return false;
+
+		return SetConnectedInternal( source, output, target, input, connected, instigator, dying );
+	}
+
+	private static bool SetConnectedInternal( Component source, SignalPort output, Component target, SignalPort input, bool connected, Player instigator = null, ManualLink dying = null )
+	{
+		if ( output.ComponentType is not null || input.ComponentType is not null )
+			return SetComponentLinkInternal( source, output, target, input, connected, instigator, dying );
+
 		if ( output.Property.GetValue( source ) is not SignalOutput port ) return false;
 
 		var connections = port.Connections ??= new();
-		var wasConnected = connections.Any( connection => connection?.Target == target && connection.Input == inputId );
+		var wasConnected = HasConnection( port, target, input.Id );
 		connections.RemoveAll( connection => connection is null
 			|| !connection.Target.IsValid()
-			|| (connection.Target == target && connection.Input == inputId) );
+			|| (connection.Target == target && connection.Input == input.Id) );
 
 		if ( connected )
-			connections.Add( new SignalConnection { Target = target, Input = inputId } );
+			connections.Add( new SignalConnection { Target = target, Input = input.Id } );
 		else if ( wasConnected )
 			Deliver( target, input, new SignalEvent( 0f, false, false, true, null ) ); // let go of anything held on
 
 		source.GameObject.Network?.Refresh();
 		return true;
+	}
+
+	private static bool HasConnection( SignalOutput port, Component target, string inputId )
+	{
+		return port?.Connections?.Any( connection => connection?.Target == target && connection.Input == inputId ) == true;
+	}
+
+	/// <summary>
+	/// Component links set the input property to the source component directly — there is
+	/// no connection list and nothing ever travels; the reference is the whole wire.
+	/// Into a boolean input, the reference implicitly reads as a bool instead: on while
+	/// anything is wired in, off when the last wire dies.
+	/// </summary>
+	private static bool SetComponentLinkInternal( Component source, SignalPort output, Component target, SignalPort input, bool connected, Player instigator, ManualLink dying )
+	{
+		if ( output.ComponentType is null || !target.IsValid() ) return false;
+
+		if ( input.ComponentType is null )
+		{
+			if ( !IsPresenceBindable( input.Binding ) ) return false;
+
+			if ( connected )
+			{
+				Deliver( target, input, new SignalEvent( 1f, true, true, false, instigator ) );
+			}
+			else
+			{
+				// Presence wires only die with their ManualLink pair — refuse anything else,
+				// or the input would stay held with no wire left to release it.
+				if ( dying is null ) return false;
+				if ( FindPresenceWire( target, input.Id, exclude: dying ) ) return true;
+
+				Deliver( target, input, new SignalEvent( 0f, false, false, true, instigator ) );
+			}
+
+			target.GameObject.Network?.Refresh();
+			return true;
+		}
+
+		if ( input.Binding.Property is not { } property ) return false;
+
+		if ( connected )
+		{
+			if ( !source.IsValid() || !source.GetType().IsAssignableTo( input.ComponentType ) ) return false;
+			property.SetValue( target, source );
+		}
+		else
+		{
+			// Only let go if we still hold this source (or a dead one) — a relink may have replaced it.
+			if ( property.GetValue( target ) is not Component current ) return false;
+			if ( current != source && current.IsValid() ) return false;
+
+			property.SetValue( target, null );
+		}
+
+		// The mutated state lives on the target for component links.
+		target.GameObject.Network?.Refresh();
+		return true;
+	}
+
+	/// <summary>
+	/// Is there a stamped component wire into this input? Optionally from one specific
+	/// source, optionally ignoring a link that's currently being destroyed.
+	/// </summary>
+	private static bool FindPresenceWire( Component target, string inputId, Component source = null, ManualLink exclude = null )
+	{
+		foreach ( var link in target.GameObject.Root.GetComponentsInChildren<ManualLink>( true ) )
+		{
+			if ( link == exclude || !link.HasWire || !link.IsComponentWire ) continue;
+			if ( link.SignalTarget != target || !link.SignalSource.IsValid() ) continue;
+			if ( source is not null && link.SignalSource != source ) continue;
+			if ( !string.Equals( link.SignalInputId, inputId, StringComparison.OrdinalIgnoreCase ) ) continue;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private static bool IsConnectedInternal( Component source, SignalPort output, Component target, SignalPort input )
+	{
+		if ( input.ComponentType is not null )
+			return input.Binding.Property?.GetValue( target ) as Component == source;
+
+		if ( output.ComponentType is not null )
+			return FindPresenceWire( target, input.Id, source );
+
+		return output.Property?.GetValue( source ) is SignalOutput port && HasConnection( port, target, input.Id );
+	}
+
+	/// <summary>
+	/// Destroy the stamped ManualLink pairs carrying wires into this input.
+	/// </summary>
+	private static void DestroyStampedWires( Component target, string inputId )
+	{
+		foreach ( var link in target.GameObject.Root.GetComponentsInChildren<ManualLink>( true ).ToArray() )
+		{
+			if ( !link.IsValid() || link.SignalTarget != target ) continue;
+			if ( !string.Equals( link.SignalInputId, inputId, StringComparison.OrdinalIgnoreCase ) ) continue;
+
+			link.GameObject.Destroy();
+		}
 	}
 
 	internal static void Emit( SignalOutput port, SignalEvent value )
@@ -384,33 +781,6 @@ internal static class SignalSystem
 		}
 	}
 
-	/// <summary>
-	/// Wire two objects together automatically — used by the Linker tool. Connects when there's
-	/// one obvious pairing (both marked Default, or only one option); does nothing when ambiguous.
-	/// </summary>
-	public static bool TryAutoConnect( GameObject first, GameObject second )
-	{
-		if ( !first.IsValid() || !second.IsValid() ) return false;
-
-		var candidates = FindCandidates( first, second ).Concat( FindCandidates( second, first ) ).ToArray();
-		var preferred = candidates.Where( candidate => candidate.Output.IsDefault && candidate.Input.IsDefault ).ToArray();
-		var selected = preferred.Length == 1 ? preferred[0] : candidates.Length == 1 ? candidates[0] : default;
-		if ( selected.Output is null ) return false;
-
-		return SetConnectedInternal( selected.Output.Component, selected.Output.Id, selected.Input.Component, selected.Input.Id, true );
-	}
-
-	private static IEnumerable<(SignalOutputDescription Output, SignalInputDescription Input)> FindCandidates( GameObject source, GameObject target )
-	{
-		var inputs = target.Root.GetComponentsInChildren<Component>( true ).SelectMany( GetInputs ).ToArray();
-
-		foreach ( var output in source.Root.GetComponentsInChildren<Component>( true ).SelectMany( GetOutputs ) )
-		{
-			foreach ( var input in inputs )
-				yield return (output, input);
-		}
-	}
-
 	private static void Deliver( Component component, SignalPort input, SignalEvent value )
 	{
 		RememberInstigator( component, value.Instigator );
@@ -430,6 +800,9 @@ internal static class SignalSystem
 	{
 		var type = Game.TypeLibrary.GetType( component.GetType() );
 		if ( type is null ) yield break;
+
+		if ( type.GetAttribute<SignalOutputAttribute>() is { } classAttribute )
+			yield return CreateComponentOutput( type, classAttribute );
 
 		var ids = new HashSet<string>( StringComparer.OrdinalIgnoreCase );
 		foreach ( var property in type.Properties )
@@ -486,6 +859,14 @@ internal static class SignalSystem
 		var found = false;
 		var type = Game.TypeLibrary.GetType( component.GetType() );
 		if ( type is null ) return false;
+
+		if ( string.Equals( id, ComponentOutputId, StringComparison.OrdinalIgnoreCase ) )
+		{
+			if ( type.GetAttribute<SignalOutputAttribute>() is not { } classAttribute ) return false;
+
+			result = CreateComponentOutput( type, classAttribute );
+			return true;
+		}
 
 		foreach ( var property in type.Properties )
 		{
@@ -546,6 +927,18 @@ internal static class SignalSystem
 		return false;
 	}
 
+	private static SignalPort CreateComponentOutput( TypeDescription type, SignalOutputAttribute attribute )
+	{
+		// The component itself is the port; it lists ahead of its signal ports.
+		return new SignalPort(
+			ComponentOutputId,
+			attribute.Name ?? type.Title ?? type.Name,
+			type.Description,
+			type.Icon,
+			attribute.Default,
+			-1 ) { ComponentType = type.TargetType };
+	}
+
 	private static bool TryCreateOutput( TypeDescription type, PropertyDescription property, SignalOutputAttribute attribute, out SignalPort port )
 	{
 		port = default;
@@ -555,7 +948,13 @@ internal static class SignalSystem
 			return false;
 		}
 
-		port = new SignalPort( property.Name, attribute.Name ?? property.Name, attribute.Default ) { Property = property };
+		port = new SignalPort(
+			property.Name,
+			attribute.Name ?? property.Title ?? property.Name,
+			property.Description,
+			property.Icon,
+			attribute.Default,
+			property.Order ) { Property = property };
 		return true;
 	}
 
@@ -569,7 +968,15 @@ internal static class SignalSystem
 		}
 
 		var id = attribute.Id ?? method.Name;
-		port = new SignalPort( id, attribute.Name ?? id, attribute.Default ) { Binding = binding };
+		var declaredPort = type.Properties.FirstOrDefault( property => string.Equals( property.Name, id, StringComparison.OrdinalIgnoreCase ) );
+		var description = !string.IsNullOrWhiteSpace( method.Description ) ? method.Description : declaredPort?.Description;
+		port = new SignalPort(
+			id,
+			attribute.Name ?? declaredPort?.Title ?? id,
+			description,
+			method.Icon ?? declaredPort?.Icon,
+			attribute.Default,
+			method.Order ) { Binding = binding };
 		return true;
 	}
 
@@ -578,12 +985,22 @@ internal static class SignalSystem
 		port = default;
 		if ( !TryBindProperty( property, attribute, out var binding ) )
 		{
-			Log.Warning( $"Signal input {type.FullName}.{property.Name} has an unsupported type. Use bool, float, or register an ISignalAdapter." );
+			Log.Warning( $"Signal input {type.FullName}.{property.Name} has an unsupported type. Use bool, float, a Component type, or register an ISignalAdapter." );
 			return false;
 		}
 
 		var id = attribute.Id ?? property.Name;
-		port = new SignalPort( id, attribute.Name ?? id, attribute.Default ) { Binding = binding };
+		port = new SignalPort(
+			id,
+			attribute.Name ?? property.Title ?? id,
+			property.Description,
+			property.Icon,
+			attribute.Default,
+			property.Order )
+		{
+			Binding = binding,
+			ComponentType = binding.Kind == SignalInputKind.ComponentProperty ? property.PropertyType : null
+		};
 		return true;
 	}
 
@@ -626,6 +1043,12 @@ internal static class SignalSystem
 		if ( property.PropertyType == typeof( float ) && property.CanWrite )
 		{
 			binding = new SignalInputBinding( null, property, SignalInputKind.FloatProperty );
+			return true;
+		}
+
+		if ( property.PropertyType.IsAssignableTo( typeof( Component ) ) && property.CanWrite )
+		{
+			binding = new SignalInputBinding( null, property, SignalInputKind.ComponentProperty );
 			return true;
 		}
 

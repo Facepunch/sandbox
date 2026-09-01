@@ -8,7 +8,7 @@ public enum ButtonMode
 	Toggle
 }
 
-[Alias( "button" )]
+[Alias( "button" ), Title( "Button" )]
 public sealed class ButtonEntity : Component, Component.IPressable
 {
 	[Property, Sync, Hide, SignalOutput( Default = true )]

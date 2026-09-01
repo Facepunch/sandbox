@@ -1,5 +1,6 @@
 ﻿using Sandbox.Rendering;
 
+[Title( "Shotgun" )]
 public sealed class ShotgunWeapon : IronSightsWeapon
 {
 	// The volley (pellet count, spread, damage) comes from the engine Ballistics; recoil from

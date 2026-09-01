@@ -1,5 +1,6 @@
 ﻿using Sandbox.Rendering;
 
+[Title( "MP5" )]
 public sealed class Mp5Weapon : IronSightsWeapon
 {
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )

@@ -1,13 +1,154 @@
-
 [Icon( "🔗" )]
 [Title( "#tool.name.linker" )]
 [ClassName( "linker" )]
 [Group( "#tool.group.constraints" )]
 public sealed class LinkerTool : BaseConstraintToolMode
 {
+	private GameObject _hoveredRoot;
+	private SignalPortDescription[] _hoveredPorts = [];
+	private SignalPortDescription _sourcePort;
+	private int _selectedPortIndex;
+	private (GameObject Root, int Stage, SignalPortDescription Source) _hoveredPortsKey;
+	private RealTimeSince _sinceHoveredPortsRefresh;
+
+	private SignalsOverlay.Entry _hoverEntry;
+	private SignalPortDescription[] _hoverEntryPorts;
+	private int _hoverEntryIndex = -1;
+
+	private SignalsOverlay _overlay;
+
 	public override string Description => Stage == 1 ? "#tool.hint.linker.stage1" : "#tool.hint.linker.stage0";
 	public override string PrimaryAction => Stage == 1 ? "#tool.hint.linker.finish" : "#tool.hint.linker.source";
 	public override string ReloadAction => "#tool.hint.linker.remove";
+	public override bool UseSnapGrid => false;
+
+	public override void OnControl()
+	{
+		if ( Input.Pressed( "attack2" ) )
+			_sourcePort = null;
+
+		var select = TraceSelect();
+		UpdateHoveredSelection( select );
+		SelectPortWithMouseWheel();
+
+		var pressedPrimary = Input.Pressed( "attack1" );
+		if ( pressedPrimary && SelectedPort is null )
+		{
+			Input.Clear( "attack1" );
+		}
+		else if ( pressedPrimary && Stage == 0 )
+		{
+			_sourcePort = SelectedPort;
+		}
+		else if ( pressedPrimary && !SignalSystem.AreCompatible( _sourcePort, SelectedPort ) )
+		{
+			Input.Clear( "attack1" );
+		}
+
+		base.OnControl();
+
+		IsValidState = SelectedPort is not null && (Stage == 0 || _sourcePort is not null);
+
+		UpdateOverlay();
+	}
+
+	protected override void OnDisabled()
+	{
+		base.OnDisabled();
+
+		// The overlay hides itself once we stop calling Show.
+		_sourcePort = null;
+		_selectedPortIndex = 0;
+		_hoverEntry = null;
+		_hoverEntryPorts = null;
+		_overlay = null;
+	}
+
+	private SignalPortDescription SelectedPort =>
+		_hoveredPorts.Length == 0 ? null : _hoveredPorts[_selectedPortIndex.Clamp( 0, _hoveredPorts.Length - 1 )];
+
+	private void UpdateHoveredSelection( SelectionPoint select )
+	{
+		var root = select.IsValid() ? select.GameObject.Root : null;
+		var targetChanged = root != _hoveredRoot;
+		_hoveredRoot = root;
+
+		if ( Stage == 0 )
+			_sourcePort = null;
+
+		// Enumerating ports reflects over the whole contraption — only redo it when the
+		// selection changed, plus a slow tick to catch components toggling on or off.
+		var key = (root, Stage, _sourcePort);
+		if ( key != _hoveredPortsKey || _sinceHoveredPortsRefresh > 0.2f )
+		{
+			_hoveredPortsKey = key;
+			_sinceHoveredPortsRefresh = 0;
+
+			var canTarget = root.IsValid() && (Stage == 0 || (_sourcePort is not null && root != _sourcePort.Component.GameObject.Root));
+			_hoveredPorts = !canTarget ? [] : Stage == 0
+				? SignalSystem.GetPorts( root ).ToArray()
+				: SignalSystem.GetCompatiblePorts( root, _sourcePort ).ToArray();
+		}
+
+		if ( targetChanged || _selectedPortIndex >= _hoveredPorts.Length )
+			_selectedPortIndex = 0;
+	}
+
+	private void SelectPortWithMouseWheel()
+	{
+		var wheel = Input.MouseWheel.y;
+		if ( wheel.AlmostEqual( 0f ) ) return;
+
+		if ( _hoveredPorts.Length > 1 )
+		{
+			var direction = wheel > 0f ? -1 : 1;
+			_selectedPortIndex = (_selectedPortIndex + direction + _hoveredPorts.Length) % _hoveredPorts.Length;
+		}
+
+		// Inventory reads this later in the frame. Linker owns the wheel while choosing a port.
+		Input.MouseWheel = default;
+	}
+
+	private void UpdateOverlay()
+	{
+		if ( !_overlay.IsValid() )
+			_overlay = Scene.Get<SignalsOverlay>();
+		if ( !_overlay.IsValid() ) return;
+		if ( Player?.WantsHideHud == true ) return;
+
+		// The overlay collects and draws the wires itself; we just keep it up and
+		// hand it the hover card for the port being picked.
+		if ( !_hoveredRoot.IsValid() || SelectedPort is null )
+		{
+			_hoverEntry = null;
+			_hoverEntryPorts = null;
+		}
+		else if ( _hoveredPorts != _hoverEntryPorts || _selectedPortIndex != _hoverEntryIndex )
+		{
+			// This runs every frame — only rebuild the card when the selection changed.
+			_hoverEntryPorts = _hoveredPorts;
+			_hoverEntryIndex = _selectedPortIndex;
+
+			var options = _hoveredPorts.Select( port => new SignalsOverlay.Option( port.Title )
+			{
+				Icon = port.Icon,
+				Description = string.IsNullOrWhiteSpace( port.Description )
+					? $"Signal {port.Kind} on {port.ComponentTitle}."
+					: port.Description
+			} ).ToArray();
+
+			_hoverEntry = new SignalsOverlay.Entry( _hoveredRoot, SelectedPort.Icon )
+			{
+				Card = new SignalsOverlay.Card( SelectedPort.ComponentTitle )
+				{
+					Options = options,
+					SelectedOption = _selectedPortIndex
+				}
+			};
+		}
+
+		_overlay.Show( _hoverEntry );
+	}
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
 	{
@@ -18,25 +159,18 @@ public sealed class LinkerTool : BaseConstraintToolMode
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
-		var go1 = new GameObject( point1.GameObject, false, "link" );
-		var go2 = new GameObject( point2.GameObject, false, "link" );
-
-		var link1 = go1.AddComponent<ManualLink>();
-		var link2 = go2.AddComponent<ManualLink>();
-
-		link1.Body = go2;
-		link2.Body = go1;
-
-		go2.NetworkSpawn();
-		go1.NetworkSpawn();
-
-		SignalSystem.TryAutoConnect( point1.GameObject, point2.GameObject );
-
-		Track( go1, go2 );
+		var links = ManualLink.CreatePair( point1.GameObject, point2.GameObject );
+		Track( links );
 
 		var undo = Player.Undo.Create();
 		undo.Name = "Link";
-		undo.Add( go1 );
+		undo.Add( links[0] );
+	}
+
+	protected override void OnConstraintSubmitted( SelectionPoint point1, SelectionPoint point2 )
+	{
+		SignalSystem.SetConnected( _sourcePort, SelectedPort, true );
+
+		_sourcePort = null;
 	}
 }
-

@@ -1,5 +1,11 @@
 ﻿using Sandbox.Rendering;
 
+
+/// <summary>
+/// A camera weapon that can be held by a player and renders to a render target texture, which can be displayed on a TV.
+/// </summary>
+[Title( "Camera" ), Icon( "videocam" )]
+[SignalOutput( Default = true )] // Linkable as a component reference — a TV's display input takes the camera itself.
 public sealed class CameraWeapon : BaseSandboxWeapon
 {
 	public CameraWeapon()

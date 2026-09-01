@@ -5,6 +5,7 @@ using Sandbox.UI;
 /// Can be triggered manually via player input or automatically on a timer.
 /// </summary>
 [Alias( "entity_spawner" )]
+[Title( "Spawner" )]
 public sealed class EntitySpawnerEntity : Component, IPlayerControllable
 {
 	/// <summary>

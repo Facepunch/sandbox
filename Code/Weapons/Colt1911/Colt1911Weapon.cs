@@ -1,5 +1,6 @@
 ﻿using Sandbox.Rendering;
 
+[Title( "1911" )]
 public sealed class Colt1911Weapon : IronSightsWeapon
 {
 	protected override bool WantsPrimaryAttack()

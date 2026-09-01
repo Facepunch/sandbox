@@ -256,8 +256,11 @@
         var prop = target.GetComponent<Prop>();
         var isGibbable = prop.IsValid() && prop.Health > 0;
 
-        var menu = MenuPanel.Open( this );
-        if ( !isPlayer )
+		var menu = MenuPanel.Open( this );
+		Scene.RunEvent<IContextMenuEvent>( listener =>
+			listener.PopulateContextMenu( new IContextMenuEvent.Event( menu, target ) ) );
+
+		if ( !isPlayer )
         {
             menu.AddOption( "🗑️", Game.Language.GetPhrase( "spawnmenu.inspect.delete" ), () => GameManager.DeleteInspectedObject( target ) );
         }

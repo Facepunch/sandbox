@@ -39,6 +39,7 @@
 				ShootEffects( select );
 
 				FirePostToolAction( ToolInput.Secondary );
+				OnConstraintSubmitted( Point1, Point2 );
 
 				return;
 			}
@@ -101,6 +102,7 @@
 				ShootEffects( select );
 
 				FirePostToolAction( ToolInput.Primary );
+				OnConstraintSubmitted( Point1, Point2 );
 			}
 
 			Stage = 0;
@@ -168,6 +170,12 @@
 	protected virtual IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target ) => [];
 
 	protected abstract void CreateConstraint( SelectionPoint point1, SelectionPoint point2 );
+
+	/// <summary>
+	/// Called on the owning client after a valid constraint creation was submitted to the host.
+	/// Follow-up RPCs are ordered after the constraint creation RPC.
+	/// </summary>
+	protected virtual void OnConstraintSubmitted( SelectionPoint point1, SelectionPoint point2 ) { }
 
 	protected virtual SelectionPoint? GetSecondaryPoint( SelectionPoint select ) => default;
 }

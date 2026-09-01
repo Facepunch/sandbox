@@ -1,6 +1,7 @@
 ﻿using Sandbox.Physics;
 using Sandbox.Rendering;
 
+[Title( "Physics Gun" )]
 public partial class Physgun
 {
 	public Physgun()

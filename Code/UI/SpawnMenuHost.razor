@@ -21,6 +21,11 @@
     bool lastState;
     string _lastMode = "SpawnMenu";
 
+    /// <summary>
+    /// Whether the menu is currently up (held or pinned), in any mode.
+    /// </summary>
+    public static bool IsOpen { get; private set; }
+
     PanelSwitcher PanelSwitcher = default;
 
     protected override void OnUpdate()
@@ -47,6 +52,7 @@
         bool state = stickOpen || openAnyMenu;
 
         SetClass("open", state);
+        IsOpen = state;
 
         if (lastState != state )
         {

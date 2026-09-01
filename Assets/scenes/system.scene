@@ -33,6 +33,7 @@
           "Scale": 1,
           "ScaleStrategy": "FollowDesktopScaling",
           "TargetCamera": null,
+          "Timing": "AfterPostProcess",
           "ZIndex": 100
         }
       ],
@@ -65,6 +66,37 @@
               "OnComponentStart": null,
               "OnComponentUpdate": null,
               "SwitchSound": "sounds/ui/ui.weapon.switch.sound"
+            }
+          ],
+          "Children": []
+        },
+        {
+          "__guid": "17c8a43e-aac4-4dc4-9c48-94ef2f67e6e8",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "World Overlay",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Sandbox.SignalsOverlay",
+              "__guid": "438db9ac-d3b1-44cb-a852-d92929e9cf1f",
+              "__enabled": true,
+              "Flags": 0,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
             }
           ],
           "Children": []
@@ -617,8 +649,6 @@
           "__enabled": true,
           "Flags": 0,
           "__version": 1,
-          "Filter": "Bilinear",
-          "Gamma": 2.2,
           "Mode": "Screen",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
@@ -731,7 +761,8 @@
     "GameObjectSystems": {
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
-          "$blob": "b4480286-f726-43b5-928b-af01786f9788"
+          "$blob": "64db792e-5935-8fbc-8cfa-050cd49fa7fd",
+          "$refs": []
         }
       },
       "Sandbox.SelectionSetsSystem": {

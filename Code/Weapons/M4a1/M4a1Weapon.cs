@@ -4,6 +4,7 @@ using Sandbox.Rendering;
 /// M4 with an underbarrel grenade launcher on secondary fire. Grenades feed from the secondary
 /// magazine (Clip2), topped back up from its reserve when reloading.
 /// </summary>
+[Title( "M4A1" )]
 public sealed class M4a1Weapon : BaseBulletWeapon
 {
 	/// <summary>
