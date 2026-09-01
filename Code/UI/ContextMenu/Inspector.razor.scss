@@ -3,6 +3,7 @@
 Inspector
 {
     font-size: 1.0rem;
+    width: 100%;
     color: #ddd;
     transition: all 0.2s linear;
 
@@ -23,7 +24,8 @@ Inspector .inspector-panel
     position: absolute;
     right: $deadzone-x;
     bottom: $deadzone-y;
-    width: 500px;
+    width: 100%;
+    max-width: 500px;
     flex-direction: column;
     pointer-events: none;
 
@@ -88,6 +90,7 @@ Inspector .tab
 
 Inspector .window-stack
 {
+    width: 100%;
     pointer-events: all;
 }
 
@@ -98,7 +101,7 @@ Inspector .window-stack .window
     border: 1px solid rgba( white, 0.06 );
     box-shadow: 0 8px 24px rgba( black, 0.5 );
     padding: 1rem;
-    width: 500px;
+    width: 100%;
     border-radius: 8px;
     pointer-events: all;
     z-index: 200;
