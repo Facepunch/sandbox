@@ -23,6 +23,7 @@ PanelSwitcher > *
 PanelSwitcher > .hidden
 {
 	opacity: 0;
+	pointer-events: none;
 	transform: translateX( -40px );
 	transition: all 0.1s ease;
 }

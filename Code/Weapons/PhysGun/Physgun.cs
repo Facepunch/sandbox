@@ -94,6 +94,16 @@ public partial class Physgun
 	/// </summary>
 	static float PullDistance => 200.0f;
 
+	/// <summary>
+	/// How quickly W/S moves a held object while rotate mode is active.
+	/// </summary>
+	static float KeyboardMoveSpeed => 240.0f;
+
+	/// <summary>
+	/// How quickly A/D yaws a held object while rotate mode is active.
+	/// </summary>
+	static float KeyboardYawSpeed => 240.0f;
+
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
 		base.OnCameraMove( player, ref angles );
@@ -140,9 +150,13 @@ public partial class Physgun
 			ViewModel?.PlaySound( ButtonOutSound );
 		}
 
-		_isSpinning = Input.Down( "use" ) && _state.IsValid();
+		var spinMove = Vector3.Zero;
+		_isSpinning = Input.Down( "use" ) && _state.Active && !_state.Pulling;
 		if ( _isSpinning )
 		{
+			spinMove = Input.AnalogMove;
+			player.Controller.UseInputControls = false;
+			player.Controller.WishVelocity = Vector3.Zero;
 			Input.Clear( "use" );
 		}
 
@@ -210,7 +224,13 @@ public partial class Physgun
 
 			if ( _isSpinning )
 			{
+				var move = spinMove;
 				var look = Input.AnalogLook * -1;
+				var state = _state;
+
+				// W/S pushes the object away from or pulls it toward the player.
+				state.GrabDistance += move.x * KeyboardMoveSpeed * Time.Delta;
+				state.GrabDistance = MathF.Max( 0.0f, state.GrabDistance );
 
 				if ( _isSnapping )
 				{
@@ -220,6 +240,18 @@ public partial class Physgun
 
 				_spinRotation = Rotation.From( look ) * _spinRotation;
 				var spinRotation = _spinRotation;
+
+				// A/D rotates around world up. Convert through the player's yaw because
+				// GrabOffset is stored relative to that frame of reference.
+				if ( MathF.Abs( move.y ) > 0.001f )
+				{
+					var eyeYaw = Rotation.FromYaw( player.Controller.EyeAngles.yaw );
+					var worldRotation = eyeYaw * spinRotation;
+					worldRotation = Rotation.FromYaw( move.y * KeyboardYawSpeed * Time.Delta ) * worldRotation;
+					spinRotation = eyeYaw.Inverse * worldRotation;
+				}
+
+				_spinRotation = spinRotation;
 
 				if ( _isSnapping )
 				{
@@ -240,8 +272,6 @@ public partial class Physgun
 
 				// save snap rotation so it can be applied after snap has finished
 				_snapRotation = spinRotation;
-
-				var state = _state;
 				state.GrabOffset = spinRotation;
 
 				// State needs to reset for sync to detect a change, bug or how it's meant to work?

@@ -1,72 +1,307 @@
 @import "/UI/Theme.scss";
 
-VirtualList
+SpawnlistWorkshop
 {
-	width: 100%;
-	flex-grow: 1;
-
-	.cell
+	VirtualGrid
 	{
 		width: 100%;
-	}
-}
-
-.spawnlist-row
-{
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 12px;
-	padding: 8px 12px;
-	cursor: pointer;
-	border-radius: 4px;
-	width: 100%;
-	height: 48px;
-
-	&:hover
-	{
-		background-color: #7773;
-		sound-in: ui.button.over;
-	}
-
-	&:active
-	{
-		background-color: $menu-accent;
-	}
-
-	.avatar
-	{
-		width: 32px;
-		height: 32px;
-		border-radius: 50%;
-		background-size: cover;
-		flex-shrink: 0;
-	}
-
-	.info
-	{
-		display: flex;
-		flex-direction: column;
 		flex-grow: 1;
+
+		.cell
+		{
+			padding: 5px;
+			background-color: transparent;
+			border: 0;
+			box-shadow: none;
+		}
+	}
+
+	.workshop-spawnlist
+	{
+		width: 100%;
+		height: 100%;
+		flex-direction: column;
+		background-color: rgba( 6, 16, 24, 0.86 );
+		border: 1px solid rgba( white, 0.07 );
+		border-radius: 10px;
+		overflow: hidden;
+		cursor: pointer;
+		box-shadow: 0 8px 24px rgba( black, 0.18 );
+		transition: transform 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
+
+		&:hover
+		{
+			transform: translateY( -2px );
+			border-color: rgba( $menu-accent, 0.5 );
+			box-shadow: 0 10px 28px rgba( black, 0.28 ), 0 0 14px rgba( $menu-accent, 0.12 );
+			sound-in: ui.button.over;
+
+			.install-button
+			{
+				background-color: rgba( $menu-accent, 0.9 );
+				color: white;
+			}
+		}
+
+		&:active
+		{
+			transform: translateY( 0 );
+		}
+	}
+
+	.content-preview
+	{
+		min-height: 100px;
+		width: 100%;
+		flex-grow: 1;
+		flex-shrink: 1;
+		background-color: rgba( black, 0.22 );
+		overflow: hidden;
+		padding: 3px;
+	}
+
+	.preview-collage
+	{
+		width: 100%;
+		height: 100%;
+		gap: 3px;
+	}
+
+	.preview-item
+	{
+		width: 33%;
+		height: 100%;
+		flex-grow: 1;
+		position: relative;
+		background-color: rgba( 18, 39, 52, 0.9 );
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: contain;
+		overflow: hidden;
+		border-radius: 5px;
+		border: 1px solid rgba( white, 0.045 );
+
+		.preview-title
+		{
+			position: absolute;
+			left: 5px;
+			right: 5px;
+			bottom: 4px;
+			padding: 2px 5px;
+			border-radius: 4px;
+			background-color: rgba( 3, 10, 15, 0.82 );
+			color: white;
+			font-size: 9px;
+			font-weight: 700;
+			text-align: center;
+			justify-content: center;
+			white-space: nowrap;
+			overflow: hidden;
+		}
+
+		.more-count
+		{
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			align-items: center;
+			justify-content: center;
+			background-color: rgba( 2, 10, 16, 0.7 );
+			backdrop-filter: blur( 2px );
+			color: white;
+			font-family: $title-font;
+			font-size: 18px;
+			font-weight: 800;
+		}
+	}
+
+	.workshop-preview
+	{
+		width: 100%;
+		height: 100%;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		color: rgba( white, 0.38 );
+
+		i
+		{
+			font-size: 36px;
+		}
+
+		label
+		{
+			font-size: 11px;
+			font-weight: 600;
+			color: rgba( white, 0.42 );
+		}
+
+		.placeholder-art
+		{
+			width: 64px;
+			height: 52px;
+			position: relative;
+			margin-bottom: 3px;
+		}
+
+		.placeholder-sheet
+		{
+			position: absolute;
+			width: 44px;
+			height: 38px;
+			border-radius: 5px;
+			border: 1px solid rgba( white, 0.1 );
+			background-color: rgba( 28, 54, 69, 0.95 );
+
+			&.back
+			{
+				left: 2px;
+				top: 2px;
+				opacity: 0.35;
+			}
+
+			&.middle
+			{
+				left: 10px;
+				top: 7px;
+				opacity: 0.6;
+			}
+
+			&.front
+			{
+				left: 18px;
+				top: 12px;
+				align-items: center;
+				justify-content: center;
+				background-color: rgba( $menu-accent, 0.18 );
+				border-color: rgba( $menu-accent, 0.35 );
+
+				i
+				{
+					font-size: 21px;
+					color: rgba( $menu-text-strong, 0.65 );
+				}
+			}
+		}
+	}
+
+	.card-details
+	{
+		height: 64px;
+		flex-grow: 0;
+		flex-shrink: 0;
+		flex-direction: column;
+		padding: 5px 8px;
 		gap: 2px;
+	}
+
+	.title-row
+	{
+		align-items: center;
+		gap: 8px;
 
 		.name
 		{
-			font-size: 14px;
-			font-weight: 600;
+			flex-grow: 1;
+			font-family: $title-font;
+			font-size: 13px;
+			font-weight: 700;
+			color: $menu-text-strong;
+			white-space: nowrap;
+			overflow: hidden;
 		}
 
-		.author
+		.item-count
 		{
-			font-size: 12px;
-			opacity: 0.5;
+			align-items: center;
+			gap: 4px;
+			padding: 3px 7px;
+			border-radius: 10px;
+			background-color: rgba( $menu-accent, 0.14 );
+			color: $menu-text;
+			font-size: 11px;
+			flex-shrink: 0;
 		}
 	}
 
-	.item-count
+	.type-summary,
+	.description
 	{
-		font-size: 12px;
-		opacity: 0.5;
+		height: 12px;
+		flex-shrink: 0;
+		font-size: 10px;
+		font-weight: 500;
+		color: rgba( $menu-text-strong, 0.55 );
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+	.card-footer
+	{
+		margin-top: auto;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.author
+	{
+		align-items: center;
+		gap: 6px;
+		min-width: 0;
+
+		.avatar
+		{
+			width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			background-position: center;
+			background-size: cover;
+			flex-shrink: 0;
+		}
+
+		.author-name
+		{
+			max-width: 90px;
+			font-size: 9px;
+			color: rgba( $menu-text-strong, 0.58 );
+			white-space: nowrap;
+			overflow: hidden;
+		}
+	}
+
+	.workshop-stats
+	{
+		flex-grow: 1;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 8px;
+		color: rgba( $menu-text-strong, 0.42 );
+		font-size: 9px;
+
+		span
+		{
+			align-items: center;
+			gap: 3px;
+		}
+	}
+
+	.install-button
+	{
+		align-items: center;
+		gap: 4px;
+		padding: 3px 7px;
+		border-radius: 5px;
+		background-color: rgba( white, 0.07 );
+		color: $menu-text;
+		font-size: 9px;
+		font-weight: 700;
+		transition: background-color 0.1s ease, color 0.1s ease;
 		flex-shrink: 0;
 	}
 }

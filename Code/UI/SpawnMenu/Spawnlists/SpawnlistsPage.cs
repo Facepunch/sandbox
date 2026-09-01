@@ -3,10 +3,9 @@ using Sandbox.UI;
 namespace Sandbox;
 
 /// <summary>
-/// Top-level spawn menu tab for user-created spawnlists.
+/// Shared spawnlist support for spawn menu pages.
 /// </summary>
-[Title( "#spawnmenu.tab.spawnlists" ), Order( 4000 ), Icon( "📋" )]
-public class SpawnlistsPage : BaseSpawnMenu
+public abstract class SpawnlistsPage : BaseSpawnMenu
 {
 	public SpawnlistCollection Collection { get; } = new();
 
@@ -33,12 +32,12 @@ public class SpawnlistsPage : BaseSpawnMenu
 		Collection.Refresh();
 	}
 
-	protected override void Rebuild()
+	protected void AddSpawnlistOptions()
 	{
+		AddHeader( "#spawnmenu.section.workshop_spawnlists" );
+
 		if ( Collection.Entries.Count > 0 || Collection.PendingCount > 0 )
 		{
-			AddHeader( "#spawnmenu.section.local" );
-
 			foreach ( var entry in Collection.Entries )
 			{
 				var captured = entry;
