@@ -1,9 +1,9 @@
 {
   "RootObject": {
-    "__guid": "3c948bf4-5353-443a-bb65-8f28584fed1b",
+    "__guid": "c72ff261-b458-479d-b3e7-765e4bed9e9e",
     "__version": 2,
     "Flags": 0,
-    "Name": "glock",
+    "Name": "revolver",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "2,2,2",
@@ -16,33 +16,32 @@
     "OwnerTransfer": 1,
     "Components": [
       {
-        "__type": "GlockWeapon",
-        "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
+        "__type": "RevolverWeapon",
+        "__guid": "064c5926-6139-4d8b-b16b-248eea9d9aa5",
         "__enabled": true,
         "Flags": 0,
-        "PrimaryAmmoType": "ammo/9mm.ammo",
+        "AttackSound": "weapons/revolver/revolver_shoot.sound",
+        "AutoReload": true,
         "Ballistics": {
-          "Damage": 12,
+          "Damage": 35,
           "Pellets": 1,
           "Range": 4096,
           "Radius": 1,
-          "Force": 300,
+          "Force": 500,
           "SpreadBase": "0.5,0.25",
           "SpreadGrowth": "3,3",
           "SpreadRecovery": 0.2
         },
         "CameraRecoilFrequency": 1,
-        "CameraRecoilStrength": 1,
-        "RecoilPitch": "-0.300000012,-0.100000001",
-        "RecoilYaw": "-0.100000001,0.100000001",
-        "CanCancelReload": false,
-        "ClipMaxSize": 17,
+        "CameraRecoilStrength": 2,
+        "CanCancelReload": true,
+        "ClipMaxSize": 6,
         "DeployTime": 0.5,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/usp_01.png",
+            "FilePath": "ui/weapons/magnum_01.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
@@ -71,56 +70,77 @@
             "Hue": 0,
             "Colorize": false,
             "TargetColor": "1,1,1,1",
-            "CacheToDisk": true
+            "CacheToDisk": true,
+            "FormatOverride": "RGBA8888"
           },
-          "compiled": "textures/generated/imagefile/3ee0db368e056402.vtex"
+          "compiled": null
         },
-        "DisplayName": "USP",
+        "DisplayName": "Revolver",
         "DroppedGameObject": {
           "_type": "gameobject",
-          "go": "51cd1382-f0cf-4c2c-b0d4-1f70dd48e24f"
+          "go": "0b8d1c44-529f-4a7f-a2a2-a6a5a59cadc6"
         },
+        "DryFireSound": "weapons/revolver/revolver_dry.sound",
         "FirstShellReloadTime": 0,
+        "Handedness": "Both",
+        "HoldBone": "hold_r",
         "HoldType": "Pistol",
         "IncrementalReloading": false,
         "IronSightsFireScale": 0.2,
-        "MuzzleGameObject": null,
+        "Npc": {
+          "MinRange": 0,
+          "MaxRange": 1400,
+          "BurstMin": 2,
+          "BurstMax": 5,
+          "RestMin": 0.3,
+          "RestMax": 0.6,
+          "SpreadScale": 3,
+          "CanBePickedUp": true
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "HoldBone": "hold_r",
-        "PrimaryDelay": 0.1,
+        "PreferredSlot": -1,
+        "PrimaryAmmoType": "ammo/9mm.ammo",
+        "PrimaryAutomatic": true,
+        "PrimaryDelay": 0.3,
+        "RecoilPitch": "-0.600000024,-0.300000012",
+        "RecoilYaw": "-0.200000003,0.200000003",
         "ReloadStartTime": 0,
-        "ReloadTime": 1.5,
+        "ReloadTime": 3,
+        "SecondaryAmmoType": null,
+        "SecondaryAutomatic": false,
+        "SecondaryClipSize": -1,
+        "SecondaryDefaultClip": -1,
+        "SecondaryDelay": 0.5,
         "SecondaryInput": {
-          "IsEnabled": false,
           "Action": null
         },
         "ShootForce": 100000,
         "ShootInput": {
-          "IsEnabled": false,
           "Action": null
         },
-        "AttackSound": "weapons/glock/glock_shoot.sound",
-        "StartingAmmo": 60,
+        "SlotOrder": 0,
+        "StartingAmmo": 36,
+        "UsableByNpcs": true,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 2,
         "ViewModelPrefab": {
           "_type": "gameobject",
-          "prefab": "weapons/glock/glock_vm.prefab"
+          "prefab": "weapons/revolver/revolver_vm.prefab"
         },
         "WorldModelPrefab": {
           "_type": "gameobject",
-          "prefab": "weapons/glock/glock_wm.prefab"
+          "prefab": "weapons/revolver/revolver_wm.prefab"
         }
       },
       {
         "__type": "Sandbox.ModelCollider",
-        "__guid": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+        "__guid": "88c78337-af8e-4749-a0fe-89aa88ef7db2",
         "__enabled": true,
         "Flags": 0,
         "ColliderFlags": 0,
@@ -145,7 +165,7 @@
       },
       {
         "__type": "Sandbox.Rigidbody",
-        "__guid": "2a84405e-f4db-4117-a46a-72baed362953",
+        "__guid": "13db83be-e503-4f71-873c-63c8505f3ecf",
         "__enabled": true,
         "Flags": 0,
         "AngularDamping": 0,
@@ -181,7 +201,7 @@
     ],
     "Children": [
       {
-        "__guid": "51cd1382-f0cf-4c2c-b0d4-1f70dd48e24f",
+        "__guid": "0b8d1c44-529f-4a7f-a2a2-a6a5a59cadc6",
         "__version": 2,
         "Flags": 0,
         "Name": "standalone_wm",
@@ -198,18 +218,18 @@
         "Components": [
           {
             "__type": "Sandbox.BaseWeaponModel",
-            "__guid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+            "__guid": "77bd778b-76c1-4238-bfd4-6d6bd4f92271",
             "__enabled": true,
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "ShellEjectGameObject": {
+            "MuzzleEffect": {
               "_type": "gameobject",
-              "go": "e5f6a7b8-c9d0-1234-ef01-345678901234"
+              "prefab": "prefabs/effects/default_muzzleflash.prefab"
             },
             "MuzzleGameObject": {
               "_type": "gameobject",
-              "go": "d4e5f6a7-b8c9-0123-def0-234567890123"
+              "go": "8d1f47dd-c73b-4309-a7b0-25f47992719d"
             },
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -219,18 +239,26 @@
             "OnComponentUpdate": null,
             "Renderer": {
               "_type": "component",
-              "component_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-              "go": "51cd1382-f0cf-4c2c-b0d4-1f70dd48e24f",
+              "component_id": "c8fb86c6-c32b-4ecc-8a53-a4e4e64ffd0b",
+              "go": "0b8d1c44-529f-4a7f-a2a2-a6a5a59cadc6",
               "component_type": "SkinnedModelRenderer"
+            },
+            "ShellEjectGameObject": {
+              "_type": "gameobject",
+              "go": "ab1a32e5-ebbc-41cd-b33f-b9d002727927"
+            },
+            "TracerEffect": {
+              "_type": "gameobject",
+              "prefab": "prefabs/effects/default_tracer.prefab"
             }
           },
           {
             "__type": "Sandbox.SkinnedModelRenderer",
-            "__guid": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+            "__guid": "c8fb86c6-c32b-4ecc-8a53-a4e4e64ffd0b",
             "__enabled": true,
             "Flags": 0,
             "AnimationGraph": null,
-            "BodyGroups": 9513,
+            "BodyGroups": 3,
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": false,
@@ -238,7 +266,7 @@
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_pistol_usp/w_usp.vmdl",
+            "Model": "models/weapons/sbox_revolver_magnum/w_magnum.vmdl",
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -272,9 +300,9 @@
         ],
         "Children": [
           {
-            "__guid": "d4e5f6a7-b8c9-0123-def0-234567890123",
+            "__guid": "8d1f47dd-c73b-4309-a7b0-25f47992719d",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "muzzle",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -290,12 +318,12 @@
             "Children": []
           },
           {
-            "__guid": "e5f6a7b8-c9d0-1234-ef01-345678901234",
+            "__guid": "ab1a32e5-ebbc-41cd-b33f-b9d002727927",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "eject",
-            "Position": "0,0,0",
-            "Rotation": "0,0,0,1",
+            "Position": "-0.843271017,0,5.183321",
+            "Rotation": "-0.183012694,-0.183012694,-0.683012664,0.683012664",
             "Scale": "1,1,1",
             "Tags": "",
             "Enabled": true,
@@ -334,12 +362,12 @@
   },
   "ResourceVersion": 2,
   "ShowInMenu": true,
-  "MenuPath": "Deathmatch/Items/Glock",
+  "MenuPath": "Deathmatch/Items/Revolver",
   "MenuIcon": null,
   "DontBreakAsTemplate": true,
   "__references": [
-    "facepunch.pistol_muzzleflash#76089",
-    "facepunch.w_usp#152497"
+    "facepunch.w_usp#152497",
+    "facepunch.wmagnum#279063"
   ],
   "__version": 2
 }
