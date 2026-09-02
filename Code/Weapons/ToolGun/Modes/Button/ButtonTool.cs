@@ -67,7 +67,7 @@ public sealed class ButtonTool : ToolMode
 		button.Tags.Add( "constraint" );
 		button.WorldTransform = transform;
 
-		if ( !noWeld && !point.IsWorld )
+		if ( !noWeld )
 		{
 			var joint = button.AddComponent<FixedJoint>();
 			joint.Attachment = Joint.AttachmentMode.LocalFrames;
