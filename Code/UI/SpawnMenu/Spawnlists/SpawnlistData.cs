@@ -178,6 +178,8 @@ public class SpawnlistData
 
 		if ( !string.IsNullOrEmpty( fullIdent ) )
 		{
+			menu.AddSpacer();
+
 			menu.AddOption( "🌐", "Open in Workshop", () =>
 			{
 				Game.Overlay.ShowPackageModal( fullIdent );
