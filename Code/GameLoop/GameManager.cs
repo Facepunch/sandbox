@@ -388,6 +388,10 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 	void ICleanupEvents.OnCleanup( int removedObjects, int restoredObjects )
 	{
-		Notices.AddNotice( "cleaning_services", Color.Green, $"Cleanup! Removed {removedObjects} objects, restored {restoredObjects} objects." );
+		var message = $"Cleanup! Removed {removedObjects} objects.";
+		if ( restoredObjects > 0 )
+			message += $" Restored {restoredObjects} objects.";
+
+		Notices.AddNotice( "cleaning_services", Color.Green, message );
 	}
 }
