@@ -22,10 +22,7 @@
         "Flags": 0,
         "AnimationSpeed": 1,
         "DeploySound": "weapons/common/foley/foley_deploy_weapon_03.sound",
-        "EjectBrass": {
-          "_type": "gameobject",
-          "prefab": "prefabs/effects/default_brasseject.prefab"
-        },
+        "EjectBrass": null,
         "IncrementalAnimationSpeed": 1.75,
         "IncrementalReloadFinishSounds": [],
         "IncrementalReloadSoundEvents": [],
