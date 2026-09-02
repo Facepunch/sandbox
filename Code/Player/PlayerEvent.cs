@@ -121,6 +121,13 @@ public static partial class Local
 		void OnCameraMove( ref Angles angles ) { }
 		void OnCameraSetup( CameraComponent camera ) { }
 		void OnCameraPostSetup( CameraComponent camera ) { }
+
+		/// <summary>
+		/// Called every tick before movement input is applied. Set <paramref name="allowMovement"/>
+		/// to false to prevent the player from moving with WASD this tick (e.g. while spinning a
+		/// physgun-held object).
+		/// </summary>
+		void OnMove( ref bool allowMovement ) { }
 	}
 }
 

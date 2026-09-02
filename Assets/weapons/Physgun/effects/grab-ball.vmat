@@ -13,6 +13,7 @@ Layer0
 
 	//---- Ambient Occlusion ----
 	g_flAmbientOcclusionDirectDiffuse "0.000"
+	g_flAmbientOcclusionDirectSpecular "0.000"
 	TextureAmbientOcclusion "materials/default/default_ao.tga"
 
 	//---- Color ----
@@ -40,18 +41,17 @@ Layer0
 	g_flSelfIllumAlbedoFactor "1.000"
 	g_flSelfIllumBrightness "7.594"
 	g_flSelfIllumScale "1.000"
+	g_vSelfIllumOffset "[0.000 0.000]"
 	g_vSelfIllumScrollSpeed "[0.000 0.000]"
 	g_vSelfIllumTint "[0.384314 0.721569 1.000000 0.000000]"
 	TextureSelfIllumMask "[1.000000 1.000000 1.000000 0.000000]"
 
 	//---- Texture Coordinates ----
-	g_nScaleTexCoordUByModelScaleAxis "0"
-	g_nScaleTexCoordVByModelScaleAxis "0"
 	g_vTexCoordOffset "[0.000 0.000]"
 	g_vTexCoordScale "[1.000 1.000]"
 	g_vTexCoordScrollSpeed "[4.463 -1.944]"
 
 	//---- Translucent ----
 	g_flOpacityScale "1.000"
-	TextureTranslucency "textures/shapes/ring1.png"
+	TextureTranslucency "textures/particles/particle_ring_wave_12.tga"
 }

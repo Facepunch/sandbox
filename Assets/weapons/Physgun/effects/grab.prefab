@@ -1,7 +1,7 @@
 {
   "RootObject": {
     "__guid": "e5cf5f34-17b5-4e70-b8db-d7f54a8ad61d",
-    "__version": 1,
+    "__version": 2,
     "Flags": 0,
     "Name": "grab",
     "Position": "0,0,0",
@@ -10,7 +10,7 @@
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 2,
-    "NetworkInterpolation": true,
+    "NetworkFlags": 0,
     "NetworkOrphaned": 0,
     "NetworkTransmit": true,
     "OwnerTransfer": 1,
@@ -18,16 +18,16 @@
     "Children": [
       {
         "__guid": "102a1867-a47d-4746-896d-1152d2f17c2b",
-        "__version": 1,
+        "__version": 2,
         "Flags": 0,
         "Name": "Sphere",
-        "Position": "0.4,0,0",
+        "Position": "0.400000006,0,0",
         "Rotation": "0,0,0,1",
-        "Scale": "0.05,0.05,0.05",
+        "Scale": "0.0500000007,0.0500000007,0.0500000007",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
-        "NetworkInterpolation": true,
+        "NetworkFlags": 0,
         "NetworkOrphaned": 0,
         "NetworkTransmit": true,
         "OwnerTransfer": 1,
@@ -64,16 +64,16 @@
       },
       {
         "__guid": "1eae2057-8084-44a1-ab7d-4d0b9d042bc9",
-        "__version": 1,
+        "__version": 2,
         "Flags": 0,
         "Name": "Sphere (1)",
         "Position": "0.5,0,0",
         "Rotation": "-0.5,0.5,0.5,0.5",
-        "Scale": "0.06,0.06,0.06",
+        "Scale": "0.0599999987,0.0599999987,0.0599999987",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
-        "NetworkInterpolation": true,
+        "NetworkFlags": 0,
         "NetworkOrphaned": 0,
         "NetworkTransmit": true,
         "OwnerTransfer": 1,
@@ -110,7 +110,7 @@
       },
       {
         "__guid": "e137bc70-3420-4d70-be8d-bb36514db654",
-        "__version": 1,
+        "__version": 2,
         "Flags": 0,
         "Name": "effect",
         "Position": "0,0,0",
@@ -119,7 +119,7 @@
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
-        "NetworkInterpolation": true,
+        "NetworkFlags": 0,
         "NetworkOrphaned": 0,
         "NetworkTransmit": true,
         "OwnerTransfer": 1,
@@ -148,16 +148,16 @@
       },
       {
         "__guid": "3c06d747-a92f-49b3-9749-0902446440a0",
-        "__version": 1,
+        "__version": 2,
         "Flags": 0,
         "Name": "Point Light",
-        "Position": "2.459076,0,0",
+        "Position": "2.45907593,0,0",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "light_point,light",
         "Enabled": true,
         "NetworkMode": 2,
-        "NetworkInterpolation": true,
+        "NetworkFlags": 0,
         "NetworkOrphaned": 0,
         "NetworkTransmit": true,
         "OwnerTransfer": 1,
@@ -168,6 +168,7 @@
             "__enabled": true,
             "Flags": 0,
             "Attenuation": 5.7279234,
+            "Contribution": "Diffuse, Specular, Transmissive",
             "FogMode": "Enabled",
             "FogStrength": 1,
             "LightColor": "0.29183,0.57667,0.66047,1",
@@ -178,6 +179,8 @@
             "OnComponentStart": null,
             "OnComponentUpdate": null,
             "Radius": 200,
+            "ShadowBias": 0,
+            "ShadowHardness": 0,
             "Shadows": false
           }
         ],
@@ -185,16 +188,16 @@
       },
       {
         "__guid": "2e80e4e6-be46-4740-b585-d175a300a962",
-        "__version": 1,
+        "__version": 2,
         "Flags": 0,
         "Name": "Spray (1)",
-        "Position": "1.889872,-0.0000003237589,0",
+        "Position": "1.88987195,-3.23758911E-07,0",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "particles",
         "Enabled": true,
         "NetworkMode": 2,
-        "NetworkInterpolation": true,
+        "NetworkFlags": 0,
         "NetworkOrphaned": 0,
         "NetworkTransmit": true,
         "OwnerTransfer": 1,
@@ -304,26 +307,6 @@
             "Gradient": {
               "Type": "Range",
               "Evaluation": "Particle",
-              "GradientA": {
-                "blend": "Linear",
-                "color": [
-                  {
-                    "t": 0.5,
-                    "c": "1,1,1,1"
-                  }
-                ],
-                "alpha": []
-              },
-              "GradientB": {
-                "blend": "Linear",
-                "color": [
-                  {
-                    "t": 0.5,
-                    "c": "1,1,1,1"
-                  }
-                ],
-                "alpha": []
-              },
               "ConstantA": "0.8132,0.94949,0.97674,1",
               "ConstantB": "0.2,0.6,1,1"
             },
@@ -335,13 +318,13 @@
             "Lifetime": {
               "Type": "Range",
               "Evaluation": "Seed",
-              "Constants": "0.1,0.2,0,0"
+              "Constants": "0.100000001,0.200000003,0,0"
             },
             "LocalSpace": {
               "Type": "Curve",
               "Evaluation": "Life",
               "CurveA": {
-                "rangex": "0,0.4234375",
+                "rangex": "0,0.423437506",
                 "frames": [
                   {
                     "x": 0,
@@ -449,6 +432,7 @@
             "SequenceSpeed": 1,
             "SequenceTime": 1,
             "SheetSequence": false,
+            "SnapToFrame": false,
             "StartDelay": 0,
             "StartVelocity": {
               "Type": "Range",
@@ -477,6 +461,8 @@
             "BlurAmount": 1,
             "BlurOpacity": 1,
             "BlurSpacing": 1,
+            "CameraFadeFar": 0,
+            "CameraFadeNear": 0,
             "DepthFeather": 0,
             "FaceVelocity": false,
             "FogStrength": 1,
@@ -511,45 +497,11 @@
                     "FrameRate": 15,
                     "Origin": "0.5,0.5",
                     "LoopMode": "Loop",
+                    "LoopStart": -1,
+                    "LoopEnd": -1,
                     "Frames": [
                       {
-                        "Texture": {
-                          "$compiler": "texture",
-                          "$source": "imagefile",
-                          "data": {
-                            "FilePath": "textures/shapes/triangle1.png",
-                            "MaxSize": 4096,
-                            "ConvertHeightToNormals": false,
-                            "NormalScale": 1,
-                            "Rotate": 0,
-                            "FlipVertical": false,
-                            "FlipHorizontal": false,
-                            "Cropping": {
-                              "Left": 0,
-                              "Top": 0,
-                              "Right": 0,
-                              "Bottom": 0
-                            },
-                            "Padding": {
-                              "Left": 0,
-                              "Top": 0,
-                              "Right": 0,
-                              "Bottom": 0
-                            },
-                            "InvertColor": false,
-                            "Tint": "1,1,1,1",
-                            "Blur": 0,
-                            "Sharpen": 0,
-                            "Brightness": 1,
-                            "Contrast": 1,
-                            "Saturation": 1,
-                            "Hue": 0,
-                            "Colorize": false,
-                            "TargetColor": "0,1,0,1",
-                            "CacheToDisk": true
-                          },
-                          "compiled": null
-                        },
+                        "Texture": "textures/shapes/triangle1.vtex",
                         "BroadcastMessages": []
                       }
                     ]
@@ -570,6 +522,7 @@
             "Burst": 0,
             "Delay": 0,
             "DestroyOnEnd": false,
+            "DistanceBias": "1,1,1",
             "Duration": 1,
             "Loop": true,
             "OnComponentDestroy": null,
@@ -579,6 +532,7 @@
             "OnComponentStart": null,
             "OnComponentUpdate": null,
             "OnEdge": false,
+            "OneSidedAxes": "None",
             "Radius": 1,
             "Rate": 20,
             "RateOverDistance": 0,
@@ -612,13 +566,15 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
     },
     "__variables": []

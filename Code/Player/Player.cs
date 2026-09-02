@@ -335,14 +335,10 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	void OnControl()
 	{
-		if ( Input.UsingController )
-		{
-			Controller.UseInputControls = !(Input.Down( "SpawnMenu" ) || Input.Down( "InspectMenu" ));
-		}
-		else
-		{
-			Controller.UseInputControls = true;
-		}
+		var allowMovement = true;
+		Local.IPlayerEvents.Post( x => x.OnMove( ref allowMovement ) );
+
+		Controller.UseInputControls = allowMovement;
 
 		if ( Input.Pressed( "die" ) )
 		{

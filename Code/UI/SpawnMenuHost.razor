@@ -1,6 +1,7 @@
 @using Sandbox;
 @using Sandbox.UI;
 @inherits PanelComponent
+@implements Local.IPlayerEvents
 @namespace Sandbox
 
 <root @onmousedown=@OnMenuClicked>
@@ -97,6 +98,16 @@
 
 
         lastState = state;
+    }
+
+    /// <summary>
+    /// Opening the menu with a controller uses the same stick input as movement, so block movement
+    /// while the open button is held (mouse/keyboard players can move and open the menu at once).
+    /// </summary>
+    void Local.IPlayerEvents.OnMove( ref bool allowMovement )
+    {
+        if ( Input.UsingController && (Input.Down( "spawnmenu" ) || Input.Down( "inspectmenu" )) )
+            allowMovement = false;
     }
 
     // When clicking anywhere in the spawn menu, blur any focused text inputs

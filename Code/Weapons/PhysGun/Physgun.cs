@@ -2,7 +2,7 @@
 using Sandbox.Rendering;
 
 [Title( "Physics Gun" )]
-public partial class Physgun
+public partial class Physgun : Local.IPlayerEvents
 {
 	public Physgun()
 	{
@@ -72,6 +72,11 @@ public partial class Physgun
 	Transform CurrentAimTransform => HasOwner ? Owner.EyeTransform : _lastAimTransform;
 
 	bool _preventReselect = false;
+
+	void Local.IPlayerEvents.OnMove( ref bool allowMovement )
+	{
+		if ( _isSpinning ) allowMovement = false;
+	}
 
 	bool _isSpinning;
 	bool _isSnapping;
@@ -156,7 +161,6 @@ public partial class Physgun
 		if ( _isSpinning )
 		{
 			spinMove = Input.AnalogMove;
-			player.Controller.UseInputControls = false;
 			player.Controller.WishVelocity = Vector3.Zero;
 			Input.Clear( "use" );
 		}

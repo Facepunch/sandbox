@@ -656,7 +656,7 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "Strength": 1.5,
+          "Strength": 0.5,
           "Threshold": 1.8598726,
           "Tint": "1,1,1,1"
         },

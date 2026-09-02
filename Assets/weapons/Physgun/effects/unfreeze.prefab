@@ -280,7 +280,7 @@
               "Type": "CurveRange",
               "Evaluation": "Life",
               "CurveA": {
-                "rangey": "0,80",
+                "rangey": "0,24",
                 "frames": [
                   {
                     "x": 0,
@@ -299,7 +299,7 @@
                 ]
               },
               "CurveB": {
-                "rangey": "0,61",
+                "rangey": "0,5",
                 "frames": [
                   {
                     "x": 0,
@@ -399,7 +399,7 @@
                           "$compiler": "texture",
                           "$source": "imagefile",
                           "data": {
-                            "FilePath": "textures/beams/lightning.png",
+                            "FilePath": "textures/beams/beam_plasma_01.tga",
                             "MaxSize": 4096,
                             "ConvertHeightToNormals": false,
                             "NormalScale": 1,

@@ -86,7 +86,7 @@
             "Scale": {
               "Type": "Range",
               "Evaluation": "Seed",
-              "Constants": "1,4,0,0"
+              "Constants": "0.100000001,0.5,0,0"
             },
             "Shadows": false,
             "TargetGameObject": null,
@@ -124,7 +124,7 @@
             "TextureScale": {
               "Type": "Range",
               "Evaluation": "Seed",
-              "Constants": "16,64,0,0"
+              "Constants": "4,4,0,0"
             },
             "TextureScroll": 0,
             "TextureScrollSpeed": 0,
