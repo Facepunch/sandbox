@@ -1,8 +1,24 @@
-﻿
+
 using Sandbox.Utility;
 
-public sealed class HydraulicEntity : Component, IPlayerControllable
+/// <summary>
+/// A length-changing constraint: a SliderJoint whose length is puppeted between MinLength
+/// and MaxLength by player input, wires, or an idle animation loop. Hydraulic, Muscle and
+/// Winch are the same component with different presentation and defaults - <see cref="Kind"/>
+/// just picks which one this instance is, for undo names, tool info and wiring titles.
+/// </summary>
+public sealed class LengthConstraintEntity : Component, IPlayerControllable
 {
+	public enum ConstraintKind
+	{
+		Hydraulic,
+		Muscle,
+		Winch
+	}
+
+	[Property]
+	public ConstraintKind Kind { get; set; }
+
 	[Property, Range( 0, 1 )]
 	public GameObject OnEffect { get; set; }
 
@@ -23,7 +39,6 @@ public sealed class HydraulicEntity : Component, IPlayerControllable
 
 	[Property, Range( 0, 1 ), ClientEditable]
 	public float PushSpeed { get; set; } = 0.25f;
-
 
 	[Property, ClientEditable]
 	public ClientInput Pull { get; set; }
@@ -55,6 +70,12 @@ public sealed class HydraulicEntity : Component, IPlayerControllable
 	[Property, ClientEditable, ToggleGroup( "Animated" )]
 	public EaseType EaseOut { get; set; } = EaseType.Linear;
 
+	/// <summary>
+	/// Emits the current 0-1 extension whenever it changes. Wire it into a gauge, a
+	/// dependent mechanism, or another length constraint's Push/Pull to gang two rams together.
+	/// </summary>
+	[SignalOutput]
+	public SignalOutput Position { get; set; } = new();
 
 	public enum EaseType
 	{
@@ -88,6 +109,7 @@ public sealed class HydraulicEntity : Component, IPlayerControllable
 
 	float? _lastTargetValue;
 	float? _targetValue;
+	float _lastEmitted = -1f;
 
 	protected override void OnFixedUpdate()
 	{
@@ -116,6 +138,12 @@ public sealed class HydraulicEntity : Component, IPlayerControllable
 		}
 
 		Length = Length.Clamp( 0, 1 );
+
+		if ( !_lastEmitted.AlmostEqual( Length, 0.001f ) )
+		{
+			_lastEmitted = Length;
+			Position.Emit( this, Length );
+		}
 	}
 
 	[SignalInput( Id = nameof( Push ), Default = true )]
