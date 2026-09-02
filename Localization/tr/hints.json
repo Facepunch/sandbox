@@ -1,5 +1,5 @@
 {
-  "hint.openspawnmenu": "{input:SpawnMenu} tuşuna basılı tutarak Spawn menüsünü açın",
-  "hint.openinspectmenu": "{input:InspectMenu} ile İnceleme menüsünü açın",
-  "hint.openpausemenu": "ESC tuşuna basarak Duraklat menüsünü açın ve kontrollerinizi kontrol edin"
+    "hint.openspawnmenu": "Oluşum menüsünü açmak için {input:SpawnMenu} tuşunu basılı tutun",
+    "hint.openinspectmenu": "İnceleme menüsünü açmak için {input:InspectMenu} tuşunu basılı tutun",
+    "hint.openpausemenu": "Menü ve kontrollere bakmak için ESC'ye basın"
 }
