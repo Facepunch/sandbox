@@ -348,6 +348,14 @@ public sealed class PlayerInventory : BaseInventoryComponent, Local.IPlayerEvent
 		}
 	}
 
+	void Local.IPlayerEvents.OnJump()
+	{
+		if ( ActiveWeapon.IsValid() )
+		{
+			ActiveWeapon.OnJump();
+		}
+	}
+
 	void Local.IPlayerEvents.OnCameraMove( ref Angles angles )
 	{
 		if ( !ActiveWeapon.IsValid() ) return;

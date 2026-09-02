@@ -274,4 +274,12 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 	public virtual void OnPlayerDeath( PlayerDiedParams args )
 	{
 	}
+
+	/// <summary>
+	/// The player carrying us just jumped. Forwards to the view model so its anim graph can react.
+	/// </summary>
+	public virtual void OnJump()
+	{
+		ViewModel?.RunEvent<ViewModel>( x => x.Renderer.Set( "b_jump", true ) );
+	}
 }
