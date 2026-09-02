@@ -93,10 +93,10 @@ public class SpawnlistData
 	public static SpawnlistData Load( Storage.Entry entry )
 	{
 		if ( !entry.Files.FileExists( "/spawnlist.json" ) )
-			return new SpawnlistData { Name = entry.GetMeta<string>( "name" ) ?? "#spawnmenu.spawnlist.untitled" };
+			return new SpawnlistData { Name = entry.GetMeta<string>( "name" ) ?? "Untitled" };
 
 		return entry.Files.ReadJson<SpawnlistData>( "/spawnlist.json" )
-			?? new SpawnlistData { Name = "#spawnmenu.spawnlist.untitled" };
+			?? new SpawnlistData { Name = "Untitled" };
 	}
 
 	public static IEnumerable<Storage.Entry> GetAll()
@@ -122,7 +122,7 @@ public class SpawnlistData
 		// local spawnlists gain content previews without needing to be edited first.
 		Save( entry, Load( entry ) );
 
-		var options = new Modals.WorkshopPublishOptions { Title = "#spawnmenu.spawnlist.publish_title" };
+		var options = new Modals.WorkshopPublishOptions { Title = entry.GetMeta<string>( "name", "Untitled" ), Description = entry.GetMeta<string>( "description", "" ) };
 		entry.Publish( options );
 	}
 
