@@ -167,5 +167,24 @@
     "spawnmenu.common.load": "Load",
     "spawnmenu.common.items": "items",
 
-    "spawnmenu.mounts.error": "Error getting mount."
+    "spawnmenu.mounts.error": "Error getting mount.",
+
+    "spawnmenu.dresser.title": "Dresser",
+    "spawnmenu.dresser.add": "Add",
+    "spawnmenu.dresser.randomize": "Randomize",
+    "spawnmenu.dresser.clear": "Clear",
+    "spawnmenu.dresser.no_items": "No clothing items",
+    "spawnmenu.dresser.picker_title": "Select Clothing (Citizen)",
+    "spawnmenu.dresser.tab_all": "All",
+    "spawnmenu.dresser.tab_hats": "Hats",
+    "spawnmenu.dresser.tab_hair": "Hair",
+    "spawnmenu.dresser.tab_tops": "Tops",
+    "spawnmenu.dresser.tab_bottoms": "Bottoms",
+    "spawnmenu.dresser.tab_footwear": "Footwear",
+    "spawnmenu.dresser.tab_accessories": "Accessories",
+    "spawnmenu.dresser.tab_outfits": "Outfits",
+    "spawnmenu.dresser.cancel": "Cancel",
+    "spawnmenu.dresser.equip": "Equip",
+    "spawnmenu.dresser.items_selected_one": "1 item selected",
+    "spawnmenu.dresser.items_selected": "{count} items selected"
 }
