@@ -37,6 +37,7 @@ public sealed class MountSpawner : ISpawner
 
 		DisplayName = System.IO.Path.GetFileNameWithoutExtension( path );
 		Loading = LoadAsync();
+		CloudLoadTracker.Track( Loading );
 	}
 
 	private async Task<bool> LoadAsync()

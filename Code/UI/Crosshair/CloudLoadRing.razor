@@ -1,0 +1,25 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+<root>
+
+    <div class="ring">
+        <div class="spinner"></div>
+    </div>
+
+</root>
+
+@code
+{
+    protected override void OnUpdate()
+    {
+        base.OnUpdate();
+
+        var player = Player.FindLocalPlayer();
+        var visible = CloudLoadTracker.IsLoading && player is not null && !player.WantsHideHud;
+
+        SetClass( "visible", visible );
+    }
+}

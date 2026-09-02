@@ -27,6 +27,7 @@ public sealed class DuplicatorSpawner : ISpawner
 		Icon = icon;
 		DisplayName = name ?? "Duplication";
 		Loading = InstallPackages();
+		CloudLoadTracker.Track( Loading );
 	}
 
 	/// <summary>
@@ -36,6 +37,7 @@ public sealed class DuplicatorSpawner : ISpawner
 	public DuplicatorSpawner( string id, string source )
 	{
 		Loading = ResolveAndLoad( id, source );
+		CloudLoadTracker.Track( Loading );
 	}
 
 	private async Task<bool> ResolveAndLoad( string id, string source )

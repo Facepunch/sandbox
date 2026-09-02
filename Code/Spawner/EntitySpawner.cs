@@ -20,6 +20,7 @@ public sealed class EntitySpawner : ISpawner
 		Path = path;
 		DisplayName = System.IO.Path.GetFileNameWithoutExtension( path );
 		Loading = LoadAsync();
+		CloudLoadTracker.Track( Loading );
 	}
 
 	private async Task<bool> LoadAsync()
