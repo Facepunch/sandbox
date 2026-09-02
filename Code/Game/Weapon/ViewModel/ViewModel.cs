@@ -78,6 +78,48 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 	[Property, Group( "Inertia" )]
 	Vector2 InertiaScale { get; set; } = new Vector2( 2, 2 );
 
+	/// <summary>
+	/// Swing the viewmodel around based on the player's look direction, with a springy lag. This is purely cosmetic and does not affect the actual camera.
+	/// </summary>
+	[Property, Group( "Inertia" )]
+	public bool LookInertia { get; set; } = false;
+
+	/// <summary>
+	/// Spring stiffness - how quickly it pulls back towards your actual look direction.
+	/// </summary>
+	[Property, Group( "Inertia" ), ShowIf( nameof( LookInertia ), true )]
+	public float LookInertiaFrequency { get; set; } = 3.0f;
+
+	/// <summary>
+	/// Spring damping. 1 settles with no overshoot, below 1 wobbles before settling - lower
+	/// for a springier, bouncier feel.
+	/// </summary>
+	[Property, Group( "Inertia" ), ShowIf( nameof( LookInertia ), true )]
+	public float LookInertiaDamping { get; set; } = 0.35f;
+
+	/// <summary>
+	/// How far out in front of the eye the gun pivots from. Larger values make the same angle
+	/// lag produce a bigger visible swing, since the gun is swinging on a longer arm.
+	/// </summary>
+	[Property, Group( "Inertia" ), ShowIf( nameof( LookInertia ), true )]
+	public float LookInertiaPivotDistance { get; set; } = 10.0f;
+
+	/// <summary>
+	/// Overall strength of the effect, applied after the spring - 0 is off, 1 is the spring's
+	/// natural lag, above 1 exaggerates it. Use this to dial the whole thing up or down without
+	/// touching how snappy or bouncy it feels (that's Frequency/Damping).
+	/// </summary>
+	[Property, Group( "Inertia" ), ShowIf( nameof( LookInertia ), true )]
+	public float LookInertiaAmount { get; set; } = 1.0f;
+
+	/// <summary>
+	/// Further multiplies <see cref="LookInertiaAmount"/> while aiming down sights (on weapons
+	/// with an <see cref="IronSightsWeapon"/>), so the gun holds steadier while aiming - below 1
+	/// calms the sway down, above 1 makes it worse.
+	/// </summary>
+	[Property, Title( "ADS Inertia Scale" ), Group( "Inertia" ), ShowIf( nameof( LookInertia ), true )]
+	public float ADSInertiaScale { get; set; } = 0.3f;
+
 	public bool IsAttacking { get; set; }
 
 	TimeSince AttackDuration;
@@ -88,6 +130,10 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 	Vector2 lastInertia;
 	Vector2 currentInertia;
 	bool isFirstUpdate = true;
+
+	Vector2 _lookAngles;
+	Vector2 _lookVelocity;
+	bool _lookInertiaFirstUpdate = true;
 
 	protected override void OnStart()
 	{
@@ -125,6 +171,8 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 	/// <summary>
 	/// Called by the weapon while the camera composes - feeds the aim inertia and lets the
 	/// animation's camera bone drive the view (reload sway and kicks authored in the anim).
+	/// This mutates the real camera view, not the viewmodel - the viewmodel itself is placed
+	/// separately from the pre-bone snapshot, see <see cref="Place"/>.
 	/// </summary>
 	public void UpdateCameraBone( ref CameraView view )
 	{
@@ -148,8 +196,51 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 	/// </summary>
 	public void Place( in CameraView view )
 	{
-		WorldPosition = view.Position;
-		WorldRotation = view.Rotation;
+		var rotation = view.Rotation;
+		var pivotOffset = Vector3.Zero;
+
+		if ( LookInertia )
+			rotation = ApplyLookInertia( view.Rotation, out pivotOffset );
+
+		WorldPosition = view.Position + pivotOffset;
+		WorldRotation = rotation;
+	}
+
+	Rotation ApplyLookInertia( Rotation rotation, out Vector3 pivotOffset )
+	{
+		var angles = rotation.Angles();
+		var target = new Vector2( angles.pitch, angles.yaw );
+
+		if ( _lookInertiaFirstUpdate )
+		{
+			_lookAngles = target;
+			_lookVelocity = Vector2.Zero;
+			_lookInertiaFirstUpdate = false;
+		}
+		else
+		{
+			// Follow yaw the short way round so crossing the -180/180 seam doesn't fling the spring.
+			target.y = _lookAngles.y + Angles.NormalizeAngle( target.y - _lookAngles.y );
+		}
+
+		_lookAngles = Vector2.SpringDamp( _lookAngles, target, ref _lookVelocity, Time.Delta, LookInertiaFrequency, LookInertiaDamping );
+
+		var laggedFull = new Angles( _lookAngles.x, _lookAngles.y, angles.roll ).ToRotation();
+
+		// Scale the effect's strength here, separately from the spring's own timing/feel above.
+		var amount = LookInertiaAmount;
+
+		var ironSights = GetComponentInParent<IronSightsWeapon>();
+		if ( ironSights.IsValid() && ironSights.IsAiming )
+			amount *= ADSInertiaScale;
+
+		var delta = laggedFull * rotation.Inverse;
+		var lagged = Rotation.Slerp( Rotation.Identity, delta, amount, clamp: false ) * rotation;
+
+		var pivotLocal = Vector3.Forward * LookInertiaPivotDistance;
+		pivotOffset = (rotation * pivotLocal) - (lagged * pivotLocal);
+
+		return lagged;
 	}
 
 	void UpdateAnimation()

@@ -27,9 +27,14 @@
         "IncrementalReloadFinishSounds": [],
         "IncrementalReloadSoundEvents": [],
         "IncrementalReloadStartSounds": [],
-        "InertiaScale": "2,2",
+        "InertiaScale": "0,0",
         "IsIncremental": false,
         "IsThrowable": false,
+        "LookInertia": true,
+        "LookInertiaAmount": 0.2,
+        "LookInertiaDamping": 0.55,
+        "LookInertiaFrequency": 4,
+        "LookInertiaPivotDistance": 16,
         "MuzzleEffect": {
           "_type": "gameobject",
           "prefab": "prefabs/effects/default_muzzleflash.prefab"
@@ -112,9 +117,15 @@
             "OnComponentStart": null,
             "OnComponentUpdate": null,
             "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
+              "bools": {
+                "b_jump": true
+              },
+              "ints": {
+                "grab_action": 2
+              },
+              "floats": {
+                "holdtype_pose": 8
+              },
               "vectors": {},
               "rotations": {}
             },
