@@ -45,7 +45,6 @@
             .OrderByDescending( x => x.Type.GetAttribute<OrderAttribute>()?.Value ?? 0 )
             .ThenBy( t => t.Attribute.Type is null ? 1 : 0 )
             .ToList();
-        Log.Info( $"[Inspector] Initializing {types.Count} editor types." );
 
         foreach ( var (typeDesc, attr) in types )
         {
@@ -146,31 +145,30 @@
     void UpdateHighlights()
     {
         var host = Ancestors.OfType<ContextMenuHost>().FirstOrDefault();
-        if (host is null) return;
+        if ( host is null ) return;
 
-        if (host.SelectedOutline is null || host.HoveredOutline is null)
+        if ( host.SelectedOutline is null || host.HoveredOutline is null )
             return;
 
         host.SelectedOutline.Targets ??= new();
         host.SelectedOutline.Targets.Clear();
-        host.SelectedOutline.Color = new Color(4.7f, 10.1f, 30.6f, 1);
-        host.SelectedOutline.ObscuredColor = new Color(2.2f, 2.3f, 2.9f, 0.1f);
+        host.SelectedOutline.Color = new Color( 4.7f, 10.1f, 30.6f, 1 );
+        host.SelectedOutline.ObscuredColor = new Color( 2.2f, 2.3f, 2.9f, 0.1f );
         host.SelectedOutline.Width = 0.2f;
 
         host.HoveredOutline.Targets ??= new();
         host.HoveredOutline.Targets.Clear();
-        host.HoveredOutline.Color = new Color(2.6f, 2.0f, 0.2f, 1);
-        host.HoveredOutline.ObscuredColor = new Color(2.6f, 2.0f, 0.2f, 0.1f);
+        host.HoveredOutline.Color = new Color( 2.6f, 2.0f, 0.2f, 1 );
+        host.HoveredOutline.ObscuredColor = new Color( 2.6f, 2.0f, 0.2f, 0.1f );
         host.HoveredOutline.Width = 0.2f;
 
-        if (!IsVisible)
-            return;
+        if ( !IsVisible ) return;
 
-        host.SelectedOutline.Targets.AddRange(_selected.SelectMany(x => GetRenderers( x ) ) ?? []);
+        host.SelectedOutline.Targets.AddRange( _selected.SelectMany( x => GetRenderers( x ) ) ?? [] );
 
-        if ( !_selected.Contains( hovered  ) )
+        if ( !_selected.Contains( hovered ) )
         {
-            host.HoveredOutline.Targets = GetRenderers( Hovered ).ToList();
+            host.HoveredOutline.Targets = GetRenderers( hovered ).ToList();
         }
         else
         {
@@ -180,18 +178,18 @@
 
     IEnumerable<Renderer> GetRenderers( GameObject o )
     {
-        if ( o == null ) yield break;
+        if ( !o.IsValid() ) yield break;
 
         foreach ( var r in o.GetComponents<Renderer>() )
         {
             yield return r;
         }
 
-        foreach( var c in o.Children )
+        foreach ( var c in o.Children )
         {
-            if (c.NetworkMode == NetworkMode.Object) continue;
+            if ( c.NetworkMode == NetworkMode.Object ) continue;
 
-            foreach (var rr in GetRenderers( c ) )
+            foreach ( var rr in GetRenderers( c ) )
             {
                 yield return rr;
             }
@@ -206,23 +204,23 @@
     {
         var cursorPos = Mouse.Position;
         var screenRay = Scene.Camera.ScreenPixelToRay( cursorPos );
-        var tr = Scene.Trace.Ray(screenRay, 4096 )
+        var tr = Scene.Trace.Ray( screenRay, 4096 )
                             .IgnoreGameObjectHierarchy( Player.FindLocalPlayer()?.GameObject )
                             .Run();
 
         var go = tr.Collider?.GameObject ?? tr.GameObject;
         go = go.FindNetworkRoot();
 
-        if (!CanSelect(go)) go = null;
+        if ( !CanSelect( go ) ) go = null;
 
-        UpdateHovered(go);
+        UpdateHovered( go );
     }
 
     bool CanSelect( GameObject o )
     {
-        if (o == null) return false;
-        if (o.Tags.Has("world")) return false;
-        if (o.NetworkMode == NetworkMode.Never) return false;
+        if ( !o.IsValid() ) return false;
+        if ( o.Tags.Has( "world" ) ) return false;
+        if ( o.NetworkMode == NetworkMode.Never ) return false;
 
         o = o?.FindNetworkRoot();
 
@@ -233,10 +231,10 @@
     {
         o = o?.FindNetworkRoot();
 
-        if (hovered == o) return;
+        if ( hovered == o ) return;
 
         hovered = o;
-        PlaySound("ui.button.over");
+        PlaySound( "ui.button.over" );
     }
 
 
@@ -260,11 +258,6 @@
         ev.Populate( menu );
     }
 
-    public void WorldMouseUp(MousePanelEvent e)
-    {
-        // nothing.
-    }
-
     public void SelectObject( GameObject o )
     {
         if ( !o.IsValid() )
@@ -273,16 +266,16 @@
         }
         else
         {
-            if (!Input.Down("run"))
+            if ( !Input.Down( "run" ) )
+            {
                 _selected.Clear();
+            }
 
-            _selected.Remove(o);
-            _selected.Add(o);
+            _selected.Remove( o );
+            _selected.Add( o );
         }
 
         _selected = _selected.Distinct().ToList();
-
-        Log.Info(_selected.FirstOrDefault());
     }
 
 	void WindowPress( PanelEvent panelEvent )

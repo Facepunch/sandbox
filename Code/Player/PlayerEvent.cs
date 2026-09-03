@@ -79,13 +79,19 @@ public class PlayerDamageEvent
 }
 
 /// <summary>
-/// Pre-respawn event. Fired before the player is spawned. Listeners can modify
-/// <see cref="SpawnLocation"/> to control where the player appears.
+/// Pre-respawn event. Fired on the host before the player is spawned. Listeners can modify
+/// <see cref="SpawnLocation"/> to control where the player appears, or set <see cref="Cancelled"/>
+/// to stop the spawn entirely - for example an addon running its own round loop that wants dead
+/// players to wait. A player cancelled after death stays in the observer state; spawn them later
+/// with <see cref="GameManager.Respawn"/>, which skips this event. This also fires for the first
+/// spawn on join, so a listener that cancels there is responsible for giving that connection
+/// something to look at.
 /// </summary>
 public class PlayerRespawnEvent
 {
 	public PlayerData PlayerData { get; init; }
 	public Transform SpawnLocation { get; set; }
+	public bool Cancelled { get; set; }
 }
 
 /// <summary>

@@ -28,11 +28,13 @@ internal sealed class PlayerObserver : Component
 		if ( timeSinceStarted < 1 )
 			return;
 
-		// If pressed a button, or has been too long
+		// If pressed a button, or has been too long, ask the host to respawn us. The host destroys
+		// this observer once the spawn goes through; if a listener vetoed it we stay here and try
+		// again after the same delay.
 		if ( Input.Pressed( "attack1" ) || Input.Pressed( "jump" ) || timeSinceStarted > 4f )
 		{
 			GameManager.Current?.RequestRespawn();
-			GameObject.Destroy();
+			timeSinceStarted = 0;
 		}
 	}
 

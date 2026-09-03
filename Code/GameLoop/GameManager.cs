@@ -66,24 +66,39 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		return data;
 	}
 
-	internal void SpawnPlayer( Connection connection ) => SpawnPlayer( PlayerData.For( connection ) );
+	/// <summary>
+	/// Spawns a player for this connection if they don't already have one. Host only.
+	/// Fires <see cref="Global.IPlayerEvents.OnPlayerRespawning"/> first, so listeners can move or
+	/// cancel the spawn. Pass <paramref name="force"/> to skip that event - for addons that cancelled
+	/// the normal flow and now want the player in the world. Returns the new player, or null if the
+	/// connection already has one or a listener cancelled.
+	/// </summary>
+	public Player SpawnPlayer( Connection connection, bool force = false ) => SpawnPlayer( PlayerData.For( connection ), force );
 
-	internal void SpawnPlayer( PlayerData playerData )
+	/// <inheritdoc cref="SpawnPlayer(Connection, bool)"/>
+	public Player SpawnPlayer( PlayerData playerData, bool force = false )
 	{
 		Assert.NotNull( playerData, "PlayerData is null" );
 		Assert.True( Networking.IsHost, $"Client tried to SpawnPlayer: {playerData.Network.Owner?.DisplayName}" );
 
 		// does this connection already have a player?
 		if ( Scene.GetAll<Player>().Any( x => x.Network.Owner == playerData.Network.Owner ) )
-			return;
+			return null;
 
 		// Find a spawn location for this player
 		var startLocation = FindSpawnLocation().WithScale( 1 );
 
-		// Fire pre-respawn event — listeners can modify spawn location
-		var respawnEvent = new PlayerRespawnEvent { PlayerData = playerData, SpawnLocation = startLocation };
-		Global.IPlayerEvents.Post( x => x.OnPlayerRespawning( respawnEvent ) );
-		startLocation = respawnEvent.SpawnLocation;
+		// Fire pre-respawn event - listeners can move or cancel the spawn, unless we're forcing it
+		if ( !force )
+		{
+			var respawnEvent = new PlayerRespawnEvent { PlayerData = playerData, SpawnLocation = startLocation };
+			Global.IPlayerEvents.Post( x => x.OnPlayerRespawning( respawnEvent ) );
+
+			if ( respawnEvent.Cancelled )
+				return null;
+
+			startLocation = respawnEvent.SpawnLocation;
+		}
 
 		// Spawn this object and make the client the owner
 		var playerGo = GameObject.Clone( "/prefabs/engine/player.prefab", new CloneConfig { Name = playerData.Network.Owner?.DisplayName, StartEnabled = false, Transform = startLocation } );
@@ -96,6 +111,44 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		Local.IPlayerEvents.PostToGameObject( player.GameObject, x => x.OnSpawned() );
 		Global.IPlayerEvents.Post( x => x.OnPlayerSpawned( player ) );
+
+		return player;
+	}
+
+	/// <summary>
+	/// Forcefully respawns a player, whether they're dead or alive. Host only. Removes their current
+	/// player object and any observer without a death, then spawns a fresh one without consulting
+	/// <see cref="Global.IPlayerEvents.OnPlayerRespawning"/>. This is the entry point for addons
+	/// that run their own round flow: cancel the normal respawn, then call this when it's time.
+	/// </summary>
+	public Player Respawn( Connection connection )
+	{
+		Assert.True( Networking.IsHost, "Only the host can respawn players" );
+
+		var playerData = PlayerData.For( connection );
+		if ( !playerData.IsValid() )
+			return null;
+
+		var existing = Player.FindForConnection( connection );
+		if ( existing.IsValid() )
+		{
+			existing.GameObject.Destroy();
+		}
+
+		DestroyObservers( connection );
+
+		return SpawnPlayer( playerData, force: true );
+	}
+
+	/// <summary>
+	/// Clean up any lingering death observers for this connection.
+	/// </summary>
+	private void DestroyObservers( Connection connection )
+	{
+		foreach ( var observer in Scene.GetAllComponents<PlayerObserver>().Where( x => x.Network.Owner == connection ).ToArray() )
+		{
+			observer.GameObject.Destroy();
+		}
 	}
 
 	void Global.ISaveEvents.AfterLoad( string filename )
@@ -111,20 +164,20 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	}
 
 	/// <summary>
-	/// Called by the client (via PlayerObserver) when they want to respawn.
+	/// Called by the client (via PlayerObserver) when they want to respawn. If a listener cancels the
+	/// respawn the observer is kept, so the player stays spectating until an addon calls
+	/// <see cref="Respawn"/> or the next request goes through.
 	/// </summary>
 	[Rpc.Host]
 	internal void RequestRespawn()
 	{
 		var connection = Rpc.Caller;
 
-		// Clean up any lingering observers for this connection.
-		foreach ( var observer in Scene.GetAllComponents<PlayerObserver>().Where( x => x.Network.Owner == connection ).ToArray() )
-		{
-			observer.GameObject.Destroy();
-		}
+		var player = SpawnPlayer( connection );
+		if ( !player.IsValid() )
+			return;
 
-		SpawnPlayer( connection );
+		DestroyObservers( connection );
 	}
 
 	/// <summary>Approximate standing-player hull, used for spawn clearance and floor settling.</summary>
