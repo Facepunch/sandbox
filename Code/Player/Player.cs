@@ -107,7 +107,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	public bool IsNoclipping { get; internal set; }
 
 	/// <summary>Seconds of invulnerability after spawning, to stop spawn-killing. 0 disables it.</summary>
-	[ConVar( "sb.spawnprotection", ConVarFlags.Replicated | ConVarFlags.Saved, Help = "Seconds of invulnerability after spawning. 0 disables spawn protection." )]
+	[ConVar( "sandbox.spawnprotection", ConVarFlags.Replicated | ConVarFlags.Saved, Help = "Seconds of invulnerability after spawning. 0 disables spawn protection." )]
 	public static float SpawnProtection { get; set; } = 5.0f;
 
 	/// <summary>
@@ -117,7 +117,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	/// <summary>
 	/// True while the player is briefly invulnerable just after spawning, per the
-	/// <c>sb.spawnprotection</c> convar.
+	/// <c>sandbox.spawnprotection</c> convar.
 	/// </summary>
 	public bool IsSpawnProtected => _timeSinceSpawned < SpawnProtection;
 

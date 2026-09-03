@@ -2,7 +2,7 @@ using System.Threading;
 
 public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 {
-	[ConVar( "sbdm.hideviewmodel", ConVarFlags.Cheat )]
+	[ConVar( "sandbox.hideviewmodel", ConVarFlags.Cheat )]
 	private static bool HideViewModel { get; set; } = false;
 
 	/// <summary>

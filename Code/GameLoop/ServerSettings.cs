@@ -9,7 +9,7 @@ internal static class ServerSettings
 	/// </summary>
 	[Title( "Show Developer Entities" )]
 	[Group( "Other" )]
-	[ConVar( "sb.developer_entities", ConVarFlags.Replicated | ConVarFlags.GameSetting | ConVarFlags.Server, Help = "Show developer entities in the spawn menu." )]
+	[ConVar( "sandbox.developer.entities", ConVarFlags.Replicated | ConVarFlags.GameSetting | ConVarFlags.Server, Help = "Show developer entities in the spawn menu." )]
 	public static bool DeveloperEntities { get; set; } = false;
 
 	/// <summary>

@@ -201,7 +201,7 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	/// Watch which value pulses: body yaw (someone rotating the object), aim
 	/// (look target moving or flickering), or move params (animgraph input).
 	/// </summary>
-	[ConVar( "npc_debug_jitter" )]
+	[ConVar( "sandbox.npc.debug.jitter" )]
 	public static bool DebugJitter { get; set; }
 
 	float _dbgLastBodyYaw = float.NaN;

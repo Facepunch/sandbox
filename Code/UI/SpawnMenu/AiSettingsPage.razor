@@ -38,6 +38,6 @@
     static readonly string EnabledDescription = "#spawnmenu.utility.ai_enabled_description";
     static readonly string NoTargetDescription = "#spawnmenu.utility.no_target_description";
 
-    void SetAiEnabled( bool enabled ) => GameManager.SetConVar( "sb.ai.enabled", enabled );
-    void SetNoTarget( bool noTarget ) => GameManager.SetConVar( "sb.ai.notarget", noTarget );
+    void SetAiEnabled( bool enabled ) => GameManager.SetConVar( "sandbox.ai.enabled", enabled );
+    void SetNoTarget( bool noTarget ) => GameManager.SetConVar( "sandbox.ai.notarget", noTarget );
 }

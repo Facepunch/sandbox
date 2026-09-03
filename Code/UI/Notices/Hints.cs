@@ -3,8 +3,8 @@
 public class Hints : GameObjectSystem<Hints>
 {
 	[Title( "Show UI Hints" )]
-	[ConVar( "cl_showhints", ConVarFlags.Saved | ConVarFlags.GameSetting, Help = "Whether to display popup hints." )]
-	public static bool cl_showhints { get; set; } = true;
+	[ConVar( "sandbox.showhints", ConVarFlags.Saved | ConVarFlags.GameSetting, Help = "Whether to display popup hints." )]
+	public static bool ShowHints { get; set; } = true;
 
 	record class Hint( string Name, string Icon, RealTimeUntil Delay )
 	{
@@ -35,7 +35,7 @@ public class Hints : GameObjectSystem<Hints>
 		if ( timeSinceLast < 3 )
 			return;
 
-		if ( !cl_showhints )
+		if ( !ShowHints )
 			return;
 
 		var next = _queue.Where( x => x.Ready ).FirstOrDefault();

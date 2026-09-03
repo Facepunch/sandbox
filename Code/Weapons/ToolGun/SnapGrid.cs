@@ -11,7 +11,7 @@ public sealed class SnapGrid
 	/// </summary>
 	public float GridSize { get; set; }
 
-	[ConVar( "snap_grid_no_fade", ConVarFlags.Cheat )]
+	[ConVar( "sandbox.snapgrid.nofade", ConVarFlags.Cheat )]
 	private static bool NoFade { get; set; } = false;
 
 	public SnapGrid( float cellSize = 4f, float maskRadius = 64f, float gridSize = 48f )

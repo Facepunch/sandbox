@@ -37,7 +37,7 @@ public sealed class Ownable : Component, IPhysgunEvent, IToolgunEvent
 	/// Host is always exempt. Off by default.
 	/// </summary>
 	[Title( "Prop Protection" )]
-	[ConVar( "sb.ownership_checks", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Enforce ownership, players can only interact with their own props." )]
+	[ConVar( "sandbox.ownership.checks", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Enforce ownership, players can only interact with their own props." )]
 	public static bool OwnershipChecks { get; private set; } = false;
 
 	internal bool CallerHasAccess( Connection caller ) => HasAccess( caller, Owner );
