@@ -21,6 +21,8 @@
     "spawnmenu.inspect.material": "Material",
     "spawnmenu.inspect.delete": "Delete",
     "spawnmenu.inspect.break": "Break",
+    "spawnmenu.inspect.ignite": "Ignite",
+    "spawnmenu.inspect.extinguish": "Extinguish",
 
     "spawnmenu.effects.presets": "Presets",
     "spawnmenu.effects.save_new_preset": "Save New Preset...",

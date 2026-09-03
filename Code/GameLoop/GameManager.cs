@@ -337,6 +337,81 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		damageable.OnDamage( in dmg );
 	}
 
+	/// <summary>
+	/// Set an object on fire from the Inspector context menu. The engine's FireDamage component
+	/// damages every IDamageable under the root until it breaks. Objects that can't break (unbreakable
+	/// props, non-damageable entities) just keep burning.
+	/// </summary>
+	[Rpc.Host]
+	internal static void IgniteInspectedObject( GameObject go )
+	{
+		if ( !go.IsValid() || go.IsProxy ) return;
+		if ( go.Tags.Has( "player" ) ) return;
+		if ( !go.HasAccess( Rpc.Caller ) ) return;
+		if ( IsOnFire( go ) ) return;
+
+		// Props already know how to burn. Prop.IsOnFire is never reset (protected setter), so a prop
+		// that was extinguished and re-ignited falls through to the generic path below.
+		if ( go.GetComponent<Prop>() is { IsOnFire: false } prop )
+		{
+			prop.Ignite();
+			return;
+		}
+
+		// Everything else gets the same fire prefab Prop.Ignite uses, parented to the root
+		var firePrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/ignite.prefab" );
+		if ( firePrefab is null )
+		{
+			Log.Warning( "Can't find /prefabs/engine/ignite.prefab" );
+			return;
+		}
+
+		var fire = GameObject.Clone( firePrefab, new CloneConfig { Parent = go, Transform = global::Transform.Zero, StartEnabled = true } );
+		if ( !fire.IsValid() ) return;
+
+		fire.RunEvent<ParticleModelEmitter>( x => x.Target = go );
+
+		if ( fire.Network.Active )
+		{
+			fire.Network.Refresh( fire );
+		}
+	}
+
+	/// <summary>
+	/// Put out a burning object from the Inspector context menu. Removes every fire effect
+	/// (anything carrying a FireDamage) under the root; descendant destruction is networked.
+	/// </summary>
+	[Rpc.Host]
+	internal static void ExtinguishInspectedObject( GameObject go )
+	{
+		if ( !go.IsValid() || go.IsProxy ) return;
+		if ( !go.HasAccess( Rpc.Caller ) ) return;
+
+		foreach ( var fire in go.GetComponentsInChildren<FireDamage>( true ).ToArray() )
+		{
+			if ( !fire.IsValid() ) continue;
+
+			var fireObject = fire.GameObject;
+			fireObject.Destroy();
+
+			// Destroying a descendant is only broadcast when we refresh it
+			if ( go.Network.Active )
+			{
+				go.Network.Refresh( fireObject );
+			}
+		}
+	}
+
+	/// <summary>
+	/// Is this object currently burning? Works on clients too, since the fire prefab is replicated
+	/// as a child of the root. Deliberately not Prop.IsOnFire: that flag is never cleared.
+	/// </summary>
+	internal static bool IsOnFire( GameObject go )
+	{
+		if ( !go.IsValid() ) return false;
+		return go.GetComponentInChildren<FireDamage>( true ).IsValid();
+	}
+
 	[Rpc.Host]
 	internal static void GiveSpawnerWeaponAt( string type, string path, int slot, string data = null, string icon = null, string title = null )
 	{

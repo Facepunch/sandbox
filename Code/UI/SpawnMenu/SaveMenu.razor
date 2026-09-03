@@ -8,41 +8,66 @@
 @attribute [Order( 150 )]
 
 <root>
-    <div class="save-window">
-        <div class="save-header">💾 <label>#spawnmenu.saves.header</label></div>
-        <div class="body">
-            @if ( !SaveFiles.Any() )
-            {
-                <div class="empty-state">#spawnmenu.saves.empty</div>
-            }
-            @foreach ( var save in SaveFiles )
-            {
-                var s = save;
-                <div class="save-card @(!s.IsCompatible ? "outdated" : "")"
-                     @onclick="@(() => ConfirmLoad( s ))"
-                     @onmousedown="@((PanelEvent e) => OnCardMouseDown( s, e ))">
-                    @if ( s.Thumbnail != null )
-                    {
-                        <Image class="save-thumb" Texture="@s.Thumbnail" />
-                    }
-                    <div class="save-info @(s.Thumbnail == null ? "save-info--padded" : "")">
-                        <label class="save-name">@s.DisplayName</label>
-                        @if ( !string.IsNullOrEmpty( s.Timestamp ) )
-                        {
-                            <label class="save-timestamp">@s.Timestamp</label>
-                        }
-                        @if ( !s.IsCompatible )
-                        {
-                            <label class="save-outdated-badge">#spawnmenu.saves.outdated_badge</label>
-                        }
-                    </div>
-                    <div class="save-dots">⋮</div>
+    <div class="save-layout">
+        <div class="save-tabs">
+            <div class="save-tab active">
+                <div class="save-tab-icon">
+                    <IconPanel Text="save" />
                 </div>
-            }
+                <label>#spawnmenu.saves.header</label>
+            </div>
         </div>
-        <div class="footer">
-            <TextEntry @ref="SaveNameEntry" Placeholder="#spawnmenu.saves.name_placeholder" @onsubmit="@OnSave"></TextEntry>
-            <button @onclick="@OnSave">💾 <label>#spawnmenu.saves.save_button</label></button>
+        <div class="save-window">
+            <div class="save-list">
+                @if ( !SaveFiles.Any() )
+                {
+                    <div class="empty-state">
+                        <IconPanel Text="bookmark_border" />
+                        <label>#spawnmenu.saves.empty</label>
+                    </div>
+                }
+                @foreach ( var save in SaveFiles )
+                {
+                    var s = save;
+                    <div class="save-card @(!s.IsCompatible ? "outdated" : "")"
+                         @onclick="@(() => ConfirmLoad( s ))"
+                         @onmousedown="@((PanelEvent e) => OnCardMouseDown( s, e ))">
+                        <div class="save-preview">
+                            @if ( s.Thumbnail != null )
+                            {
+                                <Image class="save-thumb" Texture="@s.Thumbnail" />
+                            }
+                            else
+                            {
+                                <IconPanel class="save-preview-placeholder" Text="image" />
+                            }
+                        </div>
+                        <div class="save-info">
+                            <label class="save-name">@s.DisplayName</label>
+                            <div class="save-meta">
+                                @if ( !string.IsNullOrEmpty( s.Timestamp ) )
+                                {
+                                    <label class="save-timestamp">@s.Timestamp</label>
+                                }
+                                @if ( !s.IsCompatible )
+                                {
+                                    <label class="save-outdated-badge">#spawnmenu.saves.outdated_badge</label>
+                                }
+                            </div>
+                        </div>
+                        <div class="save-dots">
+                            <IconPanel Text="more_vert" />
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="footer">
+                <TextEntry @ref="SaveNameEntry" Placeholder="#spawnmenu.saves.name_placeholder" @onsubmit="@OnSave"></TextEntry>
+                <button @onclick="@OnSave">
+                    <IconPanel class="save-button-icon" Text="save" />
+                    <label>#spawnmenu.saves.save_button</label>
+                </button>
+            </div>
         </div>
     </div>
 </root>
