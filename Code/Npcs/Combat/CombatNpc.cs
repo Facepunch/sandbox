@@ -4,9 +4,9 @@ namespace Sandbox.Npcs.CombatNpc;
 
 /// <summary>
 /// A combat NPC that searches for players, advances on them, fires in bursts, and repositions.
-/// When friendly, follows players and engages hostile NPCs instead.
+/// When friendly, can be recruited to follow a player and engages hostile NPCs instead.
 /// </summary>
-public class CombatNpc : Npc
+public class CombatNpc : Npc, Component.IPressable
 {
 	private static readonly string[] PainLines =
 	{
@@ -62,8 +62,46 @@ public class CombatNpc : Npc
 	[Property, Group( "Balance" )]
 	public float FollowDistance { get; set; } = 150f;
 
+	/// <summary>
+	/// The player this friendly NPC is following, if any.
+	/// </summary>
+	[Sync]
+	public GameObject Leader { get; set; }
+
 	private Vector3? _lastKnownPosition;
 	private TimeSince _timeSinceLastSeen;
+
+	IPressable.Tooltip? IPressable.GetTooltip( IPressable.Event e )
+	{
+		if ( !Friendly )
+			return null;
+
+		return Leader.IsValid()
+			? new IPressable.Tooltip( "Stop following", "person_off", DisplayName )
+			: new IPressable.Tooltip( "Follow me", "follow_the_signs", DisplayName );
+	}
+
+	bool IPressable.CanPress( IPressable.Event e ) => Friendly;
+
+	bool IPressable.Press( IPressable.Event e )
+	{
+		ToggleFollow( e.Source.GameObject );
+		return true;
+	}
+
+	[Rpc.Host]
+	private void ToggleFollow( GameObject presserObject )
+	{
+		if ( !Friendly || !presserObject.IsValid() )
+			return;
+
+		var player = presserObject.Root.GetComponent<Player>();
+		if ( !player.IsValid() )
+			return;
+
+		Leader = Leader == player.GameObject ? null : player.GameObject;
+		EndCurrentSchedule();
+	}
 
 	protected override void OnStart()
 	{
@@ -129,17 +167,13 @@ public class CombatNpc : Npc
 			return investigate;
 		}
 
-		// Friendly NPCs follow the nearest player when idle
-		if ( Friendly )
+		// Combat and investigation above take priority; once clear, resume following our leader.
+		if ( Friendly && Leader.IsValid() )
 		{
-			var player = Senses.GetNearestVisible( "player" );
-			if ( player.IsValid() )
-			{
-				var follow = GetSchedule<FollowSchedule>();
-				follow.Target = player;
-				follow.FollowDistance = FollowDistance;
-				return follow;
-			}
+			var follow = GetSchedule<FollowSchedule>();
+			follow.Target = Leader;
+			follow.FollowDistance = FollowDistance;
+			return follow;
 		}
 
 		// No intel — patrol
