@@ -63,6 +63,10 @@ public sealed partial class GameManager
 
 	private static async Task SpawnAndUndo( ISpawner spawner, Transform transform, Player player, bool forceWorld = false )
 	{
+		var scene = Game.ActiveScene;
+		if ( !scene.IsValid() )
+			return;
+
 		var spawnData = new Global.ISpawnEvents.SpawnData
 		{
 			Spawner = spawner,
@@ -70,7 +74,7 @@ public sealed partial class GameManager
 			Player = player?.Network.Owner
 		};
 
-		Game.ActiveScene.RunEvent<Global.ISpawnEvents>( x => x.OnSpawn( spawnData ) );
+		scene.RunEvent<Global.ISpawnEvents>( x => x.OnSpawn( spawnData ) );
 
 		if ( spawnData.Cancelled )
 			return;
@@ -92,6 +96,9 @@ public sealed partial class GameManager
 
 		var objects = await spawner.Spawn( transform, player );
 
+		if ( !scene.IsValid() || !player.IsValid() )
+			return;
+
 		if ( objects is { Count: > 0 } )
 		{
 			var undo = player.Undo.Create();
@@ -102,7 +109,7 @@ public sealed partial class GameManager
 				undo.Add( go );
 			}
 
-			Game.ActiveScene.RunEvent<Global.ISpawnEvents>( x => x.OnPostSpawn( new Global.ISpawnEvents.PostSpawnData
+			scene.RunEvent<Global.ISpawnEvents>( x => x.OnPostSpawn( new Global.ISpawnEvents.PostSpawnData
 			{
 				Spawner = spawner,
 				Transform = transform,
