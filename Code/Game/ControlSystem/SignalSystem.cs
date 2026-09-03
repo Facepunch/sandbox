@@ -294,7 +294,7 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 
 		if ( _contextSource is null )
 		{
-			AddContextPorts( e.Menu, e.Target );
+			AddContextPorts( e, e.Target );
 			return;
 		}
 
@@ -302,17 +302,17 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 
 		if ( ports.Length > 0 && e.Target.Root != _contextSource.Component.GameObject.Root )
 		{
-			e.Menu.AddSubmenu( "link", "Link", submenu =>
+			e.AddSubmenu( "link", "Link", submenu =>
 			{
 				foreach ( var port in ports )
 					submenu.AddOption( port.Icon, port.Title, () => CompleteContextLink( port ) );
 			} );
 		}
 
-		e.Menu.AddOption( "link_off", "Cancel Link", () => _contextSource = null );
+		e.AddOption( "link_off", "Cancel Link", () => _contextSource = null );
 	}
 
-	private void AddContextPorts( MenuPanel menu, GameObject target )
+	private void AddContextPorts( IContextMenuEvent.Event e, GameObject target )
 	{
 		var ports = GetPorts( target ).ToArray();
 		if ( ports.Length == 0 ) return;
@@ -321,11 +321,11 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 		if ( ports.Length == 1 || defaults.Length == 1 )
 		{
 			var port = ports.Length == 1 ? ports[0] : defaults[0];
-			menu.AddOption( "link", "Link", () => _contextSource = port );
+			e.AddOption( "link", "Link", () => _contextSource = port );
 			return;
 		}
 
-		menu.AddSubmenu( "link", "Link", submenu =>
+		e.AddSubmenu( "link", "Link", submenu =>
 		{
 			foreach ( var port in ports )
 				submenu.AddOption( port.Icon, port.Title, () => _contextSource = port );
