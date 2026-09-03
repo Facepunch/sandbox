@@ -2,7 +2,7 @@
 /// <summary>
 /// Holds player information like health
 /// </summary>
-public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, Global.ISaveEvents, IKillSource
+public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, Global.ISaveEvents, IKillSource, IHudEvents
 {
 	[RequireComponent] 
 	public PlayerController Controller { get; set; }
@@ -65,6 +65,16 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 			return false;
 		}
+	}
+
+	/// <summary>
+	/// Feeds <see cref="WantsHideHud"/> into the HUD visibility event, so the camera weapon and freecam
+	/// hide everything through the same path addons use. Panels ask through <see cref="Hud.IsVisible"/>.
+	/// </summary>
+	void IHudEvents.OnHudVisibility( ref HudElement hidden )
+	{
+		if ( IsLocalPlayer && WantsHideHud )
+			hidden = HudElement.All;
 	}
 
 	protected override void OnStart()

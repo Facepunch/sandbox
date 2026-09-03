@@ -94,7 +94,7 @@
 
         foreach ( var entry in _editors )
         {
-            bool visible = entry.Editor.TrySetTarget( _selected );
+            bool visible = entry.Editor.TrySetTarget( _selected.ToList() );
             if ( visible != entry.WasVisible ) changed = true;
             entry.WasVisible = visible;
         }
@@ -120,7 +120,7 @@
 
     public override void Tick()
     {
-        _selected.RemoveAll( x => !x.IsValid() );
+        _selected.RemoveWhere( x => !x.IsValid() );
         InitEditors();
         UpdateEditors();
         UpdateHighlights();
@@ -198,7 +198,7 @@
 
     GameObject hovered;
 
-    List<GameObject> _selected = new();
+    HashSet<GameObject> _selected = new();
 
     void UpdateCursor()
     {
@@ -240,7 +240,7 @@
 
     public void WorldMouseDown(MousePanelEvent e)
     {
-        SelectObject(hovered);
+        SelectObject( hovered );
     }
 
     public void WorldMouseRightDown(MousePanelEvent e)
@@ -271,11 +271,8 @@
                 _selected.Clear();
             }
 
-            _selected.Remove( o );
             _selected.Add( o );
         }
-
-        _selected = _selected.Distinct().ToList();
     }
 
 	void WindowPress( PanelEvent panelEvent )

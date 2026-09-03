@@ -3,25 +3,28 @@
 @inherits PanelComponent
 @namespace Sandbox
 
-@if ( !Player.IsValid() || Player.WantsHideHud ) 
+@if ( !Player.IsValid() )
     return;
 
 <root>
-    <div class="vitals">
-        @if ( Player.Armour > 0 )
-        {
-            <div class="stat armour hud-panel">
-                <Image class="icon" Texture=@ArmourIcon />
-                <label class="value">@(DisplayArmour)</label>
+    @if ( Hud.IsVisible( HudElement.Vitals ) )
+    {
+        <div class="vitals">
+            @if ( Player.Armour > 0 )
+            {
+                <div class="stat armour hud-panel">
+                    <Image class="icon" Texture=@ArmourIcon />
+                    <label class="value">@(DisplayArmour)</label>
+                </div>
+            }
+            <div class="stat health hud-panel">
+                <Image class="icon" Texture=@HealthIcon />
+                <label class="value">@(DisplayHealth)</label>
             </div>
-        }
-        <div class="stat health hud-panel">
-            <Image class="icon" Texture=@HealthIcon />
-            <label class="value">@(DisplayHealth)</label>
         </div>
-    </div>
+    }
 
-    @if ( Weapon.IsValid() && Weapon.UsesAmmo )
+    @if ( Weapon.IsValid() && Weapon.UsesAmmo && Hud.IsVisible( HudElement.Ammo ) )
     {
         <div class="ammo hud-panel">
             <label class="value">@(Weapon.UsesClips ? Weapon.Clip1.ToString() : Weapon.Ammo1.ToString())</label>
@@ -59,8 +62,8 @@
 
     protected override int BuildHash()
     {
-        if ( !Player.IsValid() || Player.WantsHideHud ) return 0;
+        if ( !Player.IsValid() ) return 0;
 
-        return System.HashCode.Combine( Player.Health, Player.Armour, Weapon?.Clip1, Weapon?.Ammo1 );
+        return System.HashCode.Combine( Player.Health, Player.Armour, Weapon?.Clip1, Weapon?.Ammo1, Hud.IsVisible( HudElement.Vitals ), Hud.IsVisible( HudElement.Ammo ) );
     }
 }

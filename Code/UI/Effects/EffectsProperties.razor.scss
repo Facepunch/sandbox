@@ -2,11 +2,6 @@
 
 EffectsProperties
 {
-    background-color: rgba( 9, 21, 31, 0.88 );
-    backdrop-filter: blur( 8px );
-    border: 1px solid rgba( white, 0.06 );
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba( black, 0.5 );
     flex-direction: column;
     overflow: hidden;
 
@@ -39,8 +34,94 @@ EffectsProperties
 
     ControlSheet
     {
-        padding: 6px 0;
         flex-grow: 1;
         overflow-y: scroll;
+        padding: 8px;
+
+        .body
+        {
+            padding: 0;
+            margin: 0;
+        }
+
+        .controlgroup
+        {
+            padding: 0;
+
+            > .body
+            {
+                padding: 0;
+            }
+        }
+    }
+
+    ControlSheetGroup
+    {
+        > .body
+        {
+            padding: 0;
+            margin: 0;
+            gap: 2px;
+        }
+    }
+
+    .page
+    {
+        gap: 2px;
+    }
+
+    controlsheetrow, .control-row
+    {
+        width: 100%;
+        background-color: #53698111;
+        border: 1px solid transparent;
+        padding: 8px;
+        border-radius: 4px;
+        max-height: auto;
+        gap: 4px;
+        transition: background-color 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;
+
+        &:hover
+        {
+            background-color: #53698122;
+
+            > .left
+            {
+                color: #fff;
+            }
+        }
+
+        &.action
+        {
+            cursor: pointer;
+
+            &:hover
+            {
+                background-color: $menu-accent-soft;
+                border-color: rgba( $color-accent, 0.4 );
+                box-shadow: 0 0 10px rgba( $menu-accent, 0.12 );
+                transform: translateY( -1px );
+            }
+
+            &:active
+            {
+                background-color: $menu-accent;
+                box-shadow: 0 0 6px rgba( $menu-accent, 0.1 );
+                transform: translateY( 0 );
+            }
+        }
+
+        > .left
+        {
+            width: 150px;
+            overflow: hidden;
+            flex-shrink: 0;
+            gap: 4px;
+        }
+
+        > .right, > .left
+        {
+            flex-shrink: 0;
+        }
     }
 }

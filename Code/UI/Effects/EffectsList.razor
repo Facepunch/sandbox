@@ -4,13 +4,7 @@
 @namespace Sandbox
 
 <root>
-    <div class="list-tabs">
-        <div class="list-tab @( _tab == 0 ? "active" : "" )" @onclick="@(() => SwitchTab(0))"><label>📦 </label><label>#spawnmenu.effects.installed</label></div>
-        <div class="list-tab @( _tab == 1 ? "active" : "" )" @onclick="@(() => SwitchTab(1))"><label>☁️ </label><label>#spawnmenu.effects.workshop</label></div>
-    </div>
-
-    <div class="panel-body">
-        <div class="scroll-body">
+    <div class="scroll-body">
             @if ( _tab == 0 )
             {
             @foreach ( var group in _groups )
@@ -98,7 +92,6 @@
             <Button class="menu-action primary" Text="#spawnmenu.effects.presets" Icon="📋" onclick=@OpenPresetsMenu></Button>
         </div>
     }
-    </div>
 </root>
 
 @code
@@ -132,7 +125,7 @@
             .ToArray();
     }
 
-    void SwitchTab( int tab )
+    public void SwitchTab( int tab )
     {
         _tab = tab;
         if ( tab == 1 && _workshopPackages.Count == 0 )

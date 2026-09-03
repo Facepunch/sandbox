@@ -1,6 +1,6 @@
 /// <summary>
 /// A TV screen entity that displays the feed from a linked <see cref="CameraWeapon"/>.
-/// Use the Linker tool to wire a Camera's video feed to this TV's display input.
+/// Use the Wire tool to wire a Camera's video feed to this TV's display input.
 /// </summary>
 [Title( "Television" )]
 public sealed class TVEntity : Component

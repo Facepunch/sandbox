@@ -69,6 +69,8 @@ public class Notices : PanelComponent
 	{
 		base.OnUpdate();
 
+		Panel.Style.Display = Hud.IsVisible( HudElement.Notices ) ? DisplayMode.Flex : DisplayMode.None;
+
 		var innerBox = Panel.Box.RectInner;
 		float y = 0;
 		float gap = 5;

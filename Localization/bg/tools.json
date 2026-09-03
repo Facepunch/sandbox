@@ -40,8 +40,8 @@
   "tool.hint.weld.finish": "Завърши",
   "tool.hint.thrustertool.toggle_axis": "Превключи ос",
   "tool.hint.weld.confirm": "Потвърдете",
-  "tool.hint.linker.source": "Изберете източник",
-  "tool.hint.linker.finish": "Завърши",
+  "tool.hint.wire.source": "Изберете източник",
+  "tool.hint.wire.finish": "Завърши",
   "tool.hint.wheeltool.place": "Място",
   "tool.hint.hoverballtool.place": "Място",
   "tool.hint.rope.stage0": "Свързва два обекта с въже",
@@ -69,8 +69,8 @@
   "tool.hint.mass.set": "Задайте маса",
   "tool.hint.hoverballtool.description": "Прикрепя ховърбол, който задържа обекти на зададена височина",
   "tool.hint.unbreakable.set": "Задай Неразрушим",
-  "tool.hint.linker.stage1": "Изберете втория обект за свързване",
-  "tool.hint.linker.remove": "Развързване",
+  "tool.hint.wire.stage1": "Изберете втория обект за свързване",
+  "tool.hint.wire.remove": "Развързване",
   "tool.hint.emittertool.description": "Поставя конфигурируем емитер на частици",
   "tool.hint.keepupright.start_link": "Изберете първия обект",
   "tool.hint.slider.stage0": "Свързва два обекта с плъзгаща се става",
@@ -78,7 +78,7 @@
   "tool.hint.stacker.description": "Дублира обекти в посока с жива визуализация",
   "tool.hint.decaltool.description": "Нанася спрей декали върху повърхности",
   "tool.hint.resizer.reset": "Нулиране",
-  "tool.hint.linker.stage0": "Създава връзка между два обекта, така че да се третират като едно устройство.",
+  "tool.hint.wire.stage0": "Създава връзка между два обекта, така че да се третират като едно устройство.",
   "tool.hint.keepupright.description": "Ограничаване на обект да остане изправен",
   "tool.hint.keepupright.apply_world": "Приложи (закрепи в света)",
   "tool.group.tools": "Инструменти",
@@ -113,5 +113,5 @@
   "tool.name.elastic": "Еластичен",
   "tool.name.hydraulic": "Хидравличен",
   "tool.name.remover": "Премахващ",
-  "tool.name.linker": "Linker"
+  "tool.name.wire": "Linker"
 }

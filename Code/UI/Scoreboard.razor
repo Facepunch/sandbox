@@ -62,7 +62,7 @@
 		    Input.Clear( "Score" );
 	    }
 
-	    SetClass( "visible", Input.Down( "Score" ) );
+	    SetClass( "visible", Input.Down( "Score" ) && Hud.IsVisible( HudElement.Scoreboard ) );
     }
 
     /// <summary>

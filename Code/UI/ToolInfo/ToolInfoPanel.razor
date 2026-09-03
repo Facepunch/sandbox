@@ -3,7 +3,7 @@
 @inherits PanelComponent
 @namespace Sandbox
 
-@if ( Player.IsValid() && Player.WantsHideHud )
+@if ( !Hud.IsVisible( HudElement.ToolInfo ) )
     return;
 
 @if ( !HasAnyAction )
@@ -80,5 +80,5 @@
 		SetClass( "visible", CurrentToolInfo is not null );
 	}
 
-	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, InfoIcon, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Player?.WantsHideHud );
+	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, InfoIcon, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Hud.IsVisible( HudElement.ToolInfo ) );
 }

@@ -2,7 +2,7 @@
 @using Sandbox.UI;
 @inherits PanelComponent
 
-@if (Player.IsValid() && !Player.IsLocalPlayer && !(Player.FindLocalPlayer()?.WantsHideHud ?? false))
+@if (Player.IsValid() && !Player.IsLocalPlayer && Hud.IsVisible( HudElement.Nameplates ))
 {
 	<root>
 
@@ -63,5 +63,5 @@
         return Math.Clamp( 1f + s * 0.6f, 1f, 1.6f ).ToString( "0.##" );
     }
 
-    protected override int BuildHash() => System.HashCode.Combine(Network.Owner, IsVoicePlaying, Player.FindLocalPlayer()?.WantsHideHud ?? false, Time.Now);
+    protected override int BuildHash() => System.HashCode.Combine(Network.Owner, IsVoicePlaying, Hud.IsVisible( HudElement.Nameplates ), Time.Now);
 }

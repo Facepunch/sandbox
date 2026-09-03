@@ -1,8 +1,8 @@
 [Icon( "🔗" )]
-[Title( "#tool.name.linker" )]
-[ClassName( "linker" )]
-[Group( "#tool.group.constraints" )]
-public sealed class LinkerTool : BaseConstraintToolMode
+[Title( "#tool.name.wire" )]
+[ClassName( "wire" )]
+[Group( "#tool.group.tools" )]
+public sealed class WireTool : BaseConstraintToolMode
 {
 	private GameObject _hoveredRoot;
 	private SignalPortDescription[] _hoveredPorts = [];
@@ -17,9 +17,9 @@ public sealed class LinkerTool : BaseConstraintToolMode
 
 	private SignalsOverlay _overlay;
 
-	public override string Description => Stage == 1 ? "#tool.hint.linker.stage1" : "#tool.hint.linker.stage0";
-	public override string PrimaryAction => Stage == 1 ? "#tool.hint.linker.finish" : "#tool.hint.linker.source";
-	public override string ReloadAction => "#tool.hint.linker.remove";
+	public override string Description => Stage == 1 ? "#tool.hint.wire.stage1" : "#tool.hint.wire.stage0";
+	public override string PrimaryAction => Stage == 1 ? "#tool.hint.wire.finish" : "#tool.hint.wire.source";
+	public override string ReloadAction => "#tool.hint.wire.remove";
 	public override bool UseSnapGrid => false;
 
 	public override void OnControl()
@@ -105,7 +105,7 @@ public sealed class LinkerTool : BaseConstraintToolMode
 			_selectedPortIndex = (_selectedPortIndex + direction + _hoveredPorts.Length) % _hoveredPorts.Length;
 		}
 
-		// Inventory reads this later in the frame. Linker owns the wheel while choosing a port.
+		// Inventory reads this later in the frame. Wire tool owns the wheel while choosing a port.
 		Input.MouseWheel = default;
 	}
 

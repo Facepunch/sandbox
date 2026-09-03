@@ -8,6 +8,28 @@
 @attribute [Order( -75 )]
 
 <root>
-    <EffectsList />
-    <EffectsProperties />
+    <div class="effects-layout">
+        <div class="list-tabs">
+            <div class="list-tab @( _tab == 0 ? "active" : "" )" @onclick="@(() => SwitchTab( 0 ))"><label>📦 </label><label>#spawnmenu.effects.installed</label></div>
+            <div class="list-tab @( _tab == 1 ? "active" : "" )" @onclick="@(() => SwitchTab( 1 ))"><label>☁️ </label><label>#spawnmenu.effects.workshop</label></div>
+        </div>
+
+        <div class="effects-container">
+            <EffectsList @ref="EffectsList" />
+            <EffectsProperties />
+        </div>
+    </div>
 </root>
+
+@code
+{
+    EffectsList EffectsList;
+    int _tab;
+
+    void SwitchTab( int tab )
+    {
+        _tab = tab;
+        EffectsList?.SwitchTab( tab );
+        StateHasChanged();
+    }
+}

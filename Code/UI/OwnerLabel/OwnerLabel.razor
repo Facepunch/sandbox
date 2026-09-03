@@ -18,7 +18,7 @@
 	protected override void OnUpdate()
 	{
 		var camera = Scene.Camera;
-        if (camera is null || (Player.IsValid() && Player.WantsHideHud) )
+        if (camera is null || !Hud.IsVisible( HudElement.OwnerLabel ) )
 		{
 			Panel.SetClass( "visible", false );
 			return;

@@ -6,13 +6,6 @@
 <root>
     @if ( _selected.IsValid() )
     {
-        <div class="header">
-            <h2>
-                <span>🎨</span>
-                <span>@_selected.Title</span>
-            </h2>
-        </div>
-
         @if ( _properties.Count > 0 )
         {
             <ControlSheet Target="@_properties" />

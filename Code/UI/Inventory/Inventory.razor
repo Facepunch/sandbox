@@ -4,7 +4,7 @@
 @inherits PanelComponent
 @implements Global.IPlayerEvents
 
-@if ( Player.IsValid() && Player.WantsHideHud )
+@if ( !Hud.IsVisible( HudElement.Inventory ) )
     return;
 
 @if ( !inventory.IsValid() )
@@ -28,7 +28,7 @@
     int activeSlot = -1;
     BaseSandboxWeapon prev;
 
-    protected override int BuildHash() => HashCode.Combine( inventory, activeSlot, Player?.WantsHideHud );
+    protected override int BuildHash() => HashCode.Combine( inventory, activeSlot, Hud.IsVisible( HudElement.Inventory ) );
 
     void Global.IPlayerEvents.OnPlayerPickup(PlayerPickupEvent e)
     {

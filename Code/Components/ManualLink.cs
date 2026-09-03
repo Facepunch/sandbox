@@ -1,6 +1,6 @@
 /// <summary>
 /// A non-physics logical link between two GameObjects.
-/// Used by the Linker tool to group unconnected objects so the Duplicator
+/// Used by the Wire tool to group unconnected objects so the Duplicator
 /// treats them as part of the same contraption.
 /// </summary>
 public sealed class ManualLink : Component
@@ -9,7 +9,7 @@ public sealed class ManualLink : Component
 	public GameObject Body { get; set; }
 
 	// The signal wire this link carries, if it was created by wiring two ports together.
-	// Destroying the link (undo, the linker's unlink) disconnects the wire too.
+	// Destroying the link (undo, the wire tool's unlink) disconnects the wire too.
 	[Property, Sync, Hide]
 	public Component SignalSource { get; set; }
 

@@ -1,5 +1,9 @@
+@using Sandbox
 @namespace Facepunch.UI
 @inherits PanelComponent
+
+@if ( !Hud.IsVisible( HudElement.Voices ) )
+    return;
 
 <root>
 

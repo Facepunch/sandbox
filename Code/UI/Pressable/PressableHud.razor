@@ -39,13 +39,14 @@
         }
 
         SetClass("active", tt.Pressable != null && tt.Enabled);
+        Panel.Style.Display = Hud.IsVisible( HudElement.Crosshair ) ? DisplayMode.Flex : DisplayMode.None;
     }
 
     IPressable.Tooltip GetHovered()
     {
         var lp = Player.FindLocalPlayer();
         if (lp is null) return default;
-        if (lp.WantsHideHud) return default;
+        if (!Hud.IsVisible( HudElement.Crosshair )) return default;
         if (lp.Controller.Tooltips.Count == 0) return default;
 
         return lp.Controller.Tooltips.FirstOrDefault();

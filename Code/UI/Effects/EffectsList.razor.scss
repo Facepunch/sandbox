@@ -3,68 +3,8 @@
 EffectsList
 {
 	flex-direction: column;
-
-	.list-tabs
-	{
-		flex-direction: row;
-		margin-left: 0;
-		margin-bottom: 8px;
-		padding: 3px;
-		gap: 2px;
-		align-self: flex-start;
-		background-color: rgba( 6, 16, 24, 0.82 );
-		backdrop-filter: blur( 8px );
-		border: 1px solid rgba( white, 0.06 );
-		border-radius: 8px;
-		box-shadow: 0 4px 12px rgba( black, 0.25 );
-		flex-shrink: 0;
-
-		.list-tab
-		{
-			padding: 0.45rem 0.8rem;
-			cursor: pointer;
-			color: #D1D7E3AA;
-			border-radius: 5px;
-			background-color: transparent;
-			border: 1px solid transparent;
-			align-items: center;
-			font-family: $subtitle-font;
-			font-weight: 650;
-			font-size: 14px;
-			transition: color 0.1s ease, background-color 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;
-
-			&:hover
-			{
-				color: $menu-color;
-				background-color: rgba( white, 0.06 );
-				box-shadow: 0 0 10px rgba( $menu-accent, 0.12 );
-				transform: translateY( -1px );
-				sound-in: ui.hover;
-			}
-
-			&.active
-			{
-				color: $menu-text-strong;
-				background-color: rgba( $menu-accent, 0.2 );
-				border-color: rgba( $menu-accent, 0.5 );
-				box-shadow: 0 0 10px rgba( $menu-accent, 0.16 );
-				pointer-events: none;
-			}
-		}
-	}
-
-	.panel-body
-	{
-		background-color: rgba( 9, 21, 31, 0.88 );
-		backdrop-filter: blur( 8px );
-		border: 1px solid rgba( white, 0.06 );
-		box-shadow: 0 8px 24px rgba( black, 0.5 );
-		border-radius: 8px;
-		flex: 1 1 0;
-		min-height: 0;
-		flex-direction: column;
-		overflow: hidden;
-	}
+	min-height: 0;
+	position: relative;
 
 	.scroll-body
 	{

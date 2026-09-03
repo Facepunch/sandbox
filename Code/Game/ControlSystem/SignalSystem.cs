@@ -557,7 +557,7 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 
 	/// <summary>
 	/// Record the wire on the ManualLink pair that carries it, so destroying the link
-	/// (undo, the linker's unlink) also disconnects the wire. Wires between objects
+	/// (undo, the wire tool's unlink) also disconnects the wire. Wires between objects
 	/// joined some other way (welds, same root) have no pair — that's fine.
 	/// </summary>
 	private static void StampWire( Component source, string outputId, Component target, string inputId )
