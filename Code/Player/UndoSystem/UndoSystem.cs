@@ -2,7 +2,7 @@ using Sandbox.UI;
 using System.Collections.Generic;
 using System.Linq;
 
-public class UndoSystem : GameObjectSystem<UndoSystem>
+internal class UndoSystem : GameObjectSystem<UndoSystem>
 {
 	public sealed class HistoryItem
 	{

@@ -1,9 +1,7 @@
-using Sandbox.UI;
-
 /// <summary>
 /// Holds a banlist, can ban users
 /// </summary>
-public sealed class BanSystem : GameObjectSystem<BanSystem>, Component.INetworkListener
+internal sealed class BanSystem : GameObjectSystem<BanSystem>, Component.INetworkListener
 {
 	public record struct BanEntry( string DisplayName, string Reason );
 
