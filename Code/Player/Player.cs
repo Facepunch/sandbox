@@ -302,10 +302,11 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 		NotifyDeath( new PlayerDiedParams() { Attacker = d.Attacker } );
 
+		// Forced holster: death isn't a voluntary switch, so addons can't veto it
 		var inventory = GetComponent<PlayerInventory>();
 		if ( inventory.IsValid() )
 		{
-			inventory.SwitchWeapon( null );
+			inventory.ForceHolster();
 		}
 
 		CreateRagdoll( GetDeathLaunchVelocity( d ), d.Origin );

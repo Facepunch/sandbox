@@ -85,7 +85,9 @@
     {
         var weapon = inventory.GetSlot( slot );
 
-        if ( weapon.IsValid() && !weapon.CanSwitchTo() )
+        // Ask before switching so a vetoed switch doesn't play the sound or snap the hotbar back
+        var to = weapon == inventory.ActiveWeapon ? null : weapon;
+        if ( !inventory.CanSwitchTo( to ) )
             return;
 
         prev = inventory.ActiveWeapon;
@@ -99,7 +101,7 @@
         if ( delta == 0 )
             return;
 
-        var weapons = inventory.Weapons.Where( x => x.CanSwitchTo() ).ToList();
+        var weapons = inventory.Weapons.Where( x => x == inventory.ActiveWeapon || inventory.CanSwitchTo( x ) ).ToList();
 
         if ( weapons.Count == 0 )
             return;

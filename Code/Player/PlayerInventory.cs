@@ -291,11 +291,40 @@ public sealed class PlayerInventory : BaseInventoryComponent, Local.IPlayerEvent
 	public BaseSandboxWeapon GetBestWeapon() => GetBestItem() as BaseSandboxWeapon;
 
 	/// <summary>
-	/// Switches to the given weapon. Thin wrapper over the engine inventory's <see cref="BaseInventoryComponent.Switch"/>
-	/// (which handles host-routing and the holster veto). Switch events had no consumers and were dropped.
+	/// Asks whether this player may switch to <paramref name="weapon"/> (null means holster). Checks the
+	/// weapon's own <see cref="Sandbox.BaseInventoryItem.CanSwitchTo"/>, then fires the cancellable
+	/// switch event on the player and scene-wide, so addons can refuse. Runs wherever it's called - the
+	/// hotbar uses it client-side to filter, <see cref="SwitchWeapon"/> uses it as the gate. Voluntary
+	/// switches are therefore vetoed on the initiating client; the engine's host path isn't hookable.
+	/// </summary>
+	public bool CanSwitchTo( BaseSandboxWeapon weapon )
+	{
+		if ( weapon.IsValid() && !weapon.CanSwitchTo() )
+			return false;
+
+		var switchEvent = new PlayerSwitchWeaponEvent { Player = Player, From = ActiveWeapon, To = weapon };
+		Local.IPlayerEvents.PostToGameObject( Player.GameObject, e => e.OnSwitchWeapon( switchEvent ) );
+		Global.IPlayerEvents.Post( e => e.OnPlayerSwitchWeapon( switchEvent ) );
+
+		return !switchEvent.Cancelled;
+	}
+
+	/// <summary>
+	/// Switches to the given weapon after asking <see cref="CanSwitchTo"/>. Wraps the engine inventory's
+	/// <see cref="BaseInventoryComponent.Switch"/>, which handles host-routing and the outgoing weapon's
+	/// holster veto. Forced switches (death, drop, removal) don't come through here and can't be vetoed.
 	/// </summary>
 	public void SwitchWeapon( BaseSandboxWeapon weapon, bool allowHolster = false )
 	{
+		// Re-selecting the active weapon is a no-op unless it's a holster toggle
+		if ( weapon.IsValid() && weapon == ActiveWeapon && !allowHolster )
+			return;
+
+		// Toggling the active slot holsters, so the event sees that as switching to nothing
+		var to = weapon == ActiveWeapon ? null : weapon;
+		if ( !CanSwitchTo( to ) )
+			return;
+
 		Switch( weapon, allowHolster );
 	}
 
