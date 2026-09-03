@@ -25,4 +25,18 @@ public static class PackageSortModeExtensions
 			_ => "popular"
 		};
 	}
+
+	/// <summary>
+	/// Material icon representing this sort mode in menus.
+	/// </summary>
+	public static string Icon( this PackageSortMode sortMode )
+	{
+		return sortMode switch
+		{
+			PackageSortMode.Newest => "new_releases",
+			PackageSortMode.Trending => "trending_up",
+			PackageSortMode.Random => "shuffle",
+			_ => "whatshot"
+		};
+	}
 }

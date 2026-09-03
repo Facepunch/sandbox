@@ -54,3 +54,17 @@ SpawnMenuIcon
 		overflow: hidden;
 	}
 }
+
+.size-small SpawnMenuIcon
+{
+	.developer-badge, .verified-badge
+	{
+		top: 3px;
+		right: 3px;
+	}
+}
+
+.size-large SpawnMenuIcon .title
+{
+	font-size: 1.2rem;
+}

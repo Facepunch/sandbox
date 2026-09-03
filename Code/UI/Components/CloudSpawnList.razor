@@ -1,0 +1,204 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<SpawnMenuContent>
+
+    <Header>
+        <SpawnMenuToolbar>
+            <Left>
+                <TextEntry Placeholder="#spawnmenu.common.search" class="filter menu-input" Value:bind=@Filter />
+            </Left>
+
+            <Right>
+                <Button Icon=@IconSize.Icon() Tooltip="Icon size" class="icon-button" @onclick=@OpenIconSizeMenu />
+                <Button Icon="verified" Active=@VerifiedOnly Tooltip="Show verified items only" class="icon-button" @onclick=@ToggleVerified />
+                <Button Icon=@SortOrder.Icon() Text=@SortOrder.ToString() Tooltip="Sort order" class="menu-button" @onclick=@OpenSortMenu />
+            </Right>
+        </SpawnMenuToolbar>
+    </Header>
+
+    <Body>
+        @if ( Entries.Count == 0 && !Loading )
+        {
+            if ( string.IsNullOrEmpty( EmptyTitle ) )
+            {
+                <SpawnMenuEmptyState Icon="search_off" Subtitle="#spawnmenu.empty.try_another_category" />
+            }
+            else
+            {
+                <SpawnMenuEmptyState Icon="search_off" Title=@EmptyTitle Subtitle="#spawnmenu.empty.try_another_category" />
+            }
+        }
+        else
+        {
+            <VirtualGrid @ref=Grid Items=@Entries ItemSize=@IconSize.ItemSize() class=@IconSize.CssClass()>
+                <Item Context="item">
+                    @if ( item is Entry entry )
+                    {
+                        <SpawnMenuIcon Ident=@entry.Ident Title=@entry.Title Developer=@entry.Developer Verified=@entry.Verified HideText=@(IconSize == SpawnMenuIconSize.Small) Tooltip=@(IconSize == SpawnMenuIconSize.Small ? entry.Title : null) />
+                    }
+                </Item>
+            </VirtualGrid>
+        }
+    </Body>
+
+</SpawnMenuContent>
+
+@code
+{
+    /// <summary>
+    /// A single tile in the grid, whether it came from disk or from the cloud.
+    /// </summary>
+    public record Entry( string Ident, string Title, bool Developer = false, bool Verified = true );
+
+    protected string Filter
+    {
+        get;
+        set { field = value; Rebuild(); }
+    }
+
+    public PackageSortMode SortOrder
+    {
+        get;
+        set { field = value; Rebuild(); }
+    }
+
+    protected override void OnParametersSet()
+    {
+        SortOrder = PackageSortMode.Popular;
+        Rebuild();
+    }
+
+    List<Entry> Entries = [];
+    bool Loading;
+
+    const string VerifiedOnlyCookie = "spawnmenu.verified_only";
+    bool VerifiedOnly => Game.Cookies.Get( VerifiedOnlyCookie, false );
+    bool _lastVerifiedOnly;
+
+    void ToggleVerified()
+    {
+        Game.Cookies.Set( VerifiedOnlyCookie, !VerifiedOnly );
+        _lastVerifiedOnly = VerifiedOnly;
+        Rebuild();
+    }
+
+    SpawnMenuIconSize IconSize
+    {
+        get => SpawnMenuIconSizeExtensions.Current;
+        set
+        {
+            if ( value == IconSize ) return;
+            SpawnMenuIconSizeExtensions.Current = value;
+            OnIconSizeChanged();
+        }
+    }
+    SpawnMenuIconSize _lastIconSize = SpawnMenuIconSizeExtensions.Current;
+    VirtualGrid Grid;
+
+    void OnIconSizeChanged()
+    {
+        _lastIconSize = IconSize;
+
+        // The grid only recreates cells when their data changes, so throw the
+        // existing tiles away to pick up the new size's text and tooltip. The
+        // render won't re-set Items for us as the list reference is unchanged.
+        if ( Grid.IsValid() )
+        {
+            Grid.Clear();
+            Grid.Items = Entries;
+        }
+
+        StateHasChanged();
+    }
+
+    void OpenSortMenu()
+    {
+        var menu = MenuPanel.Open( this );
+        foreach ( var mode in Enum.GetValues<PackageSortMode>() )
+        {
+            var m = mode;
+            menu.AddOption( m.Icon(), m.ToString(), () => SortOrder = m );
+        }
+        menu.StateHasChanged();
+    }
+
+    void OpenIconSizeMenu()
+    {
+        var menu = MenuPanel.Open( this );
+        foreach ( var size in Enum.GetValues<SpawnMenuIconSize>() )
+        {
+            var s = size;
+            menu.AddOption( s.Icon(), s.ToString(), () => IconSize = s );
+        }
+        menu.StateHasChanged();
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        // Another list may have changed these while we weren't visible
+        if ( _lastIconSize != IconSize )
+            OnIconSizeChanged();
+
+        if ( _lastVerifiedOnly == VerifiedOnly ) return;
+
+        _lastVerifiedOnly = VerifiedOnly;
+        Rebuild();
+    }
+
+    async void Rebuild()
+    {
+        var entries = FindLocalEntries().ToList();
+        Entries = entries;
+        Loading = true;
+        StateHasChanged();
+
+        var query = $"sort:{SortOrder.ToIdentifier()} type:{PackageType}";
+        if ( !string.IsNullOrEmpty( Filter ) ) query += $" {Filter}";
+        if ( !string.IsNullOrEmpty( PackageQuery ) ) query += $" {PackageQuery}";
+
+        var result = await Package.FindAsync( query );
+        var packages = result.Packages.AsEnumerable();
+        if ( VerifiedOnly )
+            packages = packages.Where( IsVerified );
+
+        // Verified packages first, otherwise keep the API's sort order
+        packages = packages.OrderByDescending( IsVerified );
+
+        entries.AddRange( packages.Select( package => new Entry( PackageIdent( package ), package.Title, false, IsVerified( package ) ) ) );
+        Entries = entries;
+        Loading = false;
+        StateHasChanged();
+    }
+
+    static bool IsVerified( Package package ) => string.Equals( package.Org?.Title, "Facepunch", StringComparison.OrdinalIgnoreCase );
+
+    /// <summary>
+    /// Value of the "type:" term in the package search, e.g. "sent" or "model".
+    /// </summary>
+    protected virtual string PackageType => "";
+
+    /// <summary>
+    /// Extra terms appended to the package search.
+    /// </summary>
+    protected virtual string PackageQuery => null;
+
+    /// <summary>
+    /// Title shown when nothing matched. Null uses the empty state's default.
+    /// </summary>
+    protected virtual string EmptyTitle => null;
+
+    /// <summary>
+    /// Build the spawn ident for a cloud package.
+    /// </summary>
+    protected virtual string PackageIdent( Package package ) => $"{package.TypeName}:{package.FullIdent}";
+
+    /// <summary>
+    /// Local entries shown ahead of cloud results. Should respect <see cref="Filter"/>.
+    /// </summary>
+    protected virtual IEnumerable<Entry> FindLocalEntries() => [];
+}
