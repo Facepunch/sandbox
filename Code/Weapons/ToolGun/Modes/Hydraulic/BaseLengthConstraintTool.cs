@@ -102,6 +102,13 @@ public abstract class BaseLengthConstraintTool : BaseConstraintToolMode
 
 		jointGo.AddComponent<CapsuleCollider>();
 
+		// The joint is the part with a collider, so it's what the remover tool hits. Tag it removable
+		// and tie it to the anchors, so removing the shaft takes the caps and anchors with it (and the
+		// joint goes when its anchor does).
+		jointGo.Tags.Add( "removable" );
+		jointGo.Tags.Add( "constraint" );
+		jointGo.AddComponent<ConstraintCleanup>().Attachment = go1;
+
 		go2.NetworkSpawn( true, null );
 		go1.NetworkSpawn( true, null );
 		jointGo.NetworkSpawn( true, null );

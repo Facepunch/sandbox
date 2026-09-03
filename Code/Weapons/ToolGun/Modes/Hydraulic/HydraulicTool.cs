@@ -142,6 +142,17 @@ public sealed class HydraulicTool : BaseLengthConstraintTool
 
 		sliderA.AddComponent<CapsuleCollider>();
 
+		// The slider is the only piece with a collider, so it's what the remover tool hits. Tag it
+		// removable and chain every piece through ConstraintCleanup (each destroys the next on
+		// destroy, and destroys itself when the next is gone) so removing any one removes them all.
+		sliderA.Tags.Add( "removable" );
+		sliderA.Tags.Add( "constraint" );
+		sliderA.AddComponent<ConstraintCleanup>().Attachment = goA;
+		goB.AddComponent<ConstraintCleanup>().Attachment = ballAnchor;
+		ballAnchor.AddComponent<ConstraintCleanup>().Attachment = ballTarget;
+		ballTarget.AddComponent<ConstraintCleanup>().Attachment = sliderB;
+		sliderB.AddComponent<ConstraintCleanup>().Attachment = sliderA;
+
 		// TODO: my lord
 		goB.NetworkSpawn( true, null );
 		goA.NetworkSpawn( true, null );
