@@ -3,11 +3,25 @@ namespace Sandbox;
 using Sandbox.UI;
 using System.Text.Json.Serialization;
 
+public enum SpawnlistItemKind
+{
+	Item,
+	Divider,
+	Title
+}
+
 /// <summary>
 /// A spawnlist item -- lots of cleanup needed, docs, etc
 /// </summary>
-public class SpawnlistItem
+public class SpawnlistItem : IMixedVirtualGridFullRow
 {
+	[JsonPropertyName( "id" )]
+	public Guid Id { get; set; }
+
+	[JsonPropertyName( "kind" )]
+	[JsonIgnore( Condition = JsonIgnoreCondition.WhenWritingDefault )]
+	public SpawnlistItemKind Kind { get; set; }
+
 	[JsonPropertyName( "ident" )]
 	public string Ident { get; set; }
 
@@ -16,6 +30,15 @@ public class SpawnlistItem
 
 	[JsonPropertyName( "icon" )]
 	public string Icon { get; set; }
+
+	[JsonIgnore]
+	public bool IsContent => Kind == SpawnlistItemKind.Item;
+
+	[JsonIgnore]
+	public bool IsFullRow => !IsContent;
+
+	[JsonIgnore]
+	public float Height => Kind == SpawnlistItemKind.Title ? 56f : 32f;
 
 	public static string MakeIdent( string type, string path, string source = "local" )
 	{
@@ -77,13 +100,16 @@ public class SpawnlistData
 
 	public static void Save( Storage.Entry entry, SpawnlistData data )
 	{
+		Normalize( data, true );
+		var contentItems = data.Items.Where( item => item.IsContent ).ToList();
+
 		entry.Files.WriteJson( "/spawnlist.json", data );
 		entry.SetMeta( "name", data.Name );
-		entry.SetMeta( "item_count", data.Items.Count );
-		entry.SetMeta( "metadata_version", 1 );
-		entry.SetMeta( "preview_items", Json.Serialize( data.Items.Take( 6 ).ToList() ) );
+		entry.SetMeta( "item_count", contentItems.Count );
+		entry.SetMeta( "metadata_version", 2 );
+		entry.SetMeta( "preview_items", Json.Serialize( contentItems.Take( 6 ).ToList() ) );
 
-		var contentTypes = data.Items
+		var contentTypes = contentItems
 			.Select( item => SpawnlistItem.ParseIdent( item.Ident ).Type ?? "other" )
 			.GroupBy( type => type, StringComparer.OrdinalIgnoreCase )
 			.ToDictionary( group => group.Key.ToLowerInvariant(), group => group.Count() );
@@ -95,8 +121,26 @@ public class SpawnlistData
 		if ( !entry.Files.FileExists( "/spawnlist.json" ) )
 			return new SpawnlistData { Name = entry.GetMeta<string>( "name" ) ?? "Untitled" };
 
-		return entry.Files.ReadJson<SpawnlistData>( "/spawnlist.json" )
+		var data = entry.Files.ReadJson<SpawnlistData>( "/spawnlist.json" )
 			?? new SpawnlistData { Name = "Untitled" };
+		Normalize( data, !entry.Files.IsReadOnly );
+		return data;
+	}
+
+	private static bool Normalize( SpawnlistData data, bool assignIds )
+	{
+		var changed = data.Items is null;
+		data.Items ??= new();
+		if ( !assignIds ) return changed;
+
+		foreach ( var item in data.Items )
+		{
+			if ( item.Id != Guid.Empty ) continue;
+			item.Id = Guid.NewGuid();
+			changed = true;
+		}
+
+		return changed;
 	}
 
 	public static IEnumerable<Storage.Entry> GetAll()
@@ -129,8 +173,51 @@ public class SpawnlistData
 	public static void AddItem( Storage.Entry entry, SpawnlistItem item )
 	{
 		var data = Load( entry );
+		if ( item.Id == Guid.Empty ) item.Id = Guid.NewGuid();
 		data.Items.Add( item );
 		Save( entry, data );
+	}
+
+	public static Guid AddMarker( Storage.Entry entry, SpawnlistItemKind kind, string title = null )
+	{
+		if ( kind == SpawnlistItemKind.Item ) throw new ArgumentOutOfRangeException( nameof( kind ) );
+
+		var data = Load( entry );
+		var item = new SpawnlistItem { Id = Guid.NewGuid(), Kind = kind, Title = title };
+		data.Items.Add( item );
+		Save( entry, data );
+		return item.Id;
+	}
+
+	public static void MoveItem( Storage.Entry entry, Guid id, int destinationIndex )
+	{
+		var data = Load( entry );
+		var sourceIndex = data.Items.FindIndex( item => item.Id == id );
+		if ( sourceIndex < 0 ) return;
+
+		var item = data.Items[sourceIndex];
+		data.Items.RemoveAt( sourceIndex );
+		if ( sourceIndex < destinationIndex ) destinationIndex--;
+		destinationIndex = destinationIndex.Clamp( 0, data.Items.Count );
+		data.Items.Insert( destinationIndex, item );
+		Save( entry, data );
+	}
+
+	public static void RenameItem( Storage.Entry entry, Guid id, string title )
+	{
+		var data = Load( entry );
+		var item = data.Items.FirstOrDefault( item => item.Id == id );
+		if ( item is null ) return;
+
+		item.Title = title?.Trim() ?? "";
+		Save( entry, data );
+	}
+
+	public static void RemoveItem( Storage.Entry entry, Guid id )
+	{
+		var data = Load( entry );
+		if ( data.Items.RemoveAll( item => item.Id == id ) > 0 )
+			Save( entry, data );
 	}
 
 	public static void RemoveItem( Storage.Entry entry, int index )

@@ -323,7 +323,7 @@ SpawnMenuHost.open SpawnMenu
     }
 }
 
-VirtualGrid
+VirtualGrid, MixedVirtualGrid
 {
     width: 100%;
     height: 100%;
@@ -351,6 +351,96 @@ VirtualGrid
             background-color: $menu-accent;
 			box-shadow: 0 0 8px rgba( $menu-accent, 0.12 );
 			transform: translateY( 0 );
+        }
+    }
+}
+
+MixedVirtualGrid
+{
+    .cell.full-row, .cell.full-row:hover, .cell.full-row:active
+    {
+        background-color: transparent;
+        border-color: transparent;
+        box-shadow: none;
+        transform: none;
+        pointer-events: none;
+        cursor: default;
+    }
+
+    &.editing .cell.full-row
+    {
+        pointer-events: all;
+        cursor: pointer;
+    }
+
+    .cell.drop-before::before, .cell.drop-after::after
+    {
+        position: absolute;
+        content: "";
+        left: -3px;
+        top: 4px;
+        bottom: 4px;
+        width: 3px;
+        border-radius: 2px;
+        background-color: $color-accent;
+        box-shadow: 0 0 8px rgba( $color-accent, 0.8 );
+        z-index: 10;
+    }
+
+    .cell.drop-after::after
+    {
+        left: auto;
+        right: -3px;
+    }
+
+    .cell.full-row.drop-before::before, .cell.full-row.drop-after::after
+    {
+        left: 8px;
+        right: 8px;
+        top: 0;
+        bottom: auto;
+        width: auto;
+        height: 3px;
+    }
+
+    .cell.full-row.drop-after::after
+    {
+        top: auto;
+        bottom: 0;
+    }
+}
+
+.community-section
+{
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: rgba( white, 0.42 );
+    font-family: $subtitle-font;
+    font-size: 12px;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    pointer-events: none;
+
+    IconPanel
+    {
+        font-size: 16px;
+        text-transform: none;
+    }
+
+    .line
+    {
+        height: 1px;
+        flex-grow: 1;
+        max-width: 220px;
+        background: linear-gradient( to right, transparent, rgba( white, 0.18 ) );
+
+        &.right
+        {
+            background: linear-gradient( to left, transparent, rgba( white, 0.18 ) );
         }
     }
 }

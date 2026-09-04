@@ -23,22 +23,6 @@ SpawnMenuIcon
 		pointer-events: none;
 	}
 
-	.verified-badge
-	{
-		position: absolute;
-		top: 6px;
-		right: 6px;
-		opacity: 0.5;
-		z-index: 1;
-		font-size: 1.35rem;
-
-		.iconpanel
-		{
-			width: 20px;
-			height: 20px;
-		}
-	}
-
 	.title
 	{
 		background-color: #0005;
@@ -57,7 +41,7 @@ SpawnMenuIcon
 
 .size-small SpawnMenuIcon
 {
-	.developer-badge, .verified-badge
+	.developer-badge
 	{
 		top: 3px;
 		right: 3px;

@@ -5,41 +5,68 @@
 
 @{
     var data = GetData();
+    var workshopId = Entry.GetMeta( "_workshopId", 0u );
+    var isPublished = workshopId > 0;
+    var isInstalled = Entry.Files.IsReadOnly;
 }
 
 <SpawnMenuContent>
-
     <Header>
-        <SpawnMenuToolbar>
-            <Left>
-                <h2>@data.Name</h2>
-            </Left>
-            <Right>
-                @{
-                    var workshopId = Entry.GetMeta( "_workshopId", 0u );
-                    var isPublished = workshopId > 0;
-                }
-                <div class="menu-icon-toggle-group">
+        <div class="spawnlist-header">
+            <SpawnMenuToolbar>
+                <Left>
+                    <div class="spawnlist-identity">
+                        <div class="folder-mark">
+                            <div class="folder-tab"></div>
+                            <IconPanel Text="collections_bookmark" />
+                        </div>
+                        <div class="identity-copy">
+                            <h2>@data.Name</h2>
+                            <div class="meta">
+                                <span><IconPanel Text="widgets" /> @data.Items.Count( item => item.IsContent ) @Game.Language.GetPhrase( "spawnmenu.spawnlist.items" )</span>
+                                <span class="dot"></span>
+                                <span><IconPanel Text="@( isInstalled ? "cloud_done" : isPublished ? "public" : "lock" )" /> @Game.Language.GetPhrase( isInstalled ? "spawnmenu.spawnlist.installed" : isPublished ? "spawnmenu.spawnlist.published" : "spawnmenu.spawnlist.local" )</span>
+                            </div>
+                        </div>
+                    </div>
+                </Left>
+                <Right>
                     @if ( isPublished )
                     {
-                        <IconPanel Tooltip="#spawnmenu.spawnlist.copy_url" Text="link" @onclick=@( () => Clipboard.SetText( $"https://steamcommunity.com/sharedfiles/filedetails/?id={workshopId}" ) ) />
-                        <IconPanel Tooltip="#spawnmenu.spawnlist.sync" Text="sync" @onclick=@( () => OnPublish() ) />
+                        <Button Icon="link" Tooltip="#spawnmenu.spawnlist.copy_url" class="icon-button" @onclick=@( () => Clipboard.SetText( $"https://steamcommunity.com/sharedfiles/filedetails/?id={workshopId}" ) ) />
+                        @if ( !Entry.Files.IsReadOnly )
+                        {
+                            <Button Icon="sync" Tooltip="#spawnmenu.spawnlist.sync" class="icon-button" @onclick=@OnPublish />
+                        }
                     }
-                    else
+                    else if ( !Entry.Files.IsReadOnly )
                     {
-                        <IconPanel Tooltip="#spawnmenu.spawnlist.publish" Text="cloud_upload" @onclick=@( () => OnPublish() ) />
+                        <Button Icon="cloud_upload" Text="#spawnmenu.spawnlist.publish" Tooltip="#spawnmenu.spawnlist.publish" class="menu-button" @onclick=@OnPublish />
                     }
                     @if ( !Entry.Files.IsReadOnly )
                     {
-                        <IconPanel Tooltip="#spawnmenu.spawnlist.delete" Text="delete" @onclick=@( () => OnDelete() ) />
+                        <Button Icon="edit" Tooltip="#spawnmenu.spawnlist.edit" class="icon-button" Active=@_editMode @onclick=@ToggleEditMode />
+                        <Button Icon="delete" Tooltip="#spawnmenu.spawnlist.delete" class="icon-button" @onclick=@OnDelete />
                     }
                     else
                     {
-                        <IconPanel Tooltip="#spawnmenu.spawnlist.remove" Text="delete" @onclick=@( () => OnUninstall() ) />
+                        <Button Icon="delete" Tooltip="#spawnmenu.spawnlist.remove" class="icon-button" @onclick=@OnUninstall />
                     }
+                </Right>
+            </SpawnMenuToolbar>
+
+            @if ( _editMode )
+            {
+                <div class="edit-toolbar">
+                    <Button class="menu-action" Icon="label" Text="#spawnmenu.spawnlist.add_title" @onclick=@AddTitle />
+                    <Button class="menu-action" Icon="horizontal_rule" Text="#spawnmenu.spawnlist.add_divider" @onclick=@AddDivider />
+                    <div class="edit-instructions">
+                        <IconPanel Text="drag_indicator" />
+                        <label>@Game.Language.GetPhrase( "spawnmenu.spawnlist.edit_instructions" )</label>
+                    </div>
                 </div>
-            </Right>
-        </SpawnMenuToolbar>
+            }
+        </div>
     </Header>
 
     <Body>
@@ -49,17 +76,23 @@
         }
         else
         {
-            <VirtualGrid Items=@data.Items ItemSize=@(new Vector2( 160, 120 ))>
+            <MixedVirtualGrid class="@( _editMode ? "editing" : "" )" Items=@data.Items ItemSize=@(new Vector2( 160, 120 )) CanAcceptDrop=@CanAcceptDrop OnDropIndex=@OnDropIndex>
                 <Item Context="item">
                     @if ( item is SpawnlistItem spawnItem )
                     {
-                        <SpawnMenuIcon Ident="@spawnItem.Ident" Title="@spawnItem.Title" Icon="@spawnItem.Icon" />
+                        @if ( spawnItem.IsContent )
+                        {
+                            <SpawnMenuIcon Ident="@spawnItem.Ident" Title="@spawnItem.Title" Icon="@spawnItem.Icon" SpawnlistItemId=@spawnItem.Id />
+                        }
+                        else
+                        {
+                            <SpawnlistLayoutItem Item=@spawnItem OnRename=@RenameItem OnRemove=@RemoveItem />
+                        }
                     }
                 </Item>
-            </VirtualGrid>
+            </MixedVirtualGrid>
         }
     </Body>
-
 </SpawnMenuContent>
 
 @code
@@ -68,11 +101,16 @@
 
     SpawnlistData _cachedData;
     RealTimeSince _lastRefresh;
+    bool _editMode;
+    public bool CanReorder => _editMode && Entry?.Files.IsReadOnly == false;
 
     SpawnlistData GetData()
     {
         if ( _cachedData == null )
-            RefreshCache();
+        {
+            _cachedData = SpawnlistData.Load( Entry );
+            _lastRefresh = 0;
+        }
 
         return _cachedData;
     }
@@ -81,6 +119,7 @@
     {
         _cachedData = SpawnlistData.Load( Entry );
         _lastRefresh = 0;
+        StateHasChanged();
     }
 
     public override void Tick()
@@ -91,7 +130,7 @@
         if ( _lastRefresh > 1f )
         {
             var fresh = SpawnlistData.Load( Entry );
-            if ( fresh.Items.Count != _cachedData?.Items?.Count )
+            if ( !ItemsMatch( fresh.Items, _cachedData?.Items, !Entry.Files.IsReadOnly ) )
             {
                 _cachedData = fresh;
                 StateHasChanged();
@@ -101,6 +140,73 @@
     }
 
     protected override int BuildHash() => HashCode.Combine( _cachedData?.Items?.Count );
+
+    void ToggleEditMode()
+    {
+        if ( Entry?.Files.IsReadOnly != false ) return;
+        _editMode = !_editMode;
+    }
+
+    void AddTitle()
+    {
+        SpawnlistData.AddMarker( Entry, SpawnlistItemKind.Title, Game.Language.GetPhrase( "spawnmenu.spawnlist.new_section" ) );
+        RefreshCache();
+    }
+
+    void AddDivider()
+    {
+        SpawnlistData.AddMarker( Entry, SpawnlistItemKind.Divider );
+        RefreshCache();
+    }
+
+    public bool CanAcceptDrop( PanelEvent e )
+    {
+        if ( !CanReorder ) return false;
+        var drag = DragHandler.Current ?? e?.Target?.UserData as DragData;
+        return drag is not null && drag.SpawnlistItemId != Guid.Empty;
+    }
+
+    void OnDropIndex( int index, PanelEvent e )
+    {
+        var drag = DragHandler.Current ?? e.Target?.UserData as DragData;
+        if ( drag is null || drag.SpawnlistItemId == Guid.Empty ) return;
+
+        drag.Handled = true;
+        if ( drag.Source is not null ) drag.Source.UserData = null;
+        SpawnlistData.MoveItem( Entry, drag.SpawnlistItemId, index );
+        RefreshCache();
+    }
+
+    void RenameItem( Guid id, string title )
+    {
+        title = title?.Trim() ?? "";
+        SpawnlistData.RenameItem( Entry, id, title );
+        var item = _cachedData?.Items.FirstOrDefault( item => item.Id == id );
+        if ( item is not null ) item.Title = title;
+        StateHasChanged();
+    }
+
+    static bool ItemsMatch( IReadOnlyList<SpawnlistItem> left, IReadOnlyList<SpawnlistItem> right, bool compareIds )
+    {
+        if ( left is null || right is null ) return left == right;
+        if ( left.Count != right.Count ) return false;
+
+        for ( var i = 0; i < left.Count; i++ )
+        {
+            var a = left[i];
+            var b = right[i];
+            if ( (compareIds && a.Id != b.Id) || a.Kind != b.Kind || a.Ident != b.Ident || a.Title != b.Title || a.Icon != b.Icon )
+                return false;
+        }
+
+        return true;
+    }
+
+    void RemoveItem( Guid id )
+    {
+        SpawnlistData.RemoveItem( Entry, id );
+        RefreshCache();
+    }
 
     void OnPublish()
     {
@@ -123,4 +229,3 @@
         page?.Collection.Uninstall( workshopId );
     }
 }
-

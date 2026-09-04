@@ -8,14 +8,6 @@
     {
         <div class="developer-badge">🪲</div>
     }
-    else if ( Verified )
-    {
-        <div class="verified-badge">
-            <IconPanel Text="verified" Tooltip="This is a verified item published by Facepunch" style="width: 20px; height: 20px; font-size: 1.35rem;" />
-        </div>
-    }
-
-
     @if ( !string.IsNullOrWhiteSpace( Title ) && !HideText )
     {
         <div class="title">@Title</div>
@@ -31,7 +23,7 @@
     [Parameter] public bool HideText { get; set; }
     [Parameter] public string Metadata { get; set; }
     [Parameter] public bool Developer { get; set; }
-    [Parameter] public bool Verified { get; set; }
+    [Parameter] public Guid SpawnlistItemId { get; set; }
 
     string Type;
     string Path;
@@ -58,7 +50,7 @@
 
     protected override int BuildHash()
     {
-        return HashCode.Combine( Ident, Icon, Title, HideText, Developer, Verified );
+        return HashCode.Combine( Ident, Icon, Title, HideText, Developer );
     }
 
     protected override async void OnDragStart( DragEvent e )
@@ -69,7 +61,8 @@
             Path = Path,
             Icon = Icon ?? $"thumb:{Path}",
             Title = Title,
-            Source = this
+            Source = this,
+            SpawnlistItemId = SpawnlistItemId
         };
 
         DragHandler.StartDragging( dragData );
@@ -102,17 +95,20 @@
 
         // If inside a spawnlist, offer removal
         var spawnlistView = Ancestors.OfType<SpawnlistView>().FirstOrDefault();
-        if ( spawnlistView?.Entry is not null )
+        if ( spawnlistView?.Entry?.Files.IsReadOnly == false )
         {
             menu.AddOption( "delete", "Remove from List", () =>
             {
-                var data = SpawnlistData.Load( spawnlistView.Entry );
-                var idx = data.Items.FindIndex( x => x.Ident == Ident );
-                if ( idx >= 0 )
+                if ( SpawnlistItemId != Guid.Empty )
+                    SpawnlistData.RemoveItem( spawnlistView.Entry, SpawnlistItemId );
+                else
                 {
-                    SpawnlistData.RemoveItem( spawnlistView.Entry, idx );
-                    spawnlistView.RefreshCache();
+                    var data = SpawnlistData.Load( spawnlistView.Entry );
+                    var idx = data.Items.FindIndex( x => x.Ident == Ident );
+                    if ( idx >= 0 ) SpawnlistData.RemoveItem( spawnlistView.Entry, idx );
                 }
+
+                spawnlistView.RefreshCache();
             } );
             menu.AddSpacer();
         }

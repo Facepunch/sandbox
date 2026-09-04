@@ -33,14 +33,23 @@
         }
         else
         {
-            <VirtualGrid @ref=Grid Items=@Entries ItemSize=@IconSize.ItemSize() class=@IconSize.CssClass()>
+            <MixedVirtualGrid @ref=Grid Items=@Entries ItemSize=@IconSize.ItemSize() class=@IconSize.CssClass()>
                 <Item Context="item">
                     @if ( item is Entry entry )
                     {
-                        <SpawnMenuIcon Ident=@entry.Ident Title=@entry.Title Developer=@entry.Developer Verified=@entry.Verified HideText=@(IconSize == SpawnMenuIconSize.Small) Tooltip=@(IconSize == SpawnMenuIconSize.Small ? entry.Title : null) />
+                        <SpawnMenuIcon Ident=@entry.Ident Title=@entry.Title Developer=@entry.Developer HideText=@(IconSize == SpawnMenuIconSize.Small) Tooltip=@(IconSize == SpawnMenuIconSize.Small ? entry.Title : null) />
+                    }
+                    else if ( item is CommunitySection )
+                    {
+                        <div class="community-section">
+                            <div class="line left"></div>
+                            <IconPanel Text="groups" />
+                            <label>#spawnmenu.section.community_items</label>
+                            <div class="line right"></div>
+                        </div>
                     }
                 </Item>
-            </VirtualGrid>
+            </MixedVirtualGrid>
         }
     </Body>
 
@@ -52,6 +61,12 @@
     /// A single tile in the grid, whether it came from disk or from the cloud.
     /// </summary>
     public record Entry( string Ident, string Title, bool Developer = false, bool Verified = true );
+
+    sealed record CommunitySection : IMixedVirtualGridFullRow
+    {
+        public bool IsFullRow => true;
+        public float Height => 48f;
+    }
 
     protected string Filter
     {
@@ -71,7 +86,7 @@
         Rebuild();
     }
 
-    List<Entry> Entries = [];
+    List<object> Entries = [];
     bool Loading;
 
     const string VerifiedOnlyCookie = "spawnmenu.verified_only";
@@ -96,7 +111,7 @@
         }
     }
     SpawnMenuIconSize _lastIconSize = SpawnMenuIconSizeExtensions.Current;
-    VirtualGrid Grid;
+    MixedVirtualGrid Grid;
 
     void OnIconSizeChanged()
     {
@@ -152,7 +167,7 @@
 
     async void Rebuild()
     {
-        var entries = FindLocalEntries().ToList();
+        var entries = FindLocalEntries().Cast<object>().ToList();
         Entries = entries;
         Loading = true;
         StateHasChanged();
@@ -166,16 +181,22 @@
         if ( VerifiedOnly )
             packages = packages.Where( IsVerified );
 
-        // Verified packages first, otherwise keep the API's sort order
-        packages = packages.OrderByDescending( IsVerified );
+        var packageList = packages.ToList();
+        entries.AddRange( packageList.Where( IsVerified ).Select( CreateEntry ) );
 
-        entries.AddRange( packages.Select( package => new Entry( PackageIdent( package ), package.Title, false, IsVerified( package ) ) ) );
+        var communityPackages = packageList.Where( package => !IsVerified( package ) ).ToList();
+        if ( communityPackages.Count > 0 && entries.Count > 0 && !VerifiedOnly )
+            entries.Add( new CommunitySection() );
+
+        entries.AddRange( communityPackages.Select( CreateEntry ) );
         Entries = entries;
         Loading = false;
         StateHasChanged();
     }
 
-    static bool IsVerified( Package package ) => string.Equals( package.Org?.Title, "Facepunch", StringComparison.OrdinalIgnoreCase );
+    static bool IsVerified( Package package ) => string.Equals( package.Org?.Ident, "facepunch", StringComparison.OrdinalIgnoreCase );
+
+    Entry CreateEntry( Package package ) => new( PackageIdent( package ), package.Title, false, IsVerified( package ) );
 
     /// <summary>
     /// Value of the "type:" term in the package search, e.g. "sent" or "model".

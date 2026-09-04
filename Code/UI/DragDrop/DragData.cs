@@ -35,6 +35,11 @@ public class DragData
 	public object Data { get; set; }
 
 	/// <summary>
+	/// Stable spawnlist entry ID when reordering an editable spawnlist.
+	/// </summary>
+	public Guid SpawnlistItemId { get; set; }
+
+	/// <summary>
 	/// Set to true when a drop target has already handled this drag (e.g. slot-to-slot swap),
 	/// so the source panel's OnDragEnd can skip secondary actions like dropping to the world.
 	/// </summary>

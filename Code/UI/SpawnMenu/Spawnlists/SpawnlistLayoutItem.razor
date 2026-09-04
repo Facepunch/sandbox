@@ -1,0 +1,67 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<root class="@(Item.Kind == SpawnlistItemKind.Title ? "title-item" : "divider-item")">
+    <SpawnlistDragHandle class="edit-only" Item=@Item />
+
+    @if ( Item.Kind == SpawnlistItemKind.Title )
+    {
+        <div class="marker-line left"></div>
+        <IconPanel Text="label" />
+        <label>@Item.Title</label>
+        <div class="marker-line right"></div>
+    }
+    else
+    {
+        <div class="marker-line divider-line"></div>
+    }
+</root>
+
+@code
+{
+    [Parameter] public SpawnlistItem Item { get; set; }
+    [Parameter] public Action<Guid, string> OnRename { get; set; }
+    [Parameter] public Action<Guid> OnRemove { get; set; }
+
+    public override void Tick()
+    {
+        base.Tick();
+        SetClass( "editing", Ancestors.OfType<SpawnlistView>().FirstOrDefault()?.CanReorder == true );
+    }
+
+    protected override void OnMouseDown( MousePanelEvent e )
+    {
+        if ( e.MouseButton != MouseButtons.Right || Ancestors.OfType<SpawnlistView>().FirstOrDefault()?.CanReorder != true )
+        {
+            base.OnMouseDown( e );
+            return;
+        }
+
+        var menu = MenuPanel.Open( this );
+        if ( Item.Kind == SpawnlistItemKind.Title )
+        {
+            menu.AddOption( "edit", "#spawnmenu.spawnlist.rename_title_item", () =>
+            {
+                var popup = new StringQueryPopup
+                {
+                    Title = "#spawnmenu.spawnlist.rename_title_item",
+                    Placeholder = "#spawnmenu.spawnlist.title_placeholder",
+                    ConfirmLabel = "#spawnmenu.spawnlist.rename_button",
+                    InitialValue = Item.Title,
+                    OnConfirm = value =>
+                    {
+                        Item.Title = value;
+                        OnRename?.Invoke( Item.Id, value );
+                        StateHasChanged();
+                    }
+                };
+                popup.Parent = FindPopupPanel();
+            } );
+        }
+
+        menu.AddOption( "delete", "#spawnmenu.spawnlist.remove_item", () => OnRemove?.Invoke( Item.Id ) );
+        e.StopPropagation();
+    }
+}

@@ -1,5 +1,153 @@
+@import "/UI/Theme.scss";
+
 SpawnlistView
 {
+	SpawnMenuContent > .header
+	{
+		padding-top: 8px;
+	}
+
+	.spawnlist-header
+	{
+		width: 100%;
+		flex-direction: column;
+		border-radius: 8px;
+		background-color: rgba( 6, 16, 24, 0.68 );
+		border: 1px solid rgba( white, 0.06 );
+		box-shadow: 0 8px 22px rgba( black, 0.2 );
+		overflow: hidden;
+
+		SpawnMenuToolbar
+		{
+			min-height: 82px;
+			padding: 10px 12px;
+
+			> .left
+			{
+				flex-grow: 1;
+				min-width: 0;
+				justify-content: flex-start;
+			}
+
+			> .right
+			{
+				flex-shrink: 0;
+
+				> Button
+				{
+					flex-shrink: 0;
+				}
+			}
+		}
+	}
+
+	.spawnlist-identity
+	{
+		align-items: center;
+		gap: 12px;
+
+		.folder-mark
+		{
+			position: relative;
+			width: 54px;
+			height: 48px;
+			flex-shrink: 0;
+			align-items: center;
+			justify-content: center;
+			border-radius: 7px;
+			background: linear-gradient( 145deg, #25a9ff, #0874d2 );
+			box-shadow: 0 6px 18px rgba( #0094ff, 0.28 );
+
+			.folder-tab
+			{
+				position: absolute;
+				left: 5px;
+				top: -5px;
+				width: 23px;
+				height: 8px;
+				border-radius: 4px 4px 0 0;
+				background-color: #25a9ff;
+			}
+
+			IconPanel
+			{
+				font-size: 25px;
+				color: white;
+			}
+		}
+
+		.identity-copy
+		{
+			flex-direction: column;
+			min-width: 0;
+			gap: 1px;
+
+			h2
+			{
+				font-size: 20px;
+				font-weight: 700;
+				color: white;
+			}
+
+			.meta
+			{
+				align-items: center;
+				gap: 8px;
+				font-size: 11px;
+				color: rgba( white, 0.42 );
+
+				span
+				{
+					align-items: center;
+					gap: 4px;
+				}
+
+				IconPanel { font-size: 12px; }
+
+				.dot
+				{
+					width: 3px;
+					height: 3px;
+					border-radius: 50%;
+					background-color: rgba( white, 0.22 );
+				}
+			}
+		}
+	}
+
+	SpawnMenuContent > .body
+	{
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	.edit-toolbar
+	{
+		height: 44px;
+		flex-shrink: 0;
+		align-items: center;
+		gap: 6px;
+		padding: 5px 12px;
+		background-color: rgba( white, 0.025 );
+		border-top: 1px solid rgba( white, 0.07 );
+
+		> .edit-instructions
+		{
+			margin-left: auto;
+			gap: 4px;
+			align-items: center;
+			font-size: 12px;
+			opacity: 0.5;
+		}
+	}
+
+	MixedVirtualGrid
+	{
+		height: 0;
+		flex-grow: 1;
+		min-height: 0;
+	}
+
 	.empty-state
 	{
 		display: flex;
