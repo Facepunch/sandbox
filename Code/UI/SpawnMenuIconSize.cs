@@ -28,7 +28,7 @@ public static class SpawnMenuIconSizeExtensions
 	/// </summary>
 	public static Vector2 ItemSize( this SpawnMenuIconSize size ) => size switch
 	{
-		SpawnMenuIconSize.Small => new Vector2( 120, 90 ),
+		SpawnMenuIconSize.Small => new Vector2( 90, 90 ),
 		SpawnMenuIconSize.Large => new Vector2( 240, 180 ),
 		_ => new Vector2( 160, 120 )
 	};
