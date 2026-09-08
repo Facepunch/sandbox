@@ -83,10 +83,16 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 		}
 	}
 
-	// The switch gate is the engine's - query with CanSwitchTo(), override OnCanSwitchTo() to gate.
+	private Vector3 GetPrefabWorldScale()
+	{
+		if ( !string.IsNullOrEmpty( GameObject.PrefabInstanceSource ) )
+		{
+			var prefab = GameObject.GetPrefab( GameObject.PrefabInstanceSource );
+			if ( prefab.IsValid() ) return prefab.LocalScale;
+		}
 
-
-	// DrawHud / DrawCrosshair and the per-frame crosshair positioning come from the engine BaseCombatWeapon.
+		return WorldScale;
+	}
 
 	/// <summary>
 	/// Runs on the host when added to an inventory. The engine base seeds the magazines and the
@@ -222,6 +228,7 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 			return;
 
 		GameObject.SetParent( null, true );
+		WorldScale = GetPrefabWorldScale();
 		GameObject.Enabled = true;
 		WorldPosition = position;
 		Slot = -1;
