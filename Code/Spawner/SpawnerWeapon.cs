@@ -6,6 +6,7 @@ using Sandbox.Rendering;
 /// The spawn menu (or any other system) sets the payload, and this weapon handles
 /// aiming, previewing, and placement.
 /// </summary>
+[Icon( "📦" )]
 public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 {
 	/// <summary>
@@ -197,7 +198,7 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 		if ( _isValidPlacement && Spawner.IsReady && Input.Pressed( "attack1" ) )
 		{
 			var transform = GetSpawnTransform( placement, player );
-			DoSpawn( transform );
+			DoSpawn( transform, new Transform( placement.EndPosition, Rotation.LookAt( placement.Normal ) ) );
 			_rotationOffset = Rotation.Identity;
 		}
 
@@ -277,7 +278,7 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 	}
 
 	[Rpc.Host]
-	private async void DoSpawn( Transform transform )
+	private async void DoSpawn( Transform transform, Transform effectTarget )
 	{
 		if ( Spawner is null ) return;
 
@@ -300,6 +301,8 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 
 		if ( objects is { Count: > 0 } )
 		{
+			if ( this.IsValid() ) SpawnEffects( effectTarget );
+
 			var undo = player.Undo.Create();
 			undo.Name = $"Spawn {Spawner.DisplayName}";
 
@@ -317,6 +320,9 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 			} ) );
 		}
 	}
+
+	[Rpc.Broadcast( NetFlags.HostOnly )]
+	private void SpawnEffects( Transform target ) => PlayToolEffects( target );
 
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )
 	{

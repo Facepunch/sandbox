@@ -18,6 +18,7 @@
       {
         "__type": "SpawnerWeapon",
         "DeployTime": 0.2,
+        "UsesAmmo": false,
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
@@ -38,7 +39,7 @@
           "compiled": null
         },
         "DisplayName": "Spawner",
-        "HoldType": "None",
+        "HoldType": "Pistol",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -46,6 +47,14 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "HoldBone": "hold_r",
+        "SuccessBeamEffect": {
+          "_type": "gameobject",
+          "prefab": "weapons/toolgun/effects/beam-success.prefab"
+        },
+        "SuccessImpactEffect": {
+          "_type": "gameobject",
+          "prefab": "weapons/toolgun/effects/impact-success.prefab"
+        },
         "Value": 2,
         "ViewModelPrefab": {
           "_type": "gameobject",

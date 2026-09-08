@@ -1,9 +1,5 @@
 ﻿public partial class Toolgun : ScreenWeapon
 {
-	[Header( "Effects" )]
-	[Property] public GameObject SuccessImpactEffect { get; set; }
-	[Property] public GameObject SuccessBeamEffect { get; set; }
-
 	bool ping = false;
 	public void SwitchToolMode()
 	{

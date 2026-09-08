@@ -126,6 +126,13 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		if ( Controller.IsValid() && Controller.Renderer.IsValid() )
 		{
 			Controller.Renderer.Set( "b_noclip", IsNoclipping );
+
+			// Weapons write their pose while active; empty hands need an explicit reset.
+			if ( GetComponent<PlayerInventory>()?.ActiveWeapon.IsValid() != true )
+			{
+				Controller.Renderer.Set( "holdtype", "none" );
+				Controller.Renderer.Set( "holdtype_handedness", 0 );
+			}
 		}
 
 		// Seated weapon bookkeeping and HUD paint in the update stage - the camera modifier

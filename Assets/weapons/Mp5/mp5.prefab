@@ -80,9 +80,14 @@
           "_type": "gameobject",
           "go": "4c0e80fa-adda-4379-9f2c-57d9fddc85f1"
         },
+        "GrenadePrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/grenade/thrown_grenade.prefab"
+        },
+        "GrenadeSpeed": 1500,
+        "StartingGrenades": 6,
         "HoldType": "Rifle",
         "IncrementalReloading": false,
-        "IronSightsFireScale": 0.2,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -104,6 +109,10 @@
         "AttackSound": "weapons/mp5/sounds/mp5_shoot.sound",
         "StartingAmmo": 90,
         "PrimaryDelay": 0.09,
+        "SecondaryClipSize": 3,
+        "SecondaryDefaultClip": -1,
+        "SecondaryAmmoType": "ammo/grenade.ammo",
+        "SecondaryDelay": 1,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 10,
