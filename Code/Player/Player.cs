@@ -342,7 +342,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		OnControl();
 	}
 
-	private RealTimeSince _timeSinceJumpPressed;
+	private RealTimeSince _timeSinceJumpPressed = 1f;
+	private const float NoclipDoubleTapWindow = 0.3f;
 
 	void OnControl()
 	{
@@ -364,12 +365,16 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 		if ( Input.Pressed( "jump" ) )
 		{
-			if ( _timeSinceJumpPressed < 0.3f )
+			if ( _timeSinceJumpPressed < NoclipDoubleTapWindow )
 			{
-				ToggleNoclip();
+				ToggleNoclip( fromJump: true );
+				Input.ReleaseAction( "jump" );
+				_timeSinceJumpPressed = 1f;
 			}
-
-			_timeSinceJumpPressed = 0;
+			else
+			{
+				_timeSinceJumpPressed = 0;
+			}
 		}
 
 		if ( Input.Pressed( "undo" ) )
@@ -382,10 +387,11 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		Scene.Get<Inventory>()?.HandleInput();
 	}
 
-	void ToggleNoclip()
+	void ToggleNoclip( bool fromJump = false )
 	{
 		if ( GetComponent<NoclipMoveMode>( true ) is { } noclip )
 		{
+			noclip.ClearUpwardVelocityOnExit = fromJump && noclip.Enabled;
 			noclip.Enabled = !noclip.Enabled;
 			IsNoclipping = noclip.Enabled;
 		}

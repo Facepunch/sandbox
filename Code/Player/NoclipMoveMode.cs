@@ -10,10 +10,12 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 	public bool EnableCollision { get; set; }
 
 	[Property]
-	public float RunSpeed { get; set; } = 1200;
+	public float RunSpeed { get; set; } = 600;
 
 	[Property]
 	public float WalkSpeed { get; set; } = 200;
+
+	internal bool ClearUpwardVelocityOnExit { get; set; }
 
 	protected override void OnUpdateAnimatorState( SkinnedModelRenderer renderer )
 	{
@@ -29,10 +31,23 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 	public override void UpdateRigidBody( Rigidbody body )
 	{
 		body.Gravity = false;
-		body.LinearDamping = 5.0f;
+		// AddVelocity handles braking; damping would also reduce the requested speed.
+		body.LinearDamping = 0f;
 		body.AngularDamping = 1f;
 
 		body.Tags.Set( "noclip", !EnableCollision );
+	}
+
+	public override void AddVelocity()
+	{
+		var body = Controller.Body;
+		var target = Controller.WishVelocity;
+		const float responseTime = 0.075f;
+		var fraction = 1f - MathF.Exp( -Time.Delta / responseTime );
+		var velocity = Vector3.Lerp( body.Velocity, target, fraction );
+
+		// Finish braking completely instead of retaining a tiny residual drift.
+		body.Velocity = (velocity - target).IsNearlyZero( 0.01f ) ? target : velocity;
 	}
 
 	public override void OnModeBegin()
@@ -47,6 +62,12 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 	public override void OnModeEnd( MoveMode next )
 	{
 		Controller.IsClimbing = false;
+		if ( ClearUpwardVelocityOnExit )
+		{
+			// The first tap can ascend, but the exit gesture must not launch the player.
+			Controller.Body.Velocity = Controller.Body.Velocity.WithZ( MathF.Min( Controller.Body.Velocity.z, 0f ) );
+			ClearUpwardVelocityOnExit = false;
+		}
 		Controller.Body.Velocity = Controller.Body.Velocity.ClampLength( Controller.RunSpeed );
 		Controller.Body.Tags.Set( "noclip", false );
 	}
@@ -78,8 +99,8 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 		// if we're running, use run speed, if not use walk speed
 		var velocity = run ? RunSpeed * 2.0f : RunSpeed;
 
-		// Slow down when the walk modifier (Alt) is held
-		if ( Input.Down( "walk" ) ) velocity = WalkSpeed;
+		// Duck and the walk modifier both slow movement in any direction.
+		if ( Input.Down( "walk" ) || Input.Down( "duck" ) ) velocity = WalkSpeed;
 
 		if ( direction.IsNearlyZero( 0.1f ) )
 		{
@@ -88,9 +109,6 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 
 		// if we're hold down jump move upwards
 		if ( Input.Down( "jump" ) ) direction += Vector3.Up;
-
-		// if we're hold down duck move downwards
-		if ( Input.Down( "duck" ) ) direction += Vector3.Down;
 
 		return direction * velocity;
 	}

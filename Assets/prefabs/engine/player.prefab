@@ -309,7 +309,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "RunSpeed": 1200,
+        "RunSpeed": 600,
         "WalkSpeed": 200
       },
       {
