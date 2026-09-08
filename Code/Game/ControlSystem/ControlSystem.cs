@@ -22,6 +22,8 @@ public sealed class ControlSystem : GameObjectSystem<ControlSystem>
 
 		foreach ( var chair in GetSortedSeats() )
 		{
+			if ( driven.Contains( chair.GameObject.Root ) ) continue;
+
 			var linked = new LinkedGameObjectBuilder();
 			linked.AddConnected( chair.GameObject );
 

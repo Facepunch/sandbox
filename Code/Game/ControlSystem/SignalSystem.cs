@@ -282,9 +282,12 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 	// Who last pressed or signaled each component, so gates that re-emit later still
 	// pass the credit along without hand-carrying it. Pruned as components die.
 	private static readonly Dictionary<Component, Player> _instigators = new();
+	private readonly List<Component> _deadInstigators = new();
+	private RealTimeSince _sinceInstigatorPrune;
 
 	public SignalSystem( Scene scene ) : base( scene )
 	{
+		Listen( Stage.StartFixedUpdate, 0, PruneInstigators, "PruneSignalInstigators" );
 	}
 
 	void IContextMenuEvent.PopulateContextMenu( IContextMenuEvent.Event e )
@@ -353,14 +356,25 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 	{
 		if ( !component.IsValid() || !player.IsValid() ) return;
 
-		// Idk
-		if ( _instigators.Count > 256 )
+		_instigators[component] = player;
+	}
+
+	private void PruneInstigators()
+	{
+		if ( Scene != Game.ActiveScene || !Networking.IsHost ) return;
+		if ( _sinceInstigatorPrune < 1f ) return;
+		_sinceInstigatorPrune = 0;
+
+		foreach ( var entry in _instigators )
 		{
-			foreach ( var dead in _instigators.Keys.Where( key => !key.IsValid() ).ToArray() )
-				_instigators.Remove( dead );
+			if ( !entry.Key.IsValid() || !entry.Value.IsValid() )
+				_deadInstigators.Add( entry.Key );
 		}
 
-		_instigators[component] = player;
+		foreach ( var component in _deadInstigators )
+			_instigators.Remove( component );
+
+		_deadInstigators.Clear();
 	}
 
 	public static IEnumerable<SignalOutputDescription> GetOutputs( Component component )

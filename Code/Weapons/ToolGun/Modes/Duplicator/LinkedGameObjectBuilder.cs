@@ -3,6 +3,7 @@
 public class LinkedGameObjectBuilder
 {
 	public List<GameObject> Objects { get; } = new();
+	private readonly HashSet<GameObject> _visited = new();
 
 	/// <summary>
 	/// Reject players and any objects with players as descendants. This is used for the duplicator to avoid accidentally duping the player and all their attachments.
@@ -16,10 +17,11 @@ public class LinkedGameObjectBuilder
 	{
 		if ( !obj.IsValid() ) return false;
 		if ( obj.Tags.Contains( "world" ) ) return false;
-		if ( Objects.Contains( obj ) ) return false;
+		if ( _visited.Contains( obj ) ) return false;
 		if ( obj.GetComponent<MapInstance>() is not null ) return false;
 		if ( RejectPlayers && HasDescendantWithTag( obj, "player" ) ) return false;
 
+		_visited.Add( obj );
 		Objects.Add( obj );
 		return true;
 	}
@@ -74,6 +76,7 @@ public class LinkedGameObjectBuilder
 	public void RemoveDeletedObjects()
 	{
 		Objects.RemoveAll( x => !x.IsValid() || x.IsDestroyed );
+		_visited.RemoveWhere( x => !x.IsValid() || x.IsDestroyed );
 	}
 
 	static bool HasDescendantWithTag( GameObject obj, string tag )
@@ -89,5 +92,6 @@ public class LinkedGameObjectBuilder
 	public void Clear()
 	{
 		Objects.Clear();
+		_visited.Clear();
 	}
 }
