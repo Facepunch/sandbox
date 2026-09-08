@@ -247,7 +247,7 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 
 		Renderer.Set( "b_twohanded", true );
 		Renderer.Set( "deploy_type", 1 );
-		Renderer.Set( "reload_type", 0 );
+		Renderer.Set( "reload_type", 1 );
 
 		Renderer.Set( "b_grounded", playerController.IsOnGround );
 		Renderer.Set( "move_bob", GamePreferences.ViewBobbing ? playerController.Velocity.Length.Remap( 0, playerController.RunSpeed * 2f ) : 0 );
