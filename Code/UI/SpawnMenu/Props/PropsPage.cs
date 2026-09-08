@@ -18,8 +18,6 @@ public class PropsPage : SpawnlistsPage
 		AddOption( "🍦", "#spawnmenu.props.food", () => new SpawnPageCloud() { Category = "food" } );
 		AddOption( "🔫", "#spawnmenu.props.guns", () => new SpawnPageCloud() { Category = "weapon" } );
 
-		AddOption( "🙎", "#spawnmenu.props.characters", () => new SpawnPageCloud { Category = "characters" } );
-
 		AddSpawnlistOptions();
 	}
 }

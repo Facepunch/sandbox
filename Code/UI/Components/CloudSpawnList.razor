@@ -88,6 +88,7 @@
 
     List<object> Entries = [];
     bool Loading;
+    int _rebuildVersion;
 
     const string VerifiedOnlyCookie = "spawnmenu.verified_only";
     bool VerifiedOnly => Game.Cookies.Get( VerifiedOnlyCookie, false );
@@ -167,7 +168,10 @@
 
     async void Rebuild()
     {
-        var entries = FindLocalEntries().Cast<object>().ToList();
+        var rebuildVersion = ++_rebuildVersion;
+        var popular = SortOrder == PackageSortMode.Popular;
+        var localEntries = FindLocalEntries().Cast<object>().ToList();
+        var entries = popular ? localEntries.ToList() : new List<object>();
         Entries = entries;
         Loading = true;
         StateHasChanged();
@@ -177,18 +181,29 @@
         if ( !string.IsNullOrEmpty( PackageQuery ) ) query += $" {PackageQuery}";
 
         var result = await Package.FindAsync( query );
+        if ( rebuildVersion != _rebuildVersion ) return;
+
         var packages = result.Packages.AsEnumerable();
         if ( VerifiedOnly )
             packages = packages.Where( IsVerified );
 
         var packageList = packages.ToList();
-        entries.AddRange( packageList.Where( IsVerified ).Select( CreateEntry ) );
+        if ( popular )
+        {
+            entries.AddRange( packageList.Where( IsVerified ).Select( CreateEntry ) );
 
-        var communityPackages = packageList.Where( package => !IsVerified( package ) ).ToList();
-        if ( communityPackages.Count > 0 && entries.Count > 0 && !VerifiedOnly )
-            entries.Add( new CommunitySection() );
+            var communityPackages = packageList.Where( package => !IsVerified( package ) ).ToList();
+            if ( communityPackages.Count > 0 && entries.Count > 0 && !VerifiedOnly )
+                entries.Add( new CommunitySection() );
 
-        entries.AddRange( communityPackages.Select( CreateEntry ) );
+            entries.AddRange( communityPackages.Select( CreateEntry ) );
+        }
+        else
+        {
+            // Keep the requested workshop order; local items have no ranking metadata.
+            entries.AddRange( packageList.Select( CreateEntry ) );
+            entries.AddRange( localEntries );
+        }
         Entries = entries;
         Loading = false;
         StateHasChanged();
@@ -219,7 +234,8 @@
     protected virtual string PackageIdent( Package package ) => $"{package.TypeName}:{package.FullIdent}";
 
     /// <summary>
-    /// Local entries shown ahead of cloud results. Should respect <see cref="Filter"/>.
+    /// Local entries shown ahead of cloud results in Popular mode, otherwise after them.
+    /// Should respect <see cref="Filter"/>.
     /// </summary>
     protected virtual IEnumerable<Entry> FindLocalEntries() => [];
 }
