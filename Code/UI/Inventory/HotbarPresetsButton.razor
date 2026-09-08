@@ -17,7 +17,7 @@
 
     void OnToggleClick()
     {
-        var menu = MenuPanel.Open( this );
+        var menu = MenuPanel.Open( this, anchor: this, position: MenuPanel.AnchorPosition.Top );
 
         var presets = PlayerLoadout.GetLoadoutPresets();
         foreach ( var preset in presets )

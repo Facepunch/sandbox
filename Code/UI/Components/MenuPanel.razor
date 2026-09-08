@@ -22,7 +22,7 @@
 
             var opt = option;
 
-            <div class="option @( opt.SubmenuBuilder != null ? "has-submenu" : "" )"
+            <div @ref="opt.Panel" class="option @( opt.SubmenuBuilder != null ? "has-submenu" : "" )"
                  @onclick="@(() => OnOptionClick( opt ))"
                  @onmouseover="@(() => OnOptionHover( opt ))">
 
@@ -43,26 +43,40 @@
 
 @code
 {
+    public enum AnchorPosition
+    {
+        Top,
+        Bottom
+    }
+
     record MenuOption( string Icon, string Text, Action Action, Action<MenuPanel> SubmenuBuilder = null )
     {
         public bool IsSpacer => Icon == "__spacer__";
+        public Panel Panel { get; set; }
     }
 
     readonly List<MenuOption> _options = new();
     MenuPanel _openSubmenu;
     MenuOption _activeSubmenuOption;
     bool _isSubmenu;
-    bool _openLeft;
-    float _parentLeft;
+    MenuPanel _parentMenu;
+    Panel _parentOption;
     bool _submenuOpensLeft;
     Rect _layoutRect;
     Panel _source;
+    Panel _anchor;
+    AnchorPosition _anchorPosition;
 
-    public static MenuPanel Open( Panel source )
+    /// <summary>
+    /// Open at the mouse, or left-aligned above/below an anchor panel when supplied.
+    /// </summary>
+    public static MenuPanel Open( Panel source, Panel anchor = null, AnchorPosition position = AnchorPosition.Bottom )
     {
         var root = source.FindRootPanel();
         var menu = root.AddChild<MenuPanel>();
         menu._source = source;
+        menu._anchor = anchor;
+        menu._anchorPosition = position;
         menu.Style.Left = root.MousePosition.x * root.ScaleFromScreen;
         menu.Style.Top = root.MousePosition.y * root.ScaleFromScreen;
         menu.PlaySound( "sounds/kenney/ui/ui.navigate.forward.sound" );
@@ -75,6 +89,11 @@
 
         if ( _isSubmenu ) return;
         if ( !_source.IsValid() ) { Close(); return; }
+        if ( _anchor is not null && ( !_anchor.IsValid() || _anchor.AncestorsAndSelf.Any( p => !p.IsVisible ) ) )
+        {
+            Close();
+            return;
+        }
 
         // Walk the source ancestor chain — if any panel becomes invisible, close the menu
         if ( _source.AncestorsAndSelf.Any( p => !p.IsVisible ) )
@@ -113,19 +132,11 @@
 
         if ( option.SubmenuBuilder == null ) return;
 
-        const int minWidth = 200;
-        const int gap = 4;
-        const int padding = 10;
-
-        bool hasRoomRight = Box.Right + gap + minWidth < Screen.Width - padding;
-
         var root = FindRootPanel();
         var submenu = root.AddChild<MenuPanel>();
         submenu._isSubmenu = true;
-        submenu._openLeft = !hasRoomRight;
-        submenu._parentLeft = Box.Left;
-        submenu.Style.Left = hasRoomRight ? Box.Right + gap : Box.Left - gap - minWidth;
-        submenu.Style.Top = root.MousePosition.y * root.ScaleFromScreen - gap;
+        submenu._parentMenu = this;
+        submenu._parentOption = option.Panel;
 
         option.SubmenuBuilder( submenu );
         submenu.StateHasChanged();
@@ -162,11 +173,23 @@
         const int padding = 10;
         const int gap = 4;
 
-        if ( _openLeft )
+        if ( _anchor.IsValid() )
         {
-            var w = layoutRect.Width;
-            layoutRect.Right = _parentLeft - gap;
-            layoutRect.Left = layoutRect.Right - w;
+            // Layout rectangles and panel bounds are both in surface pixels.
+            var size = layoutRect.Size;
+            layoutRect.Position = new Vector2( _anchor.Box.Left,
+                _anchorPosition == AnchorPosition.Top
+                    ? _anchor.Box.Top - size.y - gap
+                    : _anchor.Box.Bottom + gap );
+        }
+
+        if ( _parentMenu.IsValid() && _parentOption.IsValid() )
+        {
+            var parentRect = _parentMenu._layoutRect;
+            var hasRoomRight = parentRect.Right + gap + layoutRect.Width <= Screen.Width - padding;
+            layoutRect.Position = new Vector2(
+                hasRoomRight ? parentRect.Right + gap : parentRect.Left - gap - layoutRect.Width,
+                _parentOption.Box.Top - 5 / ScaleFromScreen ); // Match the inner panel's padding and border.
         }
 
         if ( layoutRect.Right > Screen.Width - padding )
@@ -181,7 +204,13 @@
             layoutRect.Bottom = Screen.Height - padding;
         }
 
+        // Above-panel menus can extend past the top, and wide menus past the left.
+        if ( layoutRect.Left < padding )
+            layoutRect.Position += new Vector2( padding - layoutRect.Left, 0 );
+        if ( layoutRect.Top < padding )
+            layoutRect.Position += new Vector2( 0, padding - layoutRect.Top );
+
         _layoutRect = layoutRect;
-        _submenuOpensLeft = !_isSubmenu && !( layoutRect.Right + 4 + 200 < Screen.Width - 10 );
+        _submenuOpensLeft = !( layoutRect.Right + gap + 200 / ScaleFromScreen < Screen.Width - padding );
     }
 }

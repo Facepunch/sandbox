@@ -29,9 +29,13 @@ Vitals
 		position: absolute;
 		bottom: $deadzone-y;
 		right: $deadzone-x;
-		min-width: 150px;
-		justify-content: center;
 		transition: transform 0.2s ease, opacity 0.2s ease;
+
+		.value, .alternate
+		{
+			min-width: 60px;
+			text-align: right;
+		}
 	}
 
 	&.spawnmenu-open
