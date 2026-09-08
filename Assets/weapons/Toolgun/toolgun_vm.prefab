@@ -50,8 +50,7 @@
           "component_type": "SkinnedModelRenderer"
         },
         "ThrowableType": "HEGrenade",
-        "TracerEffect": null,
-        "UseFastAnimations": false
+        "TracerEffect": null
       }
     ],
     "Children": [

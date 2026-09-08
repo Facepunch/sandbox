@@ -37,7 +37,7 @@
         "RecoilYaw": "-0.150000006,0.150000006",
         "CanCancelReload": false,
         "ClipMaxSize": 7,
-        "DeployTime": 0.5,
+        "DeployTime": 0.2,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "imagefile",

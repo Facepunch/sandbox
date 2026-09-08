@@ -53,8 +53,7 @@
           "go": "dcc37bca-a959-4b1d-87ee-15eaa48af28d"
         },
         "ThrowableType": "HEGrenade",
-        "TracerEffect": null,
-        "UseFastAnimations": false
+        "TracerEffect": null
       },
       {
         "__type": "PhygunViewmodel",

@@ -24,7 +24,7 @@
         "AttackSound": "weapons/camera/sounds/camera.shoot.sound",
         "CanCancelReload": true,
         "ClipMaxSize": 30,
-        "DeployTime": 0.5,
+        "DeployTime": 0.2,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "imagefile",

@@ -36,7 +36,7 @@
         "CameraRecoilStrength": 2,
         "CanCancelReload": true,
         "ClipMaxSize": 6,
-        "DeployTime": 0.5,
+        "DeployTime": 0.2,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "imagefile",

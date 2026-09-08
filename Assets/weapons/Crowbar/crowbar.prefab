@@ -17,6 +17,7 @@
     "Components": [
       {
         "__type": "CrowbarWeapon",
+        "DeployTime": 0.2,
         "__guid": "de3c4f5a-6e7d-8901-cdef-012345678902",
         "__enabled": true,
         "Flags": 0,

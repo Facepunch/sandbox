@@ -60,8 +60,7 @@
           "go": "2658361a-cbbf-4054-9dfc-7eafdd48f589",
           "component_type": "SkinnedModelRenderer"
         },
-        "ThrowableType": "HEGrenade",
-        "UseFastAnimations": true
+        "ThrowableType": "HEGrenade"
       }
     ],
     "Children": [

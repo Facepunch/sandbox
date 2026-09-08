@@ -59,8 +59,7 @@
           "go": "a1b2c3d4-2226-4aaa-b226-222222222226",
           "component_type": "SkinnedModelRenderer"
         },
-        "ThrowableType": "HEGrenade",
-        "UseFastAnimations": false
+        "ThrowableType": "HEGrenade"
       },
       {
         "__type": "SniperViewModel",

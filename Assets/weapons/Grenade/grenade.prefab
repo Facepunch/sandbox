@@ -24,7 +24,7 @@
         "CanCancelReload": false,
         "ClipMaxSize": 17,
         "DeploySound": null,
-        "DeployTime": 0.5,
+        "DeployTime": 0.2,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "imagefile",

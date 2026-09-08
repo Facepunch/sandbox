@@ -73,8 +73,7 @@
         "TracerEffect": {
           "_type": "gameobject",
           "prefab": "prefabs/effects/default_tracer.prefab"
-        },
-        "UseFastAnimations": false
+        }
       }
     ],
     "Children": [

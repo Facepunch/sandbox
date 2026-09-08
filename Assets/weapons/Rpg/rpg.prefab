@@ -83,7 +83,7 @@
         "PrimaryAmmoType": "ammo/rocket.ammo",
         "CanCancelReload": false,
         "ClipMaxSize": 1,
-        "DeployTime": 0.5,
+        "DeployTime": 0.2,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "svgsource",
