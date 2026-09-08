@@ -106,9 +106,9 @@ public partial class Physgun : Local.IPlayerEvents
 	static float KeyboardMoveSpeed => 240.0f;
 
 	/// <summary>
-	/// How quickly A/D yaws a held object while rotate mode is active.
+	/// How quickly keyboard controls rotate a held object while rotate mode is active.
 	/// </summary>
-	static float KeyboardYawSpeed => 240.0f;
+	static float KeyboardRotateSpeed => 240.0f;
 
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
@@ -157,7 +157,7 @@ public partial class Physgun : Local.IPlayerEvents
 		}
 
 		var spinMove = Vector3.Zero;
-		_isSpinning = Input.Down( "use" ) && _state.Active && !_state.Pulling;
+		_isSpinning = Input.Down( "use" ) && _state.Active && _state.IsValid();
 		if ( _isSpinning )
 		{
 			spinMove = Input.AnalogMove;
@@ -186,11 +186,13 @@ public partial class Physgun : Local.IPlayerEvents
 					Launch( _state.Body, force );
 
 					_state = default;
+					_isSpinning = false;
 					_preventReselect = true;
 				}
 				else if ( Input.Pressed( "attack2" ) )
 				{
 					_state = default;
+					_isSpinning = false;
 					_preventReselect = true;
 				}
 			}
@@ -233,9 +235,12 @@ public partial class Physgun : Local.IPlayerEvents
 				var look = Input.AnalogLook * -1;
 				var state = _state;
 
-				// W/S pushes the object away from or pulls it toward the player.
-				state.GrabDistance += move.x * KeyboardMoveSpeed * Time.Delta;
-				state.GrabDistance = MathF.Max( 0.0f, state.GrabDistance );
+				// Only beam grabs allow W/S to adjust the holding distance.
+				if ( !state.Pulling )
+				{
+					state.GrabDistance += move.x * KeyboardMoveSpeed * Time.Delta;
+					state.GrabDistance = MathF.Max( 0.0f, state.GrabDistance );
+				}
 
 				if ( _isSnapping )
 				{
@@ -246,24 +251,27 @@ public partial class Physgun : Local.IPlayerEvents
 				_spinRotation = Rotation.From( look ) * _spinRotation;
 				var spinRotation = _spinRotation;
 
-				// A/D rotates around world up. Convert through the player's yaw because
-				// GrabOffset is stored relative to that frame of reference.
+				// Gravity holds use W/S to pitch around the viewer's right axis.
+				if ( state.Pulling && MathF.Abs( move.x ) > 0.001f )
+					spinRotation = Rotation.From( new Angles( move.x * KeyboardRotateSpeed * Time.Delta, 0f, 0f ) ) * spinRotation;
+
+				// Gravity holds use the full eye rotation; beam grabs use only its yaw.
+				var eyeRotation = _state.Pulling
+					? player.EyeTransform.Rotation
+					: Rotation.FromYaw( player.Controller.EyeAngles.yaw );
+
+				// A/D rotates around world up through the hold's frame of reference.
 				if ( MathF.Abs( move.y ) > 0.001f )
 				{
-					var eyeYaw = Rotation.FromYaw( player.Controller.EyeAngles.yaw );
-					var worldRotation = eyeYaw * spinRotation;
-					worldRotation = Rotation.FromYaw( move.y * KeyboardYawSpeed * Time.Delta ) * worldRotation;
-					spinRotation = eyeYaw.Inverse * worldRotation;
+					var worldRotation = eyeRotation * spinRotation;
+					worldRotation = Rotation.FromYaw( move.y * KeyboardRotateSpeed * Time.Delta ) * worldRotation;
+					spinRotation = eyeRotation.Inverse * worldRotation;
 				}
 
 				_spinRotation = spinRotation;
 
 				if ( _isSnapping )
 				{
-					var eyeRotation = _state.Pulling
-						? player.EyeTransform.Rotation
-						: Rotation.FromYaw( player.Controller.EyeAngles.yaw );
-
 					// convert rotation to worldspace
 					spinRotation = eyeRotation * spinRotation;
 
@@ -537,6 +545,7 @@ public partial class Physgun : Local.IPlayerEvents
 		_launched = default;
 		_primaryControlDown = false;
 		_secondaryControlDown = false;
+		_isSpinning = false;
 	}
 
 	protected override void OnFixedUpdate()
