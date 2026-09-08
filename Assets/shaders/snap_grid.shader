@@ -65,6 +65,7 @@ PS
 	RenderState( DstBlend, INV_SRC_ALPHA );
 
 	float3 GridOrigin < Attribute( "GridOrigin" ); Default3( 0, 0, 0 ); >;
+	float3 BoundsOrigin < Attribute( "BoundsOrigin" ); Default3( 0, 0, 0 ); >;
 	float3 GridRight < Attribute( "GridRight" ); Default3( 1, 0, 0 ); >;
 	float3 GridUp < Attribute( "GridUp" ); Default3( 0, 0, 1 ); >;
 
@@ -100,7 +101,9 @@ PS
 		float grid = max( cov.x, cov.y );
 
 		// Rectangular fade: grid eases in from the bounds edge over half a cell.
-		float2 edgeDist = HalfExtents - abs( facePos );
+		float3 boundsOffset = p - BoundsOrigin;
+		float2 boundsPos = float2( dot( boundsOffset, GridRight ), dot( boundsOffset, GridUp ) );
+		float2 edgeDist = HalfExtents - abs( boundsPos );
 		float edgeFade = saturate( min( edgeDist.x, edgeDist.y ) / max( CellSize * 0.5, 0.001 ) );
 
 		float dist = length( p - AimPoint );
@@ -145,7 +148,7 @@ PS
 		float centerLines = max( centerX, centerY ) * edgeFade * gridFade;
 
 		// Bounds edges: lines at facePos == ±HalfExtents.
-		float2 boundsEdgeDist = abs( HalfExtents - abs( facePos ) );
+		float2 boundsEdgeDist = abs( HalfExtents - abs( boundsPos ) );
 		float boundsX = saturate( ( thickLw.x - boundsEdgeDist.x ) / max( thickLw.x, 0.0001 ) );
 		float boundsY = saturate( ( thickLw.y - boundsEdgeDist.y ) / max( thickLw.y, 0.0001 ) );
 		float boundsLines = max( boundsX, boundsY ) * gridFade;

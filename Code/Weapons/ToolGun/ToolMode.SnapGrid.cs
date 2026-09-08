@@ -49,11 +49,11 @@ public abstract partial class ToolMode
 	}
 
 	/// <summary>
-	/// Override to control which objects show the snap grid. Returns false for world and player geometry by default.
+	/// Override to control which objects show the snap grid. Excludes player geometry by default.
 	/// </summary>
 	protected virtual bool ShouldDisplaySnapGrid( GameObject go )
 	{
-		return !go.Tags.Has( "world" ) && !go.Tags.Has( "player" );
+		return !go.Tags.Has( "player" );
 	}
 
 	public virtual void OnControl()

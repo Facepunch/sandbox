@@ -37,7 +37,7 @@ public sealed class SnapGrid
 			var halfW = faceHalfExtents.x;
 			var halfH = faceHalfExtents.y;
 
-			// The quad is always centred at the projected bounds centre.
+			// The quad follows the surface bounds, independently of the grid's anchor.
 			var quadCenter = faceOrigin;
 
 			var v00 = quadCenter - faceRight * halfW - faceUp * halfH;
@@ -45,7 +45,7 @@ public sealed class SnapGrid
 			var v11 = quadCenter + faceRight * halfW + faceUp * halfH;
 			var v01 = quadCenter - faceRight * halfW + faceUp * halfH;
 
-			Bounds = BBox.FromPositionAndSize( quadCenter, MathF.Max( halfW, halfH ) * 2f );
+			Bounds = BBox.FromPositionAndSize( quadCenter, MathF.Sqrt( halfW * halfW + halfH * halfH ) * 2f );
 
 			Span<Vertex> verts = stackalloc Vertex[6]
 			{
@@ -66,6 +66,7 @@ public sealed class SnapGrid
 	private Material _material;
 
 	private Vector3 _cachedOrigin;
+	private Vector3 _worldPatchCenter;
 	private Vector3 _cachedNormal;
 	private Vector3 _cachedRight;
 	private Vector3 _cachedUp;
@@ -145,11 +146,16 @@ public sealed class SnapGrid
 
 		// Only recalculate the plane when the surface normal or hovered object changes
 		var faceNormal = hitNormalWorld.Normal;
+		var isWorld = hoveredObject.Tags.Has( "world" );
 		var holdingUse = Input.Down( "use" );
 		var objectChanged = hoveredObject != _cachedObject;
 		var planeChanged = !_hasPlane || (objectChanged) || (!holdingUse && Vector3.Dot( faceNormal, _cachedNormal ) < 0.999f);
 
-		if ( planeChanged )
+		if ( isWorld )
+		{
+			UpdateWorldPlane( hoveredObject, aimWorldPos, faceNormal, holdingUse );
+		}
+		else if ( planeChanged )
 		{
 			_cachedNormal = faceNormal;
 			_cachedObject = hoveredObject;
@@ -216,9 +222,11 @@ public sealed class SnapGrid
 		var (cx, cy, snapPos, snapU, snapV, snapAxisX, snapAxisY) = ComputeSnap( _cachedOrigin, _cachedRight, _cachedUp, cellSize, aimWorldPos );
 		LastSnapWorldPos = snapPos;
 
-		_sceneObj.Write( _cachedOrigin, _cachedRight, _cachedUp, halfExtents, aimWorldPos, MaskRadius, cellSize );
+		var boundsOrigin = isWorld ? _worldPatchCenter : _cachedOrigin;
+		_sceneObj.Write( boundsOrigin, _cachedRight, _cachedUp, halfExtents, aimWorldPos, MaskRadius, cellSize );
 
 		_sceneObj.Attributes.Set( "GridOrigin", _cachedOrigin );
+		_sceneObj.Attributes.Set( "BoundsOrigin", boundsOrigin );
 		_sceneObj.Attributes.Set( "GridRight", _cachedRight );
 		_sceneObj.Attributes.Set( "GridUp", _cachedUp );
 		_sceneObj.Attributes.Set( "AimPoint", aimWorldPos );
@@ -229,6 +237,41 @@ public sealed class SnapGrid
 		_sceneObj.Attributes.Set( "SnapCornerY", snapV / cellSize );
 		_sceneObj.Attributes.Set( "SnapAxisX", snapAxisX ? 1.0f : 0.0f );
 		_sceneObj.Attributes.Set( "SnapAxisY", snapAxisY ? 1.0f : 0.0f );
+	}
+
+	private void UpdateWorldPlane( GameObject hoveredObject, Vector3 aimPos, Vector3 normal, bool holdingUse )
+	{
+		var planeChanged = !_hasPlane || hoveredObject != _cachedObject || (!holdingUse &&
+			(Vector3.Dot( normal, _cachedNormal ) < 0.9999f ||
+			MathF.Abs( Vector3.Dot( aimPos - _cachedOrigin, _cachedNormal ) ) > 0.01f));
+
+		if ( planeChanged )
+		{
+			_cachedObject = hoveredObject;
+			_cachedNormal = normal;
+			var reference = MathF.Abs( Vector3.Dot( normal, Vector3.Up ) ) > 0.9f ? Vector3.Forward : Vector3.Up;
+			_cachedRight = Vector3.Cross( normal, reference ).Normal;
+			_cachedUp = Vector3.Cross( _cachedRight, normal ).Normal;
+			// Project the world origin so returning to this plane uses the same lattice.
+			_cachedOrigin = ProjectOntoPlane( Vector3.Zero, aimPos, normal );
+			_worldPatchCenter = _cachedOrigin;
+			_hasPlane = true;
+		}
+
+		// Leave enough margin for the cursor's fade mask before moving the patch.
+		var halfSize = MathF.Ceiling( MathF.Max( GridSize, MaskRadius + CellSize ) * 2f / CellSize ) * CellSize;
+		_cachedHalfExtents = new Vector2( halfSize, halfSize );
+		var offset = aimPos - _worldPatchCenter;
+		var u = Vector3.Dot( offset, _cachedRight );
+		var v = Vector3.Dot( offset, _cachedUp );
+		var threshold = halfSize - MaskRadius - CellSize;
+		if ( planeChanged || MathF.Abs( u ) > threshold || MathF.Abs( v ) > threshold )
+		{
+			var anchorOffset = aimPos - _cachedOrigin;
+			var cellU = MathF.Round( Vector3.Dot( anchorOffset, _cachedRight ) / CellSize );
+			var cellV = MathF.Round( Vector3.Dot( anchorOffset, _cachedUp ) / CellSize );
+			_worldPatchCenter = _cachedOrigin + _cachedRight * (cellU * CellSize) + _cachedUp * (cellV * CellSize);
+		}
 	}
 
 	/// <summary>
