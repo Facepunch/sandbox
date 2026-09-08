@@ -75,7 +75,7 @@ public sealed partial class Player : ICameraModifier
 		var r = Controller.WishVelocity.Dot( EyeTransform.Left ) / -250.0f;
 		roll = MathX.Lerp( roll, r, Time.Delta * 10.0f, true );
 
-		view.Rotation *= new Angles( 0, 0, roll );
+		view.Rotation *= new Angles( 0, 0, roll * GamePreferences.ViewTilt.Clamp( 0f, 1f ) );
 	}
 
 	private void UpdateSeatedWeapons()

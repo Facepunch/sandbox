@@ -23,6 +23,13 @@ internal static class GamePreferences
 	public static bool ViewBobbing { get; set; } = true;
 
 	/// <summary>
+	/// Strength of the camera tilt when moving sideways
+	/// </summary>
+	[ConVar( "sandbox.viewtilt", ConVarFlags.Saved, Help = "Sideways camera tilt strength. 0 disables tilt, 1 restores the original strength." )]
+	[Range( 0f, 1f ), Step( 0.05f ), Group( "Camera" )]
+	public static float ViewTilt { get; set; } = 0.35f;
+
+	/// <summary>
 	/// Intensity of your camera's screenshake
 	/// </summary>
 	[ConVar( "sandbox.screenshake", ConVarFlags.Saved )]
