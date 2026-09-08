@@ -10,6 +10,8 @@
     "tool.hint.weld.finish": "Finish",
     "tool.hint.weld.remove": "Unweld",
     "tool.hint.weld.confirm": "Confirm",
+    "tool.hint.weld.easy": "Easy Weld",
+    "tool.hint.weld.cancel": "Cancel",
 
     "tool.hint.balloon.description": "Places a poppable balloon",
     "tool.hint.balloon.place_rope": "Place (rope)",

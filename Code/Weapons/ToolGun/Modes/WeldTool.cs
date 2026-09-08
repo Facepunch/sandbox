@@ -5,8 +5,7 @@
 [Group( "#tool.group.constraints" )]
 public sealed class WeldTool : BaseConstraintToolMode
 {
-	[Property, Sync]
-	public bool EasyMode { get; set; } = true;
+	bool _easyMode;
 
 	[Property, Sync]
 	public bool Rigid { get; set; } = false;
@@ -15,7 +14,7 @@ public sealed class WeldTool : BaseConstraintToolMode
 	float _rawAngle = 0f;
 	bool _isSnapping;
 
-	public override bool AbsorbMouseInput => EasyMode && Stage == 2;
+	public override bool AbsorbMouseInput => _easyMode && Stage == 2;
 
 	public override string Description => Stage switch
 	{
@@ -32,6 +31,7 @@ public sealed class WeldTool : BaseConstraintToolMode
 	};
 
 	public override string ReloadAction => "#tool.hint.weld.remove";
+	public override string SecondaryAction => Stage == 0 ? "#tool.hint.weld.easy" : "#tool.hint.weld.cancel";
 
 	/// <summary>
 	/// Overrides a SelectionPoint's local position to the nearest snap grid corner
@@ -51,28 +51,42 @@ public sealed class WeldTool : BaseConstraintToolMode
 
 	public override void OnControl()
 	{
-		Toolgun.SetIsUsingJoystick( EasyMode && Stage == 2 );
+		Toolgun.SetIsUsingJoystick( _easyMode && Stage == 2 );
 
-		if ( EasyMode && Stage == 2 )
+		if ( _easyMode && Stage == 2 )
 		{
 			SnapGrid?.Hide();
 			RotateStage();
 			return;
 		}
 
-		if ( EasyMode && Stage == 1 && Input.Pressed( "attack1" ) )
+		if ( _easyMode && Stage == 1 && Input.Pressed( "attack1" ) && !Input.Pressed( "attack2" ) )
 		{
-			if ( TryEnterRotateStage() )
-				return;
+			TryEnterRotateStage();
+			return;
 		}
+
+		if ( Stage == 0 )
+			_easyMode = Input.Pressed( "attack2" );
 
 		int stageBefore = Stage;
 		base.OnControl();
 
-		if ( stageBefore == 0&& Stage == 1 && Point1.IsValid() && Input.Down( "use" ) )
+		// The base tool treats secondary as cancel; start Easy Weld after it updates the snap grid.
+		if ( stageBefore == 0 && _easyMode )
+		{
+			var select = TraceSelect();
+			IsValidState = select.IsValid();
+			if ( !IsValidState ) return;
+			Point1 = select;
+			Stage = 1;
+			ShootEffects( select );
+		}
+
+		if ( stageBefore == 0 && Stage == 1 && Point1.IsValid() && Input.Down( "use" ) )
 			Point1 = SnapSelectionPoint( Point1 );
 
-		if ( EasyMode && Stage == 1 && IsValidState )
+		if ( _easyMode && Stage == 1 && IsValidState )
 		{
 			var select = TraceSelect();
 			select = Input.Down( "use" ) ? SnapSelectionPoint( select ) : select;
@@ -99,8 +113,11 @@ public sealed class WeldTool : BaseConstraintToolMode
 
 		if ( Input.Pressed( "attack1" ) )
 		{
+			if ( !FireToolAction( ToolInput.Primary ) ) return;
 			CreateRotatedWeld( Point1, Point2, _easyModeAngle );
 			ShootEffects( Point2 );
+			FirePostToolAction( ToolInput.Primary );
+			OnConstraintSubmitted( Point1, Point2 );
 			ResetRotation();
 			Stage = 0;
 		}
@@ -153,6 +170,7 @@ public sealed class WeldTool : BaseConstraintToolMode
 	{
 		base.OnDisabled();
 		ResetRotation();
+		_easyMode = false;
 	}
 
 	/// <summary>
@@ -204,9 +222,11 @@ public sealed class WeldTool : BaseConstraintToolMode
 			return;
 		}
 
-		_easyModeAngle = angle;
+		// Placement is part of this RPC, independent of the client's current input state.
+		var moving = point1.GameObject.Network.RootGameObject ?? point1.GameObject;
+		moving.WorldTransform = GetRotatedPlacement( point1, point2, angle );
 		CreateConstraint( point1, point2 );
-		_easyModeAngle = 0f;
+		CheckContraptionStats( point1.GameObject );
 	}
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
@@ -219,13 +239,6 @@ public sealed class WeldTool : BaseConstraintToolMode
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
-		if ( EasyMode )
-		{
-			var local = GetRotatedPlacement( point1, point2, _easyModeAngle );
-			var moving = point1.GameObject.Network.RootGameObject ?? point1.GameObject;
-			moving.WorldTransform = local;
-		}
-
 		var go1 = new GameObject( false, "weld" );
 		go1.Parent = point1.GameObject;
 		go1.LocalTransform = point1.LocalTransform;

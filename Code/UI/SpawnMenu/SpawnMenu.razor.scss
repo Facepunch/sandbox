@@ -211,6 +211,8 @@ SpawnMenuHost.open SpawnMenu
 
         > .left
         {
+            height: 100%;
+            min-height: 0;
             flex-grow: 0;
             flex-shrink: 0;
             flex-direction: column;

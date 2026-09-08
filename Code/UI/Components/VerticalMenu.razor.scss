@@ -7,10 +7,17 @@ VerticalMenu
 	font-weight: 600;
 	font-size: 14px;
 	flex-grow: 1;
-	flex-shrink: 0;
+	flex-shrink: 1;
+	min-height: 0;
 	padding: 8px;
 	overflow-x: hidden;
 	overflow-y: scroll;
+	scrollbar-width: thin;
+
+	> *
+	{
+		flex-shrink: 0;
+	}
 
 	h2
 	{
