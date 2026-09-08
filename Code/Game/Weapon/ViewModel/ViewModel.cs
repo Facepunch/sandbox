@@ -174,6 +174,13 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 
 		Renderer.Enabled = !HideViewModel;
 
+		if ( !GamePreferences.ViewBobbing )
+		{
+			currentInertia = Vector2.Zero;
+			isFirstUpdate = true;
+			return;
+		}
+
 		ApplyInertia( view.Rotation );
 
 		if ( Renderer.TryGetBoneTransformLocal( "camera", out var bone ) )
@@ -193,8 +200,13 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 		var rotation = view.Rotation;
 		var pivotOffset = Vector3.Zero;
 
-		if ( LookInertia )
+		if ( LookInertia && GamePreferences.ViewBobbing )
 			rotation = ApplyLookInertia( view.Rotation, out pivotOffset );
+		else
+		{
+			_lookInertiaFirstUpdate = true;
+			_lookVelocity = Vector2.Zero;
+		}
 
 		WorldPosition = view.Position + pivotOffset;
 		WorldRotation = rotation;
@@ -253,10 +265,10 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 		Renderer.Set( "move_bob", GamePreferences.ViewBobbing ? playerController.Velocity.Length.Remap( 0, playerController.RunSpeed * 2f ) : 0 );
 
 		Renderer.Set( "aim_pitch", rot.pitch );
-		Renderer.Set( "aim_pitch_inertia", currentInertia.x * InertiaScale.x );
+		Renderer.Set( "aim_pitch_inertia", GamePreferences.ViewBobbing ? currentInertia.x * InertiaScale.x : 0 );
 
 		Renderer.Set( "aim_yaw", rot.yaw );
-		Renderer.Set( "aim_yaw_inertia", currentInertia.y * InertiaScale.y );
+		Renderer.Set( "aim_yaw_inertia", GamePreferences.ViewBobbing ? currentInertia.y * InertiaScale.y : 0 );
 
 		Renderer.Set( "attack_hold", IsAttacking ? AttackDuration.Relative.Clamp( 0f, 1f ) : 0f );
 

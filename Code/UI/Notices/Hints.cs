@@ -3,7 +3,7 @@
 public class Hints : GameObjectSystem<Hints>
 {
 	[Title( "Show UI Hints" )]
-	[ConVar( "sandbox.showhints", ConVarFlags.Saved | ConVarFlags.GameSetting, Help = "Whether to display popup hints." )]
+	[ConVar( "sandbox.showhints", ConVarFlags.Saved, Help = "Whether to display popup hints." )]
 	public static bool ShowHints { get; set; } = true;
 
 	record class Hint( string Name, string Icon, RealTimeUntil Delay )

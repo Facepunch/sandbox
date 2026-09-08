@@ -70,7 +70,11 @@ public sealed partial class Player : ICameraModifier
 	private void ApplyMovementCameraEffects( ref CameraView view )
 	{
 		if ( Controller.ThirdPerson ) return;
-		if ( !GamePreferences.ViewBobbing ) return;
+		if ( !GamePreferences.ViewBobbing )
+		{
+			roll = 0;
+			return;
+		}
 
 		var r = Controller.WishVelocity.Dot( EyeTransform.Left ) / -250.0f;
 		roll = MathX.Lerp( roll, r, Time.Delta * 10.0f, true );

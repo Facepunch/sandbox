@@ -10,13 +10,7 @@ internal static class GamePreferences
 	public static bool AutoSwitch { get; set; } = true;
 
 	/// <summary>
-	/// Enables fast switching between inventory weapons
-	/// </summary>
-	[ConVar( "sandbox.fastswitch", ConVarFlags.Saved )]
-	public static bool FastSwitch { get; set; } = false;
-
-	/// <summary>
-	/// Intensity of your camera's screenshake
+	/// Enables movement bob, weapon inertia and animation-driven camera motion.
 	/// </summary>
 	[ConVar( "sandbox.viewbob", ConVarFlags.Saved )]
 	[Group( "Camera" )]
