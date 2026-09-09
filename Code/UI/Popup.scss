@@ -64,3 +64,114 @@
 		}
 	}
 }
+
+// Compact prompt windows share the spawn menu's surfaces and controls.
+.popup > .inner.popup-window
+{
+	width: 480px;
+	max-width: 90vw;
+	max-height: 90vh;
+	padding: 0;
+	gap: 0;
+	color: $menu-text;
+	background-color: $menu-panel-bg;
+	backdrop-filter: blur( 12px );
+	border: 1px solid rgba( white, 0.07 );
+	border-radius: 10px;
+	box-shadow: 5px 5px 30px #000e;
+	overflow: hidden;
+
+	.popup-header
+	{
+		padding: 14px 16px;
+		margin: 0;
+		gap: 12px;
+		background-color: rgba( black, 0.2 );
+		border-bottom: 1px solid rgba( white, 0.07 );
+
+		h2
+		{
+			flex-grow: 1;
+			flex-shrink: 1;
+			height: auto;
+			font-size: 18px;
+			font-weight: 600;
+			color: $menu-text-strong;
+		}
+	}
+
+	.popup-close
+	{
+		width: 28px;
+		height: 28px;
+		padding: 0;
+		flex-shrink: 0;
+		justify-content: center;
+		align-items: center;
+		border-radius: 6px;
+		color: $menu-text;
+		cursor: pointer;
+
+		.icon { font-size: 20px; }
+
+		&:hover
+		{
+			color: white;
+			background-color: rgba( white, 0.08 );
+			sound-in: ui.hover;
+		}
+	}
+
+	.popup-body
+	{
+		padding: 20px;
+		gap: 16px;
+		flex-direction: column;
+		flex-shrink: 1;
+		overflow-y: scroll;
+
+		h3
+		{
+			font-size: 14px;
+			font-weight: 400;
+			color: $menu-text;
+			flex-shrink: 0;
+		}
+
+		.menu-input
+		{
+			width: 100%;
+			min-height: 40px;
+			padding: 10px 12px;
+			font-size: 14px;
+			flex-shrink: 0;
+			border: 1px solid rgba( white, 0.1 );
+
+			&:focus { border-color: $menu-accent; }
+		}
+	}
+
+	.popup-footer
+	{
+		padding: 14px 20px;
+		gap: 8px;
+		flex-shrink: 0;
+		justify-content: flex-end;
+		background-color: rgba( black, 0.15 );
+		border-top: 1px solid rgba( white, 0.07 );
+
+		.menu-action
+		{
+			min-height: 36px;
+			padding: 8px 14px;
+			border-radius: 6px;
+		}
+
+		.popup-confirm
+		{
+			background-color: rgba( $menu-accent, 0.24 );
+
+			&:hover { background-color: rgba( $menu-accent, 0.4 ); }
+		}
+	}
+}

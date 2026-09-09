@@ -5,19 +5,22 @@
 
 <root class="popup">
 
-    <div class="inner">
+    <div class="inner popup-window">
         <div class="popup-header">
             <h2>#spawnmenu.spawnlist.create_title</h2>
+            <Button Icon="close" class="popup-close" @onclick=@(() => Delete()) />
         </div>
 
-        <h3>#spawnmenu.spawnlist.create_prompt</h3>
+        <div class="popup-body">
+            <h3>#spawnmenu.spawnlist.create_prompt</h3>
 
-        <TextEntry class="menu-input" Placeholder="#spawnmenu.spawnlist.name_placeholder" Value:bind=@Name />
+            <TextEntry class="menu-input" Placeholder="#spawnmenu.spawnlist.name_placeholder" Value:bind=@Name />
+        </div>
 
-        <span class="grow">
-            <Button Text="#spawnmenu.spawnlist.create_button" Icon="add" class="menu-action primary" Disabled=@(string.IsNullOrWhiteSpace(Name)) @onclick=@OnCreate />
-            <Button Text="#spawnmenu.common.cancel" Icon="close" class="menu-action primary" @onclick=@(() => Delete() ) />
-        </span>
+        <div class="popup-footer">
+            <Button Text="#spawnmenu.common.cancel" class="menu-action soft" @onclick=@(() => Delete() ) />
+            <Button Text="#spawnmenu.spawnlist.create_button" Icon="add" class="menu-action primary popup-confirm" Disabled=@(string.IsNullOrWhiteSpace(Name)) @onclick=@OnCreate />
+        </div>
     </div>
 </root>
 
@@ -43,4 +46,3 @@
         Delete();
     }
 }
-

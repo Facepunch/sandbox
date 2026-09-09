@@ -5,25 +5,28 @@
 
 <root class="popup">
 
-    <div class="inner" onclick:preventDefault=@true>
+    <div class="inner popup-window" onclick:preventDefault=@true>
         <div class="popup-header">
             <h2>@Title</h2>
+            <Button Icon="close" class="popup-close" @onclick=@(() => Delete()) />
         </div>
 
-        @if ( !string.IsNullOrEmpty( Prompt ) )
-        {
-            <h3>@Prompt</h3>
-        }
+        <div class="popup-body">
+            @if ( !string.IsNullOrEmpty( Prompt ) )
+            {
+                <h3>@Prompt</h3>
+            }
 
-        @if ( ShowInput )
-        {
-            <TextEntry class="menu-input" Placeholder=@Placeholder Value:bind=@Value />
-        }
+            @if ( ShowInput )
+            {
+                <TextEntry class="menu-input" Placeholder=@Placeholder Value:bind=@Value />
+            }
+        </div>
 
-        <span class="grow">
-            <Button Text=@ConfirmLabel Icon="check" class="menu-action primary" Disabled=@(ShowInput && string.IsNullOrWhiteSpace( Value )) @onclick=@OnConfirmClick />
-            <Button Text="Cancel" Icon="close" class="menu-action primary" @onclick=@(() => Delete()) />
-        </span>
+        <div class="popup-footer">
+            <Button Text="#spawnmenu.common.cancel" class="menu-action soft" @onclick=@(() => Delete()) />
+            <Button Text=@ConfirmLabel Icon="check" class="menu-action primary popup-confirm" Disabled=@(ShowInput && string.IsNullOrWhiteSpace( Value )) @onclick=@OnConfirmClick />
+        </div>
     </div>
 
 </root>
@@ -45,7 +48,7 @@
     /// <summary>Pre-filled value in the text entry.</summary>
     public string InitialValue { get; set; } = "";
 
-    /// <summary>When false, hides the text entry — acts as a simple confirm/deny dialog.</summary>
+    /// <summary>When false, hides the text entry â€” acts as a simple confirm/deny dialog.</summary>
     public bool ShowInput { get; set; } = true;
 
     /// <summary>Called with the trimmed string when the user confirms.</summary>
