@@ -64,11 +64,34 @@ public sealed class WireTool : BaseConstraintToolMode
 		_overlay = null;
 	}
 
-	private SignalPortDescription SelectedPort =>
-		_hoveredPorts.Length == 0 ? null : _hoveredPorts[_selectedPortIndex.Clamp( 0, _hoveredPorts.Length - 1 )];
+	private SignalPortDescription SelectedPort
+	{
+		get
+		{
+			if ( _hoveredPorts.Length == 0 ) return null;
+			var port = _hoveredPorts[_selectedPortIndex.Clamp( 0, _hoveredPorts.Length - 1 )];
+			return IsPortValid( port ) ? port : null;
+		}
+	}
+
+	private static bool IsPortValid( SignalPortDescription port ) =>
+		port?.Component.IsValid() == true && port.Component.GameObject.IsValid();
 
 	private void UpdateHoveredSelection( SelectionPoint select )
 	{
+		// Port descriptions can outlive their component. Cancel the pending wire
+		// before accessing the source or filtering compatible targets.
+		if ( Stage != 0 && (!IsPortValid( _sourcePort ) || !Point1.IsValid()) )
+		{
+			Stage = 0;
+			Point1 = default;
+			Point2 = default;
+			_sourcePort = null;
+			_hoveredPortsKey = default;
+			_hoveredPorts = [];
+			_selectedPortIndex = 0;
+		}
+
 		var root = select.IsValid() ? select.GameObject.Root : null;
 		var targetChanged = root != _hoveredRoot;
 		_hoveredRoot = root;
