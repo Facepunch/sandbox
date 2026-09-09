@@ -1,6 +1,6 @@
 using Sandbox.Rendering;
 
-[Title( "Sniper" )]
+[Title( "M700" )]
 public sealed class SniperWeapon : BaseBulletWeapon
 {
 	[Property] public float ScopedFov { get; set; } = 20f;

@@ -1,6 +1,6 @@
 {
   "Prefab": "weapons/mp5/mp5.prefab",
-  "Title": "MP5",
+  "Title": "SG-5",
   "Description": "Semi-automatic sub machine gun",
   "Category": "Weapon",
   "IncludeCode": false,

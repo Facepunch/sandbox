@@ -1,6 +1,6 @@
 ﻿using Sandbox.Rendering;
 
-[Title( "MP5" )]
+[Title( "SG-5" )]
 public sealed class Mp5Weapon : BaseBulletWeapon
 {
 	/// <summary>

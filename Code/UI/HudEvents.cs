@@ -62,6 +62,11 @@ public enum HudElement
 	/// </summary>
 	Voices = 1 << 10,
 
+	/// <summary>
+	/// Recent ammo pickups above the ammo counter.
+	/// </summary>
+	AmmoPickups = 1 << 11,
+
 	All = ~0,
 }
 

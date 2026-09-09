@@ -1,6 +1,6 @@
 {
   "Prefab": "weapons/colt1911/colt1911.prefab",
-  "Title": "1911",
+  "Title": "Heritage .45",
   "Description": "Semi-automatic .45 ACP pistol",
   "Category": "Weapon",
   "IncludeCode": false,

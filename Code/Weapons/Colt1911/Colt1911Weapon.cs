@@ -1,6 +1,6 @@
 ﻿using Sandbox.Rendering;
 
-[Title( "1911" )]
+[Title( "Heritage .45" )]
 public sealed class Colt1911Weapon : IronSightsWeapon
 {
 	protected override bool WantsPrimaryAttack()

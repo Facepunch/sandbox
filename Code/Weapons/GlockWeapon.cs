@@ -1,6 +1,6 @@
 ﻿using Sandbox.Rendering;
 
-[Title( "USP" )]
+[Title( "UP-45" )]
 public sealed class GlockWeapon : IronSightsWeapon
 {
 	protected override bool WantsPrimaryAttack()

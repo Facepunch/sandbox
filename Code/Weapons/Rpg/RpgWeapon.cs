@@ -1,7 +1,7 @@
 ﻿using Sandbox.Rendering;
 using Sandbox.Utility;
 
-[Title( "Rocket Launcher" )]
+[Title( "Ashford R-7" )]
 public sealed class RpgWeapon : BaseSandboxWeapon
 {
 	[Property] public GameObject ProjectilePrefab { get; set; }

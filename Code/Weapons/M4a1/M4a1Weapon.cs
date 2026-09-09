@@ -3,7 +3,7 @@ using Sandbox.Rendering;
 /// <summary>
 /// M4 assault rifle.
 /// </summary>
-[Title( "M4A1" )]
+[Title( "AR-4" )]
 public sealed class M4a1Weapon : IronSightsWeapon
 {
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )

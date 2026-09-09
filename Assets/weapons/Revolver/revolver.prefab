@@ -75,7 +75,7 @@
           },
           "compiled": null
         },
-        "DisplayName": "Revolver",
+        "DisplayName": "Ironwood .357",
         "DroppedGameObject": {
           "_type": "gameobject",
           "go": "0b8d1c44-529f-4a7f-a2a2-a6a5a59cadc6"
@@ -362,7 +362,7 @@
   },
   "ResourceVersion": 2,
   "ShowInMenu": true,
-  "MenuPath": "Deathmatch/Items/Revolver",
+  "MenuPath": "Deathmatch/Items/Ironwood .357",
   "MenuIcon": null,
   "DontBreakAsTemplate": true,
   "__references": [

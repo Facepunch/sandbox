@@ -1,6 +1,6 @@
 using Sandbox.Citizen;
 
-public sealed class PlayerInventory : BaseInventoryComponent, Local.IPlayerEvents
+public sealed partial class PlayerInventory : BaseInventoryComponent, Local.IPlayerEvents
 {
 	// MaxSlots, ActiveItem, the active-item enable/disable + equip/holster and the add/remove/drop/
 	// move-slot flows come from the engine BaseInventoryComponent. This adds the sandbox's events, ammo
@@ -130,7 +130,10 @@ public sealed class PlayerInventory : BaseInventoryComponent, Local.IPlayerEvent
 		if ( existing.IsValid() )
 		{
 			if ( notice && existing.Ammo1 > ammoBefore )
+			{
+				NotifyAmmoPickup( existing.PrimaryAmmoType, existing.Ammo1 - ammoBefore );
 				OnClientPickup( existing, true );
+			}
 
 			return true;
 		}
@@ -163,7 +166,10 @@ public sealed class PlayerInventory : BaseInventoryComponent, Local.IPlayerEvent
 		if ( item.GameObject.IsDestroyed )
 		{
 			if ( includeNotices && existing.IsValid() && existing.Ammo1 > ammoBefore )
+			{
+				NotifyAmmoPickup( existing.PrimaryAmmoType, existing.Ammo1 - ammoBefore );
 				OnClientPickup( existing, true );
+			}
 
 			return true;
 		}
