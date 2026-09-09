@@ -11,14 +11,16 @@
     <div class="left">
         <VerticalMenu class="menuinner">
             <Options>
-                @foreach ( var group in GetVisiblePages().GroupBy( x => x.Group ).OrderBy( x => x.Min( t => t.Order ) ) )
+                @foreach ( var group in GetPageGroups() )
                 {
                     @if ( !string.IsNullOrWhiteSpace( group.Key ) )
                     {
                         <h2>@group.Key</h2>
                     }
 
-                    @foreach ( var type in group.OrderBy( x => x.Order ).ThenBy( x => x.Title ) )
+                    @foreach ( var type in group.OrderBy( x => x.Order )
+                        .ThenBy( x => SortLabel( x.Title ), StringComparer.CurrentCultureIgnoreCase )
+                        .ThenBy( x => x.FullName, StringComparer.Ordinal ) )
                     {
                         <MenuOption Text="@type.Title" Icon="@type.Icon"
                             class=@( SelectedPageType == type ? "active" : "" )
@@ -38,6 +40,21 @@
     TypeDescription SelectedPageType { get; set; }
     Panel PageContainer { get; set; }
     UtilityPage ActivePage;
+
+    IEnumerable<IGrouping<string, TypeDescription>> GetPageGroups()
+    {
+        return GetVisiblePages()
+            .GroupBy( x => x.Group )
+            .OrderBy( group => group.Min( type => type.Order ) )
+            .ThenBy( group => SortLabel( group.Key ), StringComparer.CurrentCultureIgnoreCase )
+            .ThenBy( group => group.Key, StringComparer.Ordinal );
+    }
+
+    static string SortLabel( string label )
+    {
+        if ( string.IsNullOrEmpty( label ) ) return "";
+        return label.StartsWith( '#' ) ? Game.Language.GetPhrase( label.TrimStart( '#' ) ) : label;
+    }
 
     IEnumerable<TypeDescription> GetVisiblePages()
     {
