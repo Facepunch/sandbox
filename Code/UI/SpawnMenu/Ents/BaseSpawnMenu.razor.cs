@@ -141,7 +141,7 @@ public partial class BaseSpawnMenu : Panel
 		}
 	}
 
-	void SwitchOption( SpawnMenuOption o )
+	protected void SwitchOption( SpawnMenuOption o )
 	{
 		if ( o == activeOption ) return;
 

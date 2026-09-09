@@ -26,7 +26,7 @@
             menu.AddOption( "#spawnmenu.common.delete", "delete", () => Content.Delete() );
             menu.AddOption( "#spawnmenu.common.publish", "publish", Publish );
 
-            SpawnlistData.PopulateContextMenu( menu, new SpawnlistItem
+            SpawnlistData.PopulateContextMenu( menu, this, new SpawnlistItem
             {
                 Ident = SpawnlistItem.MakeIdent( "dupe", Content.Id.ToString(), "local" ),
                 Title = Content.GetMeta<string>( "name" ) ?? "Dupe",

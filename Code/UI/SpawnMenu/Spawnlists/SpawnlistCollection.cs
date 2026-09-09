@@ -16,12 +16,12 @@ public class SpawnlistCollection
 	/// <summary>
 	/// Raised whenever the visible entry list changes.
 	/// </summary>
-	public event Action Changed;
+	internal Action OnChanged { get; set; }
 
 	/// <summary>
 	/// Raised after a workshop install, with the installed entry name.
 	/// </summary>
-	public event Action<string> Installed;
+	internal Action<string> OnInstalled { get; set; }
 
 	/// <summary>
 	/// Raised after an uninstall.
@@ -70,7 +70,7 @@ public class SpawnlistCollection
 		saved.Add( item.Id );
 		saved.Save();
 
-		Installed?.Invoke( item.Title );
+		OnInstalled?.Invoke( item.Title );
 		Refresh();
 	}
 
@@ -159,7 +159,7 @@ public class SpawnlistCollection
 
 		if ( !_queried ) _loading = true;
 
-		Changed?.Invoke();
+		OnChanged?.Invoke();
 
 		if ( !_queried )
 		{

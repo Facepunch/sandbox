@@ -26,6 +26,12 @@ menulist.menulist
 		gap: 2px;
 		transition: background-color 0.06s ease;
 
+		// Keep hover and clicks on the row as the pointer crosses its contents.
+		> .part, > .part *
+		{
+			pointer-events: none;
+		}
+
 		> .gutter
 		{
 			width: 24px;

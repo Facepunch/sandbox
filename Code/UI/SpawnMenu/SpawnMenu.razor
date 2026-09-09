@@ -127,6 +127,15 @@
         }
     }
 
+    public void OpenSpawnlist( Storage.Entry entry )
+    {
+        var page = tabs.OfType<PropsPage>().FirstOrDefault();
+        if ( page is null ) return;
+
+        SwitchTab( page );
+        page.SelectSpawnlist( entry );
+    }
+
     void SwitchTab(Panel tab)
     {
         activeTab = tab;

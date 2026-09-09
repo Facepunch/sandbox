@@ -34,7 +34,7 @@
         {
             var menu = new Sandbox.UI.Menu();
 
-            SpawnlistData.PopulateContextMenu( menu, new SpawnlistItem
+            SpawnlistData.PopulateContextMenu( menu, this, new SpawnlistItem
             {
                 Ident = SpawnlistItem.MakeIdent( "dupe", Item.Id.ToString(), "workshop" ),
                 Title = Item.Title,

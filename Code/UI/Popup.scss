@@ -65,6 +65,39 @@
 	}
 }
 
+// Fade the backdrop independently while the prompt window moves into place.
+.popup.prompt-popup
+{
+	transform: none;
+	transition: opacity 0.2s ease-out;
+
+	> .popup-window
+	{
+		opacity: 1;
+		transform: translateY( 0px ) scale( 1 );
+		transform-origin: 50% 50%;
+		transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+	}
+
+	&:intro > .popup-window
+	{
+		opacity: 0;
+		transform: translateY( 14px ) scale( 0.96 );
+	}
+
+	&:outro
+	{
+		transition: opacity 0.16s ease-in;
+
+		> .popup-window
+		{
+			opacity: 0;
+			transform: translateY( -8px ) scale( 0.98 );
+			transition: transform 0.16s ease-in, opacity 0.16s ease-in;
+		}
+	}
+}
+
 // Compact prompt windows share the spawn menu's surfaces and controls.
 .popup > .inner.popup-window
 {

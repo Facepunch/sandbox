@@ -3,7 +3,7 @@
 @inherits Panel
 @namespace Sandbox
 
-<root class="popup">
+<root class="popup prompt-popup">
 
     <div class="inner popup-window">
         <div class="popup-header">
@@ -30,18 +30,23 @@
     public SpawnlistCreatePopup() { }
 
     public Action OnCreated { get; set; }
+    public Action<Storage.Entry> OnEntryCreated { get; set; }
+    public SpawnlistItem InitialItem { get; set; }
 
-    string Name { get; set; } = "";
+    public string Name { get; set; } = "";
 
     void OnCreate()
     {
         if ( string.IsNullOrWhiteSpace( Name ) ) return;
 
-        SpawnlistData.Create( Name.Trim() );
+        SpawnlistData.Create( Name.Trim(), out var entry );
+        if ( InitialItem is not null )
+            SpawnlistData.AddItem( entry, InitialItem );
 
         Notices.AddNotice( "list_alt", Color.Cyan, Game.Language.GetPhrase( "spawnmenu.spawnlist.created_notice", new() { { "name", Name } } ) );
 
         OnCreated?.Invoke();
+        OnEntryCreated?.Invoke( entry );
 
         Delete();
     }

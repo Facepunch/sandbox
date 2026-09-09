@@ -90,8 +90,13 @@ public class SpawnlistData
 
 	public static SpawnlistData Create( string name )
 	{
+		return Create( name, out _ );
+	}
+
+	public static SpawnlistData Create( string name, out Storage.Entry entry )
+	{
 		var data = new SpawnlistData { Name = name };
-		var entry = Storage.CreateEntry( "spawnlist" );
+		entry = Storage.CreateEntry( "spawnlist" );
 		entry.SetMeta( "name", name );
 		Save( entry, data );
 		SpawnlistCreated?.Invoke();
@@ -230,7 +235,7 @@ public class SpawnlistData
 		}
 	}
 
-	public static void PopulateContextMenu( Sandbox.UI.Menu menu, SpawnlistItem item, Storage.Entry skipEntry = null )
+	public static void PopulateContextMenu( Sandbox.UI.Menu menu, Panel sourcePanel, SpawnlistItem item, Storage.Entry skipEntry = null )
 	{
 		var entries = GetAll()
 			.Where( e => skipEntry is null || e.Id != skipEntry.Id )
@@ -251,10 +256,15 @@ public class SpawnlistData
 
 		menu.AddOption( "#spawnmenu.spawnlist.create_new_option", "➕", () =>
 		{
-			Create( item.Title ?? "New Spawnlist" );
-			var created = GetAll().FirstOrDefault();
-			if ( created is not null )
-				AddItem( created, item );
+			var popup = new SpawnlistCreatePopup
+			{
+				Name = item.Title ?? "New Spawnlist",
+				InitialItem = item,
+				Parent = sourcePanel.FindPopupPanel()
+			};
+			var spawnMenu = sourcePanel.Ancestors.OfType<SpawnMenu>().FirstOrDefault();
+			if ( spawnMenu is not null )
+				popup.OnEntryCreated = spawnMenu.OpenSpawnlist;
 		} );
 
 		var (type, path, source) = SpawnlistItem.ParseIdent( item.Ident );

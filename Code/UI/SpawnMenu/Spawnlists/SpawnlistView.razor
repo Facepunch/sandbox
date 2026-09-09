@@ -5,7 +5,7 @@
 
 @{
     var data = GetData();
-    var workshopId = Entry.GetMeta( "_workshopId", 0u );
+    var workshopId = Entry.GetMeta( "_workshopId", 0ul );
     var isPublished = workshopId > 0;
     var isInstalled = Entry.Files.IsReadOnly;
 }
@@ -45,6 +45,10 @@
                     }
                     @if ( !Entry.Files.IsReadOnly )
                     {
+                        @if ( _editMode && CanRename )
+                        {
+                            <Button Icon="drive_file_rename_outline" Text="#spawnmenu.spawnlist.rename" class="menu-button" @onclick=@OnRename />
+                        }
                         <Button Icon="edit" Tooltip="#spawnmenu.spawnlist.edit" class="icon-button" Active=@_editMode @onclick=@ToggleEditMode />
                         <Button Icon="delete" Tooltip="#spawnmenu.spawnlist.delete" class="icon-button" @onclick=@OnDelete />
                     }
@@ -103,6 +107,7 @@
     RealTimeSince _lastRefresh;
     bool _editMode;
     public bool CanReorder => _editMode && Entry?.Files.IsReadOnly == false;
+    bool CanRename => Entry?.Files.IsReadOnly == false && Entry.GetMeta( "_workshopId", 0ul ) == 0;
 
     SpawnlistData GetData()
     {
@@ -130,7 +135,7 @@
         if ( _lastRefresh > 1f )
         {
             var fresh = SpawnlistData.Load( Entry );
-            if ( !ItemsMatch( fresh.Items, _cachedData?.Items, !Entry.Files.IsReadOnly ) )
+            if ( fresh.Name != _cachedData?.Name || !ItemsMatch( fresh.Items, _cachedData?.Items, !Entry.Files.IsReadOnly ) )
             {
                 _cachedData = fresh;
                 StateHasChanged();
@@ -139,7 +144,32 @@
         }
     }
 
-    protected override int BuildHash() => HashCode.Combine( _cachedData?.Items?.Count );
+    protected override int BuildHash() => HashCode.Combine( _cachedData?.Items?.Count, _cachedData?.Name, _editMode, CanRename );
+
+    void OnRename()
+    {
+        if ( !_editMode || !CanRename ) return;
+
+        _ = new StringQueryPopup
+        {
+            Title = "#spawnmenu.spawnlist.rename_title",
+            Prompt = "#spawnmenu.spawnlist.rename_prompt",
+            Placeholder = "#spawnmenu.spawnlist.name_placeholder",
+            ConfirmLabel = "#spawnmenu.spawnlist.rename_button",
+            InitialValue = GetData().Name,
+            OnConfirm = RenameSpawnlist,
+            Parent = FindPopupPanel()
+        };
+    }
+
+    void RenameSpawnlist( string name )
+    {
+        if ( !CanRename ) return;
+
+        SpawnlistData.Rename( Entry, name );
+        RefreshCache();
+        Ancestors.OfType<SpawnlistsPage>().FirstOrDefault()?.RefreshList();
+    }
 
     void ToggleEditMode()
     {
