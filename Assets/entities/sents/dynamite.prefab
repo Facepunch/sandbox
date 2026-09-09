@@ -151,7 +151,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.dynamite#278326"
+    "facepunch.dynamite#280341"
   ],
   "__version": 2
 }

@@ -327,7 +327,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.kickstool#139761"
+    "facepunch.kickstool#143317"
   ],
   "__version": 2
 }

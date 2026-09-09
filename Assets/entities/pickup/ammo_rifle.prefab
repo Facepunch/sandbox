@@ -363,8 +363,8 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": true,
   "__references": [
-    "facepunch.556x45bullet#144863",
-    "facepunch.ammobox9mm#95475"
+    "facepunch.556x45bullet#278385",
+    "facepunch.ammobox9mm#278528"
   ],
   "__version": 2
 }
