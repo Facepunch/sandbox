@@ -13,20 +13,22 @@ public abstract class SpawnlistsPage : BaseSpawnMenu
 	{
 		Collection.Changed += () =>
 		{
-			if ( Collection.Entries.Count == 0 )
-				_firstViewed = false;
-
 			OnParametersSet();
+
+			// A removed list must stop refreshing its deleted storage and leave the
+			// content area on a valid page, whether removed here or from the sidebar.
+			if ( ActivePanel is SpawnlistView view &&
+				!Collection.Entries.Any( entry => entry.StorageEntry.Id == view.Entry.Id ) )
+			{
+				DeselectOption();
+				view.Delete( true );
+				SelectOption( "#spawnmenu.props.all" );
+			}
 		};
 		Collection.Installed += name =>
 		{
 			OnParametersSet();
 			SelectOption( name );
-		};
-		Collection.Uninstalled += () =>
-		{
-			DeselectOption();
-			OnParametersSet();
 		};
 		SpawnlistData.SpawnlistCreated += Collection.Refresh;
 		Collection.Refresh();

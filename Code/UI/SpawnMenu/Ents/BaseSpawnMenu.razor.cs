@@ -5,6 +5,7 @@ public partial class BaseSpawnMenu : Panel
 {
 	SpawnMenuOption activeOption;
 	PanelSwitcher Switcher = default;
+	protected Panel ActivePanel => activeOption?.Panel;
 
 	protected Panel MenuFooter;
 	bool _addedFooter;
