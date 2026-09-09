@@ -232,13 +232,15 @@
 
     void PickMaterialGroup()
     {
-        var menu = MenuPanel.Open( this );
+        var menu = new Sandbox.UI.Menu();
         var current = Renderers[0].MaterialGroup ?? MaterialGroups.FirstOrDefault();
         foreach ( var group in MaterialGroups )
         {
             var g = group;
-            menu.AddOption( current == g ? "check" : "", g, () => SetMaterialGroup( g ) );
+            menu.AddOption( g, current == g ? "check" : "", () => SetMaterialGroup( g ) );
         }
+
+        menu.Open( this, Popup.PositionMode.UnderMouse );
     }
 
     void SetMaterialGroup( string group )

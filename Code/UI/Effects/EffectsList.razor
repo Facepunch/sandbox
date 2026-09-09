@@ -312,9 +312,9 @@
 
     void OpenPresetsMenu()
     {
-        var menu = MenuPanel.Open( this );
+        var menu = new Sandbox.UI.Menu();
 
-        menu.AddOption( "save", Game.Language.GetPhrase( "spawnmenu.effects.save_new_preset" ), () =>
+        menu.AddOption( Game.Language.GetPhrase( "spawnmenu.effects.save_new_preset" ), "save", () =>
         {
             var popup = new StringQueryPopup
             {
@@ -330,17 +330,17 @@
         var list = LoadPresetList();
         if ( list.Presets.Count > 0 )
         {
-            menu.AddSpacer();
+            menu.AddSeparator();
             foreach ( var preset in list.Presets )
             {
                 var captured = preset;
-                menu.AddSubmenu( "auto_awesome", captured.Name, sub =>
-                {
-                    sub.AddOption( "play_arrow", Game.Language.GetPhrase( "spawnmenu.common.load" ), () => ApplyPreset( captured ) );
-                    sub.AddOption( "delete", Game.Language.GetPhrase( "spawnmenu.inspect.delete" ), () => DeletePreset( captured.Name ) );
-                } );
+                var sub = menu.AddMenu( captured.Name, "auto_awesome" );
+                sub.AddOption( Game.Language.GetPhrase( "spawnmenu.common.load" ), "play_arrow", () => ApplyPreset( captured ) );
+                sub.AddOption( Game.Language.GetPhrase( "spawnmenu.inspect.delete" ), "delete", () => DeletePreset( captured.Name ) );
             }
         }
+
+        menu.Open( this, Popup.PositionMode.UnderMouse );
     }
 
     protected override int BuildHash() =>

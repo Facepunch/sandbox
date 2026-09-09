@@ -39,10 +39,10 @@
             return;
         }
 
-        var menu = MenuPanel.Open( this );
+        var menu = new Sandbox.UI.Menu();
         if ( Item.Kind == SpawnlistItemKind.Title )
         {
-            menu.AddOption( "edit", "#spawnmenu.spawnlist.rename_title_item", () =>
+            menu.AddOption( "#spawnmenu.spawnlist.rename_title_item", "edit", () =>
             {
                 var popup = new StringQueryPopup
                 {
@@ -61,7 +61,9 @@
             } );
         }
 
-        menu.AddOption( "delete", "#spawnmenu.spawnlist.remove_item", () => OnRemove?.Invoke( Item.Id ) );
+        menu.AddOption( "#spawnmenu.spawnlist.remove_item", "delete", () => OnRemove?.Invoke( Item.Id ) );
         e.StopPropagation();
+
+        menu.Open( this, Popup.PositionMode.UnderMouse );
     }
 }

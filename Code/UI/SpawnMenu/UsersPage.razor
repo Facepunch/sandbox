@@ -48,18 +48,20 @@
 
     void OpenBanOptions( SteamId steamId, BanSystem.BanEntry entry )
     {
-        var menu = MenuPanel.Open( this );
+        var menu = new Sandbox.UI.Menu();
 
-        menu.AddOption( "person_add", "#spawnmenu.utility.unban", () =>
+        menu.AddOption( "#spawnmenu.utility.unban", "person_add", () =>
         {
             BanSystem.Current?.Unban( steamId );
             StateHasChanged();
         } );
 
-        menu.AddOption( "content_copy", "#spawnmenu.utility.copy_steam_id", () =>
+        menu.AddOption( "#spawnmenu.utility.copy_steam_id", "content_copy", () =>
         {
             Clipboard.SetText( steamId.ToString() );
             Notices.AddNotice( "copy_all", Color.Cyan, Game.Language.GetPhrase( "spawnmenu.utility.copied_steam_id", new() { { "name", entry.DisplayName } } ), 5 );
         } );
+
+        menu.Open( this, Popup.PositionMode.UnderMouse );
     }
 }

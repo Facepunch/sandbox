@@ -132,9 +132,11 @@
         if ( e is MousePanelEvent { MouseButton: MouseButtons.Right } me )
         {
             me.StopPropagation();
-            var menu = MenuPanel.Open( this );
-            menu.AddOption( "download", "#spawnmenu.saves.load_context", () => ConfirmLoad( save ) );
-            menu.AddOption( "delete", "#spawnmenu.saves.delete_context", () => ConfirmDelete( save ) );
+            var menu = new Sandbox.UI.Menu();
+            menu.AddOption( "#spawnmenu.saves.load_context", "download", () => ConfirmLoad( save ) );
+            menu.AddOption( "#spawnmenu.saves.delete_context", "delete", () => ConfirmDelete( save ) );
+
+            menu.Open( this, Popup.PositionMode.UnderMouse );
         }
     }
 

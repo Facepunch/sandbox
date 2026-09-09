@@ -66,9 +66,9 @@ public abstract class SpawnlistsPage : BaseSpawnMenu
 
 	void OnEditableRightClick( SpawnlistCollection.Entry entry )
 	{
-		var menu = MenuPanel.Open( this );
+		var menu = new Sandbox.UI.Menu();
 
-		menu.AddOption( "edit", "#spawnmenu.spawnlist.rename", () =>
+		menu.AddOption( "#spawnmenu.spawnlist.rename", "edit", () =>
 		{
 			var data = SpawnlistData.Load( entry.StorageEntry );
 			var popup = new StringQueryPopup
@@ -87,13 +87,17 @@ public abstract class SpawnlistsPage : BaseSpawnMenu
 			popup.Parent = FindPopupPanel();
 		} );
 
-		menu.AddOption( "delete", "#spawnmenu.spawnlist.delete", () => Collection.Delete( entry.StorageEntry ) );
+		menu.AddOption( "#spawnmenu.spawnlist.delete", "delete", () => Collection.Delete( entry.StorageEntry ) );
+
+		menu.Open( this, Popup.PositionMode.UnderMouse );
 	}
 
 	void OnInstalledRightClick( SpawnlistCollection.Entry entry )
 	{
-		var menu = MenuPanel.Open( this );
-		menu.AddOption( "delete", "#spawnmenu.spawnlist.remove", () => Collection.Uninstall( entry.WorkshopId ) );
+		var menu = new Sandbox.UI.Menu();
+		menu.AddOption( "#spawnmenu.spawnlist.remove", "delete", () => Collection.Uninstall( entry.WorkshopId ) );
+
+		menu.Open( this, Popup.PositionMode.UnderMouse );
 	}
 }
 

@@ -94,11 +94,11 @@ public sealed class EntitySpawner : ISpawner
 		return Task.FromResult( new List<GameObject> { go } );
 	}
 
-	public void PopulateContextMenu( MenuPanel menu, string ident, string metadata )
+	public void PopulateContextMenu( Sandbox.UI.Menu menu, string ident, string metadata )
 	{
 		if ( Prefab?.GetComponent<BaseSandboxWeapon>( true ) is not null )
 		{
-			menu.AddOption( "public", "Spawn in World", () => GameManager.Spawn( ident, metadata, forceWorld: true ) );
+			menu.AddOption( "Spawn in World", "public", () => GameManager.Spawn( ident, metadata, forceWorld: true ) );
 		}
 	}
 }

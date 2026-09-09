@@ -91,13 +91,13 @@
             return;
         }
 
-        var menu = MenuPanel.Open( this );
+        var menu = new Sandbox.UI.Menu();
 
         // If inside a spawnlist, offer removal
         var spawnlistView = Ancestors.OfType<SpawnlistView>().FirstOrDefault();
         if ( spawnlistView?.Entry?.Files.IsReadOnly == false )
         {
-            menu.AddOption( "delete", "Remove from List", () =>
+            menu.AddOption( "Remove from List", "delete", () =>
             {
                 if ( SpawnlistItemId != Guid.Empty )
                     SpawnlistData.RemoveItem( spawnlistView.Entry, SpawnlistItemId );
@@ -110,7 +110,7 @@
 
                 spawnlistView.RefreshCache();
             } );
-            menu.AddSpacer();
+            menu.AddSeparator();
         }
 
         SpawnlistData.PopulateContextMenu( menu, new SpawnlistItem
@@ -119,6 +119,8 @@
             Title = Title,
             Icon = Icon,
         }, spawnlistView?.Entry );
+
+        menu.Open( this, Popup.PositionMode.UnderMouse );
 
         e.StopPropagation();
 

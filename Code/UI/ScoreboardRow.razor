@@ -52,9 +52,9 @@
         if ( Connection is null ) return;
 
         var steamId = Connection.SteamId;
-        var menu = Sandbox.MenuPanel.Open( this );
+        var menu = new Sandbox.UI.Menu();
 
-        menu.AddOption( "content_copy", "Copy Steam ID", () =>
+        menu.AddOption( "Copy Steam ID", "content_copy", () =>
         {
             Clipboard.SetText( steamId.ToString() );
             Notices.AddNotice( "copy_all", Color.Cyan, $"Copied {Connection.DisplayName}'s SteamID to your clipboard", 5 );
@@ -63,17 +63,19 @@
 		if ( Connection != Connection.Local )
 		{
 			bool isMuted = SandboxVoice.IsMuted( steamId );
-			menu.AddOption( isMuted ? "volume_up" : "volume_off", isMuted ? "Unmute" : "Mute", () => SandboxVoice.Mute( steamId ) );
+			menu.AddOption( isMuted ? "Unmute" : "Mute", isMuted ? "volume_up" : "volume_off", () => SandboxVoice.Mute( steamId ) );
 
 			if ( Connection.Local?.HasPermission( "admin" ) == true )
 			{
-				menu.AddSpacer();
-				menu.AddOption( "person_remove", "Kick", () => OpenKickConfirm( Connection ) );
-				menu.AddOption( "gavel", "Ban", () => OpenBanConfirm( Connection ) );
+				menu.AddSeparator();
+				menu.AddOption( "Kick", "person_remove", () => OpenKickConfirm( Connection ) );
+				menu.AddOption( "Ban", "gavel", () => OpenBanConfirm( Connection ) );
 			}
 		}
 
 		e.StopPropagation();
+
+		menu.Open( this, Popup.PositionMode.UnderMouse );
 	}
 
 	void OpenKickConfirm( Connection connection )

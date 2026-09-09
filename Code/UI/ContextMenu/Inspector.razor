@@ -254,8 +254,10 @@
         Scene.RunEvent<IContextMenuEvent>( listener => listener.PopulateContextMenu( ev ) );
         if ( !ev.Options.Any() ) return;
 
-        var menu = MenuPanel.Open( this );
+        var menu = new Sandbox.UI.Menu();
         ev.Populate( menu );
+
+        menu.Open( this, Popup.PositionMode.UnderMouse );
     }
 
     public void SelectObject( GameObject o )

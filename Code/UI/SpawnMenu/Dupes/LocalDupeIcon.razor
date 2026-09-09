@@ -21,10 +21,10 @@
     {
         if ( e.MouseButton == MouseButtons.Right )
         {
-            var menu = MenuPanel.Open( this );
+            var menu = new Sandbox.UI.Menu();
 
-            menu.AddOption( "delete", "#spawnmenu.common.delete", () => Content.Delete() );
-            menu.AddOption( "publish", "#spawnmenu.common.publish", Publish );
+            menu.AddOption( "#spawnmenu.common.delete", "delete", () => Content.Delete() );
+            menu.AddOption( "#spawnmenu.common.publish", "publish", Publish );
 
             SpawnlistData.PopulateContextMenu( menu, new SpawnlistItem
             {
@@ -33,6 +33,7 @@
                 Icon = null,
             } );
 
+            menu.Open( this, Popup.PositionMode.UnderMouse );
             return;
         }
 

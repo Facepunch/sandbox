@@ -132,24 +132,26 @@
 
     void OpenSortMenu()
     {
-        var menu = MenuPanel.Open( this );
+        var menu = new Sandbox.UI.Menu();
         foreach ( var mode in Enum.GetValues<PackageSortMode>() )
         {
             var m = mode;
-            menu.AddOption( m.Icon(), m.ToString(), () => SortOrder = m );
+            menu.AddOption( m.ToString(), m.Icon(), () => SortOrder = m );
         }
-        menu.StateHasChanged();
+
+        menu.Open( this, Popup.PositionMode.UnderMouse );
     }
 
     void OpenIconSizeMenu()
     {
-        var menu = MenuPanel.Open( this );
+        var menu = new Sandbox.UI.Menu();
         foreach ( var size in Enum.GetValues<SpawnMenuIconSize>() )
         {
             var s = size;
-            menu.AddOption( s.Icon(), s.ToString(), () => IconSize = s );
+            menu.AddOption( s.ToString(), s.Icon(), () => IconSize = s );
         }
-        menu.StateHasChanged();
+
+        menu.Open( this, Popup.PositionMode.UnderMouse );
     }
 
     public override void Tick()

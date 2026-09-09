@@ -1,0 +1,85 @@
+// Sandbox's context-menu theme, applied to the engine's popup lists and rows.
+menulist.menulist
+{
+	z-index: 10000;
+	min-width: 200px;
+	font-size: 12px;
+	font-family: $subtitle-font;
+	font-weight: 650;
+	color: $menu-text;
+	border-radius: 10px;
+	box-shadow: 5px 5px 30px #000e;
+	background-color: $menu-panel-bg;
+	backdrop-filter: blur( 12px );
+	border: 1px solid rgba( white, 0.07 );
+	flex-shrink: 0;
+	padding: 4px;
+	gap: 1px;
+	sound-in: "sounds/kenney/ui/ui.navigate.forward.sound";
+
+	> .menu
+	{
+		color: $menu-text;
+		padding: 0 8px;
+		height: 32px;
+		border-radius: 6px;
+		gap: 2px;
+		transition: background-color 0.06s ease;
+
+		> .gutter
+		{
+			width: 24px;
+
+			> .icon, > .check
+			{
+				font-family: "Material Icons";
+				font-size: 1.1rem;
+				color: rgba( white, 0.5 );
+				opacity: 1;
+			}
+		}
+
+		> .text
+		{
+			padding: 0 4px;
+		}
+
+		> .chevron
+		{
+			flex-shrink: 0;
+			font-size: 0.7rem;
+			color: rgba( white, 0.35 );
+			margin-left: 0;
+			padding-left: 8px;
+			opacity: 1;
+		}
+
+		&:not(.disabled):not(.separator)
+		{
+			&.active, &.open
+			{
+				background-color: $menu-accent;
+				color: white;
+
+				> .gutter > .icon, > .gutter > .check { color: white; }
+				> .chevron { color: rgba( white, 0.7 ); }
+			}
+
+			&:hover { sound-in: ui.hover; }
+
+			&:active
+			{
+				background-color: rgba( $menu-accent, 0.7 );
+				sound-in: ui.select;
+			}
+		}
+
+		&.separator
+		{
+			height: 1px;
+			padding: 0;
+			background-color: rgba( white, 0.07 );
+			margin: 3px 6px;
+		}
+	}
+}

@@ -17,29 +17,28 @@
 
     void OnToggleClick()
     {
-        var menu = MenuPanel.Open( this, anchor: this, position: MenuPanel.AnchorPosition.Top );
+        var menu = new Sandbox.UI.Menu();
 
         var presets = PlayerLoadout.GetLoadoutPresets();
         foreach ( var preset in presets )
         {
             var name = preset.Name;
             var json = preset.LoadoutJson;
-            menu.AddSubmenu( "bookmark", name, sub =>
-            {
-                sub.AddOption( "play_arrow", "Load", () => OnLoadPreset( json ) );
-                sub.AddOption( "save", "Overwrite with current", () => OnOverwritePreset( name ) );
-                sub.AddOption( "close", "Delete", () => OnDeletePreset( name ) );
-            } );
+            var sub = menu.AddMenu( name, "bookmark" );
+            sub.AddOption( "Load", "play_arrow", () => OnLoadPreset( json ) );
+            sub.AddOption( "Overwrite with current", "save", () => OnOverwritePreset( name ) );
+            sub.AddOption( "Delete", "close", () => OnDeletePreset( name ) );
         }
 
         if ( presets.Any() )
         {
-            menu.AddSpacer();
+            menu.AddSeparator();
         }
 
-        menu.AddOption( "refresh", "Reset to Default", ResetToDefault );
-        menu.AddOption( "add", "New Preset", OnSaveNew );
-        menu.StateHasChanged();
+        menu.AddOption( "Reset to Default", "refresh", ResetToDefault );
+        menu.AddOption( "New Preset", "add", OnSaveNew );
+
+        menu.Open( this, Popup.PositionMode.AboveLeft, 4 );
     }
 
     void OnLoadPreset( string json )

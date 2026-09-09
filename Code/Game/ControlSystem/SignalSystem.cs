@@ -308,7 +308,7 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 			e.AddSubmenu( "link", "Link", submenu =>
 			{
 				foreach ( var port in ports )
-					submenu.AddOption( port.Icon, port.Title, () => CompleteContextLink( port ) );
+					submenu.AddOption( port.Title, port.Icon, () => CompleteContextLink( port ) );
 			} );
 		}
 
@@ -331,7 +331,7 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 		e.AddSubmenu( "link", "Link", submenu =>
 		{
 			foreach ( var port in ports )
-				submenu.AddOption( port.Icon, port.Title, () => _contextSource = port );
+				submenu.AddOption( port.Title, port.Icon, () => _contextSource = port );
 		} );
 	}
 

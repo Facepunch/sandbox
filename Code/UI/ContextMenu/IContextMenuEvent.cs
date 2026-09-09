@@ -5,7 +5,7 @@
 /// </summary>
 public interface IContextMenuEvent : ISceneEvent<IContextMenuEvent>
 {
-	public sealed record Option( string Icon, string Text, Action Action, Action<MenuPanel> SubmenuBuilder, int Order );
+	public sealed record Option( string Icon, string Text, Action Action, Action<Sandbox.UI.Menu> SubmenuBuilder, int Order );
 
 	public sealed class Event( GameObject target )
 	{
@@ -26,7 +26,7 @@ public interface IContextMenuEvent : ISceneEvent<IContextMenuEvent>
 			_options.Add( new Option( icon, text, action, null, order ) );
 		}
 
-		public void AddSubmenu( string icon, string text, Action<MenuPanel> builder, int order = 0 )
+		public void AddSubmenu( string icon, string text, Action<Sandbox.UI.Menu> builder, int order = 0 )
 		{
 			_options.Add( new Option( icon, text, null, builder, order ) );
 		}
@@ -34,14 +34,14 @@ public interface IContextMenuEvent : ISceneEvent<IContextMenuEvent>
 		/// <summary>
 		/// Build the collected options into a menu.
 		/// </summary>
-		public void Populate( MenuPanel menu )
+		public void Populate( Sandbox.UI.Menu menu )
 		{
 			foreach ( var option in Options )
 			{
 				if ( option.SubmenuBuilder is not null )
-					menu.AddSubmenu( option.Icon, option.Text, option.SubmenuBuilder );
+					option.SubmenuBuilder( menu.AddMenu( option.Text, option.Icon ) );
 				else
-					menu.AddOption( option.Icon, option.Text, option.Action );
+					menu.AddOption( option.Text, option.Icon, option.Action );
 			}
 		}
 	}

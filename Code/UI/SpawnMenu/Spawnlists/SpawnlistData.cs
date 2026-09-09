@@ -230,7 +230,7 @@ public class SpawnlistData
 		}
 	}
 
-	public static void PopulateContextMenu( MenuPanel menu, SpawnlistItem item, Storage.Entry skipEntry = null )
+	public static void PopulateContextMenu( Sandbox.UI.Menu menu, SpawnlistItem item, Storage.Entry skipEntry = null )
 	{
 		var entries = GetAll()
 			.Where( e => skipEntry is null || e.Id != skipEntry.Id )
@@ -238,20 +238,18 @@ public class SpawnlistData
 
 		if ( entries.Count > 0 )
 		{
-			menu.AddSubmenu( "📋", "#spawnmenu.spawnlist.add_to_submenu", sub =>
+			var sub = menu.AddMenu( "#spawnmenu.spawnlist.add_to_submenu", "📋" );
+			foreach ( var entry in entries )
 			{
-				foreach ( var entry in entries )
-				{
-					var data = Load( entry );
-					var capturedEntry = entry;
-					sub.AddOption( "📋", data.Name, () => AddItem( capturedEntry, item ) );
-				}
-			} );
+				var data = Load( entry );
+				var capturedEntry = entry;
+				sub.AddOption( data.Name, "📋", () => AddItem( capturedEntry, item ) );
+			}
 
-			menu.AddSpacer();
+			menu.AddSeparator();
 		}
 
-		menu.AddOption( "➕", "#spawnmenu.spawnlist.create_new_option", () =>
+		menu.AddOption( "#spawnmenu.spawnlist.create_new_option", "➕", () =>
 		{
 			Create( item.Title ?? "New Spawnlist" );
 			var created = GetAll().FirstOrDefault();
@@ -265,9 +263,9 @@ public class SpawnlistData
 
 		if ( !string.IsNullOrEmpty( fullIdent ) )
 		{
-			menu.AddSpacer();
+			menu.AddSeparator();
 
-			menu.AddOption( "🌐", "Open in Workshop", () =>
+			menu.AddOption( "Open in Workshop", "🌐", () =>
 			{
 				Game.Overlay.ShowPackageModal( fullIdent );
 			} );

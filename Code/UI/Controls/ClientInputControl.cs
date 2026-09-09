@@ -52,28 +52,26 @@ public partial class ClientInputControl : BaseControl
 	{
 		base.OnClick( e );
 
-		var menu = Sandbox.MenuPanel.Open( this );
-		menu.AddOption( "", "No Key Binding", () => OnBindChanged( "" ) );
+		var menu = new Sandbox.UI.Menu();
+		menu.AddOption( "No Key Binding", "", () => OnBindChanged( "" ) );
 
 		var outputs = GetLinkedOutputs().ToArray();
 		if ( outputs.Length > 0 )
 		{
-			menu.AddSubmenu( "cable", "Linked Outputs", sub =>
+			var sub = menu.AddMenu( "Linked Outputs", "cable" );
+			foreach ( var output in outputs )
 			{
-				foreach ( var output in outputs )
-				{
-					var connected = IsConnected( output );
-					var source = output;
-					sub.AddOption(
-						connected ? "check_box" : "check_box_outline_blank",
-						$"{output.Component.GameObject.Name}: {output.Title}",
-						() => SetConnected( source, !connected )
-					);
-				}
-			} );
+				var connected = IsConnected( output );
+				var source = output;
+				sub.AddOption(
+					$"{output.Component.GameObject.Name}: {output.Title}",
+					connected ? "check_box" : "check_box_outline_blank",
+					() => SetConnected( source, !connected )
+				);
+			}
 		}
 
-		menu.AddSpacer();
+		menu.AddSeparator();
 
 		var grouped = Input.GetActions()
 			.GroupBy( a => a.GroupName ?? "" )
@@ -86,22 +84,22 @@ public partial class ClientInputControl : BaseControl
 				foreach ( var action in group )
 				{
 					var a = action;
-					menu.AddOption( "", ActionLabel( a ), () => OnBindChanged( a.Name ) );
+					menu.AddOption( ActionLabel( a ), "", () => OnBindChanged( a.Name ) );
 				}
 			}
 			else
 			{
 				var groupActions = group.ToList();
-				menu.AddSubmenu( "", group.Key, sub =>
+				var sub = menu.AddMenu( group.Key, "" );
+				foreach ( var action in groupActions )
 				{
-					foreach ( var action in groupActions )
-					{
-						var a = action;
-						sub.AddOption( "", ActionLabel( a ), () => OnBindChanged( a.Name ) );
-					}
-				} );
+					var a = action;
+					sub.AddOption( ActionLabel( a ), "", () => OnBindChanged( a.Name ) );
+				}
 			}
 		}
+
+		menu.Open( this, Popup.PositionMode.UnderMouse );
 	}
 
 	IEnumerable<SignalOutputDescription> GetLinkedOutputs()
