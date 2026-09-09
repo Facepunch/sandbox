@@ -300,6 +300,14 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 	{
 		base.OnAttack( hitPoint, origin );
 
+		// The engine parents the flash to the muzzle, but its particles default to
+		// world space. Keep first-person flashes attached through recoil and sway.
+		if ( MuzzleGameObject.IsValid() )
+		{
+			foreach ( var effect in MuzzleGameObject.GetComponentsInChildren<ParticleEffect>( true ) )
+				effect.LocalSpace = 1.0f;
+		}
+
 		if ( IsThrowable )
 		{
 			Renderer?.Set( "b_throw", true );
