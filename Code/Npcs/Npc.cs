@@ -27,7 +27,8 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 
 	private Rigidbody _rigidbody;
 	private NavMeshAgent _navAgent;
-	private TimeSince _timeSincePhysicsEnabled;
+	[Sync( SyncFlags.FromHost )]
+	private TimeSince _timeSincePhysicsEnabled { get; set; }
 
 	protected override void OnStart()
 	{

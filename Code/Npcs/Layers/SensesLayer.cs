@@ -48,7 +48,8 @@ public class SensesLayer : BaseNpcLayer
 	private readonly Dictionary<string, List<GameObject>> _visibleByTag = new();
 	private readonly Dictionary<string, List<GameObject>> _audibleByTag = new();
 
-	private TimeSince _lastScan;
+	[Sync( SyncFlags.FromHost )]
+	private TimeSince _lastScan { get; set; }
 
 	/// <summary>
 	/// The most relevant disturbance (gunshot, death, etc.) this NPC currently senses, if any.

@@ -27,8 +27,10 @@ public class SpeechLayer : BaseNpcLayer
 	public SoundEvent FallbackSound { get; set; }
 
 	private SoundHandle _soundHandle;
-	private TimeSince _lastSpoke;
-	private TimeUntil _speechEnd;
+	[Sync( SyncFlags.FromHost )]
+	private TimeSince _lastSpoke { get; set; }
+	[Sync( SyncFlags.FromHost )]
+	private TimeUntil _speechEnd { get; set; }
 	private GameObject _speechTarget;
 	private bool _hasSpeechReservation;
 	private readonly Dictionary<SoundEvent, List<SoundFile>> _remainingSounds = [];

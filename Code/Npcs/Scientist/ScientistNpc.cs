@@ -36,7 +36,8 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 	private GameObject _attacker;
 	private TimeSince _timeSinceHurt;
 	private bool _isFleeing;
-	private TimeSince _timeSinceStruggling;
+	[Sync( SyncFlags.FromHost )]
+	private TimeSince _timeSinceStruggling { get; set; }
 	private GameObject _farewellTarget;
 
 	// Voice lines by situation. Each SoundEvent picks a random clip. These replace the old

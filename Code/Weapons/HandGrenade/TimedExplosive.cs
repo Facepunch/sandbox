@@ -13,6 +13,7 @@ public sealed class TimedExplosive : Component, Component.IDamageable
 	/// <summary>Who gets credit/blame for the explosion (the thrower). Host-side only. Falls back to the explosion itself.</summary>
 	public GameObject Attacker { get; set; }
 
+	[Sync( SyncFlags.FromHost )]
 	TimeSince TimeSinceCreated { get; set; }
 
 	bool HasExploded { get; set; }

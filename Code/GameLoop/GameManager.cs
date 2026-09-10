@@ -11,7 +11,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	{
 		if ( !Networking.IsActive )
 		{
-			Networking.CreateLobby( new Sandbox.Network.LobbyConfig() { Privacy = Sandbox.Network.LobbyPrivacy.Public, MaxPlayers = 32, Name = "Sandbox", DestroyWhenHostLeaves = true } );
+			Networking.CreateLobby( new Sandbox.Network.LobbyConfig() { Privacy = Sandbox.Network.LobbyPrivacy.Public, MaxPlayers = 32, Name = "Sandbox", DestroyWhenHostLeaves = false } );
 		}
 	}
 

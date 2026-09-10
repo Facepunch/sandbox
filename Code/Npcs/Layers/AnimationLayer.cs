@@ -55,7 +55,8 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	// like HL2's AddLookTarget. Speech uses this to look whoever we're talking to
 	// in the eyes for the duration of the line.
 	private GameObject _addedLookTarget;
-	private TimeUntil _addedLookExpires;
+	[Sync( SyncFlags.FromHost )]
+	private TimeUntil _addedLookExpires { get; set; }
 
 	private SkinnedModelRenderer _renderer => Npc.IsValid() ? Npc.Renderer : null;
 	private float _lastYaw = float.NaN;

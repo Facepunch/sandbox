@@ -104,7 +104,8 @@ public sealed class RollerNpc : Npc, Component.ICollisionListener
 	public Rigidbody Rigidbody { get; private set; }
 
 	[Sync] public bool IsHunting { get; private set; }
-	private TimeSince _lastBounce;
+	[Sync( SyncFlags.FromHost )]
+	private TimeSince _lastBounce { get; set; }
 	private const float BounceCooldown = 0.25f;
 
 	private SphereCollider _collider;

@@ -39,7 +39,8 @@ public sealed class EntitySpawnerEntity : Component, IPlayerControllable
 	[Property, ClientEditable, Range( 1, 50 ), Step( 1 ), Group( "Auto Spawn" )]
 	public float MaxEntities { get; set; } = 5;
 
-	private TimeSince _timeSinceLastSpawn;
+	[Sync( SyncFlags.FromHost )]
+	private TimeSince _timeSinceLastSpawn { get; set; }
 	private readonly List<WeakReference<GameObject>> _spawnedEntities = new();
 
 	protected override void OnUpdate()
