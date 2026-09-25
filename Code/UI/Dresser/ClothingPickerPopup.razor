@@ -1,0 +1,256 @@
+@using Sandbox;
+@using Sandbox.UI;
+@using System.Collections.Generic;
+@namespace Sandbox
+@inherits BasePopup
+
+<root class="popup">
+
+    <div class="inner" onclick:preventDefault=@true>
+
+        <div class="popup-header">
+            <h2>#spawnmenu.dresser.picker_title</h2>
+        </div>
+        <div class="category-tabs">
+            <div class="cat-tab @( _activeGroup == -1 ? "active" : "" )" @onclick="@(() => SetGroup( -1 ))">#spawnmenu.dresser.tab_all</div>
+            <div class="cat-tab @( _activeGroup == 0 ? "active" : "" )" @onclick="@(() => SetGroup( 0 ))">#spawnmenu.dresser.tab_hats</div>
+            <div class="cat-tab @( _activeGroup == 1 ? "active" : "" )" @onclick="@(() => SetGroup( 1 ))">#spawnmenu.dresser.tab_hair</div>
+            <div class="cat-tab @( _activeGroup == 2 ? "active" : "" )" @onclick="@(() => SetGroup( 2 ))">#spawnmenu.dresser.tab_tops</div>
+            <div class="cat-tab @( _activeGroup == 3 ? "active" : "" )" @onclick="@(() => SetGroup( 3 ))">#spawnmenu.dresser.tab_bottoms</div>
+            <div class="cat-tab @( _activeGroup == 4 ? "active" : "" )" @onclick="@(() => SetGroup( 4 ))">#spawnmenu.dresser.tab_footwear</div>
+            <div class="cat-tab @( _activeGroup == 5 ? "active" : "" )" @onclick="@(() => SetGroup( 5 ))">#spawnmenu.dresser.tab_accessories</div>
+            <div class="cat-tab @( _activeGroup == 6 ? "active" : "" )" @onclick="@(() => SetGroup( 6 ))">#spawnmenu.dresser.tab_outfits</div>
+        </div>
+
+        <VirtualGrid Items=@_filteredItems ItemSize=@(new Vector2( 180, 200 )) class="clothing-grid">
+            <Item Context="item">
+                @if ( item is Clothing clothing )
+                {
+                    bool selected = _selectedPaths.Contains( clothing.ResourcePath );
+                    string itemClass = selected ? "clothing-item active" : "clothing-item";
+                    string thumbUrl = $"thumb:{clothing.ResourcePath}";
+
+                    <div class="@itemClass" @onclick="@(() => ToggleItem( clothing ))">
+                        <div class="clothing-icon" style="background-image: url(@thumbUrl)"></div>
+                        <div class="clothing-title">@clothing.Title</div>
+                        @if ( selected )
+                        {
+                            <div class="check-badge">✓</div>
+                        }
+                    </div>
+                }
+            </Item>
+        </VirtualGrid>
+
+        <div class="popup-footer">
+            <div class="selection-count">@GetSelectionLabel()</div>
+            <div class="cancel-button" @onclick=@Close>#spawnmenu.dresser.cancel</div>
+            <div class="select-button @( _selectedPaths.Count == 0 ? "disabled" : "" )" @onclick=@ConfirmSelection>@GetEquipLabel()</div>
+        </div>
+
+    </div>
+
+</root>
+
+@code
+{
+    public Action<List<string>> OnSelectedFiles;
+
+    HashSet<string> _selectedPaths = new HashSet<string>();
+    int _activeGroup = -1;
+    List<object> _filteredItems = new List<object>();
+
+    // Static cache so we only scan ResourceLibrary once across all popup opens
+    static List<Clothing> _cachedAllItems;
+    static bool _cacheBuilt;
+
+    static void EnsureCache()
+    {
+        if ( _cacheBuilt ) return;
+
+        _cachedAllItems = new List<Clothing>();
+
+        foreach ( var c in ResourceLibrary.GetAll<Clothing>() )
+        {
+            // Only citizen/terry compatible: must have a Model path and not be a human skin
+            if ( string.IsNullOrEmpty( c.Model ) ) continue;
+            if ( c.HasHumanSkin ) continue;
+            _cachedAllItems.Add( c );
+        }
+        _cachedAllItems.Sort( ( a, b ) => string.Compare( a.Title, b.Title, System.StringComparison.Ordinal ) );
+
+        _cacheBuilt = true;
+    }
+
+    protected override void OnAfterTreeRender( bool firstTime )
+    {
+        if ( !firstTime ) return;
+
+        EnsureCache();
+        RebuildFiltered();
+        StateHasChanged();
+    }
+
+    void SetGroup( int group )
+    {
+        _activeGroup = group;
+        RebuildFiltered();
+        StateHasChanged();
+    }
+
+    void RebuildFiltered()
+    {
+        _filteredItems = new List<object>();
+
+        if ( _cachedAllItems == null ) return;
+
+        foreach ( var item in _cachedAllItems )
+        {
+            if ( _activeGroup >= 0 && GetGroup( item.Category ) != _activeGroup )
+                continue;
+
+            _filteredItems.Add( item );
+        }
+    }
+
+    void ToggleItem( Clothing clothing )
+    {
+        if ( _selectedPaths.Contains( clothing.ResourcePath ) )
+            _selectedPaths.Remove( clothing.ResourcePath );
+        else
+            _selectedPaths.Add( clothing.ResourcePath );
+
+        StateHasChanged();
+    }
+
+    string GetSelectionLabel()
+    {
+        if ( _selectedPaths.Count == 0 ) return "";
+        if ( _selectedPaths.Count == 1 ) return Game.Language.GetPhrase( "spawnmenu.dresser.items_selected_one" );
+        return Game.Language.GetPhrase( "spawnmenu.dresser.items_selected" ).Replace( "{count}", _selectedPaths.Count.ToString() );
+    }
+
+    string GetEquipLabel()
+    {
+        var label = Game.Language.GetPhrase( "spawnmenu.dresser.equip" );
+        if ( _selectedPaths.Count > 0 )
+            return $"{label} ({_selectedPaths.Count})";
+        return label;
+    }
+
+    void ConfirmSelection()
+    {
+        if ( _selectedPaths.Count == 0 ) return;
+
+        var paths = new List<string>();
+        foreach ( var path in _selectedPaths )
+            paths.Add( path );
+
+        OnSelectedFiles?.Invoke( paths );
+        Delete();
+    }
+
+    void Close()
+    {
+        Delete();
+    }
+
+    protected override void OnMouseDown( MousePanelEvent e )
+    {
+        base.OnMouseDown( e );
+        if ( e.Target == this )
+            Delete();
+    }
+
+    /// <summary>
+    /// Maps individual ClothingCategory values into broad groups for the tab filter.
+    /// 0=Hats, 1=Hair, 2=Tops, 3=Bottoms, 4=Footwear, 5=Accessories, 6=Outfits
+    /// </summary>
+    static int GetGroup( Clothing.ClothingCategory category )
+    {
+        var key = (int)category;
+
+        // Hats & Headwear
+        if ( key == (int)Clothing.ClothingCategory.Hat ) return 0;
+        if ( key == (int)Clothing.ClothingCategory.HatCap ) return 0;
+        if ( key == (int)Clothing.ClothingCategory.HatBeanie ) return 0;
+        if ( key == (int)Clothing.ClothingCategory.HatFormal ) return 0;
+        if ( key == (int)Clothing.ClothingCategory.HatCostume ) return 0;
+        if ( key == (int)Clothing.ClothingCategory.HatUniform ) return 0;
+        if ( key == (int)Clothing.ClothingCategory.HatSpecial ) return 0;
+        if ( key == (int)Clothing.ClothingCategory.Headwear ) return 0;
+
+        // Hair & Facial
+        if ( key == (int)Clothing.ClothingCategory.Hair ) return 1;
+        if ( key == (int)Clothing.ClothingCategory.HairShort ) return 1;
+        if ( key == (int)Clothing.ClothingCategory.HairMedium ) return 1;
+        if ( key == (int)Clothing.ClothingCategory.HairLong ) return 1;
+        if ( key == (int)Clothing.ClothingCategory.HairUpdo ) return 1;
+        if ( key == (int)Clothing.ClothingCategory.HairSpecial ) return 1;
+        if ( key == (int)Clothing.ClothingCategory.Facial ) return 1;
+        if ( key == (int)Clothing.ClothingCategory.FacialHairMustache ) return 1;
+        if ( key == (int)Clothing.ClothingCategory.FacialHairBeard ) return 1;
+        if ( key == (int)Clothing.ClothingCategory.FacialHairStubble ) return 1;
+        if ( key == (int)Clothing.ClothingCategory.FacialHairSideburns ) return 1;
+        if ( key == (int)Clothing.ClothingCategory.FacialHairGoatee ) return 1;
+        if ( key == (int)Clothing.ClothingCategory.Eyebrows ) return 1;
+
+        // Tops
+        if ( key == (int)Clothing.ClothingCategory.Tops ) return 2;
+        if ( key == (int)Clothing.ClothingCategory.TShirt ) return 2;
+        if ( key == (int)Clothing.ClothingCategory.Shirt ) return 2;
+        if ( key == (int)Clothing.ClothingCategory.Sweatshirt ) return 2;
+        if ( key == (int)Clothing.ClothingCategory.Hoodie ) return 2;
+        if ( key == (int)Clothing.ClothingCategory.Jacket ) return 2;
+        if ( key == (int)Clothing.ClothingCategory.Coat ) return 2;
+        if ( key == (int)Clothing.ClothingCategory.Vest ) return 2;
+        if ( key == (int)Clothing.ClothingCategory.Knitwear ) return 2;
+        if ( key == (int)Clothing.ClothingCategory.Cardigan ) return 2;
+        if ( key == (int)Clothing.ClothingCategory.Gilet ) return 2;
+
+        // Bottoms
+        if ( key == (int)Clothing.ClothingCategory.Bottoms ) return 3;
+        if ( key == (int)Clothing.ClothingCategory.Trousers ) return 3;
+        if ( key == (int)Clothing.ClothingCategory.Jeans ) return 3;
+        if ( key == (int)Clothing.ClothingCategory.Shorts ) return 3;
+        if ( key == (int)Clothing.ClothingCategory.Skirt ) return 3;
+
+        // Footwear
+        if ( key == (int)Clothing.ClothingCategory.Footwear ) return 4;
+        if ( key == (int)Clothing.ClothingCategory.Shoes ) return 4;
+        if ( key == (int)Clothing.ClothingCategory.Boots ) return 4;
+        if ( key == (int)Clothing.ClothingCategory.Trainers ) return 4;
+        if ( key == (int)Clothing.ClothingCategory.Heels ) return 4;
+        if ( key == (int)Clothing.ClothingCategory.Sandals ) return 4;
+        if ( key == (int)Clothing.ClothingCategory.Slippers ) return 4;
+        if ( key == (int)Clothing.ClothingCategory.Socks ) return 4;
+
+        // Accessories
+        if ( key == (int)Clothing.ClothingCategory.Gloves ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.Eyewear ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.GlassesEye ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.GlassesSun ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.GlassesSpecial ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.NecklaceChain ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.NecklacePendant ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.NecklaceSpecial ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.EarringStud ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.EarringDangle ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.EarringSpecial ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.Wristwear ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.WristWatch ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.WristBand ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.Ring ) return 5;
+        if ( key == (int)Clothing.ClothingCategory.Piercing ) return 5;
+
+        // Outfits (full body / costumes / uniforms)
+        if ( key == (int)Clothing.ClothingCategory.Fullbody ) return 6;
+        if ( key == (int)Clothing.ClothingCategory.Costume ) return 6;
+        if ( key == (int)Clothing.ClothingCategory.Uniform ) return 6;
+        if ( key == (int)Clothing.ClothingCategory.Dress ) return 6;
+        if ( key == (int)Clothing.ClothingCategory.Suit ) return 6;
+        if ( key == (int)Clothing.ClothingCategory.Skin ) return 6;
+
+        return 5; // default to accessories
+    }
+}
