@@ -17,7 +17,7 @@ public class EntityPage : BaseSpawnMenu
 	protected override void Rebuild()
 	{
 		AddHeader( "#spawnmenu.section.categories" );
-		AddOption( "\U0001f9e0", "#spawnmenu.entity.all", () => new EntityListCloud { IncludeLocalEntities = true, ExcludedLocalCategoryRoots = new[] { "Weapon", "Npc" }, Query = "-category:weapon -category:npc" } );
+		AddOption( "\U0001f9e0", "#spawnmenu.entity.all", () => new EntityListCloud { IncludeLocalEntities = true, ExcludedLocalCategoryRoots = new[] { "Weapon", "Npc" }, Query = "-cat:weapon -cat:npc" } );
 
 		var categories = ResourceLibrary.GetAll<ScriptedEntity>()
 			.Where( e => !e.Developer || ServerSettings.ShowDeveloperEntities )
@@ -32,13 +32,13 @@ public class EntityPage : BaseSpawnMenu
 			var cat = category; // capture for lambda
 			var icon = CategoryIcons.GetValueOrDefault( cat, "📦" );
 			addedCategories.Add( cat );
-			AddOption( icon, cat, () => new EntityListCloud { LocalCategory = cat, Query = $"category:{cat.ToLowerInvariant()}" } );
+			AddOption( icon, cat, () => new EntityListCloud { LocalCategory = cat, Query = $"cat:{cat.ToLowerInvariant()}" } );
 		}
 
 		void AddCloudCategory( string icon, string name, string category )
 		{
 			if ( !addedCategories.Add( category ) ) return;
-			AddOption( icon, name, () => new EntityListCloud { Query = $"category:{category}" } );
+			AddOption( icon, name, () => new EntityListCloud { Query = $"cat:{category}" } );
 		}
 
 		AddCloudCategory( "🐵", "#spawnmenu.entity.animals", "animal" );
