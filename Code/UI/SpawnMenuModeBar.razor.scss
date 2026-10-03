@@ -8,7 +8,8 @@ SpawnMenuModeBar
 	justify-content: center;
 	align-items: center;
 	padding: 3rem;
+	padding-bottom: 0;
 	gap: 1rem;
-	z-index: 9999;
+	z-index: 1000;
 	background-image: linear-gradient( to bottom, rgba( black, 0.5 ), rgba( black, 0.0 ) );
 }
