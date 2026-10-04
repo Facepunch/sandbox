@@ -1,5 +1,3 @@
-using Sandbox.Rendering;
-
 [Title( "M700" )]
 public sealed class SniperWeapon : BaseBulletWeapon
 {
@@ -154,27 +152,38 @@ public sealed class SniperWeapon : BaseBulletWeapon
 		}
 	}
 
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
+	/// <summary>
+	/// Updates the scope overlay while scoped, otherwise draws the targeting dot.
+	/// </summary>
+	public override void DrawHud( Painter painter, Vector2 crosshair )
 	{
 		if ( _isScoped )
 		{
-			DrawScopeOverlay( painter, crosshair );
+			UpdateScopeOverlay();
 			return;
 		}
 
 		DrawCrosshair( painter, crosshair );
 	}
 
-	public override void DrawCrosshair( HudPainter hud, Vector2 center )
+	/// <summary>
+	/// Draws an outlined targeting dot showing whether the weapon can fire.
+	/// </summary>
+	public override void DrawCrosshair( Painter painter, Vector2 center )
 	{
 		var color = !HasPrimaryAmmo() || IsReloading || NextPrimaryFire > 0 ? CrosshairNoShoot : CrosshairCanShoot;
 
-		hud.SetBlendMode( BlendMode.Normal );
-		hud.DrawCircle( center, 5, Color.Black );
-		hud.DrawCircle( center, 3, color );
+		using var scope = painter.Scope();
+		painter.BlendMode = BlendMode.Normal;
+		painter.Fill = color;
+		painter.Stroke = Stroke.Solid( Color.Black, 1f ).WithAlignment( Stroke.StrokeAlignment.Outside );
+		painter.Circle( center, 1.5f );
 	}
 
-	private void DrawScopeOverlay( HudPainter hud, Vector2 center )
+	/// <summary>
+	/// Updates the scope's blur from mouse movement and player velocity.
+	/// </summary>
+	private void UpdateScopeOverlay()
 	{
 		if ( !_scopeEffect.IsValid() )
 			return;

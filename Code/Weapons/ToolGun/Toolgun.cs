@@ -1,6 +1,4 @@
-﻿using Sandbox.Rendering;
-
-public partial class Toolgun : ScreenWeapon
+﻿public partial class Toolgun : ScreenWeapon
 {
 	public Toolgun()
 	{
@@ -62,7 +60,10 @@ public partial class Toolgun : ScreenWeapon
 		ApplyCoilSpin();
 	}
 
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
+	/// <summary>
+	/// Draws the active tool mode's HUD.
+	/// </summary>
+	public override void DrawHud( Painter painter, Vector2 crosshair )
 	{
 		var currentMode = GetCurrentMode();
 		currentMode?.DrawHud( painter, crosshair );

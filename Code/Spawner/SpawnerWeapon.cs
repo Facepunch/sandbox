@@ -1,5 +1,3 @@
-using Sandbox.Rendering;
-
 /// <summary>
 /// A weapon that previews and places objects into the world. 
 /// Accepts any <see cref="ISpawner"/> to define what to spawn.
@@ -325,24 +323,34 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 	[Rpc.Broadcast( NetFlags.HostOnly )]
 	private void SpawnEffects( Transform target ) => PlayToolEffects( target );
 
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
+	/// <summary>
+	/// Draws the placement crosshair with the current spawner's readiness and validity.
+	/// </summary>
+	public override void DrawHud( Painter painter, Vector2 crosshair )
 	{
+		using var scope = painter.Scope();
+		painter.BlendMode = BlendMode.Normal;
+
 		if ( Spawner is null )
 		{
 			// Idle crosshair
-			painter.SetBlendMode( BlendMode.Normal );
-			painter.DrawCircle( crosshair, 3, Color.White.WithAlpha( 0.3f ) );
+			painter.Fill = Color.White.WithAlpha( 0.3f );
+			painter.Stroke = Stroke.None;
+			painter.Circle( crosshair, 1.5f );
 			return;
 		}
 
 		var color = (_isValidPlacement && Spawner.IsReady) ? Color.White : new Color( 0.9f, 0.3f, 0.2f );
 
-		painter.SetBlendMode( BlendMode.Normal );
-		painter.DrawCircle( crosshair, 5, color.Darken( 0.3f ) );
-		painter.DrawCircle( crosshair, 3, color );
+		painter.Fill = color;
+		painter.Stroke = Stroke.Solid( color.Darken( 0.3f ), 1f ).WithAlignment( Stroke.StrokeAlignment.Outside );
+		painter.Circle( crosshair, 1.5f );
 	}
 
-	protected override void DrawScreenContent( Rect rect, HudPainter paint )
+	/// <summary>
+	/// Draws the current inventory icon on the viewmodel screen.
+	/// </summary>
+	protected override void DrawScreenContent( Rect rect, Painter paint )
 	{
 		var icon = Texture.Load( this.InventoryIconOverride );
 		if ( icon is not null )
@@ -354,7 +362,7 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 				size,
 				size
 			);
-			paint.DrawTexture( icon, iconRect );
+			paint.Texture( icon, iconRect );
 		}
 	}
 

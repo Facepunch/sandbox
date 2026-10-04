@@ -105,13 +105,17 @@ public partial class ScreenWeapon : BaseSandboxWeapon
 	{
 		var rt = RenderTarget.From( _screenTexture );
 
-		var cl = new CommandList( "ScreenWeaponViewScreen");
+		var cl = new CommandList( "ScreenWeaponViewScreen" );
 		renderer.ExecuteBefore = cl;
 
 		cl.SetRenderTarget( rt );
-		cl.Clear( Color.Black );
 
-		DrawScreenContent( new Rect( 0, _screenTexture.Size ), cl.Paint );
+		var rect = new Rect( 0, _screenTexture.Size );
+		using ( var paint = Painter.Begin( cl, rect ) )
+		{
+			paint.Clear( Color.Black );
+			DrawScreenContent( rect, paint );
+		}
 
 		cl.ClearRenderTarget();
 	}
@@ -119,7 +123,7 @@ public partial class ScreenWeapon : BaseSandboxWeapon
 	/// <summary>
 	/// Override this to draw custom content onto the viewmodel screen.
 	/// </summary>
-	protected virtual void DrawScreenContent( Rect rect, HudPainter paint )
+	protected virtual void DrawScreenContent( Rect rect, Painter paint )
 	{
 	}
 }

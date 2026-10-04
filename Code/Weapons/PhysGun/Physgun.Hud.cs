@@ -1,22 +1,26 @@
-﻿using Sandbox.Rendering;
-
-public partial class Physgun : ScreenWeapon
+﻿public partial class Physgun : ScreenWeapon
 {
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
+	/// <summary>
+	/// Draws a targeting dot when the physgun is not holding an object.
+	/// </summary>
+	public override void DrawHud( Painter painter, Vector2 crosshair )
 	{
 		if ( _state.IsValid() )
 			return;
 
+		using var scope = painter.Scope();
+		painter.BlendMode = BlendMode.Normal;
+		painter.Stroke = Stroke.None;
+
 		if ( _stateHovered.IsValid() )
 		{
-			painter.DrawCircle( crosshair, 3, Color.Cyan );
+			painter.Fill = Color.Cyan;
+			painter.Circle( crosshair, 1.5f );
 		}
 		else
 		{
-			painter.DrawCircle( crosshair, 5, Color.Cyan.WithAlpha( 0.2f ) );
+			painter.Fill = Color.Cyan.WithAlpha( 0.2f );
+			painter.Circle( crosshair, 2.5f );
 		}
-
-
 	}
-
 }

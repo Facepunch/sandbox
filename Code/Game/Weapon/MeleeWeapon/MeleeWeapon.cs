@@ -1,5 +1,3 @@
-using Sandbox.Rendering;
-
 public class MeleeWeapon : BaseSandboxWeapon
 {
 	/// <summary>
@@ -110,12 +108,17 @@ public class MeleeWeapon : BaseSandboxWeapon
 		ImpactPrefab( shot.HitObject, shot.Surface, shot.HitPosition, shot.Normal );
 	}
 
-	public override void DrawCrosshair( HudPainter hud, Vector2 center )
+	/// <summary>
+	/// Draws the aiming dot with the current attack availability.
+	/// </summary>
+	public override void DrawCrosshair( Painter painter, Vector2 center )
 	{
-		var len = 6;
+		using var scope = painter.Scope();
 		Color color = CanAttack() ? Color.White : Color.Red;
 
-		hud.SetBlendMode( BlendMode.Lighten );
-		hud.DrawCircle( center, len, color );
+		painter.BlendMode = BlendMode.Lighten;
+		painter.Fill = color;
+		painter.Stroke = Stroke.None;
+		painter.Circle( center, 3f );
 	}
 }

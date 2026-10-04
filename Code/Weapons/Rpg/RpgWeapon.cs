@@ -1,5 +1,4 @@
-﻿using Sandbox.Rendering;
-using Sandbox.Utility;
+﻿using Sandbox.Utility;
 
 [Title( "Ashford R-7" )]
 public sealed class RpgWeapon : BaseSandboxWeapon
@@ -185,12 +184,16 @@ public sealed class RpgWeapon : BaseSandboxWeapon
 		projectile.UpdateDirection( direction, speed );
 	}
 
-	public override void DrawCrosshair( HudPainter hud, Vector2 center )
+	/// <summary>
+	/// Draws a diamond for guided aim or a square for an unguided rocket.
+	/// </summary>
+	public override void DrawCrosshair( Painter painter, Vector2 center )
 	{
-		var tss = TimeSinceShoot.Relative.Remap( 0, 0.2f, 1, 0 );
+		using var scope = painter.Scope();
 		var w = 2;
 
-		hud.SetBlendMode( BlendMode.Lighten );
+		painter.BlendMode = BlendMode.Lighten;
+		painter.Fill = Fill.None;
 
 		if ( IsTrackedAim )
 		{
@@ -198,10 +201,12 @@ public sealed class RpgWeapon : BaseSandboxWeapon
 			Color guideColor = IsGuiding ? new Color( 1f, 0.5f, 0.1f ) : CrosshairCanShoot;
 			var size = 32f;
 
-			hud.DrawLine( center + new Vector2( 0, -size ), center + new Vector2( size, 0 ), w, guideColor );
-			hud.DrawLine( center + new Vector2( size, 0 ), center + new Vector2( 0, size ), w, guideColor );
-			hud.DrawLine( center + new Vector2( 0, size ), center + new Vector2( -size, 0 ), w, guideColor );
-			hud.DrawLine( center + new Vector2( -size, 0 ), center + new Vector2( 0, -size ), w, guideColor );
+			painter.Stroke = Stroke.Solid( guideColor, w );
+			painter.Quad(
+				center + new Vector2( 0, -size ),
+				center + new Vector2( size, 0 ),
+				center + new Vector2( 0, size ),
+				center + new Vector2( -size, 0 ) );
 
 			return;
 		}
@@ -210,9 +215,7 @@ public sealed class RpgWeapon : BaseSandboxWeapon
 
 		var squareSize = 64f;
 
-		hud.DrawLine( center + new Vector2( -squareSize / 2, -squareSize / 2 ), center + new Vector2( squareSize / 2, -squareSize / 2 ), w, color );
-		hud.DrawLine( center + new Vector2( squareSize / 2, -squareSize / 2 ), center + new Vector2( squareSize / 2, squareSize / 2 ), w, color );
-		hud.DrawLine( center + new Vector2( squareSize / 2, squareSize / 2 ), center + new Vector2( -squareSize / 2, squareSize / 2 ), w, color );
-		hud.DrawLine( center + new Vector2( -squareSize / 2, squareSize / 2 ), center + new Vector2( -squareSize / 2, -squareSize / 2 ), w, color );
+		painter.Stroke = Stroke.Solid( color, w );
+		painter.Rect( new Rect( center - new Vector2( squareSize / 2 ), new Vector2( squareSize ) ) );
 	}
 }

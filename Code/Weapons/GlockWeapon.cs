@@ -1,6 +1,4 @@
-﻿using Sandbox.Rendering;
-
-[Title( "UP-45" )]
+﻿[Title( "UP-45" )]
 public sealed class GlockWeapon : IronSightsWeapon
 {
 	protected override bool WantsPrimaryAttack()
@@ -8,12 +6,17 @@ public sealed class GlockWeapon : IronSightsWeapon
 		return Input.Pressed( "attack1" );
 	}
 
-	public override void DrawCrosshair( HudPainter hud, Vector2 center )
+	/// <summary>
+	/// Draws the outlined aiming dot with the current firing status.
+	/// </summary>
+	public override void DrawCrosshair( Painter painter, Vector2 center )
 	{
+		using var scope = painter.Scope();
 		var color = !HasPrimaryAmmo() || IsReloading || NextPrimaryFire > 0 ? CrosshairNoShoot : CrosshairCanShoot;
 
-		hud.SetBlendMode( BlendMode.Normal );
-		hud.DrawCircle( center, 5, Color.Black );
-		hud.DrawCircle( center, 3, color );
+		painter.BlendMode = BlendMode.Normal;
+		painter.Fill = color;
+		painter.Stroke = Stroke.Solid( Color.Black, 1f ).WithAlignment( Stroke.StrokeAlignment.Outside );
+		painter.Circle( center, 1.5f );
 	}
 }

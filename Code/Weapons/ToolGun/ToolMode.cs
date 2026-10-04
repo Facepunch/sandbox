@@ -1,6 +1,4 @@
-﻿using Sandbox.Rendering;
-
-public abstract partial class ToolMode : Component, IToolInfo
+﻿public abstract partial class ToolMode : Component, IToolInfo
 {
 	public Toolgun Toolgun => GetComponent<Toolgun>();
 	public Player Player => GetComponentInParent<Player>();
@@ -182,56 +180,55 @@ public abstract partial class ToolMode : Component, IToolInfo
 		}
 	}
 
-	public virtual void DrawScreen( Rect rect, HudPainter paint )
+	/// <summary>
+	/// Draws the tool title, scrolling long titles within the viewmodel screen.
+	/// </summary>
+	public virtual void DrawScreen( Rect rect, Painter paint )
 	{
+		using var state = paint.Scope();
+		paint.Clip( rect );
+		paint.TextStyle = new TextStyle( "Poppins", 64, Color.Orange )
+		{
+			LineHeight = 0.75f,
+			FontWeight = 700,
+			Alignment = TextFlag.Center | TextFlag.SingleLine
+		};
+
 		var title = Game.Language.GetPhrase( TypeDescription.Title.TrimStart( '#' ) );
-		var t = $"{TypeDescription.Icon} {title}";
+		var text = $"{TypeDescription.Icon} {title}";
+		var textWidth = paint.MeasureText( text ).x;
 
-		var text = new TextRendering.Scope( t, Color.White, 64 );
-		text.LineHeight = 0.75f;
-		text.FontName = "Poppins";
-		text.TextColor = Color.Orange;
-		text.FontWeight = 700;
+		if ( textWidth <= rect.Width )
+		{
+			paint.Text( text, rect );
+			return;
+		}
 
-		var measured = text.Measure();
-	    float textW = measured.x;
-	    float textH = measured.y;
-	
-	    if ( textW <= rect.Width )
-	    {
-	        paint.DrawText( text, rect, TextFlag.Center );
-	        return;
-	    }
-	
-	    // Marquee: scroll text right-to-left, looping seamlessly.
-	    // The render target viewport naturally clips anything outside [0, rect.Width].
-	    const float scrollSpeed = 80f;
-	    const float gap = 60f;
-	    float cycle = textW + gap;
-	    float offset = (Time.Now * scrollSpeed) % cycle;
-	
-	    float y = rect.Top + (rect.Height - textH) * 0.5f;
-	
-	    float x = rect.Width - offset;
-	    paint.DrawText( text, new Rect( x, y, textW, textH ), TextFlag.SingleLine | TextFlag.Left );
-	    paint.DrawText( text, new Rect( x - cycle, y, textW, textH ), TextFlag.SingleLine | TextFlag.Left );
+		// Marquee: clip both copies to the screen while they loop right-to-left.
+		const float scrollSpeed = 80f;
+		const float gap = 60f;
+		var cycle = textWidth + gap;
+		var offset = (Time.Now * scrollSpeed) % cycle;
+		var x = rect.Right - offset;
+
+		paint.TextStyle = paint.TextStyle with { Alignment = TextFlag.LeftCenter | TextFlag.SingleLine };
+		paint.Text( text, new Rect( x, rect.Top, textWidth, rect.Height ) );
+		paint.Text( text, new Rect( x - cycle, rect.Top, textWidth, rect.Height ) );
 	}
 
-	public virtual void DrawHud( HudPainter painter, Vector2 crosshair )
+	/// <summary>
+	/// Draws a crosshair showing whether the current tool action is valid.
+	/// </summary>
+	public virtual void DrawHud( Painter painter, Vector2 crosshair )
 	{
-		if ( IsValidState )
-		{
-			painter.SetBlendMode( BlendMode.Normal );
-			painter.DrawCircle( crosshair, 5, Color.Black );
-			painter.DrawCircle( crosshair, 3, Color.White );
-		}
-		else
-		{
-			Color redColor = "#e53";
-			painter.SetBlendMode( BlendMode.Normal );
-			painter.DrawCircle( crosshair, 5, redColor.Darken( 0.3f ) );
-			painter.DrawCircle( crosshair, 3, redColor );
-		}
+		using var state = painter.Scope();
+		painter.BlendMode = BlendMode.Normal;
+
+		Color invalidColor = "#e53";
+		painter.Fill = IsValidState ? Color.White : invalidColor;
+		painter.Stroke = Stroke.Solid( IsValidState ? Color.Black : invalidColor.Darken( 0.3f ), 1f )
+			.WithAlignment( Stroke.StrokeAlignment.Outside );
+		painter.Circle( crosshair, 1.5f );
 	}
 
 	/// <summary>

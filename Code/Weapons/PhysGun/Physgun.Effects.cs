@@ -1,5 +1,4 @@
-﻿using Sandbox.Rendering;
-using Sandbox.Utility;
+﻿using Sandbox.Utility;
 
 public partial class Physgun : ScreenWeapon
 {
@@ -191,9 +190,14 @@ public partial class Physgun : ScreenWeapon
 	private Texture _graphTexture;
 	private byte[] _graphPixels = new byte[GraphSamples * 4]; // RGBA8
 
-	protected override void DrawScreenContent( Rect rect, HudPainter paint )
+	/// <summary>
+	/// Draws the power meter and channel labels on the viewmodel screen.
+	/// </summary>
+	protected override void DrawScreenContent( Rect rect, Painter paint )
 	{
-		paint.SetBlendMode( BlendMode.Lighten );
+		using var state = paint.Scope();
+		paint.BlendMode = BlendMode.Lighten;
+		paint.Stroke = Stroke.None;
 
 		var w = rect.Width;
 		var h = rect.Height;
@@ -216,40 +220,37 @@ public partial class Physgun : ScreenWeapon
 		var fillWidth = barW * normalized;
 		if ( fillWidth > 0f )
 		{
-			paint.DrawRect( new Rect( barX, barY, fillWidth, barH ), new Color( 1, 1, 1, 0.8f ) );
+			paint.Fill = new Color( 1, 1, 1, 0.8f );
+			paint.Rect( new Rect( barX, barY, fillWidth, barH ) );
 		}
 
 		// Bar outline
-		paint.DrawLine( new Vector2( barX, barY ), new Vector2( barX + barW, barY ), 1f, borderColor );
-		paint.DrawLine( new Vector2( barX, barY + barH ), new Vector2( barX + barW, barY + barH ), 1f, borderColor );
-		paint.DrawLine( new Vector2( barX, barY ), new Vector2( barX, barY + barH ), 1f, borderColor );
-		paint.DrawLine( new Vector2( barX + barW, barY ), new Vector2( barX + barW, barY + barH ), 1f, borderColor );
+		paint.Fill = Fill.None;
+		paint.Stroke = Stroke.Solid( borderColor, 1f );
+		paint.Rect( new Rect( barX, barY, barW, barH ) );
 
 		// Percentage label
 		var percent = (int)(normalized * 100f);
-		var percentLabel = new TextRendering.Scope( $"{percent}", Color.White, h * 0.135f );
-		percentLabel.FontName = "Consolas";
-		percentLabel.TextColor = Color.White;
-		percentLabel.FontWeight = 100;
-		percentLabel.FilterMode = FilterMode.Point;
-		paint.DrawText( percentLabel, new Rect( barX + barW + padX, barY, w - barW - padX * 3f, barH ), TextFlag.LeftCenter );
+		paint.TextStyle = new TextStyle( "Consolas", h * 0.135f, Color.White )
+		{
+			FontWeight = 100,
+			Alignment = TextFlag.LeftCenter | TextFlag.SingleLine
+		};
+		paint.Text( $"{percent}", new Rect( barX + barW + padX, barY, w - barW - padX * 3f, barH ) );
 
 		// Channel / voltage row
 		var rowY = barY + barH + padY;
+		paint.TextStyle = paint.TextStyle with
+		{
+			FontSize = h * 0.14f,
+			FontWeight = 400,
+			Color = new Color( 0f, 1f, 0f )
+		};
 
-		var ch2 = new TextRendering.Scope( "Ch2", Color.White, h * 0.14f );
-		ch2.FontName = "Consolas";
-		ch2.TextColor = new Color( 0f, 1f, 0f );
-		ch2.FontWeight = 400;
-		ch2.FilterMode = FilterMode.Point;
-		paint.DrawText( ch2, new Rect( barX, rowY, w * 0.45f, 0 ), TextFlag.LeftCenter );
-
-		var voltage = new TextRendering.Scope( "731v", Color.White, h * 0.14f );
-		voltage.FontName = "Consolas";
-		voltage.TextColor = new Color( 0f, 1f, 0f );
-		voltage.FontWeight = 400;
-		voltage.FilterMode = FilterMode.Point;
-		paint.DrawText( voltage, new Rect( barX + w * 0.45f, rowY, w * 0.45f, 0 ), TextFlag.LeftCenter );
+		var rowHeight = paint.MeasureText( "Ch2 731v" ).y;
+		var rowTop = rowY - rowHeight * 0.5f;
+		paint.Text( "Ch2", new Rect( barX, rowTop, w * 0.45f, rowHeight ) );
+		paint.Text( "731v", new Rect( barX + w * 0.45f, rowTop, w * 0.45f, rowHeight ) );
 	}
 
 	private float _spinIntensity;

@@ -1,5 +1,3 @@
-using Sandbox.Rendering;
-
 /// <summary>
 /// A weapon that can aim down sights
 /// </summary>
@@ -10,11 +8,15 @@ public abstract class IronSightsWeapon : BaseBulletWeapon
 	/// </summary>
 	[Property] public float IronSightsFireScale { get; set; } = 0.2f;
 
-	/// <summary>Multiplier for the player's FOV while aiming in first person. 1 disables zoom.</summary>
+	/// <summary>
+	/// Multiplier for the player's FOV while aiming in first person. 1 disables zoom.
+	/// </summary>
 	[Property, Group( "Iron Sights" ), Title( "Aim FOV Scale" ), Range( 0.1f, 1f )]
 	public float AimFovScale { get; set; } = 0.8f;
 
-	/// <summary>Seconds to blend between normal and aimed FOV. 0 switches instantly.</summary>
+	/// <summary>
+	/// Seconds to blend between normal and aimed FOV. 0 switches instantly.
+	/// </summary>
 	[Property, Group( "Iron Sights" ), Title( "Aim FOV Transition Time" ), Range( 0f, 1f )]
 	public float AimFovTransitionTime { get; set; } = 0.15f;
 
@@ -26,9 +28,13 @@ public abstract class IronSightsWeapon : BaseBulletWeapon
 
 	public override bool CanSecondaryAttack() => false;
 
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
+	/// <summary>
+	/// Draws the crosshair while the weapon is not aiming down sights.
+	/// </summary>
+	public override void DrawHud( Painter painter, Vector2 crosshair )
 	{
 		if ( IsAiming ) return;
+
 		base.DrawHud( painter, crosshair );
 	}
 
@@ -81,6 +87,8 @@ public abstract class IronSightsWeapon : BaseBulletWeapon
 		base.ModifyCamera( camera, ref view );
 	}
 
-	/// <summary>Aiming down sights narrows the spread cone.</summary>
+	/// <summary>
+	/// Aiming down sights narrows the spread cone.
+	/// </summary>
 	public override Vector2 CurrentSpread => base.CurrentSpread * (IsAiming ? IronSightsFireScale : 1f);
 }

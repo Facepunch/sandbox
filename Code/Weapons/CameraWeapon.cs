@@ -1,6 +1,3 @@
-using Sandbox.Rendering;
-
-
 /// <summary>
 /// A camera weapon that can be held by a player and renders to a render target texture, which can be displayed on a TV.
 /// </summary>
@@ -220,7 +217,10 @@ public sealed class CameraWeapon : BaseSandboxWeapon
 		_renderTexture = null;
 	}
 
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
+	/// <summary>
+	/// Keeps the camera view clear of weapon HUD elements.
+	/// </summary>
+	public override void DrawHud( Painter painter, Vector2 crosshair )
 	{
 		// nothing!
 	}

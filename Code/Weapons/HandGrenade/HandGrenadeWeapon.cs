@@ -1,5 +1,3 @@
-using Sandbox.Rendering;
-
 public enum ThrowType
 {
 	Far = 0,
@@ -301,10 +299,17 @@ public sealed class HandGrenadeWeapon : BaseSandboxWeapon
 		}
 	}
 
-	public override void DrawCrosshair( HudPainter hud, Vector2 center )
+	/// <summary>
+	/// Draws the aiming dot with the current grenade availability.
+	/// </summary>
+	public override void DrawCrosshair( Painter painter, Vector2 center )
 	{
+		using var scope = painter.Scope();
 		var color = !HasPrimaryAmmo() ? CrosshairNoShoot : CrosshairCanShoot;
-		hud.SetBlendMode( BlendMode.Lighten );
-		hud.DrawCircle( center, 6, color );
+
+		painter.BlendMode = BlendMode.Lighten;
+		painter.Fill = color;
+		painter.Stroke = Stroke.None;
+		painter.Circle( center, 3f );
 	}
 }
