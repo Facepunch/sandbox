@@ -1,4 +1,4 @@
-﻿﻿
+﻿
 [Icon( "⛔" )]
 [Title( "#tool.name.nocollide" )]
 [ClassName( "nocollide" )]
@@ -27,7 +27,7 @@ public sealed class NoCollideTool : BaseConstraintToolMode
 		Track( go );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "No Collide";
+		undo.Name = "#tool.name.nocollide";
 		undo.Add( go );
 	}
 }

@@ -24,10 +24,10 @@ public class SpawnPageCloud : CloudSpawnList
 			: LocalProps.All.Where( entry => string.Equals( entry.Category, LocalFilterCategory, StringComparison.OrdinalIgnoreCase ) );
 
 		if ( !string.IsNullOrWhiteSpace( Filter ) )
-			entries = entries.Where( entry => entry.DisplayName.Contains( Filter, StringComparison.OrdinalIgnoreCase ) || entry.Path.Contains( Filter, StringComparison.OrdinalIgnoreCase ) );
+			entries = entries.Where( entry => entry.DisplayName.Contains( Filter, StringComparison.CurrentCultureIgnoreCase ) || entry.Path.Contains( Filter, StringComparison.OrdinalIgnoreCase ) );
 
 		return entries
-			.OrderBy( entry => entry.DisplayName ).ThenBy( entry => entry.Path )
-			.Select( entry => new Entry( $"prop:{entry.Path}", entry.DisplayName ) );
+			.OrderBy( entry => entry.DisplayName, StringComparer.CurrentCultureIgnoreCase ).ThenBy( entry => entry.Path )
+			.Select( entry => new Entry( $"prop:{entry.Path}", entry.Title ?? entry.DisplayName ) );
 	}
 }

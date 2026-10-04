@@ -43,7 +43,7 @@ public sealed class MountMetadata : Component
 		if ( !string.IsNullOrEmpty( GameTitle ) )
 		{
 			var textPos = WorldPosition + Vector3.Up * (BoundsSize.z / 2f + 8f);
-			DebugOverlay.Text( textPos, $"🧩 Install {GameTitle}", color: Color.White, duration: 0f );
+			DebugOverlay.Text( textPos, Game.Language.GetPhrase( "entity.mount.install", new() { { "name", GameTitle } } ), color: Color.White, duration: 0f );
 		}
 	}
 }

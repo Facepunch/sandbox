@@ -24,15 +24,18 @@
     </div>
 
     <div class="footer">
-            <Button class="menu-action primary" Text="Reset" Icon="🧹" onclick=@ClearAll></Button>
-            <Button class="menu-action primary" Text="Randomize" Icon="🎲" onclick=@Randomize></Button>
-            <Button class="menu-action primary" Text="Presets" Icon="📋" onclick=@OpenPresetsMenu></Button>
+            <Button class="menu-action primary" Text="#ui.common.reset" Icon="🧹" onclick=@ClearAll></Button>
+            <Button class="menu-action primary" Text="#ui.common.randomize" Icon="🎲" onclick=@Randomize></Button>
+            <Button class="menu-action primary" Text="#spawnmenu.effects.presets" Icon="📋" onclick=@OpenPresetsMenu></Button>
     </div>
 </root>
 
 @code
 {
-    public string Title => "😶 Face Poser";
+    /// <summary>
+    /// Localized title of the face pose inspector.
+    /// </summary>
+    public string Title => "😶 " + Game.Language.GetPhrase( "ui.faceposer.title" );
 
     public SkinnedModelRenderer Target { get; private set; }
 
@@ -91,7 +94,7 @@
         {
             if (group.Count() != 2) continue;
 
-            var lower = group.Select(x => x.ToLower());
+            var lower = group.Select(x => x.ToLowerInvariant());
             if (!lower.Any(x => x.EndsWith('l')) || !lower.Any(x => x.EndsWith('r')))
                 continue;
 
@@ -106,7 +109,7 @@
         return rows;
     }
 
-    IEnumerable<IGrouping<string, MorphRow>> BuildGroups() => BuildRows().GroupBy(r => GetGroup(r.Title)).OrderBy(g => g.Key);
+    IEnumerable<IGrouping<string, MorphRow>> BuildGroups() => BuildRows().GroupBy(r => GetGroup(r.NameA)).OrderBy(g => LocalizedText.Resolve( g.Key ), StringComparer.CurrentCultureIgnoreCase);
 
     bool IsRowActive(MorphRow row) => Target.IsValid() && (
         (Target.SceneModel.Morphs.Get(row.NameA) > 0f) ||
@@ -202,14 +205,14 @@
     {
         var menu = new Sandbox.UI.Menu();
 
-        menu.AddOption( "Save New Preset...", "save", () =>
+        menu.AddOption( "#spawnmenu.effects.save_new_preset", "save", () =>
         {
             var popup = new StringQueryPopup
             {
-                Title = "Save Preset",
-                Prompt = "Enter a name for this preset.",
-                Placeholder = "Preset name...",
-                ConfirmLabel = "Save",
+                Title = "#spawnmenu.effects.save_preset",
+                Prompt = "#ui.faceposer.preset_prompt",
+                Placeholder = "#spawnmenu.effects.preset_name_placeholder",
+                ConfirmLabel = "#spawnmenu.common.save",
                 OnConfirm = name => SaveNewPreset( name )
             };
             popup.Parent = FindPopupPanel();
@@ -223,8 +226,8 @@
             {
                 var captured = preset;
                 var sub = menu.AddMenu( captured.Name, "auto_awesome" );
-                sub.AddOption( "Load", "play_arrow", () => ApplyPreset( captured ) );
-                sub.AddOption( "Delete", "delete", () => DeletePreset( captured.Name ) );
+                sub.AddOption( "#spawnmenu.common.load", "play_arrow", () => ApplyPreset( captured ) );
+                sub.AddOption( "#spawnmenu.common.delete", "delete", () => DeletePreset( captured.Name ) );
             }
         }
 
@@ -246,16 +249,16 @@
 
     static string GetGroup(string title)
     {
-        if (title.Contains("brow", StringComparison.OrdinalIgnoreCase)) return "Eyes";
-        if (title.Contains("eye", StringComparison.OrdinalIgnoreCase)) return "Eyes";
-        if (title.Contains("cheek", StringComparison.OrdinalIgnoreCase)) return "Face";
-        if (title.Contains("nose", StringComparison.OrdinalIgnoreCase)) return "Face";
-        if (title.Contains("nostril", StringComparison.OrdinalIgnoreCase)) return "Face";
-        if (title.Contains("chin", StringComparison.OrdinalIgnoreCase)) return "Face";
-        if (title.Contains("jaw", StringComparison.OrdinalIgnoreCase)) return "Mouth";
-        if (title.Contains("lip", StringComparison.OrdinalIgnoreCase)) return "Mouth";
-        if (title.Contains("mouth", StringComparison.OrdinalIgnoreCase)) return "Mouth";
-        return "Misc";
+        if (title.Contains("brow", StringComparison.OrdinalIgnoreCase)) return "#ui.faceposer.group.eyes";
+        if (title.Contains("eye", StringComparison.OrdinalIgnoreCase)) return "#ui.faceposer.group.eyes";
+        if (title.Contains("cheek", StringComparison.OrdinalIgnoreCase)) return "#ui.faceposer.group.face";
+        if (title.Contains("nose", StringComparison.OrdinalIgnoreCase)) return "#ui.faceposer.group.face";
+        if (title.Contains("nostril", StringComparison.OrdinalIgnoreCase)) return "#ui.faceposer.group.face";
+        if (title.Contains("chin", StringComparison.OrdinalIgnoreCase)) return "#ui.faceposer.group.face";
+        if (title.Contains("jaw", StringComparison.OrdinalIgnoreCase)) return "#ui.faceposer.group.mouth";
+        if (title.Contains("lip", StringComparison.OrdinalIgnoreCase)) return "#ui.faceposer.group.mouth";
+        if (title.Contains("mouth", StringComparison.OrdinalIgnoreCase)) return "#ui.faceposer.group.mouth";
+        return "#ui.faceposer.group.misc";
     }
 
     protected override int BuildHash() => HashCode.Combine(Target);

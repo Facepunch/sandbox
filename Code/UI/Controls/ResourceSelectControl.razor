@@ -1,4 +1,4 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @namespace Sandbox
 @inherits BaseControl
@@ -25,11 +25,11 @@
     <div class="content">
         @if ( ResourceType == null )
         {
-            <div class="title">Unknown Resource Type</div>
+            <div class="title">#ui.resource.unknown_type</div>
         }
         else if ( Title == null )
         {
-            <div class="title empty">None Selected</div>
+            <div class="title empty">#ui.resource.none_selected</div>
         }
         else
         {
@@ -38,7 +38,7 @@
 
         @if ( ResourceAttribute != null )
         {
-            <div class="subtitle">@ResourceAttribute.Name</div>
+            <div class="subtitle">@LocalizedText.ResourceTypeName( ResourceAttribute )</div>
         }
     </div>
 
@@ -52,6 +52,9 @@
     TypeDescription ResourceType;
     AssetTypeAttribute ResourceAttribute;
 
+    /// <summary>
+    /// Refreshes the resource type metadata and current selection.
+    /// </summary>
     public override void Rebuild()
     {
         base.Rebuild();
@@ -65,6 +68,9 @@
         OnValueChanged();
     }
 
+    /// <summary>
+    /// Updates the preview and display title when the selected resource path changes.
+    /// </summary>
     public void OnValueChanged()
     {
         var path = Property.As.String;
@@ -81,7 +87,7 @@
         var resource = ResourceLibrary.Get<GameResource>(path);
         if ( resource == null )
         {
-            Title = "Unknown Resource";
+            Title = "#ui.resource.unknown";
             return;
         }
 

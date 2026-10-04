@@ -1,7 +1,7 @@
 {
   "Prefab": "entities/wheel/tractor.prefab",
-  "Title": "Tractor",
-  "Description": "Bigger is better",
+  "Title": "#asset.tractor.title",
+  "Description": "#asset.tractor.description",
   "__references": [],
   "__version": 0
 }

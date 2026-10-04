@@ -6,10 +6,13 @@ public enum EmitMode
 	/// <summary>
 	/// Press once to turn on, press again to turn off.
 	/// </summary>
+	[Title( "#entity.emitmode.toggle" )]
 	Toggle,
+
 	/// <summary>
 	/// Emits only while the input is held down.
 	/// </summary>
+	[Title( "#entity.emitmode.hold" )]
 	Hold,
 }
 
@@ -17,31 +20,31 @@ public enum EmitMode
 /// A world-placed SENT that spawns and controls a particle/VFX emitter.
 /// The emitter prefab is defined by a <see cref="ScriptedEmitter"/> resource.
 /// </summary>
-[Alias( "emitter" )]
+[Alias( "emitter" ), Title( "#entity.name.emitter" )]
 public sealed class EmitterEntity : Component, IPlayerControllable
 {
 	/// <summary>
 	/// The emitter definition points to a prefab containing a particle system.
 	/// </summary>
-	[Property, ClientEditable]
+	[Property, Title( "#entity.property.emitter" ), Description( "#entity.description.emitter" ), ClientEditable]
 	public ScriptedEmitter Emitter { get; set; }
 
 	/// <summary>
 	/// Whether this emitter toggles on/off with a press, or emits only while held.
 	/// </summary>
-	[Property, ClientEditable]
+	[Property, Title( "#entity.property.mode" ), Description( "#entity.description.mode" ), ClientEditable]
 	public EmitMode Mode { get; set; } = EmitMode.Toggle;
 
 	/// <summary>
 	/// Used when <see cref="Mode"/> is <see cref="EmitMode.Toggle"/>.
 	/// </summary>
-	[Property, ClientEditable, Group( "Input" )]
+	[Property, Title( "#entity.property.toggleinput" ), Description( "#entity.description.toggleinput" ), ClientEditable, Group( "#entity.group.input" )]
 	public ClientInput ToggleInput { get; set; }
 
 	/// <summary>
 	/// Used when <see cref="Mode"/> is <see cref="EmitMode.Hold"/>.
 	/// </summary>
-	[Property, ClientEditable, Group( "Input" )]
+	[Property, Title( "#entity.property.holdinput" ), Description( "#entity.description.holdinput" ), ClientEditable, Group( "#entity.group.input" )]
 	public ClientInput HoldInput { get; set; }
 
 	/// <summary>
@@ -53,7 +56,7 @@ public sealed class EmitterEntity : Component, IPlayerControllable
 	/// When enabled, forces the emitter on regardless of input or mode.
 	/// Can be set from the editor or wired up externally.
 	/// </summary>
-	[Property, ClientEditable, SignalInput( Default = true )]
+	[Property, Title( "#entity.property.manualon" ), Description( "#entity.description.manualon" ), ClientEditable, SignalInput( Default = true )]
 	public bool ManualOn
 	{
 		get => _manualOn;
@@ -81,18 +84,27 @@ public sealed class EmitterEntity : Component, IPlayerControllable
 			DestroyParticle();
 	}
 
-	[SignalInput( Id = nameof( ToggleInput ) )]
+	/// <summary>
+	/// Toggles emission when a signal triggers in toggle mode.
+	/// </summary>
+	[SignalInput( Id = nameof( ToggleInput ) ), Title( "#entity.property.toggleinput" )]
 	public void ToggleSignal()
 	{
 		if ( Mode == EmitMode.Toggle ) ToggleEmitting();
 	}
 
-	[SignalInput( Id = nameof( HoldInput ) )]
+	/// <summary>
+	/// Updates emission from a signal in hold mode.
+	/// </summary>
+	[SignalInput( Id = nameof( HoldInput ) ), Title( "#entity.property.holdinput" )]
 	public void HoldSignal( bool active )
 	{
 		if ( Mode == EmitMode.Hold ) SetInputEmitting( active );
 	}
 
+	/// <summary>
+	/// Applies the owning player's emitter input for the current mode.
+	/// </summary>
 	public void OnControl()
 	{
 		if ( Mode == EmitMode.Toggle )

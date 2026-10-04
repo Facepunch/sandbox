@@ -38,8 +38,8 @@
     },
     "compiled": null
   },
-  "Title": "Motion Blur",
-  "Description": "Adds motion blur to fast-moving objects and camera movement.",
+  "Title": "#asset.motionblur.title",
+  "Description": "#asset.motionblur.description",
   "__references": [],
   "__version": 0
 }

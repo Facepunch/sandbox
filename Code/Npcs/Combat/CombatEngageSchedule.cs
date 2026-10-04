@@ -10,25 +10,25 @@ public class CombatEngageSchedule : ScheduleBase
 {
 	private static readonly string[] SpotLines =
 	{
-		"Contact!",
-		"There!",
-		"I see you!",
-		"Got one!",
-		"Enemy spotted!",
-		"Don't move!",
-		"Found you.",
+		"#npc.speech.combat.spot.1",
+		"#npc.speech.combat.spot.2",
+		"#npc.speech.combat.spot.3",
+		"#npc.speech.combat.spot.4",
+		"#npc.speech.combat.spot.5",
+		"#npc.speech.combat.spot.6",
+		"#npc.speech.combat.spot.7",
 	};
 
 	private static readonly string[] TauntLines =
 	{
-		"You're not getting away!",
-		"Stay down!",
-		"Take cover!",
-		"Suppressing fire!",
-		"Keep the pressure on!",
-		"Don't let up!",
-		"That's for my squad!",
-		"You picked the wrong fight.",
+		"#npc.speech.combat.taunt.1",
+		"#npc.speech.combat.taunt.2",
+		"#npc.speech.combat.taunt.3",
+		"#npc.speech.combat.taunt.4",
+		"#npc.speech.combat.taunt.5",
+		"#npc.speech.combat.taunt.6",
+		"#npc.speech.combat.taunt.7",
+		"#npc.speech.combat.taunt.8",
 	};
 
 	/// <summary>

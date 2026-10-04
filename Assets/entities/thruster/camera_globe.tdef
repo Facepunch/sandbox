@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/camera_globe.prefab",
-  "Title": "Camera Globe",
+  "Title": "#asset.camera_globe.title",
   "Description": "",
   "__references": [],
   "__version": 0

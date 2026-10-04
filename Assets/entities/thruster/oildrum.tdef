@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/oildrum.prefab",
-  "Title": "Oil Drum",
+  "Title": "#asset.oildrum.title",
   "Description": "",
   "__references": [],
   "__version": 0

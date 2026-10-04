@@ -12,9 +12,9 @@
             </Left>
 
             <Right>
-                <Button Icon=@IconSize.Icon() Tooltip="Icon size" class="icon-button" @onclick=@OpenIconSizeMenu />
-                <Button Icon="verified" Active=@VerifiedOnly Tooltip="Show verified items only" class="icon-button" @onclick=@ToggleVerified />
-                <Button Icon=@SortOrder.Icon() Text=@SortOrder.ToString() Tooltip="Sort order" class="menu-button" @onclick=@OpenSortMenu />
+                <Button Icon=@IconSize.Icon() Tooltip="#ui.icon_size.title" class="icon-button" @onclick=@OpenIconSizeMenu />
+                <Button Icon="verified" Active=@VerifiedOnly Tooltip="#ui.verified_only" class="icon-button" @onclick=@ToggleVerified />
+                <Button Icon=@SortOrder.Icon() Text=@SortTitle Tooltip="#ui.sort_order" class="menu-button" @onclick=@OpenSortMenu />
             </Right>
         </SpawnMenuToolbar>
     </Header>
@@ -86,6 +86,15 @@
         Rebuild();
     }
 
+    /// <summary>
+    /// Reapplies searches and sorting to the translated names of local entries.
+    /// </summary>
+    public override void LanguageChanged()
+    {
+        base.LanguageChanged();
+        Rebuild();
+    }
+
     List<object> Entries = [];
     bool Loading;
     int _rebuildVersion;
@@ -130,13 +139,15 @@
         StateHasChanged();
     }
 
+    string SortTitle => DisplayInfo.ForEnumValues<PackageSortMode>().FirstOrDefault( entry => entry.value == SortOrder ).info.Name;
+
     void OpenSortMenu()
     {
         var menu = new Sandbox.UI.Menu();
-        foreach ( var mode in Enum.GetValues<PackageSortMode>() )
+        foreach ( var (mode, info) in DisplayInfo.ForEnumValues<PackageSortMode>() )
         {
             var m = mode;
-            menu.AddOption( m.ToString(), m.Icon(), () => SortOrder = m );
+            menu.AddOption( info.Name, m.Icon(), () => SortOrder = m );
         }
 
         menu.Open( this, Popup.PositionMode.UnderMouse );
@@ -145,10 +156,10 @@
     void OpenIconSizeMenu()
     {
         var menu = new Sandbox.UI.Menu();
-        foreach ( var size in Enum.GetValues<SpawnMenuIconSize>() )
+        foreach ( var (size, info) in DisplayInfo.ForEnumValues<SpawnMenuIconSize>() )
         {
             var s = size;
-            menu.AddOption( s.ToString(), s.Icon(), () => IconSize = s );
+            menu.AddOption( info.Name, s.Icon(), () => IconSize = s );
         }
 
         menu.Open( this, Popup.PositionMode.UnderMouse );

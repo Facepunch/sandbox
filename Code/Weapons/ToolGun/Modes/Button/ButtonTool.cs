@@ -10,7 +10,7 @@ public sealed class ButtonTool : ToolMode
 	public override bool UseSnapGrid => true;
 	public override IEnumerable<string> TraceIgnoreTags => ["constraint", "collision"];
 
-	[Property, ResourceSelect( Extension = "btndef", AllowPackages = true ), Title( "Button" )]
+	[Property, ResourceSelect( Extension = "btndef", AllowPackages = true ), Title( "#tool.name.button" )]
 	public string Definition { get; set; } = "entities/button/basic.btndef";
 
 	public override string Description => "#tool.hint.buttontool.description";
@@ -84,7 +84,7 @@ public sealed class ButtonTool : ToolMode
 		Track( button );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Button";
+		undo.Name = "#tool.name.button";
 		undo.Icon = "🔘";
 		undo.Add( button );
 

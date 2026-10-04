@@ -1,7 +1,7 @@
 {
   "Prefab": "weapons/shotgun/shotgun.prefab",
   "Title": "Spaghelli M4",
-  "Description": "It goes boom",
+  "Description": "#asset.shotgun.description",
   "Category": "Weapon",
   "IncludeCode": false,
   "__references": [],

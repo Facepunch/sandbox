@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/studio_light.prefab",
-  "Title": "Studio Light",
+  "Title": "#asset.studio_light.title",
   "Description": "",
   "__references": [],
   "__version": 0

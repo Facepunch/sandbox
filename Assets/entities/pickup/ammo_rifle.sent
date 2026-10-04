@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/pickup/ammo_rifle.prefab",
-  "Title": "Rifle Ammo",
+  "Title": "#asset.rifle.title",
   "Description": null,
   "Category": "Pickup",
   "IncludeCode": false,

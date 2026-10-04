@@ -79,8 +79,11 @@ public class SpawnlistData
 	/// </summary>
 	public static event Action SpawnlistCreated;
 
+	/// <summary>
+	/// The literal name chosen by the author. Only the initial fallback is localized.
+	/// </summary>
 	[JsonPropertyName( "name" )]
-	public string Name { get; set; } = "#spawnmenu.spawnlist.untitled";
+	public string Name { get; set; } = Game.Language.GetPhrase( "spawnmenu.spawnlist.untitled" );
 
 	[JsonPropertyName( "description" )]
 	public string Description { get; set; } = "";
@@ -124,17 +127,18 @@ public class SpawnlistData
 	public static SpawnlistData Load( Storage.Entry entry )
 	{
 		if ( !entry.Files.FileExists( "/spawnlist.json" ) )
-			return new SpawnlistData { Name = entry.GetMeta<string>( "name" ) ?? "Untitled" };
+			return new SpawnlistData { Name = entry.GetMeta<string>( "name" ) ?? Game.Language.GetPhrase( "spawnmenu.spawnlist.untitled" ) };
 
 		var data = entry.Files.ReadJson<SpawnlistData>( "/spawnlist.json" )
-			?? new SpawnlistData { Name = "Untitled" };
+			?? new SpawnlistData();
 		Normalize( data, !entry.Files.IsReadOnly );
 		return data;
 	}
 
 	private static bool Normalize( SpawnlistData data, bool assignIds )
 	{
-		var changed = data.Items is null;
+		var changed = data.Items is null || data.Name is null;
+		data.Name ??= Game.Language.GetPhrase( "spawnmenu.spawnlist.untitled" );
 		data.Items ??= new();
 		if ( !assignIds ) return changed;
 
@@ -171,7 +175,11 @@ public class SpawnlistData
 		// local spawnlists gain content previews without needing to be edited first.
 		Save( entry, Load( entry ) );
 
-		var options = new Modals.WorkshopPublishOptions { Title = entry.GetMeta<string>( "name", "Untitled" ), Description = entry.GetMeta<string>( "description", "" ) };
+		var options = new Modals.WorkshopPublishOptions
+		{
+			Title = entry.GetMeta<string>( "name" ) ?? Game.Language.GetPhrase( "spawnmenu.spawnlist.untitled" ),
+			Description = entry.GetMeta<string>( "description", "" )
+		};
 		entry.Publish( options );
 	}
 
@@ -248,17 +256,28 @@ public class SpawnlistData
 			{
 				var data = Load( entry );
 				var capturedEntry = entry;
-				sub.AddOption( data.Name, "📋", () => AddItem( capturedEntry, item ) );
+				var option = sub.AddOption( null, "📋", () => AddItem( capturedEntry, item ) );
+
+				// List names are authored content, even when they begin with a phrase prefix.
+				foreach ( var label in option.Children.OfType<Label>() )
+				{
+					label.Tokenize = false;
+				}
+
+				option.Text = data.Name;
 			}
 
 			menu.AddSeparator();
 		}
 
+		var (type, path, source) = SpawnlistItem.ParseIdent( item.Ident );
+
 		menu.AddOption( "#spawnmenu.spawnlist.create_new_option", "➕", () =>
 		{
 			var popup = new SpawnlistCreatePopup
 			{
-				Name = item.Title ?? "New Spawnlist",
+				Name = (type == "dupe" ? item.Title : LocalizedText.Resolve( item.Title ))
+					?? Game.Language.GetPhrase( "spawnmenu.spawnlist.new_button" ),
 				InitialItem = item,
 				Parent = sourcePanel.FindPopupPanel()
 			};
@@ -267,7 +286,6 @@ public class SpawnlistData
 				popup.OnEntryCreated = spawnMenu.OpenSpawnlist;
 		} );
 
-		var (type, path, source) = SpawnlistItem.ParseIdent( item.Ident );
 		var spawner = ISpawner.Create( type, path, source );
 		var fullIdent = spawner?.FullIdent;
 
@@ -275,7 +293,7 @@ public class SpawnlistData
 		{
 			menu.AddSeparator();
 
-			menu.AddOption( "Open in Workshop", "🌐", () =>
+			menu.AddOption( "#ui.open_workshop", "🌐", () =>
 			{
 				Game.Overlay.ShowPackageModal( fullIdent );
 			} );

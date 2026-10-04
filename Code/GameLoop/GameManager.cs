@@ -27,6 +27,22 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		Sandbox.Platform.Chat.AddText( text );
 	}
 
+	/// <summary>
+	/// Broadcasts a phrase reference and data so each player formats the message locally.
+	/// </summary>
+	internal void NotifyLocalized( string phrase, Dictionary<string, string> tokens )
+	{
+		Assert.True( Networking.IsHost, "Only the host can send notifications" );
+		NotifyLocalizedRpc( phrase, Sandbox.Json.Serialize( tokens ) );
+	}
+
+	[Rpc.Broadcast( NetFlags.HostOnly )]
+	private void NotifyLocalizedRpc( string phrase, string tokensJson )
+	{
+		var tokens = Sandbox.Json.Deserialize<Dictionary<string, string>>( tokensJson );
+		Sandbox.Platform.Chat.AddText( LocalizedText.Resolve( phrase, tokens ) );
+	}
+
 	void Component.INetworkListener.OnActive( Connection channel )
 	{
 		channel.CanSpawnObjects = false;
@@ -408,9 +424,12 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 	void ICleanupEvents.OnCleanup( int removedObjects, int restoredObjects )
 	{
-		var message = $"Cleanup! Removed {removedObjects} objects.";
-		if ( restoredObjects > 0 )
-			message += $" Restored {restoredObjects} objects.";
+		var phrase = restoredObjects > 0 ? "cleanup.restored" : "cleanup.removed";
+		var message = Game.Language.GetPhrase( phrase, new()
+		{
+			{ "removed", removedObjects },
+			{ "restored", restoredObjects }
+		} );
 
 		Notices.AddNotice( "cleaning_services", Color.Green, message );
 	}

@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/kickstool.prefab",
-  "Title": "Kick Stool",
+  "Title": "#asset.kickstool.title",
   "Description": "",
   "__references": [],
   "__version": 0

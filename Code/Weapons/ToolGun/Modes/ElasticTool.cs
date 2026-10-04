@@ -1,18 +1,18 @@
-﻿[Icon( "🌀" )]
+[Icon( "🌀" )]
 [Title( "#tool.name.elastic" )]
 [ClassName( "elastic" )]
 [Group( "#tool.group.constraints" )]
 public sealed class ElasticTool : BaseConstraintToolMode
 {
 	[Range( 0, 15 )]
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.frequency" )]
 	public float Frequency { get; set; } = 2.0f;
 
 	[Range( 0, 4 )]
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.damping" )]
 	public float Damping { get; set; } = 0.1f;
 
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.stretch_only" )]
 	public bool StretchOnly { get; set; } = false;
 
 	public override string Description => Stage == 1 ? "#tool.hint.elastic.stage1" : "#tool.hint.elastic.stage0";
@@ -77,7 +77,7 @@ public sealed class ElasticTool : BaseConstraintToolMode
 		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Elastic";
+		undo.Name = "#tool.name.elastic";
 		undo.Add( go1 );
 		undo.Add( go2 );
 	}

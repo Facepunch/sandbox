@@ -1,4 +1,4 @@
-﻿using Sandbox.UI;
+using Sandbox.UI;
 
 [Hide]
 [Title( "#tool.name.wheel" )]
@@ -9,7 +9,7 @@ public sealed class WheelTool : ToolMode
 {
 	public override bool UseSnapGrid => true;
 	public override IEnumerable<string> TraceIgnoreTags => ["constraint", "collision"];
-	[Property, ResourceSelect( Extension = "wdef", AllowPackages = true ), Title( "Wheel" )]
+	[Property, ResourceSelect( Extension = "wdef", AllowPackages = true ), Title( "#tool.name.wheel" )]
 	public string Definition { get; set; } = "entities/wheel/basic.wdef";
 
 	public override string Description => "#tool.hint.wheeltool.description";
@@ -125,7 +125,7 @@ public sealed class WheelTool : ToolMode
 		Track( wheelGo );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Wheel";
+		undo.Name = "#tool.name.wheel";
 		undo.Add( wheelGo );
 
 		CheckContraptionStats( point.GameObject );

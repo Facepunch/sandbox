@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/emitter/emitter_speaker.prefab",
-  "Title": "Speaker",
+  "Title": "#asset.speaker.title",
   "Description": "",
   "__references": [],
   "__version": 0

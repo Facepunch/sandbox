@@ -7,6 +7,7 @@ using Sandbox.Utility;
 /// Winch are the same component with different presentation and defaults - <see cref="Kind"/>
 /// just picks which one this instance is, for undo names, tool info and wiring titles.
 /// </summary>
+[Title( "#tool.entity.lengthconstraintentity" )]
 public sealed class LengthConstraintEntity : Component, IPlayerControllable
 {
 	public enum ConstraintKind
@@ -22,67 +23,72 @@ public sealed class LengthConstraintEntity : Component, IPlayerControllable
 	[Property, Range( 0, 1 )]
 	public GameObject OnEffect { get; set; }
 
-	[Property, Range( 0, 100 ), ClientEditable]
+	[Property, Range( 0, 100 ), ClientEditable, Title( "#tool.setting.min_length" )]
 	public float MinLength { get; set; } = 10f;
 
-	[Property, Range( 0, 100 ), ClientEditable]
+	[Property, Range( 0, 100 ), ClientEditable, Title( "#tool.setting.max_length" )]
 	public float MaxLength { get; set; } = 100f;
 
-	[Property, Range( 0, 1 ), ClientEditable]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.length" )]
 	public float Length { get; set; } = 0.5f;
 
-	[Property, Range( 0, 1 ), ClientEditable]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.speed" )]
 	public float Speed { get; set; } = 0.25f;
 
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.push" )]
 	public ClientInput Push { get; set; }
 
-	[Property, Range( 0, 1 ), ClientEditable]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.push_speed" )]
 	public float PushSpeed { get; set; } = 0.25f;
 
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.pull" )]
 	public ClientInput Pull { get; set; }
 
-	[Property, Range( 0, 1 ), ClientEditable]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.pull_speed" )]
 	public float PullSpeed { get; set; } = 0.25f;
 
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.toggle" )]
 	public ClientInput Toggle { get; set; }
 
 	/// <summary>
 	/// While the input is active we'll extend towards full length
 	/// </summary>
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.activate" ), Description( "#tool.setting.lengthconstraintentity.activate.description" )]
 	public ClientInput Activate { get; set; }
 
 	[Property]
 	public SliderJoint Joint { get; set; }
 
-	[Property, ClientEditable, ToggleGroup( "Animated" )]
+	[Property, ClientEditable, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.animated" )]
 	public bool Animated { get; set; }
 
-	[Property, ClientEditable, ToggleGroup( "Animated" ), Range( 0, 10 )]
+	[Property, ClientEditable, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Range( 0, 10 ), Title( "#tool.setting.animation_speed" )]
 	public float AnimationSpeed { get; set; } = 1.0f;
 
-	[Property, ClientEditable, ToggleGroup( "Animated" )]
+	[Property, ClientEditable, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.ease_in" )]
 	public EaseType EaseIn { get; set; } = EaseType.Linear;
 
-	[Property, ClientEditable, ToggleGroup( "Animated" )]
+	[Property, ClientEditable, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.ease_out" )]
 	public EaseType EaseOut { get; set; } = EaseType.Linear;
 
 	/// <summary>
 	/// Emits the current 0-1 extension whenever it changes. Wire it into a gauge, a
 	/// dependent mechanism, or another length constraint's Push/Pull to gang two rams together.
 	/// </summary>
-	[SignalOutput]
+	[SignalOutput, Title( "#tool.signal.position" ), Description( "#tool.signal.position.description" )]
 	public SignalOutput Position { get; set; } = new();
 
 	public enum EaseType
 	{
+		[Title( "#tool.option.linear" )]
 		Linear,
+		[Title( "#tool.option.ease_in" )]
 		EaseIn,
+		[Title( "#tool.option.ease_out" )]
 		EaseOut,
+		[Title( "#tool.option.ease_in_out" )]
 		EaseInOut,
+		[Title( "#tool.option.bounce" )]
 		Bounce
 	}
 

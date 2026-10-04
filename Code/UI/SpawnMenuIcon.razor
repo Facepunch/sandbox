@@ -97,7 +97,7 @@
         var spawnlistView = Ancestors.OfType<SpawnlistView>().FirstOrDefault();
         if ( spawnlistView?.Entry?.Files.IsReadOnly == false )
         {
-            menu.AddOption( "Remove from List", "delete", () =>
+            menu.AddOption( "#spawnmenu.spawnlist.remove_item", "delete", () =>
             {
                 if ( SpawnlistItemId != Guid.Empty )
                     SpawnlistData.RemoveItem( spawnlistView.Entry, SpawnlistItemId );

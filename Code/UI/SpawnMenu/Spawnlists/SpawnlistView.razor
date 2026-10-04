@@ -21,9 +21,11 @@
                             <IconPanel Text="collections_bookmark" />
                         </div>
                         <div class="identity-copy">
-                            <h2>@data.Name</h2>
+                            <h2>
+                                <Label Tokenize=@false Text=@data.Name />
+                            </h2>
                             <div class="meta">
-                                <span><IconPanel Text="widgets" /> @data.Items.Count( item => item.IsContent ) @Game.Language.GetPhrase( "spawnmenu.spawnlist.items" )</span>
+                                <span><IconPanel Text="widgets" /> @ItemCountText( data.Items.Count( item => item.IsContent ) )</span>
                                 <span class="dot"></span>
                                 <span><IconPanel Text="@( isInstalled ? "cloud_done" : isPublished ? "public" : "lock" )" /> @Game.Language.GetPhrase( isInstalled ? "spawnmenu.spawnlist.installed" : isPublished ? "spawnmenu.spawnlist.published" : "spawnmenu.spawnlist.local" )</span>
                             </div>
@@ -107,6 +109,9 @@
     RealTimeSince _lastRefresh;
     bool _editMode;
     public bool CanReorder => _editMode && Entry?.Files.IsReadOnly == false;
+    static string ItemCountText( int count )
+        => Game.Language.GetPhrase( count == 1 ? "ui.spawnlist.one_item" : "ui.spawnlist.items", new() { { "count", count } } );
+
     bool CanRename => Entry?.Files.IsReadOnly == false && Entry.GetMeta( "_workshopId", 0ul ) == 0;
 
     SpawnlistData GetData()

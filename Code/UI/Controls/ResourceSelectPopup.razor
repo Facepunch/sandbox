@@ -1,4 +1,4 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @namespace Sandbox
 @inherits BasePopup
@@ -12,10 +12,10 @@
             @if (AllowPackages)
             {
                 <div class="sort-buttons">
-                    @foreach ( var mode in Enum.GetValues<PackageSortMode>() )
+                    @foreach ( var (mode, info) in DisplayInfo.ForEnumValues<PackageSortMode>() )
                     {
                         var m = mode;
-                        <div class="sort-button @(SortMode == m ? "active" : "")" @onclick=@(() => SetSort(m))>@m.ToString()</div>
+                        <div class="sort-button @(SortMode == m ? "active" : "")" @onclick=@(() => SetSort(m))>@info.Name</div>
                     }
                 </div>
             }
@@ -63,8 +63,8 @@
         </VirtualGrid>
 
         <div class="popup-footer">
-            <div class="clear-button" @onclick=@ClearSelection>Clear</div>
-            <div class="select-button" @onclick=@ConfirmSelection>Select</div>
+            <div class="clear-button" @onclick=@ClearSelection>#ui.common.clear</div>
+            <div class="select-button" @onclick=@ConfirmSelection>#ui.common.select</div>
         </div>
 
     </div>
@@ -73,7 +73,7 @@
 
 @code
 {
-    public string Title { get; set; } = "Select Resource";
+    public string Title { get; set; } = "#ui.resource.select";
     public string Extension { get; set; } = "vmdl";
     public string CurrentValue { get; set; }
     public bool AllowPackages { get; set; }

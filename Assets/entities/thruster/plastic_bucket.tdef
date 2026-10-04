@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/plastic_bucket.prefab",
-  "Title": "Plastic Bucket",
+  "Title": "#asset.plastic_bucket.title",
   "Description": "",
   "__references": [],
   "__version": 0

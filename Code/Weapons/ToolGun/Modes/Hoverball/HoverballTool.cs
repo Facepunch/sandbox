@@ -1,4 +1,4 @@
-﻿using Sandbox.UI;
+using Sandbox.UI;
 
 [Hide]
 [Title( "#tool.name.hoverball" )]
@@ -9,7 +9,7 @@ public sealed class HoverballTool : ToolMode
 {
 	public override IEnumerable<string> TraceIgnoreTags => ["constraint", "collision"];
 
-	[Property, ResourceSelect( Extension = "hdef", AllowPackages = true ), Title( "Hoverball" )]
+	[Property, ResourceSelect( Extension = "hdef", AllowPackages = true ), Title( "#tool.name.hoverball" )]
 	public string Definition { get; set; } = "entities/hoverball/basic.hdef";
 
 	public override string Description => "#tool.hint.hoverballtool.description";
@@ -86,7 +86,7 @@ public sealed class HoverballTool : ToolMode
 		Track( go );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Hoverball";
+		undo.Name = "#tool.name.hoverball";
 		undo.Icon = "🎱";
 		undo.Add( go );
 

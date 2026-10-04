@@ -7,14 +7,14 @@
 public sealed class KeepUprightTool : ToolMode
 {
 	[Range( 0, 20 )]
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.hertz" )]
 	public float Hertz { get; set; } = 2.0f;
 
 	[Range( 0, 2 )]
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.damping_ratio" )]
 	public float DampingRatio { get; set; } = 0.7f;
 
-	[Property, Sync, Range( 1000, 25000 ), Step( 10 )]
+	[Property, Sync, Range( 1000, 25000 ), Step( 10 ), Title( "#tool.setting.torque_multiplier" )]
 	public float TorqueMultiplier { get; set; } = 5000f;
 
 	SelectionPoint _point1;
@@ -140,7 +140,7 @@ public sealed class KeepUprightTool : ToolMode
 		Track( go );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Upright";
+		undo.Name = "#tool.name.keepupright";
 		undo.Icon = "👆🏻";
 		undo.Add( go );
 
@@ -178,7 +178,7 @@ public sealed class KeepUprightTool : ToolMode
 		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Upright";
+		undo.Name = "#tool.name.keepupright";
 		undo.Icon = "👆🏻";
 		undo.Add( go1 );
 		undo.Add( go2 );

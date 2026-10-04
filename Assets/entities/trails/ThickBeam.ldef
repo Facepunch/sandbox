@@ -1,6 +1,6 @@
 {
-  "Title": "Thick Beam",
-  "Description": "Chunky Beam.",
+  "Title": "#asset.thickbeam.title",
+  "Description": "#asset.thickbeam.description",
   "Material": "entities/trails/line_thickbeam.vmat",
   "WorldSpace": true,
   "UnitsPerTexture": 32,

@@ -1,4 +1,4 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @inherits Panel
 @namespace Sandbox
@@ -11,14 +11,14 @@
 	<div class="left">
         <VerticalMenu Value="@(CurrentMode?.GetType())"  class="menuinner">
             <Options>
-                @foreach (var group in Game.TypeLibrary.GetTypes<ToolMode>().GroupBy(x => x.Group).OrderBy( x => x.Key ) )
+                @foreach (var group in Game.TypeLibrary.GetTypes<ToolMode>().GroupBy(x => x.Group).OrderBy( x => LocalizedText.Resolve( x.Key ), StringComparer.CurrentCultureIgnoreCase ) )
                 {
                     @if ( !string.IsNullOrWhiteSpace( group.Key ) )
                     {
                         <h2>@group.Key</h2>
                     }
 
-                    @foreach (var type in group.OrderBy(x => x.Title))
+                    @foreach (var type in group.OrderBy( x => LocalizedText.Resolve( x.Title ), StringComparer.CurrentCultureIgnoreCase ))
                     {
                         if (type.IsAbstract) continue;
 
@@ -51,7 +51,7 @@
     ToolMode CurrentMode => Player.FindLocalPlayer()?.GetWeapon<Toolgun>()?.GetCurrentMode();
     PostProcessManager PostProcessManager => Game.ActiveScene.GetSystem<PostProcessManager>();
 
-    protected override int BuildHash() => HashCode.Combine(CurrentMode, PostProcessManager?.SelectedPath, PostProcessManager?.GetSelectedComponents().Count);
+    protected override int BuildHash() => HashCode.Combine(CurrentMode, PostProcessManager?.SelectedPath, PostProcessManager?.GetSelectedComponents().Count, Game.Language.SelectedCode);
 
 	bool IsActiveMode( TypeDescription t )
 	{

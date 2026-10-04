@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/makeshift_medium.prefab",
-  "Title": "Makeshift Thruster Medium",
+  "Title": "#asset.makeshift_medium.title",
   "Description": "",
   "__references": [],
   "__version": 0

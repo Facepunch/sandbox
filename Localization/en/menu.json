@@ -156,7 +156,6 @@
     "spawnmenu.utility.no_target": "No Target",
     "spawnmenu.utility.ai_enabled_description": "When disabled, all NPC AI thinking is paused — they just stand idle.",
     "spawnmenu.utility.no_target_description": "When enabled, NPCs cannot target players.",
-    "spawnmenu.utility.weapons": "Weapons",
     "spawnmenu.utility.unlimited_ammo": "Unlimited Ammo",
     "spawnmenu.utility.infinite_reserves": "Infinite Reserves",
     "spawnmenu.utility.unlimited_ammo_description": "When enabled, weapons have unlimited ammo — no ammo is consumed when firing.",

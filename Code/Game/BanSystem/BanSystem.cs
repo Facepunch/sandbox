@@ -31,7 +31,11 @@ internal sealed class BanSystem : GameObjectSystem<BanSystem>, Component.INetwor
 		_bans[connection.SteamId] = new BanEntry( connection.DisplayName, reason );
 		Save();
 
-		GameManager.Current.Notify( $"🔨 {connection.DisplayName} was banned: {reason}" );
+		GameManager.Current.NotifyLocalized( "#server.player_banned", new()
+		{
+			{ "name", LocalizedText.Literal( connection.DisplayName ) },
+			{ "reason", LocalizedText.Literal( reason ) }
+		} );
 
 		connection.Kick( $"Banned: {reason}" );
 	}

@@ -1,4 +1,4 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @inherits PanelComponent
 
@@ -9,7 +9,7 @@
 
             @if ( !string.IsNullOrEmpty( _mapTitle ) )
             {
-                <label class="small">Playing on @(_mapTitle)</label>
+                <label class="small">@Game.Language.GetPhrase( "ui.scoreboard.playing_on", new() { { "map", _mapTitle } } )</label>
             }
         </div>
 
@@ -18,9 +18,9 @@
                 <div class="header row">
                     <div class="avatar-spacer"></div>
                     <div class="name"></div>
-                    <div class="stat">Kills</div>
-                    <div class="stat">Deaths</div>
-                    <div class="stat">Ping</div>
+                    <div class="stat">#ui.scoreboard.kills</div>
+                    <div class="stat">#ui.scoreboard.deaths</div>
+                    <div class="stat">#ui.scoreboard.ping</div>
                     <div class="mute-spacer"></div>
                 </div>
 

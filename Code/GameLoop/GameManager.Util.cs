@@ -20,7 +20,11 @@ public sealed partial class GameManager
 
 		_kickedPlayers.Add( connection.Id );
 
-		GameManager.Current.Notify( $"🥾 {connection.DisplayName} was kicked: {reason}" );
+		GameManager.Current.NotifyLocalized( "#server.player_kicked", new()
+		{
+			{ "name", LocalizedText.Literal( connection.DisplayName ) },
+			{ "reason", reason == "Kicked" ? "#server.kicked" : LocalizedText.Literal( reason ) }
+		} );
 
 		connection.Kick( reason );
 	}
@@ -82,6 +86,10 @@ public sealed partial class GameManager
 
 		ConsoleSystem.Run( name, value ? "true" : "false" );
 
-		GameManager.Current.Notify( $"⚙️ {name} set to {(value ? "On" : "Off")}" );
+		GameManager.Current.NotifyLocalized( "#server.setting_changed", new()
+		{
+			{ "name", name },
+			{ "value", value ? "#spawnmenu.common.on" : "#spawnmenu.common.off" }
+		} );
 	}
 }

@@ -1,4 +1,4 @@
-﻿﻿using Sandbox.UI;
+﻿using Sandbox.UI;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -238,7 +238,7 @@ public sealed partial class DuplicatorTool : ToolMode
 		if ( objects is { Count: > 0 } )
 		{
 			var undo = player.Undo.Create();
-			undo.Name = "Duplication";
+			undo.Name = "#tool.undo.duplication";
 
 			foreach ( var go in objects )
 			{
@@ -278,7 +278,7 @@ public sealed partial class DuplicatorTool : ToolMode
 
 	public static async Task FromWorkshop( Storage.QueryItem item )
 	{
-		var notice = Notices.AddNotice( "downloading", Color.Yellow, $"Installing {item.Title}..", 0 );
+		var notice = Notices.AddNotice( "downloading", Color.Yellow, Game.Language.GetPhrase( "tool.duplicator.installing", new() { { "name", item.Title } } ), 0 );
 		notice?.AddClass( "progress" );
 
 		var installed = await item.Install();

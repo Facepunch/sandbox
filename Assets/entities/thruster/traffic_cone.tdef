@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/traffic_cone.prefab",
-  "Title": "Traffic Cone",
+  "Title": "#asset.traffic_cone.title",
   "Description": "",
   "__references": [],
   "__version": 0

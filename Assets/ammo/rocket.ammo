@@ -1,5 +1,5 @@
 {
-  "Title": "Rocket",
+  "Title": "#asset.rocket.title",
   "Icon": null,
   "MaxReserve": 6,
   "__references": [],

@@ -1,7 +1,7 @@
 {
   "Prefab": "weapons/physgun/physgun.prefab",
-  "Title": "Physics Gun",
-  "Description": "bzzzzt...",
+  "Title": "#weapon.name.physgun",
+  "Description": "#asset.physgun.description",
   "Category": "Weapon/Utility",
   "IncludeCode": false,
   "Developer": false,

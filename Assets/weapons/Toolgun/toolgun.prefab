@@ -58,7 +58,7 @@
           },
           "compiled": null
         },
-        "DisplayName": "Tool Gun",
+        "DisplayName": "#asset.toolgun.title",
         "HoldType": "Pistol",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,

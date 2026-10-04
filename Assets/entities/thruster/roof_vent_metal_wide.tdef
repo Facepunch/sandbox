@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/roof_vent_metal_wide.prefab",
-  "Title": "Roof Vent Metal Wide",
+  "Title": "#asset.roof_vent_metal_wide.title",
   "Description": "",
   "__references": [],
   "__version": 0

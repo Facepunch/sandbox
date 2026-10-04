@@ -73,9 +73,9 @@
                                     }
                                 </div>
 
-                                @if ( !string.IsNullOrWhiteSpace( entry.TypeSummary ) )
+                                @if ( !string.IsNullOrWhiteSpace( FormatTypeSummary( entry.ContentTypes ) ) )
                                 {
-                                    <div class="type-summary">@entry.TypeSummary</div>
+                                    <div class="type-summary">@FormatTypeSummary( entry.ContentTypes )</div>
                                 }
                                 @if ( !string.IsNullOrWhiteSpace( entry.Item.Description ) )
                                 {
@@ -114,7 +114,7 @@
         Storage.QueryItem Item,
         int ItemCount,
         List<SpawnlistItem> PreviewItems,
-        string TypeSummary
+        Dictionary<string, int> ContentTypes
     );
 
     string _filter;
@@ -202,7 +202,7 @@
             item,
             itemCount,
             previewItems.Take( 6 ).ToList(),
-            FormatTypeSummary( contentTypes )
+            contentTypes
         );
     }
 
@@ -260,21 +260,22 @@
         return string.Join( "  ·  ", types
             .OrderByDescending( pair => pair.Value )
             .Take( 4 )
-            .Select( pair => $"{pair.Value} {FriendlyTypeName( pair.Key, pair.Value )}" ) );
+            .Select( pair => ContentCountText( pair.Key, pair.Value ) ) );
     }
 
-    static string FriendlyTypeName( string type, int count )
+    static string ContentCountText( string type, int count )
     {
-        var plural = count != 1;
-        return type?.ToLowerInvariant() switch
+        var phrase = type?.ToLowerInvariant() switch
         {
-            "prop" => plural ? "props" : "prop",
-            "dupe" => plural ? "dupes" : "dupe",
-            "entity" => plural ? "entities" : "entity",
-            "npc" => plural ? "NPCs" : "NPC",
-            "weapon" => plural ? "weapons" : "weapon",
-            _ => plural ? $"{type}s" : type
+            "prop" => count == 1 ? "ui.spawnlist.one_prop" : "ui.spawnlist.props",
+            "dupe" => count == 1 ? "ui.spawnlist.one_dupe" : "ui.spawnlist.dupes",
+            "entity" => count == 1 ? "ui.spawnlist.one_entity" : "ui.spawnlist.entities",
+            "npc" => count == 1 ? "ui.spawnlist.one_npc" : "ui.spawnlist.npcs",
+            "weapon" => count == 1 ? "ui.spawnlist.one_weapon" : "ui.spawnlist.weapons",
+            _ => count == 1 ? "ui.spawnlist.one_item" : "ui.spawnlist.items"
         };
+
+        return Game.Language.GetPhrase( phrase, new() { { "count", count } } );
     }
 
     static string GetPreviewStyle( SpawnlistItem item )

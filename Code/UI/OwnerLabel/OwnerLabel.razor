@@ -1,11 +1,11 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @inherits PanelComponent
 @namespace Sandbox
 
 <root>
 	<div class="owner-label hud-panel">
-		<label class="name">Owned by @_ownerName</label>
+		<label class="name">@Game.Language.GetPhrase( "ui.owner.owned_by", new() { { "name", _ownerName } } )</label>
 	</div>
 </root>
 
@@ -43,5 +43,5 @@
 		Panel.SetClass( "visible", false );
 	}
 
-	protected override int BuildHash() => System.HashCode.Combine( _ownerName );
+	protected override int BuildHash() => System.HashCode.Combine( _ownerName, Game.Language.SelectedCode );
 }

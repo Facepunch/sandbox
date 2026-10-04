@@ -1,4 +1,4 @@
-﻿﻿
+﻿
 [Icon( "🐍" )]
 [Title( "#tool.name.rope" )]
 [ClassName( "rope" )]
@@ -6,14 +6,14 @@
 public sealed class RopeTool : BaseConstraintToolMode
 {
 	[Range( -500, 500 )]
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.slack" )]
 	public float Slack { get; set; } = 0.0f;
 
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.rigid" )]
 	public bool Rigid { get; set; } = false;
 
 	[Range( 0.5f, 5f ), Step( 0.5f )]
-	[Property]
+	[Property, Title( "#tool.setting.radius" )]
 	public float Radius { get; set; } = 1f;
 
 	public override string Description => Stage == 1 ? "#tool.hint.rope.stage1" : "#tool.hint.rope.stage0";
@@ -97,7 +97,7 @@ public sealed class RopeTool : BaseConstraintToolMode
 		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Rope";
+		undo.Name = "#tool.name.rope";
 		undo.Add( go1 );
 		undo.Add( go2 );
 	}

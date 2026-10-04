@@ -1,4 +1,4 @@
-﻿﻿
+﻿
 [Icon( "➖" )]
 [Title( "#tool.name.slider" )]
 [ClassName( "slider" )]
@@ -63,7 +63,7 @@ public sealed class SliderTool : BaseConstraintToolMode
 		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Slider";
+		undo.Name = "#tool.name.slider";
 		undo.Add( go1 );
 		undo.Add( go2 );
 	}

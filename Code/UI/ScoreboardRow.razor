@@ -54,22 +54,22 @@
         var steamId = Connection.SteamId;
         var menu = new Sandbox.UI.Menu();
 
-        menu.AddOption( "Copy Steam ID", "content_copy", () =>
+        menu.AddOption( "#spawnmenu.utility.copy_steam_id", "content_copy", () =>
         {
             Clipboard.SetText( steamId.ToString() );
-            Notices.AddNotice( "copy_all", Color.Cyan, $"Copied {Connection.DisplayName}'s SteamID to your clipboard", 5 );
+            Notices.AddNotice( "copy_all", Color.Cyan, Game.Language.GetPhrase( "spawnmenu.utility.copied_steam_id", new() { { "name", Connection.DisplayName } } ), 5 );
         } );
 
 		if ( Connection != Connection.Local )
 		{
 			bool isMuted = SandboxVoice.IsMuted( steamId );
-			menu.AddOption( isMuted ? "Unmute" : "Mute", isMuted ? "volume_up" : "volume_off", () => SandboxVoice.Mute( steamId ) );
+			menu.AddOption( isMuted ? "#ui.scoreboard.unmute" : "#ui.scoreboard.mute", isMuted ? "volume_up" : "volume_off", () => SandboxVoice.Mute( steamId ) );
 
 			if ( Connection.Local?.HasPermission( "admin" ) == true )
 			{
 				menu.AddSeparator();
-				menu.AddOption( "Kick", "person_remove", () => OpenKickConfirm( Connection ) );
-				menu.AddOption( "Ban", "gavel", () => OpenBanConfirm( Connection ) );
+				menu.AddOption( "#ui.scoreboard.kick", "person_remove", () => OpenKickConfirm( Connection ) );
+				menu.AddOption( "#ui.scoreboard.ban", "gavel", () => OpenBanConfirm( Connection ) );
 			}
 		}
 
@@ -82,9 +82,9 @@
 	{
 		var popup = new StringQueryPopup
 		{
-			Title = "Kick Player",
-			Prompt = $"Why do you want to kick {connection.DisplayName}?",
-			ConfirmLabel = "Kick",
+			Title = "#ui.scoreboard.kick_player",
+			Prompt = Game.Language.GetPhrase( "ui.scoreboard.kick_prompt", new() { { "name", connection.DisplayName } } ),
+			ConfirmLabel = "#ui.scoreboard.kick",
 			OnConfirm = x =>
 			{
 				GameManager.RpcKickPlayer( connection, x );
@@ -97,9 +97,9 @@
 	{
 		var popup = new StringQueryPopup
 		{
-			Title = "Ban Player",
-			Prompt = $"Why do you want to ban {connection.DisplayName}?",
-			ConfirmLabel = "Ban",
+			Title = "#ui.scoreboard.ban_player",
+			Prompt = Game.Language.GetPhrase( "ui.scoreboard.ban_prompt", new() { { "name", connection.DisplayName } } ),
+			ConfirmLabel = "#ui.scoreboard.ban",
 			OnConfirm = x => BanSystem.RpcBanPlayer( connection, x )
 		};
 		popup.Parent = FindPopupPanel();

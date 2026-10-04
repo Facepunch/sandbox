@@ -1,11 +1,30 @@
-﻿/// <summary>
+/// <summary>
 /// A typed sort mode for finding packages.
 /// </summary>
 public enum PackageSortMode
 {
+	/// <summary>
+	/// Popular entries.
+	/// </summary>
+	[Title( "#package.sort.popular" )]
 	Popular,
+
+	/// <summary>
+	/// Newest entries.
+	/// </summary>
+	[Title( "#package.sort.newest" )]
 	Newest,
+
+	/// <summary>
+	/// Trending entries.
+	/// </summary>
+	[Title( "#package.sort.trending" )]
 	Trending,
+
+	/// <summary>
+	/// Random entries.
+	/// </summary>
+	[Title( "#package.sort.random" )]
 	Random
 }
 

@@ -33,25 +33,39 @@
 
 @code
 {
-    /// <summary>Title shown at the top of the popup.</summary>
-    public string Title { get; set; } = "Enter Value";
+    /// <summary>
+    /// Title shown at the top of the popup.
+    /// </summary>
+    public string Title { get; set; } = "#ui.query.title";
 
-    /// <summary>Optional subtitle/prompt below the title.</summary>
+    /// <summary>
+    /// Optional subtitle/prompt below the title.
+    /// </summary>
     public string Prompt { get; set; }
 
-    /// <summary>Placeholder text for the text entry.</summary>
-    public string Placeholder { get; set; } = "Enter a value...";
+    /// <summary>
+    /// Placeholder text for the text entry.
+    /// </summary>
+    public string Placeholder { get; set; } = "#ui.query.placeholder";
 
-    /// <summary>Label for the confirm button.</summary>
-    public string ConfirmLabel { get; set; } = "Confirm";
+    /// <summary>
+    /// Label for the confirm button.
+    /// </summary>
+    public string ConfirmLabel { get; set; } = "#ui.common.confirm";
 
-    /// <summary>Pre-filled value in the text entry.</summary>
+    /// <summary>
+    /// Pre-filled value in the text entry.
+    /// </summary>
     public string InitialValue { get; set; } = "";
 
-    /// <summary>When false, hides the text entry â€” acts as a simple confirm/deny dialog.</summary>
+    /// <summary>
+    /// When false, hides the text entry and acts as a simple confirm/deny dialog.
+    /// </summary>
     public bool ShowInput { get; set; } = true;
 
-    /// <summary>Called with the trimmed string when the user confirms.</summary>
+    /// <summary>
+    /// Called with the trimmed string when the user confirms.
+    /// </summary>
     public Action<string> OnConfirm { get; set; }
 
     string Value { get; set; }

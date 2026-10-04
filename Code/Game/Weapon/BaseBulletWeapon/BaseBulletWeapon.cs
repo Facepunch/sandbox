@@ -18,8 +18,10 @@ public partial class BaseBulletWeapon : BaseSandboxWeapon
 	/// <summary>First-person camera shake frequency per shot.</summary>
 	[Property, Group( "Recoil" )] public float CameraRecoilFrequency { get; set; } = 1f;
 
-	/// <summary>Physical kick applied to a standalone (unheld) gun when it fires.</summary>
-	[Property, Group( "Recoil" ), ClientEditable, Range( 0f, 500000f ), Step( 10f )]
+	/// <summary>
+	/// Physical kick applied to a standalone (unheld) gun when it fires.
+	/// </summary>
+	[Property, Group( "#weapon.group.recoil" ), ClientEditable, Range( 0f, 500000f ), Step( 10f ), Title( "#weapon.setting.recoil_force" ), Description( "#weapon.setting.recoil_force.description" )]
 	public float ShootForce { get; set; } = 100000f;
 
 	public override void PrimaryAttack()

@@ -38,8 +38,8 @@
     },
     "compiled": null
   },
-  "Title": "Bloom",
-  "Description": "Adds a glowing halo effect to bright areas, simulating light bleed.",
+  "Title": "#asset.bloom.title",
+  "Description": "#asset.bloom.description",
   "__references": [],
   "__version": 0
 }

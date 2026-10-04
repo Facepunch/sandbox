@@ -1,5 +1,5 @@
 {
-  "Title": "Sniper Ammo",
+  "Title": "#asset.sniper.title",
   "Icon": null,
   "MaxReserve": 80,
   "__references": [],

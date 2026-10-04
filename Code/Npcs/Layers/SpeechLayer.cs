@@ -269,7 +269,7 @@ public class SpeechLayer : BaseNpcLayer
 		if ( tr.Hit ) return;
 
 		var text = TextRendering.Scope.Default;
-		text.Text = CurrentSpeech;
+		text.Text = LocalizedText.Resolve( CurrentSpeech );
 		text.FontSize = 14;
 		text.FontName = "Poppins";
 		text.FontWeight = 500;

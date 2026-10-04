@@ -10,25 +10,25 @@ public class CombatNpc : Npc, Component.IPressable
 {
 	private static readonly string[] PainLines =
 	{
-		"Argh!",
-		"They got me!",
-		"I'm hit!",
-		"Taking fire!",
-		"Ugh!",
+		"#npc.speech.combat.pain.1",
+		"#npc.speech.combat.pain.2",
+		"#npc.speech.combat.pain.3",
+		"#npc.speech.combat.pain.4",
+		"#npc.speech.combat.pain.5",
 	};
 
 	private static readonly string[] DeathLines =
 	{
-		"Tell them... I fought...",
-		"Not like this...",
-		"I can't...",
+		"#npc.speech.combat.death.1",
+		"#npc.speech.combat.death.2",
+		"#npc.speech.combat.death.3",
 	};
 
 	/// <summary>
 	/// When true, this NPC is friendly to players and will follow them, engaging hostile NPCs.
 	/// When false, this NPC targets players and friendly NPCs.
 	/// </summary>
-	[Property, ClientEditable, Sync]
+	[Property, Title( "#entity.property.npc_friendly" ), Description( "#entity.description.npc_friendly" ), ClientEditable, Sync]
 	public bool Friendly { get; set; } = false;
 
 	/// <summary>
@@ -44,7 +44,10 @@ public class CombatNpc : Npc, Component.IPressable
 	[Property, Group( "Balance" )]
 	public float AimSpreadScale { get; set; } = 1f;
 
-	[Property, Group( "Balance" ), Range( 90, 250f ), Step( 1 ), ClientEditable, Sync]
+	/// <summary>
+	/// Movement speed while engaging an enemy.
+	/// </summary>
+	[Property, Title( "#entity.property.npc_engagespeed" ), Description( "#entity.description.npc_engagespeed" ), Group( "#entity.group.balance" ), Range( 90, 250f ), Step( 1 ), ClientEditable, Sync]
 	public float EngageSpeed { get; set; } = 180f;
 
 	/// <summary>
@@ -77,8 +80,8 @@ public class CombatNpc : Npc, Component.IPressable
 			return null;
 
 		return Leader.IsValid()
-			? new IPressable.Tooltip( "Stop following", "person_off", DisplayName )
-			: new IPressable.Tooltip( "Follow me", "follow_the_signs", DisplayName );
+			? new IPressable.Tooltip( "#npc.action.stop_following", "person_off", DisplayName )
+			: new IPressable.Tooltip( "#npc.action.follow", "follow_the_signs", DisplayName );
 	}
 
 	bool IPressable.CanPress( IPressable.Event e ) => Friendly;

@@ -1,4 +1,4 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @namespace Sandbox
 @inherits Panel
@@ -74,7 +74,7 @@
 
     public void BuildTabs()
     {
-        foreach (var p in Game.TypeLibrary.GetTypes<ISpawnMenuTab>().OrderBy(x => x.Order).ThenBy(x => x.Title))
+        foreach (var p in Game.TypeLibrary.GetTypes<ISpawnMenuTab>().OrderBy(x => x.Order).ThenBy( x => LocalizedText.Resolve( x.Title ), StringComparer.CurrentCultureIgnoreCase ))
         {
             if (p.IsAbstract) continue;
             if (p.TargetType == typeof(BaseSpawnMenu)) continue;
@@ -90,7 +90,7 @@
 
     public void BuildUtilityTabs()
     {
-        foreach (var p in Game.TypeLibrary.GetTypes<IUtilityTab>().OrderBy(x => x.Order).ThenBy(x => x.Title))
+        foreach (var p in Game.TypeLibrary.GetTypes<IUtilityTab>().OrderBy(x => x.Order).ThenBy( x => LocalizedText.Resolve( x.Title ), StringComparer.CurrentCultureIgnoreCase ))
         {
             if (p.IsAbstract) continue;
 

@@ -305,14 +305,14 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 
 		if ( ports.Length > 0 && e.Target.Root != _contextSource.Component.GameObject.Root )
 		{
-			e.AddSubmenu( "link", "Link", submenu =>
+			e.AddSubmenu( "link", "#signal.link", submenu =>
 			{
 				foreach ( var port in ports )
 					submenu.AddOption( port.Title, port.Icon, () => CompleteContextLink( port ) );
 			} );
 		}
 
-		e.AddOption( "link_off", "Cancel Link", () => _contextSource = null );
+		e.AddOption( "link_off", "#signal.cancel_link", () => _contextSource = null );
 	}
 
 	private void AddContextPorts( IContextMenuEvent.Event e, GameObject target )
@@ -324,11 +324,11 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 		if ( ports.Length == 1 || defaults.Length == 1 )
 		{
 			var port = ports.Length == 1 ? ports[0] : defaults[0];
-			e.AddOption( "link", "Link", () => _contextSource = port );
+			e.AddOption( "link", "#signal.link", () => _contextSource = port );
 			return;
 		}
 
-		e.AddSubmenu( "link", "Link", submenu =>
+		e.AddSubmenu( "link", "#signal.link", submenu =>
 		{
 			foreach ( var port in ports )
 				submenu.AddOption( port.Title, port.Icon, () => _contextSource = port );
@@ -419,8 +419,8 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 			.SelectMany( component => GetOutputs( component ).Cast<SignalPortDescription>().Concat( GetInputs( component ) ) )
 			.OrderBy( port => port.Order )
 			.ThenByDescending( port => port.IsDefault )
-			.ThenBy( port => port.ComponentTitle, StringComparer.OrdinalIgnoreCase )
-			.ThenBy( port => port.Title, StringComparer.OrdinalIgnoreCase );
+			.ThenBy( port => LocalizedText.Resolve( port.ComponentTitle ), StringComparer.CurrentCultureIgnoreCase )
+			.ThenBy( port => LocalizedText.Resolve( port.Title ), StringComparer.CurrentCultureIgnoreCase );
 	}
 
 	public static IEnumerable<SignalPortDescription> GetCompatiblePorts( GameObject gameObject, SignalPortDescription source )
@@ -603,16 +603,22 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 
 	private static void SendConnectionNotice( Connection caller, Component source, SignalPort output, Component target, SignalPort input, bool connected )
 	{
-		var sourceName = GetComponentTitle( source );
-		var targetName = GetComponentTitle( target );
-		var action = connected ? "Linked" : "Unlinked";
-		var preposition = connected ? "to" : "from";
+		// Keep component and port phrase references intact until they reach the recipient.
+		var sourceName = Game.TypeLibrary.GetType( source.GetType() )?.Title ?? source.GetType().Name;
+		var targetName = Game.TypeLibrary.GetType( target.GetType() )?.Title ?? target.GetType().Name;
 
-		Sandbox.UI.Notices.SendNotice(
+		Sandbox.UI.Notices.SendLocalizedNotice(
 			caller,
 			connected ? "link" : "link_off",
 			connected ? Color.Green : Color.Yellow,
-			$"{action} {sourceName}: {output.Title} {preposition} {targetName}: {input.Title}",
+			connected ? "#signal.linked" : "#signal.unlinked",
+			new()
+			{
+				{ "source", sourceName },
+				{ "output", output.Title },
+				{ "target", targetName },
+				{ "input", input.Title }
+			},
 			3f );
 	}
 

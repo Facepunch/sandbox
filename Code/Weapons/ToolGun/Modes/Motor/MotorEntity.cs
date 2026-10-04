@@ -3,45 +3,46 @@
 /// Drives a <see cref="HingeJoint"/> at a continuous angular velocity — a spinning axle,
 /// turntable, or wheel that isn't a ground-contact wheel.
 /// </summary>
+[Title( "#tool.entity.motorentity" )]
 public sealed class MotorEntity : Component, IPlayerControllable
 {
-	[Property, Range( 0, 1 ), ClientEditable]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.speed" )]
 	public float Speed { get; set; } = 0.5f;
 
-	[Property, Range( 0, 1 ), ClientEditable]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.torque" )]
 	public float Torque { get; set; } = 0.5f;
 
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.reversed" )]
 	public bool Reversed { get; set; }
 
 	/// <summary>
 	/// Spins on its own as soon as it's created, without needing a driver or a wire signal.
 	/// </summary>
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.start_active" ), Description( "#tool.setting.motorentity.startactive.description" )]
 	public bool StartActive { get; set; } = true;
 
-	[Property, ClientEditable, ToggleGroup( "Limited" )]
+	[Property, ClientEditable, ToggleGroup( "Limited", Label = "#tool.setting.limited" ), Title( "#tool.setting.limited" )]
 	public bool Limited { get; set; }
 
-	[Property, ClientEditable, ToggleGroup( "Limited" ), Range( -180, 180 )]
+	[Property, ClientEditable, ToggleGroup( "Limited", Label = "#tool.setting.limited" ), Range( -180, 180 ), Title( "#tool.setting.min_angle" )]
 	public float MinAngle { get; set; } = -90f;
 
-	[Property, ClientEditable, ToggleGroup( "Limited" ), Range( -180, 180 )]
+	[Property, ClientEditable, ToggleGroup( "Limited", Label = "#tool.setting.limited" ), Range( -180, 180 ), Title( "#tool.setting.max_angle" )]
 	public float MaxAngle { get; set; } = 90f;
 
 	/// <summary>
 	/// While held, spins forward regardless of <see cref="Reversed"/> or <see cref="StartActive"/>.
 	/// </summary>
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.forward" ), Description( "#tool.setting.motorentity.forward.description" )]
 	public ClientInput Forward { get; set; }
 
 	/// <summary>
 	/// While held, spins backward regardless of <see cref="Reversed"/> or <see cref="StartActive"/>.
 	/// </summary>
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.reverse" ), Description( "#tool.setting.motorentity.reverse.description" )]
 	public ClientInput Reverse { get; set; }
 
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.toggle" )]
 	public ClientInput Toggle { get; set; }
 
 	[Property]
@@ -51,7 +52,7 @@ public sealed class MotorEntity : Component, IPlayerControllable
 	/// Emits the joint's current angle, normalized so a full turn is 1.0 — wire it into a
 	/// gauge, or into another motor's Forward/Reverse to sync two axles.
 	/// </summary>
-	[SignalOutput]
+	[SignalOutput, Title( "#tool.signal.angleoutput" ), Description( "#tool.signal.angleoutput.description" )]
 	public SignalOutput AngleOutput { get; set; } = new();
 
 	const float MaxDegreesPerSecond = 720f;

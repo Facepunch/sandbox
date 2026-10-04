@@ -15,10 +15,12 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 	/// The name shown in the kill feed when this NPC is killed.
 	/// </summary>
 	[Property]
-	public string DisplayName { get; set; } = "NPC";
+	public string DisplayName { get; set; } = "#spawnmenu.entity.npc";
 
-	/// <summary>Current health. The NPC dies when this drops below 1.</summary>
-	[Property, ClientEditable, Sync]
+	/// <summary>
+	/// Current health. The NPC dies when this drops below 1.
+	/// </summary>
+	[Property, Title( "#entity.property.npc_health" ), Description( "#entity.description.npc_health" ), ClientEditable, Sync]
 	public float Health { get; set; } = 100f;
 
 	// IKillSource

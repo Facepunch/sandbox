@@ -13,13 +13,13 @@ public sealed class EmitterTool : ToolMode
 	/// <summary>
 	/// The physical emitter body to spawn (model + physics).
 	/// </summary>
-	[Property, ResourceSelect( Extension = "smemit", AllowPackages = true ), Title( "Base" )]
+	[Property, ResourceSelect( Extension = "smemit", AllowPackages = true ), Title( "#tool.setting.base" ), Description( "#tool.setting.emittertool.basedef.description" )]
 	public string BaseDef { get; set; } = "entities/emitter/basic.smemit";
 
 	/// <summary>
 	/// The particle/VFX effect the emitter will produce.
 	/// </summary>
-	[Property, ResourceSelect( Extension = "semit", AllowPackages = true ), Title( "Effect" )]
+	[Property, ResourceSelect( Extension = "semit", AllowPackages = true ), Title( "#tool.setting.effect" ), Description( "#tool.setting.emittertool.effectdef.description" )]
 	public string EffectDef { get; set; } = "entities/particles/sparks.semit";
 
 	public override string Description => "#tool.hint.emittertool.description";
@@ -119,7 +119,7 @@ public sealed class EmitterTool : ToolMode
 		Track( go );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Emitter";
+		undo.Name = "#tool.name.emitter";
 		undo.Icon = "💨";
 		undo.Add( go );
 

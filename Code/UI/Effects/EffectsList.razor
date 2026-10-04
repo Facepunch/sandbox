@@ -9,7 +9,7 @@
             {
             @foreach ( var group in _groups )
             {
-                <div class="group-header">@group.Key.ToString()</div>
+                <div class="group-header">@(DisplayInfo.ForEnumValues<PostProcessGroup>().FirstOrDefault( entry => entry.value == group.Key ).info.Name)</div>
 
                 @foreach ( var entry in group )
                 {
@@ -120,9 +120,19 @@
     {
         _groups = ResourceLibrary.GetAll<PostProcessResource>()
             .OrderBy( r => r.Group )
-            .ThenBy( r => r.Title )
+            .ThenBy( r => LocalizedText.Resolve( r.Title ), StringComparer.CurrentCultureIgnoreCase )
             .GroupBy( r => r.Group )
             .ToArray();
+    }
+
+    /// <summary>
+    /// Sorts installed effects by their translated names after a language change.
+    /// </summary>
+    public override void LanguageChanged()
+    {
+        base.LanguageChanged();
+        RefreshInstalled();
+        StateHasChanged();
     }
 
     public void SwitchTab( int tab )

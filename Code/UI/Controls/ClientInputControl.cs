@@ -32,8 +32,8 @@ public partial class ClientInputControl : BaseControl
 			_inputHint.SetClass( "hidden", true );
 			_fallbackIcon.SetClass( "hidden", false );
 			_bindLabel.Text = outputCount > 0
-				? $"{outputCount} Connected Output{(outputCount == 1 ? "" : "s")}"
-				: "No Binding";
+				? Game.Language.GetPhrase( outputCount == 1 ? "ui.input.one_connected_output" : "ui.input.connected_outputs", new() { { "count", outputCount } } )
+				: "#ui.input.no_binding";
 			SetClass( "no-binding", outputCount == 0 );
 			return;
 		}
@@ -44,8 +44,19 @@ public partial class ClientInputControl : BaseControl
 		SetClass( "no-binding", false );
 
 		var match = Input.GetActions().FirstOrDefault( a => a.Name == action );
-		var label = match != null ? (match.Title ?? match.Name) : action;
-		_bindLabel.Text = outputCount > 0 ? $"{label} + {outputCount}" : label;
+		var label = match != null ? LocalizedText.InputTitle( match ) : action;
+		_bindLabel.Text = outputCount > 0
+			? Game.Language.GetPhrase( "ui.input.binding_with_outputs", new() { { "binding", label }, { "count", outputCount } } )
+			: label;
+	}
+
+	/// <summary>
+	/// Refreshes composed binding and connection labels when the language changes.
+	/// </summary>
+	public override void LanguageChanged()
+	{
+		base.LanguageChanged();
+		Rebuild();
 	}
 
 	protected override void OnClick( MousePanelEvent e )
@@ -53,18 +64,22 @@ public partial class ClientInputControl : BaseControl
 		base.OnClick( e );
 
 		var menu = new Sandbox.UI.Menu();
-		menu.AddOption( "No Key Binding", "", () => OnBindChanged( "" ) );
+		menu.AddOption( "#ui.input.no_key_binding", "", () => OnBindChanged( "" ) );
 
 		var outputs = GetLinkedOutputs().ToArray();
 		if ( outputs.Length > 0 )
 		{
-			var sub = menu.AddMenu( "Linked Outputs", "cable" );
+			var sub = menu.AddMenu( "#ui.input.linked_outputs", "cable" );
 			foreach ( var output in outputs )
 			{
 				var connected = IsConnected( output );
 				var source = output;
 				sub.AddOption(
-					$"{output.Component.GameObject.Name}: {output.Title}",
+					Game.Language.GetPhrase( "ui.input.linked_output", new()
+					{
+						{ "object", LocalizedText.Resolve( output.Component.GameObject.Name ) },
+						{ "output", LocalizedText.Resolve( output.Title ) }
+					} ),
 					connected ? "check_box" : "check_box_outline_blank",
 					() => SetConnected( source, !connected )
 				);
@@ -75,7 +90,7 @@ public partial class ClientInputControl : BaseControl
 
 		var grouped = Input.GetActions()
 			.GroupBy( a => a.GroupName ?? "" )
-			.OrderBy( g => g.Key );
+			.OrderBy( g => LocalizedText.InputGroup( g.Key ), StringComparer.CurrentCultureIgnoreCase );
 
 		foreach ( var group in grouped )
 		{
@@ -90,7 +105,7 @@ public partial class ClientInputControl : BaseControl
 			else
 			{
 				var groupActions = group.ToList();
-				var sub = menu.AddMenu( group.Key, "" );
+				var sub = menu.AddMenu( LocalizedText.InputGroup( group.Key ), "" );
 				foreach ( var action in groupActions )
 				{
 					var a = action;
@@ -158,9 +173,11 @@ public partial class ClientInputControl : BaseControl
 
 	string ActionLabel( InputAction a )
 	{
-		var title = !string.IsNullOrEmpty( a.Title ) ? a.Title : a.Name;
+		var title = LocalizedText.InputTitle( a );
 		var origin = Input.GetButtonOrigin( a.Name );
-		return origin != null ? $"{title} ({origin})" : title;
+		return origin != null
+			? Game.Language.GetPhrase( "ui.input.binding_with_key", new() { { "binding", title }, { "key", origin } } )
+			: title;
 	}
 
 	void OnBindChanged( string value )

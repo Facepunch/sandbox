@@ -72,7 +72,7 @@
           },
           "compiled": null
         },
-        "DisplayName": "Physics Gun",
+        "DisplayName": "#weapon.name.physgun",
         "DroppedGameObject": {
           "_type": "gameobject",
           "go": "eee17487-5a77-418f-b927-43e62b57dbbb"

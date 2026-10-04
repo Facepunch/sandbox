@@ -156,7 +156,7 @@ public sealed class WireTool : BaseConstraintToolMode
 			{
 				Icon = port.Icon,
 				Description = string.IsNullOrWhiteSpace( port.Description )
-					? $"Signal {port.Kind} on {port.ComponentTitle}."
+					? Game.Language.GetPhrase( port is SignalOutputDescription ? "tool.wire.signal_output" : "tool.wire.signal_input", new() { { "component", port.ComponentTitle } } )
 					: port.Description
 			} ).ToArray();
 
@@ -186,7 +186,7 @@ public sealed class WireTool : BaseConstraintToolMode
 		Track( links );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Link";
+		undo.Name = "#tool.undo.link";
 		undo.Add( links[0] );
 	}
 

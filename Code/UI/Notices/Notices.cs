@@ -1,9 +1,18 @@
-﻿namespace Sandbox.UI;
+namespace Sandbox.UI;
 
-public class Notices : PanelComponent
+/// <summary>
+/// Displays transient HUD notices and delivers messages to individual players.
+/// </summary>
+public partial class Notices : PanelComponent
 {
+	/// <summary>
+	/// The notice display in the active scene.
+	/// </summary>
 	public static Notices Current => Game.ActiveScene.Get<Notices>();
 
+	/// <summary>
+	/// Displays already formatted text without interpreting leading hashes as phrase references.
+	/// </summary>
 	public static NoticePanel AddNotice( string text, float seconds = 5 )
 	{
 		var current = Current;
@@ -11,7 +20,7 @@ public class Notices : PanelComponent
 
 		var notice = new NoticePanel();
 
-		notice.AddChild( new Label() { Text = text, Classes = "text", IsRich = true } );
+		notice.AddChild( new Label() { Tokenize = false, Text = text, Classes = "text", IsRich = true } );
 
 		if ( seconds <= 0 )
 			notice.Manual = true;
@@ -23,6 +32,9 @@ public class Notices : PanelComponent
 		return notice;
 	}
 
+	/// <summary>
+	/// Displays an icon and already formatted text without interpreting leading hashes as phrase references.
+	/// </summary>
 	public static NoticePanel AddNotice( string icon, Color iconColor, string text, float seconds = 5 )
 	{
 		var current = Current;
@@ -34,7 +46,7 @@ public class Notices : PanelComponent
 		iconPanel.Style.FontColor = iconColor;
 
 		notice.AddChild( iconPanel );
-		notice.AddChild( new Label() { Text = text, Classes = "text", IsRich = true } );
+		notice.AddChild( new Label() { Tokenize = false, Text = text, Classes = "text", IsRich = true } );
 
 		if ( seconds <= 0 )
 			notice.Manual = true;

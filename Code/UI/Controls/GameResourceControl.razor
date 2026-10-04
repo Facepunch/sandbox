@@ -20,7 +20,7 @@
     <div class="content">
         @if ( Title == null )
         {
-            <div class="title empty">None Selected</div>
+            <div class="title empty">#ui.resource.none_selected</div>
         }
         else
         {
@@ -38,6 +38,9 @@
     string Extension;
     string TypeName;
 
+    /// <summary>
+    /// Refreshes the displayed resource type and current selection.
+    /// </summary>
     public override void Rebuild()
     {
         base.Rebuild();
@@ -45,11 +48,14 @@
         var typeDesc = TypeLibrary.GetType( Property.PropertyType );
         var assetType = typeDesc?.GetAttribute<AssetTypeAttribute>();
         Extension = assetType?.Extension?.ToUpperInvariant().Truncate( 4 ) ?? "RES";
-        TypeName = assetType?.Name ?? Property.PropertyType?.Name ?? "Resource";
+        TypeName = LocalizedText.ResourceTypeName( assetType, Property.PropertyType?.Name );
 
         OnValueChanged();
     }
 
+    /// <summary>
+    /// Updates the preview and display title when the selected resource changes.
+    /// </summary>
     public void OnValueChanged()
     {
         var resource = Property.GetValue<GameResource>();
@@ -61,7 +67,7 @@
             return;
         }
 
-        Title = resource.ResourceName;
+        Title = resource is IDefinitionResource definition ? definition.Title ?? resource.ResourceName : resource.ResourceName;
         ResourcePath = resource.ResourcePath;
     }
 

@@ -1,27 +1,28 @@
+[Title( "#tool.entity.wheelentity" )]
 public sealed class WheelEntity : Component, IPlayerControllable
 {
-	[Property, Range( 0, 1 ), ClientEditable]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.reversed" )]
 	public bool Reversed { get; set; }
 
-	[Property, Range( 0, 1 ), ClientEditable]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.speed" )]
 	public float Speed { get; set; } = 0.5f;
 
-	[Property, Range( 0, 1 ), ClientEditable]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.power" )]
 	public float Power { get; set; } = 0.5f;
 
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.forward" )]
 	public ClientInput Forward { get; set; }
 
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.reverse" )]
 	public ClientInput Reverse { get; set; }
 
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.brake" )]
 	public ClientInput Brake { get; set; }
 
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.turn_left" )]
 	public ClientInput TurnLeft { get; set; }
 
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.turn_right" )]
 	public ClientInput TurnRight { get; set; }
 
 	private Vector3 _localAxle;

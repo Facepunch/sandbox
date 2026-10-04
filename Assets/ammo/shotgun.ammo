@@ -1,5 +1,5 @@
 {
-  "Title": "Shotgun Ammo",
+  "Title": "#asset.shotgun.title",
   "Icon": null,
   "MaxReserve": 40,
   "__references": [],

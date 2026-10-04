@@ -98,7 +98,7 @@ public sealed class EntitySpawner : ISpawner
 	{
 		if ( Prefab?.GetComponent<BaseSandboxWeapon>( true ) is not null )
 		{
-			menu.AddOption( "Spawn in World", "public", () => GameManager.Spawn( ident, metadata, forceWorld: true ) );
+			menu.AddOption( "#spawner.spawn_in_world", "public", () => GameManager.Spawn( ident, metadata, forceWorld: true ) );
 		}
 	}
 }

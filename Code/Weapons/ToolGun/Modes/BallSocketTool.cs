@@ -1,11 +1,11 @@
-﻿
+
 [Icon( "🎱" )]
 [Title( "#tool.name.ballsocket" )]
 [ClassName( "ballsocket" )]
 [Group( "#tool.group.constraints" )]
 public sealed class BallSocketTool : BaseConstraintToolMode
 {
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.enable_collision" )]
 	public bool EnableCollision { get; set; } = false;
 
 	public override string Description => Stage == 1 ? "#tool.hint.ballsocket.stage1" : "#tool.hint.ballsocket.stage0";
@@ -41,7 +41,7 @@ public sealed class BallSocketTool : BaseConstraintToolMode
 		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Ballsocket";
+		undo.Name = "#tool.name.ballsocket";
 		undo.Add( go1 );
 		undo.Add( go2 );
 	}

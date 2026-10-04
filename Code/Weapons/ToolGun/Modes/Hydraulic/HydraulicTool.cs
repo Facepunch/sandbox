@@ -1,4 +1,4 @@
-﻿[Hide]
+[Hide]
 [Title( "#tool.name.hydraulic" )]
 [Icon( "⚙️" )]
 [ClassName( "HydraulicTool" )]
@@ -9,7 +9,7 @@ public sealed class HydraulicTool : BaseLengthConstraintTool
 	public override string PrimaryAction => Stage == 1 ? "#tool.hint.hydraulictool.finish" : "#tool.hint.hydraulictool.source";
 	public override string ReloadAction => "#tool.hint.hydraulictool.remove";
 
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.ball_joints" )]
 	public bool BallJoints { get; set; } = false;
 
 	protected override string CapModelA => "hydraulics/tool_hydraulic.vmdl";
@@ -164,7 +164,7 @@ public sealed class HydraulicTool : BaseLengthConstraintTool
 		Track( goA, goB, ballAnchor, ballTarget, sliderA, sliderB );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Hydraulic (Ball Joints)";
+		undo.Name = "#tool.undo.hydraulic_ball_joints";
 		undo.Add( goA, goB, ballAnchor, ballTarget, sliderA, sliderB );
 	}
 }

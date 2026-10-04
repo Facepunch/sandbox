@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/sents/npc/combat_npc.prefab",
-  "Title": "Army Guy",
+  "Title": "#asset.combat_npc.title",
   "Description": "",
   "Category": "Npc/Humanoid",
   "IncludeCode": false,

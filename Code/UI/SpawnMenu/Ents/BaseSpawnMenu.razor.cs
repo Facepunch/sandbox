@@ -197,6 +197,13 @@ public partial class BaseSpawnMenu : Panel
 	{
 		public string Type { get; set; } = "option";
 		public string Name { get; set; }
+
+		/// <summary>
+		/// Whether the name is allowed to reference a localization phrase.
+		/// Disable this for user-authored entries.
+		/// </summary>
+		public bool Tokenize { get; set; } = true;
+
 		public string Icon { get; set; }
 		public bool Enabled { get; set; } = true;
 		public Func<Panel> PanelCreator { get; set; }

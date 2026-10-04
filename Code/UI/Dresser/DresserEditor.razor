@@ -7,17 +7,20 @@
 
 <root>
     <div class="body">
-        <Label>todo: add / remove clothing resources</Label>
+        <Label>#ui.dresser.clothing_unavailable</Label>
     </div>
     <div class="footer">
-            <Button class="menu-action primary" Text="Randomize" Icon="🎲" onclick=@DoRandomize></Button>
-            <Button class="menu-action primary" Text="Clear" Icon="🧹" onclick=@DoClear></Button>
+            <Button class="menu-action primary" Text="#ui.common.randomize" Icon="🎲" onclick=@DoRandomize></Button>
+            <Button class="menu-action primary" Text="#ui.common.clear" Icon="🧹" onclick=@DoClear></Button>
     </div>
 </root>
 
 @code
 {
-    public string Title => "👗 Dresser";
+    /// <summary>
+    /// Localized title of the clothing inspector.
+    /// </summary>
+    public string Title => "👗 " + Game.Language.GetPhrase( "ui.dresser.title" );
 
     public Dresser Target { get; private set; }
 

@@ -30,7 +30,8 @@ public sealed class PropSpawner : ISpawner
 			Model = await ResourceLibrary.LoadAsync<Model>( Path );
 			if ( Model is not null )
 			{
-				DisplayName = Model.ResourceName;
+				DisplayName = LocalProps.All.FirstOrDefault( entry =>
+					string.Equals( entry.Path, Path.TrimStart( '/' ), StringComparison.OrdinalIgnoreCase ) )?.Title ?? Model.ResourceName;
 				return true;
 			}
 		}

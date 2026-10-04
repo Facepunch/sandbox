@@ -38,8 +38,8 @@
     },
     "compiled": null
   },
-  "Title": "Color Adjustment",
-  "Description": "Adjust brightness, contrast, saturation, and hue of the scene.",
+  "Title": "#asset.coloradjustments.title",
+  "Description": "#asset.coloradjustments.description",
   "__references": [],
   "__version": 0
 }

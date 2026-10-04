@@ -4,17 +4,19 @@
 /// </summary>
 public enum ButtonMode
 {
+	[Title( "#tool.option.hold" )]
 	Hold,
+	[Title( "#tool.option.toggle" )]
 	Toggle
 }
 
-[Alias( "button" ), Title( "Button" )]
+[Alias( "button" ), Title( "#tool.name.button" )]
 public sealed class ButtonEntity : Component, Component.IPressable
 {
-	[Property, Sync, Hide, SignalOutput( Default = true )]
+	[Property, Sync, Hide, SignalOutput( Default = true ), Title( "#tool.signal.pressed" )]
 	public SignalOutput Pressed { get; set; } = new();
 
-	[Property, Sync, ClientEditable, Group( "Behavior" )]
+	[Property, Sync, ClientEditable, Group( "#tool.setting.group.behavior" ), Title( "#tool.setting.mode" )]
 	public ButtonMode Mode { get; set; } = ButtonMode.Hold;
 
 	[Property, Group( "Visual" )]
@@ -59,7 +61,7 @@ public sealed class ButtonEntity : Component, Component.IPressable
 
 	IPressable.Tooltip? IPressable.GetTooltip( IPressable.Event e )
 	{
-		var title = Mode == ButtonMode.Toggle ? "Toggle Button" : "Press Button";
+		var title = Game.Language.GetPhrase( Mode == ButtonMode.Toggle ? "tool.button.toggle" : "tool.button.press" );
 		return new IPressable.Tooltip( title, "touch_app", null );
 	}
 

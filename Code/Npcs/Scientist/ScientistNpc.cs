@@ -1,4 +1,4 @@
-﻿using Sandbox.Npcs.Layers;
+using Sandbox.Npcs.Layers;
 using Sandbox.Npcs.Schedules;
 
 namespace Sandbox.Npcs.Scientist;
@@ -57,8 +57,8 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 	IPressable.Tooltip? IPressable.GetTooltip( IPressable.Event e )
 	{
 		return Leader.IsValid()
-			? new IPressable.Tooltip( "Stop following", "person_off", DisplayName )
-			: new IPressable.Tooltip( "Follow me", "follow_the_signs", DisplayName );
+			? new IPressable.Tooltip( "#npc.action.stop_following", "person_off", DisplayName )
+			: new IPressable.Tooltip( "#npc.action.follow", "follow_the_signs", DisplayName );
 	}
 
 	bool IPressable.CanPress( IPressable.Event e ) => true;

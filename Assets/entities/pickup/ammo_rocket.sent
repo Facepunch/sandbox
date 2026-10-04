@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/pickup/ammo_rocket.prefab",
-  "Title": "Rockets",
+  "Title": "#asset.ammo_rocket.title",
   "Description": null,
   "Category": "Pickup",
   "IncludeCode": false,

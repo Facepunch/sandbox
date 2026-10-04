@@ -1,9 +1,36 @@
+/// <summary>
+/// Categories for browsing post-processing effects.
+/// </summary>
 public enum PostProcessGroup
 {
+	/// <summary>
+	/// Effects entries.
+	/// </summary>
+	[Title( "#effects.group.effects" )]
 	Effects,
+
+	/// <summary>
+	/// Overlay entries.
+	/// </summary>
+	[Title( "#effects.group.overlay" )]
 	Overlay,
+
+	/// <summary>
+	/// Shaders entries.
+	/// </summary>
+	[Title( "#effects.group.shaders" )]
 	Shaders,
+
+	/// <summary>
+	/// Textures entries.
+	/// </summary>
+	[Title( "#effects.group.textures" )]
 	Textures,
+
+	/// <summary>
+	/// Misc entries.
+	/// </summary>
+	[Title( "#effects.group.misc" )]
 	Misc
 }
 

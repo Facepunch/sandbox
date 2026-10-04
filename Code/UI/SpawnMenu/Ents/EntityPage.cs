@@ -1,4 +1,4 @@
-﻿
+
 /// <summary>
 /// This component has a kill icon that can be used in the killfeed, or somewhere else.
 /// </summary>
@@ -14,6 +14,19 @@ public class EntityPage : BaseSpawnMenu
 		{ "World", "🌍" },
 	};
 
+	/// <summary>
+	/// Translate known category labels without changing their resource or search identifiers.
+	/// </summary>
+	static string CategoryTitle( string category ) => category?.ToLowerInvariant() switch
+	{
+		"chair" => "#ui.entity.chair",
+		"pickup" => "#ui.entity.pickup",
+		"world" => "#ui.entity.world",
+		"vehicle" => "#spawnmenu.entity.vehicle",
+		"other" => "#spawnmenu.entity.other",
+		_ => category
+	};
+
 	protected override void Rebuild()
 	{
 		AddHeader( "#spawnmenu.section.categories" );
@@ -24,7 +37,8 @@ public class EntityPage : BaseSpawnMenu
 			.Select( e => SpawnMenuCategory.Root( e.Category ) )
 			.Where( category => !string.Equals( category, "Weapon", StringComparison.OrdinalIgnoreCase ) && !string.Equals( category, "Npc", StringComparison.OrdinalIgnoreCase ) )
 			.Distinct()
-			.OrderBy( c => c == "Other" ? "\xFF" : c ); // sort Other last
+			.OrderBy( c => string.Equals( c, "Other", StringComparison.OrdinalIgnoreCase ) )
+			.ThenBy( c => LocalizedText.Resolve( CategoryTitle( c ) ), StringComparer.CurrentCultureIgnoreCase );
 
 		var addedCategories = new HashSet<string>( StringComparer.OrdinalIgnoreCase );
 		foreach ( var category in categories )
@@ -32,7 +46,7 @@ public class EntityPage : BaseSpawnMenu
 			var cat = category; // capture for lambda
 			var icon = CategoryIcons.GetValueOrDefault( cat, "📦" );
 			addedCategories.Add( cat );
-			AddOption( icon, cat, () => new EntityListCloud { LocalCategory = cat, Query = $"cat:{cat.ToLowerInvariant()}" } );
+			AddOption( icon, CategoryTitle( cat ), () => new EntityListCloud { LocalCategory = cat, Query = $"cat:{cat.ToLowerInvariant()}" } );
 		}
 
 		void AddCloudCategory( string icon, string name, string category )

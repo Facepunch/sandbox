@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/makeshift_small_exhaust.prefab",
-  "Title": "Makeshift Small Exhaust",
+  "Title": "#asset.makeshift_small_exhaust.title",
   "Description": "",
   "__references": [],
   "__version": 0

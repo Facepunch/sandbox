@@ -1,28 +1,29 @@
 [Alias( "thruster" )]
+[Title( "#tool.entity.thrusterentity" )]
 public sealed class ThrusterEntity : Component, IPlayerControllable
 {
 	[Property, Range( 0, 1 )]
 	public GameObject OnEffect { get; set; }
 
-	[Property, ClientEditable, Range( 0, 1 )]
+	[Property, ClientEditable, Range( 0, 1 ), Title( "#tool.setting.power" )]
 	public float Power { get; set; } = 0.5f;
 
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.invert" )]
 	public bool Invert { get; set; } = false;
 
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.hide_effects" )]
 	public bool HideEffects { get; set; } = false;
 
 	/// <summary>
 	/// While this input is active we'll apply thrust
 	/// </summary>
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.activate" ), Description( "#tool.setting.thrusterentity.activate.description" )]
 	public ClientInput Activate { get; set; }
 
 	/// <summary>
 	/// While this input is active we'll apply thrust in the opposite direction
 	/// </summary>
-	[Property, ClientEditable]
+	[Property, ClientEditable, Title( "#tool.setting.reverse" ), Description( "#tool.setting.thrusterentity.reverse.description" )]
 	public ClientInput Reverse { get; set; }
 
 	/// <summary>
@@ -33,7 +34,7 @@ public sealed class ThrusterEntity : Component, IPlayerControllable
 	/// <summary>
 	/// Looping sound played while the thruster is active.
 	/// </summary>
-	[Property, ClientEditable, Metadata( SoundDefinition.Thruster ), Group( "Sound" )]
+	[Property, ClientEditable, Metadata( SoundDefinition.Thruster ), Group( "#tool.setting.group.sound" ), Title( "#tool.setting.thruster_sound" ), Description( "#tool.setting.thrusterentity.thrustersound.description" )]
 	public SoundDefinition ThrusterSound { get; set; }
 
 	/// <summary>

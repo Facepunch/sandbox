@@ -1,7 +1,7 @@
 {
   "Prefab": "entities/sents/npc/scientist.prefab",
-  "Title": "Scientist",
-  "Description": "It's a fucking scientist",
+  "Title": "#asset.scientist.title",
+  "Description": "#asset.scientist.description",
   "Category": "Npc/Humanoid",
   "IncludeCode": false,
   "__references": [],

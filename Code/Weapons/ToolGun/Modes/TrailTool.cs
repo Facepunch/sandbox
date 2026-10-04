@@ -6,32 +6,32 @@ using Sandbox.UI;
 [Group( "#tool.group.render" )]
 public sealed class TrailTool : ToolMode
 {
-	[Property, ResourceSelect( Extension = "ldef", AllowPackages = true ), Title( "Line" )]
+	[Property, ResourceSelect( Extension = "ldef", AllowPackages = true ), Title( "#tool.setting.line" )]
 	public string Definition { get; set; } = "entities/trails/basic.ldef";
 
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.trail_color" )]
 	public Color TrailColor { get; set; } = Color.White;
 
-	[Property, Sync, Range( 0.1f, 128.0f )]
+	[Property, Sync, Range( 0.1f, 128.0f ), Title( "#tool.setting.start_width" )]
 	public float StartWidth { get; set; } = 4.0f;
 
-	[Property, Sync, Range( 0.0f, 128.0f )]
+	[Property, Sync, Range( 0.0f, 128.0f ), Title( "#tool.setting.end_width" )]
 	public float EndWidth { get; set; } = 0.0f;
 
-	[Property, Sync, Range( 0.1f, 10.0f )]
+	[Property, Sync, Range( 0.1f, 10.0f ), Title( "#tool.setting.lifetime" )]
 	public float Lifetime { get; set; } = 1.0f;
 
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.cast_shadows" )]
 	public bool CastShadows { get; set; } = false;
 
-	public override string Description => "Add or remove trails from objects";
+	public override string Description => "#tool.hint.trail.description";
 
 	protected override void OnStart()
 	{
 		base.OnStart();
 
-		RegisterAction( ToolInput.Primary, () => "Add Trail", OnAddTrail );
-		RegisterAction( ToolInput.Secondary, () => "Remove Trail", OnRemoveTrail );
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.trail.add", OnAddTrail );
+		RegisterAction( ToolInput.Secondary, () => "#tool.hint.trail.remove", OnRemoveTrail );
 	}
 
 	void OnAddTrail()

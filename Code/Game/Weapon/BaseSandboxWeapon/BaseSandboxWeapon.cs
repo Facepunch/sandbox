@@ -111,12 +111,16 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 	// Seat / contraption inputs - a mounted weapon fires from the driver's configured bindings.
 	//
 
-	/// <summary>The input that fires the primary attack when this weapon is controlled via a seat.</summary>
-	[Property, ClientEditable, Group( "Inputs" )]
+	/// <summary>
+	/// The input that fires the primary attack when this weapon is controlled via a seat.
+	/// </summary>
+	[Property, ClientEditable, Group( "#entity.group.input" ), Title( "#input.action.attack1" ), Description( "#weapon.setting.primary.description" )]
 	public ClientInput ShootInput { get; set; }
 
-	/// <summary>The input that fires the secondary attack when this weapon is controlled via a seat.</summary>
-	[Property, ClientEditable, Group( "Inputs" )]
+	/// <summary>
+	/// The input that fires the secondary attack when this weapon is controlled via a seat.
+	/// </summary>
+	[Property, ClientEditable, Group( "#entity.group.input" ), Title( "#input.action.attack2" ), Description( "#weapon.setting.secondary.description" )]
 	public ClientInput SecondaryInput { get; set; }
 
 	/// <summary>Weapons wired into a contraption stay put - no pickup prompt, no Touch pickup.</summary>
@@ -133,14 +137,20 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 		return inventory is null || !inventory.ActiveWeapon.IsValid();
 	}
 
-	[SignalInput( Id = nameof( ShootInput ), Default = true )]
+	/// <summary>
+	/// Dispatches a primary action from a connected signal.
+	/// </summary>
+	[SignalInput( Id = nameof( ShootInput ), Default = true ), Description( "#weapon.setting.primary.description" )]
 	public void ShootSignal( SignalEvent input )
 	{
 		if ( HasOwner || !Networking.IsHost ) return;
 		DispatchPrimary( input.Pressed, input.Down, input.Released );
 	}
 
-	[SignalInput( Id = nameof( SecondaryInput ) )]
+	/// <summary>
+	/// Dispatches a secondary action from a connected signal.
+	/// </summary>
+	[SignalInput( Id = nameof( SecondaryInput ) ), Description( "#weapon.setting.secondary.description" )]
 	public void SecondarySignal( SignalEvent input )
 	{
 		if ( HasOwner || !Networking.IsHost ) return;

@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/boiler_exhaust_2.prefab",
-  "Title": "Boiler Exhaust 2",
+  "Title": "#asset.boiler_exhaust_2.title",
   "Description": "",
   "__references": [],
   "__version": 0

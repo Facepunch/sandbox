@@ -10,12 +10,19 @@
         <IconPanel Text="@Icon"></IconPanel>
     }
 
-    <Label Text="@Text"></Label>
+    <Label Tokenize=@Tokenize Text="@Text"></Label>
     
 </root>
 
 @code
 {
+
+	/// <summary>
+	/// Whether the label treats a leading # as a localization key.
+	/// Disable this for user-authored names.
+	/// </summary>
+	[Parameter]
+	public bool Tokenize { get; set; } = true;
 
 	[Parameter, EditorRequired]
 	public string Text { get; set; }

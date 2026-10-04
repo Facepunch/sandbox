@@ -38,8 +38,8 @@
     },
     "compiled": null
   },
-  "Title": "Vignette",
-  "Description": "Darkens the edges of the screen for a cinematic look.",
+  "Title": "#asset.vignette.title",
+  "Description": "#asset.vignette.description",
   "__references": [],
   "__version": 0
 }

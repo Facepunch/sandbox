@@ -5,11 +5,17 @@ using System.Numerics;
 /// </summary>
 public enum StackDirection
 {
+	[Title( "#tool.option.up" )]
 	Up,
+	[Title( "#tool.option.down" )]
 	Down,
+	[Title( "#tool.option.left" )]
 	Left,
+	[Title( "#tool.option.right" )]
 	Right,
+	[Title( "#tool.option.forward" )]
 	Forward,
+	[Title( "#tool.option.back" )]
 	Back
 }
 
@@ -21,11 +27,13 @@ public enum StackAlignMode
 	/// <summary>
 	/// Stack along world-space axes regardless of object orientation.
 	/// </summary>
+	[Title( "#tool.option.world" )]
 	World,
 
 	/// <summary>
 	/// Stack along the target object's local axes.
 	/// </summary>
+	[Title( "#tool.option.object" )]
 	Object
 }
 
@@ -42,45 +50,45 @@ public sealed class StackerTool : ToolMode
 	/// <summary>
 	/// Number of copies to create.
 	/// </summary>
-	[Property, Sync, Range( 1, MaxStackCount ), Step( 1 ), Title( "Count" ), ClientEditable]
+	[Property, Sync, Range( 1, MaxStackCount ), Step( 1 ), Title( "#tool.setting.count" ), ClientEditable, Description( "#tool.setting.stackertool.stackcount.description" )]
 	public float StackCount { get; set; } = 2;
 
 	/// <summary>
 	/// Which direction to stack in.
 	/// </summary>
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.direction" ), Description( "#tool.setting.stackertool.direction.description" )]
 	public StackDirection Direction { get; set; } = StackDirection.Up;
 
 	/// <summary>
 	/// Whether to align the stack axis to the world or the target object.
 	/// </summary>
-	[Property, Sync, Title( "Alignment" )]
+	[Property, Sync, Title( "#tool.setting.alignment" ), Description( "#tool.setting.stackertool.alignmode.description" )]
 	public StackAlignMode AlignMode { get; set; } = StackAlignMode.Object;
 
 	/// <summary>
 	/// Rotation offset (degrees) around the first perpendicular axis of the stack direction.
 	/// For Up/Down stacking this rotates around the right axis.
 	/// </summary>
-	[Property, Sync, Title( "Angle X" ), Range( -180, 180 ), Step( 1 )]
+	[Property, Sync, Title( "#tool.setting.angle_x" ), Range( -180, 180 ), Step( 1 ), Description( "#tool.setting.stackertool.angleoffsetx.description" )]
 	public float AngleOffsetX { get; set; } = 0f;
 
 	/// <summary>
 	/// Rotation offset (degrees) around the second perpendicular axis of the stack direction.
 	/// For Up/Down stacking this rotates around the forward axis.
 	/// </summary>
-	[Property, Sync, Title( "Angle Y" ), Range( -180, 180 ), Step( 1 )]
+	[Property, Sync, Title( "#tool.setting.angle_y" ), Range( -180, 180 ), Step( 1 ), Description( "#tool.setting.stackertool.angleoffsety.description" )]
 	public float AngleOffsetY { get; set; } = 0f;
 
 	/// <summary>
 	/// Extra gap (in units) between each stacked copy.
 	/// </summary>
-	[Property, Sync, Range( 0, 128 ), Title( "Gap" )]
+	[Property, Sync, Range( 0, 128 ), Title( "#tool.setting.gap" ), Description( "#tool.setting.stackertool.positionoffset.description" )]
 	public float PositionOffset { get; set; } = 0f;
 
 	/// <summary>
 	/// When true, stacked copies will be frozen (motion disabled).
 	/// </summary>
-	[Property, Sync, Title( "Freeze" )]
+	[Property, Sync, Title( "#tool.setting.freeze" ), Description( "#tool.setting.stackertool.freezeall.description" )]
 	public bool FreezeAll { get; set; } = true;
 
 	public override string Description => "#tool.hint.stacker.description";
@@ -348,7 +356,7 @@ public sealed class StackerTool : ToolMode
 		using var x = Scene.BatchGroup();
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Stack";
+		undo.Name = "#tool.undo.stack";
 		undo.Icon = "📚";
 
 		for ( int i = 0; i < transforms.Length; i++ )

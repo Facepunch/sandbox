@@ -116,7 +116,7 @@ public abstract class BaseLengthConstraintTool : BaseConstraintToolMode
 		Track( go1, go2, jointGo );
 
 		var undo = Player.Undo.Create();
-		undo.Name = UndoName;
+		undo.Name = TypeDescription.Title;
 		undo.Add( go1 );
 		undo.Add( go2 );
 		undo.Add( jointGo );

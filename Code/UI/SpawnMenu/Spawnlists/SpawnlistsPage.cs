@@ -75,6 +75,7 @@ public abstract class SpawnlistsPage : BaseSpawnMenu
 					entry.IsEditable
 						? () => OnEditableRightClick( captured )
 						: () => OnInstalledRightClick( captured ) );
+				_spawnlistOptions[entry.StorageEntry.Id].Tokenize = false;
 			}
 
 			AddSkeletons( Collection.PendingCount );

@@ -1,6 +1,6 @@
 {
   "Prefab": "weapons/grenade/grenade.prefab",
-  "Title": "Grenade",
+  "Title": "#asset.grenade.title",
   "Description": null,
   "Category": "Weapon",
   "IncludeCode": false,

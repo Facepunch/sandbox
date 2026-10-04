@@ -1,5 +1,5 @@
 {
-  "hint.openspawnmenu": "Halte {input:SpawnMenu}, um das Spawn-Menü zu öffnen",
-  "hint.openinspectmenu": "Halte {input:InspectMenu}, um das Inspektionsmenü zu öffnen",
-  "hint.openpausemenu": "Drücke ESC, um das Pausenmenü zu öffnen und deine Steuerung zu überprüfen."
+    "hint.openspawnmenu": "Halte {input:SpawnMenu} gedrückt, um das Erzeugungsmenü zu öffnen",
+    "hint.openinspectmenu": "Halte {input:InspectMenu} gedrückt, um das Inspektionsmenü zu öffnen",
+    "hint.openpausemenu": "Drücke ESC, um das Pausenmenü zu öffnen und deine Steuerung anzusehen"
 }

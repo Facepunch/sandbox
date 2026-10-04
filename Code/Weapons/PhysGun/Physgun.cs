@@ -1,7 +1,7 @@
-﻿using Sandbox.Physics;
+using Sandbox.Physics;
 using Sandbox.Rendering;
 
-[Title( "Physics Gun" )]
+[Title( "#weapon.name.physgun" )]
 public partial class Physgun : Local.IPlayerEvents
 {
 	public Physgun()
@@ -457,10 +457,16 @@ public partial class Physgun : Local.IPlayerEvents
 		_state = state;
 	}
 
-	[SignalInput( Id = nameof( ExtendInput ) )]
+	/// <summary>
+	/// Increases the grab distance using a connected signal.
+	/// </summary>
+	[SignalInput( Id = nameof( ExtendInput ) ), Description( "#weapon.setting.extend.description" )]
 	public void ExtendSignal( float amount ) => AdjustGrabDistance( amount * 200f * Time.Delta );
 
-	[SignalInput( Id = nameof( RetractInput ) )]
+	/// <summary>
+	/// Decreases the grab distance using a connected signal.
+	/// </summary>
+	[SignalInput( Id = nameof( RetractInput ) ), Description( "#weapon.setting.retract.description" )]
 	public void RetractSignal( float amount ) => AdjustGrabDistance( -amount * 200f * Time.Delta );
 
 	protected override void OnContraptionControl()
@@ -597,7 +603,8 @@ public partial class Physgun : Local.IPlayerEvents
 	/// <summary>
 	/// When true, the physgun aims where the seated player's camera looks.
 	/// </summary>
-	[Property, ClientEditable, Sync] public bool CanAim { get; set; } = true;
+	[Property, ClientEditable, Sync, Title( "#weapon.setting.camera_aim" ), Description( "#weapon.setting.camera_aim.description" )]
+	public bool CanAim { get; set; } = true;
 
 	public override bool IsTargetedAim => CanAim;
 

@@ -26,8 +26,8 @@
             <div class="control-row action undo-entry" @onclick=@(() => Undo( entry ))>
                 <div class="undo-icon @(string.IsNullOrWhiteSpace( entry.Icon ) ? "material-icon" : "")">@(string.IsNullOrWhiteSpace( entry.Icon ) ? "undo" : entry.Icon)</div>
                 <div class="undo-info">
-                    <label class="undo-name">@DisplayName( entry )</label>
-                    <label class="undo-count">@ObjectCountText( entry.ObjectCount )</label>
+                    <Label class="undo-name" Tokenize=@false Text=@DisplayName( entry ) />
+                    <Label class="undo-count" Tokenize=@false Text=@ObjectCountText( entry.ObjectCount ) />
                 </div>
                 <i class="undo-action">undo</i>
             </div>
@@ -71,6 +71,15 @@
         UndoSystem.RequestHistory();
     }
 
+    /// <summary>
+    /// Reformats action titles and object counts without requesting the history again.
+    /// </summary>
+    public override void LanguageChanged()
+    {
+        base.LanguageChanged();
+        StateHasChanged();
+    }
+
     void OnHistoryUpdated( IReadOnlyList<UndoSystem.HistoryItem> history )
     {
         History = history?.ToList() ?? [];
@@ -88,7 +97,9 @@
     }
 
     static string DisplayName( UndoSystem.HistoryItem entry )
-        => string.IsNullOrWhiteSpace( entry.Name ) ? "Action" : entry.Name;
+        => string.IsNullOrWhiteSpace( entry.Name )
+            ? Game.Language.GetPhrase( "ui.undo.action" )
+            : LocalizedText.Resolve( entry.Name, entry.NameTokens );
 
     static string ObjectCountText( int count )
         => count == 1

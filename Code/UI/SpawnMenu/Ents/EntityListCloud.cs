@@ -29,10 +29,10 @@ public class EntityListCloud : CloudSpawnList
 				string.Equals( SpawnMenuCategory.Root( entity.Category ), category, StringComparison.OrdinalIgnoreCase ) ) );
 
 		if ( !string.IsNullOrWhiteSpace( Filter ) )
-			entities = entities.Where( entity => (entity.Title ?? "").Contains( Filter, StringComparison.OrdinalIgnoreCase ) || entity.ResourcePath.Contains( Filter, StringComparison.OrdinalIgnoreCase ) );
+			entities = entities.Where( entity => (LocalizedText.Resolve( entity.Title ) ?? "").Contains( Filter, StringComparison.CurrentCultureIgnoreCase ) || entity.ResourcePath.Contains( Filter, StringComparison.OrdinalIgnoreCase ) );
 
 		return entities
-			.OrderBy( entity => entity.Title ).ThenBy( entity => entity.ResourcePath )
+			.OrderBy( entity => LocalizedText.Resolve( entity.Title ), StringComparer.CurrentCultureIgnoreCase ).ThenBy( entity => entity.ResourcePath )
 			.Select( entity => new Entry( $"entity:{entity.ResourcePath}", entity.Title, entity.Developer ) );
 	}
 }

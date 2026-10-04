@@ -1,6 +1,6 @@
 {
   "Prefab": "weapons/crowbar/crowbar.prefab",
-  "Title": "Crowbar",
+  "Title": "#weapon.name.crowbar",
   "Description": null,
   "Category": "Weapon/Melee",
   "IncludeCode": false,

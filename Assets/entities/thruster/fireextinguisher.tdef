@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/fireextinguisher.prefab",
-  "Title": "Fire Extinguisher",
+  "Title": "#asset.fireextinguisher.title",
   "Description": "",
   "__references": [],
   "__version": 0

@@ -7,7 +7,7 @@ public sealed class WeldTool : BaseConstraintToolMode
 {
 	bool _easyMode;
 
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.rigid" )]
 	public bool Rigid { get; set; } = false;
 
 	float _easyModeAngle = 0f;
@@ -265,7 +265,7 @@ public sealed class WeldTool : BaseConstraintToolMode
 		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Weld";
+		undo.Name = "#tool.name.weld";
 		undo.Add( go1 );
 		undo.Add( go2 );
 

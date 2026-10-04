@@ -1,7 +1,7 @@
 {
   "Prefab": "entities/balloon/heart.prefab",
-  "Title": "Heart",
-  "Description": "A heart balloon",
+  "Title": "#asset.heart.title",
+  "Description": "#asset.heart.description",
   "__references": [],
   "__version": 0
 }

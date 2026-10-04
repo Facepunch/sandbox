@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/sents/chairs/ladder.prefab",
-  "Title": "Ladder",
+  "Title": "#asset.ladder.title",
   "Description": "",
   "Category": "Chair",
   "IncludeCode": false,

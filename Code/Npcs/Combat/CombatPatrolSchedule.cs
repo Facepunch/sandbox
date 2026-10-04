@@ -9,14 +9,14 @@ public class CombatPatrolSchedule : ScheduleBase
 {
 	private static readonly string[] PatrolLines =
 	{
-		"Stay sharp.",
-		"Keep moving.",
-		"All clear so far.",
-		"Eyes open.",
-		"Nothing yet.",
-		"Where'd they go...",
-		"Something's not right.",
-		"I'll check over here.",
+		"#npc.speech.combat.patrol.1",
+		"#npc.speech.combat.patrol.2",
+		"#npc.speech.combat.patrol.3",
+		"#npc.speech.combat.patrol.4",
+		"#npc.speech.combat.patrol.5",
+		"#npc.speech.combat.patrol.6",
+		"#npc.speech.combat.patrol.7",
+		"#npc.speech.combat.patrol.8",
 	};
 
 	/// <summary>

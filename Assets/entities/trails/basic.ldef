@@ -1,6 +1,6 @@
 {
-  "Title": "Basic",
-  "Description": "Basic Line.",
+  "Title": "#asset.basic.title",
+  "Description": "#asset.trails.basic.description",
   "Material": null,
   "WorldSpace": true,
   "UnitsPerTexture": 32,

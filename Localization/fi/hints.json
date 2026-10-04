@@ -1,5 +1,5 @@
 {
-  "hint.openspawnmenu": "Paina {input:SpawnMenu} avataksesi Spawn-valikon",
-  "hint.openinspectmenu": "Paina {input:InspectMenu} avataksesi Tarkistusvalikon",
-  "hint.openpausemenu": "Paina ESC avataksesi Tauko-valikon ja tarkista ohjaimesi"
+    "hint.openspawnmenu": "Pidä {input:SpawnMenu} painettuna avataksesi luontivalikon",
+    "hint.openinspectmenu": "Pidä {input:InspectMenu} painettuna avataksesi tarkastusvalikon",
+    "hint.openpausemenu": "Paina ESC avataksesi Tauko-valikon ja tarkista ohjaimesi"
 }

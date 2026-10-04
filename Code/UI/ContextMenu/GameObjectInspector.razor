@@ -20,11 +20,11 @@
                 <div class="object-info">
                     @if ( totalMass > 0 )
                     {
-                        <span>⚖️ @($"{totalMass:0.#} kg")</span>
+                        <span>⚖️ @Game.Language.GetPhrase( "ui.inspect.mass", new() { { "mass", totalMass.ToString( "0.#" ) } } )</span>
                     }
                     @if ( health.IsValid() && health.Health != 0 )
                     {
-                        <span>❤️ @($"{health.Health:0.#} HP")</span>
+                        <span>❤️ @Game.Language.GetPhrase( "ui.inspect.health", new() { { "health", health.Health.ToString( "0.#" ) } } )</span>
                     }
                 </div>
                 <ControlSheet Target="@Properties"></ControlSheet>
@@ -49,10 +49,10 @@
                         var index = i;
                         var hasOverride = accessor.HasOverride(index);
                         var mat = hasOverride ? accessor.GetOverride(index) : accessor.GetOriginal(index);
-                        var name = mat?.ResourceName ?? "Default";
+                        var name = mat?.ResourceName ?? "#ui.inspect.default_material";
 
                         <div class="material-row @(hasOverride ? "overridden" : "")">
-                        <label>#spawnmenu.inspect.material</label><label> @(index + 1)</label>
+                        <label>@Game.Language.GetPhrase( "ui.inspect.material_number", new() { { "number", index + 1 } } )</label>
                             <div class="material-button" @onclick=@(() => PickMaterial(index))>
                                 <div class="material-preview" style="background-image: url( thumb:@(mat?.ResourcePath) )"></div>
                                 <label>@name</label>
@@ -70,10 +70,13 @@
 
 @code
 {
+    /// <summary>
+    /// Localized inspector title including any additional selected objects.
+    /// </summary>
     public string Title => Target?.Count switch
     {
         null or < 2 => "📦 " + Game.Language.GetPhrase( "spawnmenu.inspect.object" ),
-        _ => "📦 " + Game.Language.GetPhrase( "spawnmenu.inspect.object" ) + $" (+{Target.Count - 1})"
+        _ => "📦 " + Game.Language.GetPhrase( "ui.inspect.additional_objects", new() { { "count", Target.Count - 1 } } )
     };
 
     public List<GameObject> Target { get; private set; }

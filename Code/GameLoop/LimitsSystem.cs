@@ -135,7 +135,7 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 				if ( current + dupeObjectCount > MaxPropsPerPlayer )
 				{
 					e.Cancelled = true;
-					NotifyLimit( e.Player, "props", MaxPropsPerPlayer );
+					NotifyLimit( e.Player, "#limit.props", MaxPropsPerPlayer );
 					return;
 				}
 			}
@@ -154,7 +154,7 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 					if ( current + explosivesInDupe > MaxExplosivesPerPlayer )
 					{
 						e.Cancelled = true;
-						NotifyLimit( e.Player, "explosives", MaxExplosivesPerPlayer );
+						NotifyLimit( e.Player, "#limit.explosives", MaxExplosivesPerPlayer );
 						return;
 					}
 				}
@@ -169,7 +169,7 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 			if ( IsExceeded( MaxPropsPerPlayer, count ) )
 			{
 				e.Cancelled = true;
-				NotifyLimit( e.Player, "props", MaxPropsPerPlayer );
+				NotifyLimit( e.Player, "#limit.props", MaxPropsPerPlayer );
 				return;
 			}
 		}
@@ -185,7 +185,7 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 			if ( IsExceeded( MaxExplosivesPerPlayer, count ) )
 			{
 				e.Cancelled = true;
-				NotifyLimit( e.Player, "explosives", MaxExplosivesPerPlayer );
+				NotifyLimit( e.Player, "#limit.explosives", MaxExplosivesPerPlayer );
 				return;
 			}
 		}
@@ -267,12 +267,16 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 		return spawner.Dupe.PreviewModels.Count( m => m.Model?.Data?.Explosive == true );
 	}
 
-	private static string GetToolName( ToolMode tool ) => tool?.TypeDescription?.Title ?? tool?.GetType().Name ?? "Unknown";
+	private static string GetToolName( ToolMode tool ) => tool?.TypeDescription?.Title ?? tool?.GetType().Name ?? "#limit.unknown";
 
 	private static void NotifyLimit( Connection player, string category, int limit )
 	{
 		if ( player is null ) return;
 
-		Notices.SendNotice( player, "block", Color.Red, $"Limit reached: {category} ({limit})", 3 );
+		Notices.SendLocalizedNotice( player, "block", Color.Red, "#limit.reached", new()
+		{
+			{ "category", category },
+			{ "limit", limit.ToString() }
+		}, 3 );
 	}
 }

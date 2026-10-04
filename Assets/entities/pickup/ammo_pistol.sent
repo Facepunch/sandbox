@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/pickup/ammo_9mm.prefab",
-  "Title": "Pistol Ammo",
+  "Title": "#asset.ammo_pistol.title",
   "Description": null,
   "Category": "Pickup",
   "IncludeCode": false,

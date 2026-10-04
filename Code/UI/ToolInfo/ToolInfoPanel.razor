@@ -12,14 +12,14 @@
 <root>
  <div class="name">
   <span class="icon">@InfoIcon</span>
-  <span>@Info?.Name</span>
+  <Label Tokenize=@false Text=@LocalizedText.Resolve( Info?.Name ) />
  </div>
 
  <div class="panel">
 
   @if ( !string.IsNullOrEmpty( Info?.Description ) )
   {
-   <div class="description">@Info.Description</div>
+   <Label class="description" Tokenize=@false Text=@LocalizedText.Resolve( Info.Description ) />
   }
 
   <div class="actions">
@@ -27,21 +27,21 @@
    {
     <div class="action">
      <InputHint Action="attack1" class="key" />
-     <span class="text">@Info.PrimaryAction</span>
+     <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.PrimaryAction ) />
     </div>
    }
    @if (!string.IsNullOrEmpty(Info?.SecondaryAction))
    {
     <div class="action">
      <InputHint Action="attack2" class="key" />
-     <span class="text">@Info.SecondaryAction</span>
+     <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.SecondaryAction ) />
     </div>
    }
    @if (!string.IsNullOrEmpty(Info?.ReloadAction))
    {
     <div class="action">
      <InputHint Action="reload" class="key" />
-     <span class="text">@Info.ReloadAction</span>
+     <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.ReloadAction ) />
     </div>
    }
   </div>
@@ -80,5 +80,5 @@
 		SetClass( "visible", CurrentToolInfo is not null );
 	}
 
-	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, InfoIcon, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Hud.IsVisible( HudElement.ToolInfo ) );
+	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, InfoIcon, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Hud.IsVisible( HudElement.ToolInfo ), Game.Language.SelectedCode );
 }

@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/waterdrum.prefab",
-  "Title": "Water Drum",
+  "Title": "#asset.waterdrum.title",
   "Description": "",
   "__references": [],
   "__version": 0

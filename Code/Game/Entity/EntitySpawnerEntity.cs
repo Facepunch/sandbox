@@ -5,38 +5,38 @@ using Sandbox.UI;
 /// Can be triggered manually via player input or automatically on a timer.
 /// </summary>
 [Alias( "entity_spawner" )]
-[Title( "Spawner" )]
+[Title( "#entity.name.spawner" )]
 public sealed class EntitySpawnerEntity : Component, IPlayerControllable
 {
 	/// <summary>
 	/// The SENT to spawn.
 	/// </summary>
-	[Property, ClientEditable]
+	[Property, Title( "#entity.property.entity" ), Description( "#entity.description.entity" ), ClientEditable]
 	public ScriptedEntity Entity { get; set; }
 
 	/// <summary>
 	/// Input binding that triggers a manual spawn when the player uses this entity.
 	/// </summary>
-	[Property, ClientEditable, Group( "Input" )]
+	[Property, Title( "#entity.property.spawninput" ), Description( "#entity.description.spawninput" ), ClientEditable, Group( "#entity.group.input" )]
 	public ClientInput SpawnInput { get; set; }
 
 	/// <summary>
 	/// When enabled, spawns the entity automatically every <see cref="SpawnInterval"/> seconds.
 	/// </summary>
-	[Property, ClientEditable, Group( "Auto Spawn" )]
+	[Property, Title( "#entity.property.autospawn" ), Description( "#entity.description.autospawn" ), ClientEditable, Group( "#entity.group.auto_spawn" )]
 	public bool AutoSpawn { get; set; } = false;
 
 	/// <summary>
 	/// Seconds between automatic spawns.
 	/// </summary>
-	[Property, ClientEditable, Range( 1f, 300f ), Step( 1 ), Group( "Auto Spawn" )]
+	[Property, Title( "#entity.property.spawninterval" ), Description( "#entity.description.spawninterval" ), ClientEditable, Range( 1f, 300f ), Step( 1 ), Group( "#entity.group.auto_spawn" )]
 	public float SpawnInterval { get; set; } = 5f;
 
 	/// <summary>
 	/// Maximum number of entities spawned by this spawner allowed to exist at once.
 	/// New spawns are suppressed until existing ones are destroyed.
 	/// </summary>
-	[Property, ClientEditable, Range( 1, 50 ), Step( 1 ), Group( "Auto Spawn" )]
+	[Property, Title( "#entity.property.maxentities" ), Description( "#entity.description.maxentities" ), ClientEditable, Range( 1, 50 ), Step( 1 ), Group( "#entity.group.auto_spawn" )]
 	public float MaxEntities { get; set; } = 5;
 
 	[Sync( SyncFlags.FromHost )]
@@ -52,9 +52,15 @@ public sealed class EntitySpawnerEntity : Component, IPlayerControllable
 		DoSpawn();
 	}
 
-	[SignalInput( Id = nameof( SpawnInput ), Default = true )]
+	/// <summary>
+	/// Spawns an entity when the signal input is triggered.
+	/// </summary>
+	[SignalInput( Id = nameof( SpawnInput ), Default = true ), Title( "#entity.property.spawninput" )]
 	public void SpawnSignal() => DoSpawn();
 
+	/// <summary>
+	/// Spawns an entity when the owning player presses the spawn input.
+	/// </summary>
 	public void OnControl()
 	{
 		if ( SpawnInput.Pressed() ) DoSpawn();
@@ -92,7 +98,8 @@ public sealed class EntitySpawnerEntity : Component, IPlayerControllable
 		if ( player is not null )
 		{
 			var undo = player.Undo.Create();
-			undo.Name = $"Spawn {Entity.Title ?? Entity.ResourceName}";
+			undo.Name = "#undo.spawn";
+			undo.NameTokens = new() { { "name", Entity.Title ?? Entity.ResourceName } };
 			undo.Add( spawned );
 		}
 	}

@@ -59,7 +59,7 @@
           },
           "compiled": null
         },
-        "DisplayName": "Crowbar",
+        "DisplayName": "#weapon.name.crowbar",
         "DroppedGameObject": {
           "_type": "gameobject",
           "go": "ef4d5a6b-7f8e-9012-def0-123456789013"

@@ -102,7 +102,8 @@ public sealed partial class GameManager
 		if ( objects is { Count: > 0 } )
 		{
 			var undo = player.Undo.Create();
-			undo.Name = $"Spawn {spawner.DisplayName}";
+			undo.Name = "#undo.spawn";
+			undo.NameTokens = new() { { "name", spawner.DisplayName } };
 
 			foreach ( var go in objects )
 			{

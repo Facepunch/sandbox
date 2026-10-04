@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/beer_cask.prefab",
-  "Title": "Beer Cask",
+  "Title": "#asset.beer_cask.title",
   "Description": "",
   "__references": [],
   "__version": 0

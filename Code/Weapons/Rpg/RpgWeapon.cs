@@ -13,7 +13,8 @@ public sealed class RpgWeapon : BaseSandboxWeapon
 	/// </summary>
 	// Host-authoritative: toggled through the [Rpc.Host] ToggleTrackedAim (from the owner when held, or on
 	// the host directly for a seated RPG), so it must replicate FROM the host, not owner->everyone.
-	[Property, Sync( SyncFlags.FromHost ), ClientEditable] public bool IsTrackedAim { get; set; } = false;
+	[Property, Sync( SyncFlags.FromHost ), ClientEditable, Title( "#weapon.setting.guide_rockets" ), Description( "#weapon.setting.guide_rockets.description" )]
+	public bool IsTrackedAim { get; set; } = false;
 
 	public override bool IsTargetedAim => IsTrackedAim;
 

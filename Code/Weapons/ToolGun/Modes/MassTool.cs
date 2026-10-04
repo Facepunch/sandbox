@@ -1,11 +1,11 @@
-﻿﻿
+﻿
 [Icon( "🍔" )]
 [Title( "#tool.name.mass" )]
 [ClassName( "mass" )]
 [Group( "#tool.group.tools" )]
 public sealed class MassTool : ToolMode
 {
-	[Sync, Property, Title( "Mass (kg)" ), Range( 1, 250 ), Step( 0.5f )]
+	[Sync, Property, Title( "#tool.setting.mass_kg" ), Range( 1, 250 ), Step( 0.5f )]
 	public float Value { get; set; } = 100.0f;
 
 	public override string Description => "#tool.hint.mass.description";

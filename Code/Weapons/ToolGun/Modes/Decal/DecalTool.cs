@@ -1,4 +1,4 @@
-﻿﻿
+﻿
 using Sandbox.UI;
 
 [Title( "#tool.name.decal" )]
@@ -7,7 +7,7 @@ using Sandbox.UI;
 [Group( "#tool.group.render" )]
 public sealed class DecalTool : ToolMode
 {
-	[Property, ResourceSelect( Extension = "decal", AllowPackages = true ), Title( "Decal" )]
+	[Property, ResourceSelect( Extension = "decal", AllowPackages = true ), Title( "#tool.name.decal" )]
 	public string Decal { get; set; }
 
 	public override string Description => "#tool.hint.decaltool.description";
@@ -69,7 +69,7 @@ public sealed class DecalTool : ToolMode
 		go.NetworkSpawn();
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Decal";
+		undo.Name = "#tool.name.decal";
 		undo.Add( go );
 	}
 }

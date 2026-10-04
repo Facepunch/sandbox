@@ -1,4 +1,4 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @using Sandbox.Mounting;
 @namespace Sandbox
@@ -28,7 +28,7 @@
 				<SpawnMenuPath Path=@CurrentPath></SpawnMenuPath>
 				*@
 
-				<label>@( $"{mount.Title}, {GetData().Count()}" ) </label><label>#spawnmenu.common.items</label>
+				<label>@Game.Language.GetPhrase( "ui.mounts.item_count", new() { { "mount", mount.Title }, { "count", GetData().Count() } } )</label>
 			</Body>
 			<Right>
 				<SpawnMenuFilter Query:bind="@Filter"></SpawnMenuFilter>

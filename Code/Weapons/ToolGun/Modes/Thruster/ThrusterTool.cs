@@ -1,4 +1,4 @@
-﻿﻿using Sandbox.UI;
+﻿using Sandbox.UI;
 
 [Hide]
 [Title( "#tool.name.thruster" )]
@@ -10,7 +10,7 @@ public sealed class ThrusterTool : ToolMode
 	public override bool UseSnapGrid => true;
 	public override IEnumerable<string> TraceIgnoreTags => ["constraint", "collision"];
 
-	[Property, ResourceSelect( Extension = "tdef", AllowPackages = true ), Title( "Thruster" )]
+	[Property, ResourceSelect( Extension = "tdef", AllowPackages = true ), Title( "#tool.name.thruster" )]
 	public string Definition { get; set; } = "entities/thruster/basic.tdef";
 
 	public override string Description => "#tool.hint.thrustertool.description";
@@ -117,7 +117,7 @@ public sealed class ThrusterTool : ToolMode
 		// undo
 		{
 			var undo = Player.Undo.Create();
-			undo.Name = "Thruster";
+			undo.Name = "#tool.name.thruster";
 			undo.Icon = "🚀";
 			undo.Add( go );
 		}

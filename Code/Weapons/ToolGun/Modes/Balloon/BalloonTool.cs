@@ -1,4 +1,4 @@
-﻿using Sandbox.UI;
+using Sandbox.UI;
 
 [Icon( "🎈" )]
 [Title( "#tool.name.balloon" )]
@@ -7,21 +7,21 @@
 public sealed class BalloonTool : ToolMode
 {
 	public override bool UseSnapGrid => true;
-	[Property, ResourceSelect( Extension = "bdef", AllowPackages = true ), Title( "Balloon" )]
+	[Property, ResourceSelect( Extension = "bdef", AllowPackages = true ), Title( "#tool.name.balloon" )]
 	public string Definition { get; set; } = "entities/balloon/basic.bdef";
 
 	[Range( 0, 500 )]
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.length" )]
 	public float Length { get; set; } = 50.0f;
 
 	[Range( -10, 10 )]
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.force" )]
 	public float Force { get; set; } = 1.0f;
 
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.rigid" )]
 	public bool Rigid { get; set; } = false;
 
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.tint" )]
 	public Color Tint { get; set; } = Color.White;
 
 	public override string Description => "#tool.hint.balloon.description";
@@ -166,7 +166,7 @@ public sealed class BalloonTool : ToolMode
 		Track( go );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Balloon";
+		undo.Name = "#tool.name.balloon";
 		undo.Add( go );
 
 		Player.PlayerData?.AddStat( "tool.balloon.place" );

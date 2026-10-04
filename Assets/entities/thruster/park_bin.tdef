@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/thruster/park_bin.prefab",
-  "Title": "Park Bin",
+  "Title": "#asset.park_bin.title",
   "Description": "",
   "__references": [],
   "__version": 0

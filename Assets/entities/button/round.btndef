@@ -1,7 +1,7 @@
 {
   "Prefab": "entities/button/round.prefab",
-  "Title": "Round",
-  "Description": "A round button",
+  "Title": "#asset.button.round.title",
+  "Description": "#asset.button.round.description",
   "__references": [],
   "__version": 0
 }

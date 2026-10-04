@@ -6,7 +6,7 @@ using System.Text.Json.Nodes;
 /// </summary>
 public sealed class DuplicatorSpawner : ISpawner
 {
-	public string DisplayName { get; private set; } = "Duplication";
+	public string DisplayName { get; private set; } = "#spawner.duplication";
 	public string Icon { get; init; }
 	public BBox Bounds => Dupe?.Bounds ?? default;
 	public bool IsReady => Dupe is not null && _packagesReady;
@@ -25,7 +25,7 @@ public sealed class DuplicatorSpawner : ISpawner
 		Dupe = dupe;
 		Json = json;
 		Icon = icon;
-		DisplayName = name ?? "Duplication";
+		DisplayName = LocalizedText.Literal( name ) ?? "#spawner.duplication";
 		Loading = InstallPackages();
 		CloudLoadTracker.Track( Loading );
 	}
@@ -73,7 +73,7 @@ public sealed class DuplicatorSpawner : ISpawner
 
 		Dupe = Sandbox.Json.Deserialize<DuplicationData>( json );
 		Json = json;
-		DisplayName = name ?? "Duplication";
+		DisplayName = LocalizedText.Literal( name ) ?? "#spawner.duplication";
 
 		return await InstallPackages();
 	}

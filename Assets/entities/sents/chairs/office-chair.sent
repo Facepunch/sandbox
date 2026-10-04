@@ -1,7 +1,7 @@
 {
   "Prefab": "entities/sents/chairs/office-chair.prefab",
-  "Title": "Office Chair",
-  "Description": "For spinning and sometimes working",
+  "Title": "#asset.office_chair.title",
+  "Description": "#asset.office_chair.description",
   "Category": "Chair",
   "IncludeCode": false,
   "__references": [],

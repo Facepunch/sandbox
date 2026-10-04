@@ -1,7 +1,7 @@
 {
   "Prefab": "entities/sents/chairs/dentist-chair.prefab",
-  "Title": "Dentist Chair",
-  "Description": "I bet you didn't floss today",
+  "Title": "#asset.dentist_chair.title",
+  "Description": "#asset.dentist_chair.description",
   "Category": "Chair",
   "IncludeCode": false,
   "__references": [],

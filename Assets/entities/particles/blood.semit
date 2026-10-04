@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/particles/fx_blood_spray.prefab",
-  "Title": "Blood",
+  "Title": "#asset.blood.title",
   "Description": "",
   "__references": [],
   "__version": 0

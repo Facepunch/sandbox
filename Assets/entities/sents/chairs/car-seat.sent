@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/sents/chairs/car-seat.prefab",
-  "Title": "Car Seat",
+  "Title": "#asset.car_seat.title",
   "Description": "",
   "Category": "Chair",
   "IncludeCode": false,

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -830,7 +830,7 @@ internal sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEv
 	[Rpc.Broadcast( NetFlags.HostOnly )]
 	private static void BroadcastShowLoadingScreen()
 	{
-		LoadingScreen.Title = "Loading Save...";
+		LoadingScreen.Title = Game.Language.GetPhrase( "save.loading" );
 		LoadingScreen.IsVisible = true;
 	}
 

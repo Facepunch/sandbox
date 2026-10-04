@@ -1,5 +1,5 @@
 {
-  "hint.openspawnmenu": "اضغط مع الاستمرار على {input:SpawnMenu} لفتح قائمة الظهور",
-  "hint.openinspectmenu": "اضغط مع الاستمرار على {input:InspectMenu} لفتح قائمة الفحص",
-  "hint.openpausemenu": "اضغط ESC لفتح قائمة الإيقاف والتحقق من عناصر التحكم الخاصة بك"
+    "hint.openspawnmenu": "اضغط باستمرار على {input:SpawnMenu} لفتح قائمة الإنشاء",
+    "hint.openinspectmenu": "اضغط باستمرار على {input:InspectMenu} لفتح قائمة الفحص",
+    "hint.openpausemenu": "اضغط ESC لفتح قائمة الإيقاف المؤقت ومراجعة أدوات التحكم"
 }

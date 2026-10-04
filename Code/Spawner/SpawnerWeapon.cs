@@ -304,7 +304,8 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 			if ( this.IsValid() ) SpawnEffects( effectTarget );
 
 			var undo = player.Undo.Create();
-			undo.Name = $"Spawn {Spawner.DisplayName}";
+			undo.Name = "#undo.spawn";
+			undo.NameTokens = new() { { "name", Spawner.DisplayName } };
 
 			foreach ( var go in objects )
 			{
@@ -358,8 +359,10 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 	}
 
 
-	string IToolInfo.Name => "Spawner";
-	string IToolInfo.Description => Spawner is null ? "Spawner" : $"Placing {Spawner.DisplayName}";
-	string IToolInfo.PrimaryAction => "Spawn";
-	string IToolInfo.SecondaryAction => "Clear";
+	string IToolInfo.Name => "#spawner.name";
+	string IToolInfo.Description => Spawner is null
+		? "#spawner.name"
+		: LocalizedText.Literal( Game.Language.GetPhrase( "spawner.placing", new() { { "name", LocalizedText.Resolve( Spawner.DisplayName ) } } ) );
+	string IToolInfo.PrimaryAction => "#spawner.spawn";
+	string IToolInfo.SecondaryAction => "#spawner.clear";
 }

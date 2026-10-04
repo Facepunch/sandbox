@@ -8,6 +8,12 @@ internal class UndoSystem : GameObjectSystem<UndoSystem>
 	{
 		public Guid Id { get; set; }
 		public string Name { get; set; }
+
+		/// <summary>
+		/// Named parameters for the action title, resolved by the player viewing the history.
+		/// </summary>
+		public Dictionary<string, string> NameTokens { get; set; }
+
 		public string Icon { get; set; }
 		public int ObjectCount { get; set; }
 	}
@@ -174,6 +180,7 @@ internal class UndoSystem : GameObjectSystem<UndoSystem>
 				{
 					Id = x.Id,
 					Name = x.Name,
+					NameTokens = x.NameTokens,
 					Icon = x.Icon,
 					ObjectCount = x.ObjectCount
 				} )
@@ -198,9 +205,15 @@ internal class UndoSystem : GameObjectSystem<UndoSystem>
 		public Guid Id { get; } = Guid.NewGuid();
 
 		/// <summary>
-		/// The name of the undo, should fit the format "Undo something". Like "Undo Spawn Prop".
+		/// The action title, optionally a hash-prefixed phrase resolved by the receiving player.
 		/// </summary>
 		public string Name { get; set; }
+
+		/// <summary>
+		/// Named parameters for a localized action title. Keep phrase references unresolved here.
+		/// </summary>
+		public Dictionary<string, string> NameTokens { get; set; }
+
 		public string Icon { get; set; }
 
 		long SteamId;
@@ -269,7 +282,7 @@ internal class UndoSystem : GameObjectSystem<UndoSystem>
 				{
 					using ( Rpc.FilterInclude( c ) )
 					{
-						UndoNotice( Name );
+						UndoNotice( Name, Sandbox.Json.Serialize( NameTokens ) );
 					}
 				}
 			}
@@ -277,10 +290,19 @@ internal class UndoSystem : GameObjectSystem<UndoSystem>
 			return true;
 		}
 
+		/// <summary>
+		/// Displays the undone action using the receiving player's language.
+		/// </summary>
 		[Rpc.Broadcast]
-		public static void UndoNotice( string title )
+		public static void UndoNotice( string title, string tokensJson = null )
 		{
-			Notices.AddNotice( "cached", "#3273eb", $"Undo {title}".Trim(), 5 );
+			var tokens = string.IsNullOrEmpty( tokensJson ) ? null : Sandbox.Json.Deserialize<Dictionary<string, string>>( tokensJson );
+			var action = LocalizedText.Resolve( title, tokens );
+			var message = string.IsNullOrWhiteSpace( action )
+				? Game.Language.GetPhrase( "spawnmenu.utility.undo" )
+				: Game.Language.GetPhrase( "undo.notice", new() { { "name", action } } );
+
+			Notices.AddNotice( "cached", "#3273eb", message, 5 );
 			Sound.Play( "sounds/ui/ui.undo.sound" );
 		}
 	}

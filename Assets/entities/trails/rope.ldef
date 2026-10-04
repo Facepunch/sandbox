@@ -1,6 +1,6 @@
 {
-  "Title": "Rope",
-  "Description": "It's Rope.",
+  "Title": "#tool.name.rope",
+  "Description": "#asset.rope.description",
   "Material": "entities/trails/line_rope.vmat",
   "WorldSpace": true,
   "UnitsPerTexture": 32,

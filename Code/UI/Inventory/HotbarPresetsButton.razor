@@ -25,9 +25,9 @@
             var name = preset.Name;
             var json = preset.LoadoutJson;
             var sub = menu.AddMenu( name, "bookmark" );
-            sub.AddOption( "Load", "play_arrow", () => OnLoadPreset( json ) );
-            sub.AddOption( "Overwrite with current", "save", () => OnOverwritePreset( name ) );
-            sub.AddOption( "Delete", "close", () => OnDeletePreset( name ) );
+            sub.AddOption( "#spawnmenu.common.load", "play_arrow", () => OnLoadPreset( json ) );
+            sub.AddOption( "#ui.inventory.overwrite_preset", "save", () => OnOverwritePreset( name ) );
+            sub.AddOption( "#spawnmenu.common.delete", "close", () => OnDeletePreset( name ) );
         }
 
         if ( presets.Any() )
@@ -35,8 +35,8 @@
             menu.AddSeparator();
         }
 
-        menu.AddOption( "Reset to Default", "refresh", ResetToDefault );
-        menu.AddOption( "New Preset", "add", OnSaveNew );
+        menu.AddOption( "#ui.inventory.reset_default", "refresh", ResetToDefault );
+        menu.AddOption( "#ui.inventory.new_preset", "add", OnSaveNew );
 
         menu.Open( this, Popup.PositionMode.AboveLeft, 4 );
     }
@@ -72,9 +72,9 @@
     {
         var popup = new StringQueryPopup
         {
-            Title = "New Inventoy Preset",
-            Placeholder = "Enter a name...",
-            ConfirmLabel = "Save",
+            Title = "#ui.inventory.new_preset_title",
+            Placeholder = "#ui.inventory.preset_name_placeholder",
+            ConfirmLabel = "#spawnmenu.common.save",
             OnConfirm = OnSaveConfirmed,
             Parent = FindRootPanel()
         };

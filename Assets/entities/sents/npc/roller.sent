@@ -1,6 +1,6 @@
 {
   "Prefab": "entities/sents/npc/rollermine.prefab",
-  "Title": "Roller",
+  "Title": "#asset.roller.title",
   "Description": "",
   "Category": "Npc/Other",
   "IncludeCode": false,

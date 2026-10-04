@@ -38,7 +38,7 @@
           },
           "compiled": null
         },
-        "DisplayName": "Spawner",
+        "DisplayName": "#spawner.name",
         "HoldType": "Pistol",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,

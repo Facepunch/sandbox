@@ -1,7 +1,7 @@
 {
   "Prefab": "entities/wheel/wheelbarrow.prefab",
-  "Title": "Wheelbarrow",
-  "Description": "Thick and bouncy",
+  "Title": "#asset.wheelbarrow.title",
+  "Description": "#asset.wheelbarrow.description",
   "__references": [],
   "__version": 0
 }

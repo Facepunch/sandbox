@@ -5,8 +5,20 @@ namespace Sandbox;
 /// </summary>
 public enum SpawnMenuIconSize
 {
+	/// <summary>
+	/// Compact tiles with an icon only.
+	/// </summary>
+	[Title( "#ui.icon_size.small" )]
 	Small,
+	/// <summary>
+	/// Standard tiles with an icon and title.
+	/// </summary>
+	[Title( "#ui.icon_size.medium" )]
 	Medium,
+	/// <summary>
+	/// Large tiles with an icon and title.
+	/// </summary>
+	[Title( "#ui.icon_size.large" )]
 	Large
 }
 

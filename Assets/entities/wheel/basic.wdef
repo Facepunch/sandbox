@@ -1,7 +1,7 @@
 {
   "Prefab": "entities/wheel/basic.prefab",
-  "Title": "Basic",
-  "Description": "Your normal every day wheel",
+  "Title": "#asset.basic.title",
+  "Description": "#asset.wheel.basic.description",
   "__references": [],
   "__version": 0
 }

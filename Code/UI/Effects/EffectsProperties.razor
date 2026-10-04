@@ -57,7 +57,7 @@
         }
 
         var props = new List<SerializedProperty>();
-        props.Add( TypeLibrary.CreateProperty( "Enabled",
+        props.Add( TypeLibrary.CreateProperty( "#spawnmenu.common.on",
             () => _manager?.IsEnabled( path ) ?? false,
             v => _manager?.Set( path, v ) ) );
 

@@ -1,5 +1,5 @@
 {
-  "hint.openspawnmenu": "Mantén {input:SpawnMenu} para abrir el menú de aparición",
-  "hint.openinspectmenu": "Mantén {input:InspectMenu} para abrir el menú de Inspección",
-  "hint.openpausemenu": "Presiona ESC para abrir el menú de pausa y revisar tus controles"
+    "hint.openspawnmenu": "Mantén pulsado {input:SpawnMenu} para abrir el menú de creación",
+    "hint.openinspectmenu": "Mantén pulsado {input:InspectMenu} para abrir el menú de inspección",
+    "hint.openpausemenu": "Pulsa ESC para abrir el menú de pausa y consultar los controles"
 }

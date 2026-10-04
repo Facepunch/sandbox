@@ -271,7 +271,7 @@ internal sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoa
 			}
 			else
 			{
-				Notices.AddNotice( "cleaning_services", Color.Red, $"Can't find {targetName} to clean up" );
+				Notices.AddNotice( "cleaning_services", Color.Red, Game.Language.GetPhrase( "cleanup.player_not_found", new() { { "name", targetName } } ) );
 			}
 
 			return;
@@ -322,7 +322,7 @@ internal sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoa
 			count++;
 		}
 
-		Notices.SendNotice( caller, "cleaning_services", Color.Green, $"Cleaned up {count} objects" );
+		Notices.SendLocalizedNotice( caller, "cleaning_services", Color.Green, "#cleanup.player", new() { { "count", count.ToString() } } );
 	}
 
 }

@@ -1,20 +1,38 @@
-﻿[Alias( "dynamite" )]
+/// <summary>
+/// An explosive that can be activated by damage, player input, or a signal.
+/// </summary>
+[Alias( "dynamite" ), Title( "#entity.name.dynamite" )]
 public sealed class DynamiteEntity : Component, Component.IDamageable, IPlayerControllable
 {
-	[Property, Range( 1, 500 ), Step( 1 ), ClientEditable]
+	/// <summary>
+	/// The damage dealt by the explosion.
+	/// </summary>
+	[Property, Title( "#entity.property.dynamite_damage" ), Description( "#entity.description.dynamite_damage" ), Range( 1, 500 ), Step( 1 ), ClientEditable]
 	public float Damage { get; set; } = 128;
 
-	[Property, Range( 16, 4096 ), Step( 16 ), ClientEditable]
+	/// <summary>
+	/// The radius affected by the explosion.
+	/// </summary>
+	[Property, Title( "#entity.property.dynamite_radius" ), Description( "#entity.description.dynamite_radius" ), Range( 16, 4096 ), Step( 16 ), ClientEditable]
 	public float Radius { get; set; } = 1024f;
 
-	[Property, Range( 1, 100 ), Step( 1 ), ClientEditable]
+	/// <summary>
+	/// The strength of the explosion's physical force.
+	/// </summary>
+	[Property, Title( "#entity.property.dynamite_force" ), Description( "#entity.description.dynamite_force" ), Range( 1, 100 ), Step( 1 ), ClientEditable]
 	public float Force { get; set; } = 1;
 
-	[Property, ClientEditable]
+	/// <summary>
+	/// The input that detonates the explosive.
+	/// </summary>
+	[Property, Title( "#entity.property.dynamite_activate" ), Description( "#entity.description.dynamite_activate" ), ClientEditable]
 	public ClientInput Activate { get; set; }
 
 	bool _isDead = false;
 
+	/// <summary>
+	/// Creates the explosion and removes this explosive.
+	/// </summary>
 	[Rpc.Host]
 	public void Explode()
 	{
@@ -52,12 +70,18 @@ public sealed class DynamiteEntity : Component, Component.IDamageable, IPlayerCo
 		Explode();
 	}
 
-	[SignalInput( Id = nameof( Activate ), Default = true )]
+	/// <summary>
+	/// Detonates the explosive when its signal input is triggered.
+	/// </summary>
+	[SignalInput( Id = nameof( Activate ), Default = true ), Title( "#entity.property.dynamite_activate" )]
 	public void ActivateSignal()
 	{
 		if ( !_isDead ) Explode();
 	}
 
+	/// <summary>
+	/// Detonates the explosive when the owning player presses its activation input.
+	/// </summary>
 	public void OnControl()
 	{
 		if ( !_isDead && Activate.Pressed() ) Explode();

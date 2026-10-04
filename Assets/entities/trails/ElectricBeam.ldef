@@ -1,6 +1,6 @@
 {
-  "Title": "Electric Beam",
-  "Description": "It's an Electric Beam.",
+  "Title": "#asset.electricbeam.title",
+  "Description": "#asset.electricbeam.description",
   "Material": "entities/trails/line_electricbeam.vmat",
   "WorldSpace": true,
   "UnitsPerTexture": 32,

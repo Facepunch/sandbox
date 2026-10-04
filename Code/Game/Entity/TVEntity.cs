@@ -2,7 +2,7 @@
 /// A TV screen entity that displays the feed from a linked <see cref="CameraWeapon"/>.
 /// Use the Wire tool to wire a Camera's video feed to this TV's display input.
 /// </summary>
-[Title( "Television" )]
+[Title( "#entity.name.television" )]
 public sealed class TVEntity : Component
 {
 	[Property]
@@ -12,13 +12,19 @@ public sealed class TVEntity : Component
 	/// The camera whose view is on the screen. A component input: only a Camera
 	/// can be linked here, and linking just sets this reference.
 	/// </summary>
-	[Property, Hide, Icon( "connected_tv" ), SignalInput( Default = true )]
+	[Property, Hide, Icon( "connected_tv" ), Title( "#entity.property.display" ), SignalInput( Default = true )]
 	public CameraWeapon Display { get; set; }
 
-	[Property, Range( 0.5f, 10 ), Step( 0.5f ), ClientEditable, Group( "Screen" )]
+	/// <summary>
+	/// The brightness of the television screen.
+	/// </summary>
+	[Property, Title( "#entity.property.tv_brightness" ), Description( "#entity.description.tv_brightness" ), Range( 0.5f, 10 ), Step( 0.5f ), ClientEditable, Group( "#entity.group.screen" )]
 	public float Brightness { get; set; } = 1f;
 
-	[Property, ClientEditable, Group( "Screen" )]
+	/// <summary>
+	/// Whether the television screen is switched on.
+	/// </summary>
+	[Property, Title( "#entity.property.tv_on" ), Description( "#entity.description.tv_on" ), ClientEditable, Group( "#entity.group.screen" )]
 	public bool On { get; set; } = true;
 
 	public float MaxRenderDistance { get; set; } = 1024f;

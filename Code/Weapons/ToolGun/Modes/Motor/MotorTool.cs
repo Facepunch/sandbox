@@ -14,10 +14,10 @@ public sealed class MotorTool : BaseConstraintToolMode
 	/// The spin axis is the surface normal where you make the first selection - this flips it
 	/// 180 degrees, which is only useful in combination with <see cref="Reversed"/> and a limit range.
 	/// </summary>
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.flip_axis" )]
 	public bool FlipAxis { get; set; } = false;
 
-	[Property, Sync]
+	[Property, Sync, Title( "#tool.setting.reversed" )]
 	public bool Reversed { get; set; } = false;
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
@@ -68,7 +68,7 @@ public sealed class MotorTool : BaseConstraintToolMode
 		Track( go1, go2 );
 
 		var undo = Player.Undo.Create();
-		undo.Name = "Motor";
+		undo.Name = "#tool.name.motor";
 		undo.Add( go1 );
 		undo.Add( go2 );
 
