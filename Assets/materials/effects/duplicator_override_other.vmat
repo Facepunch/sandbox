@@ -1,55 +1,15 @@
-// THIS FILE IS AUTO-GENERATED
-
 Layer0
 {
-	shader "shaders/complex.shader"
+	shader "shaders/blueprint_overlay.shader"
 
-	//---- PBR ----
-	F_SELF_ILLUM 1
-
-	//---- Translucent ----
-	F_ADDITIVE_BLEND 1
-	F_TRANSLUCENT 1
-
-	//---- Ambient Occlusion ----
-	g_flAmbientOcclusionDirectDiffuse "0.000"
-	TextureAmbientOcclusion "materials/default/default_ao.tga"
-
-	//---- Color ----
-	g_flModelTintAmount "1.000"
-	g_vColorTint "[0.000000 0.000000 0.000000 0.000000]"
-	TextureColor "[1.000000 1.000000 1.000000 0.000000]"
-
-	//---- Fade ----
-	g_flFadeExponent "1.000"
-
-	//---- Fog ----
-	g_bFogEnabled "0"
-
-	//---- Metalness ----
-	g_flMetalness "0.785"
-
-	//---- Normal ----
-	TextureNormal "materials/default/default_normal.tga"
-
-	//---- Roughness ----
-	g_flRoughnessScaleFactor "1.000"
-	TextureRoughness "[0.000000 0.000000 0.000000 0.000000]"
-
-	//---- Self Illum ----
-	g_flSelfIllumAlbedoFactor "0.000"
-	g_flSelfIllumBrightness "1.874"
-	g_flSelfIllumScale "15.779"
-	g_vSelfIllumScrollSpeed "[1.000 2.000]"
-	g_vSelfIllumTint "[0.694118 0.843137 0.207843 1.000000]"
-	TextureSelfIllumMask "materials/default/default_mod2x.tga"
-
-	//---- Texture Coordinates ----
-	g_vTexCoordOffset "[0.000 0.000]"
-	g_vTexCoordScale "[1.000 1.000]"
-	g_vTexCoordScrollSpeed "[5.000 1.000]"
-
-	//---- Translucent ----
-	g_flOpacityScale "1.000"
-	TextureTranslucency "materials/startup_background_color.tga"
+	g_vBlueprintColor "[0.150000 0.400000 0.180000]"
+	g_vOutlineColor "[0.700000 1.000000 0.350000]"
+	g_flBrightness "1.500"
+	g_flBodyOpacity "0.045"
+	g_flRimOpacity "0.850"
+	g_flRimPower "4.000"
+	g_flGridSpacing "12.000"
+	g_flGridOpacity "0.180"
+	g_flLineWidth "0.700"
+	g_vGridScrollSpeed "[1.000000 1.000000 2.000000]"
 }
