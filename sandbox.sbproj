@@ -11,7 +11,7 @@
   "Mounts": [],
   "IsStandaloneOnly": false,
   "Metadata": {
-    "MaxPlayers": 32,
+    "MaxPlayers": 64,
     "MinPlayers": 1,
     "TickRate": 50,
     "GameNetworkType": "Multiplayer",
@@ -32,6 +32,10 @@
     "LaunchMode": "Launcher",
     "MapStartupScene": "scenes/sandbox.scene",
     "DedicatedServerStartupScene": "scenes/sandbox.scene",
-    "SystemScene": "scenes/system.scene"
+    "SystemScene": "scenes/system.scene",
+    "RecommendedMinPlayers": 1,
+    "RecommendedMaxPlayers": 64,
+    "Coop": true,
+    "Versus": true
   }
 }
