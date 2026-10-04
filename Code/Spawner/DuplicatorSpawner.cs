@@ -121,6 +121,9 @@ public sealed class DuplicatorSpawner : ISpawner
 		return true;
 	}
 
+	/// <summary>
+	/// Draws the duplication ghost, using a separate blueprint material for models that have not loaded yet.
+	/// </summary>
 	public void DrawPreview( Transform transform, Material overrideMaterial )
 	{
 		if ( Dupe is null ) return;
@@ -137,7 +140,9 @@ public sealed class DuplicatorSpawner : ISpawner
 
 				var t = transform.ToWorld( model.Transform );
 				t = new Transform( t.PointToWorld( bounds.Center ), t.Rotation, t.Scale * (bounds.Size / 50) );
-				Game.ActiveScene.DebugOverlay.Model( Model.Cube, transform: t, overlay: false, materialOveride: overrideMaterial );
+
+				var downloadingMaterial = Material.Load( "materials/effects/duplicator_override_downloading.vmat" );
+				Game.ActiveScene.DebugOverlay.Model( Model.Cube, transform: t, overlay: false, materialOveride: downloadingMaterial );
 			}
 			else
 			{
