@@ -28,6 +28,11 @@ public sealed partial class DuplicatorTool : ToolMode
 	public override string PrimaryAction => spawner is not null ? "#tool.hint.duplicator.place" : null;
 	public override string SecondaryAction => "#tool.hint.duplicator.copy";
 
+	/// <summary>
+	/// Shows the rotation hint while a duplication is available to place.
+	/// </summary>
+	public override string ReloadAction => spawner is not null ? "#tool.hint.duplicator.rotate" : null;
+
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
 		base.OnCameraMove( player, ref angles );
@@ -36,11 +41,14 @@ public sealed partial class DuplicatorTool : ToolMode
 			angles = default;
 	}
 
+	/// <summary>
+	/// Handles copying, placing, and rotating the duplication while reload is held.
+	/// </summary>
 	public override void OnControl()
 	{
 		base.OnControl();
 
-		_isRotating = spawner is not null && Input.Down( "use" );
+		_isRotating = spawner is not null && Input.Down( "reload" );
 		Toolgun.SetIsUsingJoystick( _isRotating );
 
 		var isSnapping = Input.Down( "run" );
@@ -58,7 +66,7 @@ public sealed partial class DuplicatorTool : ToolMode
 			}
 
 			_spinRotation = Rotation.From( look ) * _spinRotation;
-			Input.Clear( "use" );
+			Input.Clear( "reload" );
 
 			if ( _isSnapping )
 			{
