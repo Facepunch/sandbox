@@ -331,9 +331,11 @@ public sealed class StackerTool : ToolMode
 	/// </summary>
 	private void DrawStackPreview( GameObject target, Transform[] transforms )
 	{
+		var overlayMaterial = Material.Load( "materials/effects/duplicator_override.vmat" );
+
 		foreach ( var tx in transforms )
 		{
-			DebugOverlay.GameObject( target, transform: tx, color: Color.White.WithAlpha( 0.5f ) );
+			DebugOverlay.GameObject( target, transform: tx, castShadows: false, materialOveride: overlayMaterial );
 		}
 	}
 
