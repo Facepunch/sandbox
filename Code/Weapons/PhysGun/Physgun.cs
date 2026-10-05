@@ -127,7 +127,21 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( _state.Active && !_state.Pulling )
 		{
 			var muzzle = HasOwner ? GetMuzzleTransform() : CurrentAimTransform;
-			UpdateBeam( muzzle, _state.EndPoint, _stateHovered.EndNormal, _state.IsValid() );
+			var end = _state.EndPoint;
+			var endNormal = _stateHovered.EndNormal;
+
+			if ( !_state.IsValid() && HasOwner && !IsProxy )
+			{
+				var aim = Owner.EyeTransform;
+				var tr = Scene.Trace.Ray( aim.Position, aim.Position + aim.Forward * Range )
+					.IgnoreGameObjectHierarchy( GameObject.Root )
+					.Run();
+
+				end = tr.EndPosition;
+				endNormal = tr.Normal;
+			}
+
+			UpdateBeam( muzzle, CurrentAimTransform.Forward, end, endNormal, _state.IsValid() );
 		}
 		else
 		{

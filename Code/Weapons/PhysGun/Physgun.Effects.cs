@@ -30,6 +30,21 @@ public partial class Physgun : ScreenWeapon
 	protected override float ScreenRefreshInterval => 0.1f;
 	protected override Vector2Int ScreenTextureSize => new Vector2Int( 80, 80 );
 
+	/// <summary>
+	/// Spring frequency of the beam's middle point. Higher values follow the physgun aim more tightly.
+	/// </summary>
+	[Property, Group( "Beam" )] public float BeamFrequency { get; set; } = 128.0f;
+
+	/// <summary>
+	/// Damping ratio of the beam's middle point. Below 1 overshoots, lower values wobble.
+	/// </summary>
+	[Property, Group( "Beam" ), Range( 0, 1 )] public float BeamDamping { get; set; } = 0.8f;
+
+	/// <summary>
+	/// How far, in degrees, the beam's middle point may swing away from the aim direction when the camera moves fast.
+	/// </summary>
+	[Property, Group( "Beam" ), Range( 0, 45 )] public float BeamMaxSway { get; set; } = 5.0f;
+
 	Vector3.SpringDamped middleSpring = new Vector3.SpringDamped( 0, 0 );
 
 	float _prevBeamDistance;
@@ -39,7 +54,7 @@ public partial class Physgun : ScreenWeapon
 	public bool BeamActive => BeamRenderer?.Active == true || _state.Pulling || _stateHovered.Pulling;
 	public bool PullActive => _state.Pulling || _stateHovered.Pulling;
 
-	void UpdateBeam( Transform source, Vector3 end, Vector3 endNormal, bool grabbed )
+	void UpdateBeam( Transform source, Vector3 aimForward, Vector3 end, Vector3 endNormal, bool grabbed )
 	{
 		if ( !BeamRenderer.IsValid() ) return;
 
@@ -109,7 +124,7 @@ public partial class Physgun : ScreenWeapon
 			// If the beam halved or more in a single frame, snap the spring to the new position to avoid shakiness
 			if ( _prevBeamDistance > 1f && distance / _prevBeamDistance < 0.5f )
 			{
-				middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 4, 0.2f );
+				middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, BeamFrequency, BeamDamping );
 			}
 
 			// Ensure the middle point is never behind the first one
@@ -117,16 +132,26 @@ public partial class Physgun : ScreenWeapon
 			if ( alongFwd < 0 )
 			{
 				var clamped = middleSpring.Current - source.Forward * alongFwd;
-				middleSpring = new Vector3.SpringDamped( clamped, targetMiddle, 4, 0.2f );
+				middleSpring = new Vector3.SpringDamped( clamped, targetMiddle, BeamFrequency, BeamDamping );
 			}
 		}
 		_prevBeamDistance = distance;
 
-		BeamRenderer.VectorPoints[0] = source.Position;
-
-		BeamRenderer.VectorPoints[1] = middleSpring.Current;
 		middleSpring.Target = targetMiddle;
+		middleSpring.Frequency = BeamFrequency;
+		middleSpring.Damping = BeamDamping;
 		middleSpring.Update( Time.Delta );
+
+		var restMiddle = source.Position + aimForward * distance * 0.33f;
+		var maxSway = distance * 0.33f * MathF.Tan( BeamMaxSway.DegreeToRadian() );
+		var sway = middleSpring.Current - restMiddle;
+		if ( sway.Length > maxSway )
+		{
+			middleSpring.Current = restMiddle + sway.Normal * maxSway;
+		}
+
+		BeamRenderer.VectorPoints[0] = source.Position;
+		BeamRenderer.VectorPoints[1] = middleSpring.Current;
 
 		BeamRenderer.VectorPoints[2] = Vector3.Lerp( (end + endNormal * 10), BeamRenderer.VectorPoints[1], 0.3f + MathF.Sin( Time.Now * 10.0f ) * 0.2f );
 		BeamRenderer.VectorPoints[3] = end;
@@ -136,7 +161,7 @@ public partial class Physgun : ScreenWeapon
 			BeamRenderer.GameObject.Enabled = true;
 			_prevBeamDistance = distance;
 			BeamRenderer.VectorPoints[1] = targetMiddle;
-			middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 4, 0.2f );
+			middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, BeamFrequency, BeamDamping );
 		}
 
 
