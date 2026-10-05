@@ -178,6 +178,12 @@ public partial class Physgun : Local.IPlayerEvents
 
 		if ( _state.IsValid() )
 		{
+			if ( Input.Pressed( "reload" ) )
+			{
+				UnfreezeAll( _state.Body );
+				Input.Clear( "reload" );
+			}
+
 			if ( _state.Pulling )
 			{
 				if ( Input.Pressed( "attack1" ) )
@@ -740,6 +746,25 @@ public partial class Physgun : Local.IPlayerEvents
 		{
 			Unfreeze( rb );
 		}
+
+		var models = bodies
+			.Select( x => x.Components.GetInAncestorsOrSelf<ModelPhysics>() )
+			.Where( x => x.IsValid() )
+			.Distinct();
+
+		foreach ( var mp in models )
+		{
+			UnfreezeModelPhysics( mp );
+		}
+	}
+
+	[Rpc.Host]
+	void UnfreezeModelPhysics( ModelPhysics modelPhysics )
+	{
+		if ( !modelPhysics.IsValid() ) return;
+		if ( modelPhysics.IsProxy ) return;
+
+		modelPhysics.MotionEnabled = true;
 	}
 
 	[Rpc.Host]
