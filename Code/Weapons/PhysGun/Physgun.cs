@@ -737,10 +737,19 @@ public partial class Physgun : Local.IPlayerEvents
 			emitter.Target = body.GameObject;
 		}
 
-		if ( body.IsProxy ) return;
+		if ( IsProxy && body.IsProxy ) return;
 
 		var bodies = new HashSet<Rigidbody>();
 		GetConnectedBodies( body.GameObject, bodies );
+
+		if ( !IsProxy )
+		{
+			var count = bodies.Select( x => x.GameObject.Root ).Distinct().Count();
+			var phrase = Game.Language.GetPhrase( "physgun.unfrozen", new() { { "count", count.ToString() } } );
+			Sandbox.UI.Notices.AddNotice( "ac_unit", Color.Cyan, phrase );
+		}
+
+		if ( body.IsProxy ) return;
 
 		foreach ( var rb in bodies )
 		{
