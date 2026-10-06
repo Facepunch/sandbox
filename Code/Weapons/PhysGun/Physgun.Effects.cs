@@ -99,16 +99,7 @@ public partial class Physgun : ScreenWeapon
 			}
 		}
 
-		// obj
-		if ( _state.GameObject.IsValid() )
-		{
-			//	BeamHighlight.Enabled = true;
-			//	BeamHighlight.OverrideTargets = true;
-			//	BeamHighlight.Targets.Clear();
-			//	BeamHighlight.Targets.AddRange( _state.GameObject.GetComponents<Renderer>() );
-			//	BeamHighlight.Width = 0.1f + Noise.Fbm( 3, Time.Now * 100.0f ) * 0.1f;
-			//	BeamHighlight.Color = Color.Lerp( Color.Cyan, Color.White, Noise.Fbm( 3, Time.Now * 40.0f ) * 0.5f ) * 200.0f;
-		}
+		UpdateHighlight( grabbed ? _state.GameObject : null );
 
 		bool justEnabled = !BeamRenderer.GameObject.Enabled;
 
@@ -167,21 +158,45 @@ public partial class Physgun : ScreenWeapon
 
 	}
 
-	void CloseBeam()
+	/// <summary>
+	/// Outlines the object held by the beam, visible only to player holding the physgun
+	/// </summary>
+	void UpdateHighlight( GameObject target )
 	{
-		if ( _stateHovered.GameObject.IsValid() )
-		{
-			//	BeamHighlight.Enabled = true;
-			//	BeamHighlight.OverrideTargets = true;
-			//	BeamHighlight.Targets.Clear();
-			//	BeamHighlight.Targets.AddRange( _stateHovered.GameObject.GetComponents<Renderer>() );
-			//	BeamHighlight.Width = 0.2f;
-			//	BeamHighlight.Color = new Color( 0.5f, 1, 1, 0.3f );
-		}
-		else
+		if ( !BeamHighlight.IsValid() ) return;
+
+		if ( IsProxy || !target.IsValid() )
 		{
 			BeamHighlight.Enabled = false;
+			return;
 		}
+
+		BeamHighlight.Enabled = true;
+		BeamHighlight.OverrideTargets = true;
+		BeamHighlight.Color = new Color( 4.7f, 10.1f, 30.6f, 1 );
+		BeamHighlight.ObscuredColor = new Color( 2.2f, 2.3f, 2.9f, 0.1f );
+		BeamHighlight.Width = 0.2f;
+
+		BeamHighlight.Targets ??= new();
+		BeamHighlight.Targets.Clear();
+		AddHighlightRenderers( target, BeamHighlight.Targets );
+	}
+
+	static void AddHighlightRenderers( GameObject o, List<Renderer> renderers )
+	{
+		renderers.AddRange( o.GetComponents<Renderer>() );
+
+		foreach ( var c in o.Children )
+		{
+			if ( c.NetworkMode == NetworkMode.Object ) continue;
+
+			AddHighlightRenderers( c, renderers );
+		}
+	}
+
+	void CloseBeam()
+	{
+		UpdateHighlight( null );
 
 		if ( !BeamRenderer.IsValid() ) return;
 
