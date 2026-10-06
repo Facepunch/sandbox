@@ -47,9 +47,9 @@ public partial class Physgun : Local.IPlayerEvents
 		// Attack-driven claw movement has its own sounds. Only track idle gravity targeting here.
 		if ( _state.Active || _state.Pulling || _stateHovered.Pulling )
 		{
-			_gravityLookOpenSound?.Stop();
+			_gravityLookOpenSound?.Stop( 0.2f );
 			_gravityLookOpenSound = null;
-			_gravityLookCloseSound?.Stop();
+			_gravityLookCloseSound?.Stop( 0.2f );
 			_gravityLookCloseSound = null;
 			_clawSoundsSuppressed = true;
 			return;
@@ -74,12 +74,12 @@ public partial class Physgun : Local.IPlayerEvents
 		_clawsOpen = open;
 		if ( open )
 		{
-			_gravityLookOpenSound?.Stop();
+			_gravityLookOpenSound?.Stop( 0.2f );
 			_gravityLookOpenSound = GameObject.PlaySound( GravityLookOpenSound );
 		}
 		else
 		{
-			_gravityLookCloseSound?.Stop();
+			_gravityLookCloseSound?.Stop( 0.2f );
 			_gravityLookCloseSound = GameObject.PlaySound( GravityLookCloseSound );
 		}
 	}
@@ -112,7 +112,7 @@ public partial class Physgun : Local.IPlayerEvents
 		}
 		else
 		{
-			_gravityHoldSound?.Stop();
+			_gravityHoldSound?.Stop( 0.2f );
 			_gravityHoldSound = null;
 		}
 	}
@@ -676,13 +676,13 @@ public partial class Physgun : Local.IPlayerEvents
 
 		RemoveJoint();
 		CloseBeam();
-		_gravityHoldSound?.Stop();
+		_gravityHoldSound?.Stop( 0.2f );
 		_gravityHoldSound = null;
 
 		_state = default;
-		_gravityLookOpenSound?.Stop();
+		_gravityLookOpenSound?.Stop( 0.2f );
 		_gravityLookOpenSound = null;
-		_gravityLookCloseSound?.Stop();
+		_gravityLookCloseSound?.Stop( 0.2f );
 		_gravityLookCloseSound = null;
 		_clawsOpen = false;
 		_clawSoundsSuppressed = false;
