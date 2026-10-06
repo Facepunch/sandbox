@@ -1,0 +1,55 @@
+@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits Panel
+
+<root>
+    @for ( int i = 0; i < _chars.Length; i++ )
+    {
+        <div class="digit bg-@(_variants[i])">
+            @if ( _chars[i] != ' ' )
+            {
+                <label>@_chars[i]</label>
+            }
+        </div>
+    }
+</root>
+
+@code
+{
+    /// <summary>
+    /// Number to display
+    /// </summary>
+    [Parameter] public int Value { get; set; }
+
+    /// <summary>
+    /// Minimum number of digit slots
+    /// </summary>
+    [Parameter] public int Slots { get; set; } = 3;
+
+    char[] _chars = System.Array.Empty<char>();
+    int[] _variants = System.Array.Empty<int>();
+
+    protected override void OnParametersSet()
+    {
+        var text = System.Math.Max( Value, 0 ).ToString().PadLeft( Slots );
+
+        if ( text.Length != _chars.Length )
+        {
+            _chars = new char[text.Length];
+            _variants = new int[text.Length];
+            System.Array.Fill( _chars, '\0' );
+        }
+
+        // Re-roll the background of every slot whose digit changed, so it shuffles as the number ticks.
+        for ( int i = 0; i < text.Length; i++ )
+        {
+            if ( _chars[i] == text[i] ) continue;
+
+            _chars[i] = text[i];
+            _variants[i] = System.Random.Shared.Int( 1, 3 );
+        }
+    }
+
+    protected override int BuildHash() => System.HashCode.Combine( Value, Slots );
+}

@@ -11,45 +11,77 @@
 
     @if ( Hud.IsVisible( HudElement.Vitals ) )
     {
+        <div class="shade left"></div>
         <div class="vitals">
+            <div class="stat health">
+                <label class="title">HEALTH</label>
+                <HudDigits Value=@DisplayHealth Slots=@(3) />
+            </div>
             @if ( Player.Armour > 0 )
             {
-                <div class="stat armour hud-panel">
-                    <Image class="icon" Texture=@ArmourIcon />
-                    <label class="value">@(DisplayArmour)</label>
+                <div class="stat armour">
+                    <label class="title">ARMOR</label>
+                    <HudDigits Value=@DisplayArmour Slots=@(3) />
                 </div>
             }
-            <div class="stat health hud-panel">
-                <Image class="icon" Texture=@HealthIcon />
-                <label class="value">@(DisplayHealth)</label>
-            </div>
         </div>
     }
 
     @if ( Weapon.IsValid() && Weapon.UsesAmmo && Hud.IsVisible( HudElement.Ammo ) )
     {
-        <div class="ammo hud-panel">
-            <label class="value">@(Weapon.UsesClips ? Weapon.Clip1.ToString() : Weapon.Ammo1.ToString())</label>
+        <div class="shade right"></div>
+        <div class="ammo">
             @if ( Weapon.UsesClips )
             {
-                <label class="alternate">@(Weapon.Ammo1.ToString())</label>
+                <div class="clip-bar">
+                    @for ( int i = ClipSlots - 1; i >= 0; i-- )
+                    {
+                        <div class="segment @(i < FilledSegments ? "filled" : "")"></div>
+                    }
+                </div>
             }
-            <Image class="icon" Texture=@AmmoIcon />
+            <div class="stat">
+                <label class="title">AMMO</label>
+                <div class="row">
+                    @if ( Weapon.UsesClips )
+                    {
+                        <HudDigits Value=@Weapon.Clip1 Slots=@(DigitCount( Weapon.ClipMaxSize )) />
+                        <label class="reserve">@Weapon.Ammo1</label>
+                    }
+                    else
+                    {
+                        <HudDigits Value=@Weapon.Ammo1 Slots=@(2) />
+                    }
+                </div>
+            </div>
         </div>
     }
 </root>
 
 @code
 {
-    [Property] public Texture HealthIcon { get; set; }
-    [Property] public Texture ArmourIcon { get; set; }
-    [Property] public Texture AmmoIcon { get; set; }
+    const int MaxClipSegments = 16;
 
     Player Player => Player.FindLocalPlayer();
     BaseSandboxWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseSandboxWeapon;
 
     int DisplayHealth => (int)Player.Health;
     int DisplayArmour => (int)Player.Armour;
+
+    int ClipSlots => System.Math.Clamp( Weapon.ClipMaxSize, 1, MaxClipSegments );
+
+    int FilledSegments
+    {
+        get
+        {
+            var clip = System.Math.Clamp( Weapon.Clip1, 0, System.Math.Max( Weapon.ClipMaxSize, 1 ) );
+            if ( Weapon.ClipMaxSize <= MaxClipSegments ) return System.Math.Min( clip, ClipSlots );
+
+            return (int)System.MathF.Ceiling( ClipSlots * clip / (float)Weapon.ClipMaxSize );
+        }
+    }
+
+    static int DigitCount( int value ) => System.Math.Max( value, 0 ).ToString().Length;
 
     bool IsSpawnMenuOpen()
     {
@@ -66,6 +98,6 @@
     {
         if ( !Player.IsValid() ) return 0;
 
-        return System.HashCode.Combine( Player.Health, Player.Armour, Weapon?.Clip1, Weapon?.Ammo1, Hud.IsVisible( HudElement.Vitals ), Hud.IsVisible( HudElement.Ammo ) );
+        return System.HashCode.Combine( Player.Health, Player.Armour, Weapon, Weapon?.Clip1, Weapon?.Ammo1, Hud.IsVisible( HudElement.Vitals ), Hud.IsVisible( HudElement.Ammo ) );
     }
 }

@@ -5,6 +5,12 @@ $hud-radius: 8px;
 $hud-radius-sm: 4px;
 $hud-icon-size: 30px;
 
+$hud-digit-font: "Inconsolata";
+$hud-digit-color: #ffffff;
+$hud-label-color: #ececec;
+$hud-reserve-color: #e6e6e6;
+$hud-depleted-color: #444444;
+
 .hud-panel
 {
 	flex-direction: row;
