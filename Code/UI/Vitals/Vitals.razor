@@ -18,6 +18,31 @@
     /// </summary>
     [Property] public Color Tint { get; set; } = Color.White;
 
+    /// <summary>
+    /// HDR color exponent for digits in HUD
+    /// </summary>
+    [Property, Group( "Effects" ), Range( 0, 6 )] public float DigitExponent { get; set; } = 3;
+
+    /// <summary>
+    /// HDR color exponent for text in HUD
+    /// </summary>
+    [Property, Group( "Effects" ), Range( 0, 6 )] public float TextExponent { get; set; } = 1.25f;
+
+    [Property, Group( "Effects" ), Range( 0, 1 )] public float GlowStrength { get; set; } = 0.15f;
+
+    [Property, Group( "Effects" ), Range( 0, 48 )] public float GlowRadius { get; set; } = 16;
+
+    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineIntensity { get; set; } = 0.35f;
+
+    /// <summary>
+    /// Scanline frequency in pixels
+    /// </summary>
+    [Property, Group( "Effects" ), Range( 2, 12 )] public float ScanlinePeriod { get; set; } = 3;
+
+    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineThickness { get; set; } = 0.8f;
+
+    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineSoftness { get; set; } = 1f;
+
     VitalsCanvas Canvas { get; set; }
 
     Player Player => Player.FindLocalPlayer();
@@ -37,6 +62,14 @@
         var showAmmo = weapon.IsValid() && weapon.UsesAmmo && Hud.IsVisible( HudElement.Ammo );
 
         Canvas.Tint = Tint;
+        Canvas.DigitExponent = DigitExponent;
+        Canvas.TextExponent = TextExponent;
+        Canvas.GlowStrength = GlowStrength;
+        Canvas.GlowRadius = GlowRadius;
+        Canvas.ScanlineIntensity = ScanlineIntensity;
+        Canvas.ScanlinePeriod = ScanlinePeriod;
+        Canvas.ScanlineThickness = ScanlineThickness;
+        Canvas.ScanlineSoftness = ScanlineSoftness;
         Canvas.Hidden = IsSpawnMenuOpen();
         Canvas.Data = new VitalsCanvas.Readout
         {

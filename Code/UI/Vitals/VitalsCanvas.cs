@@ -1,3 +1,4 @@
+using Sandbox.Rendering;
 using Sandbox.UI;
 using Sandbox.Utility;
 
@@ -6,7 +7,7 @@ namespace Sandbox;
 /// <summary>
 /// Paints the health, armour and ammo HUD.
 /// </summary>
-public sealed class VitalsCanvas : Panel
+public sealed class VitalsCanvas : Panel, IPanelDraw
 {
 	public struct Readout
 	{
@@ -30,6 +31,31 @@ public sealed class VitalsCanvas : Panel
 
 	public bool Hidden { get; set; }
 
+	/// <summary>
+	/// Adjusts HDR color exponent for digits in vitals HUD
+	/// </summary>
+	public float DigitExponent { get; set; } = 3;
+
+	/// <summary>
+	/// Adjusts HDR color exponent for text in vitals HUD
+	/// </summary>
+	public float TextExponent { get; set; } = 1.25f;
+
+	public float GlowStrength { get; set; } = 0.15f;
+
+	public float GlowRadius { get; set; } = 16;
+
+	public float ScanlineIntensity { get; set; } = 0.35f;
+
+	/// <summary>
+	/// Scanline frequency, 2 minimum
+	/// </summary>
+	public float ScanlinePeriod { get; set; } = 3;
+
+	public float ScanlineThickness { get; set; } = 0.8f;
+
+	public float ScanlineSoftness { get; set; } = 1f;
+
 	const string Font = "Inconsolata";
 
 	const float DigitWidth = 32;
@@ -51,11 +77,11 @@ public sealed class VitalsCanvas : Panel
 	const float ClipBarGap = 14;
 	const float ClipBarBottom = 11;
 	const float ClipSegmentGap = 2;
-	const float ClipSegmentSoftness = 0.33f;
+	const float ClipSegmentSoftness = 0.5f;
 
 	const float ShadeWidth = 600;
 	const float ShadeHeight = 220;
-	const float ShadeOpacity = 0.6f;
+	const float ShadeOpacity = 0.45f;
 
 	const float HideDistance = 40;
 	const float HideDuration = 0.2f;
@@ -74,6 +100,21 @@ public sealed class VitalsCanvas : Panel
 
 	float _hideProgress;
 
+	float _fontScale = 1;
+
+	Texture _target;
+	RenderTarget _renderTarget;
+	CommandList _paintCommands;
+	CameraComponent _camera;
+	Material _material;
+
+	// half resolution ping-pong targets for the glow blur
+	Texture _glowA, _glowB;
+	RenderTarget _glowATarget, _glowBTarget;
+	Material _glowMaterial;
+
+	const int GlowBlurTaps = 6;
+
 	public VitalsCanvas()
 	{
 		Style.Position = PositionMode.Absolute;
@@ -88,9 +129,123 @@ public sealed class VitalsCanvas : Panel
 
 		var step = RealTime.Delta / HideDuration;
 		_hideProgress = Hidden ? MathF.Min( _hideProgress + step, 1 ) : MathF.Max( _hideProgress - step, 0 );
+
+		PaintTarget();
 	}
 
-	public override void OnDraw( Painter painter )
+	void PaintTarget()
+	{
+		var width = (int)Box.Rect.Width;
+		var height = (int)Box.Rect.Height;
+		if ( width <= 0 || height <= 0 ) return;
+
+		if ( _target is null || _target.Width != width || _target.Height != height )
+		{
+			_target?.Dispose();
+			_target = Texture.CreateRenderTarget().WithSize( width, height ).WithFormat( ImageFormat.RGBA16161616F ).Create();
+			_renderTarget = RenderTarget.From( _target );
+		}
+
+		_paintCommands ??= new CommandList( "Vitals HUD" );
+
+		var camera = Game.ActiveScene?.Camera;
+		if ( camera != _camera )
+		{
+			_camera?.RemoveCommandList( _paintCommands );
+			camera?.AddCommandList( _paintCommands, Stage.AfterViewmodel );
+			_camera = camera;
+		}
+
+		_paintCommands.Reset();
+		_paintCommands.Attributes.Set( "UIGammaOutput", true );
+		_paintCommands.Attributes.Set( "UIFrameGrabEncoded", true );
+		_paintCommands.SetRenderTarget( _renderTarget );
+
+		using ( var painter = Painter.Begin( _paintCommands, new Rect( 0, 0, width, height ) ) )
+		{
+			painter.Clear( Color.Transparent );
+			_fontScale = ScaleToScreen;
+			Paint( painter );
+		}
+
+		BlurGlow( width, height );
+
+		_paintCommands.ClearRenderTarget();
+	}
+
+	void BlurGlow( int width, int height )
+	{
+		var glowWidth = Math.Max( 1, width / 2 );
+		var glowHeight = Math.Max( 1, height / 2 );
+
+		if ( _glowA is null || _glowA.Width != glowWidth || _glowA.Height != glowHeight )
+		{
+			_glowA?.Dispose();
+			_glowB?.Dispose();
+			_glowA = Texture.CreateRenderTarget().WithSize( glowWidth, glowHeight ).WithFormat( ImageFormat.RGBA16161616F ).Create();
+			_glowB = Texture.CreateRenderTarget().WithSize( glowWidth, glowHeight ).WithFormat( ImageFormat.RGBA16161616F ).Create();
+			_glowATarget = RenderTarget.From( _glowA );
+			_glowBTarget = RenderTarget.From( _glowB );
+		}
+
+		_glowMaterial ??= Material.FromShader( "shaders/hud_glow.shader" );
+
+		var step = MathF.Max( GlowRadius * ScaleToScreen * 0.5f / GlowBlurTaps, 0.5f );
+
+		_paintCommands.SetRenderTarget( _glowATarget );
+		_paintCommands.Attributes.Set( "GlowSource", _target );
+		_paintCommands.Attributes.Set( "GlowExtract", 1 );
+		_paintCommands.Attributes.Set( "GlowStep", new Vector2( step / glowWidth, 0 ) );
+		_paintCommands.Blit( _glowMaterial );
+
+		_paintCommands.SetRenderTarget( _glowBTarget );
+		_paintCommands.Attributes.Set( "GlowSource", _glowA );
+		_paintCommands.Attributes.Set( "GlowExtract", 0 );
+		_paintCommands.Attributes.Set( "GlowStep", new Vector2( 0, step / glowHeight ) );
+		_paintCommands.Blit( _glowMaterial );
+	}
+
+	void IPanelDraw.Draw( CommandList commands )
+	{
+		var data = Data;
+		if ( _target is null || _glowB is null || (!data.ShowVitals && !data.ShowAmmo) ) return;
+
+		_material ??= Material.FromShader( "shaders/hud_composite.shader" );
+
+		var scale = ScaleToScreen;
+		var attributes = commands.Attributes;
+		attributes.Set( "HudTexture", _target );
+		attributes.Set( "HudInvSize", new Vector2( 1f / _target.Width, 1f / _target.Height ) );
+		attributes.Set( "GlowTexture", _glowB );
+		attributes.Set( "GlowStrength", GlowStrength );		attributes.Set( "ScanlineIntensity", ScanlineIntensity );
+		attributes.Set( "ScanlinePeriod", MathF.Max( 2, MathF.Round( ScanlinePeriod * scale ) ) );
+		attributes.Set( "ScanlineThickness", ScanlineThickness );
+		attributes.Set( "ScanlineSoftness", ScanlineSoftness );
+		attributes.SetCombo( "D_BLENDMODE", BlendMode.Normal );
+
+		// The glow is added onto what's behind the HUD
+		attributes.GrabFrameTexture( "FrameBufferCopyTexture", Graphics.DownsampleMethod.None );
+
+		// Everything the HUD draws sits inside the corner shades, so only those regions run the shader
+		var rect = Box.Rect;
+		var region = new Vector2( ShadeWidth, ShadeHeight ) * scale;
+		if ( data.ShowVitals ) commands.DrawQuad( new Rect( rect.Left, rect.Bottom - region.y, region.x, region.y ), _material, Color.White );
+		if ( data.ShowAmmo ) commands.DrawQuad( new Rect( rect.Right - region.x, rect.Bottom - region.y, region.x, region.y ), _material, Color.White );
+	}
+
+	public override void OnDeleted()
+	{
+		if ( _paintCommands is not null ) _camera?.RemoveCommandList( _paintCommands );
+		_camera = null;
+		_target?.Dispose();
+		_glowA?.Dispose();
+		_glowB?.Dispose();
+		_target = _glowA = _glowB = null;
+
+		base.OnDeleted();
+	}
+
+	void Paint( Painter painter )
 	{
 		var data = Data;
 		if ( !data.ShowVitals && !data.ShowAmmo ) return;
@@ -141,7 +296,7 @@ public sealed class VitalsCanvas : Panel
 
 			if ( data.UsesClips )
 			{
-				painter.TextStyle = new TextStyle( Font, ReserveFontSize, Tinted( ReserveColor ) ) { FontWeight = 700, Alignment = TextFlag.LeftBottom };
+				painter.TextStyle = new TextStyle( Font, ReserveFontSize * _fontScale, Brightened( Tinted( ReserveColor ), TextExponent ) ) { FontWeight = 700, Alignment = TextFlag.LeftBottom };
 				painter.Text( data.Reserve.ToString(), new Rect( digitsRight + MathF.Round( ReserveGap * scale ), 0, bounds.Width, bottom - MathF.Round( ReserveBottom * scale ) ) );
 
 				var barSize = new Vector2( MathF.Round( ClipBarWidth * scale ), MathF.Round( ClipBarHeight * scale ) );
@@ -159,7 +314,7 @@ public sealed class VitalsCanvas : Panel
 	/// </summary>
 	float DrawStat( Painter painter, string title, DigitCounter counter, int value, int slots, float x, float bottom, float scale )
 	{
-		painter.TextStyle = new TextStyle( Font, TitleFontSize, Tinted( TitleColor ) ) { FontWeight = 700 };
+		painter.TextStyle = new TextStyle( Font, TitleFontSize * _fontScale, Brightened( Tinted( TitleColor ), TextExponent ) ) { FontWeight = 700 };
 		var titleHeight = MathF.Ceiling( painter.MeasureText( title ).y );
 
 		var slot = SlotSize( scale );
@@ -174,7 +329,7 @@ public sealed class VitalsCanvas : Panel
 	{
 		counter.Update( value, slots );
 
-		painter.TextStyle = new TextStyle( Font, DigitFontSize, Tinted( DigitColor ) ) { FontWeight = 700, Alignment = TextFlag.Center };
+		painter.TextStyle = new TextStyle( Font, DigitFontSize * _fontScale, Glowing( Tinted( DigitColor ) ) ) { FontWeight = 700, Alignment = TextFlag.Center };
 
 		var tint = Tinted( Color.White );
 
@@ -206,14 +361,21 @@ public sealed class VitalsCanvas : Panel
 		var gap = ClipSegmentGap * scale;
 		var height = (bar.Height - gap * (slots - 1)) / slots;
 
-		var softness = ClipSegmentSoftness * scale;
-		using var layer = painter.BeginLayer( bar.Grow( MathF.Ceiling( softness * 3 ) ), filter: new Painter.Filter { Blur = softness } );
+		Rect Segment( int i ) => new( bar.Left, bar.Bottom - (i + 1) * height - i * gap, bar.Width, height );
 
-		for ( int i = 0; i < slots; i++ )
+		var softness = ClipSegmentSoftness * scale;
+		using ( painter.BeginLayer( bar.Grow( MathF.Ceiling( softness * 3 ) ), filter: new Painter.Filter { Blur = softness } ) )
 		{
-			painter.Fill = Tinted( i < filled ? DigitColor : DepletedColor );
-			painter.Rect( new Rect( bar.Left, bar.Bottom - (i + 1) * height - i * gap, bar.Width, height ) );
+			for ( int i = 0; i < slots; i++ )
+			{
+				painter.Fill = Tinted( i < filled ? DigitColor : DepletedColor );
+				painter.Rect( Segment( i ) );
+			}
 		}
+
+		painter.Fill = Glowing( Tinted( DigitColor ) );
+		for ( int i = 0; i < filled; i++ )
+			painter.Rect( Segment( i ) );
 	}
 
 	/// <summary>
@@ -225,6 +387,14 @@ public sealed class VitalsCanvas : Panel
 
 		painter.Fill = Fill.RadialGradient( Color.Black.WithAlpha( ShadeOpacity ), Color.Black.WithAlpha( 0 ) );
 		painter.Rect( new Rect( corner - radius, radius * 2 ) );
+	}
+
+	Color Glowing( Color color ) => Brightened( color, DigitExponent );
+
+	static Color Brightened( Color color, float exponent )
+	{
+		var intensity = MathF.Pow( 2, exponent );
+		return new Color( color.r * intensity, color.g * intensity, color.b * intensity, color.a );
 	}
 
 	Color Tinted( Color color ) => new( color.r * Tint.r, color.g * Tint.g, color.b * Tint.b, color.a * Tint.a );
