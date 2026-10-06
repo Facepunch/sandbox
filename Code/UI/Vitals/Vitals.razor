@@ -18,6 +18,16 @@
     /// </summary>
     [Property] public Color Tint { get; set; } = Color.White;
 
+    [Property, Group( "Warning" )] public Color WarningColor { get; set; } = new( 1f, 0.03f, 0.02f );
+
+    [Property, Group( "Warning" ), Range( 0, 1 )] public float WarningPulseAmount { get; set; } = 0.35f;
+
+    [Property, Group( "Warning" ), Range( 0, 6 )] public float WarningPulseRate { get; set; } = 1.5f;
+
+    [Property, Group( "Warning" ), Range( 0, 1 )] public float LowHealthFraction { get; set; } = 0.2f;
+
+    [Property, Group( "Warning" ), Range( 0, 1 )] public float LowAmmoFraction { get; set; } = 0.2f;
+
     /// <summary>
     /// HDR color exponent for digits in HUD
     /// </summary>
@@ -62,6 +72,11 @@
         var showAmmo = weapon.IsValid() && weapon.UsesAmmo && Hud.IsVisible( HudElement.Ammo );
 
         Canvas.Tint = Tint;
+        Canvas.WarningColor = WarningColor;
+        Canvas.WarningPulseAmount = WarningPulseAmount;
+        Canvas.WarningPulseRate = WarningPulseRate;
+        Canvas.LowHealthFraction = LowHealthFraction;
+        Canvas.LowAmmoFraction = LowAmmoFraction;
         Canvas.DigitExponent = DigitExponent;
         Canvas.TextExponent = TextExponent;
         Canvas.GlowStrength = GlowStrength;
@@ -75,6 +90,7 @@
         {
             ShowVitals = Hud.IsVisible( HudElement.Vitals ),
             Health = (int)Player.Health,
+            MaxHealth = (int)Player.MaxHealth,
             Armour = (int)Player.Armour,
 
             ShowAmmo = showAmmo,

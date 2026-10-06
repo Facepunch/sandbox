@@ -13,6 +13,7 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 	{
 		public bool ShowVitals;
 		public int Health;
+		public int MaxHealth;
 		public int Armour;
 
 		public bool ShowAmmo;
@@ -32,7 +33,22 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 	/// </summary>
 	public Color Tint { get; set; } = Color.White;
 
+	/// <summary>
+	/// Draws this color when ammo/health reach a critical level
+	/// </summary>
+	public Color WarningColor { get; set; } = new( 1f, 0.03f, 0.02f );
+
+	public float WarningPulseAmount { get; set; } = 0.35f;
+
+	public float WarningPulseRate { get; set; } = 1.5f;
+
+	public float LowHealthFraction { get; set; } = 0.2f;
+
+	public float LowAmmoFraction { get; set; } = 0.2f;
+
 	public bool Hidden { get; set; }
+
+	Color _sectionTint = Color.White;
 
 	/// <summary>
 	/// Adjusts HDR color exponent for digits in vitals HUD
@@ -275,8 +291,10 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 			painter.Translate( -HideDistance * scale * hide, 0 );
 
 			var x = MathF.Floor( deadzone );
+			_sectionTint = SectionTint( IsLowHealth( data ) );
 			x += DrawStat( painter, "HEALTH", _health, data.Health, 3, x, bottom, scale ) + MathF.Round( StatGap * scale );
 
+			_sectionTint = Tint;
 			if ( data.Armour > 0 )
 				DrawStat( painter, "ARMOR", _armour, data.Armour, 3, x, bottom, scale );
 		}
@@ -285,6 +303,7 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 		{
 			using var _ = painter.Scope();
 			painter.Opacity = opacity;
+			_sectionTint = SectionTint( IsLowAmmo( data ) );
 
 			DrawShade( painter, new Vector2( bounds.Width, bounds.Height ), scale );
 
@@ -416,7 +435,23 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 		return new Color( color.r * intensity, color.g * intensity, color.b * intensity, color.a );
 	}
 
-	Color Tinted( Color color ) => new( color.r * Tint.r, color.g * Tint.g, color.b * Tint.b, color.a * Tint.a );
+	Color Tinted( Color color ) => new( color.r * _sectionTint.r, color.g * _sectionTint.g, color.b * _sectionTint.b, color.a * _sectionTint.a );
+
+	Color SectionTint( bool warning )
+	{
+		if ( !warning ) return Tint;
+
+		var wave = 0.5f - 0.5f * MathF.Cos( RealTime.Now * WarningPulseRate * MathF.PI * 2 );
+		var brightness = 1 - Math.Clamp( WarningPulseAmount, 0, 1 ) * wave;
+		return new Color( WarningColor.r * brightness, WarningColor.g * brightness, WarningColor.b * brightness, WarningColor.a );
+	}
+
+	bool IsLowHealth( in Readout data ) => data.MaxHealth > 0 && data.Health <= data.MaxHealth * LowHealthFraction;
+	bool IsLowAmmo( in Readout data )
+	{
+		if ( !data.UsesClips ) return data.Reserve <= 0;
+		return data.Clip <= data.ClipMaxSize * LowAmmoFraction;
+	}
 
 	static int DigitCount( int value ) => Math.Max( value, 0 ).ToString().Length;
 

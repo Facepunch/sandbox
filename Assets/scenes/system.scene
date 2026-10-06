@@ -252,6 +252,8 @@
               "DigitExponent": 1.2307693,
               "GlowRadius": 22.76923,
               "GlowStrength": 0.029555563,
+              "LowAmmoFraction": 0.3,
+              "LowHealthFraction": 0.2,
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
               "OnComponentEnabled": null,
@@ -263,7 +265,10 @@
               "ScanlineSoftness": 0.017094018,
               "ScanlineThickness": 0.47863248,
               "TextExponent": 0.1,
-              "Tint": "1,1,1,1"
+              "Tint": "1,1,1,1",
+              "WarningColor": "0.72093,0.20426,0,1",
+              "WarningPulseAmount": 0.1923077,
+              "WarningPulseRate": 0.71794873
             }
           ],
           "Children": []
