@@ -182,6 +182,7 @@
         "__enabled": true,
         "Flags": 0,
         "GiveOnStart": false,
+        "ManualPumping": true,
         "MaxSlots": 9,
         "PickupMode": "Touch",
         "StartingItems": [

@@ -389,7 +389,11 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			ConsoleSystem.Run( "undo" );
 		}
 
-		GetComponent<PlayerInventory>()?.OnControl();
+		var inventory = GetComponent<PlayerInventory>();
+		inventory?.OnControl();
+
+		if ( inventory.IsValid() && inventory.ManualPumping )
+			inventory.Pump();
 
 		Scene.Get<Inventory>()?.HandleInput();
 	}
