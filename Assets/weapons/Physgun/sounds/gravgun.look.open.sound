@@ -1,11 +1,14 @@
 {
   "UI": false,
-  "Volume": "1",
+  "Volume": "0.5",
   "Pitch": "1",
   "Decibels": 70,
   "SelectionMode": "Random",
   "Sounds": [
-    "weapons/physgun/sounds/gravgun.look.open.1.vsnd"
+    {
+      "Id": "01b6ff98-44cd-4802-b983-6b941faf09f8",
+      "Path": "weapons/physgun/sounds/gravgun.look.open.1.vsnd"
+    }
   ],
   "OcclusionEnabled": true,
   "Occlusion": true,

@@ -1,12 +1,12 @@
 {
   "UI": false,
-  "Volume": "1",
+  "Volume": "0.800000012",
   "Pitch": "0.899999976 1.10000002",
   "Decibels": 70,
   "SelectionMode": "Random",
   "Sounds": [
     {
-      "Id": "e046e1d8-9bec-4d77-b914-5af5c110655a",
+      "Id": "ebe9c521-7803-4822-87a3-9c1685480a07",
       "Path": "weapons/physgun/sounds/gravgun.shoot.pull.1.vsnd"
     }
   ],
