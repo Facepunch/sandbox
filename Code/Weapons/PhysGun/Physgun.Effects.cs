@@ -47,6 +47,8 @@ public partial class Physgun : ScreenWeapon
 
 	Vector3.SpringDamped middleSpring = new Vector3.SpringDamped( 0, 0 );
 
+	float _freezeFlashDuration { get; set; } = 0.25f;
+
 	float _prevBeamDistance;
 	GameObject _endPointEffect;
 	GameObject _grabEffect;
@@ -157,6 +159,11 @@ public partial class Physgun : ScreenWeapon
 
 
 	}
+	
+	// Outline color
+	static readonly Color HighlightColor = new( 4.7f, 10.1f, 30.6f, 1 );
+	static readonly Color HighlightObscuredColor = new( 2.2f, 2.3f, 2.9f, 0.1f );
+	const float HighlightWidth = 0.2f;
 
 	/// <summary>
 	/// Outlines the object held by the beam, visible only to player holding the physgun
@@ -173,25 +180,21 @@ public partial class Physgun : ScreenWeapon
 
 		BeamHighlight.Enabled = true;
 		BeamHighlight.OverrideTargets = true;
-		BeamHighlight.Color = new Color( 4.7f, 10.1f, 30.6f, 1 );
-		BeamHighlight.ObscuredColor = new Color( 2.2f, 2.3f, 2.9f, 0.1f );
-		BeamHighlight.Width = 0.2f;
+		BeamHighlight.Color = HighlightColor;
+		BeamHighlight.ObscuredColor = HighlightObscuredColor;
+		BeamHighlight.Width = HighlightWidth;
 
 		BeamHighlight.Targets ??= new();
 		BeamHighlight.Targets.Clear();
-		AddHighlightRenderers( target, BeamHighlight.Targets );
+		OutlineFlash.AddRenderers( GetHighlightTarget( target ), BeamHighlight.Targets );
 	}
 
-	static void AddHighlightRenderers( GameObject o, List<Renderer> renderers )
+	static GameObject GetHighlightTarget( GameObject go )
 	{
-		renderers.AddRange( o.GetComponents<Renderer>() );
+		var modelPhysics = go.Components.GetInAncestorsOrSelf<ModelPhysics>();
+		if ( !modelPhysics.IsValid() ) return go;
 
-		foreach ( var c in o.Children )
-		{
-			if ( c.NetworkMode == NetworkMode.Object ) continue;
-
-			AddHighlightRenderers( c, renderers );
-		}
+		return modelPhysics.Renderer.IsValid() ? modelPhysics.Renderer.GameObject : modelPhysics.GameObject;
 	}
 
 	void CloseBeam()

@@ -723,6 +723,11 @@ public partial class Physgun : Local.IPlayerEvents
 			emitter.Target = body.GameObject;
 		}
 
+		if ( !IsProxy )
+		{
+			OutlineFlash.Play( GetHighlightTarget( body.GameObject ),HighlightColor, HighlightObscuredColor, HighlightWidth, _freezeFlashDuration, 3.0f );
+		}
+
 		if ( body.IsProxy ) return;
 
 		if ( Networking.IsHost )
