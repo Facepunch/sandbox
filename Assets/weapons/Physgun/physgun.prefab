@@ -135,6 +135,14 @@
           "Id": "8dd915d9-a147-4121-9339-6d36ecac4353",
           "Path": "weapons/physgun/sounds/gravgun.shoot.launch.sound"
         },
+        "GravityLookOpenSound": {
+          "Id": "bbb470b2-01e4-4fd3-be53-c4d1b9700533",
+          "Path": "weapons/physgun/sounds/gravgun.look.open.sound"
+        },
+        "GravityLookCloseSound": {
+          "Id": "911e2e0d-fef4-434f-9de5-135f582b65ac",
+          "Path": "weapons/physgun/sounds/gravgun.look.close.sound"
+        },
         "GravityPullSound": {
           "Id": "577c6b4b-dd28-43ab-9ab4-795411f76cf0",
           "Path": "weapons/physgun/sounds/gravgun.shoot.pull.sound"
