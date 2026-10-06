@@ -82,7 +82,18 @@
             Clip = showAmmo ? weapon.Clip1 : 0,
             ClipMaxSize = showAmmo ? weapon.ClipMaxSize : 0,
             Reserve = showAmmo ? weapon.Ammo1 : 0,
+
+            HasSecondary = showAmmo && HasSecondaryAmmo( weapon ),
+            Secondary = showAmmo ? SecondaryAmmo( weapon ) : 0,
         };
+    }
+
+    static bool HasSecondaryAmmo( BaseSandboxWeapon weapon ) => weapon.UsesSecondaryClip || weapon.SecondaryAmmoType is not null;
+
+    static int SecondaryAmmo( BaseSandboxWeapon weapon )
+    {
+        if ( weapon.UsesSecondaryClip ) return System.Math.Max( weapon.Clip2, 0 );
+        return weapon.SecondaryAmmoType is not null ? weapon.Ammo2 : 0;
     }
 
     protected override int BuildHash() => System.HashCode.Combine( Player.IsValid() );

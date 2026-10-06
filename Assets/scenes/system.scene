@@ -262,7 +262,7 @@
               "ScanlinePeriod": 4.136752,
               "ScanlineSoftness": 0.017094018,
               "ScanlineThickness": 0.47863248,
-              "TextExponent": 0.35897437,
+              "TextExponent": 0.1,
               "Tint": "1,1,1,1"
             }
           ],

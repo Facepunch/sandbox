@@ -20,6 +20,9 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 		public int Clip;
 		public int ClipMaxSize;
 		public int Reserve;
+
+		public bool HasSecondary;
+		public int Secondary;
 	}
 
 	public Readout Data { get; set; }
@@ -69,7 +72,8 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 	const float ReserveFontSize = 24;
 	const float ReserveGap = 14;
 	const float ReserveBottom = 8;
-	const float ReserveSpace = 50;
+	const float ReserveSpace = 62; // room for "/" plus a 3 digit count (14px gap + 4 x 12px glyphs)
+	const float SecondaryLineSpacing = 28; // baseline to baseline, secondary count sits above the reserve
 
 	const int MaxClipSegments = 12;
 	const float ClipBarWidth = 16;
@@ -294,11 +298,26 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 
 			DrawStat( painter, "AMMO", _ammo, value, slots, statX, bottom, scale );
 
-			if ( data.UsesClips )
+			if ( data.UsesClips || data.HasSecondary )
 			{
 				painter.TextStyle = new TextStyle( Font, ReserveFontSize * _fontScale, Brightened( Tinted( ReserveColor ), TextExponent ) ) { FontWeight = 700, Alignment = TextFlag.LeftBottom };
-				painter.Text( data.Reserve.ToString(), new Rect( digitsRight + MathF.Round( ReserveGap * scale ), 0, bounds.Width, bottom - MathF.Round( ReserveBottom * scale ) ) );
 
+				var slashWidth = painter.MeasureText( "/" ).x;
+				var columnX = digitsRight + MathF.Round( ReserveGap * scale ) + slashWidth;
+				var reserveBottom = bottom - MathF.Round( ReserveBottom * scale );
+
+				if ( data.UsesClips )
+				{
+					painter.Text( "/", new Rect( columnX - slashWidth, 0, bounds.Width, reserveBottom ) );
+					painter.Text( data.Reserve.ToString(), new Rect( columnX, 0, bounds.Width, reserveBottom ) );
+				}
+
+				if ( data.HasSecondary )
+					painter.Text( data.Secondary.ToString(), new Rect( columnX, 0, bounds.Width, reserveBottom - MathF.Round( SecondaryLineSpacing * scale ) ) );
+			}
+
+			if ( data.UsesClips )
+			{
 				var barSize = new Vector2( MathF.Round( ClipBarWidth * scale ), MathF.Round( ClipBarHeight * scale ) );
 				var barBottom = bottom - MathF.Round( ClipBarBottom * scale );
 				var barRight = statX - MathF.Round( ClipBarGap * scale );
