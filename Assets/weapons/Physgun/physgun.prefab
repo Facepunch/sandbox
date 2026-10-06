@@ -59,6 +59,10 @@
         "CanCancelReload": true,
         "ClipMaxSize": 30,
         "DeployTime": 0.2,
+        "GravityDrySound": "weapons/physgun/sounds/gravgun.shoot.dry.sound",
+        "GravityLaunchSound": "weapons/physgun/sounds/gravgun.shoot.launch.sound",
+        "GravityPullSound": "weapons/physgun/sounds/gravgun.shoot.pull.sound",
+        "GravityHoldSound": "weapons/physgun/sounds/gravgun.hold.sound",
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "imagefile",

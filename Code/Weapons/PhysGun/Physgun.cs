@@ -15,6 +15,38 @@ public partial class Physgun : Local.IPlayerEvents
 	[Property, Group( "Sound" )] SoundEvent ReleasedSound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent ButtonInSound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent ButtonOutSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent GravityDrySound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent GravityLaunchSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent GravityPullSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent GravityHoldSound { get; set; }
+
+	SoundHandle _gravityHoldSound;
+
+	[Rpc.Broadcast]
+	void PlayGravityShotSound( bool pulling )
+	{
+		GameObject.PlaySound( pulling ? GravityPullSound : GravityDrySound );
+	}
+
+	[Rpc.Broadcast]
+	void PlayGravityLaunchSound()
+	{
+		GameObject.PlaySound( GravityLaunchSound );
+	}
+
+	void UpdateGravityHoldSound()
+	{
+		if ( _state.Active && _state.Pulling && _state.IsValid() && _state.Body.IsValid() && _state.Body.MotionEnabled )
+		{
+			_gravityHoldSound ??= GameObject.PlaySound( GravityHoldSound );
+			_gravityHoldSound?.Position = GetMuzzleTransform().Position;
+		}
+		else
+		{
+			_gravityHoldSound?.Stop();
+			_gravityHoldSound = null;
+		}
+	}
 
 	[Property] public float Range { get; set; } = 8196f;
 
@@ -123,6 +155,7 @@ public partial class Physgun : Local.IPlayerEvents
 	protected override void OnPreRender()
 	{
 		base.OnPreRender();
+		UpdateGravityHoldSound();
 
 		if ( _state.Active && !_state.Pulling )
 		{
@@ -204,6 +237,7 @@ public partial class Physgun : Local.IPlayerEvents
 				{
 					var force = player.EyeTransform.Rotation.Forward * LaunchForce;
 					Launch( _state.Body, force );
+					PlayGravityLaunchSound();
 
 					_state = default;
 					_isSpinning = false;
@@ -330,6 +364,9 @@ public partial class Physgun : Local.IPlayerEvents
 		FindGrabbedBody( out var sh, player.EyeTransform, player.Controller.EyeAngles.yaw, isPulling );
 		_stateHovered = sh;
 
+		if ( isPulling && Input.Pressed( "attack2" ) )
+			PlayGravityShotSound( sh.IsValid() && sh.Body.IsValid() && sh.Body.MotionEnabled );
+
 		if ( sh.IsValid() && sh.Pulling && sh.Body.MotionEnabled )
 		{
 			var eyePosition = player.EyeTransform.Position;
@@ -385,6 +422,7 @@ public partial class Physgun : Local.IPlayerEvents
 
 		var force = AimTransform.Rotation.Forward * LaunchForce;
 		Launch( _state.Body, force );
+		PlayGravityLaunchSound();
 		_state = default;
 		_preventReselect = true;
 	}
@@ -431,7 +469,16 @@ public partial class Physgun : Local.IPlayerEvents
 
 	protected override void OnSecondaryPressed()
 	{
-		if ( !_state.IsValid() || !_state.Pulling ) return;
+		if ( !_state.IsValid() )
+		{
+			if ( _preventReselect ) return;
+			var aim = AimTransform;
+			FindGrabbedBody( out var sh, aim, aim.Rotation.Yaw(), true );
+			PlayGravityShotSound( sh.IsValid() && sh.Body.IsValid() && sh.Body.MotionEnabled );
+			return;
+		}
+
+		if ( !_state.Pulling ) return;
 
 		_state = default;
 		_preventReselect = true;
@@ -565,6 +612,8 @@ public partial class Physgun : Local.IPlayerEvents
 
 		RemoveJoint();
 		CloseBeam();
+		_gravityHoldSound?.Stop();
+		_gravityHoldSound = null;
 
 		_state = default;
 		_stateHovered = default;
