@@ -17,6 +17,7 @@ public partial class Physgun : Local.IPlayerEvents
 	[Property, Group( "Sound" )] SoundEvent ButtonOutSound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent GravityDrySound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent GravityLaunchSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent GravityDropSound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent GravityPullSound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent GravityHoldSound { get; set; }
 
@@ -32,6 +33,12 @@ public partial class Physgun : Local.IPlayerEvents
 	void PlayGravityLaunchSound()
 	{
 		GameObject.PlaySound( GravityLaunchSound );
+	}
+
+	[Rpc.Broadcast]
+	void PlayGravityDropSound()
+	{
+		GameObject.PlaySound( GravityDropSound );
 	}
 
 	void UpdateGravityHoldSound()
@@ -245,6 +252,7 @@ public partial class Physgun : Local.IPlayerEvents
 				}
 				else if ( Input.Pressed( "attack2" ) )
 				{
+					PlayGravityDropSound();
 					_state = default;
 					_isSpinning = false;
 					_preventReselect = true;
@@ -480,6 +488,7 @@ public partial class Physgun : Local.IPlayerEvents
 
 		if ( !_state.Pulling ) return;
 
+		PlayGravityDropSound();
 		_state = default;
 		_preventReselect = true;
 	}
