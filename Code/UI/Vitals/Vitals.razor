@@ -8,80 +8,20 @@
 
 <root>
     <AmmoPickupFeed />
-
-    @if ( Hud.IsVisible( HudElement.Vitals ) )
-    {
-        <div class="shade left"></div>
-        <div class="vitals">
-            <div class="stat health">
-                <label class="title">HEALTH</label>
-                <HudDigits Value=@DisplayHealth Slots=@(3) />
-            </div>
-            @if ( Player.Armour > 0 )
-            {
-                <div class="stat armour">
-                    <label class="title">ARMOR</label>
-                    <HudDigits Value=@DisplayArmour Slots=@(3) />
-                </div>
-            }
-        </div>
-    }
-
-    @if ( Weapon.IsValid() && Weapon.UsesAmmo && Hud.IsVisible( HudElement.Ammo ) )
-    {
-        <div class="shade right"></div>
-        <div class="ammo">
-            @if ( Weapon.UsesClips )
-            {
-                <div class="clip-bar">
-                    @for ( int i = ClipSlots - 1; i >= 0; i-- )
-                    {
-                        <div class="segment @(i < FilledSegments ? "filled" : "")"></div>
-                    }
-                </div>
-            }
-            <div class="stat">
-                <label class="title">AMMO</label>
-                <div class="row">
-                    @if ( Weapon.UsesClips )
-                    {
-                        <HudDigits Value=@Weapon.Clip1 Slots=@(DigitCount( Weapon.ClipMaxSize )) />
-                        <label class="reserve">@Weapon.Ammo1</label>
-                    }
-                    else
-                    {
-                        <HudDigits Value=@Weapon.Ammo1 Slots=@(2) />
-                    }
-                </div>
-            </div>
-        </div>
-    }
+    <VitalsCanvas @ref="Canvas" />
 </root>
 
 @code
 {
-    const int MaxClipSegments = 16;
+    /// <summary>
+    /// Colour multiplied into every HUD element
+    /// </summary>
+    [Property] public Color Tint { get; set; } = Color.White;
+
+    VitalsCanvas Canvas { get; set; }
 
     Player Player => Player.FindLocalPlayer();
     BaseSandboxWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseSandboxWeapon;
-
-    int DisplayHealth => (int)Player.Health;
-    int DisplayArmour => (int)Player.Armour;
-
-    int ClipSlots => System.Math.Clamp( Weapon.ClipMaxSize, 1, MaxClipSegments );
-
-    int FilledSegments
-    {
-        get
-        {
-            var clip = System.Math.Clamp( Weapon.Clip1, 0, System.Math.Max( Weapon.ClipMaxSize, 1 ) );
-            if ( Weapon.ClipMaxSize <= MaxClipSegments ) return System.Math.Min( clip, ClipSlots );
-
-            return (int)System.MathF.Ceiling( ClipSlots * clip / (float)Weapon.ClipMaxSize );
-        }
-    }
-
-    static int DigitCount( int value ) => System.Math.Max( value, 0 ).ToString().Length;
 
     bool IsSpawnMenuOpen()
     {
@@ -91,13 +31,26 @@
 
     protected override void OnUpdate()
     {
-        Panel.SetClass( "spawnmenu-open", IsSpawnMenuOpen() );
+        if ( !Canvas.IsValid() || !Player.IsValid() ) return;
+
+        var weapon = Weapon;
+        var showAmmo = weapon.IsValid() && weapon.UsesAmmo && Hud.IsVisible( HudElement.Ammo );
+
+        Canvas.Tint = Tint;
+        Canvas.Hidden = IsSpawnMenuOpen();
+        Canvas.Data = new VitalsCanvas.Readout
+        {
+            ShowVitals = Hud.IsVisible( HudElement.Vitals ),
+            Health = (int)Player.Health,
+            Armour = (int)Player.Armour,
+
+            ShowAmmo = showAmmo,
+            UsesClips = showAmmo && weapon.UsesClips,
+            Clip = showAmmo ? weapon.Clip1 : 0,
+            ClipMaxSize = showAmmo ? weapon.ClipMaxSize : 0,
+            Reserve = showAmmo ? weapon.Ammo1 : 0,
+        };
     }
 
-    protected override int BuildHash()
-    {
-        if ( !Player.IsValid() ) return 0;
-
-        return System.HashCode.Combine( Player.Health, Player.Armour, Weapon, Weapon?.Clip1, Weapon?.Ammo1, Hud.IsVisible( HudElement.Vitals ), Hud.IsVisible( HudElement.Ammo ) );
-    }
+    protected override int BuildHash() => System.HashCode.Combine( Player.IsValid() );
 }
