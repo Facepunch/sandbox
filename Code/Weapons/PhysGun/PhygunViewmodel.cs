@@ -19,6 +19,9 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 		{
 			BeamActive = physgun.BeamActive;
 
+			if ( BeamActive && SparksEffect.IsValid() )
+				SparksEffect.Tint = physgun.PullActive ? GravTint : PhysTint;
+
 			_tintFrac = MathX.Approach( _tintFrac, physgun.PullActive ? 1 : 0, Time.Delta * 5 );
 			// Steep ease-in-out so the transition rushes through the midpoint
 			var t = _tintFrac < 0.5f
