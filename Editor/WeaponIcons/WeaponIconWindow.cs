@@ -36,6 +36,13 @@ public class WeaponIconWindow : BaseWindow
 	Layout FormLayout;
 	RealTimeSince _lastPreview;
 
+	// One bitmap and pixmap are reused for every preview frame
+	Bitmap _bitmap;
+	Pixmap _pixmap;
+
+	float _renderUntil;
+	const float SettleTime = 0.5f;
+
 	string CookieKey => $"WeaponIconCreator.{IconName}";
 	string RelativeIconPath => $"{OutputFolder}/{IconName}_icon.png";
 
@@ -88,6 +95,12 @@ public class WeaponIconWindow : BaseWindow
 
 		Scene?.Destroy();
 		Scene = null;
+
+		Preview.Pixmap = null;
+		_pixmap = null;
+
+		_bitmap?.Dispose();
+		_bitmap = null;
 	}
 
 	void CreateScene()
@@ -127,6 +140,8 @@ public class WeaponIconWindow : BaseWindow
 
 	void ApplySettings()
 	{
+		_renderUntil = RealTime.Now + SettleTime;
+
 		var model = Settings.Model;
 		Renderer.Model = model;
 
@@ -167,23 +182,35 @@ public class WeaponIconWindow : BaseWindow
 	[EditorEvent.Frame]
 	void Frame()
 	{
-		if ( Scene is null ) return;
+		if ( Scene is null || RealTime.Now > _renderUntil ) return;
 
 		Scene.EditorTick( RealTime.Now, RealTime.Delta );
 
 		if ( _lastPreview < 1f / 30f ) return;
 		_lastPreview = 0;
 
-		using var bitmap = RenderIcon();
-		Preview.Pixmap = Pixmap.FromBitmap( bitmap );
+		RenderIcon();
+
+		if ( _pixmap is null )
+		{
+			_pixmap = Pixmap.FromBitmap( _bitmap );
+			Preview.Pixmap = _pixmap;
+		}
+		else
+		{
+			_pixmap.UpdateFromPixels( _bitmap );
+		}
+
 		Preview.Update();
 	}
 
-	Bitmap RenderIcon()
+	/// <summary>
+	/// Renders the scene into the shared bitmap
+	/// </summary>
+	void RenderIcon()
 	{
-		var bitmap = new Bitmap( IconWidth, IconHeight );
-		Camera.RenderToBitmap( bitmap, false );
-		return bitmap;
+		_bitmap ??= new Bitmap( IconWidth, IconHeight );
+		Camera.RenderToBitmap( _bitmap, false );
 	}
 
 	async Task SaveIcon()
@@ -192,10 +219,8 @@ public class WeaponIconWindow : BaseWindow
 		Directory.CreateDirectory( Path.GetDirectoryName( absolutePath ) );
 
 		Scene.EditorTick( RealTime.Now, RealTime.Delta );
-		using ( var bitmap = RenderIcon() )
-		{
-			File.WriteAllBytes( absolutePath, bitmap.ToPng() );
-		}
+		RenderIcon();
+		File.WriteAllBytes( absolutePath, _bitmap.ToPng() );
 
 		AssetSystem.RegisterFile( absolutePath );
 

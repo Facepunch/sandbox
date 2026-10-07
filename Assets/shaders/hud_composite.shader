@@ -36,7 +36,7 @@ PS
 	Texture2D g_tGlow < Attribute( "GlowTexture" ); SrgbRead( false ); >;
 	float GlowStrength < Default( 0.22 ); Attribute( "GlowStrength" ); >;	// how fast HDR excess turns into glow
 	float ScanlineIntensity < Default( 0.46 ); Attribute( "ScanlineIntensity" ); >;
-	float ScanlinePeriod < Default( 3.7 ); Attribute( "ScanlinePeriod" ); >;		// screen pixels from one line to the next
+	float ScanlinePeriod < Attribute( "ScanlinePeriod" ); >;		// screen pixels from one line to the next, set by HudCanvas
 	float ScanlineThickness < Default( 0.55 ); Attribute( "ScanlineThickness" ); >;	// share of the period that is dark
 	float ScanlineSoftness < Default( 0.04 ); Attribute( "ScanlineSoftness" ); >;	// edge blur, as a share of the period
 
@@ -60,7 +60,7 @@ PS
 
 	float ScanlineMask( float flPixelY )
 	{
-		float t = frac( flPixelY / max( ScanlinePeriod, 1.0 ) );
+		float t = frac( flPixelY / ScanlinePeriod );
 		float flHalf = ScanlineThickness * 0.5;
 		return 1.0 - smoothstep( flHalf - ScanlineSoftness, flHalf + ScanlineSoftness, abs( t - 0.5 ) );
 	}
