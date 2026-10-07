@@ -85,7 +85,6 @@
             inventory.SwitchWeapon( weapon );
         }
 
-        Step( -(int)Input.MouseWheel.y );
         if ( Input.Pressed( "SlotNext" ) ) Step( 1 );
         if ( Input.Pressed( "SlotPrev" ) ) Step( -1 );
 
@@ -113,6 +112,18 @@
         {
             selected = null;
         }
+    }
+
+    /// <summary>
+    /// The scroll wheel steps the selection. Runs after the weapon's update, so a weapon that uses the wheel
+    /// (physgun distance, wire tool ports) clears Input.MouseWheel first and nothing reaches the menu
+    /// </summary>
+    public void HandleScrollInput()
+    {
+        if ( inventory is null || IsSpawnMenuOpen() )
+            return;
+
+        Step( -(int)Input.MouseWheel.y );
     }
 
     List<BaseSandboxWeapon> Selectable() => inventory.Weapons.Where( x => x == inventory.ActiveWeapon || inventory.CanSwitchTo( x ) ).ToList();
