@@ -34,11 +34,11 @@ PS
 
 	// glow settings
 	Texture2D g_tGlow < Attribute( "GlowTexture" ); SrgbRead( false ); >;
-	float GlowStrength < Default( 0.15 ); Attribute( "GlowStrength" ); >;	// how fast HDR excess turns into glow
-	float ScanlineIntensity < Default( 0.35 ); Attribute( "ScanlineIntensity" ); >;
-	float ScanlinePeriod < Default( 3.0 ); Attribute( "ScanlinePeriod" ); >;		// screen pixels from one line to the next
-	float ScanlineThickness < Default( 0.4 ); Attribute( "ScanlineThickness" ); >;	// share of the period that is dark
-	float ScanlineSoftness < Default( 1 ); Attribute( "ScanlineSoftness" ); >;	// edge blur, as a share of the period
+	float GlowStrength < Default( 0.22 ); Attribute( "GlowStrength" ); >;	// how fast HDR excess turns into glow
+	float ScanlineIntensity < Default( 0.46 ); Attribute( "ScanlineIntensity" ); >;
+	float ScanlinePeriod < Default( 3.7 ); Attribute( "ScanlinePeriod" ); >;		// screen pixels from one line to the next
+	float ScanlineThickness < Default( 0.55 ); Attribute( "ScanlineThickness" ); >;	// share of the period that is dark
+	float ScanlineSoftness < Default( 0.04 ); Attribute( "ScanlineSoftness" ); >;	// edge blur, as a share of the period
 
 	RenderState( ColorWriteEnable0, RGBA );
 	RenderState( FillMode, SOLID );

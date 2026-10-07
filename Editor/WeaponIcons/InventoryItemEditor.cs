@@ -10,6 +10,12 @@ public class InventoryItemEditor : ComponentEditorWidget
 {
 	Editor.Button _createButton;
 	RealTimeSince _lastSearch;
+	int _searchAttempts;
+
+	/// <summary>
+	/// The icon control is created a few frames after the sheet, so look for it for a few seconds and then give up
+	/// </summary>
+	const int MaxSearchAttempts = 20;
 
 	public InventoryItemEditor( SerializedObject obj ) : base( obj )
 	{
@@ -21,6 +27,7 @@ public class InventoryItemEditor : ComponentEditorWidget
 	{
 		Layout.Clear( true );
 		_createButton = null;
+		_searchAttempts = 0;
 
 		var showAdvanced = SerializedObject.Targets.OfType<Component>().Any( x => x.IsValid() && x.Flags.Contains( ComponentFlags.ShowAdvancedProperties ) );
 
@@ -43,9 +50,10 @@ public class InventoryItemEditor : ComponentEditorWidget
 	[EditorEvent.Frame]
 	void AttachCreateButton()
 	{
-		if ( _createButton.IsValid() ) return;
+		if ( _createButton.IsValid() || _searchAttempts >= MaxSearchAttempts ) return;
 		if ( _lastSearch < 0.25f ) return;
 		_lastSearch = 0;
+		_searchAttempts++;
 
 		var wrapper = GetDescendants<ResourceWrapperControlWidget>()
 			.FirstOrDefault( x => x.SerializedProperty?.Name == nameof( BaseInventoryItem.DisplayIcon ) );

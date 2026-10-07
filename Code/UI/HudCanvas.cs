@@ -8,32 +8,32 @@ namespace Sandbox;
 /// </summary>
 public sealed class HudCanvas : Panel, IPanelDraw
 {
-	public Color Tint { get; set; } = Color.White;
+	public Color Tint { get; set; } = new( 0.43f, 0.74f, 1f );
 
 	/// <summary>
 	/// HDR color exponent for highlighted elements like vitals digits or selected hotbar slot
 	/// </summary>
-	public float DigitExponent { get; set; } = 3;
+	public float DigitExponent { get; set; } = 0.75f;
 
 	/// <summary>
 	/// HDR color exponent for regular text/other UI elements
 	/// </summary>
-	public float TextExponent { get; set; } = 1.25f;
+	public float TextExponent { get; set; } = 0.16f;
 
-	public float GlowStrength { get; set; } = 0.15f;
+	public float GlowStrength { get; set; } = 0.22f;
 
-	public float GlowRadius { get; set; } = 16;
+	public float GlowRadius { get; set; } = 20;
 
-	public float ScanlineIntensity { get; set; } = 0.35f;
+	public float ScanlineIntensity { get; set; } = 0.46f;
 
 	/// <summary>
 	/// Scanline frequency, 2 minimum
 	/// </summary>
-	public float ScanlinePeriod { get; set; } = 3;
+	public float ScanlinePeriod { get; set; } = 3.7f;
 
-	public float ScanlineThickness { get; set; } = 0.8f;
+	public float ScanlineThickness { get; set; } = 0.55f;
 
-	public float ScanlineSoftness { get; set; } = 1f;
+	public float ScanlineSoftness { get; set; } = 0.04f;
 
 	/// <summary>
 	/// Texture painters don't apply ScaleToScreen to text, so font sizes get scaled by hand
@@ -65,12 +65,17 @@ public sealed class HudCanvas : Panel, IPanelDraw
 		Style.PointerEvents = PointerEvents.None;
 	}
 
-	public T Section<T>() where T : HudSection, new()
+	/// <summary>
+	/// The section of type <typeparamref name="T"/>, added on first use unless <paramref name="create"/> is false (then null if there is none)
+	/// </summary>
+	public T Section<T>( bool create = true ) where T : HudSection, new()
 	{
 		foreach ( var section in _sections )
 		{
 			if ( section is T existing ) return existing;
 		}
+
+		if ( !create ) return null;
 
 		var added = new T { Canvas = this };
 		_sections.Add( added );

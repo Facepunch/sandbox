@@ -12,42 +12,42 @@
     /// <summary>
     /// Colour multiplied into every HUD element
     /// </summary>
-    [Property] public Color Tint { get; set; } = Color.White;
+    [Property] public Color Tint { get; set; } = new( 0.43f, 0.74f, 1f );
 
     /// <summary>
     /// HDR color exponent for highlighted HUD elements like digits or selected hotbar slots
     /// </summary>
-    [Property, Group( "Effects" ), Range( 0, 6 )] public float DigitExponent { get; set; } = 3;
+    [Property, Group( "Effects" ), Range( 0, 6 )] public float DigitExponent { get; set; } = 0.75f;
 
     /// <summary>
     /// HDR color exponent for regular HUD text
     /// </summary>
-    [Property, Group( "Effects" ), Range( 0, 6 )] public float TextExponent { get; set; } = 1.25f;
+    [Property, Group( "Effects" ), Range( 0, 6 )] public float TextExponent { get; set; } = 0.16f;
 
-    [Property, Group( "Effects" ), Range( 0, 1 )] public float GlowStrength { get; set; } = 0.15f;
+    [Property, Group( "Effects" ), Range( 0, 1 )] public float GlowStrength { get; set; } = 0.22f;
 
-    [Property, Group( "Effects" ), Range( 0, 48 )] public float GlowRadius { get; set; } = 16;
+    [Property, Group( "Effects" ), Range( 0, 48 )] public float GlowRadius { get; set; } = 20;
 
-    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineIntensity { get; set; } = 0.35f;
+    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineIntensity { get; set; } = 0.46f;
 
     /// <summary>
     /// Scanline frequency in pixels
     /// </summary>
-    [Property, Group( "Effects" ), Range( 2, 12 )] public float ScanlinePeriod { get; set; } = 3;
+    [Property, Group( "Effects" ), Range( 2, 12 )] public float ScanlinePeriod { get; set; } = 3.7f;
 
-    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineThickness { get; set; } = 0.8f;
+    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineThickness { get; set; } = 0.55f;
 
-    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineSoftness { get; set; } = 1f;
+    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineSoftness { get; set; } = 0.04f;
 
     public HudCanvas Canvas { get; private set; }
 
     /// <summary>
-    /// The scene's HUD layer, added next to the screen panel <paramref name="from"/> lives under if there isn't one yet
+    /// The scene's HUD layer. With <paramref name="create"/> it is added next to the screen panel <paramref name="from"/> lives under if there isn't one yet
     /// </summary>
-    public static HudLayer Find( Component from )
+    public static HudLayer Find( Component from, bool create = true )
     {
-        var layer = from.Scene.Get<HudLayer>();
-        if ( layer.IsValid() ) return layer;
+        var layer = from.Scene?.Get<HudLayer>();
+        if ( layer.IsValid() || !create ) return layer;
 
         var screen = from.Components.GetInAncestorsOrSelf<ScreenPanel>();
         return screen.IsValid() ? screen.GameObject.Components.GetOrCreate<HudLayer>() : null;

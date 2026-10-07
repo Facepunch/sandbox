@@ -49,37 +49,34 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	}
 
 	/// <summary>
-	/// True if the player wants the HUD not to draw right now
+	/// The HUD elements the player wants hidden right now: everything in freecam, otherwise whatever the held weapon hides
 	/// </summary>
-	public bool WantsHideHud
+	public HudElement HiddenHud
 	{
 		get
 		{
 			var freeCam = Scene.Get<FreeCamGameObjectSystem>();
 			if ( freeCam.IsActive )
-				return true;
+				return HudElement.All;
 
 			var weapon = GetComponent<PlayerInventory>()?.ActiveWeapon;
-			if ( weapon.IsValid() && weapon.WantsHideHud )
-				return true;
-
-			return false;
+			return weapon.IsValid() && weapon.WantsHideHud ? weapon.HiddenHudElements : HudElement.None;
 		}
 	}
 
 	/// <summary>
-	/// Feeds <see cref="WantsHideHud"/> into the HUD visibility event, so the camera weapon and freecam
-	/// hide everything through the same path addons use. Panels ask through <see cref="Hud.IsVisible"/>.
+	/// True if the player wants any of the HUD not to draw right now
+	/// </summary>
+	public bool WantsHideHud => HiddenHud != HudElement.None;
+
+	/// <summary>
+	/// Feeds <see cref="HiddenHud"/> into the HUD visibility event, so the camera weapon and freecam
+	/// hide the HUD through the same path addons use. Panels ask through <see cref="Hud.IsVisible"/>.
 	/// </summary>
 	void IHudEvents.OnHudVisibility( ref HudElement hidden )
 	{
-		if ( !IsLocalPlayer || !WantsHideHud )
-			return;
-
-		var freeCam = Scene.Get<FreeCamGameObjectSystem>();
-		var weapon = GetComponent<PlayerInventory>()?.ActiveWeapon;
-
-		hidden |= !freeCam.IsActive && weapon.IsValid() ? weapon.HiddenHudElements : HudElement.All;
+		if ( IsLocalPlayer )
+			hidden |= HiddenHud;
 	}
 
 	protected override void OnStart()

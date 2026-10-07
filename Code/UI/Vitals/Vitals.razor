@@ -12,19 +12,19 @@
 
 @code
 {
-    [Property, Group( "Warning" )] public Color WarningColor { get; set; } = new( 1f, 0.03f, 0.02f );
+    [Property, Group( "Warning" )] public Color WarningColor { get; set; } = new( 0.9f, 0.26f, 0f );
 
-    [Property, Group( "Warning" ), Range( 0, 1 )] public float WarningPulseAmount { get; set; } = 0.35f;
+    [Property, Group( "Warning" ), Range( 0, 1 )] public float WarningPulseAmount { get; set; } = 0.24f;
 
-    [Property, Group( "Warning" ), Range( 0, 6 )] public float WarningPulseRate { get; set; } = 1.5f;
+    [Property, Group( "Warning" ), Range( 0, 6 )] public float WarningPulseRate { get; set; } = 0.5f;
 
     [Property, Group( "Warning" ), Range( 0, 1 )] public float LowHealthFraction { get; set; } = 0.2f;
 
-    [Property, Group( "Warning" ), Range( 0, 1 )] public float LowAmmoFraction { get; set; } = 0.2f;
+    [Property, Group( "Warning" ), Range( 0, 1 )] public float LowAmmoFraction { get; set; } = 0.3f;
 
-    [Property, Group( "Damage Flash" )] public Color DamageFlashColor { get; set; } = new( 2.378f, 0.071f, 0.048f );
+    [Property, Group( "Damage Flash" )] public Color DamageFlashColor { get; set; } = new( 1.5f, 0.4f, 0.03f );
 
-    [Property, Group( "Damage Flash" ), Range( 0, 1 )] public float DamageFlashDuration { get; set; } = 0.1f;
+    [Property, Group( "Damage Flash" ), Range( 0, 1 )] public float DamageFlashDuration { get; set; } = 0.15f;
 
     Player Player => Player.FindLocalPlayer();
     BaseSandboxWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseSandboxWeapon;
@@ -40,7 +40,7 @@
 
     protected override void OnDisabled()
     {
-        if ( Section is { } section ) section.Data = default;
+        if ( HudLayer.Find( this, false )?.Canvas?.Section<VitalsSection>( false ) is { } section ) section.Data = default;
     }
 
     protected override void OnUpdate()

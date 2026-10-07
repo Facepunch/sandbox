@@ -30,22 +30,22 @@ public sealed class VitalsSection : HudSection
 	/// <summary>
 	/// Draws this color when ammo/health reach a critical level
 	/// </summary>
-	public Color WarningColor { get; set; } = new( 1f, 0.03f, 0.02f );
+	public Color WarningColor { get; set; } = new( 0.9f, 0.26f, 0f );
 
-	public float WarningPulseAmount { get; set; } = 0.35f;
+	public float WarningPulseAmount { get; set; } = 0.24f;
 
-	public float WarningPulseRate { get; set; } = 1.5f;
+	public float WarningPulseRate { get; set; } = 0.5f;
 
 	public float LowHealthFraction { get; set; } = 0.2f;
 
-	public float LowAmmoFraction { get; set; } = 0.2f;
+	public float LowAmmoFraction { get; set; } = 0.3f;
 
 	/// <summary>
 	/// The health readout flashes this color when health drops
 	/// </summary>
-	public Color DamageFlashColor { get; set; } = new( 2.378f, 0.071f, 0.048f );
+	public Color DamageFlashColor { get; set; } = new( 1.5f, 0.4f, 0.03f );
 
-	public float DamageFlashDuration { get; set; } = 0.1f;
+	public float DamageFlashDuration { get; set; } = 0.15f;
 
 	public bool Hidden { get; set; }
 

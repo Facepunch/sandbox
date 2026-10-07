@@ -63,7 +63,7 @@
     protected override void OnDisabled()
     {
         selected = null;
-        if ( Section is { } section ) section.Open = false;
+        if ( HudLayer.Find( this, false )?.Canvas?.Section<InventorySection>( false ) is { } section ) section.Open = false;
     }
 
     public void HandleInput()

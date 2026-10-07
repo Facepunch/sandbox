@@ -228,7 +228,7 @@ public sealed class InventorySection : HudSection
 	}
 
 	/// <summary>
-	/// A collapsed child slot: just the frame, 16px tall.
+	/// A collapsed child slot: just the frame, CollapsedHeight tall.
 	/// </summary>
 	void DrawBar( Painter painter, Rect rect, float scale )
 	{

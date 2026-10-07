@@ -247,7 +247,7 @@ public sealed partial class PlayerInventory : BaseInventoryComponent, Local.IPla
 	{
 		if ( !weapon.IsValid() ) return;
 
-		if ( !justAmmo && (given || ShouldAutoswitchTo( weapon )) )
+		if ( !justAmmo && ShouldAutoswitchTo( weapon, given ) )
 		{
 			SwitchWeapon( weapon );
 		}
@@ -259,7 +259,11 @@ public sealed partial class PlayerInventory : BaseInventoryComponent, Local.IPla
 		}
 	}
 
-	private bool ShouldAutoswitchTo( BaseSandboxWeapon item )
+	/// <summary>
+	/// Whether picking up <paramref name="item"/> should switch to it. <paramref name="given"/> means it was handed over explicitly
+	/// (spawn menu, give): that still honours AutoSwitch and a weapon in use, but skips the value comparison.
+	/// </summary>
+	private bool ShouldAutoswitchTo( BaseSandboxWeapon item, bool given = false )
 	{
 		Assert.True( item.IsValid(), "item invalid" );
 
@@ -271,6 +275,9 @@ public sealed partial class PlayerInventory : BaseInventoryComponent, Local.IPla
 
 		if ( ActiveWeapon.IsInUse() )
 			return false;
+
+		if ( given )
+			return true;
 
 		// Nothing to fire or load - the engine flags spent guns.
 		if ( item.ShouldAvoid )
