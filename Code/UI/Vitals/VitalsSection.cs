@@ -183,7 +183,7 @@ public sealed class VitalsSection : HudSection
 
 			if ( data.UsesClips || data.HasSecondary )
 			{
-				painter.TextStyle = new TextStyle( Font, ReserveFontSize * FontScale, Brightened( Tinted( ReserveColor ), TextExponent ) ) { FontWeight = 700, Alignment = TextFlag.LeftBottom };
+				painter.TextStyle = new TextStyle( Font, ReserveFontSize * FontScale, Brightened( Tinted( ReserveColor ), TextGain ) ) { FontWeight = 700, Alignment = TextFlag.LeftBottom };
 
 				var slashWidth = painter.MeasureText( "/" ).x;
 				var columnX = digitsRight + MathF.Round( ReserveGap * scale ) + slashWidth;
@@ -213,7 +213,7 @@ public sealed class VitalsSection : HudSection
 
 	float DrawStat( Painter painter, string title, DigitCounter counter, int value, int slots, float x, float bottom, float scale )
 	{
-		painter.TextStyle = new TextStyle( Font, TitleFontSize * FontScale, Brightened( Tinted( TitleColor ), TextExponent ) ) { FontWeight = 700 };
+		painter.TextStyle = new TextStyle( Font, TitleFontSize * FontScale, Brightened( Tinted( TitleColor ), TextGain ) ) { FontWeight = 700 };
 		var titleHeight = MathF.Ceiling( painter.MeasureText( title ).y );
 
 		var slot = SlotSize( scale );

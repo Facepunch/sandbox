@@ -54,6 +54,7 @@ public sealed class InventorySection : HudSection
 
 	float _slide;
 	float[] _expand = Array.Empty<float>();
+	float[] _expandEased = Array.Empty<float>(); // _expand through the easing curve, worked out once per tick
 	float[] _contentFade = Array.Empty<float>();
 
 	int _expandedBucket = -1;
@@ -73,9 +74,10 @@ public sealed class InventorySection : HudSection
 	public override void Tick()
 	{
 		var columns = ColumnCount;
-		if ( _expand.Length != columns )
+		if ( _expand.Length != columns || _expandEased.Length != columns )
 		{
 			_expand = new float[columns];
+			_expandEased = new float[columns];
 			_contentFade = new float[columns];
 		}
 
@@ -95,6 +97,7 @@ public sealed class InventorySection : HudSection
 		{
 			var expanded = i == _expandedBucket;
 			_expand[i] = Approach( _expand[i], expanded ? 1 : 0, dt / ExpandDuration );
+			_expandEased[i] = Easing.QuadraticInOut( _expand[i] );
 
 			_contentFade[i] = expanded && _expand[i] >= 1 ? Approach( _contentFade[i], 1, dt / ContentFadeDuration ) : 0;
 		}
@@ -126,12 +129,12 @@ public sealed class InventorySection : HudSection
 	/// <summary>
 	/// Collapsed columns are square, the selected one widens to 2:1 as it expands
 	/// </summary>
-	float ColumnWidth( int column, float scale ) => MathF.Round( MathX.Lerp( TileHeight, TileWidth, Easing.QuadraticInOut( _expand[column] ) ) * scale );
+	float ColumnWidth( int column, float scale ) => MathF.Round( MathX.Lerp( TileHeight, TileWidth, _expandEased[column] ) * scale );
 
 	float ColumnHeight( int column, float scale )
 	{
 		var items = Math.Max( _columns[column].Count, 1 );
-		var child = MathX.Lerp( CollapsedHeight, TileHeight, Easing.QuadraticInOut( _expand[column] ) );
+		var child = MathX.Lerp( CollapsedHeight, TileHeight, _expandEased[column] );
 		return (TileHeight + (items - 1) * (child + Gap)) * scale;
 	}
 
@@ -182,7 +185,7 @@ public sealed class InventorySection : HudSection
 		{
 			var tileWidth = ColumnWidth( c, scale );
 			var items = _columns[c];
-			var expand = Easing.QuadraticInOut( _expand[c] );
+			var expand = _expandEased[c];
 			var childHeight = MathF.Round( MathX.Lerp( CollapsedHeight, TileHeight, expand ) * scale );
 
 			var head = items.Count > 0 ? items[0] : null;

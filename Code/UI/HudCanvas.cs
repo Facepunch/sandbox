@@ -14,6 +14,12 @@ public sealed class HudCanvas : Panel, IPanelDraw
 	public HudLayer Layer { get; set; }
 
 	/// <summary>
+	/// HDR multipliers for <see cref="HudLayer.DigitExponent"/> and <see cref="HudLayer.TextExponent"/>, worked out once per tick
+	/// </summary>
+	public float DigitGain { get; private set; } = 1;
+	public float TextGain { get; private set; } = 1;
+
+	/// <summary>
 	/// Texture painters don't apply ScaleToScreen to text, so font sizes get scaled by hand
 	/// </summary>
 	public float FontScale { get; private set; } = 1;
@@ -76,6 +82,9 @@ public sealed class HudCanvas : Panel, IPanelDraw
 		base.Tick();
 
 		if ( !Layer.IsValid() ) return;
+
+		DigitGain = MathF.Pow( 2, Layer.DigitExponent );
+		TextGain = MathF.Pow( 2, Layer.TextExponent );
 
 		foreach ( var section in _sections )
 			section.Tick();
