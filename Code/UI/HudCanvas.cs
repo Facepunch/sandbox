@@ -19,11 +19,6 @@ public sealed class HudCanvas : Panel, IPanelDraw
 	public float DigitGain { get; private set; } = 1;
 	public float TextGain { get; private set; } = 1;
 
-	/// <summary>
-	/// Texture painters don't apply ScaleToScreen to text, so font sizes get scaled by hand
-	/// </summary>
-	public float FontScale { get; private set; } = 1;
-
 	readonly List<HudSection> _sections = new();
 
 	Texture _target;
@@ -36,8 +31,6 @@ public sealed class HudCanvas : Panel, IPanelDraw
 	Texture _glowA, _glowB;
 	RenderTarget _glowATarget, _glowBTarget;
 	Material _glowMaterial;
-
-	const int GlowBlurTaps = 6;
 
 	/// <summary>
 	/// Screen rects the sections draw into this frame. Empty means there is nothing to paint
@@ -135,7 +128,6 @@ public sealed class HudCanvas : Panel, IPanelDraw
 		using ( var painter = Painter.Begin( _paintCommands, new Rect( 0, 0, width, height ) ) )
 		{
 			painter.Clear( Color.Transparent );
-			FontScale = ScaleToScreen;
 
 			foreach ( var section in _sections )
 			{
@@ -167,18 +159,19 @@ public sealed class HudCanvas : Panel, IPanelDraw
 
 		_glowMaterial ??= Material.FromShader( "shaders/hud_glow.shader" );
 
-		var step = MathF.Max( Layer.GlowRadius * ScaleToScreen * 0.5f / GlowBlurTaps, 0.5f );
+		var reach = Layer.GlowRadius * ScaleToScreen * 0.5f;
+		_paintCommands.Attributes.Set( "GlowReach", reach );
 
 		_paintCommands.SetRenderTarget( _glowATarget );
 		_paintCommands.Attributes.Set( "GlowSource", _target );
 		_paintCommands.Attributes.Set( "GlowExtract", 1 );
-		_paintCommands.Attributes.Set( "GlowStep", new Vector2( step / glowWidth, 0 ) );
+		_paintCommands.Attributes.Set( "GlowStep", new Vector2( 1f / glowWidth, 0 ) );
 		_paintCommands.Blit( _glowMaterial );
 
 		_paintCommands.SetRenderTarget( _glowBTarget );
 		_paintCommands.Attributes.Set( "GlowSource", _glowA );
 		_paintCommands.Attributes.Set( "GlowExtract", 0 );
-		_paintCommands.Attributes.Set( "GlowStep", new Vector2( 0, step / glowHeight ) );
+		_paintCommands.Attributes.Set( "GlowStep", new Vector2( 0, 1f / glowHeight ) );
 		_paintCommands.Blit( _glowMaterial );
 	}
 

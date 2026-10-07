@@ -12,6 +12,9 @@
 
 @code
 {
+    /// <summary>
+    /// Draws this color when ammo/health reach a critical level
+    /// </summary>
     [Property, Group( "Warning" )] public Color WarningColor { get; set; } = new( 0.9f, 0.26f, 0f );
 
     [Property, Group( "Warning" ), Range( 0, 1 )] public float WarningPulseAmount { get; set; } = 0.24f;
@@ -22,6 +25,9 @@
 
     [Property, Group( "Warning" ), Range( 0, 1 )] public float LowAmmoFraction { get; set; } = 0.3f;
 
+    /// <summary>
+    /// The health readout flashes this color when health drops
+    /// </summary>
     [Property, Group( "Damage Flash" )] public Color DamageFlashColor { get; set; } = new( 1.5f, 0.4f, 0.03f );
 
     [Property, Group( "Damage Flash" ), Range( 0, 1 )] public float DamageFlashDuration { get; set; } = 0.15f;
@@ -51,13 +57,7 @@
         var weapon = Weapon;
         var showAmmo = weapon.IsValid() && weapon.UsesAmmo && Hud.IsVisible( HudElement.Ammo );
 
-        section.WarningColor = WarningColor;
-        section.WarningPulseAmount = WarningPulseAmount;
-        section.WarningPulseRate = WarningPulseRate;
-        section.LowHealthFraction = LowHealthFraction;
-        section.LowAmmoFraction = LowAmmoFraction;
-        section.DamageFlashColor = DamageFlashColor;
-        section.DamageFlashDuration = DamageFlashDuration;
+        section.Settings = this;
         section.Hidden = SpawnMenuHost.IsOpen;
         section.Data = new VitalsSection.Readout
         {

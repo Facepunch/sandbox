@@ -28,8 +28,6 @@ public abstract class HudSection
 
 	protected Rect CanvasRect => Canvas.Box.Rect;
 
-	protected float FontScale => Canvas.FontScale;
-
 	protected Color Tint => Canvas.Layer.Tint;
 	protected float DigitGain => Canvas.DigitGain;
 	protected float TextGain => Canvas.TextGain;

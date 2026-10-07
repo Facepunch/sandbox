@@ -51,7 +51,8 @@ PS
 	RenderState( DepthEnable, false );
 
 	Texture2D g_tSource < Attribute( "GlowSource" ); SrgbRead( false ); >;
-	float2 g_vStep < Attribute( "GlowStep" ); >; // uv offset between taps, along the blur direction
+	float2 g_vStep < Attribute( "GlowStep" ); >; // uv size of one pixel of the glow texture
+	float g_flReach < Attribute( "GlowReach" ); >; // how far the blur reaches, in glow texture pixels
 	int g_nExtract < Attribute( "GlowExtract" ); Default( 0 ); >;
 
 	#define TAPS 6
@@ -68,6 +69,7 @@ PS
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		float2 uv = i.vTexCoord;
+		float2 vTapStep = g_vStep * max( g_flReach / TAPS, 0.5 );
 
 		float3 vSum = Fetch( uv );
 		float flWeights = 1.0;
@@ -76,7 +78,7 @@ PS
 		for ( int k = 1; k <= TAPS; k++ )
 		{
 			float w = exp( -( k * k ) / ( 2.0 * 2.4 * 2.4 ) );
-			vSum += ( Fetch( uv + g_vStep * k ) + Fetch( uv - g_vStep * k ) ) * w;
+			vSum += ( Fetch( uv + vTapStep * k ) + Fetch( uv - vTapStep * k ) ) * w;
 			flWeights += w * 2.0;
 		}
 

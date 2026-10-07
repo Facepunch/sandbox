@@ -28,24 +28,10 @@ public sealed class VitalsSection : HudSection
 	public Readout Data { get; set; }
 
 	/// <summary>
-	/// Draws this color when ammo/health reach a critical level
+	/// The component that owns the warning and flash settings
 	/// </summary>
-	public Color WarningColor { get; set; } = new( 0.9f, 0.26f, 0f );
+	public Vitals Settings { get; set; }
 
-	public float WarningPulseAmount { get; set; } = 0.24f;
-
-	public float WarningPulseRate { get; set; } = 0.5f;
-
-	public float LowHealthFraction { get; set; } = 0.2f;
-
-	public float LowAmmoFraction { get; set; } = 0.3f;
-
-	/// <summary>
-	/// The health readout flashes this color when health drops
-	/// </summary>
-	public Color DamageFlashColor { get; set; } = new( 1.5f, 0.4f, 0.03f );
-
-	public float DamageFlashDuration { get; set; } = 0.15f;
 
 	public bool Hidden { get; set; }
 
@@ -103,10 +89,12 @@ public sealed class VitalsSection : HudSection
 
 	public override void Tick()
 	{
+		if ( Settings is null ) return;
+
 		var step = RealTime.Delta / HideDuration;
 		_hideProgress = Hidden ? MathF.Min( _hideProgress + step, 1 ) : MathF.Max( _hideProgress - step, 0 );
 
-		_damageFlash = DamageFlashDuration > 0 ? MathF.Max( _damageFlash - RealTime.Delta / DamageFlashDuration, 0 ) : 0;
+		_damageFlash = Settings.DamageFlashDuration > 0 ? MathF.Max( _damageFlash - RealTime.Delta / Settings.DamageFlashDuration, 0 ) : 0;
 
 		var data = Data;
 		if ( !data.ShowVitals )
@@ -183,7 +171,7 @@ public sealed class VitalsSection : HudSection
 
 			if ( data.UsesClips || data.HasSecondary )
 			{
-				painter.TextStyle = new TextStyle( Font, ReserveFontSize * FontScale, Brightened( Tinted( ReserveColor ), TextGain ) ) { FontWeight = 700, Alignment = TextFlag.LeftBottom };
+				painter.TextStyle = new TextStyle( Font, ReserveFontSize * ScaleToScreen, Brightened( Tinted( ReserveColor ), TextGain ) ) { FontWeight = 700, Alignment = TextFlag.LeftBottom };
 
 				var slashWidth = painter.MeasureText( "/" ).x;
 				var columnX = digitsRight + MathF.Round( ReserveGap * scale ) + slashWidth;
@@ -213,7 +201,7 @@ public sealed class VitalsSection : HudSection
 
 	float DrawStat( Painter painter, string title, DigitCounter counter, int value, int slots, float x, float bottom, float scale )
 	{
-		painter.TextStyle = new TextStyle( Font, TitleFontSize * FontScale, Brightened( Tinted( TitleColor ), TextGain ) ) { FontWeight = 700 };
+		painter.TextStyle = new TextStyle( Font, TitleFontSize * ScaleToScreen, Brightened( Tinted( TitleColor ), TextGain ) ) { FontWeight = 700 };
 		var titleHeight = MathF.Ceiling( painter.MeasureText( title ).y );
 
 		var slot = SlotSize( scale );
@@ -228,7 +216,7 @@ public sealed class VitalsSection : HudSection
 	{
 		counter.Update( value, slots );
 
-		painter.TextStyle = new TextStyle( Font, DigitFontSize * FontScale, Glowing( Tinted( DigitColor ) ) ) { FontWeight = 700, Alignment = TextFlag.Center };
+		painter.TextStyle = new TextStyle( Font, DigitFontSize * ScaleToScreen, Glowing( Tinted( DigitColor ) ) ) { FontWeight = 700, Alignment = TextFlag.Center };
 
 		var tint = Tinted( Color.White );
 
@@ -288,22 +276,22 @@ public sealed class VitalsSection : HudSection
 	{
 		if ( !warning ) return Tint;
 
-		var wave = 0.5f - 0.5f * MathF.Cos( RealTime.Now * WarningPulseRate * MathF.PI * 2 );
-		var brightness = 1 - Math.Clamp( WarningPulseAmount, 0, 1 ) * wave;
-		return new Color( WarningColor.r * brightness, WarningColor.g * brightness, WarningColor.b * brightness, WarningColor.a );
+		var wave = 0.5f - 0.5f * MathF.Cos( RealTime.Now * Settings.WarningPulseRate * MathF.PI * 2 );
+		var brightness = 1 - Math.Clamp( Settings.WarningPulseAmount, 0, 1 ) * wave;
+		return new Color( Settings.WarningColor.r * brightness, Settings.WarningColor.g * brightness, Settings.WarningColor.b * brightness, Settings.WarningColor.a );
 	}
 
 	Color DamageFlashed( Color tint )
 	{
 		if ( _damageFlash <= 0 ) return tint;
-		return Color.Lerp( tint, DamageFlashColor, _damageFlash );
+		return Color.Lerp( tint, Settings.DamageFlashColor, _damageFlash );
 	}
 
-	bool IsLowHealth( in Readout data ) => data.MaxHealth > 0 && data.Health <= data.MaxHealth * LowHealthFraction;
+	bool IsLowHealth( in Readout data ) => data.MaxHealth > 0 && data.Health <= data.MaxHealth * Settings.LowHealthFraction;
 	bool IsLowAmmo( in Readout data )
 	{
 		if ( !data.UsesClips ) return data.Reserve <= 0;
-		return data.Clip <= data.ClipMaxSize * LowAmmoFraction;
+		return data.Clip <= data.ClipMaxSize * Settings.LowAmmoFraction;
 	}
 
 	static int DigitCount( int value )
