@@ -271,6 +271,8 @@
               "__guid": "ec513cb5-7e44-4efc-b71a-f1353f4a8443",
               "__enabled": true,
               "Flags": 0,
+              "DamageFlashColor": "1.5,0.3975,0.03,1",
+              "DamageFlashDuration": 0.15,
               "LowAmmoFraction": 0.3,
               "LowHealthFraction": 0.2,
               "OnComponentDestroy": null,
