@@ -41,15 +41,21 @@
           "__guid": "14b7901f-78bd-4bdf-a260-847ffb944905",
           "__enabled": true,
           "Flags": 0,
-          "DigitExponent": 2.0170214,
-          "GlowRadius": 13.07234,
-          "GlowStrength": 0.04255319,
-          "ScanlineIntensity": 1,
-          "ScanlinePeriod": 3.8297873,
-          "ScanlineSoftness": 0.2212766,
-          "ScanlineThickness": 0.54468083,
-          "TextExponent": 0.25531915,
-          "Tint": "0.85581,0.85581,0.85581,1"
+          "DigitExponent": 0.7404255,
+          "GlowRadius": 20.425533,
+          "GlowStrength": 0.21702127,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "ScanlineIntensity": 0.4638298,
+          "ScanlinePeriod": 3.7021275,
+          "ScanlineSoftness": 0.04255319,
+          "ScanlineThickness": 0.5489362,
+          "TextExponent": 0.15931919,
+          "Tint": "0.43256,0.73519,1,1"
         }
       ],
       "Children": [
@@ -273,9 +279,9 @@
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
               "OnComponentUpdate": null,
-              "WarningColor": "0.72093,0.20426,0,1",
-              "WarningPulseAmount": 0.1923077,
-              "WarningPulseRate": 0.71794873
+              "WarningColor": "0.90233,0.25565,0,1",
+              "WarningPulseAmount": 0.23829788,
+              "WarningPulseRate": 0.5106383
             }
           ],
           "Children": []
