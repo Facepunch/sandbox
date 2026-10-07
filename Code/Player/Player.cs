@@ -445,12 +445,15 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		//
 		if ( dmg.Tags.Contains( "impact" ) )
 		{
+			var impactBody = dmg.Attacker?.GetComponentInParent<Rigidbody>();
+			if ( !impactBody.IsValid() || !impactBody.MotionEnabled )
+				return;
+
 			// Was this fall damage? If so, we can bail out here
 			if ( Controller.Velocity.Dot( Vector3.Down ) > 10 )
 				return;
 
-			// We were hit by some flying object, or flew into a wall, 
-			// so lets take that damage.
+			// We were hit by a moving physics object, so lets take that damage.
 		}
 
 		// Fire pre-damage event — listeners can modify damage or cancel

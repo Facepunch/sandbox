@@ -33,7 +33,7 @@ public class PlayerFallDamage : Component, Local.IPlayerEvents
 
 	void Local.IPlayerEvents.OnLand( float distance, Vector3 velocity )
 	{
-		var fallSpeed = Math.Abs( velocity.z );
+		var fallSpeed = Math.Max( -velocity.z, 0f );
 
 		if ( fallSpeed <= MaxSafeFallSpeed )
 			return;
