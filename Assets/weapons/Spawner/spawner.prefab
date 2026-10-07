@@ -21,6 +21,8 @@
         "UsesAmmo": false,
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
+        "PreferredSlot": 0,
+        "SlotOrder": 2,
         "Flags": 0,
         "DisplayIcon": {
           "$compiler": "texture",

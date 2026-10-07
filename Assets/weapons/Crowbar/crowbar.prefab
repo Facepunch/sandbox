@@ -17,16 +17,33 @@
     "Components": [
       {
         "__type": "CrowbarWeapon",
-        "DeployTime": 0.2,
         "__guid": "de3c4f5a-6e7d-8901-cdef-012345678902",
         "__enabled": true,
         "Flags": 0,
+        "AttackSound": {
+          "Id": "c1fb968e-3ec9-4a1e-9ddc-a1262a025ac4",
+          "Path": "weapons/crowbar/sounds/crowbar.swing.sound"
+        },
+        "AutoReload": true,
+        "Ballistics": {
+          "Damage": 12,
+          "Pellets": 1,
+          "Range": 4096,
+          "Radius": 1,
+          "Force": 3000,
+          "SpreadBase": "0.200000003,0.200000003",
+          "SpreadGrowth": "1.5,1.5",
+          "SpreadRecovery": 0.2
+        },
+        "CanCancelReload": true,
+        "ClipMaxSize": 30,
         "Damage": 12,
+        "DeployTime": 0.2,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/melee/crowbar.png",
+            "FilePath": "ui/weapons/crowbar_icon.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
@@ -55,7 +72,8 @@
             "Hue": 0,
             "Colorize": false,
             "TargetColor": "1,1,1,1",
-            "CacheToDisk": true
+            "CacheToDisk": true,
+            "FormatOverride": "RGBA8888"
           },
           "compiled": null
         },
@@ -64,22 +82,59 @@
           "_type": "gameobject",
           "go": "ef4d5a6b-7f8e-9012-def0-123456789013"
         },
-        "HitSound": "weapons/crowbar/sounds/crowbar.hit.sound",
+        "DryFireSound": null,
+        "FirstShellReloadTime": 0,
+        "Handedness": "Both",
+        "HitSound": {
+          "Id": "2e3985df-f680-4963-bc95-4a570ad0d8dc",
+          "Path": "weapons/crowbar/sounds/crowbar.hit.sound"
+        },
+        "HoldBone": "hold_r",
         "HoldType": "melee_weapons",
+        "IncrementalReloading": false,
         "MissSwingDelay": 0.4,
-        "MuzzleGameObject": null,
+        "Npc": {
+          "MinRange": 0,
+          "MaxRange": 1400,
+          "BurstMin": 2,
+          "BurstMax": 5,
+          "RestMin": 0.3,
+          "RestMax": 0.6,
+          "SpreadScale": 3,
+          "CanBePickedUp": true
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "HoldBone": "hold_r",
+        "PreferredSlot": 1,
+        "PrimaryAmmoType": null,
+        "PrimaryAutomatic": true,
+        "PrimaryDelay": 0.1,
         "Range": 128,
+        "ReloadStartTime": 0,
+        "ReloadTime": 2,
+        "SecondaryAmmoType": null,
+        "SecondaryAutomatic": false,
+        "SecondaryClipSize": -1,
+        "SecondaryDefaultClip": -1,
+        "SecondaryDelay": 0.5,
+        "SecondaryInput": {
+          "Action": null
+        },
+        "ShootInput": {
+          "Action": null
+        },
+        "SlotOrder": 0,
+        "StartingAmmo": 0,
         "SwingDelay": 0.4,
         "SwingForce": 1000,
         "SwingRadius": 10,
-        "AttackSound": "weapons/crowbar/sounds/crowbar.swing.sound",
+        "UsableByNpcs": true,
+        "UsesAmmo": false,
+        "UsesClips": true,
         "Value": 1,
         "ViewModelPrefab": {
           "_type": "gameobject",
@@ -99,7 +154,10 @@
         "Elasticity": null,
         "Friction": null,
         "IsTrigger": false,
-        "Model": "models/weapons/sbox_melee_crowbar/w_crowbar.vmdl",
+        "Model": {
+          "Id": "0fd68abd-d503-4c1b-a03e-c25067e5c80b",
+          "Path": "models/weapons/sbox_melee_crowbar/w_crowbar.vmdl"
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -175,7 +233,6 @@
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "ShellEjectGameObject": null,
             "MuzzleEffect": null,
             "MuzzleGameObject": null,
             "OnComponentDestroy": null,
@@ -190,6 +247,7 @@
               "go": "ef4d5a6b-7f8e-9012-def0-123456789013",
               "component_type": "SkinnedModelRenderer"
             },
+            "ShellEjectGameObject": null,
             "TracerEffect": null
           },
           {
@@ -202,11 +260,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": false,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_melee_crowbar/w_crowbar.vmdl",
+            "Model": {
+              "Id": "0fd68abd-d503-4c1b-a03e-c25067e5c80b",
+              "Path": "models/weapons/sbox_melee_crowbar/w_crowbar.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -214,13 +276,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -243,6 +299,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},

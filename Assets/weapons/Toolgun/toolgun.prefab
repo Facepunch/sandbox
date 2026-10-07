@@ -17,15 +17,29 @@
     "Components": [
       {
         "__type": "Toolgun",
-        "DeployTime": 0.2,
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
+        "AttackSound": null,
+        "AutoReload": true,
+        "Ballistics": {
+          "Damage": 12,
+          "Pellets": 1,
+          "Range": 4096,
+          "Radius": 1,
+          "Force": 3000,
+          "SpreadBase": "0.200000003,0.200000003",
+          "SpreadGrowth": "1.5,1.5",
+          "SpreadRecovery": 0.2
+        },
+        "CanCancelReload": true,
+        "ClipMaxSize": 30,
+        "DeployTime": 0.2,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/toolgun_trans.png",
+            "FilePath": "ui/weapons/toolgun_icon.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
@@ -54,19 +68,54 @@
             "Hue": 0,
             "Colorize": false,
             "TargetColor": "1,1,1,1",
-            "CacheToDisk": true
+            "CacheToDisk": true,
+            "FormatOverride": "RGBA8888"
           },
           "compiled": null
         },
         "DisplayName": "#asset.toolgun.title",
+        "DroppedGameObject": null,
+        "DryFireSound": null,
+        "FirstShellReloadTime": 0,
+        "Handedness": "Both",
+        "HoldBone": "hold_r",
         "HoldType": "Pistol",
+        "IncrementalReloading": false,
+        "Npc": {
+          "MinRange": 0,
+          "MaxRange": 1400,
+          "BurstMin": 2,
+          "BurstMax": 5,
+          "RestMin": 0.3,
+          "RestMax": 0.6,
+          "SpreadScale": 3,
+          "CanBePickedUp": true
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "HoldBone": "hold_r",
+        "PreferredSlot": 0,
+        "PrimaryAmmoType": null,
+        "PrimaryAutomatic": true,
+        "PrimaryDelay": 0.1,
+        "ReloadStartTime": 0,
+        "ReloadTime": 2,
+        "SecondaryAmmoType": null,
+        "SecondaryAutomatic": false,
+        "SecondaryClipSize": -1,
+        "SecondaryDefaultClip": -1,
+        "SecondaryDelay": 0.5,
+        "SecondaryInput": {
+          "Action": null
+        },
+        "ShootInput": {
+          "Action": null
+        },
+        "SlotOrder": 1,
+        "StartingAmmo": 0,
         "SuccessBeamEffect": {
           "_type": "gameobject",
           "prefab": "weapons/toolgun/effects/beam-success.prefab"
@@ -75,6 +124,9 @@
           "_type": "gameobject",
           "prefab": "weapons/toolgun/effects/impact-success.prefab"
         },
+        "UsableByNpcs": true,
+        "UsesAmmo": false,
+        "UsesClips": true,
         "Value": 2,
         "ViewModelPrefab": {
           "_type": "gameobject",
@@ -89,6 +141,7 @@
     "Children": [],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},
@@ -103,6 +156,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },

@@ -17,29 +17,53 @@
     "Components": [
       {
         "__type": "Physgun",
-        "DeployTime": 0.2,
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
+        "AttackSound": null,
+        "AutoReload": true,
+        "Ballistics": {
+          "Damage": 12,
+          "Pellets": 1,
+          "Range": 4096,
+          "Radius": 1,
+          "Force": 3000,
+          "SpreadBase": "0.200000003,0.200000003",
+          "SpreadGrowth": "1.5,1.5",
+          "SpreadRecovery": 0.2
+        },
+        "BeamDamping": 0.8,
+        "BeamFrequency": 128,
         "BeamHighlight": {
           "_type": "component",
           "component_id": "1baf5c79-b37e-48ce-a328-e89114e8659e",
           "go": "3c948bf4-5353-443a-bb65-8f28584fed1b",
           "component_type": "HighlightOutline"
         },
+        "BeamMaxSway": 5,
         "BeamRenderer": {
           "_type": "component",
           "component_id": "f3f80109-6fa0-4a11-a63e-0664044ed0b6",
           "go": "38c1b57f-3b24-4d7b-b222-982dd9ed9ebf",
           "component_type": "LineRenderer"
         },
-        "ButtonInSound": "weapons/physgun/sounds/physgun.button.in.1.sound",
-        "ButtonOutSound": "weapons/physgun/sounds/physgun.button.out.1.sound",
+        "ButtonInSound": {
+          "Id": "8ed6cc04-facb-48f1-8f74-dea34d80dbf0",
+          "Path": "weapons/physgun/sounds/physgun.button.in.1.sound"
+        },
+        "ButtonOutSound": {
+          "Id": "c01b704f-2a9a-474b-8100-f785bb5443d7",
+          "Path": "weapons/physgun/sounds/physgun.button.out.1.sound"
+        },
+        "CanAim": true,
+        "CanCancelReload": true,
+        "ClipMaxSize": 30,
+        "DeployTime": 0.2,
         "DisplayIcon": {
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/physgun_trans.png",
+            "FilePath": "ui/weapons/physgun_icon.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
@@ -68,7 +92,8 @@
             "Hue": 0,
             "Colorize": false,
             "TargetColor": "1,1,1,1",
-            "CacheToDisk": true
+            "CacheToDisk": true,
+            "FormatOverride": "RGBA8888"
           },
           "compiled": null
         },
@@ -77,10 +102,15 @@
           "_type": "gameobject",
           "go": "eee17487-5a77-418f-b927-43e62b57dbbb"
         },
+        "DryFireSound": null,
         "EndPointEffectPrefab": {
           "_type": "gameobject",
           "prefab": "weapons/physgun/effects/beam-end.prefab"
         },
+        "ExtendInput": {
+          "Action": null
+        },
+        "FirstShellReloadTime": 0,
         "FreezeEffectPrefab": {
           "_type": "gameobject",
           "prefab": "weapons/physgun/effects/freeze.prefab"
@@ -89,10 +119,19 @@
           "_type": "gameobject",
           "prefab": "weapons/physgun/effects/grab.prefab"
         },
+        "Handedness": "Both",
+        "HoldBone": "hold_r",
         "HoldType": "Physgun",
-        "MuzzleGameObject": {
-          "_type": "gameobject",
-          "go": "6fb841db-2a8c-429c-9db2-6dd3298f18f7"
+        "IncrementalReloading": false,
+        "Npc": {
+          "MinRange": 0,
+          "MaxRange": 1400,
+          "BurstMin": 2,
+          "BurstMax": 5,
+          "RestMin": 0.3,
+          "RestMax": 0.6,
+          "SpreadScale": 3,
+          "CanBePickedUp": true
         },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -100,25 +139,46 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "HoldBone": "hold_r",
         "PowerMaxDistance": 512,
         "PowerMaxFraction": 1,
         "PowerMinDistance": 64,
         "PowerMinFraction": 0.5,
+        "PreferredSlot": 0,
+        "PrimaryAmmoType": null,
+        "PrimaryAutomatic": true,
+        "PrimaryDelay": 0.1,
         "Range": 8196,
-        "ReleasedSound": "weapons/physgun/sounds/physgun.shoot.end.sound",
+        "ReleasedSound": {
+          "Id": "fe22f215-8ed0-49b4-8f4c-5596d93586a1",
+          "Path": "weapons/physgun/sounds/physgun.shoot.end.sound"
+        },
+        "ReloadStartTime": 0,
+        "ReloadTime": 2,
+        "RetractInput": {
+          "Action": null
+        },
+        "SecondaryAmmoType": null,
+        "SecondaryAutomatic": false,
+        "SecondaryClipSize": -1,
+        "SecondaryDefaultClip": -1,
+        "SecondaryDelay": 0.5,
         "SecondaryInput": {
-          "IsEnabled": false,
           "Action": null
         },
         "ShootInput": {
-          "IsEnabled": false,
           "Action": null
         },
+        "SlotOrder": 0,
+        "StartingAmmo": 0,
+        "SuccessBeamEffect": null,
+        "SuccessImpactEffect": null,
         "UnFreezeEffectPrefab": {
           "_type": "gameobject",
           "prefab": "weapons/physgun/effects/unfreeze.prefab"
         },
+        "UsableByNpcs": true,
+        "UsesAmmo": false,
+        "UsesClips": true,
         "Value": 2,
         "ViewModelPrefab": {
           "_type": "gameobject",
@@ -158,7 +218,10 @@
         "Elasticity": null,
         "Friction": null,
         "IsTrigger": false,
-        "Model": "models/weapons/sbox_physgun/w_physgun.vmdl",
+        "Model": {
+          "Id": "4285f28f-d968-4902-bedb-205f4b7c08f9",
+          "Path": "models/weapons/sbox_physgun/w_physgun.vmdl"
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -206,6 +269,7 @@
         "OnComponentUpdate": null,
         "OverrideMassCenter": false,
         "RigidbodyFlags": 0,
+        "SleepThreshold": 2,
         "StartAsleep": false
       }
     ],
@@ -296,7 +360,10 @@
                 },
                 "compiled": "textures/generated/random/de57f30dc50aa163.vtex"
               },
-              "Material": "weapons/physgun/physgun_beam.vmat",
+              "Material": {
+                "Id": "8c9d3bed-bd77-4d4e-921d-093f0664857a",
+                "Path": "weapons/physgun/physgun_beam.vmat"
+              },
               "WorldSpace": true,
               "UnitsPerTexture": 512,
               "Scale": 1,
@@ -367,9 +434,8 @@
             "Force2d": false,
             "MaxRepeatTime": 1,
             "MinRepeatTime": 1,
-            "Occlusion": false,
+            "OcclusionEnabled": false,
             "OcclusionOverride": false,
-            "OcclusionRadius": 32,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -378,10 +444,13 @@
             "OnComponentUpdate": null,
             "Pitch": 1,
             "PlayOnStart": true,
-            "ReflectionOverride": false,
-            "Reflections": false,
             "Repeat": false,
-            "SoundEvent": "weapons/physgun/sounds/physgun.active.loop.sound",
+            "ReverbEnabled": false,
+            "ReverbOverride": false,
+            "SoundEvent": {
+              "Id": "891eb113-09c5-4a78-8c82-6959aa706a4f",
+              "Path": "weapons/physgun/sounds/physgun.active.loop.sound"
+            },
             "SoundOverride": false,
             "StopOnNew": false,
             "TargetMixer": {
@@ -417,9 +486,8 @@
             "Force2d": false,
             "MaxRepeatTime": 1,
             "MinRepeatTime": 1,
-            "Occlusion": false,
+            "OcclusionEnabled": false,
             "OcclusionOverride": false,
-            "OcclusionRadius": 32,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -428,10 +496,13 @@
             "OnComponentUpdate": null,
             "Pitch": 1,
             "PlayOnStart": true,
-            "ReflectionOverride": false,
-            "Reflections": false,
             "Repeat": false,
-            "SoundEvent": "weapons/physgun/sounds/physgun.shoot.start.sound",
+            "ReverbEnabled": false,
+            "ReverbOverride": false,
+            "SoundEvent": {
+              "Id": "20359398-ea43-4d92-9b7a-2cfe372897da",
+              "Path": "weapons/physgun/sounds/physgun.shoot.start.sound"
+            },
             "SoundOverride": false,
             "StopOnNew": false,
             "TargetMixer": {
@@ -486,9 +557,8 @@
             "Force2d": false,
             "MaxRepeatTime": 1,
             "MinRepeatTime": 1,
-            "Occlusion": false,
+            "OcclusionEnabled": false,
             "OcclusionOverride": false,
-            "OcclusionRadius": 32,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -497,10 +567,13 @@
             "OnComponentUpdate": null,
             "Pitch": 1,
             "PlayOnStart": true,
-            "ReflectionOverride": false,
-            "Reflections": false,
             "Repeat": false,
-            "SoundEvent": "weapons/physgun/sounds/physgun.idle.sound",
+            "ReverbEnabled": false,
+            "ReverbOverride": false,
+            "SoundEvent": {
+              "Id": "74a1a755-3e42-4bb0-9ee0-cb2471031b36",
+              "Path": "weapons/physgun/sounds/physgun.idle.sound"
+            },
             "SoundOverride": false,
             "StopOnNew": false,
             "TargetMixer": {
@@ -538,11 +611,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": false,
             "CreateBoneObjects": false,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_physgun/w_physgun.vmdl",
+            "Model": {
+              "Id": "4285f28f-d968-4902-bedb-205f4b7c08f9",
+              "Path": "models/weapons/sbox_physgun/w_physgun.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -550,13 +627,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -578,8 +649,8 @@
             "__guid": "5d90b75d-4489-449b-93e4-8de1007de4e7",
             "__enabled": true,
             "Flags": 0,
+            "DeploySound": null,
             "EjectBrass": null,
-            "ShellEjectGameObject": null,
             "MuzzleEffect": null,
             "MuzzleGameObject": {
               "_type": "gameobject",
@@ -597,6 +668,7 @@
               "go": "eee17487-5a77-418f-b927-43e62b57dbbb",
               "component_type": "SkinnedModelRenderer"
             },
+            "ShellEjectGameObject": null,
             "TracerEffect": null
           },
           {
@@ -647,7 +719,10 @@
               {
                 "__guid": "c0c2a398-6d71-418b-b883-12ee49db7ac8",
                 "__version": 2,
-                "__Prefab": "weapons/physgun/effects/wm-glow.prefab",
+                "__Prefab": {
+                  "Id": "9ae80f7b-f980-48f9-80a7-d10a4a34927a",
+                  "Path": "weapons/physgun/effects/wm-glow.prefab"
+                },
                 "__PrefabInstancePatch": {
                   "AddedObjects": [],
                   "RemovedObjects": [],
@@ -657,8 +732,8 @@
                 "__PrefabIdToInstanceId": {
                   "e5cf5f34-17b5-4e70-b8db-d7f54a8ad61d": "c0c2a398-6d71-418b-b883-12ee49db7ac8",
                   "3c06d747-a92f-49b3-9749-0902446440a0": "46aa8309-7659-4f73-ad63-6869b56bbd4c",
-                  "1eade6ef-bca3-4844-967d-98d7e79c224e": "5e5f9ab1-8787-4cde-8375-73eb57d76646",
                   "14848a05-e916-4b3f-abdf-34cf6ff912c9": "4b0f5e82-61b1-4741-98e6-5a3494a762dd",
+                  "1eade6ef-bca3-4844-967d-98d7e79c224e": "5e5f9ab1-8787-4cde-8375-73eb57d76646",
                   "41ef4816-f57a-420c-bc59-2411a9f5251a": "5e76084d-9107-4f38-9084-5b4a513b8cc2",
                   "feb67b66-6937-4970-b707-655e5b1eb784": "0c9dbabf-2bd9-4610-996a-7f21d6eecdbc",
                   "aa79498c-82a3-4823-9f26-a5eda7dac889": "e0c725b0-acdb-48ee-a228-78f47efc10a4"
@@ -671,6 +746,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},
