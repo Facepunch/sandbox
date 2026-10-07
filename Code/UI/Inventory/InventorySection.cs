@@ -21,13 +21,13 @@ public sealed class InventorySection : HudSection
 	const string Font = "Inconsolata";
 	const string IndexFont = "SandboxID"; // custom, supports only digits at the moment, don't use for anything else
 
-	const float Top = 48;
-	const float TileWidth = 220;
-	const float TileHeight = 128;
-	const float IconAreaHeight = 110; // the icon is centred in the top part, the rest holds the name
-	const float CollapsedHeight = 16;
-	const float Gap = 2;
-	const float Border = 2;
+	const float Top = 38;
+	const float TileWidth = 173;
+	const float TileHeight = 101;
+	const float IconAreaHeight = 78; // the icon is centred in the top part, the rest holds the name
+	const float CollapsedHeight = 12.6f;
+	const float Gap = 1;
+	const float Border = 1;
 	const float IndexInset = 2; // from the inside of the border
 	const float IndexBoxSize = 15;
 	const float IndexDigitSize = 7; // height of the SandboxID digit, centred in the box
@@ -41,13 +41,13 @@ public sealed class InventorySection : HudSection
 	const float ContentFadeDuration = 0.05f;
 
 	const float FillAlpha = 0.6f; // slot backgrounds are see-through
-	const float BorderAlpha = 0.92f;
+	const float BorderAlpha = 0.8f;
 	static readonly Color FillTop = Gray( 0.224f, FillAlpha );
 	static readonly Color FillBottom = Gray( 0.182f, FillAlpha );
-	static readonly Color BorderColor = Gray( 0.965f, BorderAlpha );
+	static readonly Color BorderColor = Gray( 0.75f, BorderAlpha );
 	static readonly Color HighlightFillTop = Gray( 0.514f, FillAlpha );
 	static readonly Color HighlightFillBottom = Gray( 0.344f, FillAlpha );
-	static readonly Color IndexColor = Gray( 0.945f );
+	static readonly Color IndexColor = Gray( 0.75f );
 	static readonly Color HighlightIndexColor = Gray( 0.95f );
 	static readonly Color DimIcon = Gray( 1f, 0.51f ); // icon of unselected slots
 	static readonly Color DimName = Gray( 1f, 0.51f ); // name of unselected slots
@@ -115,6 +115,11 @@ public sealed class InventorySection : HudSection
 		}
 	}
 
+	/// <summary>
+	/// Collapsed columns are square, the selected one widens to 2:1 as it expands
+	/// </summary>
+	float ColumnWidth( int column, float scale ) => MathF.Round( MathX.Lerp( TileHeight, TileWidth, Easing.QuadraticInOut( _expand[column] ) ) * scale );
+
 	float ColumnHeight( int column, float scale )
 	{
 		var items = Math.Max( _columns[column].Count, 1 );
@@ -131,10 +136,11 @@ public sealed class InventorySection : HudSection
 		var bounds = painter.Bounds;
 		var columns = ColumnCount;
 
-		var tileWidth = MathF.Round( TileWidth * scale );
 		var tileHeight = MathF.Round( TileHeight * scale );
 		var gap = MathF.Max( 1, MathF.Round( Gap * scale ) );
-		var totalWidth = columns * tileWidth + (columns - 1) * gap;
+
+		var totalWidth = (columns - 1) * gap;
+		for ( int c = 0; c < columns; c++ ) totalWidth += ColumnWidth( c, scale );
 		var left = MathF.Floor( (bounds.Width - totalWidth) * 0.5f );
 
 		var tallest = 0f;
@@ -148,15 +154,16 @@ public sealed class InventorySection : HudSection
 
 		var active = Inventory.ActiveWeapon;
 
+		var x = left;
 		for ( int c = 0; c < columns; c++ )
 		{
-			var x = left + c * (tileWidth + gap);
+			var tileWidth = ColumnWidth( c, scale );
 			var items = _columns[c];
 			var expand = Easing.QuadraticInOut( _expand[c] );
 			var childHeight = MathF.Round( MathX.Lerp( CollapsedHeight, TileHeight, expand ) * scale );
 
 			var head = items.Count > 0 ? items[0] : null;
-			DrawTile( painter, new Rect( x, y0, tileWidth, tileHeight ), head, c, IsHighlighted( head, active ), 1, scale );
+			DrawTile( painter, new Rect( x, y0, tileWidth, tileHeight ), head, c, IsHighlighted( head, active ), _contentFade[c], scale );
 
 			var y = y0 + tileHeight + gap;
 			for ( int i = 1; i < items.Count; i++ )
@@ -169,6 +176,8 @@ public sealed class InventorySection : HudSection
 
 				y += childHeight + gap;
 			}
+
+			x += tileWidth + gap;
 		}
 	}
 
