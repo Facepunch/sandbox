@@ -178,8 +178,6 @@ public sealed class InventorySection : HudSection
 		var left = _menuRect.Left;
 		var y0 = _menuRect.Top;
 
-		var active = Inventory.ActiveWeapon;
-
 		var x = left;
 		for ( int c = 0; c < columns; c++ )
 		{
@@ -189,7 +187,7 @@ public sealed class InventorySection : HudSection
 			var childHeight = MathF.Round( MathX.Lerp( CollapsedHeight, TileHeight, expand ) * scale );
 
 			var head = items.Count > 0 ? items[0] : null;
-			DrawTile( painter, new Rect( x, y0, tileWidth, tileHeight ), head, c, IsHighlighted( head, active ), _contentFade[c], scale );
+			DrawTile( painter, new Rect( x, y0, tileWidth, tileHeight ), head, c, IsHighlighted( head ), _contentFade[c], scale );
 
 			var y = y0 + tileHeight + gap;
 			for ( int i = 1; i < items.Count; i++ )
@@ -198,7 +196,7 @@ public sealed class InventorySection : HudSection
 				if ( expand <= 0 )
 					DrawBar( painter, rect, scale );
 				else
-					DrawTile( painter, rect, items[i], -1, IsHighlighted( items[i], active ), _contentFade[c], scale );
+					DrawTile( painter, rect, items[i], -1, IsHighlighted( items[i] ), _contentFade[c], scale );
 
 				y += childHeight + gap;
 			}
@@ -207,7 +205,7 @@ public sealed class InventorySection : HudSection
 		}
 	}
 
-	bool IsHighlighted( BaseSandboxWeapon weapon, BaseSandboxWeapon active ) => weapon.IsValid() && weapon == _shownSelection;
+	bool IsHighlighted( BaseSandboxWeapon weapon ) => weapon.IsValid() && weapon == _shownSelection;
 
 	void DrawTile( Painter painter, Rect rect, BaseSandboxWeapon weapon, int index, bool highlighted, float contentAlpha, float scale )
 	{

@@ -87,7 +87,8 @@ public class WeaponIconWindow : BaseWindow
 		base.OnDestroyed();
 
 		Scene?.Destroy();
-		Scene = null;	}
+		Scene = null;
+	}
 
 	void CreateScene()
 	{
