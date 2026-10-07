@@ -63,6 +63,7 @@ public sealed class InventorySection : HudSection
 	readonly List<List<BaseSandboxWeapon>> _columns = new();
 
 	Rect _menuRect;
+	float _tileHeight, _gap;
 
 	static Color Gray( float value, float alpha = 1 ) => new( value, value, value, alpha );
 
@@ -95,6 +96,8 @@ public sealed class InventorySection : HudSection
 		}
 
 		RefreshColumns();
+
+		UpdateLayout();
 	}
 
 	static float Approach( float value, float target, float step ) => value < target ? MathF.Min( value + step, target ) : MathF.Max( value - step, target );
@@ -127,21 +130,24 @@ public sealed class InventorySection : HudSection
 		return (TileHeight + (items - 1) * (child + Gap)) * scale;
 	}
 
-	public override void Paint( Painter painter )
+	/// <summary>
+	/// Works out where the menu sits this frame, so the composite regions are known before anything is painted.
+	/// Leaves <see cref="_menuRect"/> empty while the menu is not visible
+	/// </summary>
+	void UpdateLayout()
 	{
 		_menuRect = default;
 		if ( _slide <= 0 || ColumnCount == 0 ) return;
 
 		var scale = ScaleToScreen;
-		var bounds = painter.Bounds;
 		var columns = ColumnCount;
 
-		var tileHeight = MathF.Round( TileHeight * scale );
-		var gap = MathF.Max( 1, MathF.Round( Gap * scale ) );
+		_tileHeight = MathF.Round( TileHeight * scale );
+		_gap = MathF.Max( 1, MathF.Round( Gap * scale ) );
 
-		var totalWidth = (columns - 1) * gap;
+		var totalWidth = (columns - 1) * _gap;
 		for ( int c = 0; c < columns; c++ ) totalWidth += ColumnWidth( c, scale );
-		var left = MathF.Floor( (bounds.Width - totalWidth) * 0.5f );
+		var left = MathF.Floor( (Canvas.PixelSize.x - totalWidth) * 0.5f );
 
 		var tallest = 0f;
 		for ( int c = 0; c < columns; c++ ) tallest = MathF.Max( tallest, ColumnHeight( c, scale ) );
@@ -151,6 +157,18 @@ public sealed class InventorySection : HudSection
 		var y0 = MathF.Round( MathX.Lerp( hidden, top, Easing.QuadraticInOut( _slide ) ) );
 
 		_menuRect = new Rect( left, y0, totalWidth, tallest );
+	}
+
+	public override void Paint( Painter painter )
+	{
+		if ( _menuRect.Width <= 0 ) return;
+
+		var scale = ScaleToScreen;
+		var columns = ColumnCount;
+		var tileHeight = _tileHeight;
+		var gap = _gap;
+		var left = _menuRect.Left;
+		var y0 = _menuRect.Top;
 
 		var active = Inventory.ActiveWeapon;
 

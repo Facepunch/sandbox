@@ -119,6 +119,8 @@ public sealed class VitalsSection : HudSection
 
 	public override void GetCompositeRegions( List<Rect> regions )
 	{
+		if ( _hideProgress >= 1 ) return;
+
 		var data = Data;
 		var rect = CanvasRect;
 		var region = new Vector2( ShadeWidth, ShadeHeight ) * ScaleToScreen;

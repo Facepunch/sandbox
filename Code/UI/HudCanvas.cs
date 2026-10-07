@@ -33,7 +33,17 @@ public sealed class HudCanvas : Panel, IPanelDraw
 
 	const int GlowBlurTaps = 6;
 
+	/// <summary>
+	/// Screen rects the sections draw into this frame. Empty means there is nothing to paint
+	/// </summary>
 	readonly List<Rect> _regions = new();
+
+	bool _paintRecorded;
+
+	/// <summary>
+	/// Canvas size in whole pixels, which is what the paint target is created with
+	/// </summary>
+	public Vector2 PixelSize => new( (int)Box.Rect.Width, (int)Box.Rect.Height );
 
 	public HudCanvas()
 	{
@@ -70,13 +80,24 @@ public sealed class HudCanvas : Panel, IPanelDraw
 		foreach ( var section in _sections )
 			section.Tick();
 
+		_regions.Clear();
+		foreach ( var section in _sections )
+			section.GetCompositeRegions( _regions );
+
+		if ( _regions.Count == 0 )
+		{
+			if ( _paintRecorded ) _paintCommands.Reset();
+			_paintRecorded = false;
+			return;
+		}
+
 		PaintTarget();
 	}
 
 	void PaintTarget()
 	{
-		var width = (int)Box.Rect.Width;
-		var height = (int)Box.Rect.Height;
+		var width = (int)PixelSize.x;
+		var height = (int)PixelSize.y;
 		if ( width <= 0 || height <= 0 ) return;
 
 		if ( _target is null || _target.Width != width || _target.Height != height )
@@ -97,6 +118,7 @@ public sealed class HudCanvas : Panel, IPanelDraw
 		}
 
 		_paintCommands.Reset();
+		_paintRecorded = true;
 		_paintCommands.Attributes.Set( "UIGammaOutput", true );
 		_paintCommands.Attributes.Set( "UIFrameGrabEncoded", true );
 		_paintCommands.SetRenderTarget( _renderTarget );
@@ -153,12 +175,7 @@ public sealed class HudCanvas : Panel, IPanelDraw
 
 	void IPanelDraw.Draw( CommandList commands )
 	{
-		if ( !Layer.IsValid() || _target is null || _glowB is null ) return;
-
-		_regions.Clear();
-		foreach ( var section in _sections )
-			section.GetCompositeRegions( _regions );
-		if ( _regions.Count == 0 ) return;
+		if ( !Layer.IsValid() || _regions.Count == 0 || _target is null || _glowB is null ) return;
 
 		_material ??= Material.FromShader( "shaders/hud_composite.shader" );
 
