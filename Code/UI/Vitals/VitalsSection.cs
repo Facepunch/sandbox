@@ -261,18 +261,14 @@ public sealed class VitalsSection : HudSection
 		Rect Segment( int i ) => new( bar.Left, bar.Bottom - (i + 1) * height - i * gap, bar.Width, height );
 
 		var softness = ClipSegmentSoftness * scale;
-		using ( painter.BeginLayer( bar.Grow( MathF.Ceiling( softness * 3 ) ), filter: new Painter.Filter { Blur = softness } ) )
+		for ( int i = 0; i < slots; i++ )
 		{
-			for ( int i = 0; i < slots; i++ )
-			{
-				painter.Fill = Tinted( i < filled ? DigitColor : DepletedColor );
-				painter.Rect( Segment( i ) );
-			}
-		}
+			var color = Tinted( i < filled ? DigitColor : DepletedColor );
+			painter.RectShadow( Segment( i ), color: color, blur: softness * 2, spread: softness );
 
-		painter.Fill = Glowing( Tinted( DigitColor ) );
-		for ( int i = 0; i < filled; i++ )
+			painter.Fill = i < filled ? Glowing( Tinted( DigitColor ) ) : color;
 			painter.Rect( Segment( i ) );
+		}
 	}
 
 	/// <summary>
