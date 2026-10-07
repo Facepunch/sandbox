@@ -40,6 +40,13 @@ public sealed class VitalsSection : HudSection
 
 	public float LowAmmoFraction { get; set; } = 0.2f;
 
+	/// <summary>
+	/// The health readout flashes this color when health drops
+	/// </summary>
+	public Color DamageFlashColor { get; set; } = new( 2.378f, 0.071f, 0.048f );
+
+	public float DamageFlashDuration { get; set; } = 0.1f;
+
 	public bool Hidden { get; set; }
 
 	const string Font = "Inconsolata";
@@ -88,10 +95,26 @@ public sealed class VitalsSection : HudSection
 
 	float _hideProgress;
 
+	// 1 on the frame health drops, fading to 0 over DamageFlashDuration
+	float _damageFlash;
+	int? _lastHealth;
+
 	public override void Tick()
 	{
 		var step = RealTime.Delta / HideDuration;
 		_hideProgress = Hidden ? MathF.Min( _hideProgress + step, 1 ) : MathF.Max( _hideProgress - step, 0 );
+
+		_damageFlash = DamageFlashDuration > 0 ? MathF.Max( _damageFlash - RealTime.Delta / DamageFlashDuration, 0 ) : 0;
+
+		var data = Data;
+		if ( !data.ShowVitals )
+		{
+			_lastHealth = null;
+			return;
+		}
+
+		if ( data.Health < _lastHealth ) _damageFlash = 1;
+		_lastHealth = data.Health;
 	}
 
 	public override void GetCompositeRegions( List<Rect> regions )
@@ -129,7 +152,7 @@ public sealed class VitalsSection : HudSection
 			painter.Translate( -HideDistance * scale * hide, 0 );
 
 			var x = MathF.Floor( deadzone );
-			PaintTint = SectionTint( IsLowHealth( data ) );
+			PaintTint = DamageFlashed( SectionTint( IsLowHealth( data ) ) );
 			x += DrawStat( painter, "HEALTH", _health, data.Health, 3, x, bottom, scale ) + MathF.Round( StatGap * scale );
 
 			PaintTint = Tint;
@@ -269,6 +292,12 @@ public sealed class VitalsSection : HudSection
 		var wave = 0.5f - 0.5f * MathF.Cos( RealTime.Now * WarningPulseRate * MathF.PI * 2 );
 		var brightness = 1 - Math.Clamp( WarningPulseAmount, 0, 1 ) * wave;
 		return new Color( WarningColor.r * brightness, WarningColor.g * brightness, WarningColor.b * brightness, WarningColor.a );
+	}
+
+	Color DamageFlashed( Color tint )
+	{
+		if ( _damageFlash <= 0 ) return tint;
+		return Color.Lerp( tint, DamageFlashColor, _damageFlash );
 	}
 
 	bool IsLowHealth( in Readout data ) => data.MaxHealth > 0 && data.Health <= data.MaxHealth * LowHealthFraction;

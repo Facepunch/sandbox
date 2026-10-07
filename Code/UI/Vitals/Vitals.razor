@@ -22,6 +22,10 @@
 
     [Property, Group( "Warning" ), Range( 0, 1 )] public float LowAmmoFraction { get; set; } = 0.2f;
 
+    [Property, Group( "Damage Flash" )] public Color DamageFlashColor { get; set; } = new( 2.378f, 0.071f, 0.048f );
+
+    [Property, Group( "Damage Flash" ), Range( 0, 1 )] public float DamageFlashDuration { get; set; } = 0.1f;
+
     Player Player => Player.FindLocalPlayer();
     BaseSandboxWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseSandboxWeapon;
 
@@ -58,6 +62,8 @@
         section.WarningPulseRate = WarningPulseRate;
         section.LowHealthFraction = LowHealthFraction;
         section.LowAmmoFraction = LowAmmoFraction;
+        section.DamageFlashColor = DamageFlashColor;
+        section.DamageFlashDuration = DamageFlashDuration;
         section.Hidden = IsSpawnMenuOpen();
         section.Data = new VitalsSection.Readout
         {
