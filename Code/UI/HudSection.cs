@@ -30,10 +30,10 @@ public abstract class HudSection
 
 	protected float FontScale => Canvas.FontScale;
 
-	protected Color Tint => Canvas.Tint;
-	protected float DigitExponent => Canvas.DigitExponent;
-	protected float TextExponent => Canvas.TextExponent;
-	protected float GlowRadius => Canvas.GlowRadius;
+	protected Color Tint => Canvas.Layer.Tint;
+	protected float DigitExponent => Canvas.Layer.DigitExponent;
+	protected float TextExponent => Canvas.Layer.TextExponent;
+	protected float GlowRadius => Canvas.Layer.GlowRadius;
 
 	protected internal Color PaintTint { get; set; } = Color.White;
 

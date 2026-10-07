@@ -8,32 +8,10 @@ namespace Sandbox;
 /// </summary>
 public sealed class HudCanvas : Panel, IPanelDraw
 {
-	public Color Tint { get; set; } = new( 0.43f, 0.74f, 1f );
-
 	/// <summary>
-	/// HDR color exponent for highlighted elements like vitals digits or selected hotbar slot
+	/// The component that owns the effect settings
 	/// </summary>
-	public float DigitExponent { get; set; } = 0.75f;
-
-	/// <summary>
-	/// HDR color exponent for regular text/other UI elements
-	/// </summary>
-	public float TextExponent { get; set; } = 0.16f;
-
-	public float GlowStrength { get; set; } = 0.22f;
-
-	public float GlowRadius { get; set; } = 20;
-
-	public float ScanlineIntensity { get; set; } = 0.46f;
-
-	/// <summary>
-	/// Scanline frequency, 2 minimum
-	/// </summary>
-	public float ScanlinePeriod { get; set; } = 3.7f;
-
-	public float ScanlineThickness { get; set; } = 0.55f;
-
-	public float ScanlineSoftness { get; set; } = 0.04f;
+	public HudLayer Layer { get; set; }
 
 	/// <summary>
 	/// Texture painters don't apply ScaleToScreen to text, so font sizes get scaled by hand
@@ -87,6 +65,8 @@ public sealed class HudCanvas : Panel, IPanelDraw
 	{
 		base.Tick();
 
+		if ( !Layer.IsValid() ) return;
+
 		foreach ( var section in _sections )
 			section.Tick();
 
@@ -129,7 +109,7 @@ public sealed class HudCanvas : Panel, IPanelDraw
 			foreach ( var section in _sections )
 			{
 				using var _ = painter.Scope();
-				section.PaintTint = Tint;
+				section.PaintTint = Layer.Tint;
 				section.Paint( painter );
 			}
 		}
@@ -156,7 +136,7 @@ public sealed class HudCanvas : Panel, IPanelDraw
 
 		_glowMaterial ??= Material.FromShader( "shaders/hud_glow.shader" );
 
-		var step = MathF.Max( GlowRadius * ScaleToScreen * 0.5f / GlowBlurTaps, 0.5f );
+		var step = MathF.Max( Layer.GlowRadius * ScaleToScreen * 0.5f / GlowBlurTaps, 0.5f );
 
 		_paintCommands.SetRenderTarget( _glowATarget );
 		_paintCommands.Attributes.Set( "GlowSource", _target );
@@ -173,7 +153,7 @@ public sealed class HudCanvas : Panel, IPanelDraw
 
 	void IPanelDraw.Draw( CommandList commands )
 	{
-		if ( _target is null || _glowB is null ) return;
+		if ( !Layer.IsValid() || _target is null || _glowB is null ) return;
 
 		_regions.Clear();
 		foreach ( var section in _sections )
@@ -187,11 +167,11 @@ public sealed class HudCanvas : Panel, IPanelDraw
 		attributes.Set( "HudTexture", _target );
 		attributes.Set( "HudInvSize", new Vector2( 1f / _target.Width, 1f / _target.Height ) );
 		attributes.Set( "GlowTexture", _glowB );
-		attributes.Set( "GlowStrength", GlowStrength );
-		attributes.Set( "ScanlineIntensity", ScanlineIntensity );
-		attributes.Set( "ScanlinePeriod", MathF.Max( 2, MathF.Round( ScanlinePeriod * scale ) ) );
-		attributes.Set( "ScanlineThickness", ScanlineThickness );
-		attributes.Set( "ScanlineSoftness", ScanlineSoftness );
+		attributes.Set( "GlowStrength", Layer.GlowStrength );
+		attributes.Set( "ScanlineIntensity", Layer.ScanlineIntensity );
+		attributes.Set( "ScanlinePeriod", MathF.Max( 2, MathF.Round( Layer.ScanlinePeriod * scale ) ) );
+		attributes.Set( "ScanlineThickness", Layer.ScanlineThickness );
+		attributes.Set( "ScanlineSoftness", Layer.ScanlineSoftness );
 		attributes.SetCombo( "D_BLENDMODE", BlendMode.Normal );
 
 		// The glow is added onto what's behind the HUD

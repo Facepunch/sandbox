@@ -4,7 +4,7 @@
 @namespace Sandbox
 
 <root>
-    <HudCanvas @ref="Canvas" />
+    <HudCanvas @ref="Canvas" Layer=@this />
 </root>
 
 @code
@@ -51,21 +51,6 @@
 
         var screen = from.Components.GetInAncestorsOrSelf<ScreenPanel>();
         return screen.IsValid() ? screen.GameObject.Components.GetOrCreate<HudLayer>() : null;
-    }
-
-    protected override void OnUpdate()
-    {
-        if ( !Canvas.IsValid() ) return;
-
-        Canvas.Tint = Tint;
-        Canvas.DigitExponent = DigitExponent;
-        Canvas.TextExponent = TextExponent;
-        Canvas.GlowStrength = GlowStrength;
-        Canvas.GlowRadius = GlowRadius;
-        Canvas.ScanlineIntensity = ScanlineIntensity;
-        Canvas.ScanlinePeriod = ScanlinePeriod;
-        Canvas.ScanlineThickness = ScanlineThickness;
-        Canvas.ScanlineSoftness = ScanlineSoftness;
     }
 
     protected override int BuildHash() => 0;
