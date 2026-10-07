@@ -121,7 +121,7 @@ public sealed partial class PlayerInventory : BaseInventoryComponent, Local.IPla
 		if ( base.Pickup( prefab, targetSlot ) is BaseSandboxWeapon weapon )
 		{
 			if ( notice )
-				OnClientPickup( weapon );
+				OnClientPickup( weapon, given: true );
 
 			return true;
 		}
@@ -243,11 +243,11 @@ public sealed partial class PlayerInventory : BaseInventoryComponent, Local.IPla
 	private static SoundEvent GunPickupSound = ResourceLibrary.Get<SoundEvent>( "sounds/weapons/gun_pickup.sound" );
 
 	[Rpc.Owner]
-	private void OnClientPickup( BaseSandboxWeapon weapon, bool justAmmo = false )
+	private void OnClientPickup( BaseSandboxWeapon weapon, bool justAmmo = false, bool given = false )
 	{
 		if ( !weapon.IsValid() ) return;
 
-		if ( ShouldAutoswitchTo( weapon ) )
+		if ( !justAmmo && (given || ShouldAutoswitchTo( weapon )) )
 		{
 			SwitchWeapon( weapon );
 		}
