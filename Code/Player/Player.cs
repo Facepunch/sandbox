@@ -392,10 +392,10 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		var inventory = GetComponent<PlayerInventory>();
 		inventory?.OnControl();
 
+		Scene.Get<Inventory>()?.HandleInput();
+
 		if ( inventory.IsValid() && inventory.ManualPumping )
 			inventory.Pump();
-
-		Scene.Get<Inventory>()?.HandleInput();
 	}
 
 	void ToggleNoclip( bool fromJump = false )

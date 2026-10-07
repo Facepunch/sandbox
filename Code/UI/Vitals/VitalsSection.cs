@@ -1,13 +1,12 @@
-using Sandbox.Rendering;
 using Sandbox.UI;
 using Sandbox.Utility;
 
 namespace Sandbox;
 
 /// <summary>
-/// Paints the health, armour and ammo HUD.
+/// Paints the health, armour and ammo HUD
 /// </summary>
-public sealed class VitalsCanvas : Panel, IPanelDraw
+public sealed class VitalsSection : HudSection
 {
 	public struct Readout
 	{
@@ -29,11 +28,6 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 	public Readout Data { get; set; }
 
 	/// <summary>
-	/// Multiplied into every element's colour
-	/// </summary>
-	public Color Tint { get; set; } = Color.White;
-
-	/// <summary>
 	/// Draws this color when ammo/health reach a critical level
 	/// </summary>
 	public Color WarningColor { get; set; } = new( 1f, 0.03f, 0.02f );
@@ -48,33 +42,6 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 
 	public bool Hidden { get; set; }
 
-	Color _sectionTint = Color.White;
-
-	/// <summary>
-	/// Adjusts HDR color exponent for digits in vitals HUD
-	/// </summary>
-	public float DigitExponent { get; set; } = 3;
-
-	/// <summary>
-	/// Adjusts HDR color exponent for text in vitals HUD
-	/// </summary>
-	public float TextExponent { get; set; } = 1.25f;
-
-	public float GlowStrength { get; set; } = 0.15f;
-
-	public float GlowRadius { get; set; } = 16;
-
-	public float ScanlineIntensity { get; set; } = 0.35f;
-
-	/// <summary>
-	/// Scanline frequency, 2 minimum
-	/// </summary>
-	public float ScanlinePeriod { get; set; } = 3;
-
-	public float ScanlineThickness { get; set; } = 0.8f;
-
-	public float ScanlineSoftness { get; set; } = 1f;
-
 	const string Font = "Inconsolata";
 
 	const float DigitWidth = 32;
@@ -88,8 +55,8 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 	const float ReserveFontSize = 24;
 	const float ReserveGap = 14;
 	const float ReserveBottom = 8;
-	const float ReserveSpace = 62; // room for "/" plus a 3 digit count (14px gap + 4 x 12px glyphs)
-	const float SecondaryLineSpacing = 28; // baseline to baseline, secondary count sits above the reserve
+	const float ReserveSpace = 62;
+	const float SecondaryLineSpacing = 28;
 
 	const int MaxClipSegments = 12;
 	const float ClipBarWidth = 16;
@@ -111,6 +78,7 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 	static readonly Color ReserveColor = Color.FromBytes( 230, 230, 230 );
 	static readonly Color DepletedColor = Color.FromBytes( 68, 68, 68 );
 
+	// randomized digit background images as a little detail
 	static readonly string[] DigitBackgroundPaths = { "ui/hud/bg-digit1.png", "ui/hud/bg-digit2.png", "ui/hud/bg-digit3.png" };
 	Texture[] _digitBackgrounds;
 
@@ -120,152 +88,22 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 
 	float _hideProgress;
 
-	float _fontScale = 1;
-
-	Texture _target;
-	RenderTarget _renderTarget;
-	CommandList _paintCommands;
-	CameraComponent _camera;
-	Material _material;
-
-	// half resolution ping-pong targets for the glow blur
-	Texture _glowA, _glowB;
-	RenderTarget _glowATarget, _glowBTarget;
-	Material _glowMaterial;
-
-	const int GlowBlurTaps = 6;
-
-	public VitalsCanvas()
-	{
-		Style.Position = PositionMode.Absolute;
-		Style.Width = Length.Percent( 100 );
-		Style.Height = Length.Percent( 100 );
-		Style.PointerEvents = PointerEvents.None;
-	}
-
 	public override void Tick()
 	{
-		base.Tick();
-
 		var step = RealTime.Delta / HideDuration;
 		_hideProgress = Hidden ? MathF.Min( _hideProgress + step, 1 ) : MathF.Max( _hideProgress - step, 0 );
-
-		PaintTarget();
 	}
 
-	void PaintTarget()
-	{
-		var width = (int)Box.Rect.Width;
-		var height = (int)Box.Rect.Height;
-		if ( width <= 0 || height <= 0 ) return;
-
-		if ( _target is null || _target.Width != width || _target.Height != height )
-		{
-			_target?.Dispose();
-			_target = Texture.CreateRenderTarget().WithSize( width, height ).WithFormat( ImageFormat.RGBA16161616F ).Create();
-			_renderTarget = RenderTarget.From( _target );
-		}
-
-		_paintCommands ??= new CommandList( "Vitals HUD" );
-
-		var camera = Game.ActiveScene?.Camera;
-		if ( camera != _camera )
-		{
-			_camera?.RemoveCommandList( _paintCommands );
-			camera?.AddCommandList( _paintCommands, Stage.AfterViewmodel );
-			_camera = camera;
-		}
-
-		_paintCommands.Reset();
-		_paintCommands.Attributes.Set( "UIGammaOutput", true );
-		_paintCommands.Attributes.Set( "UIFrameGrabEncoded", true );
-		_paintCommands.SetRenderTarget( _renderTarget );
-
-		using ( var painter = Painter.Begin( _paintCommands, new Rect( 0, 0, width, height ) ) )
-		{
-			painter.Clear( Color.Transparent );
-			_fontScale = ScaleToScreen;
-			Paint( painter );
-		}
-
-		BlurGlow( width, height );
-
-		_paintCommands.ClearRenderTarget();
-	}
-
-	void BlurGlow( int width, int height )
-	{
-		var glowWidth = Math.Max( 1, width / 2 );
-		var glowHeight = Math.Max( 1, height / 2 );
-
-		if ( _glowA is null || _glowA.Width != glowWidth || _glowA.Height != glowHeight )
-		{
-			_glowA?.Dispose();
-			_glowB?.Dispose();
-			_glowA = Texture.CreateRenderTarget().WithSize( glowWidth, glowHeight ).WithFormat( ImageFormat.RGBA16161616F ).Create();
-			_glowB = Texture.CreateRenderTarget().WithSize( glowWidth, glowHeight ).WithFormat( ImageFormat.RGBA16161616F ).Create();
-			_glowATarget = RenderTarget.From( _glowA );
-			_glowBTarget = RenderTarget.From( _glowB );
-		}
-
-		_glowMaterial ??= Material.FromShader( "shaders/hud_glow.shader" );
-
-		var step = MathF.Max( GlowRadius * ScaleToScreen * 0.5f / GlowBlurTaps, 0.5f );
-
-		_paintCommands.SetRenderTarget( _glowATarget );
-		_paintCommands.Attributes.Set( "GlowSource", _target );
-		_paintCommands.Attributes.Set( "GlowExtract", 1 );
-		_paintCommands.Attributes.Set( "GlowStep", new Vector2( step / glowWidth, 0 ) );
-		_paintCommands.Blit( _glowMaterial );
-
-		_paintCommands.SetRenderTarget( _glowBTarget );
-		_paintCommands.Attributes.Set( "GlowSource", _glowA );
-		_paintCommands.Attributes.Set( "GlowExtract", 0 );
-		_paintCommands.Attributes.Set( "GlowStep", new Vector2( 0, step / glowHeight ) );
-		_paintCommands.Blit( _glowMaterial );
-	}
-
-	void IPanelDraw.Draw( CommandList commands )
+	public override void GetCompositeRegions( List<Rect> regions )
 	{
 		var data = Data;
-		if ( _target is null || _glowB is null || (!data.ShowVitals && !data.ShowAmmo) ) return;
-
-		_material ??= Material.FromShader( "shaders/hud_composite.shader" );
-
-		var scale = ScaleToScreen;
-		var attributes = commands.Attributes;
-		attributes.Set( "HudTexture", _target );
-		attributes.Set( "HudInvSize", new Vector2( 1f / _target.Width, 1f / _target.Height ) );
-		attributes.Set( "GlowTexture", _glowB );
-		attributes.Set( "GlowStrength", GlowStrength );		attributes.Set( "ScanlineIntensity", ScanlineIntensity );
-		attributes.Set( "ScanlinePeriod", MathF.Max( 2, MathF.Round( ScanlinePeriod * scale ) ) );
-		attributes.Set( "ScanlineThickness", ScanlineThickness );
-		attributes.Set( "ScanlineSoftness", ScanlineSoftness );
-		attributes.SetCombo( "D_BLENDMODE", BlendMode.Normal );
-
-		// The glow is added onto what's behind the HUD
-		attributes.GrabFrameTexture( "FrameBufferCopyTexture", Graphics.DownsampleMethod.None );
-
-		// Everything the HUD draws sits inside the corner shades, so only those regions run the shader
-		var rect = Box.Rect;
-		var region = new Vector2( ShadeWidth, ShadeHeight ) * scale;
-		if ( data.ShowVitals ) commands.DrawQuad( new Rect( rect.Left, rect.Bottom - region.y, region.x, region.y ), _material, Color.White );
-		if ( data.ShowAmmo ) commands.DrawQuad( new Rect( rect.Right - region.x, rect.Bottom - region.y, region.x, region.y ), _material, Color.White );
+		var rect = CanvasRect;
+		var region = new Vector2( ShadeWidth, ShadeHeight ) * ScaleToScreen;
+		if ( data.ShowVitals ) regions.Add( new Rect( rect.Left, rect.Bottom - region.y, region.x, region.y ) );
+		if ( data.ShowAmmo ) regions.Add( new Rect( rect.Right - region.x, rect.Bottom - region.y, region.x, region.y ) );
 	}
 
-	public override void OnDeleted()
-	{
-		if ( _paintCommands is not null ) _camera?.RemoveCommandList( _paintCommands );
-		_camera = null;
-		_target?.Dispose();
-		_glowA?.Dispose();
-		_glowB?.Dispose();
-		_target = _glowA = _glowB = null;
-
-		base.OnDeleted();
-	}
-
-	void Paint( Painter painter )
+	public override void Paint( Painter painter )
 	{
 		var data = Data;
 		if ( !data.ShowVitals && !data.ShowAmmo ) return;
@@ -291,10 +129,10 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 			painter.Translate( -HideDistance * scale * hide, 0 );
 
 			var x = MathF.Floor( deadzone );
-			_sectionTint = SectionTint( IsLowHealth( data ) );
+			PaintTint = SectionTint( IsLowHealth( data ) );
 			x += DrawStat( painter, "HEALTH", _health, data.Health, 3, x, bottom, scale ) + MathF.Round( StatGap * scale );
 
-			_sectionTint = Tint;
+			PaintTint = Tint;
 			if ( data.Armour > 0 )
 				DrawStat( painter, "ARMOR", _armour, data.Armour, 3, x, bottom, scale );
 		}
@@ -303,13 +141,12 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 		{
 			using var _ = painter.Scope();
 			painter.Opacity = opacity;
-			_sectionTint = SectionTint( IsLowAmmo( data ) );
+			PaintTint = SectionTint( IsLowAmmo( data ) );
 
 			DrawShade( painter, new Vector2( bounds.Width, bounds.Height ), scale );
 
 			painter.Translate( HideDistance * scale * hide, 0 );
 
-			// Anchored on the right edge of the clip digits, so the block grows to the left as clips get bigger.
 			var value = data.UsesClips ? data.Clip : data.Reserve;
 			var slots = data.UsesClips ? DigitCount( data.ClipMaxSize ) : 2;
 			var digitsRight = MathF.Floor( bounds.Width - deadzone - ReserveSpace * scale );
@@ -319,7 +156,7 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 
 			if ( data.UsesClips || data.HasSecondary )
 			{
-				painter.TextStyle = new TextStyle( Font, ReserveFontSize * _fontScale, Brightened( Tinted( ReserveColor ), TextExponent ) ) { FontWeight = 700, Alignment = TextFlag.LeftBottom };
+				painter.TextStyle = new TextStyle( Font, ReserveFontSize * FontScale, Brightened( Tinted( ReserveColor ), TextExponent ) ) { FontWeight = 700, Alignment = TextFlag.LeftBottom };
 
 				var slashWidth = painter.MeasureText( "/" ).x;
 				var columnX = digitsRight + MathF.Round( ReserveGap * scale ) + slashWidth;
@@ -347,12 +184,9 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 
 	static Vector2 SlotSize( float scale ) => new( MathF.Ceiling( DigitWidth * scale ), MathF.Ceiling( DigitHeight * scale ) );
 
-	/// <summary>
-	/// A title with a row of digits under it, bottom-left anchored at (x, bottom). Returns the width it took.
-	/// </summary>
 	float DrawStat( Painter painter, string title, DigitCounter counter, int value, int slots, float x, float bottom, float scale )
 	{
-		painter.TextStyle = new TextStyle( Font, TitleFontSize * _fontScale, Brightened( Tinted( TitleColor ), TextExponent ) ) { FontWeight = 700 };
+		painter.TextStyle = new TextStyle( Font, TitleFontSize * FontScale, Brightened( Tinted( TitleColor ), TextExponent ) ) { FontWeight = 700 };
 		var titleHeight = MathF.Ceiling( painter.MeasureText( title ).y );
 
 		var slot = SlotSize( scale );
@@ -367,7 +201,7 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 	{
 		counter.Update( value, slots );
 
-		painter.TextStyle = new TextStyle( Font, DigitFontSize * _fontScale, Glowing( Tinted( DigitColor ) ) ) { FontWeight = 700, Alignment = TextFlag.Center };
+		painter.TextStyle = new TextStyle( Font, DigitFontSize * FontScale, Glowing( Tinted( DigitColor ) ) ) { FontWeight = 700, Alignment = TextFlag.Center };
 
 		var tint = Tinted( Color.White );
 
@@ -427,15 +261,6 @@ public sealed class VitalsCanvas : Panel, IPanelDraw
 		painter.Rect( new Rect( corner - radius, radius * 2 ) );
 	}
 
-	Color Glowing( Color color ) => Brightened( color, DigitExponent );
-
-	static Color Brightened( Color color, float exponent )
-	{
-		var intensity = MathF.Pow( 2, exponent );
-		return new Color( color.r * intensity, color.g * intensity, color.b * intensity, color.a );
-	}
-
-	Color Tinted( Color color ) => new( color.r * _sectionTint.r, color.g * _sectionTint.g, color.b * _sectionTint.b, color.a * _sectionTint.a );
 
 	Color SectionTint( bool warning )
 	{

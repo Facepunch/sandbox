@@ -76,7 +76,7 @@ PS
 		if ( !g_bUIFrameGrabEncoded || g_bUIInPanelLayer )
 			vBackdrop = SrgbLinearToGamma( vBackdrop );
 
-		// additive glow
+		// additive glow onto the frame
 		float3 vGlow = Glow( vHudUv );
 		float3 vResult = SrgbLinearToGamma( saturate( SrgbGammaToLinear( saturate( vBackdrop ) ) + vGlow ) );
 
@@ -86,11 +86,12 @@ PS
 		float flHudCoverage = saturate( vHud.a );
 		vResult = lerp( vResult, SrgbLinearToGamma( vHudColor ), flHudCoverage );
 
-		// scanlines
 		float3 vLinear = SrgbGammaToLinear( vResult );
-		vLinear += ScanlineMask( vPixel.y ) * saturate( ScanlineIntensity ) * ( vHudColor * flHudCoverage + vGlow );
 
-		// The UI layer blends in gamma space, so encode when it asks for that
+		// scanlines
+		// float3 vEmissive = 1.0 - exp( -max( vHud.rgb - 1.0, 0.0 ) );
+		vLinear += ScanlineMask( vPixel.y ) * saturate( ScanlineIntensity ) * ( vHudColor * flHudCoverage + vGlow ); // original is ( vHudColor * vEmissive * flHudCoverage + vGlow );
+
 		return UIEncodeOutput( float4( saturate( vLinear ), 1.0 ) );
 	}
 }

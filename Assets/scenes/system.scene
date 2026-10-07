@@ -35,6 +35,21 @@
           "TargetCamera": null,
           "Timing": "AfterPostProcess",
           "ZIndex": 100
+        },
+        {
+          "__type": "Sandbox.HudLayer",
+          "__guid": "14b7901f-78bd-4bdf-a260-847ffb944905",
+          "__enabled": true,
+          "Flags": 0,
+          "DigitExponent": 2.0170214,
+          "GlowRadius": 13.07234,
+          "GlowStrength": 0.04255319,
+          "ScanlineIntensity": 1,
+          "ScanlinePeriod": 3.8297873,
+          "ScanlineSoftness": 0.2212766,
+          "ScanlineThickness": 0.54468083,
+          "TextExponent": 0.25531915,
+          "Tint": "0.85581,0.85581,0.85581,1"
         }
       ],
       "Children": [
@@ -65,6 +80,7 @@
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
               "OnComponentUpdate": null,
+              "SelectionTimeout": 1.5,
               "SwitchSound": {
                 "Id": "b59ccf73-7d2a-4e75-889d-5d457befd977",
                 "Path": "sounds/ui/ui.weapon.switch.sound"
@@ -249,9 +265,6 @@
               "__guid": "ec513cb5-7e44-4efc-b71a-f1353f4a8443",
               "__enabled": true,
               "Flags": 0,
-              "DigitExponent": 1.2307693,
-              "GlowRadius": 22.76923,
-              "GlowStrength": 0.029555563,
               "LowAmmoFraction": 0.3,
               "LowHealthFraction": 0.2,
               "OnComponentDestroy": null,
@@ -260,12 +273,6 @@
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
               "OnComponentUpdate": null,
-              "ScanlineIntensity": 1,
-              "ScanlinePeriod": 4.136752,
-              "ScanlineSoftness": 0.017094018,
-              "ScanlineThickness": 0.47863248,
-              "TextExponent": 0.1,
-              "Tint": "1,1,1,1",
               "WarningColor": "0.72093,0.20426,0,1",
               "WarningPulseAmount": 0.1923077,
               "WarningPulseRate": 0.71794873

@@ -1,0 +1,72 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+<root>
+    <HudCanvas @ref="Canvas" />
+</root>
+
+@code
+{
+    /// <summary>
+    /// Colour multiplied into every HUD element
+    /// </summary>
+    [Property] public Color Tint { get; set; } = Color.White;
+
+    /// <summary>
+    /// HDR color exponent for highlighted HUD elements like digits or selected hotbar slots
+    /// </summary>
+    [Property, Group( "Effects" ), Range( 0, 6 )] public float DigitExponent { get; set; } = 3;
+
+    /// <summary>
+    /// HDR color exponent for regular HUD text
+    /// </summary>
+    [Property, Group( "Effects" ), Range( 0, 6 )] public float TextExponent { get; set; } = 1.25f;
+
+    [Property, Group( "Effects" ), Range( 0, 1 )] public float GlowStrength { get; set; } = 0.15f;
+
+    [Property, Group( "Effects" ), Range( 0, 48 )] public float GlowRadius { get; set; } = 16;
+
+    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineIntensity { get; set; } = 0.35f;
+
+    /// <summary>
+    /// Scanline frequency in pixels
+    /// </summary>
+    [Property, Group( "Effects" ), Range( 2, 12 )] public float ScanlinePeriod { get; set; } = 3;
+
+    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineThickness { get; set; } = 0.8f;
+
+    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineSoftness { get; set; } = 1f;
+
+    public HudCanvas Canvas { get; private set; }
+
+    /// <summary>
+    /// The scene's HUD layer, added next to the screen panel <paramref name="from"/> lives under if there isn't one yet
+    /// </summary>
+    public static HudLayer Find( Component from )
+    {
+        var layer = from.Scene.Get<HudLayer>();
+        if ( layer.IsValid() ) return layer;
+
+        var screen = from.Components.GetInAncestorsOrSelf<ScreenPanel>();
+        return screen.IsValid() ? screen.GameObject.Components.GetOrCreate<HudLayer>() : null;
+    }
+
+    protected override void OnUpdate()
+    {
+        if ( !Canvas.IsValid() ) return;
+
+        Canvas.Tint = Tint;
+        Canvas.DigitExponent = DigitExponent;
+        Canvas.TextExponent = TextExponent;
+        Canvas.GlowStrength = GlowStrength;
+        Canvas.GlowRadius = GlowRadius;
+        Canvas.ScanlineIntensity = ScanlineIntensity;
+        Canvas.ScanlinePeriod = ScanlinePeriod;
+        Canvas.ScanlineThickness = ScanlineThickness;
+        Canvas.ScanlineSoftness = ScanlineSoftness;
+    }
+
+    protected override int BuildHash() => 0;
+}

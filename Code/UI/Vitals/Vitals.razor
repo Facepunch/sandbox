@@ -8,16 +8,10 @@
 
 <root>
     <AmmoPickupFeed />
-    <VitalsCanvas @ref="Canvas" />
 </root>
 
 @code
 {
-    /// <summary>
-    /// Colour multiplied into every HUD element
-    /// </summary>
-    [Property] public Color Tint { get; set; } = Color.White;
-
     [Property, Group( "Warning" )] public Color WarningColor { get; set; } = new( 1f, 0.03f, 0.02f );
 
     [Property, Group( "Warning" ), Range( 0, 1 )] public float WarningPulseAmount { get; set; } = 0.35f;
@@ -28,35 +22,11 @@
 
     [Property, Group( "Warning" ), Range( 0, 1 )] public float LowAmmoFraction { get; set; } = 0.2f;
 
-    /// <summary>
-    /// HDR color exponent for digits in HUD
-    /// </summary>
-    [Property, Group( "Effects" ), Range( 0, 6 )] public float DigitExponent { get; set; } = 3;
-
-    /// <summary>
-    /// HDR color exponent for text in HUD
-    /// </summary>
-    [Property, Group( "Effects" ), Range( 0, 6 )] public float TextExponent { get; set; } = 1.25f;
-
-    [Property, Group( "Effects" ), Range( 0, 1 )] public float GlowStrength { get; set; } = 0.15f;
-
-    [Property, Group( "Effects" ), Range( 0, 48 )] public float GlowRadius { get; set; } = 16;
-
-    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineIntensity { get; set; } = 0.35f;
-
-    /// <summary>
-    /// Scanline frequency in pixels
-    /// </summary>
-    [Property, Group( "Effects" ), Range( 2, 12 )] public float ScanlinePeriod { get; set; } = 3;
-
-    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineThickness { get; set; } = 0.8f;
-
-    [Property, Group( "Effects" ), Range( 0, 1 )] public float ScanlineSoftness { get; set; } = 1f;
-
-    VitalsCanvas Canvas { get; set; }
-
     Player Player => Player.FindLocalPlayer();
     BaseSandboxWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseSandboxWeapon;
+
+    // The readouts are painted by the shared HUD layer (see HudLayer, VitalsSection)
+    VitalsSection Section => HudLayer.Find( this )?.Canvas?.Section<VitalsSection>();
 
     bool IsSpawnMenuOpen()
     {
@@ -64,29 +34,32 @@
         return host?.Panel?.HasClass( "open" ) ?? false;
     }
 
+    protected override void OnDisabled()
+    {
+        if ( Section is { } section ) section.Data = default;
+    }
+
     protected override void OnUpdate()
     {
-        if ( !Canvas.IsValid() || !Player.IsValid() ) return;
+        var section = Section;
+        if ( section is null ) return;
+
+        if ( !Player.IsValid() )
+        {
+            section.Data = default;
+            return;
+        }
 
         var weapon = Weapon;
         var showAmmo = weapon.IsValid() && weapon.UsesAmmo && Hud.IsVisible( HudElement.Ammo );
 
-        Canvas.Tint = Tint;
-        Canvas.WarningColor = WarningColor;
-        Canvas.WarningPulseAmount = WarningPulseAmount;
-        Canvas.WarningPulseRate = WarningPulseRate;
-        Canvas.LowHealthFraction = LowHealthFraction;
-        Canvas.LowAmmoFraction = LowAmmoFraction;
-        Canvas.DigitExponent = DigitExponent;
-        Canvas.TextExponent = TextExponent;
-        Canvas.GlowStrength = GlowStrength;
-        Canvas.GlowRadius = GlowRadius;
-        Canvas.ScanlineIntensity = ScanlineIntensity;
-        Canvas.ScanlinePeriod = ScanlinePeriod;
-        Canvas.ScanlineThickness = ScanlineThickness;
-        Canvas.ScanlineSoftness = ScanlineSoftness;
-        Canvas.Hidden = IsSpawnMenuOpen();
-        Canvas.Data = new VitalsCanvas.Readout
+        section.WarningColor = WarningColor;
+        section.WarningPulseAmount = WarningPulseAmount;
+        section.WarningPulseRate = WarningPulseRate;
+        section.LowHealthFraction = LowHealthFraction;
+        section.LowAmmoFraction = LowAmmoFraction;
+        section.Hidden = IsSpawnMenuOpen();
+        section.Data = new VitalsSection.Readout
         {
             ShowVitals = Hud.IsVisible( HudElement.Vitals ),
             Health = (int)Player.Health,

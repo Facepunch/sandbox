@@ -374,15 +374,13 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	}
 
 	[Rpc.Host]
-	internal static void GiveSpawnerWeaponAt( string type, string path, int slot, string data = null, string icon = null, string title = null )
+	internal static void GiveSpawnerWeapon( string type, string path, string data = null, string icon = null, string title = null )
 	{
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null ) return;
 
 		var inventory = player.GetComponent<PlayerInventory>();
 		if ( !inventory.IsValid() ) return;
-
-		if ( slot < 0 || slot >= inventory.MaxSlots ) return;
 
 		ISpawner s = type switch
 		{
@@ -396,20 +394,13 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		var loadout = player.GetComponent<PlayerLoadout>();
 
-		// If there's already a spawner weapon in this slot, just update
-		if ( inventory.GetSlot( slot ) is SpawnerWeapon existingSpawner )
+		var spawner = inventory.GetWeapon<SpawnerWeapon>();
+		if ( !spawner.IsValid() )
 		{
-			existingSpawner.SetSpawner( s );
-			inventory.SwitchWeapon( existingSpawner );
-			loadout?.SaveLoadout();
-			return;
+			inventory.Pickup( "weapons/spawner/spawner.prefab", false );
+			spawner = inventory.GetWeapon<SpawnerWeapon>();
 		}
 
-		// Slot is occupied by something else — don't replace it
-		if ( inventory.GetSlot( slot ).IsValid() ) return;
-
-		inventory.Pickup( "weapons/spawner/spawner.prefab", slot, false );
-		var spawner = inventory.GetSlot( slot ) as SpawnerWeapon;
 		if ( !spawner.IsValid() ) return;
 
 		spawner.SetSpawner( s );
