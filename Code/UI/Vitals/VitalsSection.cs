@@ -93,6 +93,8 @@ public sealed class VitalsSection : HudSection
 	readonly DigitCounter _armour = new();
 	readonly DigitCounter _ammo = new();
 
+	IntText _reserveText, _secondaryText;
+
 	float _hideProgress;
 
 	// 1 on the frame health drops, fading to 0 over DamageFlashDuration
@@ -190,11 +192,11 @@ public sealed class VitalsSection : HudSection
 				if ( data.UsesClips )
 				{
 					painter.Text( "/", new Rect( columnX - slashWidth, 0, bounds.Width, reserveBottom ) );
-					painter.Text( data.Reserve.ToString(), new Rect( columnX, 0, bounds.Width, reserveBottom ) );
+					painter.Text( _reserveText.Get( data.Reserve ), new Rect( columnX, 0, bounds.Width, reserveBottom ) );
 				}
 
 				if ( data.HasSecondary )
-					painter.Text( data.Secondary.ToString(), new Rect( columnX, 0, bounds.Width, reserveBottom - MathF.Round( SecondaryLineSpacing * scale ) ) );
+					painter.Text( _secondaryText.Get( data.Secondary ), new Rect( columnX, 0, bounds.Width, reserveBottom - MathF.Round( SecondaryLineSpacing * scale ) ) );
 			}
 
 			if ( data.UsesClips )
@@ -235,8 +237,7 @@ public sealed class VitalsSection : HudSection
 			var slot = new Rect( position + new Vector2( size.x * i, 0 ), size );
 			painter.Texture( _digitBackgrounds[counter.Variant( i )], slot, tint );
 
-			var c = counter.Char( i );
-			if ( c != ' ' ) painter.Text( c.ToString(), slot );
+			if ( counter.Glyph( i ) is { } glyph ) painter.Text( glyph, slot );
 		}
 
 		return size.x * counter.Length;
@@ -305,38 +306,84 @@ public sealed class VitalsSection : HudSection
 		return data.Clip <= data.ClipMaxSize * LowAmmoFraction;
 	}
 
-	static int DigitCount( int value ) => Math.Max( value, 0 ).ToString().Length;
+	static int DigitCount( int value )
+	{
+		var digits = 1;
+		for ( var rest = value; rest >= 10; rest /= 10 ) digits++;
+		return digits;
+	}
 
 	/// <summary>
 	/// Digit slots for one counter, each with one of the background variants picked randomly per digit
 	/// </summary>
 	sealed class DigitCounter
 	{
-		char[] _chars = Array.Empty<char>();
-		int[] _variants = Array.Empty<int>();
+		// one shared string per digit, so painting doesn't format anything per digit per frame
+		static readonly string[] DigitStrings = Enumerable.Range( 0, 10 ).Select( x => x.ToString() ).ToArray();
 
-		public int Length => _chars.Length;
-		public char Char( int i ) => _chars[i];
+		string[] _glyphs = Array.Empty<string>();
+		int[] _variants = Array.Empty<int>();
+		int _value = -1;
+		int _slots = -1;
+
+		public int Length => _glyphs.Length;
 		public int Variant( int i ) => _variants[i];
+
+		static int RandomVariant() => Random.Shared.Int( 0, DigitBackgroundPaths.Length - 1 );
+
+		/// <summary>
+		/// The digit shown in slot <paramref name="i"/>, or null if the slot is blank
+		/// </summary>
+		public string Glyph( int i ) => _glyphs[i];
 
 		public void Update( int value, int slots )
 		{
-			var text = Math.Max( value, 0 ).ToString().PadLeft( slots );
+			value = Math.Max( value, 0 );
+			if ( value == _value && slots == _slots ) return;
 
-			if ( text.Length != _chars.Length )
+			_value = value;
+			_slots = slots;
+
+			var length = Math.Max( slots, DigitCount( value ) );
+			if ( length != _glyphs.Length )
 			{
-				_chars = new char[text.Length];
-				_variants = new int[text.Length];
-				Array.Fill( _chars, '\0' );
+				_glyphs = new string[length];
+				_variants = new int[length];
+				for ( int i = 0; i < length; i++ )
+					_variants[i] = RandomVariant();
 			}
 
-			for ( int i = 0; i < text.Length; i++ )
+			var rest = value;
+			for ( int i = length - 1; i >= 0; i-- )
 			{
-				if ( _chars[i] == text[i] ) continue;
+				var glyph = rest > 0 || i == length - 1 ? DigitStrings[rest % 10] : null;
+				rest /= 10;
 
-				_chars[i] = text[i];
-				_variants[i] = Random.Shared.Int( 0, DigitBackgroundPaths.Length - 1 );
+				if ( _glyphs[i] == glyph ) continue;
+
+				_glyphs[i] = glyph;
+				_variants[i] = RandomVariant();
 			}
+		}
+	}
+
+	/// <summary>
+	/// Formats an int once per change instead of every frame
+	/// </summary>
+	struct IntText
+	{
+		int _value;
+		string _text;
+
+		public string Get( int value )
+		{
+			if ( _text is null || value != _value )
+			{
+				_value = value;
+				_text = value.ToString();
+			}
+
+			return _text;
 		}
 	}
 }

@@ -61,6 +61,7 @@ public sealed class InventorySection : HudSection
 
 	readonly Dictionary<string, Texture> _iconCache = new();
 	readonly List<List<BaseSandboxWeapon>> _columns = new();
+	readonly Dictionary<string, string> _nameLabels = new();
 
 	Rect _menuRect;
 	float _tileHeight, _gap;
@@ -83,6 +84,9 @@ public sealed class InventorySection : HudSection
 			_expandedBucket = Selected.IsValid() ? Selected.Slot : -1;
 			_shownSelection = Selected;
 		}
+
+		// the menu is about to slide in
+		if ( Open && _slide <= 0 ) _nameLabels.Clear();
 
 		var dt = RealTime.Delta;
 		_slide = Approach( _slide, Open ? 1 : 0, dt / SlideDuration );
@@ -220,7 +224,7 @@ public sealed class InventorySection : HudSection
 
 			var em = IndexDigitSize / 1.25f * FontScale;
 			painter.TextStyle = new TextStyle( IndexFont, em, Tinted( highlighted ? HighlightFillTop : FillTop ).WithAlpha( 1 ) ) { Alignment = TextFlag.Center };
-			painter.Text( (index + 1).ToString(), new Rect( box.Left + em * 0.125f, box.Top, box.Width, box.Height ) );
+			painter.Text( IndexLabel( index ), new Rect( box.Left + em * 0.125f, box.Top, box.Width, box.Height ) );
 		}
 
 		if ( !weapon.IsValid() || contentAlpha <= 0 ) return;
@@ -242,7 +246,7 @@ public sealed class InventorySection : HudSection
 		}
 
 		painter.TextStyle = new TextStyle( Font, NameFontSize * FontScale, nameColor ) { FontWeight = 700, LetterSpacing = NameFontSize * NameLetterSpacing * FontScale, Alignment = TextFlag.CenterHorizontally | TextFlag.Bottom };
-		painter.Text( Localize( weapon.DisplayName ).ToUpperInvariant(), new Rect( rect.Left, rect.Top, rect.Width, rect.Height - MathF.Round( NameBottom * scale ) ) );
+		painter.Text( NameLabel( weapon ), new Rect( rect.Left, rect.Top, rect.Width, rect.Height - MathF.Round( NameBottom * scale ) ) );
 	}
 
 	/// <summary>
@@ -277,6 +281,23 @@ public sealed class InventorySection : HudSection
 	}
 
 	static string Localize( string text ) => !string.IsNullOrEmpty( text ) && text.StartsWith( '#' ) ? Game.Language.GetPhrase( text[1..] ) : text ?? "";
+
+	// label strings are built once instead of every frame
+	static readonly string[] IndexLabels = Enumerable.Range( 1, 16 ).Select( x => x.ToString() ).ToArray();
+
+	static string IndexLabel( int index ) => index < IndexLabels.Length ? IndexLabels[index] : (index + 1).ToString();
+
+	/// <summary>
+	/// Cached uppercase display name for the inventory weapon
+	/// </summary>
+	string NameLabel( BaseSandboxWeapon weapon )
+	{
+		var raw = weapon.DisplayName ?? "";
+		if ( !_nameLabels.TryGetValue( raw, out var label ) )
+			_nameLabels[raw] = label = Localize( raw ).ToUpperInvariant();
+
+		return label;
+	}
 
 	public override void GetCompositeRegions( List<Rect> regions )
 	{
