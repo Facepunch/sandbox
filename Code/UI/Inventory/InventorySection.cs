@@ -99,7 +99,8 @@ public sealed class InventorySection : HudSection
 			_contentFade[i] = expanded && _expand[i] >= 1 ? Approach( _contentFade[i], 1, dt / ContentFadeDuration ) : 0;
 		}
 
-		RefreshColumns();
+		// nothing is drawn while the menu is shut, so skip walking the inventory for it
+		if ( Open || _slide > 0 ) RefreshColumns();
 
 		UpdateLayout();
 	}
