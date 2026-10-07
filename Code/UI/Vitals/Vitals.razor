@@ -30,22 +30,16 @@
     BaseSandboxWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseSandboxWeapon;
 
     // The readouts are painted by the shared HUD layer (see HudLayer, VitalsSection)
-    VitalsSection Section => HudLayer.Find( this )?.Canvas?.Section<VitalsSection>();
-
-    bool IsSpawnMenuOpen()
-    {
-        var host = Game.ActiveScene.Get<SpawnMenuHost>();
-        return host?.Panel?.HasClass( "open" ) ?? false;
-    }
+    VitalsSection section;
 
     protected override void OnDisabled()
     {
-        if ( HudLayer.Find( this, false )?.Canvas?.Section<VitalsSection>( false ) is { } section ) section.Data = default;
+        if ( section is not null ) section.Data = default;
     }
 
     protected override void OnUpdate()
     {
-        var section = Section;
+        section = HudLayer.FindSection( this, section );
         if ( section is null ) return;
 
         if ( !Player.IsValid() )
@@ -64,7 +58,7 @@
         section.LowAmmoFraction = LowAmmoFraction;
         section.DamageFlashColor = DamageFlashColor;
         section.DamageFlashDuration = DamageFlashDuration;
-        section.Hidden = IsSpawnMenuOpen();
+        section.Hidden = SpawnMenuHost.IsOpen;
         section.Data = new VitalsSection.Readout
         {
             ShowVitals = Hud.IsVisible( HudElement.Vitals ),

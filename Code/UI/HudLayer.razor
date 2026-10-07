@@ -53,5 +53,11 @@
         return screen.IsValid() ? screen.GameObject.Components.GetOrCreate<HudLayer>() : null;
     }
 
+    /// <summary>
+    /// A section of the scene's HUD layer. Hand back the previous result to skip the scene lookup while its canvas is still alive
+    /// </summary>
+    public static T FindSection<T>( Component from, T cached ) where T : HudSection, new()
+        => cached?.Canvas is { } canvas && canvas.IsValid() ? cached : Find( from )?.Canvas?.Section<T>();
+
     protected override int BuildHash() => 0;
 }

@@ -45,11 +45,11 @@ PS
 	RenderState( CullMode, NONE );
 	RenderState( DepthWriteEnable, false );
 
+	// HUD target is gamma encoded and premultiplied, returns the straight clamped gamma colour and the coverage
 	float4 SampleHud( float2 uv )
 	{
 		float4 s = g_tHud.SampleLevel( g_sTrilinearBorder, uv, 0 );
-		float3 c = s.a > 0.00001 ? SrgbGammaToLinear( s.rgb / s.a ) : 0;
-		return float4( c, s.a );
+		return s.a > 0.00001 ? float4( saturate( s.rgb / s.a ), saturate( s.a ) ) : 0;
 	}
 
 	float3 Glow( float2 uv )
@@ -72,25 +72,26 @@ PS
 
 		float2 vNdc = i.vPositionSs.xy / i.vPositionSs.w;
 		float2 vFrameUv = ( float2( vNdc.x, -vNdc.y ) * 0.5 + 0.5 ) * g_vFrameRect.zw;
-		float3 vBackdrop = g_tFrame.SampleLevel( g_sTrilinearClamp, vFrameUv, 0 ).rgb;
-		if ( !g_bUIFrameGrabEncoded || g_bUIInPanelLayer )
-			vBackdrop = SrgbLinearToGamma( vBackdrop );
+		float3 vBackdrop = saturate( g_tFrame.SampleLevel( g_sTrilinearClamp, vFrameUv, 0 ).rgb );
+		if ( g_bUIFrameGrabEncoded && !g_bUIInPanelLayer )
+			vBackdrop = SrgbGammaToLinear( vBackdrop );
 
-		// additive glow onto the frame
+		// additive glow onto the frame, in linear space
 		float3 vGlow = Glow( vHudUv );
-		float3 vResult = SrgbLinearToGamma( saturate( SrgbGammaToLinear( saturate( vBackdrop ) ) + vGlow ) );
+		float3 vLinear = saturate( vBackdrop + vGlow );
 
 		// HUD
 		float4 vHud = SampleHud( vHudUv );
-		float3 vHudColor = saturate( vHud.rgb );
-		float flHudCoverage = saturate( vHud.a );
-		vResult = lerp( vResult, SrgbLinearToGamma( vHudColor ), flHudCoverage );
-
-		float3 vLinear = SrgbGammaToLinear( vResult );
+		float3 vHudLinear = 0;
+		if ( vHud.a > 0 )
+		{
+			// blended in gamma space like the rest of the UI
+			vLinear = SrgbGammaToLinear( lerp( SrgbLinearToGamma( vLinear ), vHud.rgb, vHud.a ) );
+			vHudLinear = SrgbGammaToLinear( vHud.rgb );
+		}
 
 		// scanlines
-		// float3 vEmissive = 1.0 - exp( -max( vHud.rgb - 1.0, 0.0 ) );
-		vLinear += ScanlineMask( vPixel.y ) * saturate( ScanlineIntensity ) * ( vHudColor * flHudCoverage + vGlow ); // original is ( vHudColor * vEmissive * flHudCoverage + vGlow );
+		vLinear += ScanlineMask( vPixel.y ) * saturate( ScanlineIntensity ) * ( vHudLinear * vHud.a + vGlow );
 
 		return UIEncodeOutput( float4( saturate( vLinear ), 1.0 ) );
 	}

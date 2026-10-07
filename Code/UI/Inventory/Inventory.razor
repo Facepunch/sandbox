@@ -21,7 +21,7 @@
     /// </summary>
     [Property] public float SelectionTimeout { get; set; } = 1.5f;
 
-    InventorySection Section => HudLayer.Find( this )?.Canvas?.Section<InventorySection>();
+    InventorySection section;
 
     PlayerInventory inventory;
     BaseSandboxWeapon prev;
@@ -38,21 +38,18 @@
         StateHasChanged();
     }
 
-    bool IsSpawnMenuOpen()
-    {
-        var host = Game.ActiveScene.Get<SpawnMenuHost>();
-        return host?.Panel?.HasClass( "open" ) ?? false;
-    }
-
     protected override void OnUpdate()
     {
-        inventory = Game.ActiveScene.GetAllComponents<PlayerInventory>().Where( x => x.Network.IsOwner ).FirstOrDefault();
+        // only search the scene when the inventory we have is gone or stopped being ours
+        if ( !inventory.IsValid() || !inventory.Network.IsOwner )
+            inventory = Game.ActiveScene.GetAllComponents<PlayerInventory>().FirstOrDefault( x => x.Network.IsOwner );
 
         // the highlighted weapon was dropped or removed
         if ( selected is not null && (!selected.IsValid() || selected.Inventory != inventory) )
             selected = null;
 
-        if ( Section is not { } section ) return;
+        section = HudLayer.FindSection( this, section );
+        if ( section is null ) return;
 
         // the menu only shows while picking a weapon
         section.Inventory = inventory;
@@ -63,7 +60,7 @@
     protected override void OnDisabled()
     {
         selected = null;
-        if ( HudLayer.Find( this, false )?.Canvas?.Section<InventorySection>( false ) is { } section ) section.Open = false;
+        if ( section is not null ) section.Open = false;
     }
 
     public void HandleInput()
@@ -71,7 +68,7 @@
         if ( inventory is null )
             return;
 
-        if ( IsSpawnMenuOpen() )
+        if ( SpawnMenuHost.IsOpen )
         {
             selected = null;
             return;
@@ -120,7 +117,7 @@
     /// </summary>
     public void HandleScrollInput()
     {
-        if ( inventory is null || IsSpawnMenuOpen() )
+        if ( inventory is null || SpawnMenuHost.IsOpen )
             return;
 
         Step( -(int)Input.MouseWheel.y );
