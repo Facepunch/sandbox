@@ -17,6 +17,11 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 	/// </summary>
 	public virtual bool WantsHideHud => false;
 
+	/// <summary>
+	/// Which parts of the HUD <see cref="WantsHideHud"/> hides. Everything by default.
+	/// </summary>
+	public virtual HudElement HiddenHudElements => HudElement.All;
+
 	// WeaponModel resolution (view model when drawn, else world model, else own hierarchy) comes from
 	// the engine BaseCombatWeapon.
 

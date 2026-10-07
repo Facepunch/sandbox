@@ -17,7 +17,7 @@
     [Property, Group( "Sound" )] public SoundEvent SwitchSound { get; set; }
 
     /// <summary>
-    /// Seconds after the last selection change before the highlighted weapon is switched to on its own
+    /// Seconds after the last selection change before the menu closes on its own, keeping the current weapon
     /// </summary>
     [Property] public float SelectionTimeout { get; set; } = 1.5f;
 
@@ -111,7 +111,7 @@
         }
         else if ( sinceSelectionChanged > SelectionTimeout )
         {
-            Confirm();
+            selected = null;
         }
     }
 

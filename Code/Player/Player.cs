@@ -73,8 +73,13 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	/// </summary>
 	void IHudEvents.OnHudVisibility( ref HudElement hidden )
 	{
-		if ( IsLocalPlayer && WantsHideHud )
-			hidden = HudElement.All;
+		if ( !IsLocalPlayer || !WantsHideHud )
+			return;
+
+		var freeCam = Scene.Get<FreeCamGameObjectSystem>();
+		var weapon = GetComponent<PlayerInventory>()?.ActiveWeapon;
+
+		hidden |= !freeCam.IsActive && weapon.IsValid() ? weapon.HiddenHudElements : HudElement.All;
 	}
 
 	protected override void OnStart()
