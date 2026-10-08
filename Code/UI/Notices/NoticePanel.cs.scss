@@ -1,37 +1,108 @@
 @import "/UI/Theme.scss";
 
+$notice-bg: rgba( 38, 38, 38, 0.7 );
+$notice-text: rgb( 230, 230, 230 );
+
 NoticePanel
 {
-	position: absolute;
-	left: 100%;
-	backdrop-filter: blur( 4px ) brightness( 0.4 );
-	padding: 0.75rem 1.5rem;
-	border-radius: 10px;
+	flex-direction: column;
+	width: 513px;
+	background-color: $notice-bg;
 	font-family: $body-font;
-	font-weight: 600;
-	font-size: 18px;
-	color: $color-text;
-	gap: 10px;
-	justify-content: center;
-	align-items: center;
+	font-weight: 500;
+	font-size: 16px;
+	color: $notice-text;
 	overflow: hidden;
+	animation: notice-in 0.3s ease-in-out;
+
+	&.leaving
+	{
+		animation: notice-out 0.3s ease-in-out forwards;
+	}
+
+	.glow
+	{
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 3px;
+		width: 50%;
+		background-image: linear-gradient( to right, rgba( 255, 255, 255, 0.2 ), rgba( 255, 255, 255, 0 ) );
+	}
+
+	.body
+	{
+		flex-direction: row;
+		align-items: center;
+		gap: 13px;
+		padding: 9px 13px;
+	}
 
 	.icon
 	{
-		font-size: 24px;
+		flex-shrink: 0;
+		font-size: 25px;
+		position: relative;
+		top: 2px; 
+		line-height: 15px;
 		font-family: "Material Icons";
 	}
 
-	&.progress::after
+	.text
 	{
-		content: "";
-		position: absolute;
-		left: 0;
-		bottom: 0;
+		flex-grow: 1;
+		flex-shrink: 1;
+		font-size: 16px;
+		font-weight: 600;
+		line-height: 15px;
+	}
+
+	.bar
+	{
 		height: 3px;
+		flex-shrink: 0;
+		background-color: rgba( black, 0.35 );
+		overflow: hidden;
+	}
+
+	.fill
+	{
+		height: 100%;
+	}
+
+	&.manual .fill
+	{
 		width: 100%;
-		background-color: #08f;
+		background-color: rgb( 70, 140, 220 );
 		animation: progress-sweep 2s ease-in-out infinite;
+	}
+}
+
+$slide-distance: 600px;
+
+@keyframes notice-in
+{
+	from
+	{
+		transform: translateX( $slide-distance );
+	}
+
+	to
+	{
+		transform: translateX( 0px );
+	}
+}
+
+@keyframes notice-out
+{
+	from
+	{
+		transform: translateX( 0px );
+	}
+
+	to
+	{
+		transform: translateX( $slide-distance );
 	}
 }
 
@@ -60,11 +131,4 @@ NoticePanel
 		transform: translateX( 100% );
 		opacity: 0;
 	}
-}
-
-span.key
-{
-	font-weight: 500;
-	color: #fff;
-	background-color: #08f;
 }
