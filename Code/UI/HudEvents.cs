@@ -67,6 +67,11 @@ public enum HudElement
 	/// </summary>
 	AmmoPickups = 1 << 11,
 
+	/// <summary>
+	/// The chat box and the recent messages.
+	/// </summary>
+	Chat = 1 << 12,
+
 	All = ~0,
 }
 

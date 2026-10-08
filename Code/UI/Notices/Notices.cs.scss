@@ -1,8 +1,10 @@
+@import "/UI/Theme.scss";
+
 Notices
 {
 	position: absolute;
 	right: 45px;
-	bottom: 140px;
+	bottom: $hud-stack-bottom;
 	flex-direction: column;
 	align-items: flex-end;
 	gap: 8px;
