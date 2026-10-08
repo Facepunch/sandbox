@@ -1,4 +1,4 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @inherits PanelComponent
 @namespace Sandbox
@@ -6,46 +6,51 @@
 @if ( !Hud.IsVisible( HudElement.ToolInfo ) )
     return;
 
-@if ( !HasAnyAction )
+@if ( Info is null )
     return;
 
 <root>
- <div class="name">
-  <span class="icon">@InfoIcon</span>
-  <Label Tokenize=@false Text=@LocalizedText.Resolve( Info?.Name ) />
- </div>
+ <div class="header">
+  <div class="tint" style=@TintStyle />
 
- <div class="panel">
+  <div class="grid-mask">
+   <div class="grid" />
+  </div>
 
-  @if ( !string.IsNullOrEmpty( Info?.Description ) )
+  <Label class="title" Tokenize=@false Text=@LocalizedText.Resolve( Info.Name ) />
+
+  @if ( !string.IsNullOrEmpty( Info.Description ) )
   {
    <Label class="description" Tokenize=@false Text=@LocalizedText.Resolve( Info.Description ) />
   }
+ </div>
 
-  <div class="actions">
-   @if (!string.IsNullOrEmpty(Info?.PrimaryAction))
+ @if ( HasAnyAction )
+ {
+  <div class="hints">
+   @if ( !string.IsNullOrEmpty( Info.PrimaryAction ) )
    {
-    <div class="action">
+    <div class="hint">
      <InputHint Action="attack1" class="key" />
      <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.PrimaryAction ) />
     </div>
    }
-   @if (!string.IsNullOrEmpty(Info?.SecondaryAction))
+   @if ( !string.IsNullOrEmpty( Info.SecondaryAction ) )
    {
-    <div class="action">
+    <div class="hint">
      <InputHint Action="attack2" class="key" />
      <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.SecondaryAction ) />
     </div>
    }
-   @if (!string.IsNullOrEmpty(Info?.ReloadAction))
+   @if ( !string.IsNullOrEmpty( Info.ReloadAction ) )
    {
-    <div class="action">
+    <div class="hint">
      <InputHint Action="reload" class="key" />
      <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.ReloadAction ) />
     </div>
    }
   </div>
- </div>
+ }
 </root>
 
 @code
@@ -55,10 +60,10 @@
 		get
 		{
 			var inv = Player?.GetComponent<PlayerInventory>();
-			
+
 			if ( !inv.IsValid() || !inv.ActiveWeapon.IsValid() )
 				return null;
-			
+
 			if ( inv.ActiveWeapon.GetComponentInChildren<IToolInfo>() is { IsValid: true } toolInfo )
 				return toolInfo;
 
@@ -69,16 +74,29 @@
 	Player Player => Player.FindLocalPlayer();
 
 	IToolInfo Info => CurrentToolInfo;
-	string InfoIcon => Info is null ? "build" : Game.TypeLibrary.GetType( Info.GetType() )?.Icon ?? "build";
 
 	bool HasAnyAction => !string.IsNullOrEmpty( Info?.PrimaryAction )
 	                     || !string.IsNullOrEmpty( Info?.SecondaryAction )
 	                     || !string.IsNullOrEmpty( Info?.ReloadAction );
+
+	const float TintAlpha = 0.6f;
+
+	Color HudTint => ( HudLayer.Find( this, false )?.Tint ?? new Color( 0.43f, 0.74f, 1f ) ) * 0.75f;
+
+	string TintStyle
+	{
+		get
+		{
+			var c = HudTint;
+			var rgb = $"{(int)(c.r * 255)}, {(int)(c.g * 255)}, {(int)(c.b * 255)}";
+			return $"background-image: linear-gradient( to right, rgba( {rgb}, {TintAlpha} ), rgba( {rgb}, 0 ) );";
+		}
+	}
 
 	protected override void OnUpdate()
 	{
 		SetClass( "visible", CurrentToolInfo is not null );
 	}
 
-	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, InfoIcon, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Hud.IsVisible( HudElement.ToolInfo ), Game.Language.SelectedCode );
+	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Hud.IsVisible( HudElement.ToolInfo ), Game.Language.SelectedCode, HudTint );
 }
