@@ -99,12 +99,15 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 	private void RequestClientLoadout()
 	{
 		var json = LocalData.Get<string>( "hotbar" );
-		if ( !string.IsNullOrEmpty( json ) )
+		if ( string.IsNullOrEmpty( json ) )
+			HostGiveStarterItems();
+		else
 			HostRestoreLoadoutFromClient( json );
 	}
 
 	/// <summary>
 	/// Clears the current inventory, waits a frame, then gives the loadout from JSON and equips the best weapon.
+	/// A layout that gives back nothing falls back to the starter items.
 	/// </summary>
 	private async Task ReplaceLoadoutAsync( string json )
 	{
@@ -116,9 +119,26 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 		await EnsureMountedAsync( json );
 		GiveLoadoutWeapons( json );
 
+		GiveStarterItemsIfEmpty();
+
 		var best = Inventory.GetBestWeapon();
 		if ( best.IsValid() )
 			Inventory.SwitchWeapon( best );
+	}
+
+	private void GiveStarterItemsIfEmpty()
+	{
+		if ( !Networking.IsHost || Inventory.Weapons.Any() ) return;
+
+		Inventory.GiveLoadout();
+	}
+
+	[Rpc.Host]
+	private void HostGiveStarterItems()
+	{
+		if ( Rpc.Caller != Player.Network.Owner ) return;
+
+		GiveStarterItemsIfEmpty();
 	}
 
 	[Rpc.Host]
@@ -137,25 +157,24 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 
 	private async Task RestoreOnSpawnAsync()
 	{
-		if ( Player.IsLocalPlayer )
-		{
-			var json = LocalData.Get<string>( "hotbar" );
-			if ( !string.IsNullOrEmpty( json ) )
-			{
-				await ReplaceLoadoutAsync( json );
-				return;
-			}
-		}
-		else
+		if ( !Player.IsLocalPlayer )
 		{
 			RequestClientLoadout();
 			return;
 		}
 
-		Inventory.GiveLoadout();
-		var bestWeapon = Inventory.GetBestWeapon();
-		if ( bestWeapon.IsValid() )
-			Inventory.SwitchWeapon( bestWeapon );
+		var json = LocalData.Get<string>( "hotbar" );
+		if ( !string.IsNullOrEmpty( json ) )
+		{
+			await ReplaceLoadoutAsync( json );
+			return;
+		}
+
+		GiveStarterItemsIfEmpty();
+
+		var best = Inventory.GetBestWeapon();
+		if ( best.IsValid() )
+			Inventory.SwitchWeapon( best );
 	}
 
 	void Local.IPlayerEvents.OnDied( PlayerDiedParams args )
