@@ -81,7 +81,7 @@
 
 	const float TintAlpha = 0.6f;
 
-	Color HudTint => ( HudLayer.Find( this, false )?.Tint ?? new Color( 0.43f, 0.74f, 1f ) ) * 0.75f;
+	Color HudTint => ( HudLayer.Find( this, false )?.Tint ?? HudLayer.DefaultTint ) * 0.75f;
 
 	string TintStyle
 	{

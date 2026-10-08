@@ -24,7 +24,7 @@ public sealed class ChatBox : PanelComponent, IChatEvent
 	/// <summary>
 	/// The local player's HUD colour, shared with the lines
 	/// </summary>
-	public static Color Tint { get; private set; } = new Color( 0.43f, 0.74f, 1f );
+	public static Color Tint { get; private set; } = HudLayer.DefaultTint;
 
 	Panel _box;
 	Panel _history;

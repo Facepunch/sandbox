@@ -21,6 +21,16 @@ public partial class Notices : PanelComponent
 	public static NoticePanel AddNotice( string icon, Color iconColor, string text, float seconds = 5 ) => Create( icon, iconColor, text, seconds );
 
 	/// <summary>
+	/// The colour of a notice's icon, and its timer bar, unless it is given another
+	/// </summary>
+	public static readonly Color DefaultColor = new Color( 0.302f, 0.565f, 0.988f ); // 4D90FC
+
+	/// <summary>
+	/// Displays an icon in the default colour and already formatted text.
+	/// </summary>
+	public static NoticePanel AddNotice( string icon, string text, float seconds = 5 ) => Create( icon, DefaultColor, text, seconds );
+
+	/// <summary>
 	/// Every notice is made here, so anything a notice can be configured with (icon, colour, duration) goes through this one place.
 	/// </summary>
 	static NoticePanel Create( string icon, Color iconColor, string text, float seconds )

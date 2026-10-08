@@ -46,7 +46,7 @@ public class Hints : GameObjectSystem<Hints>
 
 		var phrase = Game.Language.GetPhrase( $"hint.{next.Name}", InputTokens() );
 
-		Notices.AddNotice( next.Icon, Color.White, phrase, 5 );
+		Notices.AddNotice( next.Icon, phrase, 5 );
 	}
 
 	// Hint phrases write the key as {input:ActionName}. The phrase system treats that as a variable called "input:ActionName", so

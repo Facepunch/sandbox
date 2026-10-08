@@ -20,16 +20,6 @@ NoticePanel
 		animation: notice-out 0.3s ease-in-out forwards;
 	}
 
-	.glow
-	{
-		position: absolute;
-		left: 0;
-		top: 0;
-		bottom: 3px;
-		width: 50%;
-		background-image: linear-gradient( to right, rgba( 255, 255, 255, 0.2 ), rgba( 255, 255, 255, 0 ) );
-	}
-
 	.body
 	{
 		flex-direction: row;
@@ -59,21 +49,22 @@ NoticePanel
 
 	.bar
 	{
-		height: 3px;
+		height: 2px;
 		flex-shrink: 0;
 		background-color: rgba( black, 0.35 );
 		overflow: hidden;
 	}
 
+	// remaining time, anchored left so it drains right to left. Width is set from code
 	.fill
 	{
 		height: 100%;
+		background-color: rgb( 77, 144, 252 ); // #4D90FC, the default notice colour
 	}
 
 	&.manual .fill
 	{
 		width: 100%;
-		background-color: rgb( 70, 140, 220 );
 		animation: progress-sweep 2s ease-in-out infinite;
 	}
 }

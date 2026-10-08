@@ -43,7 +43,13 @@ public sealed class VitalsSection : HudSection
 
 	const float TitleFontSize = 20;
 	const float TitleOverlap = 10;
-	const float StatGap = 44;
+
+	// Settings for the box around the counters, and the spacing between them
+	const float BoxPadding = 15;
+	const float BoxSidePadding = BoxPadding * 2.5f;
+	const float BoxGap = 10;
+	const float TitleTopInset = 5;
+	const float DigitBottomInset = 14;
 
 	const float ReserveFontSize = 24;
 	const float ReserveGap = 14;
@@ -134,6 +140,13 @@ public sealed class VitalsSection : HudSection
 		var deadzone = Screen.Width * 0.02f;
 		var bottom = MathF.Floor( bounds.Height - deadzone );
 
+		var pad = MathF.Round( BoxPadding * scale );
+		var sidePad = MathF.Round( BoxSidePadding * scale );
+		var boxGap = MathF.Round( BoxGap * scale );
+
+		// the boxes end at the margin, and the digits end a padding above it
+		var textBottom = bottom - pad + MathF.Round( DigitBottomInset * scale );
+
 		if ( data.ShowVitals )
 		{
 			using var _ = painter.Scope();
@@ -143,13 +156,13 @@ public sealed class VitalsSection : HudSection
 
 			painter.Translate( -HideDistance * scale * hide, 0 );
 
-			var x = MathF.Floor( deadzone );
+			var x = MathF.Floor( deadzone ) + sidePad;
 			PaintTint = DamageFlashed( SectionTint( IsLowHealth( data ) ) );
-			x += DrawStat( painter, "HEALTH", _health, data.Health, 3, x, bottom, scale ) + MathF.Round( StatGap * scale );
+			x += DrawStat( painter, "HEALTH", _health, data.Health, 3, x, textBottom, scale, sidePad, pad, bottom ) + sidePad + boxGap + sidePad;
 
 			PaintTint = Tint;
 			if ( data.Armour > 0 )
-				DrawStat( painter, "ARMOR", _armour, data.Armour, 3, x, bottom, scale );
+				DrawStat( painter, "ARMOR", _armour, data.Armour, 3, x, textBottom, scale, sidePad, pad, bottom );
 		}
 
 		if ( data.ShowAmmo )
@@ -164,10 +177,17 @@ public sealed class VitalsSection : HudSection
 
 			var value = data.UsesClips ? data.Clip : data.Reserve;
 			var slots = data.UsesClips ? DigitCount( data.ClipMaxSize ) : 2;
-			var digitsRight = MathF.Floor( bounds.Width - deadzone - ReserveSpace * scale );
+			var hasReserve = data.UsesClips || data.HasSecondary;
+			var digitsRight = MathF.Floor( bounds.Width - deadzone - sidePad - (hasReserve ? ReserveSpace * scale : 0) );
 			var statX = digitsRight - slots * SlotSize( scale ).x;
 
-			DrawStat( painter, "AMMO", _ammo, value, slots, statX, bottom, scale );
+			// one box around the whole counter: clip bar, digits and the reserve beside them
+			var contentLeft = data.UsesClips ? statX - MathF.Round( ClipBarGap * scale ) - MathF.Round( ClipBarWidth * scale ) : statX;
+			var boxTop = StatTop( painter, "AMMO", textBottom, scale ) + MathF.Round( TitleTopInset * scale ) - pad;
+			var boxRight = MathF.Floor( bounds.Width - deadzone );
+			DrawBox( painter, new Rect( contentLeft - sidePad, boxTop, boxRight - (contentLeft - sidePad), bottom - boxTop ), scale );
+
+			DrawStat( painter, "AMMO", _ammo, value, slots, statX, textBottom, scale );
 
 			if ( data.UsesClips || data.HasSecondary )
 			{
@@ -175,7 +195,7 @@ public sealed class VitalsSection : HudSection
 
 				var slashWidth = painter.MeasureText( "/" ).x;
 				var columnX = digitsRight + MathF.Round( ReserveGap * scale ) + slashWidth;
-				var reserveBottom = bottom - MathF.Round( ReserveBottom * scale );
+				var reserveBottom = textBottom - MathF.Round( ReserveBottom * scale );
 
 				if ( data.UsesClips )
 				{
@@ -190,7 +210,7 @@ public sealed class VitalsSection : HudSection
 			if ( data.UsesClips )
 			{
 				var barSize = new Vector2( MathF.Round( ClipBarWidth * scale ), MathF.Round( ClipBarHeight * scale ) );
-				var barBottom = bottom - MathF.Round( ClipBarBottom * scale );
+				var barBottom = textBottom - MathF.Round( ClipBarBottom * scale );
 				var barRight = statX - MathF.Round( ClipBarGap * scale );
 				DrawClipBar( painter, new Rect( barRight - barSize.x, barBottom - barSize.y, barSize.x, barSize.y ), data.Clip, data.ClipMaxSize, scale );
 			}
@@ -199,18 +219,51 @@ public sealed class VitalsSection : HudSection
 
 	static Vector2 SlotSize( float scale ) => new( MathF.Ceiling( DigitWidth * scale ), MathF.Ceiling( DigitHeight * scale ) );
 
-	float DrawStat( Painter painter, string title, DigitCounter counter, int value, int slots, float x, float bottom, float scale )
+	void SetTitleStyle( Painter painter )
 	{
 		painter.TextStyle = new TextStyle( Font, TitleFontSize * ScaleToScreen, Brightened( Tinted( TitleColor ), TextGain ) ) { FontWeight = 700 };
+	}
+
+	/// <summary>
+	/// Where the title of a counter whose digits end at <paramref name="bottom"/> starts
+	/// </summary>
+	float StatTop( Painter painter, string title, float bottom, float scale )
+	{
+		SetTitleStyle( painter );
 		var titleHeight = MathF.Ceiling( painter.MeasureText( title ).y );
+
+		return bottom - MathF.Ceiling( titleHeight + SlotSize( scale ).y - TitleOverlap * scale );
+	}
+
+	/// <summary>
+	/// Paints a counter, and when <paramref name="boxBottom"/> is given a box around it. Returns how wide the counter is.
+	/// </summary>
+	float DrawStat( Painter painter, string title, DigitCounter counter, int value, int slots, float x, float bottom, float scale, float sidePad = 0, float pad = 0, float? boxBottom = null )
+	{
+		SetTitleStyle( painter );
+		var measured = painter.MeasureText( title );
+		var titleHeight = MathF.Ceiling( measured.y );
 
 		var slot = SlotSize( scale );
 		var top = bottom - MathF.Ceiling( titleHeight + slot.y - TitleOverlap * scale );
 
+		counter.Update( value, slots );
+		var width = MathF.Max( slot.x * counter.Length, measured.x );
+
+		if ( boxBottom is { } lower )
+		{
+			var boxTop = top + MathF.Round( TitleTopInset * scale ) - pad;
+			DrawBox( painter, new Rect( x - sidePad, boxTop, width + sidePad * 2, lower - boxTop ), scale );
+		}
+
 		painter.Text( title, new Rect( x, top, 400 * scale, titleHeight ) );
 
-		return DrawDigits( painter, counter, value, slots, new Vector2( x, bottom - slot.y ), slot );
+		DrawDigits( painter, counter, value, slots, new Vector2( x, bottom - slot.y ), slot );
+
+		return width;
 	}
+
+	static void DrawBox( Painter painter, Rect rect, float scale ) => DrawPanel( painter, rect, PanelColor, scale );
 
 	float DrawDigits( Painter painter, DigitCounter counter, int value, int slots, Vector2 position, Vector2 size )
 	{
@@ -278,7 +331,7 @@ public sealed class VitalsSection : HudSection
 
 		var wave = 0.5f - 0.5f * MathF.Cos( RealTime.Now * Settings.WarningPulseRate * MathF.PI * 2 );
 		var brightness = 1 - Math.Clamp( Settings.WarningPulseAmount, 0, 1 ) * wave;
-		return new Color( Settings.WarningColor.r * brightness, Settings.WarningColor.g * brightness, Settings.WarningColor.b * brightness, Settings.WarningColor.a );
+		return Brightened( Settings.WarningColor, brightness );
 	}
 
 	Color DamageFlashed( Color tint )

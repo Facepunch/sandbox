@@ -8,11 +8,9 @@ public class NoticePanel : Panel
 	const float SlideDuration = 0.3f;
 
 	readonly Panel _fill;
-	readonly Panel _glow;
 
 	bool _leaving;
 	RealTimeSince _sinceLeaving;
-	Color? _fillColor;
 
 	public RealTimeUntil TimeUntilDie;
 
@@ -30,8 +28,6 @@ public class NoticePanel : Panel
 
 	public NoticePanel( string icon, Color iconColor, string text, float seconds )
 	{
-		_glow = Add.Panel( "glow" );
-
 		var body = Add.Panel( "body" );
 
 		if ( !string.IsNullOrEmpty( icon ) )
@@ -87,16 +83,10 @@ public class NoticePanel : Panel
 
 	void UpdateBar()
 	{
-		if ( !Manual && Duration > 0 )
-		{
-			var left = MathX.Clamp( (float)TimeUntilDie.Relative / Duration, 0f, 1f );
-			_fill.Style.Width = Length.Percent( left * 100 );
-		}
+		if ( Manual || Duration <= 0 )
+			return;
 
-		var tint = Game.ActiveScene?.Get<HudLayer>()?.Tint ?? Color.Gray;
-
-		_fillColor = tint;
-		_fill.Style.BackgroundColor = tint;
-		_glow.Style.BackgroundTint = tint;
+		var left = MathX.Clamp( (float)TimeUntilDie.Relative / Duration, 0f, 1f );
+		_fill.Style.Width = Length.Percent( left * 100 );
 	}
 }

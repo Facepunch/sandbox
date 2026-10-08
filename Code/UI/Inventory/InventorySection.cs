@@ -26,9 +26,8 @@ public sealed class InventorySection : HudSection
 	const float TileHeight = 120;
 	const float IconAreaHeight = 108; // the icon is centred in the top part, the rest holds the name
 	const float CollapsedHeight = 12.6f;
-	const float Gap = 1;
-	const float Border = 1;
-	const float IndexInset = 2; // from the inside of the border
+	const float Gap = 10; // between buckets
+	const float IndexInset = 2; // from the edge of the bucket
 	const float IndexBoxSize = 15;
 	const float IndexDigitSize = 7; // height of the SandboxID digit, centred in the box
 	const float NameFontSize = 16;
@@ -40,16 +39,10 @@ public sealed class InventorySection : HudSection
 	const float ExpandDuration = 0.1f;
 	const float ContentFadeDuration = 0.05f;
 
-	const float FillAlpha = 0.6f; // slot backgrounds are see-through
-	const float BorderAlpha = 0.8f;
 	const float EmptyBrightness = 0.5f; // buckets with no weapon are drawn this much darker
-	static readonly Color FillTop = Gray( 0.224f, FillAlpha );
-	static readonly Color FillBottom = Gray( 0.182f, FillAlpha );
-	static readonly Color BorderColor = Gray( 0.75f, BorderAlpha );
-	static readonly Color HighlightFillTop = Gray( 0.514f, FillAlpha );
-	static readonly Color HighlightFillBottom = Gray( 0.344f, FillAlpha );
-	static readonly Color IndexColor = Gray( 0.75f );
-	static readonly Color HighlightIndexColor = Gray( 0.95f );
+	// flat greys that are never tinted by the HUD colour
+	static readonly Color TileColor = PanelColor;
+	static readonly Color HighlightTileColor = new Color( 0.29f, 0.29f, 0.29f, PanelColor.a ); // 4A4A4A
 	static readonly Color DimIcon = Gray( 1f, 0.51f ); // icon of unselected slots
 	static readonly Color DimName = Gray( 1f, 0.51f ); // name of unselected slots
 
@@ -69,8 +62,6 @@ public sealed class InventorySection : HudSection
 	float _tileHeight, _gap;
 
 	static Color Gray( float value, float alpha = 1 ) => new( value, value, value, alpha );
-
-	static Color Darkened( Color color, float brightness ) => new( color.r * brightness, color.g * brightness, color.b * brightness, color.a );
 
 	int ColumnCount => Inventory.IsValid() ? Inventory.MaxSlots : 0;
 
@@ -212,26 +203,23 @@ public sealed class InventorySection : HudSection
 
 	void DrawTile( Painter painter, Rect rect, BaseSandboxWeapon weapon, int index, bool highlighted, float contentAlpha, float scale )
 	{
-		var border = MathF.Max( 1, MathF.Round( Border * scale ) );
 		var empty = !weapon.IsValid();
-		Color Shade( Color color ) => empty ? Darkened( color, EmptyBrightness ) : color;
+		Color Shade( Color color ) => empty ? Brightened( color, EmptyBrightness ) : color;
 
-		var borderColor = highlighted ? Glowing( Tinted( Color.White ) ) : Shade( Tinted( BorderColor ) );
+		var tile = Shade( highlighted ? HighlightTileColor : TileColor );
 
-		painter.Fill = Fill.LinearGradient( Shade( Tinted( highlighted ? HighlightFillTop : FillTop ) ), Shade( Tinted( highlighted ? HighlightFillBottom : FillBottom ) ), 90 );
-		painter.Rect( rect, new Vector4( border ), borderColor, borderColor, borderColor, borderColor );
+		DrawPanel( painter, rect, tile, scale );
 
 		if ( index >= 0 )
 		{
-			var inset = border + MathF.Round( IndexInset * scale );
+			var inset = MathF.Round( IndexInset * scale );
+			// the number sits where it always did, in a box that is no longer drawn
 			var boxSize = MathF.Round( IndexBoxSize * scale );
 			var box = new Rect( rect.Left + inset, rect.Top + inset, boxSize, boxSize );
 
-			painter.Fill = highlighted ? Glowing( Tinted( HighlightIndexColor ) ) : Shade( Tinted( IndexColor ) );
-			painter.Rect( box );
-
 			var em = IndexDigitSize / 1.25f * ScaleToScreen;
-			painter.TextStyle = new TextStyle( IndexFont, em, Shade( Tinted( highlighted ? HighlightFillTop : FillTop ) ).WithAlpha( 1 ) ) { Alignment = TextFlag.Center };
+			var indexColor = highlighted ? Glowing( Tinted( Color.White ) ) : Shade( Tinted( Color.White ) );
+			painter.TextStyle = new TextStyle( IndexFont, em, indexColor ) { Alignment = TextFlag.Center };
 			painter.Text( IndexLabel( index ), new Rect( box.Left + em * 0.125f, box.Top, box.Width, box.Height ) );
 		}
 
@@ -258,15 +246,11 @@ public sealed class InventorySection : HudSection
 	}
 
 	/// <summary>
-	/// A collapsed child slot: just the frame, CollapsedHeight tall.
+	/// A collapsed child slot: just a flat bar, CollapsedHeight tall.
 	/// </summary>
 	void DrawBar( Painter painter, Rect rect, float scale )
 	{
-		var border = MathF.Max( 1, MathF.Round( Border * scale ) );
-		var borderColor = Tinted( BorderColor );
-
-		painter.Fill = Tinted( FillBottom );
-		painter.Rect( rect, new Vector4( border ), borderColor, borderColor, borderColor, borderColor );
+		DrawPanel( painter, rect, TileColor, scale );
 	}
 
 	const string WeaponFallbackIcon = "ui/hud/weapon_icon_test.png";

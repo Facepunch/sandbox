@@ -10,9 +10,14 @@
 @code
 {
     /// <summary>
+    /// The HUD colour when nothing has set one, also what the HUD panels fall back to without a layer
+    /// </summary>
+    public static readonly Color DefaultTint = new Color( 0.97f, 0.77f, 0.302f );
+
+    /// <summary>
     /// Colour multiplied into every HUD element
     /// </summary>
-    [Property] public Color Tint { get; set; } = new( 0.43f, 0.74f, 1f );
+    [Property] public Color Tint { get; set; } = DefaultTint;
 
     /// <summary>
     /// HDR color exponent for highlighted HUD elements like digits or selected hotbar slots

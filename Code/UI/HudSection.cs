@@ -33,17 +33,40 @@ public abstract class HudSection
 	protected float TextGain => Canvas.TextGain;
 	protected float GlowRadius => Canvas.Layer.GlowRadius;
 
+	/// <summary>
+	/// Background color for HUD elements
+	/// </summary>
+	protected static readonly Color PanelColor = new Color( 0.07f, 0.5f );
+
 	protected internal Color PaintTint { get; set; } = Color.White;
 
-	protected Color Tinted( Color color ) => new( color.r * PaintTint.r, color.g * PaintTint.g, color.b * PaintTint.b, color.a * PaintTint.a );
+	protected Color Tinted( Color color ) => color * PaintTint;
 
 	protected Color Glowing( Color color ) => Brightened( color, DigitGain );
 
 	/// <summary>
-	/// Multiplies the colour past 1 for HDR glow
+	/// Scales the colour, leaving its alpha alone. A gain past 1 goes over 1 for HDR glow, below 1 darkens.
 	/// </summary>
-	protected static Color Brightened( Color color, float gain )
+	protected static Color Brightened( Color color, float gain ) => (color * gain).WithAlpha( color.a );
+
+	/// <summary>
+	/// Corner radius of <see cref="DrawPanel"/>
+	/// </summary>
+	const float PanelRadius = 2;
+
+	const float PanelSoftness = 0.5f;
+
+	/// <summary>
+	/// A flat panel with rounded corners
+	/// </summary>
+	protected static void DrawPanel( Painter painter, Rect rect, Color color, float scale )
 	{
-		return new Color( color.r * gain, color.g * gain, color.b * gain, color.a );
+		var softness = PanelSoftness * scale;
+		var radius = PanelRadius * scale;
+
+		painter.RectShadow( rect, radius, color, softness * 2, softness );
+
+		painter.Fill = color;
+		painter.Rect( rect, radius );
 	}
 }
