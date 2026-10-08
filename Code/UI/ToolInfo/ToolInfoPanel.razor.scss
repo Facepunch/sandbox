@@ -64,7 +64,7 @@ ToolInfoPanel
 		background-image: url( /UI/tool_grid.png );
 		background-size: $grid-size $grid-size;
 		background-repeat: repeat;
-		animation: tool-grid-scroll 6s linear infinite;
+		animation: tool-grid-scroll 3s linear infinite;
 	}
 
 	.title
@@ -125,6 +125,6 @@ ToolInfoPanel
 
 	to
 	{
-		transform: translate( $grid-size, $grid-size );
+		transform: translate( 25px, 25px );
 	}
 }
