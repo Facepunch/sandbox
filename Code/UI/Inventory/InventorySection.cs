@@ -39,7 +39,7 @@ public sealed class InventorySection : HudSection
 	const float ExpandDuration = 0.1f;
 	const float ContentFadeDuration = 0.05f;
 
-	const float EmptyBrightness = 0.5f; // buckets with no weapon are drawn this much darker
+	const float EmptyOpacity = 0.5f; // buckets with no weapon keep this much of their opacity
 	// flat greys that are never tinted by the HUD colour
 	static readonly Color TileColor = PanelColor;
 	static readonly Color HighlightTileColor = new Color( 0.29f, 0.29f, 0.29f, PanelColor.a ); // 4A4A4A
@@ -204,7 +204,7 @@ public sealed class InventorySection : HudSection
 	void DrawTile( Painter painter, Rect rect, BaseSandboxWeapon weapon, int index, bool highlighted, float contentAlpha, float scale )
 	{
 		var empty = !weapon.IsValid();
-		Color Shade( Color color ) => empty ? Brightened( color, EmptyBrightness ) : color;
+		Color Shade( Color color ) => empty ? color.WithAlpha( color.a * EmptyOpacity ) : color;
 
 		var tile = Shade( highlighted ? HighlightTileColor : TileColor );
 
