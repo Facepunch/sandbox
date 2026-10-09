@@ -1,57 +1,62 @@
 @import "/UI/Theme.scss";
 
+$avatar-size: 26px;
+
 Voices
 {
     position: absolute;
-    right: 128px;
-    bottom: 256px;
-    gap: 6px;
+    right: $deadzone-x;
+    gap: 4px;
     flex-direction: column;
     align-items: flex-end;
+    pointer-events: none;
 
     .item-row
     {
+        transform-origin: right center;
+        width: 230;
+        height: 38px;
+        padding: 4px;
         gap: 10px;
         align-items: center;
-        padding: 8px 14px 8px 12px;
-        justify-content: flex-end;
-        background-color: $hud-element-bg;
-        border-radius: $hud-radius-sm;
-        overflow: hidden;
+        flex-shrink: 0;
+        background-color: rgba( black, 0.33 );
+        border-radius: 2px;
     }
 
     .avatar-wrap
     {
         position: relative;
-        width: $hud-icon-size;
-        height: $hud-icon-size;
+        width: $avatar-size;
+        height: $avatar-size;
         flex-shrink: 0;
-    }
-
-    .speaking-glow
-    {
-        position: absolute;
-        width: 56px;
-        height: 56px;
-        left: -13px;
-        top: -13px;
-        border-radius: 100%;
-        background: radial-gradient( rgba(0, 148, 255, 0.7) 0%, transparent 70% );
     }
 
     img
     {
-        width: $hud-icon-size;
-        height: $hud-icon-size;
-        border-radius: 100px;
+        width: $avatar-size;
+        height: $avatar-size;
+        border-radius: 2px;
     }
 
-    label
+    .icon
     {
-        font-family: $title-font;
-        color: $hud-text;
-        font-size: 15px;
-        font-weight: 600;
-        text-shadow: 0px 0px 8px $color-accent;
+        flex-shrink: 0;
+        font-family: "Material Icons";
+        font-size: 20px;
+        color: white;
+    }
+
+    .name
+    {
+        flex-grow: 1;
+        min-width: 0;
+        font-family: $body-font;
+        font-size: 16px;
+        font-weight: 700;
+        color: white;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 }

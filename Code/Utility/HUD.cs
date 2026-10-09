@@ -4,6 +4,25 @@ public static class Hud
 {
 	public static float Scale => Screen.Height / 1080.0f;
 
+	/// <summary>
+	/// Space kept between the vitals and the HUD stacked above them (chat, notices, the voice list)
+	/// </summary>
+	const float StackGap = 10;
+
+	public static float StackBottom
+	{
+		get
+		{
+			var vitals = Game.ActiveScene?.Get<HudLayer>()?.Canvas?.Section<VitalsSection>( false );
+
+			// until the vitals have been painted, go by the size they usually are
+			var scale = vitals?.Canvas.ScaleToScreen ?? Scale;
+			var fromBottom = vitals is { BoxTop: > 0 } ? vitals.Canvas.PixelSize.y - vitals.BoxTop : Screen.Width * 0.02f + 92 * scale;
+
+			return fromBottom + StackGap * scale;
+		}
+	}
+
 	private static float _cachedAt = -1;
 	private static HudElement _hidden;
 

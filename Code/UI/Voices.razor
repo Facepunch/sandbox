@@ -1,4 +1,5 @@
 @using Sandbox
+@using Sandbox.UI
 @namespace Facepunch.UI
 @inherits PanelComponent
 
@@ -9,11 +10,13 @@
 
     @foreach (var voice in VoiceList.Where( x => CanDisplay( x ) ) )
     {
-        <div class="item-row">
+        var activity = GetActivity( voice );
+
+        <div class="item-row" style="transform: scale( @GetRowScale( activity ) ); background-color: @GetRowColor( activity )">
             <div class="avatar-wrap">
-                <div class="speaking-glow" style="opacity: @GetGlowOpacity( voice ); transform: scale( @GetGlowScale( voice ) )"></div>
                 <img class="avatar" src="avatar:@voice.Network.Owner.SteamId" />
             </div>
+            <label class="icon">volume_up</label>
             <label class="name">@voice.Network.Owner.DisplayName</label>
         </div>
     }
@@ -25,6 +28,23 @@
     public IEnumerable<Voice> VoiceList => Scene.GetAllComponents<Voice>();
 
     private Dictionary<ulong, float> _smoothed = new();
+
+    /// <summary>
+    /// How tall the list is on screen in screen pixels, zero when nobody is shown. The notices stack above it.
+    /// </summary>
+    public static float ListHeight { get; private set; }
+
+    protected override void OnUpdate()
+    {
+        // starts above the vitals
+        Panel.Style.Bottom = Length.Pixels( Hud.StackBottom * Panel.ScaleFromScreen );
+        ListHeight = Hud.IsVisible( HudElement.Voices ) && VoiceList.Any( x => CanDisplay( x ) ) ? Panel.Box.Rect.Height : 0;
+    }
+
+    protected override void OnDisabled()
+    {
+        ListHeight = 0;
+    }
 
     private float GetSmoothed( Voice voice )
     {
@@ -39,16 +59,23 @@
         return voice.LastPlayed < 0.25f;
     }
 
-    private string GetGlowOpacity( Voice voice )
-    {
-        var s = GetSmoothed( voice );
-        return Math.Clamp( s * 4f, 0.2f, 0.9f ).ToString( "0.##" );
-    }
+    /// <summary>
+    /// How much someone is talking, 0 to 1. Never quite zero while they are in the list, so a quiet moment still looks lit.
+    /// </summary>
+    private float GetActivity( Voice voice ) => Math.Clamp( GetSmoothed( voice ) * 4f, 0.25f, 1f );
 
-    private string GetGlowScale( Voice voice )
+    // The row grows and lights up with it
+    private const float MaxScale = 1.1f;
+
+    private string GetRowScale( float activity ) => ( 1f + ( MaxScale - 1f ) * activity ).ToString( "0.###", System.Globalization.CultureInfo.InvariantCulture );
+
+    private string GetRowColor( float activity )
     {
-        var s = GetSmoothed( voice );
-        return Math.Clamp( 1f + s * 0.6f, 1f, 1.6f ).ToString( "0.##" );
+        // from the resting colour of the row, black at 33%, towards a lighter grey
+        var grey = (int)MathX.Lerp( 0, 90, activity );
+        var alpha = MathX.Lerp( 0.33f, 0.5f, activity );
+
+        return $"rgba( {grey}, {grey}, {grey}, {alpha.ToString( "0.###", System.Globalization.CultureInfo.InvariantCulture )} )";
     }
 
     protected override int BuildHash()
