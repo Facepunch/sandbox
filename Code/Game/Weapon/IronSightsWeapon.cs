@@ -42,7 +42,7 @@ public abstract class IronSightsWeapon : BaseBulletWeapon
 	{
 		base.OnControl();
 
-		var wantsAim = Input.Down( "attack2" );
+		var wantsAim = Input.Down( "attack2" ) && !IsReloading;
 
 		if ( wantsAim == IsAiming )
 			return;

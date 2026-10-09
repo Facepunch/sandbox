@@ -96,8 +96,8 @@ public sealed class SniperWeapon : BaseBulletWeapon
 	{
 		base.OnControl();
 
-		// Hold right mouse to scope
-		var wantsScope = Input.Down( "attack2" );
+		// Hold right mouse to scope, except while the reload animation owns the view model.
+		var wantsScope = Input.Down( "attack2" ) && !IsReloading;
 		if ( wantsScope != _isScoped )
 		{
 			SetScoped( wantsScope );
