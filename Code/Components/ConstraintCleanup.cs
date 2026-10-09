@@ -3,6 +3,9 @@
 	[Property]
 	public GameObject Attachment { get; set; }
 
+	[Property]
+	public bool DestroyOnDetach { get; set; } = true;
+
 	protected override void OnDestroy()
 	{
 		if ( Attachment.IsValid() )
@@ -15,10 +18,17 @@
 
 	protected override void OnUpdate()
 	{
-		if (  !Attachment.IsValid() )
+		if ( Attachment.IsValid() ) return;
+
+		if ( DestroyOnDetach )
 		{
 			DestroyGameObject();
 			return;
 		}
+
+		GetComponent<SpringJoint>()?.Destroy();
+		GetComponent<VerletRope>()?.Destroy();
+		GetComponent<LineRenderer>()?.Destroy();
+		Destroy();
 	}
 }

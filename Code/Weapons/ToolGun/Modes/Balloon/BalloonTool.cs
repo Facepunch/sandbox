@@ -122,6 +122,7 @@ public sealed class BalloonTool : ToolMode
 
 			var cleanup = go.AddComponent<ConstraintCleanup>();
 			cleanup.Attachment = anchor;
+			cleanup.DestroyOnDetach = false; // popping the balloon we're tied to should only cut the string
 
 			const float ropeWidth = 0.4f;
 			var splineInterpolation = 0;
