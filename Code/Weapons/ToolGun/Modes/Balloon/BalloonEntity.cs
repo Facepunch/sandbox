@@ -25,6 +25,17 @@ public sealed class BalloonEntity : Component, Component.IDamageable
 				tintable.Color = Prop.Tint;
 			}
 
+			// Beef up the gib burst
+			foreach ( var gibs in effect.GetComponentsInChildren<ParticleEffect>( true ).Where( x => x.GameObject.Name == "Gibs" ) )
+			{
+				gibs.MaxParticles = 40;
+
+				foreach ( var emitter in gibs.GetComponents<ParticleConeEmitter>( true ) )
+				{
+					emitter.Burst = 35;
+				}
+			}
+
 			effect.NetworkSpawn( true, null );
 		}
 
