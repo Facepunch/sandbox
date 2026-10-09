@@ -1,11 +1,14 @@
 {
   "UI": true,
-  "Volume": "0.600000024 0.800000012",
+  "Volume": "1",
   "Pitch": "0.899999976 1.10000002",
   "Decibels": 70,
   "SelectionMode": "Random",
   "Sounds": [
-    "sounds/damage_taken_fall.vsnd"
+    {
+      "Id": "5b89034b-15e1-4dc0-ba48-b6422180e8b7",
+      "Path": "sounds/damage_taken_fall.vsnd"
+    }
   ],
   "OcclusionEnabled": true,
   "Occlusion": true,
