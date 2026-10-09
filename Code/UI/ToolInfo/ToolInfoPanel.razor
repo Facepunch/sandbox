@@ -11,7 +11,7 @@
 
 <root>
  <div class="header">
-  <div class="tint" style=@TintStyle />
+  <div class="accent" />
 
   <div class="grid-mask">
    <div class="grid" />
@@ -79,24 +79,10 @@
 	                     || !string.IsNullOrEmpty( Info?.SecondaryAction )
 	                     || !string.IsNullOrEmpty( Info?.ReloadAction );
 
-	const float TintAlpha = 0.6f;
-
-	Color HudTint => ( HudLayer.Find( this, false )?.Tint ?? HudLayer.DefaultTint ) * 0.75f;
-
-	string TintStyle
-	{
-		get
-		{
-			var c = HudTint;
-			var rgb = $"{(int)(c.r * 255)}, {(int)(c.g * 255)}, {(int)(c.b * 255)}";
-			return $"background-image: linear-gradient( to right, rgba( {rgb}, {TintAlpha} ), rgba( {rgb}, 0 ) );";
-		}
-	}
-
 	protected override void OnUpdate()
 	{
 		SetClass( "visible", CurrentToolInfo is not null );
 	}
 
-	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Hud.IsVisible( HudElement.ToolInfo ), Game.Language.SelectedCode, HudTint );
+	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Hud.IsVisible( HudElement.ToolInfo ), Game.Language.SelectedCode );
 }

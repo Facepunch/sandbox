@@ -14,17 +14,7 @@ public sealed class ChatBox : PanelComponent, IChatEvent
 
 	const float SubmitDelay = 0.15f;
 
-	/// <summary>
-	/// Intensity of tint applied to chatbox from HUD color setting
-	/// </summary>
-	const float BoxTint = 0.25f;
-
 	public static bool IsOpen { get; private set; }
-
-	/// <summary>
-	/// The local player's HUD colour, shared with the lines
-	/// </summary>
-	public static Color Tint { get; private set; } = HudLayer.DefaultTint;
 
 	Panel _box;
 	Panel _history;
@@ -40,7 +30,6 @@ public sealed class ChatBox : PanelComponent, IChatEvent
 	RealTimeSince _sinceOpened;
 	RealTimeUntil _closingUntil;
 	bool _closing;
-	Color? _appliedTint;
 
 	protected override void OnEnabled()
 	{
@@ -112,14 +101,15 @@ public sealed class ChatBox : PanelComponent, IChatEvent
 		var visible = Sandbox.Platform.Chat.Enabled && Hud.IsVisible( HudElement.Chat );
 		Panel.Style.Display = visible ? DisplayMode.Flex : DisplayMode.None;
 
+		// both sit above the vitals
+		_box.Style.Bottom = Length.Pixels( Hud.StackBottom * _box.ScaleFromScreen );
+		_recent.Style.Bottom = Length.Pixels( Hud.StackBottom * _recent.ScaleFromScreen );
+
 		if ( !visible )
 		{
 			if ( IsOpen ) Close();
 			return;
 		}
-
-		Tint = Game.ActiveScene?.Get<HudLayer>()?.Tint ?? Tint;
-		ApplyTint();
 
 		if ( !IsOpen && Input.Pressed( "Chat" ) && !SpawnMenuHost.IsOpen && InputFocus.Current is not TextEntry )
 			Open();
@@ -180,15 +170,5 @@ public sealed class ChatBox : PanelComponent, IChatEvent
 			Sandbox.Platform.Chat.Say( text );
 
 		Close();
-	}
-
-	void ApplyTint()
-	{
-		if ( _appliedTint == Tint )
-			return;
-
-		_appliedTint = Tint;
-
-		_box.Style.BackgroundTint = Color.Lerp( Color.White, Tint, BoxTint );
 	}
 }

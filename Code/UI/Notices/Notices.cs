@@ -11,6 +11,11 @@ public partial class Notices : PanelComponent
 	public static Notices Current => Game.ActiveScene.Get<Notices>();
 
 	/// <summary>
+	/// Space between the list of who is talking and the notices above it
+	/// </summary>
+	const float VoicesGap = 8;
+
+	/// <summary>
 	/// Displays already formatted text without interpreting leading hashes as phrase references.
 	/// </summary>
 	public static NoticePanel AddNotice( string text, float seconds = 5 ) => Create( null, Color.White, text, seconds );
@@ -69,5 +74,9 @@ public partial class Notices : PanelComponent
 
 		// notices stack themselves, the layout lives in Notices.cs.scss
 		Panel.Style.Display = Hud.IsVisible( HudElement.Notices ) ? DisplayMode.Flex : DisplayMode.None;
+
+		var voices = Facepunch.UI.Voices.ListHeight;
+		var bottom = Hud.StackBottom + (voices > 0 ? voices : 0);
+		Panel.Style.Bottom = Length.Pixels( bottom * Panel.ScaleFromScreen + (voices > 0 ? VoicesGap : 0) );
 	}
 }

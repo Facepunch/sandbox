@@ -32,6 +32,11 @@ public sealed class VitalsSection : HudSection
 	/// </summary>
 	public Vitals Settings { get; set; }
 
+	/// <summary>
+	/// Top edge of the health box on the canvas, so other HUD can sit above it. Zero until it has been painted.
+	/// </summary>
+	public float BoxTop { get; private set; }
+
 
 	public bool Hidden { get; set; }
 
@@ -73,9 +78,9 @@ public sealed class VitalsSection : HudSection
 	const float HideDuration = 0.2f;
 
 	static readonly Color DigitColor = Color.White;
-	static readonly Color TitleColor = Color.FromBytes( 236, 236, 236 );
-	static readonly Color ReserveColor = Color.FromBytes( 230, 230, 230 );
-	static readonly Color DepletedColor = Color.FromBytes( 68, 68, 68 );
+	static readonly Color TitleColor = new Color( 0.925f, 0.925f, 0.925f );
+	static readonly Color ReserveColor = new Color( 0.9f, 0.9f, 0.9f );
+	static readonly Color DepletedColor = new Color( 0.267f, 0.267f, 0.267f );
 
 	// randomized digit background images as a little detail
 	static readonly string[] DigitBackgroundPaths = { "ui/hud/bg-digit1.png", "ui/hud/bg-digit2.png", "ui/hud/bg-digit3.png" };
@@ -155,6 +160,8 @@ public sealed class VitalsSection : HudSection
 			DrawShade( painter, new Vector2( 0, bounds.Height ), scale );
 
 			painter.Translate( -HideDistance * scale * hide, 0 );
+
+			BoxTop = StatTop( painter, "HEALTH", textBottom, scale ) + MathF.Round( TitleTopInset * scale ) - pad;
 
 			var x = MathF.Floor( deadzone ) + sidePad;
 			PaintTint = DamageFlashed( SectionTint( IsLowHealth( data ) ) );

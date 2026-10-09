@@ -18,15 +18,10 @@ public sealed class ChatLine : Panel
 	/// </summary>
 	const float FadeTime = 0.6f;
 
-	// a faint pull towards the HUD colour
-	const float TextTint = 0.1f;
-	static readonly Color BaseText = Color.FromBytes( 0xC4, 0xC6, 0xCC );
-
 	readonly ChatEntry _entry;
 	readonly bool _fades;
 	readonly Label _name;
 	readonly Label _text;
-	Color? _appliedTint;
 
 	public ChatLine( ChatEntry entry, bool fades )
 	{
@@ -54,18 +49,15 @@ public sealed class ChatLine : Panel
 		// not tokenized, so a message starting with # can't pull a phrase out of the localization files
 		_text = new Label() { Tokenize = false, Text = entry.Text, Classes = "text" };
 		AddChild( _text );
+
+		// a system message can have a colour of its own, everything else is coloured by the stylesheet
+		if ( entry.TextColor is { } color )
+			_text.Style.FontColor = color;
 	}
 
 	public override void Tick()
 	{
 		base.Tick();
-
-		var tint = ChatBox.Tint;
-		if ( _appliedTint != tint )
-		{
-			_appliedTint = tint;
-			ApplyColors( tint );
-		}
 
 		if ( !_fades )
 			return;
@@ -75,20 +67,5 @@ public sealed class ChatLine : Panel
 
 		if ( alpha <= 0 )
 			Delete();
-	}
-
-	void ApplyColors( Color tint )
-	{
-		switch ( _entry.Kind )
-		{
-			case ChatEntryKind.Player:
-				_name.Style.FontColor = tint;
-				_text.Style.FontColor = Color.Lerp( BaseText, tint, TextTint );
-				break;
-
-			default:
-				_text.Style.FontColor = _entry.TextColor ?? Color.Lerp( BaseText, tint, TextTint );
-				break;
-		}
 	}
 }

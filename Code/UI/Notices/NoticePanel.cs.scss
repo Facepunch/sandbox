@@ -59,7 +59,7 @@ NoticePanel
 	.fill
 	{
 		height: 100%;
-		background-color: rgb( 77, 144, 252 ); // #4D90FC, the default notice colour
+		background-color: $notice-color;
 	}
 
 	&.manual .fill

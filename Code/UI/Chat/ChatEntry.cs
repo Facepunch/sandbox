@@ -14,12 +14,12 @@ public sealed class ChatEntry
 	/// <summary>
 	/// Colour of the platform's "player joined" notice
 	/// </summary>
-	public static readonly Color JoinedColor = Color.FromBytes( 168, 223, 0 );
+	public static readonly Color JoinedColor = new Color( 0.66f, 0.875f, 0f ); // A8DF00
 
 	/// <summary>
 	/// Colour of the platform's "player left" notice
 	/// </summary>
-	public static readonly Color LeftColor = Color.FromBytes( 255, 107, 61 );
+	public static readonly Color LeftColor = new Color( 1f, 0.42f, 0.24f ); // FF6B3D
 
 	const string JoinedSuffix = " has joined the game";
 	const string LeftSuffix = " left the game";

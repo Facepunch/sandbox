@@ -30,13 +30,14 @@ ToolInfoPanel
 		background-image: linear-gradient( to right, $bg, $bg-clear );
 	}
 
-	.tint
+	.accent
 	{
 		position: absolute;
 		left: 0;
 		top: 0;
 		bottom: 0;
 		width: 280px;
+		background-image: linear-gradient( to right, rgba( 77, 144, 252, 0.6 ), rgba( 77, 144, 252, 0 ) );
 	}
 
 	.grid-mask

@@ -1,8 +1,8 @@
 $deadzone-x: 2vw;
 $deadzone-y: 2vw;
 
-// baseline for HUD elements at the bottom side of screen, such as chat and notices
-$hud-stack-bottom: 140px;
+// default color for notice timer bar, also used for the tool panel's gradient and chat usernames
+$notice-color: rgb( 77, 144, 252 );
 
 $color-accent: #0094ff;
 $color-text: #fafaff;
