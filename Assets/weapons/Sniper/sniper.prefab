@@ -20,7 +20,10 @@
         "__guid": "a1b2c3d4-1112-4aaa-b112-111111111112",
         "__enabled": true,
         "Flags": 0,
-        "AttackSound": "weapons/sniper/sounds/m700_shot.sound",
+        "AttackSound": {
+          "Id": "f60e6579-98f3-407d-95ea-ad2abe20d922",
+          "Path": "weapons/sniper/sounds/m700_shot.sound"
+        },
         "AutoReload": true,
         "Ballistics": {
           "Damage": 100,
@@ -32,7 +35,10 @@
           "SpreadGrowth": "1,1",
           "SpreadRecovery": 0.5
         },
-        "BoltPullSound": "weapons/sniper/sounds/sniper_bolt_pull.sound",
+        "BoltPullSound": {
+          "Id": "bc8a13f7-3721-4a7d-beed-0698706b7947",
+          "Path": "weapons/sniper/sounds/sniper_bolt_pull.sound"
+        },
         "CameraRecoilFrequency": 0.8,
         "CameraRecoilStrength": 10,
         "CanCancelReload": false,
@@ -42,7 +48,7 @@
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/m700_01.png",
+            "FilePath": "ui/weapons/m700_icon.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
@@ -103,8 +109,11 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "PreferredSlot": -1,
-        "PrimaryAmmoType": "ammo/sniper.ammo",
+        "PreferredSlot": 3,
+        "PrimaryAmmoType": {
+          "Id": "2a4bd498-8f60-4135-af5d-155c657a785f",
+          "Path": "ammo/sniper.ammo"
+        },
         "PrimaryAutomatic": true,
         "PrimaryDelay": 1.2,
         "RecoilPitch": "-1.5,-0.800000012",
@@ -119,15 +128,13 @@
         "SecondaryDefaultClip": -1,
         "SecondaryDelay": 0.5,
         "SecondaryInput": {
-          "IsEnabled": false,
           "Action": null
         },
         "ShootForce": 100000,
         "ShootInput": {
-          "IsEnabled": false,
           "Action": null
         },
-        "SlotOrder": 0,
+        "SlotOrder": 1,
         "StartingAmmo": 10,
         "UsableByNpcs": true,
         "UsesAmmo": true,
@@ -151,7 +158,10 @@
         "Elasticity": null,
         "Friction": null,
         "IsTrigger": false,
-        "Model": "models/weapons/sbox_sniper_m700/w_m700.vmdl",
+        "Model": {
+          "Id": "02fafb73-25fc-40e2-a858-caead0735d73",
+          "Path": "models/weapons/sbox_sniper_m700/w_m700.vmdl"
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -266,11 +276,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": false,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_sniper_m700/w_m700.vmdl",
+            "Model": {
+              "Id": "02fafb73-25fc-40e2-a858-caead0735d73",
+              "Path": "models/weapons/sbox_sniper_m700/w_m700.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -278,13 +292,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -344,6 +352,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},

@@ -35,6 +35,27 @@
           "TargetCamera": null,
           "Timing": "AfterPostProcess",
           "ZIndex": 100
+        },
+        {
+          "__type": "Sandbox.HudLayer",
+          "__guid": "14b7901f-78bd-4bdf-a260-847ffb944905",
+          "__enabled": true,
+          "Flags": 0,
+          "DigitExponent": 0.7404255,
+          "GlowRadius": 20.425533,
+          "GlowStrength": 0.21702127,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "ScanlineIntensity": 0.4638298,
+          "ScanlinePeriod": 3.7021275,
+          "ScanlineSoftness": 0.04255319,
+          "ScanlineThickness": 0.5489362,
+          "TextExponent": 0.15931919,
+          "Tint": "0.94902,0.72941,0.21569,1"
         }
       ],
       "Children": [
@@ -65,7 +86,11 @@
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
               "OnComponentUpdate": null,
-              "SwitchSound": "sounds/ui/ui.weapon.switch.sound"
+              "SelectionTimeout": 1.5,
+              "SwitchSound": {
+                "Id": "b59ccf73-7d2a-4e75-889d-5d457befd977",
+                "Path": "sounds/ui/ui.weapon.switch.sound"
+              }
             }
           ],
           "Children": []
@@ -195,6 +220,37 @@
           "Children": []
         },
         {
+          "__guid": "5c1f0e7a-3b24-4d8e-9a61-7e2d4b8f0c93",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "Chat",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Sandbox.ChatBox",
+              "__guid": "a84d2e19-6f03-4c5b-8d7a-1b9e3f60c2d4",
+              "__enabled": true,
+              "Flags": 0,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          ],
+          "Children": []
+        },
+        {
           "__guid": "ec4456d1-df73-4613-aa9a-9dff58bd05bf",
           "__version": 2,
           "Flags": 0,
@@ -246,81 +302,19 @@
               "__guid": "ec513cb5-7e44-4efc-b71a-f1353f4a8443",
               "__enabled": true,
               "Flags": 0,
-              "AmmoIcon": {
-                "$compiler": "texture",
-                "$source": "imagefile",
-                "data": {
-                  "FilePath": "ui/bullet.png",
-                  "MaxSize": 4096,
-                  "ConvertHeightToNormals": false,
-                  "NormalScale": 1,
-                  "Rotate": 0,
-                  "FlipVertical": false,
-                  "FlipHorizontal": false,
-                  "Cropping": {
-                    "Left": 0,
-                    "Top": 0,
-                    "Right": 0,
-                    "Bottom": 0
-                  },
-                  "Padding": {
-                    "Left": 0,
-                    "Top": 0,
-                    "Right": 0,
-                    "Bottom": 0
-                  },
-                  "InvertColor": false,
-                  "Tint": "1,1,1,1",
-                  "Blur": 0,
-                  "Sharpen": 0,
-                  "Brightness": 1,
-                  "Contrast": 1,
-                  "Saturation": 1,
-                  "Hue": 0,
-                  "Colorize": false,
-                  "TargetColor": "1,1,1,1",
-                  "CacheToDisk": true
-                },
-                "compiled": "textures/generated/imagefile/fc6ab29c7c446f4.vtex"
-              },
-              "ArmourIcon": {
-                "$compiler": "texture",
-                "$source": "svgsource",
-                "data": {
-                  "Size": "256,256",
-                  "Source": "\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"1200pt\" height=\"1200pt\" version=\"1.1\" viewBox=\"0 0 1200 1200\" xmlns=\"http://www.w3.org/2000/svg\">\n <path d=\"m928.69 228.61-323.9-60.141c-3.2344-0.60938-6.375-0.60938-9.6094 0l-323.86 60.141c-12.469 2.2969-21.469 13.078-21.469 25.781v322.55c0 196.78 133.78 374.76 340.78 453.37 3 1.0781 6.1406 1.6875 9.375 1.6875 3.2344 0 6.375-0.60938 9.375-1.6875 207-78.609 340.78-256.55 340.78-453.37v-322.55c0-12.703-9-23.531-21.469-25.781z\"/>\n</svg>\n",
-                  "Colorize": true,
-                  "TargetColor": "1,1,1,1",
-                  "Scale": 1.2976744,
-                  "Offset": "0,0",
-                  "Rotate": 0,
-                  "FlipVertical": false,
-                  "FlipHorizontal": false
-                },
-                "compiled": "textures/generated/svgsource/74df76e844d64c97.vtex"
-              },
-              "HealthIcon": {
-                "$compiler": "texture",
-                "$source": "svgsource",
-                "data": {
-                  "Size": "256,256",
-                  "Source": "\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"1200pt\" height=\"1200pt\" version=\"1.1\" viewBox=\"0 0 1200 1200\" xmlns=\"http://www.w3.org/2000/svg\">\n <path d=\"m474.98 200.02c-6.6562-0.046875-13.078 2.625-17.766 7.3125-4.7344 4.7344-7.3594 11.109-7.3125 17.766v224.81h-224.81c-6.6562 0-13.078 2.625-17.766 7.3125-4.7344 4.7344-7.3594 11.156-7.3594 17.812v249.89c0 6.6562 2.625 13.078 7.3594 17.766 4.6875 4.7344 11.109 7.3594 17.766 7.3125h224.81v200.02c-0.046875 6.6562 2.5781 13.078 7.3125 17.766 4.6875 4.7344 11.109 7.3594 17.766 7.3125h249.89c6.6562 0.046874 13.078-2.5781 17.766-7.3125 4.7344-4.6875 7.3594-11.109 7.3594-17.766v-200.02h225.1c6.6562 0.046874 13.031-2.5781 17.766-7.3125 4.6875-4.6875 7.3594-11.109 7.3125-17.766v-249.89c0.046875-6.6562-2.625-13.078-7.3125-17.812-4.7344-4.6875-11.109-7.3125-17.766-7.3125h-225.1v-224.81c0-6.6562-2.625-13.031-7.3594-17.766-4.6875-4.6875-11.109-7.3594-17.766-7.3125z\"/>\n</svg>\n",
-                  "Colorize": true,
-                  "TargetColor": "1,1,1,1",
-                  "Scale": 1.4186046,
-                  "Offset": "0,0",
-                  "Rotate": 0,
-                  "FlipVertical": false,
-                  "FlipHorizontal": false
-                },
-                "compiled": "textures/generated/svgsource/b62fb7af3ae97c5f.vtex"
-              },
+              "DamageFlashColor": "1.5,0.3975,0.03,1",
+              "DamageFlashDuration": 0.15,
+              "LowAmmoFraction": 0.3,
+              "LowHealthFraction": 0.2,
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
               "OnComponentEnabled": null,
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
-              "OnComponentUpdate": null
+              "OnComponentUpdate": null,
+              "WarningColor": "0.90233,0.25565,0,1",
+              "WarningPulseAmount": 0.23829788,
+              "WarningPulseRate": 0.5106383
             }
           ],
           "Children": []
@@ -688,7 +682,7 @@
           "OnComponentStart": null,
           "OnComponentUpdate": null,
           "Strength": 0.5,
-          "Threshold": 1.8598726,
+          "Threshold": 1.85,
           "Tint": "1,1,1,1"
         },
         {
@@ -705,7 +699,7 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "Roundness": 0.18892509,
+          "Roundness": 0.4183267,
           "Smoothness": 0.7687296
         },
         {
@@ -772,6 +766,7 @@
   ],
   "SceneProperties": {
     "NetworkInterpolation": true,
+    "PhysicsMode": "Physics3D",
     "TimeScale": 1,
     "WantsSystemScene": true,
     "Metadata": {},

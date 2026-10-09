@@ -20,7 +20,21 @@
         "__guid": "ab522638-2fd4-40a8-b165-36922f5ec630",
         "__enabled": true,
         "Flags": 0,
-        "PrimaryAmmoType": "ammo/grenade.ammo",
+        "AttackSound": {
+          "Id": "6e966a76-0733-4d01-a74f-7adb2c300347",
+          "Path": "weapons/m4a1/reload/gun_grab_foley.sound"
+        },
+        "AutoReload": true,
+        "Ballistics": {
+          "Damage": 12,
+          "Pellets": 1,
+          "Range": 4096,
+          "Radius": 1,
+          "Force": 3000,
+          "SpreadBase": "0.200000003,0.200000003",
+          "SpreadGrowth": "1.5,1.5",
+          "SpreadRecovery": 0.2
+        },
         "CanCancelReload": false,
         "ClipMaxSize": 17,
         "DeploySound": null,
@@ -29,7 +43,7 @@
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/grenades/he_grenade_01.png",
+            "FilePath": "ui/weapons/grenade_icon.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
@@ -58,7 +72,8 @@
             "Hue": 0,
             "Colorize": false,
             "TargetColor": "1,1,1,1",
-            "CacheToDisk": true
+            "CacheToDisk": true,
+            "FormatOverride": "RGBA8888"
           },
           "compiled": null
         },
@@ -67,37 +82,64 @@
           "_type": "gameobject",
           "go": "00edf338-ad8d-4472-9725-250b57efbaba"
         },
+        "DryFireSound": null,
+        "FirstShellReloadTime": 0,
         "Force": 1,
+        "Handedness": "Both",
+        "HoldBone": "hold_r",
         "HoldType": "HoldItem",
         "IncrementalReloading": false,
         "Lifetime": 3,
         "MaxDamage": 125,
-        "MuzzleGameObject": null,
+        "Npc": {
+          "MinRange": 0,
+          "MaxRange": 1400,
+          "BurstMin": 2,
+          "BurstMax": 5,
+          "RestMin": 0.3,
+          "RestMax": 0.6,
+          "SpreadScale": 3,
+          "CanBePickedUp": true
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "HoldBone": "hold_r",
-        "PinPullSound": "weapons/grenade/sounds/grenade_pin_pull.sound",
+        "PinPullSound": {
+          "Id": "0dfac9c7-46f5-4353-ae8b-6313ce207775",
+          "Path": "weapons/grenade/sounds/grenade_pin_pull.sound"
+        },
         "Prefab": {
           "_type": "gameobject",
           "prefab": "weapons/grenade/thrown_grenade.prefab"
         },
+        "PreferredSlot": 4,
+        "PrimaryAmmoType": {
+          "Id": "cbc79196-3af3-4e66-bcf9-7439d1fd2322",
+          "Path": "ammo/grenade.ammo"
+        },
+        "PrimaryAutomatic": true,
+        "PrimaryDelay": 0.1,
         "Radius": 512,
+        "ReloadStartTime": 0,
         "ReloadTime": 1.5,
+        "SecondaryAmmoType": null,
+        "SecondaryAutomatic": false,
+        "SecondaryClipSize": -1,
+        "SecondaryDefaultClip": -1,
+        "SecondaryDelay": 0.5,
         "SecondaryInput": {
-          "IsEnabled": false,
           "Action": null
         },
         "ShootInput": {
-          "IsEnabled": false,
           "Action": null
         },
+        "SlotOrder": 0,
         "StartingAmmo": 5,
         "ThrowPower": 1200,
-        "AttackSound": "weapons/m4a1/reload/gun_grab_foley.sound",
+        "UsableByNpcs": true,
         "UsesAmmo": true,
         "UsesClips": false,
         "Value": 2,
@@ -119,7 +161,10 @@
         "Elasticity": null,
         "Friction": null,
         "IsTrigger": false,
-        "Model": "models/weapons/sbox_grenade_explosive/w_he_grenade.vmdl",
+        "Model": {
+          "Id": "a8f338f8-5ea6-419a-9741-8ff814765975",
+          "Path": "models/weapons/sbox_grenade_explosive/w_he_grenade.vmdl"
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -195,7 +240,6 @@
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "ShellEjectGameObject": null,
             "MuzzleEffect": null,
             "MuzzleGameObject": null,
             "OnComponentDestroy": null,
@@ -210,6 +254,7 @@
               "go": "00edf338-ad8d-4472-9725-250b57efbaba",
               "component_type": "SkinnedModelRenderer"
             },
+            "ShellEjectGameObject": null,
             "TracerEffect": null
           },
           {
@@ -222,11 +267,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": false,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_grenade_explosive/w_he_grenade.vmdl",
+            "Model": {
+              "Id": "a8f338f8-5ea6-419a-9741-8ff814765975",
+              "Path": "models/weapons/sbox_grenade_explosive/w_he_grenade.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -234,13 +283,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -263,6 +306,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},

@@ -20,21 +20,23 @@
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
-        "PrimaryAmmoType": "ammo/9mm.ammo",
+        "AttackSound": {
+          "Id": "dd47064c-fd1b-4f82-bd67-c82b1aedadc8",
+          "Path": "weapons/mp5/sounds/mp5_shoot.sound"
+        },
+        "AutoReload": true,
         "Ballistics": {
           "Damage": 12,
           "Pellets": 1,
           "Range": 4096,
           "Radius": 1,
           "Force": 300,
-          "SpreadBase": "0.2,0.2",
+          "SpreadBase": "0.200000003,0.200000003",
           "SpreadGrowth": "1.5,1.5",
           "SpreadRecovery": 0.2
         },
         "CameraRecoilFrequency": 1,
         "CameraRecoilStrength": 1,
-        "RecoilPitch": "-0.300000012,-0.100000001",
-        "RecoilYaw": "-0.100000001,0.100000001",
         "CanCancelReload": false,
         "ClipMaxSize": 30,
         "DeployTime": 0.2,
@@ -42,7 +44,7 @@
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/mp5_01.png",
+            "FilePath": "ui/weapons/sg_5_icon.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
@@ -71,7 +73,8 @@
             "Hue": 0,
             "Colorize": false,
             "TargetColor": "1,1,1,1",
-            "CacheToDisk": true
+            "CacheToDisk": true,
+            "FormatOverride": "RGBA8888"
           },
           "compiled": null
         },
@@ -80,39 +83,63 @@
           "_type": "gameobject",
           "go": "4c0e80fa-adda-4379-9f2c-57d9fddc85f1"
         },
+        "DryFireSound": null,
+        "FirstShellReloadTime": 0,
         "GrenadePrefab": {
           "_type": "gameobject",
           "prefab": "weapons/grenade/thrown_grenade.prefab"
         },
         "GrenadeSpeed": 1500,
-        "StartingGrenades": 6,
+        "Handedness": "Both",
+        "HoldBone": "hold_r",
         "HoldType": "Rifle",
         "IncrementalReloading": false,
-        "MuzzleGameObject": null,
+        "Npc": {
+          "MinRange": 0,
+          "MaxRange": 1400,
+          "BurstMin": 2,
+          "BurstMax": 5,
+          "RestMin": 0.3,
+          "RestMax": 0.6,
+          "SpreadScale": 3,
+          "CanBePickedUp": true
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "HoldBone": "hold_r",
+        "PreferredSlot": 2,
+        "PrimaryAmmoType": {
+          "Id": "091bfde9-872e-46c2-b6ce-4a6948df5eea",
+          "Path": "ammo/9mm.ammo"
+        },
+        "PrimaryAutomatic": true,
+        "PrimaryDelay": 0.09,
+        "RecoilPitch": "-0.300000012,-0.100000001",
+        "RecoilYaw": "-0.100000001,0.100000001",
+        "ReloadStartTime": 0,
         "ReloadTime": 1.8,
+        "SecondaryAmmoType": {
+          "Id": "cbc79196-3af3-4e66-bcf9-7439d1fd2322",
+          "Path": "ammo/grenade.ammo"
+        },
+        "SecondaryAutomatic": false,
+        "SecondaryClipSize": 3,
+        "SecondaryDefaultClip": -1,
+        "SecondaryDelay": 1,
         "SecondaryInput": {
-          "IsEnabled": false,
           "Action": null
         },
         "ShootForce": 100000,
         "ShootInput": {
-          "IsEnabled": false,
           "Action": null
         },
-        "AttackSound": "weapons/mp5/sounds/mp5_shoot.sound",
+        "SlotOrder": 0,
         "StartingAmmo": 90,
-        "PrimaryDelay": 0.09,
-        "SecondaryClipSize": 3,
-        "SecondaryDefaultClip": -1,
-        "SecondaryAmmoType": "ammo/grenade.ammo",
-        "SecondaryDelay": 1,
+        "StartingGrenades": 6,
+        "UsableByNpcs": true,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 10,
@@ -134,7 +161,10 @@
         "Elasticity": null,
         "Friction": null,
         "IsTrigger": false,
-        "Model": "models/weapons/sbox_smg_mp5/w_mp5.vmdl",
+        "Model": {
+          "Id": "181ff015-7e7e-4e04-b9e3-5211f94ad750",
+          "Path": "models/weapons/sbox_smg_mp5/w_mp5.vmdl"
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -182,6 +212,7 @@
         "OnComponentUpdate": null,
         "OverrideMassCenter": false,
         "RigidbodyFlags": 0,
+        "SleepThreshold": 2,
         "StartAsleep": false
       }
     ],
@@ -207,10 +238,11 @@
             "__guid": "5d1f91ab-beeb-548a-a03d-68eaeed96a02",
             "__enabled": true,
             "Flags": 0,
+            "DeploySound": null,
             "EjectBrass": null,
-            "ShellEjectGameObject": {
+            "MuzzleEffect": {
               "_type": "gameobject",
-              "go": "9b5d35ef-f22f-98ce-e471-ac2e2223bae6"
+              "prefab": "prefabs/effects/default_muzzleflash.prefab"
             },
             "MuzzleGameObject": {
               "_type": "gameobject",
@@ -228,6 +260,10 @@
               "go": "4c0e80fa-adda-4379-9f2c-57d9fddc85f1",
               "component_type": "SkinnedModelRenderer"
             },
+            "ShellEjectGameObject": {
+              "_type": "gameobject",
+              "go": "9b5d35ef-f22f-98ce-e471-ac2e2223bae6"
+            },
             "TracerEffect": null
           },
           {
@@ -240,11 +276,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": false,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_smg_mp5/w_mp5.vmdl",
+            "Model": {
+              "Id": "181ff015-7e7e-4e04-b9e3-5211f94ad750",
+              "Path": "models/weapons/sbox_smg_mp5/w_mp5.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -252,13 +292,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -280,7 +314,7 @@
           {
             "__guid": "8a4c24de-e11e-87bd-d360-9b1d1112a9d5",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "muzzle",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -298,7 +332,7 @@
           {
             "__guid": "9b5d35ef-f22f-98ce-e471-ac2e2223bae6",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "eject",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -318,6 +352,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},
@@ -344,7 +379,6 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.pistol_muzzleflash#76089",
     "facepunch.w_mp5#279124"
   ],
   "__version": 2

@@ -121,7 +121,7 @@ public sealed partial class PlayerInventory : BaseInventoryComponent, Local.IPla
 		if ( base.Pickup( prefab, targetSlot ) is BaseSandboxWeapon weapon )
 		{
 			if ( notice )
-				OnClientPickup( weapon );
+				OnClientPickup( weapon, given: true );
 
 			return true;
 		}
@@ -243,11 +243,11 @@ public sealed partial class PlayerInventory : BaseInventoryComponent, Local.IPla
 	private static SoundEvent GunPickupSound = ResourceLibrary.Get<SoundEvent>( "sounds/weapons/gun_pickup.sound" );
 
 	[Rpc.Owner]
-	private void OnClientPickup( BaseSandboxWeapon weapon, bool justAmmo = false )
+	private void OnClientPickup( BaseSandboxWeapon weapon, bool justAmmo = false, bool given = false )
 	{
 		if ( !weapon.IsValid() ) return;
 
-		if ( ShouldAutoswitchTo( weapon ) )
+		if ( !justAmmo && ShouldAutoswitchTo( weapon, given ) )
 		{
 			SwitchWeapon( weapon );
 		}
@@ -259,7 +259,11 @@ public sealed partial class PlayerInventory : BaseInventoryComponent, Local.IPla
 		}
 	}
 
-	private bool ShouldAutoswitchTo( BaseSandboxWeapon item )
+	/// <summary>
+	/// Whether picking up <paramref name="item"/> should switch to it. <paramref name="given"/> means it was handed over explicitly
+	/// (spawn menu, give): that still honours AutoSwitch and a weapon in use, but skips the value comparison.
+	/// </summary>
+	private bool ShouldAutoswitchTo( BaseSandboxWeapon item, bool given = false )
 	{
 		Assert.True( item.IsValid(), "item invalid" );
 
@@ -271,6 +275,9 @@ public sealed partial class PlayerInventory : BaseInventoryComponent, Local.IPla
 
 		if ( ActiveWeapon.IsInUse() )
 			return false;
+
+		if ( given )
+			return true;
 
 		// Nothing to fire or load - the engine flags spent guns.
 		if ( item.ShouldAvoid )

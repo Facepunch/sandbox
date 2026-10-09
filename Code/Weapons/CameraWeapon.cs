@@ -33,6 +33,8 @@ public sealed class CameraWeapon : BaseSandboxWeapon
 
 	public override bool WantsHideHud => true;
 
+	public override HudElement HiddenHudElements => HudElement.All & ~HudElement.Inventory;
+
 	protected override void OnEnabled()
 	{
 		base.OnEnabled();

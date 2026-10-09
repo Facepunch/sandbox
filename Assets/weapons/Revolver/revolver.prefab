@@ -20,7 +20,12 @@
         "__guid": "064c5926-6139-4d8b-b16b-248eea9d9aa5",
         "__enabled": true,
         "Flags": 0,
-        "AttackSound": "weapons/revolver/revolver_shoot.sound",
+        "AimFovScale": 0.8,
+        "AimFovTransitionTime": 0.15,
+        "AttackSound": {
+          "Id": "6d4b3a2e-1d60-4654-998b-3feaf30b180c",
+          "Path": "weapons/revolver/revolver_shoot.sound"
+        },
         "AutoReload": true,
         "Ballistics": {
           "Damage": 35,
@@ -41,7 +46,7 @@
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/magnum_01.png",
+            "FilePath": "ui/weapons/ironwood__357_icon.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
@@ -80,7 +85,10 @@
           "_type": "gameobject",
           "go": "0b8d1c44-529f-4a7f-a2a2-a6a5a59cadc6"
         },
-        "DryFireSound": "weapons/revolver/revolver_dry.sound",
+        "DryFireSound": {
+          "Id": "01ec47c6-5033-4591-a341-9e9aa27bbf38",
+          "Path": "weapons/revolver/revolver_dry.sound"
+        },
         "FirstShellReloadTime": 0,
         "Handedness": "Both",
         "HoldBone": "hold_r",
@@ -103,8 +111,11 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "PreferredSlot": -1,
-        "PrimaryAmmoType": "ammo/9mm.ammo",
+        "PreferredSlot": 1,
+        "PrimaryAmmoType": {
+          "Id": "091bfde9-872e-46c2-b6ce-4a6948df5eea",
+          "Path": "ammo/9mm.ammo"
+        },
         "PrimaryAutomatic": true,
         "PrimaryDelay": 0.3,
         "RecoilPitch": "-0.600000024,-0.300000012",
@@ -123,7 +134,7 @@
         "ShootInput": {
           "Action": null
         },
-        "SlotOrder": 0,
+        "SlotOrder": 3,
         "StartingAmmo": 36,
         "UsableByNpcs": true,
         "UsesAmmo": true,
@@ -147,7 +158,10 @@
         "Elasticity": null,
         "Friction": null,
         "IsTrigger": false,
-        "Model": "models/weapons/sbox_pistol_usp/w_usp.vmdl",
+        "Model": {
+          "Id": "45a633f3-fca2-451c-a92c-813422886001",
+          "Path": "models/weapons/sbox_pistol_usp/w_usp.vmdl"
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -262,11 +276,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": false,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_revolver_magnum/w_magnum.vmdl",
+            "Model": {
+              "Id": "22e91c76-7950-479f-91ed-7254f835e8ba",
+              "Path": "models/weapons/sbox_revolver_magnum/w_magnum.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -274,13 +292,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -340,6 +352,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},

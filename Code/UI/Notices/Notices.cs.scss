@@ -1,10 +1,11 @@
+@import "/UI/Theme.scss";
+
 Notices
 {
 	position: absolute;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	bottom: 0px;
-	padding-right: 64px;
-	padding-bottom: 300px;
+	right: $deadzone-x;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 8px;
+	pointer-events: none;
 }

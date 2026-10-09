@@ -20,21 +20,25 @@
         "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
         "__enabled": true,
         "Flags": 0,
-        "PrimaryAmmoType": "ammo/rifle.ammo",
+        "AimFovScale": 0.8,
+        "AimFovTransitionTime": 0.15,
+        "AttackSound": {
+          "Id": "f5ae2a24-7e77-45f1-b077-c541e28ec194",
+          "Path": "weapons/m4a1/m4a1_shoot.sound"
+        },
+        "AutoReload": true,
         "Ballistics": {
           "Damage": 16,
           "Pellets": 1,
           "Range": 4096,
           "Radius": 1,
           "Force": 300,
-          "SpreadBase": "0.2,0.2",
+          "SpreadBase": "0.200000003,0.200000003",
           "SpreadGrowth": "1.5,1.5",
           "SpreadRecovery": 0.2
         },
         "CameraRecoilFrequency": 1,
         "CameraRecoilStrength": 1,
-        "RecoilPitch": "-0.300000012,-0.100000001",
-        "RecoilYaw": "-0.100000001,0.100000001",
         "CanCancelReload": false,
         "ClipMaxSize": 30,
         "DeployTime": 0.2,
@@ -42,7 +46,7 @@
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/m4_01.png",
+            "FilePath": "ui/weapons/ar_4_icon.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
@@ -71,40 +75,65 @@
             "Hue": 0,
             "Colorize": false,
             "TargetColor": "1,1,1,1",
-            "CacheToDisk": true
+            "CacheToDisk": true,
+            "FormatOverride": "RGBA8888"
           },
-          "compiled": "textures/generated/imagefile/280bb8c5c69aeda5.vtex"
+          "compiled": null
         },
         "DisplayName": "AR-4",
         "DroppedGameObject": {
           "_type": "gameobject",
           "go": "e7dc7a22-b5a7-41c9-9aa9-ed48c0a053e8"
         },
+        "DryFireSound": null,
         "FirstShellReloadTime": 0,
+        "Handedness": "Both",
+        "HoldBone": "hold_r",
         "HoldType": "Rifle",
         "IncrementalReloading": false,
-        "MuzzleGameObject": null,
+        "IronSightsFireScale": 0.2,
+        "Npc": {
+          "MinRange": 0,
+          "MaxRange": 1400,
+          "BurstMin": 2,
+          "BurstMax": 5,
+          "RestMin": 0.3,
+          "RestMax": 0.6,
+          "SpreadScale": 3,
+          "CanBePickedUp": true
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "HoldBone": "hold_r",
+        "PreferredSlot": 2,
+        "PrimaryAmmoType": {
+          "Id": "c281a85b-14cd-4edf-a8a8-8e269d27b377",
+          "Path": "ammo/rifle.ammo"
+        },
+        "PrimaryAutomatic": true,
+        "PrimaryDelay": 0.1,
+        "RecoilPitch": "-0.300000012,-0.100000001",
+        "RecoilYaw": "-0.100000001,0.100000001",
         "ReloadStartTime": 0,
         "ReloadTime": 2,
+        "SecondaryAmmoType": null,
+        "SecondaryAutomatic": false,
+        "SecondaryClipSize": -1,
+        "SecondaryDefaultClip": -1,
+        "SecondaryDelay": 0.5,
         "SecondaryInput": {
-          "IsEnabled": false,
           "Action": null
         },
         "ShootForce": 100000,
         "ShootInput": {
-          "IsEnabled": false,
           "Action": null
         },
-        "AttackSound": "weapons/m4a1/m4a1_shoot.sound",
+        "SlotOrder": 1,
         "StartingAmmo": 150,
-        "PrimaryDelay": 0.1,
+        "UsableByNpcs": true,
         "UsesAmmo": true,
         "UsesClips": true,
         "Value": 10,
@@ -126,7 +155,10 @@
         "Elasticity": null,
         "Friction": null,
         "IsTrigger": false,
-        "Model": "models/weapons/sbox_assault_m4a1/w_m4a1.vmdl",
+        "Model": {
+          "Id": "79986ccf-583c-4f1b-b2cd-e23cf1de5193",
+          "Path": "models/weapons/sbox_assault_m4a1/w_m4a1.vmdl"
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -202,9 +234,9 @@
             "Flags": 0,
             "DeploySound": null,
             "EjectBrass": null,
-            "ShellEjectGameObject": {
+            "MuzzleEffect": {
               "_type": "gameobject",
-              "go": "3c2bcf77-0afc-96be-eefe-3c9d15f5a8d3"
+              "prefab": "prefabs/effects/default_muzzleflash.prefab"
             },
             "MuzzleGameObject": {
               "_type": "gameobject",
@@ -221,6 +253,14 @@
               "component_id": "09fe9c44-d7c9-63eb-bbcb-0f6ae2c275a0",
               "go": "e7dc7a22-b5a7-41c9-9aa9-ed48c0a053e8",
               "component_type": "SkinnedModelRenderer"
+            },
+            "ShellEjectGameObject": {
+              "_type": "gameobject",
+              "go": "3c2bcf77-0afc-96be-eefe-3c9d15f5a8d3"
+            },
+            "TracerEffect": {
+              "_type": "gameobject",
+              "prefab": "prefabs/effects/default_tracer.prefab"
             }
           },
           {
@@ -233,11 +273,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": false,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_assault_m4a1/w_m4a1.vmdl",
+            "Model": {
+              "Id": "79986ccf-583c-4f1b-b2cd-e23cf1de5193",
+              "Path": "models/weapons/sbox_assault_m4a1/w_m4a1.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -245,13 +289,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -273,7 +311,7 @@
           {
             "__guid": "2b1abe66-f9eb-85ad-dded-2b8c04e497c2",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "muzzle",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -291,7 +329,7 @@
           {
             "__guid": "3c2bcf77-0afc-96be-eefe-3c9d15f5a8d3",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "eject",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -311,6 +349,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},
@@ -337,7 +376,6 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.pistol_muzzleflash#76089",
     "facepunch.w_m4a1#278949"
   ],
   "__version": 2

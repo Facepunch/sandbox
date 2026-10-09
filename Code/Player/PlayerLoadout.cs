@@ -1,5 +1,5 @@
 /// <summary>
-/// Manages loadout persistence, presets, and restoration for a player.
+/// Manages loadout persistence and restoration for a player.
 /// Lives on the Player GameObject alongside PlayerInventory.
 /// Listens to inventory events to auto-save, and handles all loadout RPCs directly.
 /// </summary>
@@ -11,43 +11,12 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 	private bool _isRestoringLoadout;
 
 	/// <summary>
-	/// One entry in a serialized loadout: the prefab resource path and the slot it occupies.
+	/// One entry in a serialized loadout: the prefab resource path, plus the spawner payload for spawner weapons.
 	/// </summary>
 	public struct LoadoutEntry
 	{
 		public string PrefabPath { get; set; }
-		public int Slot { get; set; }
 		public string SpawnerDataPayload { get; set; }
-	}
-
-	public struct SavedPreset
-	{
-		public string Name { get; set; }
-		public string LoadoutJson { get; set; }
-	}
-
-	public static IReadOnlyList<SavedPreset> GetLoadoutPresets()
-	{
-		return LocalData.Get<List<SavedPreset>>( "presets", new() );
-	}
-
-	public static void SaveLoadoutPreset( string name, string loadoutJson )
-	{
-		var presets = LocalData.Get<List<SavedPreset>>( "presets", new() );
-		var idx = presets.FindIndex( p => p.Name == name );
-		var entry = new SavedPreset { Name = name, LoadoutJson = loadoutJson };
-		if ( idx >= 0 )
-			presets[idx] = entry;
-		else
-			presets.Add( entry );
-		LocalData.Set( "presets", presets );
-	}
-
-	public static void DeleteLoadoutPreset( string name )
-	{
-		var presets = LocalData.Get<List<SavedPreset>>( "presets", new() );
-		presets.RemoveAll( p => p.Name == name );
-		LocalData.Set( "presets", presets );
 	}
 
 	public string SerializeLoadout()
@@ -57,7 +26,6 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 			.Select( w => new LoadoutEntry
 			{
 				PrefabPath = w.GameObject.PrefabInstanceSource,
-				Slot = w.Slot,
 				SpawnerDataPayload = (w as SpawnerWeapon)?.SpawnerData
 			} )
 			.ToList();
@@ -92,10 +60,10 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 		{
 			foreach ( var entry in entries )
 			{
-				if ( !Inventory.Pickup( entry.PrefabPath, entry.Slot, false ) )
+				if ( !Inventory.Pickup( entry.PrefabPath, false ) )
 					continue;
 
-				if ( !string.IsNullOrEmpty( entry.SpawnerDataPayload ) && Inventory.GetSlot( entry.Slot ) is SpawnerWeapon spawnerWeapon )
+				if ( !string.IsNullOrEmpty( entry.SpawnerDataPayload ) && Inventory.GetWeapon<SpawnerWeapon>() is { } spawnerWeapon )
 				{
 					spawnerWeapon.RestoreSpawnerData( entry.SpawnerDataPayload );
 				}
@@ -121,69 +89,6 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 			await Sandbox.Mounting.Directory.Mount( entry.Ident );
 	}
 
-	public void SwitchToPreset( string loadoutJson )
-	{
-		if ( !Networking.IsHost )
-		{
-			HostSwitchToPreset( loadoutJson );
-			return;
-		}
-		_ = SwitchToPresetAsync( loadoutJson );
-	}
-
-	public void ResetToDefault()
-	{
-		if ( !Networking.IsHost )
-		{
-			HostResetToDefault();
-			return;
-		}
-		_ = ResetToDefaultAsync();
-	}
-
-	[Rpc.Host]
-	private void HostSwitchToPreset( string loadoutJson )
-	{
-		_ = SwitchToPresetAsync( loadoutJson );
-	}
-
-	[Rpc.Host]
-	private void HostResetToDefault()
-	{
-		_ = ResetToDefaultAsync();
-	}
-
-	private async Task SwitchToPresetAsync( string loadoutJson )
-	{
-		var previousSlot = Inventory.ActiveWeapon?.Slot ?? 0;
-
-		foreach ( var weapon in Inventory.Weapons.ToList() )
-			weapon.DestroyGameObject();
-
-		await Task.Yield();
-
-		await EnsureMountedAsync( loadoutJson );
-		GiveLoadoutWeapons( loadoutJson );
-
-		var toEquip = Inventory.GetSlot( previousSlot ) ?? Inventory.GetBestWeapon();
-		if ( toEquip.IsValid() )
-			Inventory.SwitchWeapon( toEquip );
-
-		SaveLoadout();
-	}
-
-	private async Task ResetToDefaultAsync()
-	{
-		foreach ( var weapon in Inventory.Weapons.ToList() )
-			weapon.DestroyGameObject();
-
-		await Task.Yield();
-
-		Inventory.GiveLoadout();
-		Inventory.SwitchWeapon( Inventory.GetBestWeapon() );
-		SaveLoadout();
-	}
-
 	[Rpc.Owner]
 	private void PushLoadoutToClient( string loadoutJson )
 	{
@@ -194,12 +99,15 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 	private void RequestClientLoadout()
 	{
 		var json = LocalData.Get<string>( "hotbar" );
-		if ( !string.IsNullOrEmpty( json ) )
+		if ( string.IsNullOrEmpty( json ) )
+			HostGiveStarterItems();
+		else
 			HostRestoreLoadoutFromClient( json );
 	}
 
 	/// <summary>
 	/// Clears the current inventory, waits a frame, then gives the loadout from JSON and equips the best weapon.
+	/// A layout that gives back nothing falls back to the starter items.
 	/// </summary>
 	private async Task ReplaceLoadoutAsync( string json )
 	{
@@ -211,9 +119,26 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 		await EnsureMountedAsync( json );
 		GiveLoadoutWeapons( json );
 
+		GiveStarterItemsIfEmpty();
+
 		var best = Inventory.GetBestWeapon();
 		if ( best.IsValid() )
 			Inventory.SwitchWeapon( best );
+	}
+
+	private void GiveStarterItemsIfEmpty()
+	{
+		if ( !Networking.IsHost || Inventory.Weapons.Any() ) return;
+
+		Inventory.GiveLoadout();
+	}
+
+	[Rpc.Host]
+	private void HostGiveStarterItems()
+	{
+		if ( Rpc.Caller != Player.Network.Owner ) return;
+
+		GiveStarterItemsIfEmpty();
 	}
 
 	[Rpc.Host]
@@ -232,25 +157,24 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 
 	private async Task RestoreOnSpawnAsync()
 	{
-		if ( Player.IsLocalPlayer )
-		{
-			var json = LocalData.Get<string>( "hotbar" );
-			if ( !string.IsNullOrEmpty( json ) )
-			{
-				await ReplaceLoadoutAsync( json );
-				return;
-			}
-		}
-		else
+		if ( !Player.IsLocalPlayer )
 		{
 			RequestClientLoadout();
 			return;
 		}
 
-		Inventory.GiveLoadout();
-		var bestWeapon = Inventory.GetBestWeapon();
-		if ( bestWeapon.IsValid() )
-			Inventory.SwitchWeapon( bestWeapon );
+		var json = LocalData.Get<string>( "hotbar" );
+		if ( !string.IsNullOrEmpty( json ) )
+		{
+			await ReplaceLoadoutAsync( json );
+			return;
+		}
+
+		GiveStarterItemsIfEmpty();
+
+		var best = Inventory.GetBestWeapon();
+		if ( best.IsValid() )
+			Inventory.SwitchWeapon( best );
 	}
 
 	void Local.IPlayerEvents.OnDied( PlayerDiedParams args )

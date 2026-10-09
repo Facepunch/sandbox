@@ -17,6 +17,11 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 	/// </summary>
 	public virtual bool WantsHideHud => false;
 
+	/// <summary>
+	/// Which parts of the HUD <see cref="WantsHideHud"/> hides. Everything by default.
+	/// </summary>
+	public virtual HudElement HiddenHudElements => HudElement.All;
+
 	// WeaponModel resolution (view model when drawn, else world model, else own hierarchy) comes from
 	// the engine BaseCombatWeapon.
 
@@ -237,13 +242,13 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 		if ( !Networking.IsHost )
 			return;
 
+		Network.DropOwnership();
+
 		GameObject.SetParent( null, true );
 		WorldScale = GetPrefabWorldScale();
 		GameObject.Enabled = true;
 		WorldPosition = position;
 		Slot = -1;
-
-		Network.DropOwnership();
 
 		Ownable.Set( GameObject, owner );
 		GameObject.Tags.Add( "removable" );
@@ -278,6 +283,35 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 		}
 
 		return true;
+	}
+
+	protected override void OnHolstered()
+	{
+		base.OnHolstered();
+
+		_ = EnableIfDroppedAsync();
+	}
+
+	/// <summary>
+	/// The engine disables a holstered weapon on every peer. Dropping the held weapon holsters it first and then enables
+	/// it again on the host, but clients only ever see the end state ("enabled", the same as before), so their copy of a
+	/// dropped weapon stayed disabled and invisible
+	/// </summary>
+	private async Task EnableIfDroppedAsync()
+	{
+		for ( var waited = 0f; waited < 1f; waited += 0.05f )
+		{
+			await GameTask.DelaySeconds( 0.05f );
+
+			if ( !this.IsValid() )
+				return;
+
+			if ( !Inventory.IsValid() )
+			{
+				GameObject.Enabled = true;
+				return;
+			}
+		}
 	}
 
 	/// <summary>

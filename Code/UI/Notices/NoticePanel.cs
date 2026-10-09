@@ -1,20 +1,55 @@
-﻿
 namespace Sandbox.UI;
 
 public class NoticePanel : Panel
 {
-	bool initialized;
-	Vector3.SpringDamped _springy;
+	/// <summary>
+	/// How long the slide in / slide out takes. You need to manually sync this timing with NoticePanel scss file!!
+	/// </summary>
+	const float SlideDuration = 0.3f;
+
+	readonly Panel _fill;
+
+	bool _leaving;
+	RealTimeSince _sinceLeaving;
 
 	public RealTimeUntil TimeUntilDie;
 
 	/// <summary>
-	/// If true, the notice won't auto-dismiss. Call <see cref="Dismiss"/> to remove it.
+	/// How long the notice lives for. Zero will make the notification stay visible until it is manually dismissed
 	/// </summary>
-	public bool Manual { get; set; }
+	public float Duration { get; }
+
+	/// <summary>
+	/// If true, the notice won't be automatically dismissed. Call Dismiss() to remove it.
+	/// </summary>
+	public bool Manual { get; private set; }
 
 	public bool IsDead => !Manual && TimeUntilDie < 0;
-	public bool wasDead = false;
+
+	public NoticePanel( string icon, Color iconColor, string text, float seconds )
+	{
+		var body = Add.Panel( "body" );
+
+		if ( !string.IsNullOrEmpty( icon ) )
+		{
+			var iconLabel = new Label() { Text = icon, Classes = "icon" };
+			body.AddChild( iconLabel );
+			iconLabel.Style.FontColor = iconColor;
+		}
+
+		body.AddChild( new Label() { Tokenize = false, Text = text, Classes = "text", IsRich = text?.Contains( '<' ) == true } );
+
+		var bar = Add.Panel( "bar" );
+		_fill = bar.Add.Panel( "fill" );
+
+		Duration = MathF.Max( seconds, 0 );
+		Manual = seconds <= 0;
+		if ( Manual )
+			AddClass( "manual" );
+		else
+			TimeUntilDie = seconds;
+
+	}
 
 	/// <summary>
 	/// Dismiss a manual notice, causing it to slide out and be deleted.
@@ -22,44 +57,36 @@ public class NoticePanel : Panel
 	public void Dismiss()
 	{
 		Manual = false;
+		RemoveClass( "manual" );
 		TimeUntilDie = 0;
 	}
 
-	internal void UpdatePosition( Vector2 vector2 )
+	public override void Tick()
 	{
-		if ( initialized == false )
+		base.Tick();
+
+		if ( IsDead && !_leaving )
 		{
-			_springy = new Vector3.SpringDamped( new Vector3( Screen.Width + 50, vector2.y + Random.Shared.Float( -10, 10 ), 0 ), 0.0f );
-			_springy.Velocity = Vector3.Random * 1000;
-			initialized = true;
+			_leaving = true;
+			_sinceLeaving = 0;
+			AddClass( "leaving" );
 		}
 
-		if ( !Manual && TimeUntilDie < 0.4f )
+		if ( _leaving && _sinceLeaving >= SlideDuration )
 		{
-			vector2.x -= 50;
+			Delete();
+			return;
 		}
 
-		// we're dead, push us out to rhe right
-		if ( IsDead )
-		{
-			vector2.x = Screen.Width + 50;
+		UpdateBar();
+	}
 
-			// we've been dead for 2 seconds, get rid of us
-			if ( TimeUntilDie < -2 )
-			{
-				Delete();
-				return;
-			}
+	void UpdateBar()
+	{
+		if ( Manual || Duration <= 0 )
+			return;
 
-			wasDead = true;
-		}
-
-		_springy.Target = new Vector3( vector2.x, vector2.y, 0 );
-		_springy.Frequency = 4;
-		_springy.Damping = 0.5f;
-		_springy.Update( RealTime.Delta * 1.0f );
-
-		Style.Left = _springy.Current.x * ScaleFromScreen;
-		Style.Top = _springy.Current.y * ScaleFromScreen;
+		var left = MathX.Clamp( (float)TimeUntilDie.Relative / Duration, 0f, 1f );
+		_fill.Style.Width = Length.Percent( left * 100 );
 	}
 }
