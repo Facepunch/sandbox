@@ -119,6 +119,34 @@
           "_type": "gameobject",
           "prefab": "weapons/physgun/effects/grab.prefab"
         },
+        "GravityDropSound": {
+          "Id": "9994f4f9-0b01-4afb-ad35-a911006cd27b",
+          "Path": "weapons/physgun/sounds/gravgun.shoot.drop.sound"
+        },
+        "GravityDrySound": {
+          "Id": "e5adbd21-eba3-4e5c-8c8f-46ec5f7ca42f",
+          "Path": "weapons/physgun/sounds/gravgun.shoot.dry.sound"
+        },
+        "GravityHoldSound": {
+          "Id": "a9b4e81b-ee16-45e0-92f9-4595281d5a09",
+          "Path": "weapons/physgun/sounds/gravgun.hold.sound"
+        },
+        "GravityLaunchSound": {
+          "Id": "8dd915d9-a147-4121-9339-6d36ecac4353",
+          "Path": "weapons/physgun/sounds/gravgun.shoot.launch.sound"
+        },
+        "GravityLookOpenSound": {
+          "Id": "bbb470b2-01e4-4fd3-be53-c4d1b9700533",
+          "Path": "weapons/physgun/sounds/gravgun.look.open.sound"
+        },
+        "GravityLookCloseSound": {
+          "Id": "911e2e0d-fef4-434f-9de5-135f582b65ac",
+          "Path": "weapons/physgun/sounds/gravgun.look.close.sound"
+        },
+        "GravityPullSound": {
+          "Id": "577c6b4b-dd28-43ab-9ab4-795411f76cf0",
+          "Path": "weapons/physgun/sounds/gravgun.shoot.pull.sound"
+        },
         "Handedness": "Both",
         "HoldBone": "hold_r",
         "HoldType": "Physgun",

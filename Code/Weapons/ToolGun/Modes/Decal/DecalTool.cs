@@ -13,6 +13,8 @@ public sealed class DecalTool : ToolMode
 	public override string Description => "#tool.hint.decaltool.description";
 
 	TimeSince timeSinceShoot = 0;
+	[Sync] bool IsPainting { get; set; }
+	SoundHandle _paintSound;
 
 	protected override void OnStart()
 	{
@@ -20,6 +22,66 @@ public sealed class DecalTool : ToolMode
 
 		RegisterAction( ToolInput.Primary, () => "#tool.hint.decaltool.place", OnPlace );
 		RegisterAction( ToolInput.Secondary, () => "#tool.hint.decaltool.paint", OnPaint, InputMode.Down );
+	}
+
+	public override void OnControl()
+	{
+		IsPainting = Input.Down( "attack2" );
+		base.OnControl();
+	}
+
+	protected override void OnUpdate()
+	{
+		base.OnUpdate();
+
+		var toolgun = Toolgun;
+		var player = toolgun?.Owner;
+		var active = toolgun.IsValid() && player.IsValid()
+			&& player.GetComponent<PlayerInventory>()?.ActiveWeapon == toolgun;
+
+		if ( !active )
+		{
+			if ( !IsProxy ) IsPainting = false;
+			StopPaintSound();
+			return;
+		}
+
+		if ( IsPainting )
+		{
+			var position = toolgun.GetMuzzleTransform().Position;
+			_paintSound ??= Sound.Play( "weapons/toolgun/sounds/shoot.spray.sound", position );
+			_paintSound?.Position = position;
+		}
+		else
+		{
+			StopPaintSound();
+		}
+	}
+
+	protected override void OnDisabled()
+	{
+		base.OnDisabled();
+		if ( !IsProxy ) IsPainting = false;
+		StopPaintSound();
+	}
+
+	protected override void OnDestroy()
+	{
+		StopPaintSound();
+		base.OnDestroy();
+	}
+
+	void StopPaintSound()
+	{
+		_paintSound?.Stop( 0.2f );
+		_paintSound = null;
+	}
+
+	[Rpc.Broadcast]
+	void PlayPlaceSound()
+	{
+		if ( !Toolgun.IsValid() ) return;
+		Sound.Play( "weapons/toolgun/sounds/shoot.decal.sound", Toolgun.GetMuzzleTransform().Position );
 	}
 
 	void OnPlace()
@@ -31,6 +93,7 @@ public sealed class DecalTool : ToolMode
 		if ( resource == null ) return;
 
 		SpawnDecal( select, resource );
+		PlayPlaceSound();
 	}
 
 	void OnPaint()

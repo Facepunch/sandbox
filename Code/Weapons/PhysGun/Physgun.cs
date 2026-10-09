@@ -15,6 +15,107 @@ public partial class Physgun : Local.IPlayerEvents
 	[Property, Group( "Sound" )] SoundEvent ReleasedSound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent ButtonInSound { get; set; }
 	[Property, Group( "Sound" )] SoundEvent ButtonOutSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent GravityDrySound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent GravityLaunchSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent GravityDropSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent GravityPullSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent GravityHoldSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent GravityLookOpenSound { get; set; }
+	[Property, Group( "Sound" )] SoundEvent GravityLookCloseSound { get; set; }
+	[Property, Group( "Sound" )] float GravityLookDropCooldown { get; set; } = 0.5f;
+
+	SoundHandle _gravityHoldSound;
+	SoundHandle _gravityLookOpenSound;
+	SoundHandle _gravityLookCloseSound;
+	bool _clawsOpen;
+	bool _clawSoundsSuppressed;
+	TimeUntil _gravityLookCooldown;
+	float ClawOpenAmount => _state.Active ? 1f : CanGravityGrabHovered() ? 0.5f : 0f;
+
+	bool CanGravityGrabHovered()
+	{
+		if ( !_stateHovered.IsValid() ) return false;
+		var body = _stateHovered.Body;
+		if ( !body.IsValid() || !body.MotionEnabled ) return false;
+
+		var eyePosition = CurrentAimTransform.Position;
+		return body.FindClosestPoint( eyePosition ).Distance( eyePosition ) <= PullDistance;
+	}
+
+	void UpdateClawSounds()
+	{
+		// Attack-driven claw movement has its own sounds. Only track idle gravity targeting here.
+		if ( _state.Active || _state.Pulling || _stateHovered.Pulling )
+		{
+			_gravityLookOpenSound?.Stop( 0.2f );
+			_gravityLookOpenSound = null;
+			_gravityLookCloseSound?.Stop( 0.2f );
+			_gravityLookCloseSound = null;
+			_clawSoundsSuppressed = true;
+			return;
+		}
+
+		var open = CanGravityGrabHovered();
+		if ( _gravityLookCooldown > 0 )
+		{
+			_clawsOpen = open;
+			return;
+		}
+
+		if ( _clawSoundsSuppressed )
+		{
+			_clawSoundsSuppressed = false;
+			_clawsOpen = open;
+			return;
+		}
+
+		if ( open == _clawsOpen ) return;
+
+		_clawsOpen = open;
+		if ( open )
+		{
+			_gravityLookOpenSound?.Stop( 0.2f );
+			_gravityLookOpenSound = GameObject.PlaySound( GravityLookOpenSound );
+		}
+		else
+		{
+			_gravityLookCloseSound?.Stop( 0.2f );
+			_gravityLookCloseSound = GameObject.PlaySound( GravityLookCloseSound );
+		}
+	}
+
+	[Rpc.Broadcast]
+	void PlayGravityShotSound( bool pulling )
+	{
+		GameObject.PlaySound( pulling ? GravityPullSound : GravityDrySound );
+	}
+
+	[Rpc.Broadcast]
+	void PlayGravityLaunchSound()
+	{
+		GameObject.PlaySound( GravityLaunchSound );
+	}
+
+	[Rpc.Broadcast]
+	void PlayGravityDropSound()
+	{
+		_gravityLookCooldown = GravityLookDropCooldown;
+		GameObject.PlaySound( GravityDropSound );
+	}
+
+	void UpdateGravityHoldSound()
+	{
+		if ( _state.Active && _state.Pulling && _state.IsValid() && _state.Body.IsValid() && _state.Body.MotionEnabled )
+		{
+			_gravityHoldSound ??= GameObject.PlaySound( GravityHoldSound );
+			_gravityHoldSound?.Position = GetMuzzleTransform().Position;
+		}
+		else
+		{
+			_gravityHoldSound?.Stop( 0.2f );
+			_gravityHoldSound = null;
+		}
+	}
 
 	[Property] public float Range { get; set; } = 8196f;
 
@@ -123,6 +224,8 @@ public partial class Physgun : Local.IPlayerEvents
 	protected override void OnPreRender()
 	{
 		base.OnPreRender();
+		UpdateGravityHoldSound();
+		UpdateClawSounds();
 
 		if ( _state.Active && !_state.Pulling )
 		{
@@ -204,6 +307,7 @@ public partial class Physgun : Local.IPlayerEvents
 				{
 					var force = player.EyeTransform.Rotation.Forward * LaunchForce;
 					Launch( _state.Body, force );
+					PlayGravityLaunchSound();
 
 					_state = default;
 					_isSpinning = false;
@@ -211,6 +315,7 @@ public partial class Physgun : Local.IPlayerEvents
 				}
 				else if ( Input.Pressed( "attack2" ) )
 				{
+					PlayGravityDropSound();
 					_state = default;
 					_isSpinning = false;
 					_preventReselect = true;
@@ -330,6 +435,9 @@ public partial class Physgun : Local.IPlayerEvents
 		FindGrabbedBody( out var sh, player.EyeTransform, player.Controller.EyeAngles.yaw, isPulling );
 		_stateHovered = sh;
 
+		if ( isPulling && Input.Pressed( "attack2" ) )
+			PlayGravityShotSound( sh.IsValid() && sh.Body.IsValid() && sh.Body.MotionEnabled );
+
 		if ( sh.IsValid() && sh.Pulling && sh.Body.MotionEnabled )
 		{
 			var eyePosition = player.EyeTransform.Position;
@@ -385,6 +493,7 @@ public partial class Physgun : Local.IPlayerEvents
 
 		var force = AimTransform.Rotation.Forward * LaunchForce;
 		Launch( _state.Body, force );
+		PlayGravityLaunchSound();
 		_state = default;
 		_preventReselect = true;
 	}
@@ -431,8 +540,18 @@ public partial class Physgun : Local.IPlayerEvents
 
 	protected override void OnSecondaryPressed()
 	{
-		if ( !_state.IsValid() || !_state.Pulling ) return;
+		if ( !_state.IsValid() )
+		{
+			if ( _preventReselect ) return;
+			var aim = AimTransform;
+			FindGrabbedBody( out var sh, aim, aim.Rotation.Yaw(), true );
+			PlayGravityShotSound( sh.IsValid() && sh.Body.IsValid() && sh.Body.MotionEnabled );
+			return;
+		}
 
+		if ( !_state.Pulling ) return;
+
+		PlayGravityDropSound();
 		_state = default;
 		_preventReselect = true;
 	}
@@ -533,16 +652,8 @@ public partial class Physgun : Local.IPlayerEvents
 
 	private void UpdateViewModel( ViewModel model )
 	{
-		float stylus = 0;
-
-		if ( _stateHovered.IsValid() )
-			stylus = 0.5f;
-
-		if ( _state.Active )
-			stylus = 1;
-
 		model.IsAttacking = _state.Active;
-		model.Renderer?.Set( "stylus", stylus );
+		model.Renderer?.Set( "stylus", ClawOpenAmount );
 		model.Renderer?.Set( "b_button", _isSpinning );
 		model.Renderer?.Set( "brake", _state.Active || _state.Pulling || _stateHovered.Pulling ? 1 : 0 );
 	}
@@ -565,8 +676,17 @@ public partial class Physgun : Local.IPlayerEvents
 
 		RemoveJoint();
 		CloseBeam();
+		_gravityHoldSound?.Stop( 0.2f );
+		_gravityHoldSound = null;
 
 		_state = default;
+		_gravityLookOpenSound?.Stop( 0.2f );
+		_gravityLookOpenSound = null;
+		_gravityLookCloseSound?.Stop( 0.2f );
+		_gravityLookCloseSound = null;
+		_clawsOpen = false;
+		_clawSoundsSuppressed = false;
+		_gravityLookCooldown = 0;
 		_stateHovered = default;
 		_launched = default;
 		_primaryControlDown = false;
