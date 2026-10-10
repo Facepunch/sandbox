@@ -13,36 +13,5 @@ SpawnlistFooter
 
 SpawnlistFooter Button
 {
-    height: 22px;
-    padding: 0 10px;
-    gap: 6px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    font-family: $body-font;
-    font-size: 12px;
-    font-weight: 700;
-    color: white;
-    background-color: $ui-blue;
-    border: 1px solid rgba( 0, 0, 0, 0.51 );
-    border-radius: 0;
-    cursor: pointer;
-
-    &:hover
-    {
-        background-color: #5b95ee;
-        sound-in: ui.hover;
-    }
-
-    &:active
-    {
-        background-color: #2f6fd4;
-        sound-in: ui.select;
-    }
-
-    &.disabled
-    {
-        opacity: 0.4;
-        pointer-events: none;
-    }
+    @include ui-button;
 }

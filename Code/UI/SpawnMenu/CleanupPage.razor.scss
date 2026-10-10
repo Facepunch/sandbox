@@ -1,0 +1,9 @@
+@import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
+
+CleanupPage Button
+{
+    @include ui-button;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+}

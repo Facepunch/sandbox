@@ -89,10 +89,7 @@ SpawnMenuPage .tree-header
 
 	label
 	{
-		font-size: 12px;
-		font-weight: 800;
-		color: $ui-text-muted;
-		text-transform: uppercase;
+		@include ui-heading-text;
 		white-space: nowrap;
 	}
 
