@@ -17,13 +17,10 @@ PanelSwitcher > *
 	flex-shrink: 0;
 	flex-grow: 0;
 	opacity: 1;
-	transition: all 0.2s ease;
 }
 
 PanelSwitcher > .hidden
 {
 	opacity: 0;
 	pointer-events: none;
-	transform: translateX( -40px );
-	transition: all 0.1s ease;
 }

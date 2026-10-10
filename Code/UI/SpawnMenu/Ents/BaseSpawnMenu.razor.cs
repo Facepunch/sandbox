@@ -193,6 +193,62 @@ public partial class BaseSpawnMenu : Panel
 		StateHasChanged();
 	}
 
+	/// <summary>
+	/// Headers the user has collapsed, by name.
+	/// </summary>
+	readonly HashSet<string> collapsedSections = new();
+
+	/// <summary>
+	/// A header and the options that follow it, or a flexible gap.
+	/// </summary>
+	class Section
+	{
+		public SpawnMenuOption Header;
+		public List<SpawnMenuOption> Items = new();
+		public bool IsGrow;
+	}
+
+	List<Section> GetSections()
+	{
+		var sections = new List<Section>();
+		Section current = null;
+
+		foreach ( var o in options )
+		{
+			if ( o.Type == "grow" )
+			{
+				sections.Add( new Section { IsGrow = true } );
+				current = null;
+				continue;
+			}
+
+			if ( o.Type == "header" )
+			{
+				current = new Section { Header = o };
+				sections.Add( current );
+				continue;
+			}
+
+			if ( current is null )
+			{
+				current = new Section();
+				sections.Add( current );
+			}
+
+			current.Items.Add( o );
+		}
+
+		return sections;
+	}
+
+	void ToggleSection( SpawnMenuOption header )
+	{
+		if ( !collapsedSections.Remove( header.Name ) )
+			collapsedSections.Add( header.Name );
+
+		StateHasChanged();
+	}
+
 	public class SpawnMenuOption
 	{
 		public string Type { get; set; } = "option";

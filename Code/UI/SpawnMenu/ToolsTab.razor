@@ -8,41 +8,24 @@
 @attribute [Order( -100 )]
 
 <root class="tab">
-	<div class="left">
-        <VerticalMenu Value="@(CurrentMode?.GetType())"  class="menuinner">
-            <Options>
-                @foreach (var group in Game.TypeLibrary.GetTypes<ToolMode>().GroupBy(x => x.Group).OrderBy( x => LocalizedText.Resolve( x.Key ), StringComparer.CurrentCultureIgnoreCase ) )
-                {
-                    @if ( !string.IsNullOrWhiteSpace( group.Key ) )
-                    {
-                        <h2>@group.Key</h2>
-                    }
 
-                    @foreach (var type in group.OrderBy( x => LocalizedText.Resolve( x.Title ), StringComparer.CurrentCultureIgnoreCase ))
-                    {
-                        if (type.IsAbstract) continue;
+    <UIGroupedList Groups=@GetGroups() Selected=@(CurrentMode?.GetType()) OnSelect=@OnSelectTool />
 
-                        <MenuOption Text="@type.Title" Icon="@type.Icon" @onclick="@(() => SwitchMode(type))" Value="@type.TargetType"></MenuOption>
-                    }
-                }
-            </Options>
-        </VerticalMenu>
-	</div>
-
-    <div class="body menuinner">
+    <UISettingsPane Title=@GetTitle() Revision=@BuildHash()>
+        <Body>
         @if ( PostProcessManager?.GetSelectedComponents().Count > 0 )
         {
             @foreach ( var component in PostProcessManager.GetSelectedComponents() )
             {
-                <h2>@(Game.TypeLibrary.GetType( component.GetType() )?.Title ?? component.GetType().Name)</h2>
-                <ControlSheet Target="@component" PropertyFilter="@FilterProperties"></ControlSheet>
+                <UISheet Target="@component" PropertyFilter="@FilterProperties"></UISheet>
             }
         }
         else
         {
-            <ControlSheet PropertyFilter="@FilterProperties" Target="@GetCurrentMode()"></ControlSheet>
+            <UISheet PropertyFilter="@FilterProperties" Target="@GetCurrentMode()"></UISheet>
         }
-	</div>
+        </Body>
+    </UISettingsPane>
 
 </root>
 
@@ -51,54 +34,77 @@
     ToolMode CurrentMode => Player.FindLocalPlayer()?.GetWeapon<Toolgun>()?.GetCurrentMode();
     PostProcessManager PostProcessManager => Game.ActiveScene.GetSystem<PostProcessManager>();
 
-    protected override int BuildHash() => HashCode.Combine(CurrentMode, PostProcessManager?.SelectedPath, PostProcessManager?.GetSelectedComponents().Count, Game.Language.SelectedCode);
+    protected override int BuildHash() => HashCode.Combine( CurrentMode, PostProcessManager?.SelectedPath, PostProcessManager?.GetSelectedComponents().Count, Game.Language.SelectedCode );
 
-	bool IsActiveMode( TypeDescription t )
-	{
-		var localPlayer = Player.FindLocalPlayer();
-		var toolgun = localPlayer?.GetWeapon<Toolgun>();
-		if (!toolgun.IsValid()) return false;
+    /// <summary>
+    /// Every tool under its group, both sorted by what the player reads.
+    /// </summary>
+    List<UIGroupedList.ListGroup> GetGroups()
+    {
+        return Game.TypeLibrary.GetTypes<ToolMode>()
+            .Where( x => !x.IsAbstract )
+            .GroupBy( x => x.Group )
+            .OrderBy( x => LocalizedText.Resolve( x.Key ), StringComparer.CurrentCultureIgnoreCase )
+            .Select( group => new UIGroupedList.ListGroup( group.Key, group
+                .OrderBy( x => LocalizedText.Resolve( x.Title ), StringComparer.CurrentCultureIgnoreCase )
+                .Select( x => new UIGroupedList.ListItem( x.Title, x.TargetType ) )
+                .ToList() ) )
+            .ToList();
+    }
 
-		return toolgun.GetCurrentMode()?.GetType() == t.TargetType;
-	}
+    string GetTitle()
+    {
+        if ( PostProcessManager?.SelectedPath is { } path && PostProcessManager.GetSelectedComponents().Count > 0 )
+        {
+            var effect = ResourceLibrary.Get<PostProcessResource>( path );
+            if ( effect is not null ) return LocalizedText.Resolve( effect.Title );
+        }
 
-	void SwitchMode(TypeDescription t)
-	{
-		var localPlayer = Player.FindLocalPlayer();
-		if ( localPlayer == null ) return;
+        return GetCurrentMode()?.Name ?? "";
+    }
 
-		PostProcessManager?.Deselect();
+    void OnSelectTool( object value )
+    {
+        var type = Game.TypeLibrary.GetTypes<ToolMode>().FirstOrDefault( x => x.TargetType == (value as Type) );
+        if ( type is not null ) SwitchMode( type );
+    }
 
-		var inventory = localPlayer.GetComponent<PlayerInventory>();
-		if ( !inventory.IsValid() ) return;
+    void SwitchMode(TypeDescription t)
+    {
+        var localPlayer = Player.FindLocalPlayer();
+        if ( localPlayer == null ) return;
 
-		inventory.SetToolMode( t.ClassName );
-	}
+        PostProcessManager?.Deselect();
 
-	protected override void OnVisibilityChanged()
-	{
-		if ( !IsVisible )
-		{
-			GetCurrentMode()?.SaveCookies();
-		}
-	}
+        var inventory = localPlayer.GetComponent<PlayerInventory>();
+        if ( !inventory.IsValid() ) return;
 
-	ToolMode GetCurrentMode()
-	{
-		var localPlayer = Player.FindLocalPlayer();
-		var toolgun = localPlayer?.GetWeapon<Toolgun>();
-		return toolgun?.GetCurrentMode();
-	}
+        inventory.SetToolMode( t.ClassName );
+    }
 
-	static bool FilterProperties(SerializedProperty o)
-	{
-		if (o.PropertyType is null) return false;
-		if (o.PropertyType.IsAssignableTo(typeof(Delegate))) return false;
+    protected override void OnVisibilityChanged()
+    {
+        if ( !IsVisible )
+        {
+            GetCurrentMode()?.SaveCookies();
+        }
+    }
 
-		if (o.IsMethod) return true;
-		if (!o.HasAttribute<PropertyAttribute>()) return false;
+    ToolMode GetCurrentMode()
+    {
+        var localPlayer = Player.FindLocalPlayer();
+        var toolgun = localPlayer?.GetWeapon<Toolgun>();
+        return toolgun?.GetCurrentMode();
+    }
 
-		return true;
-	}
+    static bool FilterProperties(SerializedProperty o)
+    {
+        if (o.PropertyType is null) return false;
+        if (o.PropertyType.IsAssignableTo(typeof(Delegate))) return false;
+
+        if (o.IsMethod) return true;
+        if (!o.HasAttribute<PropertyAttribute>()) return false;
+
+        return true;
+    }
 }
-

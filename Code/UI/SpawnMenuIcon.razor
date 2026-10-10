@@ -4,6 +4,8 @@
 
 <root>
 
+    <div class="thumb" style="background-image: url( @Icon )"></div>
+
     @if ( Developer )
     {
         <div class="developer-badge">🪲</div>
@@ -44,8 +46,6 @@
         {
             Icon = $"thumb:{Path}";
         }
-
-        Style.SetBackgroundImage(Icon);
     }
 
     protected override int BuildHash()

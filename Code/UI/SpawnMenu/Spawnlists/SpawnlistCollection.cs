@@ -144,7 +144,7 @@ public class SpawnlistCollection
 				continue;
 			}
 
-			result.Add( new Entry( "📁", data.Name, storageEntry, 0, true ) );
+			result.Add( new Entry( "folder", data.Name, storageEntry, 0, true ) );
 		}
 
 		foreach ( var (workshopId, storageEntry) in _cloudEntries )
@@ -152,7 +152,7 @@ public class SpawnlistCollection
 			if ( !installedIds.Contains( workshopId ) ) continue;
 
 			var data = SpawnlistData.Load( storageEntry );
-			result.Add( new Entry( "☁️", data.Name, storageEntry, workshopId, false ) );
+			result.Add( new Entry( "cloud", data.Name, storageEntry, workshopId, false ) );
 		}
 
 		_entries = result;

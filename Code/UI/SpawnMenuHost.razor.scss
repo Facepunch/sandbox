@@ -22,30 +22,19 @@ SpawnMenuHost .menu-wrapper
 	height: 100%;
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity 0.15s ease-in;
+	transition: opacity 0.1s ease-out;
 }
 
 SpawnMenuHost.open .menu-wrapper
 {
 	opacity: 1;
 	pointer-events: all;
-	transition: opacity 0.15s ease-out;
 }
 
+// nothing darkens the game behind the menu
 SpawnMenuHost .menu-backdrop
 {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	backdrop-filter: brightness( 0.4 ) contrast( 0.7 ) saturate( 0.7 );
-	transition: opacity 0.15s ease;
-}
-
-SpawnMenuHost.no-backdrop .menu-backdrop
-{
-	opacity: 0;
+	display: none;
 }
 
 SpawnMenuHost .menu-slide
@@ -55,15 +44,11 @@ SpawnMenuHost .menu-slide
 	left: 0;
 	right: 0;
 	bottom: 0;
-	transform: translateX( -60px );
-	transition: transform 0.15s ease-in;
+	transform: translateY( -180px );
+	transition: transform 0.1s ease-out;
 }
 
 SpawnMenuHost.open .menu-slide
 {
-	transform: translateX( 0px );
-	transition: transform 0.15s ease-out;
+	transform: translateY( 0px );
 }
-
-
-

@@ -1,15 +1,48 @@
+@import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
+
 SpawnlistFooter
 {
     width: 100%;
     flex-shrink: 0;
     flex-direction: column;
-    padding: 8px;
+    padding: 6px;
     gap: 4px;
+    border-top: 1px solid rgba( 0, 0, 0, 0.2 );
 }
 
-.menu-action
+SpawnlistFooter Button
 {
-    padding: 8px 16px;
-    gap: 1rem;
-}
+    height: 22px;
+    padding: 0 10px;
+    gap: 6px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-family: $body-font;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    background-color: $ui-blue;
+    border: 1px solid rgba( 0, 0, 0, 0.51 );
+    border-radius: 0;
+    cursor: pointer;
 
+    &:hover
+    {
+        background-color: #5b95ee;
+        sound-in: ui.hover;
+    }
+
+    &:active
+    {
+        background-color: #2f6fd4;
+        sound-in: ui.select;
+    }
+
+    &.disabled
+    {
+        opacity: 0.4;
+        pointer-events: none;
+    }
+}

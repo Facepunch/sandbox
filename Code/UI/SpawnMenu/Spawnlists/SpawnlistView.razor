@@ -82,7 +82,7 @@
         }
         else
         {
-            <MixedVirtualGrid class="@( _editMode ? "editing" : "" )" Items=@data.Items ItemSize=@(new Vector2( 160, 120 )) CanAcceptDrop=@CanAcceptDrop OnDropIndex=@OnDropIndex>
+            <MixedVirtualGrid class="@( _editMode ? "editing" : "" )" Items=@data.Items ItemSize=@(new Vector2( 123, 123 )) CanAcceptDrop=@CanAcceptDrop OnDropIndex=@OnDropIndex>
                 <Item Context="item">
                     @if ( item is SpawnlistItem spawnItem )
                     {

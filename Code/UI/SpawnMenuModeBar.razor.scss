@@ -1,15 +1,68 @@
+@import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
 
 SpawnMenuModeBar
 {
 	position: absolute;
-	top: 0;
+	top: 54px;
 	left: 0;
 	right: 0;
+	flex-direction: row;
 	justify-content: center;
-	align-items: center;
-	padding: 3rem;
-	padding-bottom: 0;
-	gap: 1rem;
+	align-items: flex-end;
 	z-index: 1000;
-	background-image: linear-gradient( to bottom, rgba( black, 0.5 ), rgba( black, 0.0 ) );
+	pointer-events: none;
+}
+
+SpawnMenuModeBar .mode-tabs
+{
+	flex-direction: row;
+	align-items: flex-end;
+	height: 25px;
+	font-family: $body-font;
+	pointer-events: all;
+}
+
+SpawnMenuModeBar .mode-tab
+{
+	@include ui-tab;
+
+	&:first-child
+	{
+		border-left: 1px solid #464646;
+	}
+
+	&:hover
+	{
+		color: white;
+		background-color: #707070;
+		sound-in: ui.hover;
+	}
+
+	&:active
+	{
+		sound-in: ui.select;
+	}
+
+	&.active
+	{
+		@include ui-tab-active;
+		border-bottom: 1px solid rgba( 255, 255, 255, 0.28 );
+	}
+
+	.icon
+	{
+		font-size: 13px;
+	}
+
+	.title
+	{
+		font-size: 13px;
+		font-weight: 600;
+	}
+}
+
+SpawnMenuModeBar.hidden
+{
+	display: none;
 }

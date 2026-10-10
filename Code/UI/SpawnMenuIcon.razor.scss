@@ -7,48 +7,107 @@ SpawnMenuIcon
 	align-items: center;
 	flex-grow: 1;
 	width: 100%;
+	height: 100%;
 	position: relative;
 	overflow: visible;
-	border-radius: $hud-radius-sm;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-size: contain;
+	padding: 6px;
+	background-color: rgba( 0, 0, 0, 0.16 );
+	cursor: pointer;
+
+	.thumb
+	{
+		width: 100%;
+		height: 100%;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: contain;
+	}
 
 	.developer-badge
 	{
 		position: absolute;
-		top: 6px;
-		right: 6px;
+		top: 8px;
+		right: 8px;
 		font-size: 1.2rem;
+		pointer-events: none;
+	}
+
+	// white 1px outline all the way round, the name sits just inside it
+	&::before
+	{
+		content: "";
+		position: absolute;
+		left: 0px;
+		top: 0px;
+		right: 0px;
+		bottom: 0px;
+		border: 1px solid white;
+		opacity: 0;
 		pointer-events: none;
 	}
 
 	.title
 	{
-		background-color: #0005;
-		border-radius: 10px;
-		padding: 0.5rem 1rem;
-		margin: 0.5rem;
-		font-size: 1rem;
-		font-weight: 600;
-		max-width: 90%;
 		position: absolute;
-		bottom: 0px;
+		left: 1px;
+		right: 1px;
+		bottom: 1px;
+		height: 28px;
+		padding: 0 6px;
+		justify-content: center;
+		align-items: center;
+		background-color: white;
+		color: black;
+		font-family: $body-font;
+		font-size: 11px;
+		font-weight: 500;
+		text-align: center;
 		white-space: nowrap;
 		overflow: hidden;
+		text-overflow: ellipsis;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	&:hover
+	{
+		sound-in: ui.hover;
+
+		&::before
+		{
+			opacity: 1;
+		}
+
+		.title
+		{
+			opacity: 1;
+		}
+	}
+
+	&:active
+	{
+		sound-in: ui.select;
 	}
 }
 
 .size-small SpawnMenuIcon
 {
+	padding: 4px;
+
 	.developer-badge
 	{
-		top: 3px;
-		right: 3px;
+		top: 5px;
+		right: 5px;
 	}
 }
 
-.size-large SpawnMenuIcon .title
+.size-large SpawnMenuIcon
 {
-	font-size: 1.2rem;
+	padding: 8px;
+
+	.title
+	{
+		height: 32px;
+		font-size: 12px;
+	}
 }

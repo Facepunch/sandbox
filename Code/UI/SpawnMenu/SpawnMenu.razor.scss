@@ -1,160 +1,105 @@
 @import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
 
 SpawnMenu
 {
     width: 100%;
     height: 100%;
-    color: $menu-color;
+    flex-direction: row;
     justify-content: center;
+    color: white;
     font-family: $body-font;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 500;
     z-index: 1000;
 }
 
 SpawnMenu .container
 {
+    flex-direction: row;
     width: 100%;
+    max-width: 1658px;
     height: 100%;
-    max-width: 1900px;
+    padding-top: 54px;
+    padding-bottom: 83px;
+    gap: 10px;
 }
 
-SpawnMenu .container .spawnmenuleft
-{
-    transform: translateX( -100px );
-    transition: all 0.2s ease-in;
-}
-
-SpawnMenu .container .spawnmenuright
-{
-    transform: translateX( 100px );
-    transition: all 0.2s ease-in;
-}
-
-SpawnMenuHost.open SpawnMenu
-{
-    .container .spawnmenuleft
-    {
-        transform: translateX( 0px );
-        transition: all 0.1s ease-out;
-    }
-
-    .container .spawnmenuright
-    {
-        transform: translateX( 0px );
-        transition: all 0.1s ease-out;
-    }
-}
-
-.container .spawnmenuleft
-{
-    flex-grow: 1;
-    padding: 128px 64px;
-    padding-right: 16px;
-
-    PanelSwitcher
-    {
-        padding-bottom: 128px;
-    }
-}
-
-.container .spawnmenuright
-{
-    width: 700px;
-    flex-shrink: 0;
-    flex-grow: 0;
-    padding: 128px 64px;
-    padding-left: 16px;
-}
 
 .container > .spawnmenuleft,
 .container > .spawnmenuright
 {
     flex-direction: column;
+    min-width: 0px;
 }
 
-
-.container > .spawnmenuleft > .body,
-.container > .spawnmenuright > .body
+.container > .spawnmenuleft
 {
-    border-radius: 8px;
     flex-grow: 1;
 }
 
+.container > .spawnmenuright
+{
+    width: 583px;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+// --- tabs -----------------------------------------------------------------------------------
+
 .tabs
 {
-    font-size: 14px;
-    color: white;
-    font-weight: 650;
-    font-family: $subtitle-font;
-    margin-left: 0;
-    margin-bottom: 8px;
-    padding: 3px;
-    gap: 2px;
-    align-self: flex-start;
-    background-color: rgba( 6, 16, 24, 0.82 );
-    backdrop-filter: blur( 8px );
-    border: 1px solid rgba( white, 0.06 );
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba( black, 0.25 );
-    z-index: 10;
+    flex-direction: row;
+    align-items: flex-end;
     flex-shrink: 0;
+    height: 25px;
+    margin-left: 9px;
+    align-self: flex-start;
+    font-family: $body-font;
+    z-index: 10;
 }
 
 .tabs > *
 {
-    padding: 0.45rem 0.8rem;
-    cursor: pointer;
-    color: #D1D7E3AA;
-    border-radius: 5px;
-    background-color: transparent;
-    opacity: 1;
-    border: 1px solid transparent;
-    gap: 0.4rem;
-    align-items: center;
-    transition: color 0.1s ease, background-color 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;
+    @include ui-tab;
+
+    &:hover
+    {
+        color: white;
+        background-color: #707070;
+        sound-in: ui.hover;
+    }
+
+    &:active
+    {
+        sound-in: ui.select;
+    }
+
+    &.active
+    {
+        @include ui-tab-active;
+    }
 }
 
-.tabs > *:hover
-{
-    color: $menu-color;
-    background-color: rgba( white, 0.06 );
-    box-shadow: 0 0 10px rgba( $menu-accent, 0.12 );
-    transform: translateY( -1px );
-    sound-in: ui.hover;
-}
-
-.tabs > *:active
-{
-    color: $menu-text-strong;
-    sound-in: ui.select;
-}
-
-.tabs > *.active
-{
-    opacity: 1;
-    color: $menu-text-strong;
-    cursor: pointer;
-    background-color: rgba( $menu-accent, 0.2 );
-    border-color: rgba( $menu-accent, 0.5 );
-    pointer-events: none;
-    box-shadow: 0 0 10px rgba( $menu-accent, 0.16 );
-}
-
+// --- blocks ---------------------------------------------------------------------------------
 
 .container > .spawnmenuleft > .body,
 .container > .spawnmenuright > .body
 {
+    @include ui-block;
     position: relative;
+    flex-grow: 1;
 }
 
-
+// each page fills the block, inside its padding
 .container > .spawnmenuleft > .body > *,
 .container > .spawnmenuright > .body > *
 {
     position: absolute;
-    height: 100%;
-    width: 100%;
+    left: 8px;
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
 }
 
 .container > .spawnmenuleft > .body > .hidden,
@@ -162,30 +107,15 @@ SpawnMenuHost.open SpawnMenu
 {
     opacity: 0;
     pointer-events: none;
-    transition: all 0.1s linear;
-    transform: translateY( 20px );
 }
 
 .container > .spawnmenuleft > .body > .active,
 .container > .spawnmenuright > .body > .active
 {
     opacity: 1;
-    transition: all 0.1s linear;
-    transform: translateY( 0px );
 }
 
-.container > .spawnmenuleft,
-.container > .spawnmenuright
-{
-    > .body
-    {
-        background-color: rgba( 9, 21, 31, 0.88 );
-        backdrop-filter: blur( 8px );
-        border: 1px solid rgba( white, 0.06 );
-        box-shadow: 0 8px 24px rgba( black, 0.5 );
-    }
-}
-
+// --- shared page bits -------------------------------------------------------------------------
 
 .menuinner
 {
@@ -194,134 +124,10 @@ SpawnMenuHost.open SpawnMenu
     h1, h2
     {
         text-transform: uppercase;
-        font-size: 11px;
-        letter-spacing: 0.1em;
-        opacity: 0.5;
+        font-size: 12px;
         font-weight: 800;
+        color: $ui-text-muted;
         padding: 8px 4px 2px 4px;
-    }
-}
-
-.spawnmenuright .body
-{
-    .tab
-    {
-        flex-grow: 1;
-        flex-direction: row;
-
-        > .left
-        {
-            height: 100%;
-            min-height: 0;
-            flex-grow: 0;
-            flex-shrink: 0;
-            flex-direction: column;
-            width: 180px;
-            border-right: 1px solid rgba( white, 0.06 );
-            padding: 8px;
-
-            .list
-            {
-                flex-direction: column;
-                height: 100%;
-            }
-        }
-
-        > .body
-        {
-            flex-direction: column;
-            flex-grow: 1;
-            padding: 8px;
-            margin: 8px;
-            overflow-x: hidden;
-            overflow-y: scroll;
-        }
-
-        ControlSheet .body
-        {
-            padding: 0;
-            margin: 0;
-        }
-
-        ControlSheet .controlgroup
-        {
-            padding: 0;
-
-            > .body
-            {
-                padding: 0;
-            }
-        }
-
-        ControlSheetGroup
-        {
-            > .body
-            {
-                padding: 0;
-                margin: 0;
-                gap: 2px;
-            }
-        }
-
-        .page
-        {
-            gap: 2px;
-        }
-
-        controlsheetrow, .control-row
-        {
-            width: 100%;
-            background-color: #53698111;
-            border: 1px solid transparent;
-            padding: 8px;
-            border-radius: 4px;
-            max-height: auto;
-            gap: 4px;
-            transition: background-color 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;
-
-            &:hover
-            {
-                background-color: #53698122;
-
-                > .left
-                {
-                    color: #fff;
-                }
-            }
-
-            &.action
-            {
-                cursor: pointer;
-
-                &:hover
-                {
-                    background-color: $menu-accent-soft;
-                    border-color: rgba( $color-accent, 0.4 );
-                    box-shadow: 0 0 10px rgba( $menu-accent, 0.12 );
-                    transform: translateY( -1px );
-                }
-
-                &:active
-                {
-                    background-color: $menu-accent;
-                    box-shadow: 0 0 6px rgba( $menu-accent, 0.1 );
-                    transform: translateY( 0 );
-                }
-            }
-
-            > .left
-            {
-                width: 150px;
-                overflow: hidden;
-                flex-shrink: 0;
-                gap: 4px;
-            }
-
-            > .right, > .left
-            {
-                flex-shrink: 0;
-            }
-        }
     }
 }
 
@@ -329,43 +135,16 @@ VirtualGrid, MixedVirtualGrid
 {
     width: 100%;
     height: 100%;
-    scrollbar-width: thin;
-    gap: 5px;
-    padding: 6px;
-
-    .cell
-    {
-        background-color: #7771;
-        border-radius: $hud-radius-sm;
-        border: 1px solid transparent;
-        cursor: pointer;
-        transition: background-color 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;
-
-        &:hover
-        {
-            background-color: $menu-accent-soft;
-            border-color: rgba($color-accent, 0.4);
-			box-shadow: 0 0 12px rgba( $menu-accent, 0.16 );
-			transform: translateY( -1px );
-        }
-
-        &:active
-        {
-            background-color: $menu-accent;
-			box-shadow: 0 0 8px rgba( $menu-accent, 0.12 );
-			transform: translateY( 0 );
-        }
-    }
+    flex-grow: 1;
+    @include ui-scroll;
+    gap: 4px;
+    padding: 0;
 }
 
 MixedVirtualGrid
 {
     .cell.full-row, .cell.full-row:hover, .cell.full-row:active
     {
-        background-color: transparent;
-        border-color: transparent;
-        box-shadow: none;
-        transform: none;
         pointer-events: none;
         cursor: default;
     }
@@ -384,9 +163,7 @@ MixedVirtualGrid
         top: 4px;
         bottom: 4px;
         width: 3px;
-        border-radius: 2px;
-        background-color: $color-accent;
-        box-shadow: 0 0 8px rgba( $color-accent, 0.8 );
+        background-color: $ui-blue;
         z-index: 10;
     }
 
@@ -417,33 +194,34 @@ MixedVirtualGrid
 {
     width: 100%;
     height: 100%;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    color: rgba( white, 0.42 );
-    font-family: $subtitle-font;
-    font-size: 12px;
-    font-weight: 650;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding-bottom: 8px;
     pointer-events: none;
 
-    IconPanel
+    label
     {
-        font-size: 16px;
-        text-transform: none;
+        font-family: $body-font;
+        font-size: 30px;
+        font-weight: 700;
+        color: white;
+        text-shadow: 0px 1px 3px rgba( 0, 0, 0, 0.4 );
     }
+}
 
-    .line
-    {
-        height: 1px;
-        flex-grow: 1;
-        max-width: 220px;
-        background: linear-gradient( to right, transparent, rgba( white, 0.18 ) );
+.container > .spawnmenuright > .body > *
+{
+    left: 6px;
+}
 
-        &.right
-        {
-            background: linear-gradient( to left, transparent, rgba( white, 0.18 ) );
-        }
-    }
+.container > .spawnmenuright > .tabs
+{
+    margin-left: 7px;
+}
+
+.spawnmenuright .body .tab
+{
+    flex-direction: row;
+    gap: 8px;
 }

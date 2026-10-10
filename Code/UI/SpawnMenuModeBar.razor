@@ -5,7 +5,7 @@
 
 <root>
 
-    <div class="menu-segmented-group">
+    <div class="mode-tabs">
     @{
 
         var activeMode = SpawnMenuHost.GetActiveMode();
@@ -17,9 +17,9 @@
 
             var activeClass = mode.Type.TargetType == activeMode?.GetType() ? "active" : "";
 
-            <div class="menu-mode-button @activeClass" @onclick="@( () => SpawnMenuHost.SwitchMode( mode.Type.Name ) )">
+            <div class="mode-tab @activeClass" @onclick="@( () => SpawnMenuHost.SwitchMode( mode.Type.Name ) )">
                 <div class="icon">@mode.Type.Icon</div>
-                <div class="title">@mode.Type.Title</div>                
+                <div class="title">@mode.Type.Title</div>
             </div>
         }
     }
@@ -30,5 +30,11 @@
 @code
 {
     protected override int BuildHash() => HashCode.Combine( SpawnMenuHost.GetActiveMode(), Game.TypeLibrary.GetTypesWithAttribute<SpawnMenuHost.SpawnMenuMode>() );
-}
 
+    public override void Tick()
+    {
+        base.Tick();
+
+        SetClass( "hidden", SpawnMenuHost.GetActiveMode() is SpawnMenu );
+    }
+}

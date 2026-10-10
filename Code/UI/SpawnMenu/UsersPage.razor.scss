@@ -1,4 +1,5 @@
 @import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
 
 UsersPage .ban-entry
 {
@@ -7,11 +8,11 @@ UsersPage .ban-entry
     padding: 6px 8px;
     border-radius: 4px;
     margin: 2px 0px;
-    background-color: #53698111;
+    background-color: $ui-row-alt;
 
     &:hover
     {
-        background-color: #53698122;
+        background-color: $ui-blue-soft;
     }
 }
 
@@ -35,14 +36,14 @@ UsersPage .ban-entry .ban-name
 {
     font-size: 13px;
     font-weight: 600;
-    color: $menu-color;
+    color: $ui-text;
 }
 
 UsersPage .ban-entry .ban-reason
 {
     font-size: 11px;
     opacity: 0.55;
-    color: $menu-color;
+    color: $ui-text;
     margin-top: 2px;
 }
 
@@ -58,7 +59,7 @@ UsersPage .ban-entry .ban-options
 
     &:hover
     {
-        background-color: rgba( 255, 255, 255, 0.12 );
+        background-color: rgba( 0, 0, 0, 0.08 );
         opacity: 1;
     }
 

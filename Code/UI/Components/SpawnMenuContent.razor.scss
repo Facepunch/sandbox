@@ -1,3 +1,4 @@
+@import "/UI/UiCommon.scss";
 
 SpawnMenuContent
 {
@@ -10,19 +11,14 @@ SpawnMenuContent
 SpawnMenuContent > .header
 {
 	flex-direction: column;
-	padding: 0 8px;
 	flex-shrink: 0;
+	margin-bottom: 21px;
 }
 
 SpawnMenuContent > .body
 {
 	position: relative;
 	flex-grow: 1;
-	padding: 8px;
-}
-
-SpawnMenuContent > .body .cell:hover
-{
-	color: white;
-	sound-in: ui.hover;
+	min-height: 0px;
+	padding: 0;
 }

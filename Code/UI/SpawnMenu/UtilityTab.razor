@@ -1,4 +1,4 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @inherits Panel
 @namespace Sandbox
@@ -8,31 +8,13 @@
 @attribute [Order(0)]
 
 <root class="tab">
-    <div class="left">
-        <VerticalMenu class="menuinner">
-            <Options>
-                @foreach ( var group in GetPageGroups() )
-                {
-                    @if ( !string.IsNullOrWhiteSpace( group.Key ) )
-                    {
-                        <h2>@group.Key</h2>
-                    }
 
-                    @foreach ( var type in group.OrderBy( x => x.Order )
-                        .ThenBy( x => SortLabel( x.Title ), StringComparer.CurrentCultureIgnoreCase )
-                        .ThenBy( x => x.FullName, StringComparer.Ordinal ) )
-                    {
-                        <MenuOption Text="@type.Title" Icon="@type.Icon"
-                            class=@( SelectedPageType == type ? "active" : "" )
-                            @onclick="@(() => OnSelect( type ))">
-                        </MenuOption>
-                    }
-                }
-            </Options>
-        </VerticalMenu>
-    </div>
+    <UIGroupedList Groups=@GetGroups() Selected=@SelectedPageType?.TargetType OnSelect=@OnSelectPage />
 
-    <div class="body menuinner" @ref="PageContainer"></div>
+    <UISettingsPane Title=@( SelectedPageType is null ? "" : LocalizedText.Resolve( SelectedPageType.Title ) )>
+        <Body><div class="utility-page" @ref="PageContainer"></div></Body>
+    </UISettingsPane>
+
 </root>
 
 @code
@@ -40,6 +22,20 @@
     TypeDescription SelectedPageType { get; set; }
     Panel PageContainer { get; set; }
     UtilityPage ActivePage;
+
+    protected override int BuildHash() => HashCode.Combine( SelectedPageType, Game.Language.SelectedCode );
+
+    List<UIGroupedList.ListGroup> GetGroups()
+    {
+        return GetPageGroups()
+            .Select( group => new UIGroupedList.ListGroup( group.Key, group
+                .OrderBy( x => x.Order )
+                .ThenBy( x => SortLabel( x.Title ), StringComparer.CurrentCultureIgnoreCase )
+                .ThenBy( x => x.FullName, StringComparer.Ordinal )
+                .Select( x => new UIGroupedList.ListItem( x.Title, x.TargetType ) )
+                .ToList() ) )
+            .ToList();
+    }
 
     IEnumerable<IGrouping<string, TypeDescription>> GetPageGroups()
     {
@@ -56,20 +52,27 @@
         return label.StartsWith( '#' ) ? Game.Language.GetPhrase( label.TrimStart( '#' ) ) : label;
     }
 
-    IEnumerable<TypeDescription> GetVisiblePages()
+    List<TypeDescription> GetVisiblePages()
     {
+        var pages = new List<TypeDescription>();
+
         foreach ( var type in Game.TypeLibrary.GetTypes<UtilityPage>() )
         {
             if ( type.IsAbstract ) continue;
             var instance = type.Create<UtilityPage>();
             if ( instance is null || !instance.IsPageVisible() ) continue;
             instance.Delete();
-            yield return type;
+            pages.Add( type );
         }
+
+        return pages;
     }
 
-    void OnSelect( TypeDescription type )
+    void OnSelectPage( object value )
     {
+        var type = Game.TypeLibrary.GetTypes<UtilityPage>().FirstOrDefault( x => x.TargetType == (value as Type) );
+        if ( type is null ) return;
+
         SelectedPageType = type;
 
         ActivePage?.Delete();
