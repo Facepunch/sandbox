@@ -147,7 +147,7 @@ public class UIResourceGrid : BaseControl
 			AddClass( "resource-cell" );
 
 			var thumb = Add.Panel( "thumb" );
-			thumb.Style.SetBackgroundImage( $"thumb:{resource.ResourcePath}" );
+			thumb.Style.Set( "background-image", $"url( thumb:{resource.ResourcePath} )" );
 		}
 
 		public bool Matches( string path ) => !string.IsNullOrEmpty( path ) && path.Equals( _resource.ResourcePath, StringComparison.OrdinalIgnoreCase );

@@ -24,7 +24,7 @@ $ui-settings-font: 12px;
 {
 	padding: 8px;
 	border: 1px solid rgba( 255, 255, 255, 0.28 );
-	background-image: linear-gradient( to bottom, rgba( 169, 169, 169, 0.56 ), rgba( 162, 162, 162, 0.56 ) );
+	background-image: linear-gradient( to bottom, rgba( 140, 140, 140, 0.66 ), rgba( 130, 130, 130, 0.66 ) );
 }
 
 // lists, settings, tool list, etc..
@@ -32,7 +32,7 @@ $ui-settings-font: 12px;
 {
 	color: $ui-text;
 	border: 1px solid rgba( 0, 0, 0, 0.51 );
-	background-image: linear-gradient( to bottom, rgba( 255, 255, 255, 0.92 ), rgba( 245, 245, 245, 0.83 ) );
+	background-image: linear-gradient( to bottom, rgba( 255, 255, 255, 0.90 ), rgba( 245, 245, 245, 0.80 ) );
 }
 
 // scrollbar
@@ -57,7 +57,82 @@ $ui-settings-font: 12px;
 	color: $ui-text;
 }
 
-// (unselected) menu tabs (buttons for spawnlist/entities/NPCs/etc..) 
+@mixin ui-button
+{
+	height: 28px;
+	padding: 0 10px;
+	gap: 6px;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	font-family: $body-font;
+	font-size: 12px;
+	color: $ui-text;
+	background-image: linear-gradient( to bottom, rgba(233, 233, 233, 0.8) 0%, rgba(233, 233, 233, 0.8) 48%, rgba( 170, 170, 170, 0.25 ) 52%, rgba( 170, 170, 170, 0.25 ) 100% );
+	border: 1px solid rgba( 0, 0, 0, 0.33 );
+	border-radius: 0;
+	cursor: pointer;
+
+	&:hover
+	{
+		filter: brightness( 1.1 );
+		sound-in: ui.hover;
+	}
+
+	&:active
+	{
+		transform: translateY( 1px );
+		sound-in: ui.select;
+	}
+
+	&.disabled
+	{
+		opacity: 0.4;
+		background-image: none;
+		background-color: rgba( 0, 0, 0, 0.33 );
+		pointer-events: none;
+	}
+}
+
+// space above every section header except the first one in a sheet or page
+$ui-section-gap: 20px;
+
+// blue bar with a white title, on top of lists and settings panels
+@mixin ui-title-bar
+{
+	flex-direction: row;
+	align-items: center;
+	flex-shrink: 0;
+	height: 23px;
+	padding: 0 10px;
+	background-color: $ui-blue;
+	color: white;
+	font-size: 12px;
+	font-weight: 800;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+// grey uppercase text of group and section names
+@mixin ui-heading-text
+{
+	font-size: $ui-settings-font;
+	font-weight: 800;
+	text-transform: uppercase;
+	color: $ui-text-muted;
+}
+
+// a group name with a line under it, the first one of a sheet or page sits at the top and the others get $ui-section-gap above
+@mixin ui-section-header
+{
+	flex-shrink: 0;
+	margin: 4px 0px 6px 0px;
+	padding-bottom: 3px;
+	border-bottom: 1px solid rgba( 0, 0, 0, 0.12 );
+	@include ui-heading-text;
+}
+
+// (unselected) menu tabs (buttons for spawnlist/entities/NPCs/etc..)
 @mixin ui-tab
 {
 	flex-direction: row;

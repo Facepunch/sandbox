@@ -8,6 +8,7 @@ UIResourceGrid
 	flex-grow: 1;
 	max-height: 237px;
 	padding: 1px;
+	margin: 0px 0px 20px 0px;
 	gap: 1px;
 	border: 1px solid $ui-control-border;
 	overflow-y: scroll;
@@ -57,7 +58,7 @@ UIResourceGrid .resource-cell
 
 		.thumb
 		{
-			opacity: 0.5; // make thumbnail semi-transparent so it blends with blue color
+			opacity: 0.75; // make thumbnail semi-transparent so it blends with blue color
 		}
 	}
 }

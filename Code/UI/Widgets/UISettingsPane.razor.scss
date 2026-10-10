@@ -14,17 +14,7 @@ UISettingsPane
 
 UISettingsPane .title-bar
 {
-	flex-direction: row;
-	align-items: center;
-	flex-shrink: 0;
-	height: 21px;
-	padding: 0 10px;
-	background-color: $ui-blue;
-	color: white;
-	font-size: 12px;
-	font-weight: 800;
-	text-transform: uppercase;
-	white-space: nowrap;
+	@include ui-title-bar;
 	overflow: hidden;
 
 	label
@@ -106,14 +96,12 @@ UISettingsPane .settings-body .control-row
 
 UISettingsPane .settings-body .section-header
 {
-	flex-shrink: 0;
-	margin: 8px 0px 6px 0px;
-	padding-bottom: 3px;
-	border-bottom: 1px solid rgba( 0, 0, 0, 0.12 );
-	font-size: $ui-settings-font;
-	font-weight: 800;
-	text-transform: uppercase;
-	color: $ui-text-muted;
+	@include ui-section-header;
+
+	&:not(:first-child)
+	{
+		margin-top: $ui-section-gap;
+	}
 }
 
 UISettingsPane .settings-body .utility-page

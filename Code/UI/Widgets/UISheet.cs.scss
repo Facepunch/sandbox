@@ -31,17 +31,18 @@ UISheet
 			align-items: center;
 			flex-shrink: 0;
 			gap: 6px;
-			margin: 4px 0 6px 0;
-			padding-bottom: 3px;
-			border-bottom: 1px solid rgba( 0, 0, 0, 0.12 );
+			@include ui-section-header;
 
 			.title
 			{
-				font-size: $ui-settings-font;
-				font-weight: 800;
-				text-transform: uppercase;
-				color: $ui-text-muted;
+				@include ui-heading-text;
 			}
+		}
+
+		// the first group stays against the top of the sheet
+		&:not(:first-child) > .header
+		{
+			margin-top: $ui-section-gap;
 		}
 
 		> .rows
