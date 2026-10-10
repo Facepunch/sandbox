@@ -1,0 +1,63 @@
+@import "/UI/UiCommon.scss";
+
+UIResourceGrid
+{
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	flex-grow: 1;
+	max-height: 237px;
+	padding: 1px;
+	gap: 1px;
+	border: 1px solid $ui-control-border;
+	overflow-y: scroll;
+	@include ui-scroll;
+	pointer-events: all;
+
+	&.empty
+	{
+		height: 40px;
+	}
+
+	.thumb
+	{
+		width: 100%;
+		height: 100%;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+}
+
+UIResourceGrid .resource-cell
+{
+	width: 90px;
+	height: 91px;
+	flex-shrink: 0;
+	padding: 1px;
+	background-color: #d9d9d9;
+	border: 1px solid $ui-control-border;
+	cursor: pointer;
+
+	&:hover
+	{
+		border-color: #6f6f6f;
+		sound-in: ui.hover;
+	}
+
+	&:active
+	{
+		sound-in: ui.select;
+	}
+
+	&.selected
+	{
+		background-color: $ui-blue;
+		border-color: $ui-blue;
+
+		.thumb
+		{
+			opacity: 0.5; // make thumbnail semi-transparent so it blends with blue color
+		}
+	}
+}

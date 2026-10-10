@@ -1,0 +1,48 @@
+@import "/UI/UiCommon.scss";
+
+UIDropdown
+{
+	flex-direction: row;
+	align-items: center;
+	flex-grow: 1;
+	flex-shrink: 0;
+	height: 24px;
+	padding: 0 4px 0 7px;
+	gap: 4px;
+	font-family: "Inter";
+	font-size: $ui-settings-font;
+	font-weight: 700;
+	color: #545454;
+	background-image: linear-gradient( to right, #f4f4f4, #e1e1e1 );
+	border: 1px solid $ui-control-border;
+	cursor: pointer;
+
+	.value
+	{
+		flex-grow: 1;
+		flex-shrink: 1;
+		min-width: 0px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.chevron
+	{
+		flex-shrink: 0;
+		font-size: 14px;
+		color: #444444;
+	}
+
+	&:hover
+	{
+		background-image: linear-gradient( to right, #ffffff, #ebebeb );
+		sound-in: ui.hover;
+	}
+
+	&.big
+	{
+		height: 24px;
+		font-size: 12px;
+	}
+}

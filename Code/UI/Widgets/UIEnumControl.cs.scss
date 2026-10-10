@@ -1,0 +1,42 @@
+@import "/UI/UiCommon.scss";
+
+UIEnumControl
+{
+	flex-direction: row;
+	flex-grow: 1;
+	height: 24px;
+
+	&.segmented
+	{
+		border: 1px solid $ui-control-border;
+		background-color: $ui-control-bg;
+	}
+
+	.segment
+	{
+		flex-grow: 1;
+		flex-shrink: 1;
+		flex-basis: 0px;
+		justify-content: center;
+		align-items: center;
+		font-family: "Inter";
+		font-size: $ui-settings-font;
+		font-weight: 800;
+		color: #afafaf;
+		text-transform: uppercase;
+		cursor: pointer;
+
+		&:hover
+		{
+			color: #8a8a8a;
+			sound-in: ui.hover;
+		}
+
+		&.active
+		{
+			color: white;
+			background-color: $ui-blue;
+			pointer-events: none;
+		}
+	}
+}

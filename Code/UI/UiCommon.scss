@@ -1,0 +1,90 @@
+// this is a common file for everything related to our new sandbox UI design
+
+$ui-blue: #3e83eb;
+$ui-blue-soft: rgba( 62, 131, 235, 0.14 );
+
+// text
+$ui-text: #555555;
+$ui-text-muted: #777777;
+$ui-text-label: #666666;
+$ui-text-on-gray: rgba( 255, 255, 255, 0.55 );
+
+// controls inside a white section
+$ui-control-border: #989898;
+$ui-control-bg: #f3f3f3;
+$ui-row-alt: rgba( 0, 0, 0, 0.05 );
+
+$ui-mono: "Inconsolata";
+
+// text size in the tool settings and the controls in them
+$ui-settings-font: 12px;
+
+// base gray block, all UI stuff is built on top of them 
+@mixin ui-block
+{
+	padding: 8px;
+	border: 1px solid rgba( 255, 255, 255, 0.28 );
+	background-image: linear-gradient( to bottom, rgba( 169, 169, 169, 0.56 ), rgba( 162, 162, 162, 0.56 ) );
+}
+
+// lists, settings, tool list, etc..
+@mixin ui-section
+{
+	color: $ui-text;
+	border: 1px solid rgba( 0, 0, 0, 0.51 );
+	background-image: linear-gradient( to bottom, rgba( 255, 255, 255, 0.92 ), rgba( 245, 245, 245, 0.83 ) );
+}
+
+// scrollbar
+@mixin ui-scroll
+{
+	scrollbar-width: 9px;
+	scrollbar-color: $ui-blue #d0d0d0;
+}
+
+// for search boxes
+@mixin ui-input
+{
+	height: 24px;
+	min-width: 0px;
+	padding: 0 6px;
+	align-items: center;
+	background-color: rgba( 255, 255, 255, 0.96 );
+	border: 1px solid rgba( 0, 0, 0, 0.51 );
+	border-radius: 0;
+	font-size: 12px;
+	font-weight: 500;
+	color: $ui-text;
+}
+
+// (unselected) menu tabs (buttons for spawnlist/entities/NPCs/etc..) 
+@mixin ui-tab
+{
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	height: 24px;
+	padding: 0 10px;
+	flex-shrink: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: $ui-text-on-gray;
+	background-color: #676767;
+	border-top: 1px solid #464646;
+	border-right: 1px solid #464646;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+// selected menu tab
+@mixin ui-tab-active
+{
+	height: 25px;
+	padding-top: 1px;
+	color: white;
+	background-color: #878787;
+	border: 1px solid rgba( 255, 255, 255, 0.28 );
+	border-bottom: 0px;
+	pointer-events: none;
+}

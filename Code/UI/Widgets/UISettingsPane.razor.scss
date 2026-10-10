@@ -1,0 +1,129 @@
+@import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
+
+UISettingsPane
+{
+	@include ui-section;
+	flex-direction: column;
+	flex-grow: 1;
+	min-width: 0px;
+	height: 100%;
+	padding: 1px;
+	font-family: $body-font;
+}
+
+UISettingsPane .title-bar
+{
+	flex-direction: row;
+	align-items: center;
+	flex-shrink: 0;
+	height: 21px;
+	padding: 0 10px;
+	background-color: $ui-blue;
+	color: white;
+	font-size: 12px;
+	font-weight: 800;
+	text-transform: uppercase;
+	white-space: nowrap;
+	overflow: hidden;
+
+	label
+	{
+		text-overflow: ellipsis;
+	}
+}
+
+UISettingsPane .settings-body
+{
+	@include ui-scroll;
+	flex-direction: column;
+	flex-grow: 1;
+	flex-shrink: 1;
+	min-height: 0px;
+	padding: 12px 10px 8px 10px;
+	overflow-y: scroll;
+
+	> *
+	{
+		flex-shrink: 0;
+	}
+}
+
+UISettingsPane .settings-body .page
+{
+	flex-direction: column;
+	flex-shrink: 0;
+}
+
+UISettingsPane .settings-body .control-row
+{
+	flex-direction: row;
+	align-items: center;
+	flex-shrink: 0;
+	min-height: 22px;
+	margin-bottom: 2px;
+	gap: 6px;
+	font-size: $ui-settings-font;
+	font-weight: 500;
+	color: $ui-text-label;
+
+	> .left
+	{
+		flex-direction: row;
+		align-items: center;
+		gap: 4px;
+		flex-shrink: 0;
+	}
+
+	label
+	{
+		font-size: $ui-settings-font;
+	}
+
+	&.action
+	{
+		min-height: 22px;
+		padding: 0 8px;
+		font-weight: 700;
+		color: #545454;
+		background-image: linear-gradient( to right, #f4f4f4, #e1e1e1 );
+		border: 1px solid $ui-control-border;
+		cursor: pointer;
+
+		&:hover
+		{
+			background-image: linear-gradient( to right, #ffffff, #ebebeb );
+			sound-in: ui.hover;
+		}
+
+		&:active
+		{
+			background-image: linear-gradient( to right, #e1e1e1, #d4d4d4 );
+			sound-in: ui.select;
+		}
+	}
+}
+
+UISettingsPane .settings-body .section-header
+{
+	flex-shrink: 0;
+	margin: 8px 0px 6px 0px;
+	padding-bottom: 3px;
+	border-bottom: 1px solid rgba( 0, 0, 0, 0.12 );
+	font-size: $ui-settings-font;
+	font-weight: 800;
+	text-transform: uppercase;
+	color: $ui-text-muted;
+}
+
+UISettingsPane .settings-body .utility-page
+{
+	flex-direction: column;
+	flex-shrink: 0;
+
+	> *
+	{
+		width: 100%;
+		flex-shrink: 0;
+	}
+}

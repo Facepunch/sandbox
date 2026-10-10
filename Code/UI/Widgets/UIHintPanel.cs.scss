@@ -1,0 +1,38 @@
+@import "/UI/UiCommon.scss";
+
+UIHintPanel
+{
+	position: absolute;
+	z-index: 10000;
+	pointer-events: none;
+	flex-direction: column;
+	gap: 2px;
+	padding: 5px 15px;
+	background-color: rgba(46, 46, 46, 0.9);
+	border: 1px solid rgb(43, 43, 43);
+	border-radius: 0px;
+	color: rgb(221, 221, 221);
+	opacity: 1;
+	transition: opacity 0.04s ease;
+
+	&:intro, &:outro
+	{
+		opacity: 0;
+	}
+
+	label
+	{
+		font-family: "Inter";
+		font-size: 12px;
+		font-weight: 500;
+		max-width: 28vw;
+	}
+
+	// the property name
+	.name
+	{
+		font-weight: 800;
+		color: $ui-blue;
+		text-transform: uppercase;
+	}
+}

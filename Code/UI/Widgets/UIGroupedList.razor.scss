@@ -1,0 +1,128 @@
+@import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
+
+UIGroupedList
+{
+	flex-direction: column;
+	width: 185px;
+	height: 100%;
+	flex-shrink: 0;
+	gap: 8px;
+	font-family: $body-font;
+}
+
+UIGroupedList .filter.textentry
+{
+	@include ui-input;
+	width: 100%;
+	flex-shrink: 0;
+	flex-direction: row;
+	justify-content: flex-start;
+	cursor: text;
+
+	&:focus
+	{
+		border-color: $ui-blue;
+	}
+
+	.placeholder
+	{
+		opacity: 1;
+		color: #a8a8a8;
+	}
+
+	.content-label
+	{
+		color: $ui-text;
+	}
+}
+
+// white area section
+UIGroupedList .list
+{
+	@include ui-section;
+	@include ui-scroll;
+	flex-direction: column;
+	flex-grow: 1;
+	flex-shrink: 1;
+	min-height: 0px;
+	padding: 1px;
+	overflow-y: scroll;
+}
+
+UIGroupedList .group
+{
+	flex-direction: column;
+	flex-shrink: 0;
+	margin-bottom: 18px;
+
+	&:last-child
+	{
+		margin-bottom: 0px;
+	}
+}
+
+UIGroupedList .group-header
+{
+	flex-direction: row;
+	align-items: center;
+	flex-shrink: 0;
+	height: 23px;
+	padding: 0 8px;
+	background-color: $ui-blue;
+	color: white;
+	font-size: 12px;
+	font-weight: 800;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+UIGroupedList .group-items
+{
+	flex-direction: column;
+	flex-shrink: 0;
+	margin-top: 1px;
+}
+
+// every other row is a shade darker, starting with the first
+UIGroupedList .item
+{
+	flex-direction: row;
+	align-items: center;
+	flex-shrink: 0;
+	height: 19px;
+	padding: 0 9px;
+	color: $ui-text;
+	font-size: 12px;
+	font-weight: 500;
+	white-space: nowrap;
+	cursor: pointer;
+
+	label
+	{
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+
+	&.alt
+	{
+		background-color: $ui-row-alt;
+	}
+
+	&:hover
+	{
+		background-color: $ui-blue-soft;
+		sound-in: ui.hover;
+	}
+
+	&:active
+	{
+		sound-in: ui.select;
+	}
+
+	&.active
+	{
+		color: white;
+		background-color: $ui-blue;
+	}
+}
