@@ -34,6 +34,8 @@
     "ui.resource.none_selected": "None Selected",
     "ui.resource.unknown": "Unknown Resource",
     "ui.resource.title": "Resource",
+    "ui.resource.no_description": "No description available",
+    "ui.color.brightness": "Brightness",
     "ui.query.title": "Enter Value",
     "ui.query.placeholder": "Enter a value...",
     "ui.dresser.title": "Dresser",

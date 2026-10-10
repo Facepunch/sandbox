@@ -190,6 +190,7 @@
     "spawnmenu.common.delete": "Delete",
     "spawnmenu.common.publish": "Publish",
     "spawnmenu.common.search": "Search...",
+    "spawnmenu.common.filter": "Quick filter...",
     "spawnmenu.common.host_only": "Host only",
     "spawnmenu.common.save": "Save",
     "spawnmenu.common.load": "Load",
