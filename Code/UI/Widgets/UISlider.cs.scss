@@ -98,10 +98,7 @@ UISlider
 				border-color: rgba( 0, 0, 0, 0.15 );
 			}
 
-			&:focus
-			{
-				border-color: $ui-blue;
-			}
+			@include ui-focus-ring;
 		}
 	}
 }

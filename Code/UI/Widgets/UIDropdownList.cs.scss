@@ -39,8 +39,7 @@ UIDropdownList.popup-panel
 
 		&.active
 		{
-			color: white;
-			background-color: $ui-blue;
+			@include ui-selected;
 		}
 	}
 }

@@ -94,6 +94,44 @@ $ui-settings-font: 12px;
 	}
 }
 
+// white text on the blue fill, for the picked item of a list, dropdown or segmented control
+@mixin ui-selected
+{
+	color: white;
+	background-color: $ui-blue;
+}
+
+// rows you can pick, a soft blue under the mouse and the blue fill on the active one
+@mixin ui-selectable
+{
+	cursor: pointer;
+
+	&:hover
+	{
+		background-color: $ui-blue-soft;
+		sound-in: ui.hover;
+	}
+
+	&:active
+	{
+		sound-in: ui.select;
+	}
+
+	&.active
+	{
+		@include ui-selected;
+	}
+}
+
+// blue border on the control that has the keyboard focus
+@mixin ui-focus-ring
+{
+	&:focus
+	{
+		border-color: $ui-blue;
+	}
+}
+
 // space above every section header except the first one in a sheet or page
 $ui-section-gap: 20px;
 
@@ -120,6 +158,13 @@ $ui-section-gap: 20px;
 	font-weight: 800;
 	text-transform: uppercase;
 	color: $ui-text-muted;
+}
+
+// the same group names in the dark menus
+@mixin ui-heading-text-on-dark
+{
+	text-transform: uppercase;
+	color: rgba( 255, 255, 255, 0.35 );
 }
 
 // a group name with a line under it, the first one of a sheet or page sits at the top and the others get $ui-section-gap above

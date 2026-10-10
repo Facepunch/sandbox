@@ -34,8 +34,7 @@ UIEnumControl
 
 		&.active
 		{
-			color: white;
-			background-color: $ui-blue;
+			@include ui-selected;
 			pointer-events: none;
 		}
 	}

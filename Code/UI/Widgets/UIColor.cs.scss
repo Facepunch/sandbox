@@ -53,10 +53,7 @@ UIColor
 			color: $ui-blue;
 		}
 
-		&:focus
-		{
-			border-color: $ui-blue;
-		}
+		@include ui-focus-ring;
 
 		&.invalid .content-label
 		{

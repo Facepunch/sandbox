@@ -17,9 +17,7 @@
 
     @if ( bans is null || bans.Count == 0 )
     {
-        <div class="control-row">
-            <label class="left" style="opacity: 0.5;">#spawnmenu.utility.no_bans</label>
-        </div>
+        <div class="note">#spawnmenu.utility.no_bans</div>
     }
     else
     {
@@ -27,13 +25,13 @@
         {
             var sid = steamId;
             var e = entry;
-            <div class="ban-entry">
-                <img class="avatar" src="avatar:@sid" />
-                <div class="ban-info">
-                    <label class="ban-name">@e.DisplayName</label>
-                    <label class="ban-reason">@e.Reason</label>
+            <div class="list-entry">
+                <img class="list-entry-avatar" src="avatar:@sid" />
+                <div class="list-entry-info">
+                    <label class="list-entry-name">@e.DisplayName</label>
+                    <label class="list-entry-detail">@e.Reason</label>
                 </div>
-                <div class="ban-options" @onclick=@(() => OpenBanOptions( sid, e ))>
+                <div class="list-entry-action pressable" @onclick=@(() => OpenBanOptions( sid, e ))>
                     <i>more_vert</i>
                 </div>
             </div>

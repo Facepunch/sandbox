@@ -33,10 +33,7 @@ SpawnMenuToolbar .textentry.menu-input
 	justify-content: flex-start;
 	cursor: text;
 
-	&:focus
-	{
-		border-color: $ui-blue;
-	}
+	@include ui-focus-ring;
 
 	.placeholder
 	{
@@ -81,9 +78,8 @@ SpawnMenuToolbar .menu-button
 
 	&.active
 	{
-		color: white;
+		@include ui-selected;
 		background-image: none;
-		background-color: $ui-blue;
 		border-color: rgba( 0, 0, 0, 0.51 );
 	}
 

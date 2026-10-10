@@ -179,22 +179,10 @@ SpawnMenuPage .tree-row
 		overflow: hidden;
 	}
 
-	&:hover
-	{
-		background-color: $ui-blue-soft;
-		sound-in: ui.hover;
-	}
-
-	&:active
-	{
-		sound-in: ui.select;
-	}
+	@include ui-selectable;
 
 	&.active
 	{
-		color: white;
-		background-color: $ui-blue;
-
 		IconPanel
 		{
 			color: white;

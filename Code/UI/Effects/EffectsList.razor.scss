@@ -1,4 +1,5 @@
 @import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
 
 EffectsList
 {
@@ -41,9 +42,8 @@ EffectsList
 	.group-header
 	{
 		font-family: $subtitle-font;
-		text-transform: uppercase;
+		@include ui-heading-text-on-dark;
 		letter-spacing: 1px;
-		color: rgba( white, 0.35 );
 		margin-top: 8px;
 		margin-bottom: 4px;
 		margin-left: 12px;

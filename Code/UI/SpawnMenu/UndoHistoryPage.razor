@@ -10,26 +10,26 @@
 <root class="page">
     @if ( Loading )
     {
-        <div class="undo-empty">#spawnmenu.utility.undo_loading</div>
+        <div class="note">#spawnmenu.utility.undo_loading</div>
     }
     else if ( History.Count == 0 )
     {
-        <div class="undo-empty">#spawnmenu.utility.undo_empty</div>
+        <div class="note">#spawnmenu.utility.undo_empty</div>
     }
     else
     {
-        <div class="undo-help">#spawnmenu.utility.undo_help</div>
+        <div class="note">#spawnmenu.utility.undo_help</div>
 
         @foreach ( var item in History )
         {
             var entry = item;
-            <div class="control-row action undo-entry" @onclick=@(() => Undo( entry ))>
-                <div class="undo-icon @(string.IsNullOrWhiteSpace( entry.Icon ) ? "material-icon" : "")">@(string.IsNullOrWhiteSpace( entry.Icon ) ? "undo" : entry.Icon)</div>
-                <div class="undo-info">
-                    <Label class="undo-name" Tokenize=@false Text=@DisplayName( entry ) />
-                    <Label class="undo-count" Tokenize=@false Text=@ObjectCountText( entry.ObjectCount ) />
+            <div class="list-entry clickable" @onclick=@(() => Undo( entry ))>
+                <div class="list-entry-icon @(string.IsNullOrWhiteSpace( entry.Icon ) ? "material-icon" : "")">@(string.IsNullOrWhiteSpace( entry.Icon ) ? "undo" : entry.Icon)</div>
+                <div class="list-entry-info">
+                    <Label class="list-entry-name" Tokenize=@false Text=@DisplayName( entry ) />
+                    <Label class="list-entry-detail" Tokenize=@false Text=@ObjectCountText( entry.ObjectCount ) />
                 </div>
-                <i class="undo-action">undo</i>
+                <div class="list-entry-action"><i>undo</i></div>
             </div>
         }
     }
