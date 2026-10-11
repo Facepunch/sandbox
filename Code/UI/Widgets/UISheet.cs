@@ -115,10 +115,25 @@ public class UISheetGroup : Panel
 
 		_rows = Add.Panel( "rows" );
 
+		UISheetRow last = null;
+
 		foreach ( var property in group.Properties )
 		{
-			var row = _rows.AddChild<UISheetRow>();
-			row.Initialize( property );
+			// shares the row above, like the second button of a pair
+			if ( last is not null && property.HasAttribute<SameLineAttribute>() )
+			{
+				last.AddToRow( property );
+				continue;
+			}
+
+			if ( property.TryGetAttribute<SpaceAttribute>( out var space ) )
+				_rows.Add.Panel( "space" ).Style.Height = space.Height;
+
+			if ( property.HasAttribute<SeparatorAttribute>() )
+				_rows.AddChild<UISeparator>();
+
+			last = _rows.AddChild<UISheetRow>();
+			last.Initialize( property );
 		}
 	}
 
@@ -136,11 +151,13 @@ public class UISheetGroup : Panel
 
 /// <summary>
 /// One property, its name on the left and its control on the right, wide controls like the resource grid go under the name instead.
+/// A button has no name and takes the row, and the buttons that follow with [SameLine] share it.
 /// </summary>
 public class UISheetRow : Panel
 {
 	SerializedProperty _property;
 	InspectorVisibilityAttribute[] _visibility;
+	Panel _holder;
 
 	public UISheetRow()
 	{
@@ -153,17 +170,35 @@ public class UISheetRow : Panel
 		_visibility = property.GetAttributes<InspectorVisibilityAttribute>()?.ToArray();
 
 		var control = CreateControl( property, out var wide );
+		var isButton = control is UIButton;
+		var hasName = !isButton && !property.HasAttribute<HideLabelAttribute>();
+
 		SetClass( "wide", wide );
 		SetClass( "toggle", control is UICheckbox );
+		SetClass( "buttons", isButton );
+		SetClass( "bare", !hasName );
 
-		// only the name shows the description, not the control next to it
-		var label = AddChild( new UIHintLabel { Hint = property.Description } );
-		label.AddClass( "label" );
-		label.Text = property.DisplayName;
+		if ( hasName )
+		{
+			// only the name shows the description, not the control next to it
+			var label = AddChild( new UIHintLabel { Hint = property.Description } );
+			label.AddClass( "label" );
+			label.Text = property.DisplayName;
+		}
 
-		var holder = Add.Panel( "control" );
+		_holder = Add.Panel( "control" );
 		if ( control is not null )
-			holder.AddChild( control );
+			_holder.AddChild( control );
+	}
+
+	/// <summary>
+	/// Another property on the same row, after the ones already there.
+	/// </summary>
+	internal void AddToRow( SerializedProperty property )
+	{
+		var control = CreateControl( property, out _ );
+		if ( control is not null )
+			_holder.AddChild( control );
 	}
 
 	public override void Tick()
@@ -179,12 +214,12 @@ public class UISheetRow : Panel
 	/// <summary>
 	/// Pick the control for a property. Anything we don't have a Sandbox one for gets the engine's.
 	/// </summary>
-	static BaseControl CreateControl( SerializedProperty property, out bool wide )
+	static Panel CreateControl( SerializedProperty property, out bool wide )
 	{
 		wide = false;
 
 		if ( property.IsMethod )
-			return BaseControl.CreateFor( property );
+			return property.HasAttribute<ButtonAttribute>() ? new UIButton { Method = property } : null;
 
 		var type = property.PropertyType;
 		if ( type is null || Nullable.GetUnderlyingType( type ) is not null )
@@ -209,6 +244,18 @@ public class UISheetRow : Panel
 		if ( isNumber && property.HasAttribute<RangeAttribute>() )
 			return new UISlider { Property = property };
 
-		return BaseControl.CreateFor( property );
+		var control = BaseControl.CreateFor( property );
+
+		// the engine's plain text box, in our look and with the placeholder of the property.
+		// The special strings (input actions, fonts, icons) have controls of their own and keep them
+		if ( type == typeof( string ) && control is TextEntry entry && entry.GetType() == typeof( TextEntry ) )
+		{
+			entry.AddClass( "text-field" );
+
+			if ( property.TryGetAttribute<PlaceholderAttribute>( out var placeholder ) )
+				entry.Placeholder = placeholder.Value;
+		}
+
+		return control;
 	}
 }

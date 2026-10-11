@@ -1,0 +1,8 @@
+@import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
+
+UIButton.button
+{
+	@include ui-button;
+	flex-shrink: 0;
+}

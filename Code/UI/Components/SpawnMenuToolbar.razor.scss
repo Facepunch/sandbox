@@ -26,25 +26,9 @@ SpawnMenuToolbar > .body
 
 SpawnMenuToolbar .textentry.menu-input
 {
-	@include ui-input;
+	@include ui-text-entry;
 	width: 205px;
 	min-width: 205px;
-	flex-direction: row;
-	justify-content: flex-start;
-	cursor: text;
-
-	@include ui-focus-ring;
-
-	.placeholder
-	{
-		opacity: 1;
-		color: #a8a8a8;
-	}
-
-	.content-label
-	{
-		color: $ui-text;
-	}
 }
 
 SpawnMenuToolbar .icon-button,

@@ -57,6 +57,19 @@ UISheet
 		}
 	}
 
+	.textentry.text-field
+	{
+		@include ui-text-entry;
+		width: 100%;
+		flex-shrink: 0;
+	}
+
+	// the empty gap of [Space]
+	.space
+	{
+		flex-shrink: 0;
+	}
+
 	.sheet-row
 	{
 		flex-direction: row;
@@ -89,6 +102,24 @@ UISheet
 			flex-grow: 1;
 			flex-shrink: 1;
 			min-width: 0px;
+		}
+
+		// control takes the whole row if it has no name
+		&.bare > .control
+		{
+			width: 100%;
+		}
+
+		// buttons share the row evenly
+		&.buttons > .control
+		{
+			gap: 6px;
+
+			> UIButton
+			{
+				flex-grow: 1;
+				flex-basis: 0px;
+			}
 		}
 
 		// a checkbox sits at the right edge, the name gets all the room before it (could've been better)

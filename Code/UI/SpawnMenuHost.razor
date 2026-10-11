@@ -12,6 +12,7 @@
         <div class="menu-slide">
             <PanelSwitcher @ref="PanelSwitcher"></PanelSwitcher>
         </div>
+        <div class="modal-layer" @ref="modalLayer"></div>
     </div>
 
 </root>
@@ -28,6 +29,12 @@
     public static bool IsOpen { get; private set; }
 
     PanelSwitcher PanelSwitcher = default;
+    Sandbox.UI.Panel modalLayer = default;
+
+    /// <summary>
+    /// Where <see cref="UIModal"/> windows go. They are inside the menu, so it stays up while one has focus.
+    /// </summary>
+    public static Sandbox.UI.Panel ModalLayer => Game.ActiveScene?.Get<SpawnMenuHost>()?.modalLayer;
 
     protected override void OnUpdate()
     {
@@ -61,6 +68,12 @@
             if (!state)
             {
                 Popup.CloseAll();
+
+                if ( modalLayer.IsValid() )
+                {
+                    foreach ( var modal in modalLayer.Children.OfType<UIModal>().ToList() )
+                        modal.Close();
+                }
             }
 
             // opened

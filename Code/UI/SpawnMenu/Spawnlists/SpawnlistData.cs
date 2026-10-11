@@ -274,16 +274,16 @@ public class SpawnlistData
 
 		menu.AddOption( "#spawnmenu.spawnlist.create_new_option", "➕", () =>
 		{
-			var popup = new SpawnlistCreatePopup
-			{
-				Name = (type == "dupe" ? item.Title : LocalizedText.Resolve( item.Title ))
-					?? Game.Language.GetPhrase( "spawnmenu.spawnlist.new_button" ),
-				InitialItem = item,
-				Parent = sourcePanel.FindPopupPanel()
-			};
+			var name = (type == "dupe" ? item.Title : LocalizedText.Resolve( item.Title ))
+				?? Game.Language.GetPhrase( "spawnmenu.spawnlist.new_button" );
+
+			// open the list that was made
+			Action<Storage.Entry> opened = null;
 			var spawnMenu = sourcePanel.Ancestors.OfType<SpawnMenu>().FirstOrDefault();
 			if ( spawnMenu is not null )
-				popup.OnEntryCreated = spawnMenu.OpenSpawnlist;
+				opened = spawnMenu.OpenSpawnlist;
+
+			SpawnlistCreateForm.Show( sourcePanel, onEntryCreated: opened, initialItem: item, name: name );
 		} );
 
 		var spawner = ISpawner.Create( type, path, source );

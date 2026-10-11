@@ -75,7 +75,7 @@ $ui-settings-font: 12px;
 
 	&:hover
 	{
-		filter: brightness( 1.1 );
+		filter: brightness( 1.10 );
 		sound-in: ui.hover;
 	}
 
@@ -91,6 +91,30 @@ $ui-settings-font: 12px;
 		background-image: none;
 		background-color: rgba( 0, 0, 0, 0.33 );
 		pointer-events: none;
+	}
+}
+
+// separator
+$ui-separator: rgba( 0, 0, 0, 0.12 );
+
+// text entry
+@mixin ui-text-entry
+{
+	@include ui-input;
+	flex-direction: row;
+	justify-content: flex-start;
+	cursor: text;
+	@include ui-focus-ring;
+
+	.placeholder
+	{
+		opacity: 1;
+		color: #a8a8a8;
+	}
+
+	.content-label
+	{
+		color: $ui-text;
 	}
 }
 
@@ -173,7 +197,7 @@ $ui-section-gap: 20px;
 	flex-shrink: 0;
 	margin: 4px 0px 6px 0px;
 	padding-bottom: 3px;
-	border-bottom: 1px solid rgba( 0, 0, 0, 0.12 );
+	border-bottom: 1px solid $ui-separator;
 	@include ui-heading-text;
 }
 
