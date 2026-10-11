@@ -1,4 +1,5 @@
 @import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
 
 SpawnlistLayoutItem
 {
@@ -7,10 +8,11 @@ SpawnlistLayoutItem
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
-	color: rgba( white, 0.58 );
-	font-family: $subtitle-font;
-	font-weight: 650;
-	letter-spacing: 0.5px;
+	color: $ui-text-on-gray;
+	font-family: $body-font;
+	font-size: 12px;
+	font-weight: 800;
+	text-transform: uppercase;
 	pointer-events: none;
 
 	.marker-line

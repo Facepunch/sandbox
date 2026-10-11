@@ -12,7 +12,7 @@ public partial class SpawnlistFooter : Panel
 
 	void CreateSpawnlist()
 	{
-		SpawnlistCreateForm.Show( this, onCreated: () => Ancestors.OfType<SpawnlistsPage>().FirstOrDefault()?.RefreshList() );
+		SpawnlistData.PromptCreate( this, onCreated: () => Ancestors.OfType<SpawnlistsPage>().FirstOrDefault()?.RefreshList() );
 	}
 
 	void Refresh()

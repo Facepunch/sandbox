@@ -106,6 +106,26 @@ public class SpawnlistData
 		return data;
 	}
 
+	/// <summary>
+	/// Asks for a name in a window over the menu, then makes the spawnlist.
+	/// </summary>
+	/// <param name="initialItem">An item the new list starts with.</param>
+	/// <param name="name">What the name box starts with.</param>
+	public static void PromptCreate( Panel source, Action onCreated = null, Action<Storage.Entry> onEntryCreated = null, SpawnlistItem initialItem = null, string name = null )
+	{
+		UIModal.Prompt( source, "#spawnmenu.spawnlist.create_title", name, newName =>
+		{
+			Create( newName, out var entry );
+			if ( initialItem is not null )
+				AddItem( entry, initialItem );
+
+			Notices.AddNotice( "list_alt", Color.Cyan, Game.Language.GetPhrase( "spawnmenu.spawnlist.created_notice", new() { { "name", newName } } ) );
+
+			onCreated?.Invoke();
+			onEntryCreated?.Invoke( entry );
+		}, "#spawnmenu.spawnlist.name_placeholder", "#spawnmenu.spawnlist.create_button", "add" );
+	}
+
 	public static void Save( Storage.Entry entry, SpawnlistData data )
 	{
 		Normalize( data, true );
@@ -283,7 +303,7 @@ public class SpawnlistData
 			if ( spawnMenu is not null )
 				opened = spawnMenu.OpenSpawnlist;
 
-			SpawnlistCreateForm.Show( sourcePanel, onEntryCreated: opened, initialItem: item, name: name );
+			PromptCreate( sourcePanel, onEntryCreated: opened, initialItem: item, name: name );
 		} );
 
 		var spawner = ISpawner.Create( type, path, source );

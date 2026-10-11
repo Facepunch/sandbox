@@ -1,4 +1,5 @@
 @import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
 
 SpawnMenuEmptyState
 {
@@ -11,6 +12,7 @@ SpawnMenuEmptyState
     text-align: center;
     padding: 2rem;
     gap: 6px;
+    font-family: $body-font;
 
     .iconpanel
     {
@@ -19,23 +21,23 @@ SpawnMenuEmptyState
         align-items: center;
         justify-content: center;
         font-size: 2.4rem;
-        color: $menu-accent;
-        opacity: 0.55;
+        color: $ui-text-on-gray;
         margin-bottom: 6px;
     }
 
     .title
     {
-        color: $menu-text-strong;
-        font-size: 18px;
-        font-weight: 700;
+        color: white;
+        font-size: 14px;
+        font-weight: 800;
     }
 
     .subtitle
     {
         max-width: 320px;
-        color: rgba( white, 0.45 );
-        font-size: 13px;
+        color: $ui-text-on-gray;
+        font-size: 12px;
+        font-weight: 500;
         line-height: 1.35;
     }
 }

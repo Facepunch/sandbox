@@ -44,20 +44,12 @@
         {
             menu.AddOption( "#spawnmenu.spawnlist.rename_title_item", "edit", () =>
             {
-                var popup = new StringQueryPopup
+                UIModal.Prompt( this, "#spawnmenu.spawnlist.rename_title_item", Item.Title, value =>
                 {
-                    Title = "#spawnmenu.spawnlist.rename_title_item",
-                    Placeholder = "#spawnmenu.spawnlist.title_placeholder",
-                    ConfirmLabel = "#spawnmenu.spawnlist.rename_button",
-                    InitialValue = Item.Title,
-                    OnConfirm = value =>
-                    {
-                        Item.Title = value;
-                        OnRename?.Invoke( Item.Id, value );
-                        StateHasChanged();
-                    }
-                };
-                popup.Parent = FindPopupPanel();
+                    Item.Title = value;
+                    OnRename?.Invoke( Item.Id, value );
+                    StateHasChanged();
+                }, placeholder: "#spawnmenu.spawnlist.title_placeholder", confirmText: "#spawnmenu.spawnlist.rename_button" );
             } );
         }
 

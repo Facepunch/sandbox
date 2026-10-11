@@ -36,6 +36,13 @@
     /// </summary>
     public static Sandbox.UI.Panel ModalLayer => Game.ActiveScene?.Get<SpawnMenuHost>()?.modalLayer;
 
+    protected override void OnTreeFirstBuilt()
+    {
+        base.OnTreeFirstBuilt();
+
+        Panel.FindRootPanel()?.StyleSheet.Load( "/UI/Tooltip.scss" );
+    }
+
     protected override void OnUpdate()
     {
         UpdateSpawnMenuState();

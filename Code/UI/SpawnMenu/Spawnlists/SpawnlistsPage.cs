@@ -110,21 +110,12 @@ public abstract class SpawnlistsPage : BaseSpawnMenu
 			menu.AddOption( "#spawnmenu.spawnlist.rename", "edit", () =>
 			{
 				var data = SpawnlistData.Load( entry.StorageEntry );
-				var popup = new StringQueryPopup
+				UIModal.Prompt( this, "#spawnmenu.spawnlist.rename_title", data.Name, newName =>
 				{
-					Title = "#spawnmenu.spawnlist.rename_title",
-					Prompt = "#spawnmenu.spawnlist.rename_prompt",
-					Placeholder = "#spawnmenu.spawnlist.name_placeholder",
-					ConfirmLabel = "#spawnmenu.spawnlist.rename_button",
-					InitialValue = data.Name,
-					OnConfirm = newName =>
-					{
-						if ( entry.StorageEntry.GetMeta( "_workshopId", 0ul ) != 0 ) return;
-						SpawnlistData.Rename( entry.StorageEntry, newName );
-						Collection.Refresh();
-					}
-				};
-				popup.Parent = FindPopupPanel();
+					if ( entry.StorageEntry.GetMeta( "_workshopId", 0ul ) != 0 ) return;
+					SpawnlistData.Rename( entry.StorageEntry, newName );
+					Collection.Refresh();
+				}, placeholder: "#spawnmenu.spawnlist.name_placeholder", confirmText: "#spawnmenu.spawnlist.rename_button" );
 			} );
 		}
 

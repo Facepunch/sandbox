@@ -52,6 +52,48 @@ public class UIModal : Panel
 		return modal;
 	}
 
+	/// <summary>
+	/// A window with a text box and two buttons, for asking a name
+	/// </summary>
+	/// <param name="title">The title bar, can be a localization token.</param>
+	/// <param name="value">What the text box starts with.</param>
+	/// <param name="onConfirm">Called with the name when it is confirmed.</param>
+	/// <param name="placeholder">What the empty text box says.</param>
+	/// <param name="confirmText">What the confirm button says.</param>
+	/// <param name="confirmIcon">The icon of the confirm button.</param>
+	public static UIModal Prompt( Panel source, string title, string value, Action<string> onConfirm, string placeholder = null, string confirmText = "#ui.common.confirm", string confirmIcon = "check" )
+	{
+		value ??= "";
+		UIModal modal = null;
+
+		bool HasValue() => !string.IsNullOrWhiteSpace( value );
+
+		void Confirm()
+		{
+			if ( !HasValue() ) return;
+
+			onConfirm?.Invoke( value.Trim() );
+			modal?.Close();
+		}
+
+		var attributes = new List<Attribute> { new PropertyAttribute(), new HideLabelAttribute() };
+		if ( placeholder is not null )
+			attributes.Add( new PlaceholderAttribute( placeholder ) );
+
+		var properties = new List<SerializedProperty>
+		{
+			Game.TypeLibrary.CreateProperty( "Value", () => value, v => value = v, attributes.ToArray() ),
+			new UIActionProperty( confirmText, confirmIcon, Confirm, 1, separator: true ) { Enabled = HasValue },
+			new UIActionProperty( "#spawnmenu.common.cancel", null, () => modal?.Close(), 2, sameLine: true )
+		};
+
+		modal = Show( source, title, properties );
+		if ( modal is not null )
+			modal.OnSubmit = Confirm;
+
+		return modal;
+	}
+
 	public void Submit() => OnSubmit?.Invoke();
 
 	public void Close()

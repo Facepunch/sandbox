@@ -12,10 +12,7 @@ UIDropdown
 	font-family: "Inter";
 	font-size: $ui-settings-font;
 	font-weight: 700;
-	color: #545454;
-	background-image: linear-gradient( to right, #f4f4f4, #e1e1e1 );
-	border: 1px solid $ui-control-border;
-	cursor: pointer;
+	@include ui-button-face;
 
 	.value
 	{
@@ -32,12 +29,6 @@ UIDropdown
 		flex-shrink: 0;
 		font-size: 14px;
 		color: #444444;
-	}
-
-	&:hover
-	{
-		background-image: linear-gradient( to right, #ffffff, #ebebeb );
-		sound-in: ui.hover;
 	}
 
 	&.big

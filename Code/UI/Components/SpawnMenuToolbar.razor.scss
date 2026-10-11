@@ -31,40 +31,15 @@ SpawnMenuToolbar .textentry.menu-input
 	min-width: 205px;
 }
 
-SpawnMenuToolbar .icon-button,
-SpawnMenuToolbar .menu-button
+SpawnMenuToolbar UIButton.button
 {
 	height: 24px;
 	padding: 0 8px;
-	gap: 6px;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	color: $ui-text;
-	font-size: 12px;
-	font-weight: 700;
-	background-image: linear-gradient( to right, #f4f4f4, #e1e1e1 );
-	border: 1px solid $ui-control-border;
-	border-radius: 0;
-	cursor: pointer;
-
-	&:hover
-	{
-		background-image: linear-gradient( to right, #ffffff, #ebebeb );
-		sound-in: ui.hover;
-	}
-
-	&:active
-	{
-		background-image: linear-gradient( to right, #e1e1e1, #d4d4d4 );
-		sound-in: ui.select;
-	}
 
 	&.active
 	{
 		@include ui-selected;
 		background-image: none;
-		border-color: rgba( 0, 0, 0, 0.51 );
 	}
 
 	IconPanel, .iconpanel
@@ -73,32 +48,17 @@ SpawnMenuToolbar .menu-button
 	}
 }
 
-SpawnMenuToolbar .icon-button
+SpawnMenuToolbar UIButton.icon-button
 {
 	min-width: 24px;
 	width: 24px;
 	padding: 0;
 }
 
-SpawnMenuToolbar .menu-button
+SpawnMenuToolbar UIButton.menu-button
 {
 	min-width: 120px;
 	justify-content: flex-start;
-}
-
-SpawnMenuToolbar DropDown
-{
-	height: 24px;
-	min-height: 24px;
-	padding: 0 8px;
-	gap: 6px;
-	align-items: center;
-	color: $ui-text;
-	font-size: 12px;
-	font-weight: 700;
-	background-image: linear-gradient( to right, #f4f4f4, #e1e1e1 );
-	border: 1px solid $ui-control-border;
-	border-radius: 0;
 }
 
 SpawnMenuToolbar UIDropdown

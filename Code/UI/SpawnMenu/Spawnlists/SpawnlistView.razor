@@ -16,61 +16,60 @@
             <SpawnMenuToolbar>
                 <Left>
                     <div class="spawnlist-identity">
-                        <div class="folder-mark">
-                            <div class="folder-tab"></div>
-                            <IconPanel Text="collections_bookmark" />
-                        </div>
-                        <div class="identity-copy">
-                            <h2>
-                                <Label Tokenize=@false Text=@data.Name />
-                            </h2>
-                            <div class="meta">
-                                <span><IconPanel Text="widgets" /> @ItemCountText( data.Items.Count( item => item.IsContent ) )</span>
-                                <span class="dot"></span>
-                                <span><IconPanel Text="@( isInstalled ? "cloud_done" : isPublished ? "public" : "lock" )" /> @Game.Language.GetPhrase( isInstalled ? "spawnmenu.spawnlist.installed" : isPublished ? "spawnmenu.spawnlist.published" : "spawnmenu.spawnlist.local" )</span>
-                            </div>
+                        <IconPanel class="identity-icon" Text="collections_bookmark" />
+                        <h2>
+                            <Label Tokenize=@false Text=@data.Name />
+                        </h2>
+                        <div class="meta">
+                            <span><IconPanel Text="widgets" /> @ItemCountText( data.Items.Count( item => item.IsContent ) )</span>
+                            <span class="dot"></span>
+                            <span><IconPanel Text="@( isInstalled ? "cloud_done" : isPublished ? "public" : "lock" )" /> @Game.Language.GetPhrase( isInstalled ? "spawnmenu.spawnlist.installed" : isPublished ? "spawnmenu.spawnlist.published" : "spawnmenu.spawnlist.local" )</span>
                         </div>
                     </div>
                 </Left>
                 <Right>
                     @if ( isPublished )
                     {
-                        <Button Icon="link" Tooltip="#spawnmenu.spawnlist.copy_url" class="icon-button" @onclick=@( () => Clipboard.SetText( $"https://steamcommunity.com/sharedfiles/filedetails/?id={workshopId}" ) ) />
+                        <UIButton Icon="link" Tooltip="#spawnmenu.spawnlist.copy_url" class="icon-button" @onclick=@( () => Clipboard.SetText( $"https://steamcommunity.com/sharedfiles/filedetails/?id={workshopId}" ) ) />
                         @if ( !Entry.Files.IsReadOnly )
                         {
-                            <Button Icon="sync" Tooltip="#spawnmenu.spawnlist.sync" class="icon-button" @onclick=@OnPublish />
+                            <UIButton Icon="sync" Tooltip="#spawnmenu.spawnlist.sync" class="icon-button" @onclick=@OnPublish />
                         }
                     }
                     else if ( !Entry.Files.IsReadOnly )
                     {
-                        <Button Icon="cloud_upload" Text="#spawnmenu.spawnlist.publish" Tooltip="#spawnmenu.spawnlist.publish" class="menu-button" @onclick=@OnPublish />
+                        <UIButton Icon="cloud_upload" Text="#spawnmenu.spawnlist.publish" Tooltip="#spawnmenu.spawnlist.publish" class="menu-button" @onclick=@OnPublish />
                     }
                     @if ( !Entry.Files.IsReadOnly )
                     {
                         @if ( _editMode && CanRename )
                         {
-                            <Button Icon="drive_file_rename_outline" Text="#spawnmenu.spawnlist.rename" class="menu-button" @onclick=@OnRename />
+                            <UIButton Icon="drive_file_rename_outline" Text="#spawnmenu.spawnlist.rename" class="menu-button" @onclick=@OnRename />
                         }
-                        <Button Icon="edit" Tooltip="#spawnmenu.spawnlist.edit" class="icon-button" Active=@_editMode @onclick=@ToggleEditMode />
-                        <Button Icon="delete" Tooltip="#spawnmenu.spawnlist.delete" class="icon-button" @onclick=@OnDelete />
+                        <UIButton Icon="edit" Tooltip="#spawnmenu.spawnlist.edit" class="icon-button" Active=@_editMode @onclick=@ToggleEditMode />
+                        <UIButton Icon="delete" Tooltip="#spawnmenu.spawnlist.delete" class="icon-button" @onclick=@OnDelete />
                     }
                     else
                     {
-                        <Button Icon="delete" Tooltip="#spawnmenu.spawnlist.remove" class="icon-button" @onclick=@OnUninstall />
+                        <UIButton Icon="delete" Tooltip="#spawnmenu.spawnlist.remove" class="icon-button" @onclick=@OnUninstall />
                     }
                 </Right>
             </SpawnMenuToolbar>
 
             @if ( _editMode )
             {
-                <div class="edit-toolbar">
-                    <Button class="menu-action" Icon="label" Text="#spawnmenu.spawnlist.add_title" @onclick=@AddTitle />
-                    <Button class="menu-action" Icon="horizontal_rule" Text="#spawnmenu.spawnlist.add_divider" @onclick=@AddDivider />
-                    <div class="edit-instructions">
-                        <IconPanel Text="drag_indicator" />
-                        <label>@Game.Language.GetPhrase( "spawnmenu.spawnlist.edit_instructions" )</label>
-                    </div>
-                </div>
+                <SpawnMenuToolbar>
+                    <Left>
+                        <UIButton class="menu-button" Icon="label" Text="#spawnmenu.spawnlist.add_title" @onclick=@AddTitle />
+                        <UIButton class="menu-button" Icon="horizontal_rule" Text="#spawnmenu.spawnlist.add_divider" @onclick=@AddDivider />
+                    </Left>
+                    <Right>
+                        <div class="edit-instructions">
+                            <IconPanel Text="drag_indicator" />
+                            <label>@Game.Language.GetPhrase( "spawnmenu.spawnlist.edit_instructions" )</label>
+                        </div>
+                    </Right>
+                </SpawnMenuToolbar>
             }
         </div>
     </Header>
@@ -155,16 +154,8 @@
     {
         if ( !_editMode || !CanRename ) return;
 
-        _ = new StringQueryPopup
-        {
-            Title = "#spawnmenu.spawnlist.rename_title",
-            Prompt = "#spawnmenu.spawnlist.rename_prompt",
-            Placeholder = "#spawnmenu.spawnlist.name_placeholder",
-            ConfirmLabel = "#spawnmenu.spawnlist.rename_button",
-            InitialValue = GetData().Name,
-            OnConfirm = RenameSpawnlist,
-            Parent = FindPopupPanel()
-        };
+        UIModal.Prompt( this, "#spawnmenu.spawnlist.rename_title", GetData().Name, RenameSpawnlist,
+            placeholder: "#spawnmenu.spawnlist.name_placeholder", confirmText: "#spawnmenu.spawnlist.rename_button" );
     }
 
     void RenameSpawnlist( string name )

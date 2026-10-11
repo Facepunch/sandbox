@@ -31,7 +31,9 @@ public class UIButton : Button
 	{
 		base.Tick();
 
-		if ( _method is not null && _method.TryGetAttribute<EnabledIfAttribute>( out var condition ) )
+		if ( _method is UIActionProperty { Enabled: { } enabled } )
+			Disabled = !enabled();
+		else if ( _method is not null && _method.TryGetAttribute<EnabledIfAttribute>( out var condition ) )
 			Disabled = !condition.Test( _method.Parent );
 	}
 

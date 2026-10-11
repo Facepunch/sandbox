@@ -12,8 +12,8 @@
             </Left>
 
             <Right>
-                <Button Icon=@IconSize.Icon() Tooltip="#ui.icon_size.title" class="icon-button" @onclick=@OpenIconSizeMenu />
-                <Button Icon="verified" Active=@VerifiedOnly Tooltip="#ui.verified_only" class="icon-button" @onclick=@ToggleVerified />
+                <UIButton Icon=@IconSize.Icon() Tooltip="#ui.icon_size.title" class="icon-button" @onclick=@OpenIconSizeMenu />
+                <UIButton Icon="verified" Active=@VerifiedOnly Tooltip="#ui.verified_only" class="icon-button" @onclick=@ToggleVerified />
                 <UIDropdown class="big sort" Items=@SortItems Value=@SortOrder ValueChanged=@OnSortChanged Tooltip="#ui.sort_order" />
             </Right>
         </SpawnMenuToolbar>
