@@ -40,7 +40,10 @@
     {
         base.OnTreeFirstBuilt();
 
-        Panel.FindRootPanel()?.StyleSheet.Load( "/UI/Tooltip.scss" );
+        // tooltips and menu lists are styled from the root panel, not from the panel that opened them
+        var root = Panel.FindRootPanel();
+        root?.StyleSheet.Load( "/UI/Tooltip.scss" );
+        root?.StyleSheet.Load( "/UI/ContextMenu.scss" );
     }
 
     protected override void OnUpdate()

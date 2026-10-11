@@ -3,6 +3,11 @@
 $ui-blue: #3e83eb;
 $ui-blue-soft: rgba( 62, 131, 235, 0.14 );
 
+// a row of a menu under the mouse, a stronger blue than the soft one of the lists
+$ui-hover-fill: rgba( 62, 131, 235, 0.35 );
+$ui-hover-border: rgba( 62, 131, 235, 0.68 );
+$ui-hover-text: #56759e;
+
 // text
 $ui-text: #555555;
 $ui-text-muted: #777777;
@@ -24,12 +29,20 @@ $ui-mono: "Inconsolata";
 // text size in the tool settings and the controls in them
 $ui-settings-font: 12px;
 
-// base gray block, all UI stuff is built on top of them 
+// the colors of the gray block and of the white section
+$ui-block-top: rgba( 140, 140, 140, 0.66 );
+$ui-block-bottom: rgba( 130, 130, 130, 0.66 );
+$ui-block-border: rgba( 255, 255, 255, 0.28 );
+$ui-section-top: rgba( 255, 255, 255, 0.90 );
+$ui-section-bottom: rgba( 245, 245, 245, 0.80 );
+$ui-section-border: rgba( 0, 0, 0, 0.51 );
+
+// base gray block, all UI stuff is built on top of them
 @mixin ui-block
 {
 	padding: 8px;
-	border: 1px solid rgba( 255, 255, 255, 0.28 );
-	background-image: linear-gradient( to bottom, rgba( 140, 140, 140, 0.66 ), rgba( 130, 130, 130, 0.66 ) );
+	border: 1px solid $ui-block-border;
+	background-image: linear-gradient( to bottom, $ui-block-top, $ui-block-bottom );
 	border-radius: 2px;
 }
 
@@ -37,8 +50,8 @@ $ui-settings-font: 12px;
 @mixin ui-section
 {
 	color: $ui-text;
-	border: 1px solid rgba( 0, 0, 0, 0.51 );
-	background-image: linear-gradient( to bottom, rgba( 255, 255, 255, 0.90 ), rgba( 245, 245, 245, 0.80 ) );
+	border: 1px solid $ui-section-border;
+	background-image: linear-gradient( to bottom, $ui-section-top, $ui-section-bottom );
 	border-radius: 2px;
 }
 
@@ -283,7 +296,7 @@ $ui-section-gap: 20px;
 	padding-top: 1px;
 	color: white;
 	background-color: #878787;
-	border: 1px solid rgba( 255, 255, 255, 0.28 );
+	border: 1px solid $ui-block-border;
 	border-bottom: 0px;
 	pointer-events: none;
 }

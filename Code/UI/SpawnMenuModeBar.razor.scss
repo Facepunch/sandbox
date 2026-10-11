@@ -47,7 +47,7 @@ SpawnMenuModeBar .mode-tab
 	&.active
 	{
 		@include ui-tab-active;
-		border-bottom: 1px solid rgba( 255, 255, 255, 0.28 );
+		border-bottom: 1px solid $ui-block-border;
 	}
 
 	.icon

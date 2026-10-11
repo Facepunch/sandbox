@@ -273,12 +273,12 @@ public class SpawnlistData
 
 		if ( entries.Count > 0 )
 		{
-			var sub = menu.AddMenu( "#spawnmenu.spawnlist.add_to_submenu", "📋" );
+			var sub = menu.AddMenu( "#spawnmenu.spawnlist.add_to_submenu", "playlist_add" );
 			foreach ( var entry in entries )
 			{
 				var data = Load( entry );
 				var capturedEntry = entry;
-				var option = sub.AddOption( null, "📋", () => AddItem( capturedEntry, item ) );
+				var option = sub.AddOption( null, "collections_bookmark", () => AddItem( capturedEntry, item ) );
 
 				// List names are authored content, even when they begin with a phrase prefix.
 				foreach ( var label in option.Children.OfType<Label>() )
@@ -294,7 +294,7 @@ public class SpawnlistData
 
 		var (type, path, source) = SpawnlistItem.ParseIdent( item.Ident );
 
-		menu.AddOption( "#spawnmenu.spawnlist.create_new_option", "➕", () =>
+		menu.AddOption( "#spawnmenu.spawnlist.create_new_option", "add", () =>
 		{
 			var name = (type == "dupe" ? item.Title : LocalizedText.Resolve( item.Title ))
 				?? Game.Language.GetPhrase( "spawnmenu.spawnlist.new_button" );
@@ -315,7 +315,7 @@ public class SpawnlistData
 		{
 			menu.AddSeparator();
 
-			menu.AddOption( "#ui.open_workshop", "🌐", () =>
+			menu.AddOption( "#ui.open_workshop", "public", () =>
 			{
 				Game.Overlay.ShowPackageModal( fullIdent );
 			} );
