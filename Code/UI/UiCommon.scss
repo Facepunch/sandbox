@@ -25,6 +25,7 @@ $ui-settings-font: 12px;
 	padding: 8px;
 	border: 1px solid rgba( 255, 255, 255, 0.28 );
 	background-image: linear-gradient( to bottom, rgba( 140, 140, 140, 0.66 ), rgba( 130, 130, 130, 0.66 ) );
+	border-radius: 2px;
 }
 
 // lists, settings, tool list, etc..
@@ -33,6 +34,7 @@ $ui-settings-font: 12px;
 	color: $ui-text;
 	border: 1px solid rgba( 0, 0, 0, 0.51 );
 	background-image: linear-gradient( to bottom, rgba( 255, 255, 255, 0.90 ), rgba( 245, 245, 245, 0.80 ) );
+	border-radius: 2px;
 }
 
 // scrollbar
@@ -51,26 +53,19 @@ $ui-settings-font: 12px;
 	align-items: center;
 	background-color: rgba( 255, 255, 255, 0.96 );
 	border: 1px solid rgba( 0, 0, 0, 0.51 );
-	border-radius: 0;
+	border-radius: 2px;
 	font-size: 12px;
 	font-weight: 500;
 	color: $ui-text;
 }
 
-@mixin ui-button
+// buttons
+@mixin ui-button-face
 {
-	height: 28px;
-	padding: 0 10px;
-	gap: 6px;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	font-family: $body-font;
-	font-size: 12px;
 	color: $ui-text;
-	background-image: linear-gradient( to bottom, rgba(233, 233, 233, 0.8) 0%, rgba(233, 233, 233, 0.8) 48%, rgba( 170, 170, 170, 0.25 ) 52%, rgba( 170, 170, 170, 0.25 ) 100% );
+	background-image: linear-gradient( to bottom, rgba(240, 240, 240, 0.9) 0%, rgba(240, 240, 240, 0.9) 46%, rgba( 215, 215, 215, 0.8 ) 54%, rgba( 215, 215, 215, 0.8 ) 100% );
 	border: 1px solid rgba( 0, 0, 0, 0.33 );
-	border-radius: 0;
+	border-radius: 2px;
 	cursor: pointer;
 
 	&:hover
@@ -94,6 +89,20 @@ $ui-settings-font: 12px;
 	}
 }
 
+@mixin ui-button
+{
+	height: 28px;
+	padding: 0 10px;
+	gap: 6px;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	font-family: $body-font;
+	font-size: 12px;
+	font-weight: 500;
+	@include ui-button-face;
+}
+
 // separator
 $ui-separator: rgba( 0, 0, 0, 0.12 );
 
@@ -105,6 +114,7 @@ $ui-separator: rgba( 0, 0, 0, 0.12 );
 	justify-content: flex-start;
 	cursor: text;
 	@include ui-focus-ring;
+	border-radius: 2px;
 
 	.placeholder
 	{
@@ -115,6 +125,31 @@ $ui-separator: rgba( 0, 0, 0, 0.12 );
 	.content-label
 	{
 		color: $ui-text;
+	}
+}
+
+// the dark box of hints
+@mixin ui-hint
+{
+	padding: 5px 15px;
+	background-color: rgba( 46, 46, 46, 0.9 );
+	border: 1px solid rgb( 43, 43, 43 );
+	border-radius: 2px;
+	color: rgb( 221, 221, 221 );
+	opacity: 1;
+	transition: opacity 0.04s ease;
+
+	&:intro, &:outro
+	{
+		opacity: 0;
+	}
+
+	label
+	{
+		font-family: "Inter";
+		font-size: 12px;
+		font-weight: 500;
+		max-width: 28vw;
 	}
 }
 
@@ -129,6 +164,7 @@ $ui-separator: rgba( 0, 0, 0, 0.12 );
 @mixin ui-selectable
 {
 	cursor: pointer;
+	border-radius: 2px;
 
 	&:hover
 	{
@@ -171,6 +207,7 @@ $ui-section-gap: 20px;
 	color: white;
 	font-size: 12px;
 	font-weight: 800;
+	border-radius: 2px 2px 0px 0px;
 	text-transform: uppercase;
 	white-space: nowrap;
 }
@@ -211,6 +248,7 @@ $ui-section-gap: 20px;
 	height: 24px;
 	padding: 0 10px;
 	flex-shrink: 0;
+	border-radius: 2px 2px 0px 0px;
 	font-size: 13px;
 	font-weight: 600;
 	color: $ui-text-on-gray;
