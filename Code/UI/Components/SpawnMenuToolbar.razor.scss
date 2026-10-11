@@ -31,36 +31,6 @@ SpawnMenuToolbar .textentry.menu-input
 	min-width: 205px;
 }
 
-SpawnMenuToolbar UIButton.button
-{
-	height: 24px;
-	padding: 0 8px;
-
-	&.active
-	{
-		@include ui-selected;
-		background-image: none;
-	}
-
-	IconPanel, .iconpanel
-	{
-		font-size: 14px;
-	}
-}
-
-SpawnMenuToolbar UIButton.icon-button
-{
-	min-width: 24px;
-	width: 24px;
-	padding: 0;
-}
-
-SpawnMenuToolbar UIButton.menu-button
-{
-	min-width: 120px;
-	justify-content: flex-start;
-}
-
 SpawnMenuToolbar UIDropdown
 {
 	width: 166px;

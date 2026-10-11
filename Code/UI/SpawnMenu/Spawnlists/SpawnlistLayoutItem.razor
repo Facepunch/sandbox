@@ -8,14 +8,11 @@
 
     @if ( Item.Kind == SpawnlistItemKind.Title )
     {
-        <div class="marker-line left"></div>
-        <IconPanel Text="label" />
-        <Label Tokenize=@false Text=@Item.Title />
-        <div class="marker-line right"></div>
+        <Label class="section-title" Tokenize=@false Text=@Item.Title />
     }
     else
     {
-        <div class="marker-line divider-line"></div>
+        <div class="divider-line"></div>
     }
 </root>
 

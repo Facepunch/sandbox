@@ -31,6 +31,9 @@ public class UIButton : Button
 	{
 		base.Tick();
 
+		var hasText = TextLabel.IsValid() && TextLabel.Style.Display == DisplayMode.Flex;
+		SetClass( "icon-only", !hasText && !string.IsNullOrEmpty( Icon ) );
+
 		if ( _method is UIActionProperty { Enabled: { } enabled } )
 			Disabled = !enabled();
 		else if ( _method is not null && _method.TryGetAttribute<EnabledIfAttribute>( out var condition ) )

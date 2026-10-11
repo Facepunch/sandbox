@@ -1,6 +1,8 @@
 @import "/UI/Theme.scss";
 @import "/UI/UiCommon.scss";
 
+$edit-bar-spacing: 4px;
+
 SpawnlistView
 {
 	.spawnlist-header
@@ -8,6 +10,13 @@ SpawnlistView
 		width: 100%;
 		flex-direction: column;
 		gap: 6px;
+
+		// the first bar is taller than the others, it has the name of the list, so its buttons stay at the top
+		> SpawnMenuToolbar:first-child
+		{
+			height: auto;
+			align-items: flex-start;
+		}
 
 		SpawnMenuToolbar
 		{
@@ -27,35 +36,37 @@ SpawnlistView
 
 	.spawnlist-identity
 	{
-		align-items: center;
-		gap: 8px;
+		flex-direction: column;
+		gap: 2px;
 		min-width: 0px;
+
+		.title-row
+		{
+			align-items: center;
+			gap: 10px;
+			min-width: 0px;
+		}
 
 		.identity-icon
 		{
-			font-size: 18px;
-			color: white;
+			font-size: 28px;
+			color: $ui-heading-on-gray;
 			flex-shrink: 0;
 		}
 
-		h2
+		.spawnlist-name
 		{
-			margin: 0;
-			font-size: 13px;
-			font-weight: 800;
-			color: white;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			overflow: hidden;
+			@include ui-display-heading;
+			min-width: 0px;
 		}
 
 		.meta
 		{
 			align-items: center;
-			gap: 8px;
-			flex-shrink: 0;
-			font-size: 11px;
-			color: $ui-text-on-gray;
+			gap: 16px;
+			font-size: 12px;
+			font-weight: 500;
+			color: $ui-subtext-on-gray;
 
 			span
 			{
@@ -63,24 +74,36 @@ SpawnlistView
 				gap: 4px;
 			}
 
-			IconPanel { font-size: 12px; }
-
-			.dot
-			{
-				width: 3px;
-				height: 3px;
-				border-radius: 50%;
-				background-color: $ui-text-on-gray;
-			}
+			IconPanel { font-size: 14px; }
 		}
 	}
 
-	.edit-instructions
+	// editing bar
+	.edit-bar
 	{
-		align-items: center;
-		gap: 4px;
+		align-items: stretch;
+		margin-top: 8px;
+		border: 1px solid rgba( 255, 255, 255, 0.5 );
+		border-radius: 2px;
 		font-size: 12px;
-		color: $ui-text-on-gray;
+
+		.edit-instructions
+		{
+			align-items: center;
+			flex-grow: 1;
+			min-width: 0px;
+			padding: 0 12px;
+			color: $ui-heading-on-gray;
+			font-weight: 600;
+		}
+
+		.edit-actions
+		{
+			align-items: center;
+			flex-shrink: 0;
+			gap: $edit-bar-spacing;
+			padding: $edit-bar-spacing;
+		}
 	}
 
 	SpawnMenuContent > .body

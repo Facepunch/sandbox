@@ -1,53 +1,52 @@
 @import "/UI/Theme.scss";
 @import "/UI/UiCommon.scss";
 
+// the titles and dividers between the items of a spawnlist, on the gray block of the menu
 SpawnlistLayoutItem
 {
 	width: 100%;
 	height: 100%;
 	align-items: center;
-	justify-content: center;
 	gap: 8px;
-	color: $ui-text-on-gray;
 	font-family: $body-font;
-	font-size: 12px;
-	font-weight: 800;
-	text-transform: uppercase;
 	pointer-events: none;
 
-	.marker-line
+	&.title-item
 	{
-		height: 1px;
-		flex-grow: 1;
-		background: linear-gradient( to right, transparent, rgba( white, 0.18 ) );
-
-		&.right
-		{
-			background: linear-gradient( to left, transparent, rgba( white, 0.18 ) );
-		}
-
-		&.divider-line
-		{
-			background: linear-gradient( to right, transparent, rgba( white, 0.18 ) 18%, rgba( white, 0.18 ) 82%, transparent );
-		}
+		align-items: flex-end;
+		padding-bottom: 8px;
 	}
 
-	IconPanel
+	.section-title
 	{
-		font-size: 16px;
-		flex-shrink: 0;
+		@include ui-display-heading;
+		flex-grow: 1;
+		flex-shrink: 1;
+		min-width: 0px;
+	}
+
+	.divider-line
+	{
+		height: 2px;
+		flex-grow: 1;
+		background-color: $ui-line-on-gray;
 	}
 
 	SpawnlistDragHandle
 	{
-		width: 26px;
-		height: 26px;
+		width: 36px;
+		height: 39px;
 		flex-shrink: 0;
 		align-items: center;
 		justify-content: center;
 		border-radius: 4px;
 		cursor: move;
 		opacity: 0.45;
+
+		IconPanel
+		{
+			font-size: 18px;
+		}
 
 		&:hover
 		{
@@ -65,10 +64,5 @@ SpawnlistLayoutItem
 	{
 		pointer-events: all;
 		.edit-only { display: flex; }
-
-		&:hover
-		{
-			color: white;
-		}
 	}
 }
