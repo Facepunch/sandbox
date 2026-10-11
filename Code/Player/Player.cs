@@ -4,25 +4,25 @@
 /// </summary>
 public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, Global.ISaveEvents, IKillSource, IHudEvents
 {
-	[RequireComponent] 
+	[RequireComponent]
 	public PlayerController Controller { get; set; }
 
-	[Property] 
+	[Property]
 	public GameObject Body { get; internal set; }
 
-	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )] 
+	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )]
 	public float Health { get; set; } = 100;
 
-	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )] 
+	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )]
 	public float MaxHealth { get; set; } = 100;
 
-	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )] 
+	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )]
 	public float Armour { get; set; } = 0;
 
-	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )] 
+	[Property, Range( 0, 100 ), Sync( SyncFlags.FromHost )]
 	public float MaxArmour { get; set; } = 100;
 
-	[Sync( SyncFlags.FromHost )] 
+	[Sync( SyncFlags.FromHost )]
 	public PlayerData PlayerData { get; internal set; }
 
 	public Transform EyeTransform
@@ -430,6 +430,10 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			if ( args.Tags.Contains( DamageTags.Shock ) )
 			{
 				_dmgSound = Sound.Play( "damage_taken_shock" );
+			}
+			else if ( args.Tags.Contains( DamageTags.Fall ) )
+			{
+				_dmgSound = Sound.Play( "damage_taken_fall" );
 			}
 			else
 			{
