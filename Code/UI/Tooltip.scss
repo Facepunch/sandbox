@@ -1,0 +1,7 @@
+@import "/UI/UiCommon.scss";
+
+panel.tooltip
+{
+	@include ui-hint;
+	margin: 0px;
+}
