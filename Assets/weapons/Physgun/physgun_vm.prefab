@@ -20,8 +20,12 @@
         "__guid": "0d8179ee-f780-4aab-bed2-a1f42cc41e79",
         "__enabled": true,
         "Flags": 0,
+        "ADSInertiaScale": 0.3,
         "AnimationSpeed": 1,
-        "DeploySound": "weapons/common/foley/foley_deploy_weapon_01.sound",
+        "DeploySound": {
+          "Id": "cd40d880-a62f-4e55-93b7-5caad138cd31",
+          "Path": "weapons/common/foley/foley_deploy_weapon_01.sound"
+        },
         "EjectBrass": null,
         "IncrementalAnimationSpeed": 3,
         "IncrementalReloadFinishSounds": [],
@@ -30,6 +34,11 @@
         "InertiaScale": "2,2",
         "IsIncremental": false,
         "IsThrowable": false,
+        "LookInertia": false,
+        "LookInertiaAmount": 1,
+        "LookInertiaDamping": 0.35,
+        "LookInertiaFrequency": 3,
+        "LookInertiaPivotDistance": 10,
         "MuzzleEffect": null,
         "MuzzleGameObject": {
           "_type": "gameobject",
@@ -61,13 +70,17 @@
         "__enabled": true,
         "Flags": 0,
         "BeamActive": true,
-        "BottleMaterial": "models/weapons/sbox_physgun/v_physgun_d.vmat",
+        "BottleMaterial": {
+          "Id": "0ac01006-4dda-4262-af61-dbfe014dd36b",
+          "Path": "models/weapons/sbox_physgun/v_physgun_d.vmat"
+        },
         "GlowEffect": {
           "_type": "component",
           "component_id": "641c4ad5-7b84-41d6-95b8-81517a04d182",
           "go": "45f9462f-1700-4260-9337-37001fe7d38b",
           "component_type": "ParticleEffect"
         },
+        "GravGlowScale": 0.55,
         "GravTint": "1,0.8,0,1",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -102,7 +115,10 @@
             "component_type": "SpriteRenderer"
           }
         ],
-        "TubeFxMaterial": "models/weapons/sbox_physgun/v_physgun_tube.vmat"
+        "TubeFxMaterial": {
+          "Id": "fb862148-30fe-4b63-9844-2b7412836624",
+          "Path": "models/weapons/sbox_physgun/v_physgun_tube.vmat"
+        }
       }
     ],
     "Children": [
@@ -132,11 +148,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": true,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_physgun/v_physgun.vmdl",
+            "Model": {
+              "Id": "2ecd8a02-cf46-4c21-8913-2fcf5fe7f526",
+              "Path": "models/weapons/sbox_physgun/v_physgun.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -144,13 +164,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": false,
@@ -473,11 +487,15 @@
                             "ForceSpace": "World",
                             "Friction": 1,
                             "Gradient": "1,1,1,1",
+                            "InitialPitch": 0,
+                            "InitialRoll": 0,
+                            "InitialScale": 1,
                             "InitialVelocity": {
                               "X": 0,
                               "Y": 0,
                               "Z": 0
                             },
+                            "InitialYaw": 0,
                             "Lifetime": {
                               "Type": "Range",
                               "Evaluation": "Seed",
@@ -546,6 +564,7 @@
                               }
                             },
                             "Scale": 32,
+                            "SequenceFitToLifetime": false,
                             "SequenceId": 0,
                             "SequenceSpeed": 1,
                             "SequenceTime": 1,
@@ -619,7 +638,10 @@
                                     "LoopEnd": -1,
                                     "Frames": [
                                       {
-                                        "Texture": "textures/lightcookies/lightcookies_09.vtex",
+                                        "Texture": {
+                                          "Id": "668d8ec0-75d5-43d8-8797-388d2aa89f24",
+                                          "Path": "textures/particles/flares/light_glow_03.vtex"
+                                        },
                                         "BroadcastMessages": []
                                       }
                                     ]
@@ -740,11 +762,15 @@
                             "ForceSpace": "World",
                             "Friction": 1,
                             "Gradient": "1,1,1,1",
+                            "InitialPitch": 0,
+                            "InitialRoll": 0,
+                            "InitialScale": 1,
                             "InitialVelocity": {
                               "X": 0,
                               "Y": 0,
                               "Z": 0
                             },
+                            "InitialYaw": 0,
                             "Lifetime": {
                               "Type": "Range",
                               "Evaluation": "Seed",
@@ -842,6 +868,7 @@
                                 }
                               ]
                             },
+                            "SequenceFitToLifetime": false,
                             "SequenceId": 0,
                             "SequenceSpeed": 1,
                             "SequenceTime": 1,
@@ -915,7 +942,10 @@
                                     "LoopEnd": -1,
                                     "Frames": [
                                       {
-                                        "Texture": "textures/lightcookies/lightcookies_09.vtex",
+                                        "Texture": {
+                                          "Id": "35e7103a-860f-4a6d-820c-0d0e8926e31a",
+                                          "Path": "textures/lightcookies/lightcookies_09.vtex"
+                                        },
                                         "BroadcastMessages": []
                                       }
                                     ]
@@ -977,7 +1007,7 @@
                             "Billboard": "Always",
                             "CameraFadeFar": 0,
                             "CameraFadeNear": 0,
-                            "Color": "0,0.68333,1,0.57064",
+                            "Color": "0,0.68333,1,0.42863",
                             "DepthFeather": 3,
                             "FlipHorizontal": false,
                             "FlipVertical": false,
@@ -1003,7 +1033,7 @@
                               "AfterUILayer": false
                             },
                             "Shadows": false,
-                            "Size": "6.57298994,6.57298994",
+                            "Size": "3.39962173,3.39962173",
                             "Sprite": {
                               "$compiler": "embed",
                               "$source": null,
@@ -1018,7 +1048,10 @@
                                     "LoopEnd": -1,
                                     "Frames": [
                                       {
-                                        "Texture": "textures/particles/particle_glow_05.vtex",
+                                        "Texture": {
+                                          "Id": "1e342e2a-8da3-4701-9c21-9a196b8b0fb0",
+                                          "Path": "textures/particles/flares/particle_flare_7b.vtex"
+                                        },
                                         "BroadcastMessages": []
                                       }
                                     ]
@@ -1057,7 +1090,7 @@
                         "__guid": "ee8f88b0-2dec-4db8-aa2d-a9493699a10f",
                         "__version": 2,
                         "Flags": 0,
-                        "Name": "Sprite",
+                        "Name": "Sprite (2)",
                         "Position": "6.14176512,2.82323694,-1.788139E-06",
                         "Rotation": "0,0,0,1",
                         "Scale": "3.40000105,3.40000105,3.40000105",
@@ -1080,7 +1113,7 @@
                             "Billboard": "Always",
                             "CameraFadeFar": 0,
                             "CameraFadeNear": 0,
-                            "Color": "0,0.68333,1,0.78623",
+                            "Color": "0,0.68333,1,0.37563",
                             "DepthFeather": 3,
                             "FlipHorizontal": false,
                             "FlipVertical": false,
@@ -1106,7 +1139,7 @@
                               "AfterUILayer": false
                             },
                             "Shadows": false,
-                            "Size": "6.10691929,6.10691929",
+                            "Size": "3.51699877,3.51699877",
                             "Sprite": {
                               "$compiler": "embed",
                               "$source": null,
@@ -1121,7 +1154,10 @@
                                     "LoopEnd": -1,
                                     "Frames": [
                                       {
-                                        "Texture": "textures/particles/particle_glow_05.vtex",
+                                        "Texture": {
+                                          "Id": "1e342e2a-8da3-4701-9c21-9a196b8b0fb0",
+                                          "Path": "textures/particles/flares/particle_flare_7b.vtex"
+                                        },
                                         "BroadcastMessages": []
                                       }
                                     ]
@@ -1160,7 +1196,7 @@
                         "__guid": "02128166-e28b-471d-aac1-f77a9acd475a",
                         "__version": 2,
                         "Flags": 0,
-                        "Name": "Sprite",
+                        "Name": "Sprite (3)",
                         "Position": "6.14176512,2.82323694,-1.788139E-06",
                         "Rotation": "0,0,0,1",
                         "Scale": "3.40000105,3.40000105,3.40000105",
@@ -1183,7 +1219,7 @@
                             "Billboard": "Always",
                             "CameraFadeFar": 0,
                             "CameraFadeNear": 0,
-                            "Color": "0,0.68333,1,0.62552",
+                            "Color": "0,0.68333,1,0.25972",
                             "DepthFeather": 3,
                             "FlipHorizontal": false,
                             "FlipVertical": false,
@@ -1209,7 +1245,7 @@
                               "AfterUILayer": false
                             },
                             "Shadows": false,
-                            "Size": "6.06782532,6.06782532",
+                            "Size": "3.48019695,3.48019695",
                             "Sprite": {
                               "$compiler": "embed",
                               "$source": null,
@@ -1224,7 +1260,10 @@
                                     "LoopEnd": -1,
                                     "Frames": [
                                       {
-                                        "Texture": "textures/particles/particle_glow_05.vtex",
+                                        "Texture": {
+                                          "Id": "1e342e2a-8da3-4701-9c21-9a196b8b0fb0",
+                                          "Path": "textures/particles/flares/particle_flare_7b.vtex"
+                                        },
                                         "BroadcastMessages": []
                                       }
                                     ]
@@ -2679,11 +2718,15 @@
             },
             "CreateAttachments": false,
             "CreateBoneObjects": false,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/first_person/v_first_person_arms_human.vmdl",
+            "Model": {
+              "Id": "9efa2a97-02e8-4f91-9e8d-ac93d137828d",
+              "Path": "models/first_person/v_first_person_arms_human.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -2691,13 +2734,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": false,
@@ -2720,6 +2757,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},

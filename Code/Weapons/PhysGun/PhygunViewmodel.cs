@@ -10,8 +10,15 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 	[Property] public Color GravTint { get; set; }
 	[Property] public Color PhysTint { get; set; }
 
+	/// <summary>
+	/// Strength of the glow particles and tip sprites in grav (yellow) mode relative to phys (blue).
+	/// Yellow at full strength saturates into flat, hard-edged blooming discs.
+	/// </summary>
+	[Property, Range( 0, 1 )] public float GravGlowScale { get; set; } = 0.55f;
+
 	float _tintFrac;
 	Color _effectsTint;
+	float _glowScale = 1;
 
 	protected override void OnUpdate()
 	{
@@ -29,11 +36,13 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 				: 1f - 8f * (1f - _tintFrac) * (1f - _tintFrac) * (1f - _tintFrac) * (1f - _tintFrac);
 
 			_effectsTint = Color.Lerp( PhysTint, GravTint, t );
+			_glowScale = MathX.Lerp( 1, GravGlowScale, t );
 		}
 		else
 		{
 			_tintFrac = 0.0f;
 			_effectsTint = PhysTint;
+			_glowScale = 1;
 		}
 
 		UpdateGlowEffect();
@@ -58,7 +67,7 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 		_scroll += _scrollSpeed * Time.Delta;
 
 		TubeFxMaterial.Set( "g_vSelfIllumOffset", new Vector2( _scroll % 1, 0 ) );
-		TubeFxMaterial.Set( "g_flSelfIllumBrightness", 3 * (_scrollSpeed + 1.5) );
+		TubeFxMaterial.Set( "g_flSelfIllumBrightness", 2f * (_scrollSpeed + 1) );
 		TubeFxMaterial.Set( "g_vSelfIllumTint", _effectsTint );
 	}
 
@@ -74,13 +83,14 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 
 	void UpdateTipSprites()
 	{
-		var mul = BeamActive ? 1.0f : 0.6f;
+		var mul = BeamActive ? 0.6f : 0.3f;
 
 		foreach ( var sprite in TipSprites )
 		{
 			sprite.Enabled = true;
-			sprite.Color = _effectsTint.WithAlpha( mul * Random.Shared.Float( 0.4f, 0.9f ) );
-			sprite.Size = Random.Shared.Float( 6, 7 ) * mul;
+			sprite.Color = _effectsTint.WithAlpha( mul * _glowScale * Random.Shared.Float( 0.4f, 0.9f ) );
+			var targetSize = Random.Shared.Float( 3, 4f );
+			sprite.Size = Vector2.Lerp( sprite.Size, targetSize, 1f - MathF.Exp( -Time.Delta * 12f ) );
 		}
 	}
 
@@ -89,7 +99,7 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 		if ( GlowEffect is null ) return;
 
 		GlowEffect.Tint = _effectsTint;
-		GlowEffect.Alpha = BeamActive ? 1.0f : 0.2f;
+		GlowEffect.Alpha = (BeamActive ? 1.0f : 0.2f) * _glowScale;
 	}
 
 
