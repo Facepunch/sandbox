@@ -8,6 +8,32 @@ public partial class ScreenWeapon : BaseSandboxWeapon
 	private float _joystickX;
 	private float _joystickY;
 	private TimeSince _lastScreenUpdate;
+	private TimeSince _sinceTransition = float.MaxValue;
+
+	/// <summary>
+	/// How long a screen transition lasts after <see cref="StartScreenTransition"/>
+	/// </summary>
+	const float TransitionDuration = 0.35f;
+
+	/// <summary>
+	/// How bright the screen flares at the start of a transition, fading back to 1
+	/// </summary>
+	const float TransitionIntensity = 5f;
+
+	/// <summary>
+	/// Starts a transition on the screen, drawn by <see cref="DrawScreenContent"/> using <see cref="TransitionProgress"/>
+	/// </summary>
+	protected void StartScreenTransition() => _sinceTransition = 0;
+
+	/// <summary>
+	/// A transition from <see cref="StartScreenTransition"/> is still running
+	/// </summary>
+	protected bool InScreenTransition => _sinceTransition < TransitionDuration;
+
+	/// <summary>
+	/// How far through the current transition the screen is, 0 to 1
+	/// </summary>
+	protected float TransitionProgress => (_sinceTransition / TransitionDuration).Clamp( 0f, 1f );
 
 	/// <summary>
 	/// Override to match a different model's screen material.
@@ -89,12 +115,22 @@ public partial class ScreenWeapon : BaseSandboxWeapon
 		var index = modelRenderer.Model.Materials.IndexOf( oldMaterial );
 		if ( index < 0 ) return;
 
-		_screenTexture ??= Texture.CreateRenderTarget().WithSize( ScreenTextureSize.x, ScreenTextureSize.y ).WithInitialColor( Color.Red )
+		_screenTexture ??= Texture.CreateRenderTarget().WithSize( ScreenTextureSize.x, ScreenTextureSize.y ).WithFormat( ImageFormat.RGBA16161616F ).WithInitialColor( Color.Black )
 			.Create();
 
 		_screenMaterialCopy ??= Material.Load( ScreenMaterialPath ).CreateCopy();
 		_screenMaterialCopy.Attributes.Set( "Emissive", _screenTexture );
-		modelRenderer.SceneObject.Attributes.Set( "Emissive", _screenTexture );
+
+		var attributes = modelRenderer.SceneObject.Attributes;
+		attributes.Set( "Emissive", _screenTexture );
+
+		// the art of the model's own screen (glass, panels), for screen shaders that draw it over their picture
+		attributes.Set( "PanelColor", oldMaterial.GetTexture( "g_tColor" ) );
+		attributes.Set( "PanelNormal", oldMaterial.GetTexture( "g_tNormal" ) );
+		attributes.Set( "PanelAmbientOcclusion", oldMaterial.GetTexture( "g_tAmbientOcclusion" ) );
+
+		// the screen flares up during a transition and settles back
+		attributes.Set( "ScreenIntensity", MathX.Lerp( TransitionIntensity, 1f, TransitionProgress ) );
 
 		modelRenderer.Materials.SetOverride( index, _screenMaterialCopy );
 

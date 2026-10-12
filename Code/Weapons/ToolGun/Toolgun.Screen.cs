@@ -1,11 +1,72 @@
 ﻿public partial class Toolgun : ScreenWeapon
 {
 	/// <summary>
-	/// Draws the current tool mode on the viewmodel screen.
+	/// The mode the screen is switching to, and the one it showed before
+	/// </summary>
+	ToolMode _screenTarget;
+	ToolMode _screenPrevious;
+
+	const int SwipeRows = 8;
+	const float SwipeJitter = 60f;
+	const float SwipeEdgeWidth = 6f;
+
+	/// <summary>
+	/// Draws the current tool mode on the viewmodel screen. A new mode swipes in from the left over the old one,
+	/// along a glowing, ragged edge that jumps about as it goes.
 	/// </summary>
 	protected override void DrawScreenContent( Rect rect, Painter paint )
 	{
 		var currentMode = GetCurrentMode();
-		currentMode?.DrawScreen( rect, paint );
+		if ( currentMode != _screenTarget )
+		{
+			_screenPrevious = _screenTarget;
+			_screenTarget = currentMode;
+			StartScreenTransition();
+		}
+
+		if ( !InScreenTransition )
+		{
+			_screenTarget?.DrawScreen( rect, paint );
+			return;
+		}
+
+		// the edge runs from just off the left to just off the right, each row of the screen offset at random
+		var tick = (int)(Time.Now * 30f);
+		var edgeBase = rect.Left - SwipeJitter + TransitionProgress * (rect.Width + SwipeJitter * 2);
+		var rowHeight = rect.Height / SwipeRows;
+		var edgeColor = HudStyle.For( Scene ).Glow( Color.White );
+
+		for ( var row = 0; row < SwipeRows; row++ )
+		{
+			var top = rect.Top + row * rowHeight;
+			var edge = edgeBase + (Hash( row, tick ) - 0.5f) * SwipeJitter;
+
+			if ( _screenTarget.IsValid() )
+			{
+				using var _ = paint.Scope();
+				paint.Clip( new Rect( rect.Left, top, MathF.Max( edge - rect.Left, 0 ), rowHeight ) );
+				_screenTarget.DrawScreen( rect, paint );
+			}
+
+			if ( _screenPrevious.IsValid() )
+			{
+				using var _ = paint.Scope();
+				paint.Clip( new Rect( edge, top, MathF.Max( rect.Right - edge, 0 ), rowHeight ) );
+				_screenPrevious.DrawScreen( rect, paint );
+			}
+
+			paint.Fill = edgeColor;
+			paint.Rect( new Rect( edge - SwipeEdgeWidth * 0.5f, top, SwipeEdgeWidth, rowHeight ) );
+		}
+	}
+
+	/// <summary>
+	/// Cheap repeatable 0-1 noise for the swipe edge
+	/// </summary>
+	static float Hash( int a, int b )
+	{
+		var h = (uint)(a * 374761393 + b * 668265263);
+		h = (h ^ (h >> 13)) * 1274126177;
+		return (h & 0xffff) / 65535f;
 	}
 }

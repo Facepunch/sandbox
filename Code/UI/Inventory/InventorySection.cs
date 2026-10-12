@@ -18,7 +18,6 @@ public sealed class InventorySection : HudSection
 	/// </summary>
 	public bool Open { get; set; }
 
-	const string Font = "Inconsolata";
 	const string IndexFont = "SandboxID"; // custom, supports only digits at the moment, don't use for anything else
 
 	const float Top = 38;
@@ -42,8 +41,8 @@ public sealed class InventorySection : HudSection
 
 	const float EmptyOpacity = 0.5f; // buckets with no weapon keep this much of their opacity
 	// flat greys that are never tinted by the HUD colour
-	static readonly Color TileColor = PanelColor;
-	static readonly Color HighlightTileColor = new Color( 0.29f, 0.29f, 0.29f, PanelColor.a ); // 4A4A4A
+	static readonly Color TileColor = HudStyle.PanelColor;
+	static readonly Color HighlightTileColor = new Color( 0.29f, 0.29f, 0.29f, HudStyle.PanelColor.a ); // 4A4A4A
 	static readonly Color DimContent = Color.White.WithAlpha( 0.51f ); // icon and name of unselected slots
 
 	float _slide;
@@ -207,7 +206,7 @@ public sealed class InventorySection : HudSection
 
 		var tile = Shade( highlighted ? HighlightTileColor : TileColor );
 
-		DrawPanel( painter, rect, tile, scale );
+		HudStyle.DrawPanel( painter, rect, tile, scale );
 
 		if ( index >= 0 )
 		{
@@ -240,7 +239,7 @@ public sealed class InventorySection : HudSection
 			painter.Texture( icon, new Rect( center - size * 0.5f, size ), iconColor );
 		}
 
-		painter.TextStyle = new TextStyle( Font, NameFontSize * ScaleToScreen, nameColor ) { FontWeight = 700, LetterSpacing = NameFontSize * NameLetterSpacing * ScaleToScreen, Alignment = TextFlag.CenterHorizontally | TextFlag.Bottom };
+		painter.TextStyle = new TextStyle( HudStyle.Font, NameFontSize * ScaleToScreen, nameColor ) { FontWeight = 700, LetterSpacing = NameFontSize * NameLetterSpacing * ScaleToScreen, Alignment = TextFlag.CenterHorizontally | TextFlag.Bottom };
 		painter.Text( NameLabel( weapon ), new Rect( rect.Left, rect.Top, rect.Width, rect.Height - MathF.Round( NameBottom * scale ) ) );
 	}
 
@@ -249,7 +248,7 @@ public sealed class InventorySection : HudSection
 	/// </summary>
 	void DrawBar( Painter painter, Rect rect, float scale )
 	{
-		DrawPanel( painter, rect, TileColor, scale );
+		HudStyle.DrawPanel( painter, rect, TileColor, scale );
 	}
 
 	const string WeaponFallbackIcon = "ui/hud/weapon_icon_test.png";

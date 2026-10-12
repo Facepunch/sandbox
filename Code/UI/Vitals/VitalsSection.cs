@@ -40,7 +40,6 @@ public sealed class VitalsSection : HudSection
 
 	public bool Hidden { get; set; }
 
-	const string Font = "Inconsolata";
 
 	const float DigitWidth = 32;
 	const float DigitHeight = 68;
@@ -78,7 +77,6 @@ public sealed class VitalsSection : HudSection
 	const float HideDuration = 0.2f;
 
 	static readonly Color DigitColor = Color.White;
-	static readonly Color TitleColor = new Color( 0.925f, 0.925f, 0.925f );
 	static readonly Color ReserveColor = new Color( 0.9f, 0.9f, 0.9f );
 	static readonly Color DepletedColor = new Color( 0.267f, 0.267f, 0.267f );
 
@@ -198,7 +196,7 @@ public sealed class VitalsSection : HudSection
 
 			if ( data.UsesClips || data.HasSecondary )
 			{
-				painter.TextStyle = new TextStyle( Font, ReserveFontSize * ScaleToScreen, Brightened( Tinted( ReserveColor ), TextGain ) ) { FontWeight = 700, Alignment = TextFlag.LeftBottom };
+				painter.TextStyle = new TextStyle( HudStyle.Font, ReserveFontSize * ScaleToScreen, HudStyle.Brightened( Tinted( ReserveColor ), TextGain ) ) { FontWeight = 700, Alignment = TextFlag.LeftBottom };
 
 				var slashWidth = painter.MeasureText( "/" ).x;
 				var columnX = digitsRight + MathF.Round( ReserveGap * scale ) + slashWidth;
@@ -228,7 +226,7 @@ public sealed class VitalsSection : HudSection
 
 	void SetTitleStyle( Painter painter )
 	{
-		painter.TextStyle = new TextStyle( Font, TitleFontSize * ScaleToScreen, Brightened( Tinted( TitleColor ), TextGain ) ) { FontWeight = 700 };
+		painter.TextStyle = new TextStyle( HudStyle.Font, TitleFontSize * ScaleToScreen, HudStyle.Brightened( Tinted( HudStyle.TitleColor ), TextGain ) ) { FontWeight = 700 };
 	}
 
 	/// <summary>
@@ -270,13 +268,13 @@ public sealed class VitalsSection : HudSection
 		return width;
 	}
 
-	static void DrawBox( Painter painter, Rect rect, float scale ) => DrawPanel( painter, rect, PanelColor, scale );
+	static void DrawBox( Painter painter, Rect rect, float scale ) => HudStyle.DrawPanel( painter, rect, HudStyle.PanelColor, scale );
 
 	float DrawDigits( Painter painter, DigitCounter counter, int value, int slots, Vector2 position, Vector2 size )
 	{
 		counter.Update( value, slots );
 
-		painter.TextStyle = new TextStyle( Font, DigitFontSize * ScaleToScreen, Glowing( Tinted( DigitColor ) ) ) { FontWeight = 700, Alignment = TextFlag.Center };
+		painter.TextStyle = new TextStyle( HudStyle.Font, DigitFontSize * ScaleToScreen, Glowing( Tinted( DigitColor ) ) ) { FontWeight = 700, Alignment = TextFlag.Center };
 
 		var tint = Tinted( Color.White );
 
@@ -338,7 +336,7 @@ public sealed class VitalsSection : HudSection
 
 		var wave = 0.5f - 0.5f * MathF.Cos( RealTime.Now * Settings.WarningPulseRate * MathF.PI * 2 );
 		var brightness = 1 - Math.Clamp( Settings.WarningPulseAmount, 0, 1 ) * wave;
-		return Brightened( Settings.WarningColor, brightness );
+		return HudStyle.Brightened( Settings.WarningColor, brightness );
 	}
 
 	Color DamageFlashed( Color tint )

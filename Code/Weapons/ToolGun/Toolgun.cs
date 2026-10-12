@@ -76,6 +76,25 @@
 		return GetComponent<T>( true );
 	}
 
+	/// <summary>
+	/// Switches the local player's toolgun to a random tool other than the current one.
+	/// </summary>
+	[ConCmd( "sandbox.toolgun.random", Help = "Switch the toolgun to a random tool" )]
+	public static void RandomToolCommand()
+	{
+		var inventory = Player.FindLocalPlayer()?.GetComponent<PlayerInventory>();
+		if ( !inventory.IsValid() ) return;
+
+		var current = inventory.GetWeapon<Toolgun>()?.GetCurrentMode()?.GetType();
+		var modes = Game.TypeLibrary.GetTypes<ToolMode>()
+			.Where( x => !x.IsAbstract && x.TargetType != current )
+			.ToArray();
+
+		if ( modes.Length == 0 ) return;
+
+		inventory.SetToolMode( Random.Shared.FromArray( modes ).ClassName );
+	}
+
 	[Rpc.Host]
 	public void SetToolMode( string name )
 	{

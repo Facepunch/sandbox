@@ -181,39 +181,27 @@
 	}
 
 	/// <summary>
-	/// Draws the tool title, scrolling long titles within the viewmodel screen.
+	/// Scrolls the tool name across the viewmodel screen in the HUD's style, glowing like the HUD digits.
+	/// The screen shader splits it over the four LCDs under the glass.
 	/// </summary>
 	public virtual void DrawScreen( Rect rect, Painter paint )
 	{
 		using var state = paint.Scope();
-		paint.Clip( rect );
-		paint.TextStyle = new TextStyle( "Poppins", 64, Color.Orange )
-		{
-			LineHeight = 0.75f,
-			FontWeight = 700,
-			Alignment = TextFlag.Center | TextFlag.SingleLine
-		};
+		const float nameSize = 100f;
+		const float scrollSpeed = 120f;
 
-		var title = Game.Language.GetPhrase( TypeDescription.Title.TrimStart( '#' ) );
-		var text = $"{TypeDescription.Icon} {title}";
-		var textWidth = paint.MeasureText( text ).x;
+		var look = HudStyle.For( Scene );
+		var title = Game.Language.GetPhrase( TypeDescription.Title.TrimStart( '#' ) ).ToUpperInvariant();
 
-		if ( textWidth <= rect.Width )
-		{
-			paint.Text( text, rect );
-			return;
-		}
+		paint.TextStyle = new TextStyle( HudStyle.Font, nameSize, look.Glow( Color.White ) ) { FontWeight = 700, Alignment = TextFlag.LeftCenter | TextFlag.SingleLine };
+		var textWidth = paint.MeasureText( title ).x;
 
-		// Marquee: clip both copies to the screen while they loop right-to-left.
-		const float scrollSpeed = 80f;
-		const float gap = 60f;
-		var cycle = textWidth + gap;
-		var offset = (Time.Now * scrollSpeed) % cycle;
-		var x = rect.Right - offset;
+		// copies a half screen apart loop right-to-left, entering from the right edge
+		var cycle = textWidth + rect.Width * 0.5f;
+		var x = rect.Right - (Time.Now * scrollSpeed) % cycle;
 
-		paint.TextStyle = paint.TextStyle with { Alignment = TextFlag.LeftCenter | TextFlag.SingleLine };
-		paint.Text( text, new Rect( x, rect.Top, textWidth, rect.Height ) );
-		paint.Text( text, new Rect( x - cycle, rect.Top, textWidth, rect.Height ) );
+		for ( ; x > rect.Left - textWidth; x -= cycle )
+			paint.Text( title, new Rect( x, rect.Top, textWidth, rect.Height ) );
 	}
 
 	/// <summary>

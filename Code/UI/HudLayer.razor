@@ -29,6 +29,12 @@
     /// </summary>
     [Property, Group( "Effects" ), Range( 0, 6 )] public float TextExponent { get; set; } = 0.16f;
 
+    /// <summary>
+    /// HDR multipliers from <see cref="DigitExponent"/> and <see cref="TextExponent"/>
+    /// </summary>
+    public float DigitGain => MathF.Pow( 2, DigitExponent );
+    public float TextGain => MathF.Pow( 2, TextExponent );
+
     [Property, Group( "Effects" ), Range( 0, 1 )] public float GlowStrength { get; set; } = 0.22f;
 
     [Property, Group( "Effects" ), Range( 0, 48 )] public float GlowRadius { get; set; } = 20;

@@ -10,7 +10,6 @@ public sealed class OwnerLabelSection : HudSection
 	/// </summary>
 	public string Text { get; set; }
 
-	const string Font = "Inconsolata";
 	const float FontSize = 20;
 
 	// same padding as the vitals boxes
@@ -19,8 +18,6 @@ public sealed class OwnerLabelSection : HudSection
 
 	// generous room for the glow around the box
 	const float GlowMargin = 48;
-
-	static readonly Color TextColor = new Color( 0.925f, 0.925f, 0.925f );
 
 	Rect _box;
 
@@ -42,7 +39,7 @@ public sealed class OwnerLabelSection : HudSection
 
 		using var _ = painter.Scope();
 		PaintTint = Tint;
-		painter.TextStyle = new TextStyle( Font, FontSize * scale, Brightened( Tinted( TextColor ), TextGain ) ) { FontWeight = 700, Alignment = TextFlag.Center };
+		painter.TextStyle = new TextStyle( HudStyle.Font, FontSize * scale, HudStyle.Brightened( Tinted( HudStyle.TitleColor ), TextGain ) ) { FontWeight = 700, Alignment = TextFlag.Center };
 
 		var text = painter.MeasureText( Text );
 		var pad = MathF.Round( Padding * scale );
@@ -53,7 +50,7 @@ public sealed class OwnerLabelSection : HudSection
 		var bottom = MathF.Floor( bounds.Height - Screen.Width * 0.02f );
 		_box = new Rect( MathF.Floor( (bounds.Width - size.x) * 0.5f ), bottom - size.y, size.x, size.y );
 
-		DrawPanel( painter, _box, PanelColor, scale );
+		HudStyle.DrawPanel( painter, _box, HudStyle.PanelColor, scale );
 		painter.Text( Text, _box );
 	}
 }
