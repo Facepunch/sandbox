@@ -16,27 +16,39 @@ DragHandler
 		pointer-events: none;
 		width: 64px;
 		height: 64px;
-		background-size: contain;
-		background-position: center center;
-		background-repeat: no-repeat;
-		border-radius: 4px;
-		background-color: rgba( 0, 0, 0, 0.5 );
-		backdrop-filter: blur( 5px );
-		border: 1px solid rgba( $color-accent, 0.4 );
-		box-shadow: 0px 0px 20px rgba( $color-accent, 0.3 );
-		background-tint: $color-accent;
-		justify-content: flex-end;
-		align-items: center;
+		padding: 6px;
+		background-color: rgba( 0, 0, 0, 0.16 );
+		border: 1px solid white;
+		transform: rotate( -2.5deg );
+
+		.thumb
+		{
+			width: 100%;
+			height: 100%;
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: contain;
+		}
 
 		.drag-title
 		{
-			font-size: 11px;
-			font-weight: 600;
+			position: absolute;
+			left: 1px;
+			right: 1px;
+			bottom: 1px;
+			height: 28px;
+			padding: 0 6px;
+			justify-content: center;
+			align-items: center;
+			background-color: white;
+			color: black;
 			font-family: $body-font;
-			color: rgba( white, 0.9 );
+			font-size: 11px;
+			font-weight: 500;
 			text-align: center;
-			text-shadow: 0 1px 4px black;
-			padding: 0 4px 4px 4px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 }
