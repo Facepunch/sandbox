@@ -304,11 +304,7 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 			var undo = player.Undo.Create();
 			undo.Name = "#undo.spawn";
 			undo.NameTokens = new() { { "name", Spawner.DisplayName } };
-
-			foreach ( var go in objects )
-			{
-				undo.Add( go );
-			}
+			undo.Add( objects );
 
 			Scene.RunEvent<Global.ISpawnEvents>( x => x.OnPostSpawn( new Global.ISpawnEvents.PostSpawnData
 			{

@@ -236,21 +236,22 @@ internal class UndoSystem : GameObjectSystem<UndoSystem>
 		/// <summary>
 		/// Add a GameObject that should be destroyed when the undo is undone
 		/// </summary>
-		public void Add( GameObject go )
-		{
-			gameObjects.Add( go );
-		}
+		public void Add( GameObject go ) => Add( [go] );
 
 		/// <summary>
-		/// Add a collection of GameObjects that should be destroyed when the undo is undone
+		/// Add a collection of GameObjects that should be destroyed when the undo is undone.
+		/// The owner is sent their updated history, so add everything in one call.
 		/// </summary>
-		/// <param name="gos"></param>
 		public void Add( params IEnumerable<GameObject> gos )
 		{
 			foreach ( var go in gos )
 			{
-				Add( go );
+				gameObjects.Add( go );
 			}
+
+			var target = Connection.All.FirstOrDefault( x => x.SteamId == SteamId );
+			if ( target is not null )
+				SendHistory( target );
 		}
 
 		/// <summary>

@@ -266,8 +266,7 @@ public sealed class WeldTool : BaseConstraintToolMode
 
 		var undo = Player.Undo.Create();
 		undo.Name = "#tool.name.weld";
-		undo.Add( go1 );
-		undo.Add( go2 );
+		undo.Add( go1, go2 );
 
 		Player.PlayerData?.AddStat( "tool.weld.create" );
 	}

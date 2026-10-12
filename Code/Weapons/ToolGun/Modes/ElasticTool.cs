@@ -78,7 +78,6 @@ public sealed class ElasticTool : BaseConstraintToolMode
 
 		var undo = Player.Undo.Create();
 		undo.Name = "#tool.name.elastic";
-		undo.Add( go1 );
-		undo.Add( go2 );
+		undo.Add( go1, go2 );
 	}
 }

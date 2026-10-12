@@ -361,6 +361,8 @@ public sealed class StackerTool : ToolMode
 		undo.Name = "#tool.undo.stack";
 		undo.Icon = "📚";
 
+		var clones = new List<GameObject>( transforms.Length );
+
 		for ( int i = 0; i < transforms.Length; i++ )
 		{
 			var tx = transforms[i];
@@ -388,7 +390,9 @@ public sealed class StackerTool : ToolMode
 
 			Ownable.Set( clone, Player.Network.Owner );
 			clone.NetworkSpawn( true, null );
-			undo.Add( clone );
+			clones.Add( clone );
 		}
+
+		undo.Add( clones );
 	}
 }

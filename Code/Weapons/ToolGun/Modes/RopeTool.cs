@@ -98,7 +98,6 @@ public sealed class RopeTool : BaseConstraintToolMode
 
 		var undo = Player.Undo.Create();
 		undo.Name = "#tool.name.rope";
-		undo.Add( go1 );
-		undo.Add( go2 );
+		undo.Add( go1, go2 );
 	}
 }

@@ -104,11 +104,7 @@ public sealed partial class GameManager
 			var undo = player.Undo.Create();
 			undo.Name = "#undo.spawn";
 			undo.NameTokens = new() { { "name", spawner.DisplayName } };
-
-			foreach ( var go in objects )
-			{
-				undo.Add( go );
-			}
+			undo.Add( objects );
 
 			scene.RunEvent<Global.ISpawnEvents>( x => x.OnPostSpawn( new Global.ISpawnEvents.PostSpawnData
 			{

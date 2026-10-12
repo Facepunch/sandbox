@@ -42,7 +42,6 @@ public sealed class BallSocketTool : BaseConstraintToolMode
 
 		var undo = Player.Undo.Create();
 		undo.Name = "#tool.name.ballsocket";
-		undo.Add( go1 );
-		undo.Add( go2 );
+		undo.Add( go1, go2 );
 	}
 }

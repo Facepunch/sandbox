@@ -247,11 +247,7 @@ public sealed partial class DuplicatorTool : ToolMode
 		{
 			var undo = player.Undo.Create();
 			undo.Name = "#tool.undo.duplication";
-
-			foreach ( var go in objects )
-			{
-				undo.Add( go );
-			}
+			undo.Add( objects );
 
 			Scene.RunEvent<Global.ISpawnEvents>( x => x.OnPostSpawn( new Global.ISpawnEvents.PostSpawnData
 			{
