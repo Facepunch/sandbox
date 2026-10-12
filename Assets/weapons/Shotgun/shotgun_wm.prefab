@@ -20,9 +20,14 @@
         "__guid": "a1b2c3d4-4445-4aaa-b445-444444444445",
         "__enabled": true,
         "Flags": 0,
-        "ShellEjectGameObject": {
+        "DeploySound": null,
+        "EjectBrass": {
           "_type": "gameobject",
-          "go": "8e571825-7366-47b8-a226-d8c9ae8b083f"
+          "prefab": "prefabs/effects/default_brasseject.prefab"
+        },
+        "MuzzleEffect": {
+          "_type": "gameobject",
+          "prefab": "prefabs/effects/default_muzzleflash.prefab"
         },
         "MuzzleGameObject": {
           "_type": "gameobject",
@@ -39,6 +44,14 @@
           "component_id": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
           "go": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
           "component_type": "SkinnedModelRenderer"
+        },
+        "ShellEjectGameObject": {
+          "_type": "gameobject",
+          "go": "8e571825-7366-47b8-a226-d8c9ae8b083f"
+        },
+        "TracerEffect": {
+          "_type": "gameobject",
+          "prefab": "prefabs/effects/default_tracer.prefab"
         }
       }
     ],
@@ -48,9 +61,9 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "7.18284702,-7.70390034E-06,-7.99994612",
-        "Rotation": "0,0,0,1",
-        "Scale": "1.5,1.5,1.5",
+        "Position": "5.8701582,1.49775386,-6.04613161",
+        "Rotation": "0.00560664944,-0.0533439405,0.104377538,0.993090391",
+        "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
@@ -69,11 +82,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": true,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_shotgun_spaghellim4/w_spaghellim4.vmdl",
+            "Model": {
+              "Id": "271573a7-0908-41ef-afe0-6a7ce81906be",
+              "Path": "models/weapons/sbox_shotgun_spaghellim4/w_spaghellim4.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -81,13 +98,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -146,7 +157,7 @@
           {
             "__guid": "ed6466c4-e28c-4e9b-8446-ffa3f096176d",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "muzzle",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -164,7 +175,7 @@
           {
             "__guid": "88302757-22b9-44b5-9561-6acad55a74a7",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "eject",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -184,6 +195,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},
@@ -210,7 +222,6 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.shotgun_muzzleflash#76091",
     "facepunch.w_spaghellim4#279114"
   ],
   "__version": 2

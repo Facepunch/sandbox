@@ -20,11 +20,8 @@
         "__guid": "f0bc724c-4fed-48ab-9f03-6985859b92c4",
         "__enabled": true,
         "Flags": 0,
+        "DeploySound": null,
         "EjectBrass": null,
-        "ShellEjectGameObject": {
-          "_type": "gameobject",
-          "go": "997deebb-b176-46e1-b280-3c6a12f321f8"
-        },
         "MuzzleEffect": null,
         "MuzzleGameObject": {
           "_type": "gameobject",
@@ -42,6 +39,10 @@
           "go": "71aa3389-a51e-41c8-9739-509f1a5daa6f",
           "component_type": "SkinnedModelRenderer"
         },
+        "ShellEjectGameObject": {
+          "_type": "gameobject",
+          "go": "997deebb-b176-46e1-b280-3c6a12f321f8"
+        },
         "TracerEffect": null
       }
     ],
@@ -51,9 +52,9 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_grenade",
-        "Position": "3.418695,-0.6192533,-5.397455",
-        "Rotation": "0,0,0,1",
-        "Scale": "2,2,2",
+        "Position": "1.94376445,0.1636329,-1.78013062",
+        "Rotation": "0,0,1,-4.37113883E-08",
+        "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
@@ -72,11 +73,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": true,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_grenade_explosive/w_he_grenade.vmdl",
+            "Model": {
+              "Id": "3851eb6c-6a52-47e5-9252-d1ee61814710",
+              "Path": "models/weapons/sbox_grenade_explosive/w_he_grenade.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -84,13 +89,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -114,7 +113,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "muzzle",
-            "Position": "3.854532,0,4.955329",
+            "Position": "3.854532,0,4.95532894",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -132,8 +131,8 @@
             "__version": 2,
             "Flags": 0,
             "Name": "eject",
-            "Position": "-0.843271,0,5.183321",
-            "Rotation": "-0.1830127,-0.1830127,-0.6830127,0.6830127",
+            "Position": "-0.843271017,0,5.183321",
+            "Rotation": "-0.183012694,-0.183012694,-0.683012724,0.683012724",
             "Scale": "1,1,1",
             "Tags": "",
             "Enabled": true,
@@ -150,7 +149,7 @@
             "__version": 2,
             "Flags": 0,
             "Name": "hold_R",
-            "Position": "-1.848641,0,3.195872",
+            "Position": "-1.84864104,0,3.19587207",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
@@ -168,6 +167,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},
@@ -181,7 +181,9 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
     },
     "__variables": []

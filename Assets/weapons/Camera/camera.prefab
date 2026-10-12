@@ -6,7 +6,7 @@
     "Name": "camera",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
-    "Scale": "2,2,2",
+    "Scale": "1,1,1",
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 2,
@@ -74,7 +74,7 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/577701bed148b9e9.vtex"
         },
         "DisplayName": "#weapon.name.camera",
         "DroppedGameObject": {
@@ -85,7 +85,7 @@
         "FirstShellReloadTime": 0,
         "Handedness": "Both",
         "HoldBone": "hold_R",
-        "HoldType": "HoldItem",
+        "HoldType": "pistol",
         "IncrementalReloading": false,
         "Npc": {
           "MinRange": 0,
@@ -142,7 +142,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "49d43076-3d30-444f-8b4a-edf94576d377",
+          "Id": "50536266-2326-4110-9788-6566086d84df",
           "Path": "models/props/camera_film/camera_film.vmdl"
         },
         "OnComponentDestroy": null,
@@ -171,6 +171,7 @@
         "Gravity": true,
         "GravityScale": 1,
         "ImpactDamage": 0,
+        "InertiaScale": 1,
         "LinearDamping": 0,
         "Locking": {
           "X": false,
@@ -229,7 +230,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "49d43076-3d30-444f-8b4a-edf94576d377",
+              "Id": "50536266-2326-4110-9788-6566086d84df",
               "Path": "models/props/camera_film/camera_film.vmdl"
             },
             "Morphs": {},

@@ -6,7 +6,7 @@
     "Name": "sniper",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
-    "Scale": "1.5,1.5,1.5",
+    "Scale": "1,1,1",
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 1,

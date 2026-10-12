@@ -6,7 +6,7 @@
     "Name": "grenade",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
-    "Scale": "2,2,2",
+    "Scale": "1,1,1",
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 1,
@@ -75,7 +75,7 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/6196736081797a0b.vtex"
         },
         "DisplayName": "#asset.grenade.title",
         "DroppedGameObject": {
@@ -87,7 +87,7 @@
         "Force": 1,
         "Handedness": "Both",
         "HoldBone": "hold_r",
-        "HoldType": "HoldItem",
+        "HoldType": "pistol",
         "IncrementalReloading": false,
         "Lifetime": 3,
         "MaxDamage": 125,
@@ -162,7 +162,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "a8f338f8-5ea6-419a-9741-8ff814765975",
+          "Id": "3851eb6c-6a52-47e5-9252-d1ee61814710",
           "Path": "models/weapons/sbox_grenade_explosive/w_he_grenade.vmdl"
         },
         "OnComponentDestroy": null,
@@ -191,6 +191,7 @@
         "Gravity": true,
         "GravityScale": 1,
         "ImpactDamage": 0,
+        "InertiaScale": 1,
         "LinearDamping": 0,
         "Locking": {
           "X": false,
@@ -273,7 +274,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "a8f338f8-5ea6-419a-9741-8ff814765975",
+              "Id": "3851eb6c-6a52-47e5-9252-d1ee61814710",
               "Path": "models/weapons/sbox_grenade_explosive/w_he_grenade.vmdl"
             },
             "Morphs": {},

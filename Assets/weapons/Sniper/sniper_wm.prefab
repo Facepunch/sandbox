@@ -20,9 +20,14 @@
         "__guid": "a1b2c3d4-3332-4aaa-b332-333333333332",
         "__enabled": true,
         "Flags": 0,
-        "ShellEjectGameObject": {
+        "DeploySound": null,
+        "EjectBrass": {
           "_type": "gameobject",
-          "go": "a1b2c3d4-3336-4aaa-b336-333333333336"
+          "prefab": "prefabs/effects/default_brasseject.prefab"
+        },
+        "MuzzleEffect": {
+          "_type": "gameobject",
+          "prefab": "prefabs/effects/default_muzzleflash.prefab"
         },
         "MuzzleGameObject": {
           "_type": "gameobject",
@@ -39,6 +44,14 @@
           "component_id": "a1b2c3d4-3334-4aaa-b334-333333333334",
           "go": "a1b2c3d4-3333-4aaa-b333-333333333333",
           "component_type": "SkinnedModelRenderer"
+        },
+        "ShellEjectGameObject": {
+          "_type": "gameobject",
+          "go": "a1b2c3d4-3336-4aaa-b336-333333333336"
+        },
+        "TracerEffect": {
+          "_type": "gameobject",
+          "prefab": "prefabs/effects/default_tracer.prefab"
         }
       }
     ],
@@ -48,9 +61,9 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_sniper",
-        "Position": "3.41869497,-0.619253278,-5.39745522",
-        "Rotation": "0,0,0,1",
-        "Scale": "1.5,1.5,1.5",
+        "Position": "5.13857174,1.08153677,-4.80170965",
+        "Rotation": "0.00162038556,-0.0803265572,0.0201031733,0.996564507",
+        "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
@@ -69,11 +82,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": true,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_sniper_m700/w_m700.vmdl",
+            "Model": {
+              "Id": "638e00af-b463-4cf7-b633-5c250135647e",
+              "Path": "models/weapons/sbox_sniper_m700/w_m700.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -81,13 +98,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -109,7 +120,7 @@
           {
             "__guid": "a1b2c3d4-3335-4aaa-b335-333333333335",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "muzzle",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -127,7 +138,7 @@
           {
             "__guid": "a1b2c3d4-3336-4aaa-b336-333333333336",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "eject",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -165,6 +176,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},
@@ -191,7 +203,6 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.rifle_muzzleflash#76090",
     "facepunch.w_m700#279143"
   ],
   "__version": 2

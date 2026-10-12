@@ -10,6 +10,10 @@
   "EditorReferences": null,
   "Mounts": [],
   "IsStandaloneOnly": false,
+  "AI": {
+    "WriteAgentInstructions": true,
+    "EnableMcpCommunication": true
+  },
   "Metadata": {
     "MaxPlayers": 64,
     "MinPlayers": 1,

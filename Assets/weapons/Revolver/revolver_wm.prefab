@@ -4,7 +4,7 @@
     "__version": 2,
     "Flags": 0,
     "Name": "revolver_wm",
-    "Position": "0,0,0",
+    "Position": "0,0.0524120107,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
     "Tags": "",
@@ -20,7 +20,10 @@
         "__guid": "a58d9ea4-a142-492c-a2a9-e830b26dbaf9",
         "__enabled": true,
         "Flags": 0,
-        "DeploySound": "weapons/revolver/revolver_deploy.sound",
+        "DeploySound": {
+          "Id": "7a037687-533b-4066-8876-99d789866617",
+          "Path": "weapons/revolver/revolver_deploy.sound"
+        },
         "EjectBrass": null,
         "MuzzleEffect": null,
         "MuzzleGameObject": {
@@ -52,9 +55,9 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_usp",
-        "Position": "3.41869497,-0.619253278,-5.39745522",
+        "Position": "4.23561573,0.200439095,-3.52260733",
         "Rotation": "0,0,0,1",
-        "Scale": "2,2,2",
+        "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
@@ -73,11 +76,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": true,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_revolver_magnum/w_magnum.vmdl",
+            "Model": {
+              "Id": "90cd3411-0425-45db-9d1b-d40e3ced8512",
+              "Path": "models/weapons/sbox_revolver_magnum/w_magnum.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -85,13 +92,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -169,6 +170,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},

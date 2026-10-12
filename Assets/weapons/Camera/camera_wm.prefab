@@ -4,7 +4,7 @@
     "__version": 2,
     "Flags": 0,
     "Name": "camera_wm",
-    "Position": "0,1.473098,0",
+    "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
     "Tags": "",
@@ -20,8 +20,8 @@
         "__guid": "765ebd37-c91f-4058-8815-f4b7df6f24b0",
         "__enabled": true,
         "Flags": 0,
+        "DeploySound": null,
         "EjectBrass": null,
-        "ShellEjectGameObject": null,
         "MuzzleEffect": null,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
@@ -36,6 +36,7 @@
           "go": "18528b62-19f8-4e7d-aca6-aa5e98bd7544",
           "component_type": "SkinnedModelRenderer"
         },
+        "ShellEjectGameObject": null,
         "TracerEffect": null
       }
     ],
@@ -45,9 +46,9 @@
         "__version": 2,
         "Flags": 0,
         "Name": "camera_film",
-        "Position": "5.851528,2.709859,-5.739427",
-        "Rotation": "-0.1706949,-0.2347082,-0.2668644,0.9189987",
-        "Scale": "3,3.3,3",
+        "Position": "3.03657532,1.19331098,-1.45825958",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
@@ -66,11 +67,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": false,
             "CreateBoneObjects": false,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/props/camera_film/camera_film.vmdl",
+            "Model": {
+              "Id": "50536266-2326-4110-9788-6566086d84df",
+              "Path": "models/props/camera_film/camera_film.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -78,13 +83,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -107,6 +106,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},
@@ -120,7 +120,9 @@
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
     },
     "__variables": []

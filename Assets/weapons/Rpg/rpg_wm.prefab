@@ -20,11 +20,8 @@
         "__guid": "f0bc724c-4fed-48ab-9f03-6985859b92c4",
         "__enabled": true,
         "Flags": 0,
+        "DeploySound": null,
         "EjectBrass": null,
-        "ShellEjectGameObject": {
-          "_type": "gameobject",
-          "go": "997deebb-b176-46e1-b280-3c6a12f321f8"
-        },
         "MuzzleEffect": null,
         "MuzzleGameObject": {
           "_type": "gameobject",
@@ -42,6 +39,10 @@
           "go": "71aa3389-a51e-41c8-9739-509f1a5daa6f",
           "component_type": "SkinnedModelRenderer"
         },
+        "ShellEjectGameObject": {
+          "_type": "gameobject",
+          "go": "997deebb-b176-46e1-b280-3c6a12f321f8"
+        },
         "TracerEffect": null
       }
     ],
@@ -51,9 +52,9 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_rocketlauncher",
-        "Position": "-11.775322,1.90733218,-9.15011024",
-        "Rotation": "0,0,0,1",
-        "Scale": "1.5,1.5,1.5",
+        "Position": "-9.46805859,0.47770381,-7.40770531",
+        "Rotation": "0,0,0.0601243563,0.99819088",
+        "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
@@ -72,11 +73,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": true,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_rpg_recoillessrifle/w_recoillessrifle.vmdl",
+            "Model": {
+              "Id": "4b342e5e-cdfa-4fd5-bfa4-f124c0ae6c75",
+              "Path": "models/weapons/sbox_rpg_recoillessrifle/w_recoillessrifle.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -84,13 +89,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -112,7 +111,7 @@
           {
             "__guid": "ee2db9cf-6e53-4ee3-82bd-3e1b6d054b8d",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "muzzle",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -130,7 +129,7 @@
           {
             "__guid": "997deebb-b176-46e1-b280-3c6a12f321f8",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "eject",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -168,6 +167,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},

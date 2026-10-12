@@ -4,9 +4,9 @@
     "__version": 2,
     "Flags": 0,
     "Name": "crowbar_wm",
-    "Position": "1.704281,-0.04967886,-12.89714",
-    "Rotation": "-0.0000003874302,0.0000003380701,1.000005,0.00000005960464",
-    "Scale": "1.5,1.5,1.5",
+    "Position": "0,0,0",
+    "Rotation": "3.38065007E-07,0,0,1",
+    "Scale": "1,1,1",
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 0,
@@ -20,8 +20,8 @@
         "__guid": "ab2b3c4d-5e6f-7890-bcde-f01234567812",
         "__enabled": true,
         "Flags": 0,
+        "DeploySound": null,
         "EjectBrass": null,
-        "ShellEjectGameObject": null,
         "MuzzleEffect": null,
         "MuzzleGameObject": null,
         "OnComponentDestroy": null,
@@ -30,63 +30,78 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "Renderer": {
-          "_type": "component",
-          "component_id": "bc3c4d5e-6f7a-8901-cdef-012345678923",
-          "go": "cb1a2e3f-4d5b-6789-abcd-ef0123456701",
-          "component_type": "SkinnedModelRenderer"
-        },
+        "Renderer": null,
+        "ShellEjectGameObject": null,
         "TracerEffect": null
-      },
-      {
-        "__type": "Sandbox.SkinnedModelRenderer",
-        "__guid": "bc3c4d5e-6f7a-8901-cdef-012345678923",
-        "__enabled": true,
-        "Flags": 0,
-        "AnimationGraph": null,
-        "BodyGroups": 18446744073709551615,
-        "BoneMergeTarget": null,
-        "CreateAttachments": true,
-        "CreateBoneObjects": false,
-        "LodOverride": null,
-        "MaterialGroup": null,
-        "MaterialOverride": null,
-        "Materials": null,
-        "Model": "models/weapons/sbox_melee_crowbar/w_crowbar.vmdl",
-        "Morphs": {},
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "Parameters": {
-          "bools": {},
-          "ints": {},
-          "floats": {},
-          "vectors": {},
-          "rotations": {}
-        },
-        "PlaybackRate": 1,
-        "RenderOptions": {
-          "GameLayer": true,
-          "OverlayLayer": false,
-          "BloomLayer": false,
-          "AfterUILayer": false
-        },
-        "RenderType": "On",
-        "Sequence": {
-          "Name": null,
-          "Looping": true,
-          "Blending": false
-        },
-        "Tint": "1,1,1,1",
-        "UseAnimGraph": false
       }
     ],
-    "Children": [],
+    "Children": [
+      {
+        "__guid": "7b7e03fd-72b8-4e47-b966-65d06c3fc951",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "Object",
+        "Position": "4.83433342,2.85260534,-8.00271893",
+        "Rotation": "-0.14440985,-0.0359661989,0.95266813,-0.265096068",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.SkinnedModelRenderer",
+            "__guid": "919edb5c-6725-48a3-8936-c9763370ae97",
+            "__enabled": true,
+            "Flags": 0,
+            "AnimationGraph": null,
+            "BodyGroups": 18446744073709551615,
+            "BoneMergeTarget": null,
+            "CreateAttachments": true,
+            "CreateBoneObjects": false,
+            "DeformationMode": "Normal",
+            "LodOverride": null,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
+            "Model": {
+              "Id": "72fde87c-a95d-494a-be3c-95b48a6021db",
+              "Path": "models/weapons/sbox_melee_crowbar/w_crowbar.vmdl"
+            },
+            "Morphs": {},
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Parameters": {},
+            "PlaybackRate": 1,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Sequence": {
+              "Name": null,
+              "Looping": true,
+              "Blending": false
+            },
+            "Tint": "1,1,1,1",
+            "UseAnimGraph": false
+          }
+        ],
+        "Children": []
+      }
+    ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},
@@ -101,6 +116,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },
