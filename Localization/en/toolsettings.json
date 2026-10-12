@@ -19,6 +19,8 @@
     "tool.setting.length": "Length",
     "tool.setting.force": "Force",
     "tool.setting.tint": "Tint",
+    "tool.setting.scale": "Scale",
+    "tool.setting.attenuation": "Attenuation",
     "tool.setting.base": "Base",
     "tool.setting.emittertool.basedef.description": "The physical emitter body to spawn.",
     "tool.setting.effect": "Effect",

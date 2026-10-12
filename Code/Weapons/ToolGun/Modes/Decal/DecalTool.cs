@@ -10,6 +10,20 @@ public sealed class DecalTool : ToolMode
 	[Property, ResourceSelect( Extension = "decal", AllowPackages = true ), Title( "#tool.name.decal" )]
 	public string Decal { get; set; }
 
+	[Property, Title( "#tool.setting.tint" )]
+	public Color Tint { get; set; } = Color.White;
+
+	[Range( 0.1f, 4f ), Step( 0.1f ), Separator]
+	[Property, Title( "#tool.setting.scale" )]
+	public float Scale { get; set; } = 1f;
+
+	/// <summary>
+	/// Multiplies the decal's own attenuation angle, lower fades less at grazing angles.
+	/// </summary>
+	[Range( 0f, 1f ), Step( 0.05f )]
+	[Property, Title( "#tool.setting.attenuation" )]
+	public float Attenuation { get; set; } = 1f;
+
 	public override string Description => "#tool.hint.decaltool.description";
 
 	TimeSince timeSinceShoot = 0;
@@ -107,7 +121,7 @@ public sealed class DecalTool : ToolMode
 		var resource = ResourceLibrary.Get<DecalDefinition>( Decal );
 		if ( resource == null ) return;
 
-		SpawnDecal( select, resource, 0 );
+		SpawnDecal( select, resource, Tint, Scale, Attenuation, 0 );
 		PlayPlaceSound();
 	}
 
@@ -122,7 +136,7 @@ public sealed class DecalTool : ToolMode
 		if ( resource == null ) return;
 
 		timeSinceShoot = 0;
-		SpawnDecal( select, resource, _sprayId );
+		SpawnDecal( select, resource, Tint, Scale, Attenuation, _sprayId );
 	}
 
 	uint _layer = 0;
@@ -130,9 +144,10 @@ public sealed class DecalTool : ToolMode
 	/// <summary>
 	/// Spawn a decal on the host. A non-zero <paramref name="sprayId"/> groups the decal with
 	/// every other decal sent with the same id into a single undo entry.
+	/// The settings come with the call, since only the owner has their current values.
 	/// </summary>
 	[Rpc.Host]
-	public void SpawnDecal( SelectionPoint point, DecalDefinition def, int sprayId )
+	public void SpawnDecal( SelectionPoint point, DecalDefinition def, Color tint, float scale, float attenuation, int sprayId )
 	{
 		if ( def == null ) return;
 
@@ -147,6 +162,9 @@ public sealed class DecalTool : ToolMode
 		var decal = go.AddComponent<Decal>();
 		decal.Decals = [def];
 		decal.SortLayer = _layer++;
+		decal.ColorTint = tint;
+		decal.Scale = scale.Clamp( 0.1f, 4f );
+		decal.AttenuationAngle *= attenuation.Clamp( 0f, 1f );
 
 		go.NetworkSpawn();
 
