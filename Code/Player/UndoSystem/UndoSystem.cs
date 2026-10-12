@@ -135,6 +135,11 @@ internal class UndoSystem : GameObjectSystem<UndoSystem>
 		}
 
 		/// <summary>
+		/// Is this entry still in the history? False once it has been undone, evicted, or pruned.
+		/// </summary>
+		public bool Contains( Entry entry ) => entry is not null && entries.Contains( entry );
+
+		/// <summary>
 		/// Run the undo
 		/// </summary>
 		public void Undo()

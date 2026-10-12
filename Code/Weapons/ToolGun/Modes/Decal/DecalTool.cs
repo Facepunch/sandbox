@@ -24,9 +24,24 @@ public sealed class DecalTool : ToolMode
 		RegisterAction( ToolInput.Secondary, () => "#tool.hint.decaltool.paint", OnPaint, InputMode.Down );
 	}
 
+	/// <summary>
+	/// Owner-side id of the current spray
+	/// </summary>
+	int _sprayId;
+
+	/// <summary>
+	/// Host-side undo entry for the spray identified by <see cref="_hostSprayId"/>.
+	/// </summary>
+	UndoSystem.Entry _sprayUndo;
+	int _hostSprayId;
+
 	public override void OnControl()
 	{
+		var wasPainting = IsPainting;
 		IsPainting = Input.Down( "attack2" );
+
+		if ( IsPainting && !wasPainting ) _sprayId++;
+
 		base.OnControl();
 	}
 
@@ -92,7 +107,7 @@ public sealed class DecalTool : ToolMode
 		var resource = ResourceLibrary.Get<DecalDefinition>( Decal );
 		if ( resource == null ) return;
 
-		SpawnDecal( select, resource );
+		SpawnDecal( select, resource, 0 );
 		PlayPlaceSound();
 	}
 
@@ -107,13 +122,17 @@ public sealed class DecalTool : ToolMode
 		if ( resource == null ) return;
 
 		timeSinceShoot = 0;
-		SpawnDecal( select, resource );
+		SpawnDecal( select, resource, _sprayId );
 	}
 
 	uint _layer = 0;
 
+	/// <summary>
+	/// Spawn a decal on the host. A non-zero <paramref name="sprayId"/> groups the decal with
+	/// every other decal sent with the same id into a single undo entry.
+	/// </summary>
 	[Rpc.Host]
-	public void SpawnDecal( SelectionPoint point, DecalDefinition def )
+	public void SpawnDecal( SelectionPoint point, DecalDefinition def, int sprayId )
 	{
 		if ( def == null ) return;
 
@@ -131,8 +150,31 @@ public sealed class DecalTool : ToolMode
 
 		go.NetworkSpawn();
 
-		var undo = Player.Undo.Create();
-		undo.Name = "#tool.name.decal";
-		undo.Add( go );
+		GetUndoEntry( sprayId ).Add( go );
+	}
+
+	/// <summary>
+	/// The spray has no explicit end, the entry is created lazily with its first decal, so it is registered no matter how painting stops. 
+	/// A new spray id, or the entry leaving the history (undone mid-spray, evicted, stack cleared), starts a new entry
+	/// </summary>
+	UndoSystem.Entry GetUndoEntry( int sprayId )
+	{
+		var stack = Player.Undo;
+
+		if ( sprayId == 0 )
+		{
+			var single = stack.Create();
+			single.Name = "#tool.name.decal";
+			return single;
+		}
+
+		if ( sprayId != _hostSprayId || !stack.Contains( _sprayUndo ) )
+		{
+			_hostSprayId = sprayId;
+			_sprayUndo = stack.Create();
+			_sprayUndo.Name = "#tool.undo.decal_spray";
+		}
+
+		return _sprayUndo;
 	}
 }

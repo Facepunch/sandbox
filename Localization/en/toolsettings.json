@@ -118,6 +118,7 @@
     "tool.undo.hydraulic_ball_joints": "Hydraulic (Ball Joints)",
     "tool.undo.stack": "Stack",
     "tool.undo.link": "Link",
+    "tool.undo.decal_spray": "Decal Spray",
     "tool.hint.trail.description": "Add or remove trails from objects",
     "tool.hint.trail.add": "Add Trail",
     "tool.hint.trail.remove": "Remove Trail",
