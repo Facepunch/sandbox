@@ -3,27 +3,27 @@
 @inherits PanelComponent
 
 <root>
-    <div class="body">
-        <div class="title">
-            <label class="big">sandbox</label>
+    <div class="board">
+        <div class="heading">
+            <label class="hostname">@HostName</label>
 
             @if ( !string.IsNullOrEmpty( _mapTitle ) )
             {
-                <label class="small">@Game.Language.GetPhrase( "ui.scoreboard.playing_on", new() { { "map", _mapTitle } } )</label>
+                <label class="map">@Game.Language.GetPhrase( "ui.scoreboard.playing_on", new() { { "map", _mapTitle } } )</label>
             }
         </div>
 
-        <div class="table">
-            <div class="col">
-                <div class="header row">
-                    <div class="avatar-spacer"></div>
-                    <div class="name"></div>
-                    <div class="stat">#ui.scoreboard.kills</div>
-                    <div class="stat">#ui.scoreboard.deaths</div>
-                    <div class="stat">#ui.scoreboard.ping</div>
-                    <div class="mute-spacer"></div>
-                </div>
+        <div class="section">
+            <div class="title-bar">
+                <div class="avatar-spacer"></div>
+                <div class="name"></div>
+                <label class="stat">#ui.scoreboard.kills</label>
+                <label class="stat">#ui.scoreboard.deaths</label>
+                <label class="stat">#ui.scoreboard.ping</label>
+                <div class="mute-spacer"></div>
+            </div>
 
+            <div class="rows">
                 @foreach ( var connection in Connection.All.OrderByDescending( x => PlayerData.For( x )?.Kills ?? 0 ).ThenBy( x => x.DisplayName ) )
                 {
                     <ScoreboardRow Connection="@connection" />
@@ -37,6 +37,8 @@
 {
     string _mapTitle = null;
 
+    static string HostName => string.IsNullOrEmpty( Networking.ServerName ) ? "Sandbox" : Networking.ServerName;
+
     protected override void OnTreeFirstBuilt()
     {
         base.OnTreeFirstBuilt();
@@ -45,9 +47,7 @@
 
     async void FetchMap()
     {
-        var ident = Networking.MapName;
-
-        var pkg = await Package.FetchAsync( ident, false );
+        var pkg = await Package.FetchAsync( Networking.MapName, false );
         if ( pkg is not null )
         {
             _mapTitle = pkg.Title;
@@ -68,5 +68,5 @@
     /// <summary>
     /// update every second
     /// </summary>
-    protected override int BuildHash() => System.HashCode.Combine( RealTime.Now.CeilToInt() );
+    protected override int BuildHash() => System.HashCode.Combine( RealTime.Now.CeilToInt(), HostName, _mapTitle );
 }

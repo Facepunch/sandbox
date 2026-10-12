@@ -11,10 +11,10 @@
 		bool isMuted = SandboxVoice.IsMuted( steamId );
 
 		<img class="avatar" src="avatar:@steamId" />
-		<div class="name">@Connection.DisplayName</div>
-		<div class="stat">@(data?.Kills ?? 0)</div>
-		<div class="stat">@(data?.Deaths ?? 0)</div>
-		<div class="stat">@(Connection.Ping.CeilToInt())</div>
+		<label class="name">@Connection.DisplayName</label>
+		<label class="stat">@(data?.Kills ?? 0)</label>
+		<label class="stat">@(data?.Deaths ?? 0)</label>
+		<label class="stat">@(Connection.Ping.CeilToInt())</label>
 		@if ( Connection != Connection.Local )
 		{
 			<div class="mute-btn @(isMuted ? "muted" : "")" onclick="@( () => SandboxVoice.Mute( steamId ) )">
@@ -38,6 +38,7 @@
         if ( Connection is null ) return;
         SetClass( "me", Connection == Connection.Local );
         SetClass( "friend", new Friend( Connection.SteamId ).IsFriend );
+        SetClass( "dead", !Player.FindForConnection( Connection ).IsValid() );
     }
 
     protected override int BuildHash()
