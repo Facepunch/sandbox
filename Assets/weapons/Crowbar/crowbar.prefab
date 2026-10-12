@@ -84,7 +84,7 @@
         },
         "DryFireSound": null,
         "FirstShellReloadTime": 0,
-        "Handedness": "Both",
+        "Handedness": "Right",
         "HitSound": {
           "Id": "2e3985df-f680-4963-bc95-4a570ad0d8dc",
           "Path": "weapons/crowbar/sounds/crowbar.hit.sound"
