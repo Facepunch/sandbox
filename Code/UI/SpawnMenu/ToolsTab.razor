@@ -20,9 +20,13 @@
                 <UISheet Target="@component" PropertyFilter="@FilterProperties"></UISheet>
             }
         }
+        else if ( GetCurrentMode() is { } mode )
+        {
+            <UISheet PropertyFilter="@FilterProperties" Target="@mode"></UISheet>
+        }
         else
         {
-            <UISheet PropertyFilter="@FilterProperties" Target="@GetCurrentMode()"></UISheet>
+            <div class="note">#spawnmenu.tools.none_selected_hint</div>
         }
         </Body>
     </UISettingsPane>
@@ -60,7 +64,7 @@
             if ( effect is not null ) return LocalizedText.Resolve( effect.Title );
         }
 
-        return GetCurrentMode()?.Name ?? "";
+        return GetCurrentMode()?.Name ?? Game.Language.GetPhrase( "spawnmenu.tools.none_selected" );
     }
 
     void OnSelectTool( object value )

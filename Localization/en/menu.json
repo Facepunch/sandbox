@@ -41,6 +41,8 @@
     "spawnmenu.empty.mount_unavailable": "This mount may no longer be available.",
 
     "spawnmenu.tab.tools": "Tools",
+    "spawnmenu.tools.none_selected": "No tool selected",
+    "spawnmenu.tools.none_selected_hint": "Select any tool in menu on the left to see its settings!",
     "spawnmenu.tab.utilities": "Utilities",
 
     "spawnmenu.section.props": "Props",
