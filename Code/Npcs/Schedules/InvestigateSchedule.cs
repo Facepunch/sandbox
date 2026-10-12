@@ -14,7 +14,7 @@ public sealed class InvestigateSchedule : ScheduleBase
 
 	protected override void OnStart()
 	{
-		AddTask( new MoveTo( Target ) );
+		AddTask( new MoveTo( Target, stopDistance: 64f ) );
 		AddTask( new LookAt( Target ) );
 		AddTask( new Wait( 1f ) );
 	}
