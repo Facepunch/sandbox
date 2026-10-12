@@ -31,7 +31,7 @@ public class UIModal : Panel
 		window.Add.Panel( "title-bar" ).Add.Label( title );
 
 		_sheet = window.Add.Panel( "body" ).AddChild<UISheet>();
-		_sheet.PropertyFilter = x => x.IsMethod || x.HasAttribute<PropertyAttribute>();
+		_sheet.PropertyFilter = UISheet.PropertiesAndButtons;
 		_sheet.Target = target;
 	}
 

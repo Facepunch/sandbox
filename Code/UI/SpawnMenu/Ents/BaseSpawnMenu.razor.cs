@@ -127,11 +127,6 @@ public partial class BaseSpawnMenu : Panel
 		SwitchOption( o );
 	}
 
-	void OnOptionRightClick( SpawnMenuOption o )
-	{
-		o.OnRightClick?.Invoke();
-	}
-
 	void OnOptionMouseDown( SpawnMenuOption o, PanelEvent e )
 	{
 		if ( e is MousePanelEvent me && me.MouseButton == MouseButtons.Right && o.OnRightClick != null )

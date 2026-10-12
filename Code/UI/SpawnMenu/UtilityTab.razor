@@ -30,7 +30,7 @@
         return GetPageGroups()
             .Select( group => new UIGroupedList.ListGroup( group.Key, group
                 .OrderBy( x => x.Order )
-                .ThenBy( x => SortLabel( x.Title ), StringComparer.CurrentCultureIgnoreCase )
+                .ThenBy( x => LocalizedText.Resolve( x.Title ), StringComparer.CurrentCultureIgnoreCase )
                 .ThenBy( x => x.FullName, StringComparer.Ordinal )
                 .Select( x => new UIGroupedList.ListItem( x.Title, x.TargetType ) )
                 .ToList() ) )
@@ -42,14 +42,8 @@
         return GetVisiblePages()
             .GroupBy( x => x.Group )
             .OrderBy( group => group.Min( type => type.Order ) )
-            .ThenBy( group => SortLabel( group.Key ), StringComparer.CurrentCultureIgnoreCase )
+            .ThenBy( group => LocalizedText.Resolve( group.Key ), StringComparer.CurrentCultureIgnoreCase )
             .ThenBy( group => group.Key, StringComparer.Ordinal );
-    }
-
-    static string SortLabel( string label )
-    {
-        if ( string.IsNullOrEmpty( label ) ) return "";
-        return label.StartsWith( '#' ) ? Game.Language.GetPhrase( label.TrimStart( '#' ) ) : label;
     }
 
     List<TypeDescription> GetVisiblePages()
@@ -60,9 +54,12 @@
         {
             if ( type.IsAbstract ) continue;
             var instance = type.Create<UtilityPage>();
-            if ( instance is null || !instance.IsPageVisible() ) continue;
+            if ( instance is null ) continue;
+
+            var visible = instance.IsPageVisible();
             instance.Delete();
-            pages.Add( type );
+
+            if ( visible ) pages.Add( type );
         }
 
         return pages;

@@ -56,6 +56,11 @@
 
     [Parameter] public Action<object> OnSelect { get; set; }
 
+    /// <summary>
+    /// Bump this when the groups changed in a way their item count does not show (titles, order, values), to make the list build again.
+    /// </summary>
+    [Parameter] public int Revision { get; set; }
+
     string _filter;
 
     string Filter
@@ -97,6 +102,6 @@
             foreach ( var group in Groups ) count += group.Items.Count + 1;
         }
 
-        return HashCode.Combine( Selected, _filter, count, Game.Language.SelectedCode );
+        return HashCode.Combine( Selected, _filter, count, Game.Language.SelectedCode, Revision );
     }
 }

@@ -1,4 +1,5 @@
 @import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
 
 DragHandler
 {
@@ -17,38 +18,18 @@ DragHandler
 		width: 64px;
 		height: 64px;
 		padding: 6px;
-		background-color: rgba( 0, 0, 0, 0.16 );
+		background-color: $ui-tile-bg;
 		border: 1px solid white;
 		transform: rotate( -2.5deg );
 
 		.thumb
 		{
-			width: 100%;
-			height: 100%;
-			background-repeat: no-repeat;
-			background-position: center;
-			background-size: contain;
+			@include ui-tile-thumb;
 		}
 
 		.drag-title
 		{
-			position: absolute;
-			left: 1px;
-			right: 1px;
-			bottom: 1px;
-			height: 28px;
-			padding: 0 6px;
-			justify-content: center;
-			align-items: center;
-			background-color: white;
-			color: black;
-			font-family: $body-font;
-			font-size: 11px;
-			font-weight: 500;
-			text-align: center;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
+			@include ui-tile-title;
 		}
 	}
 }

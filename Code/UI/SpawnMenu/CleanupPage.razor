@@ -7,7 +7,7 @@
 @attribute [Group( "#spawnmenu.utility.group.world" )]
 @attribute [Order( 0 )]
 
-<root class="page" style="flex-direction: column;">
+<root class="page">
     <UIButton Icon="cleaning_services" Text="#spawnmenu.utility.cleanup_mine" @onclick=@CleanUpMine></UIButton>
 
     @if ( Connection.Local.HasPermission( "admin" ) )

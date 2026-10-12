@@ -23,7 +23,7 @@
         }
         else
         {
-            <VirtualGrid Items=@Items ItemSize=@(new Vector2( 340, 190 )) OnLastCell="@(() => { _ = QueryNext(); })">
+            <VirtualGrid Items=@Items ItemSize=@(new Vector2( 340, 190 )) OnLastCell="@LoadMore">
                 <Item Context="context">
                     @if ( context is WorkshopSpawnlist entry )
                     {
@@ -66,7 +66,7 @@
 
                             @if ( !string.IsNullOrWhiteSpace( entry.Item.Description ) )
                             {
-                                <DupeDescription class="description" Text="@entry.Item.Description" />
+                                <UICardDescription class="description" Text="@entry.Item.Description" />
                             }
 
                             <div class="info">
@@ -78,7 +78,7 @@
                                     <div class="meta-text" Tooltip="@entry.Item.Updated.ToString()">• @entry.Item.Updated.Humanize()</div>
                                     @if ( entry.ItemCount > 0 )
                                     {
-                                        <div class="meta-text">• @ContentCountText( null, entry.ItemCount )</div>
+                                        <div class="meta-text">• @SpawnlistData.ItemCountText( entry.ItemCount )</div>
                                     }
                                 </div>
 
@@ -105,12 +105,7 @@
         if ( value is WorkshopSortMode mode ) SortOrder = mode;
     }
 
-    sealed record WorkshopSpawnlist(
-        Storage.QueryItem Item,
-        int ItemCount,
-        List<SpawnlistItem> PreviewItems,
-        Dictionary<string, int> ContentTypes
-    );
+    sealed record WorkshopSpawnlist( Storage.QueryItem Item, int ItemCount, List<SpawnlistItem> PreviewItems );
 
     string _filter;
     public string Filter
@@ -120,7 +115,7 @@
         {
             if ( _filter == value ) return;
             _filter = value;
-            Rebuild();
+            _ = Restart();
         }
     }
 
@@ -132,23 +127,41 @@
         {
             if ( _sortOrder == value ) return;
             _sortOrder = value;
-            Rebuild();
+            _ = Restart();
         }
     }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        Items.Clear();
-        LastResult = null;
-        await QueryNext();
-    }
+    protected override Task OnParametersSetAsync() => Restart();
 
     List<WorkshopSpawnlist> Items = new();
     Storage.QueryResult LastResult;
     bool Loading;
 
+    /// <summary>
+    /// Bumped when the filter or sort changes, so a query that comes back after that is thrown away.
+    /// </summary>
+    int _queryGeneration;
+
+    Task Restart()
+    {
+        _queryGeneration++;
+        Items.Clear();
+        LastResult = null;
+        return QueryNext();
+    }
+
+    /// <summary>
+    /// The next page, when the grid reaches its end. One page at a time.
+    /// </summary>
+    void LoadMore()
+    {
+        if ( Loading ) return;
+        _ = QueryNext();
+    }
+
     async Task QueryNext()
     {
+        var generation = _queryGeneration;
         Loading = true;
 
         if ( LastResult != null )
@@ -159,7 +172,10 @@
                 return;
             }
 
-            LastResult = await LastResult.GetNextResults();
+            var next = await LastResult.GetNextResults();
+            if ( generation != _queryGeneration ) return;
+
+            LastResult = next;
             AddItems( LastResult?.Items );
             Loading = false;
             StateHasChanged();
@@ -174,7 +190,10 @@
         if ( !string.IsNullOrWhiteSpace( Filter ) )
             query.SearchText = Filter;
 
-        LastResult = await query.Run();
+        var result = await query.Run();
+        if ( generation != _queryGeneration ) return;
+
+        LastResult = result;
         AddItems( LastResult?.Items );
         Loading = false;
         StateHasChanged();
@@ -190,15 +209,9 @@
     static WorkshopSpawnlist CreateViewModel( Storage.QueryItem item )
     {
         var previewItems = ReadMetaJson<List<SpawnlistItem>>( item, "preview_items" ) ?? [];
-        var contentTypes = ReadMetaJson<Dictionary<string, int>>( item, "content_types" ) ?? [];
         var itemCount = ReadMetaInt( item, "item_count" );
 
-        return new WorkshopSpawnlist(
-            item,
-            itemCount,
-            previewItems.Take( 6 ).ToList(),
-            contentTypes
-        );
+        return new WorkshopSpawnlist( item, itemCount, previewItems.Take( 6 ).ToList() );
     }
 
     static string ReadMeta( Storage.QueryItem item, string key )
@@ -248,21 +261,6 @@
         return int.TryParse( ReadMeta( item, key ), out var value ) ? value : 0;
     }
 
-    static string ContentCountText( string type, int count )
-    {
-        var phrase = type?.ToLowerInvariant() switch
-        {
-            "prop" => count == 1 ? "ui.spawnlist.one_prop" : "ui.spawnlist.props",
-            "dupe" => count == 1 ? "ui.spawnlist.one_dupe" : "ui.spawnlist.dupes",
-            "entity" => count == 1 ? "ui.spawnlist.one_entity" : "ui.spawnlist.entities",
-            "npc" => count == 1 ? "ui.spawnlist.one_npc" : "ui.spawnlist.npcs",
-            "weapon" => count == 1 ? "ui.spawnlist.one_weapon" : "ui.spawnlist.weapons",
-            _ => count == 1 ? "ui.spawnlist.one_item" : "ui.spawnlist.items"
-        };
-
-        return Game.Language.GetPhrase( phrase, new() { { "count", count } } );
-    }
-
     static string GetPreviewStyle( SpawnlistItem item )
     {
         var icon = item.Icon;
@@ -278,13 +276,6 @@
     static string GetWorkshopPreviewStyle( Storage.QueryItem item )
     {
         return string.IsNullOrWhiteSpace( item.Preview ) ? null : $"background-image: url('{item.Preview}');";
-    }
-
-    async void Rebuild()
-    {
-        Items.Clear();
-        LastResult = null;
-        await QueryNext();
     }
 
     async Task OnInstall( Storage.QueryItem item )

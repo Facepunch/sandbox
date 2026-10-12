@@ -42,7 +42,7 @@ UIResourceGrid .resource-cell
 
 	&:hover
 	{
-		border-color: #6f6f6f;
+		border-color: $ui-control-border-hover;
 		sound-in: ui.hover;
 	}
 

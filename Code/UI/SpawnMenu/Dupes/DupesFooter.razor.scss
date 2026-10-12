@@ -1,9 +1,8 @@
+@import "/UI/UiCommon.scss";
+
 DupesFooter
 {
-    width: 100%;
-    flex-shrink: 0;
-    padding: 6px;
-    border-top: 1px solid rgba( 0, 0, 0, 0.2 );
+    @include ui-footer-bar;
 }
 
 DupesFooter UIButton

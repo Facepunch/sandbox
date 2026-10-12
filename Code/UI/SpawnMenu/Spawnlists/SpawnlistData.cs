@@ -128,6 +128,12 @@ public class SpawnlistData
 		}, "#spawnmenu.spawnlist.name_placeholder", "#spawnmenu.spawnlist.create_button", "add" );
 	}
 
+	/// <summary>
+	/// "1 item" or "N items", in the player's language.
+	/// </summary>
+	public static string ItemCountText( int count )
+		=> Game.Language.GetPhrase( count == 1 ? "ui.spawnlist.one_item" : "ui.spawnlist.items", new() { { "count", count } } );
+
 	public static void Save( Storage.Entry entry, SpawnlistData data )
 	{
 		Normalize( data, true );

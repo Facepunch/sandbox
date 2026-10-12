@@ -8,10 +8,10 @@
 @attribute [Group( "#spawnmenu.utility.group.world" )]
 @attribute [Order( 1 )]
 
-<root class="page" style="flex-direction: column;">
+<root class="page">
     @if ( Connection.Local.HasPermission( "admin" ) )
     {
-        <UISheet Target="@Settings" PropertyFilter="@FilterProperties" />
+        <UISheet Target="@Settings" PropertyFilter="@UISheet.PropertiesAndButtons" />
     }
     else
     {
@@ -24,8 +24,6 @@
     public override bool IsPageVisible() => Connection.Local.HasPermission( "admin" );
 
     readonly NpcSettings Settings = new();
-
-    static bool FilterProperties( SerializedProperty property ) => property.HasAttribute<PropertyAttribute>();
 
     // Write through the host so the replicated convars change for everyone.
     sealed class NpcSettings

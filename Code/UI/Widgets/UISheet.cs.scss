@@ -104,6 +104,12 @@ UISheet
 			min-width: 0px;
 		}
 
+		// a [SameLine] control whose condition hides it
+		> .control > .hidden
+		{
+			display: none;
+		}
+
 		// control takes the whole row if it has no name
 		&.bare > .control
 		{

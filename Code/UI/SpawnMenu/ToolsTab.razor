@@ -17,12 +17,12 @@
         {
             @foreach ( var component in PostProcessManager.GetSelectedComponents() )
             {
-                <UISheet Target="@component" PropertyFilter="@FilterProperties"></UISheet>
+                <UISheet Target="@component" PropertyFilter="@UISheet.PropertiesAndButtons"></UISheet>
             }
         }
-        else if ( GetCurrentMode() is { } mode )
+        else if ( CurrentMode is { } mode )
         {
-            <UISheet PropertyFilter="@FilterProperties" Target="@mode"></UISheet>
+            <UISheet PropertyFilter="@UISheet.PropertiesAndButtons" Target="@mode"></UISheet>
         }
         else
         {
@@ -64,7 +64,7 @@
             if ( effect is not null ) return LocalizedText.Resolve( effect.Title );
         }
 
-        return GetCurrentMode()?.Name ?? Game.Language.GetPhrase( "spawnmenu.tools.none_selected" );
+        return CurrentMode?.Name ?? Game.Language.GetPhrase( "spawnmenu.tools.none_selected" );
     }
 
     void OnSelectTool( object value )
@@ -90,25 +90,7 @@
     {
         if ( !IsVisible )
         {
-            GetCurrentMode()?.SaveCookies();
+            CurrentMode?.SaveCookies();
         }
-    }
-
-    ToolMode GetCurrentMode()
-    {
-        var localPlayer = Player.FindLocalPlayer();
-        var toolgun = localPlayer?.GetWeapon<Toolgun>();
-        return toolgun?.GetCurrentMode();
-    }
-
-    static bool FilterProperties(SerializedProperty o)
-    {
-        if (o.PropertyType is null) return false;
-        if (o.PropertyType.IsAssignableTo(typeof(Delegate))) return false;
-
-        if (o.IsMethod) return true;
-        if (!o.HasAttribute<PropertyAttribute>()) return false;
-
-        return true;
     }
 }

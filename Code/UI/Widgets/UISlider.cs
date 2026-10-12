@@ -134,7 +134,6 @@ public class UISlider : BaseControl
 
 		_entry.WholeNumbers = Property.PropertyType == typeof( int ) || Property.PropertyType == typeof( long );
 
-
 		RebuildTicks();
 		UpdateVisuals();
 	}
@@ -187,7 +186,6 @@ public class UISlider : BaseControl
 	{
 		base.Tick();
 
-
 		SetClass( "dragging", _dragging && HasActive );
 
 		if ( Value != _rendered )
@@ -210,7 +208,8 @@ public class UISlider : BaseControl
 		base.OnMouseDown( e );
 
 		// only the track drags, the box takes typing
-		if ( !IsOverTrack( e ) ) return;
+		_dragging = IsOverTrack( e );
+		if ( !_dragging ) return;
 
 		SetFromUser( ScreenPosToValue() );
 		_entry.Blur();
@@ -230,10 +229,5 @@ public class UISlider : BaseControl
 
 	bool _dragging;
 
-	bool IsOverTrack( MousePanelEvent e )
-	{
-		var over = e.Target == _track || e.Target?.Parent == _track;
-		_dragging = over;
-		return over;
-	}
+	bool IsOverTrack( MousePanelEvent e ) => e.Target == _track || e.Target?.Parent == _track;
 }

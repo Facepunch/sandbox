@@ -12,9 +12,20 @@ public class UISheet : Panel, IControlSheet
 	[Parameter] public object Target { get; set; }
 
 	/// <summary>
-	/// Decides which properties get a row.
+	/// Decides which properties get a row. All of them when not set, <see cref="PropertiesAndButtons"/> is the usual choice.
 	/// </summary>
 	[Parameter] public Func<SerializedProperty, bool> PropertyFilter { get; set; }
+
+	/// <summary>
+	/// A filter for <see cref="PropertyFilter"/>: members marked [Property] and methods marked [Button], without delegates.
+	/// </summary>
+	public static bool PropertiesAndButtons( SerializedProperty property )
+	{
+		if ( property.IsMethod ) return property.HasAttribute<ButtonAttribute>();
+		if ( property.PropertyType is null || property.PropertyType.IsAssignableTo( typeof( Delegate ) ) ) return false;
+
+		return property.HasAttribute<PropertyAttribute>();
+	}
 
 	Panel _body;
 	int _hash;
@@ -145,7 +156,7 @@ public class UISheetGroup : Panel
 			_rows?.SetClass( "hidden", !_toggle.As.Bool );
 
 		if ( _visibility?.Length > 0 )
-			SetClass( "hidden", _visibility.All( x => x.TestCondition( _toggle?.Parent ) ) );
+			SetClass( "hidden", UISheetRow.IsHidden( _visibility, _toggle?.Parent ) );
 	}
 }
 
@@ -158,6 +169,9 @@ public class UISheetRow : Panel
 	SerializedProperty _property;
 	InspectorVisibilityAttribute[] _visibility;
 	Panel _holder;
+
+	// the controls of the properties added with [SameLine], they show and hide by their own conditions
+	readonly List<(Panel control, SerializedProperty property, InspectorVisibilityAttribute[] visibility)> _sharing = new();
 
 	public UISheetRow()
 	{
@@ -197,19 +211,33 @@ public class UISheetRow : Panel
 	internal void AddToRow( SerializedProperty property )
 	{
 		var control = CreateControl( property, out _ );
-		if ( control is not null )
-			_holder.AddChild( control );
+		if ( control is null ) return;
+
+		_holder.AddChild( control );
+
+		var visibility = property.GetAttributes<InspectorVisibilityAttribute>()?.ToArray();
+		if ( visibility?.Length > 0 )
+			_sharing.Add( (control, property, visibility) );
 	}
 
 	public override void Tick()
 	{
 		base.Tick();
 
-		if ( _visibility is null || _visibility.Length == 0 ) return;
-		if ( _property?.Parent is null ) return;
+		if ( _visibility?.Length > 0 && _property?.Parent is { } parent )
+			SetClass( "hidden", IsHidden( _visibility, parent ) );
 
-		SetClass( "hidden", _visibility.All( x => x.TestCondition( _property.Parent ) ) );
+		foreach ( var (control, property, visibility) in _sharing )
+		{
+			if ( property.Parent is not null )
+				control.SetClass( "hidden", IsHidden( visibility, property.Parent ) );
+		}
 	}
+
+	/// <summary>
+	/// Whether every one of the conditions says to hide.
+	/// </summary>
+	internal static bool IsHidden( InspectorVisibilityAttribute[] visibility, SerializedObject parent ) => visibility.All( x => x.TestCondition( parent ) );
 
 	/// <summary>
 	/// Pick the control for a property. Anything we don't have a Sandbox one for gets the engine's.

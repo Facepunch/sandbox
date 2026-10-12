@@ -7,15 +7,13 @@
 @attribute [Group( "#spawnmenu.utility.group.utilities" )]
 @attribute [Order( 0 )]
 
-<root class="page" style="flex-direction: column;">
-    <UISheet Target="@Settings" PropertyFilter="@FilterProperties" />
+<root class="page">
+    <UISheet Target="@Settings" PropertyFilter="@UISheet.PropertiesAndButtons" />
 </root>
 
 @code
 {
     readonly LocalPlayerSettings Settings = new();
-
-    static bool FilterProperties( SerializedProperty property ) => property.HasAttribute<PropertyAttribute>();
 
     // Write through the console system so Saved and UserInfo convar behavior is preserved.
     sealed class LocalPlayerSettings

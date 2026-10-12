@@ -32,21 +32,8 @@ SpawnMenuModeBar .mode-tab
 		border-left: 1px solid #464646;
 	}
 
-	&:hover
-	{
-		color: white;
-		background-color: #707070;
-		sound-in: ui.hover;
-	}
-
-	&:active
-	{
-		sound-in: ui.select;
-	}
-
 	&.active
 	{
-		@include ui-tab-active;
 		border-bottom: 1px solid $ui-block-border;
 	}
 

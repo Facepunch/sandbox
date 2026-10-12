@@ -23,7 +23,7 @@ UIDropdownList.popup-panel
 		padding: 0 7px;
 		font-size: $ui-settings-font;
 		font-weight: 500;
-		color: #545454;
+		color: $ui-text;
 		cursor: pointer;
 
 		&.alt
@@ -33,7 +33,7 @@ UIDropdownList.popup-panel
 
 		&:hover
 		{
-			background-color: rgba( 62, 131, 235, 0.3 );
+			background-color: rgba( $ui-blue, 0.3 );
 			sound-in: ui.hover;
 		}
 

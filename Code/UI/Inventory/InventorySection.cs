@@ -44,8 +44,7 @@ public sealed class InventorySection : HudSection
 	// flat greys that are never tinted by the HUD colour
 	static readonly Color TileColor = PanelColor;
 	static readonly Color HighlightTileColor = new Color( 0.29f, 0.29f, 0.29f, PanelColor.a ); // 4A4A4A
-	static readonly Color DimIcon = Gray( 1f, 0.51f ); // icon of unselected slots
-	static readonly Color DimName = Gray( 1f, 0.51f ); // name of unselected slots
+	static readonly Color DimContent = Color.White.WithAlpha( 0.51f ); // icon and name of unselected slots
 
 	float _slide;
 	float[] _expand = Array.Empty<float>();
@@ -61,8 +60,6 @@ public sealed class InventorySection : HudSection
 
 	Rect _menuRect;
 	float _gap;
-
-	static Color Gray( float value, float alpha = 1 ) => new( value, value, value, alpha );
 
 	int ColumnCount => Inventory.IsValid() ? Inventory.MaxSlots : 0;
 
@@ -231,8 +228,8 @@ public sealed class InventorySection : HudSection
 		painter.Opacity = contentAlpha;
 
 		var glow = Glowing( Tinted( Color.White ) );
-		var iconColor = highlighted ? glow : Tinted( DimIcon );
-		var nameColor = highlighted ? glow : Tinted( DimName );
+		var iconColor = highlighted ? glow : Tinted( DimContent );
+		var nameColor = highlighted ? glow : Tinted( DimContent );
 
 		if ( GetIcon( weapon ) is { } icon && icon.Width > 0 && icon.Height > 0 )
 		{
