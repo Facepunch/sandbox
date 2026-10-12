@@ -72,8 +72,11 @@ public sealed class DecalTool : ToolMode
 		{
 			if ( !IsProxy ) IsPainting = false;
 			StopPaintSound();
+			HidePreview();
 			return;
 		}
+
+		if ( !IsProxy ) UpdatePreview();
 
 		if ( IsPainting )
 		{
@@ -92,12 +95,75 @@ public sealed class DecalTool : ToolMode
 		base.OnDisabled();
 		if ( !IsProxy ) IsPainting = false;
 		StopPaintSound();
+		DestroyPreview();
 	}
 
 	protected override void OnDestroy()
 	{
 		StopPaintSound();
+		DestroyPreview();
 		base.OnDestroy();
+	}
+
+	// Decal preview visuals settings
+	const float PreviewOpacityMax = 0.25f;
+	const float PreviewOpacityMin = 0.1f;
+	const float PreviewPulsePeriod = 1f; // how long it takes to go from Max to Min, and vice versa
+
+	/// <summary>
+	/// Local client preview of the selected decal where the player is looking
+	/// </summary>
+	GameObject _preview;
+	Decal _previewDecal;
+
+	void UpdatePreview()
+	{
+		var select = TraceSelect();
+		var def = string.IsNullOrEmpty( Decal ) ? null : ResourceLibrary.Get<DecalDefinition>( Decal );
+
+		if ( !select.IsValid() || def == null )
+		{
+			HidePreview();
+			return;
+		}
+
+		// recreated if something removed it, like a map cleanup
+		if ( !_preview.IsValid() || !_previewDecal.IsValid() )
+		{
+			_preview?.Destroy();
+			_preview = new GameObject( false, "decal preview" );
+			_preview.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked | GameObjectFlags.Hidden;
+			_preview.NetworkMode = NetworkMode.Never;
+
+			_previewDecal = _preview.AddComponent<Decal>();
+		}
+
+		var pos = select.WorldTransform();
+		_preview.WorldPosition = pos.Position + pos.Rotation.Forward * 1f;
+		_preview.WorldRotation = Rotation.LookAt( -pos.Rotation.Forward );
+
+		if ( _previewDecal.Decals is not [var current] || current != def )
+			_previewDecal.Decals = [def];
+
+		var pulse = 0.5f + 0.5f * MathF.Cos( Time.Now * MathF.Tau / PreviewPulsePeriod );
+		var opacity = MathX.Lerp( PreviewOpacityMin, PreviewOpacityMax, pulse );
+		_previewDecal.ColorTint = Tint.WithAlpha( Tint.a * opacity );
+		_previewDecal.Scale = Scale.Clamp( 0.1f, 4f );
+		_previewDecal.AttenuationAngle = Attenuation.Clamp( 0f, 1f );
+
+		_preview.Enabled = true;
+	}
+
+	void HidePreview()
+	{
+		if ( _preview.IsValid() ) _preview.Enabled = false;
+	}
+
+	void DestroyPreview()
+	{
+		if ( _preview.IsValid() ) _preview.Destroy();
+		_preview = null;
+		_previewDecal = null;
 	}
 
 	void StopPaintSound()
