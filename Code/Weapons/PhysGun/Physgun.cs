@@ -30,6 +30,9 @@ public partial class Physgun : Local.IPlayerEvents
 	bool _clawsOpen;
 	bool _clawSoundsSuppressed;
 	TimeUntil _gravityLookCooldown;
+	TimeUntil _clawOpenSoundCooldown;
+	TimeUntil _clawCloseSoundCooldown;
+	const float ClawSoundMinInterval = 2f;
 	float ClawOpenAmount => _state.Active ? 1f : CanGravityGrabHovered() ? 0.5f : 0f;
 
 	bool CanGravityGrabHovered()
@@ -74,11 +77,15 @@ public partial class Physgun : Local.IPlayerEvents
 		_clawsOpen = open;
 		if ( open )
 		{
+			if ( _clawOpenSoundCooldown > 0 ) return;
+			_clawOpenSoundCooldown = ClawSoundMinInterval;
 			_gravityLookOpenSound?.Stop( 0.2f );
 			_gravityLookOpenSound = GameObject.PlaySound( GravityLookOpenSound );
 		}
 		else
 		{
+			if ( _clawCloseSoundCooldown > 0 ) return;
+			_clawCloseSoundCooldown = ClawSoundMinInterval;
 			_gravityLookCloseSound?.Stop( 0.2f );
 			_gravityLookCloseSound = GameObject.PlaySound( GravityLookCloseSound );
 		}
