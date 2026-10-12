@@ -7,8 +7,9 @@ public partial class Npc : Component
 	public void DrawDebugString()
 	{
 		var bounds = GameObject.GetBounds();
-		var worldpos = WorldPosition - (Vector3.Up * -bounds.Maxs.z);
+		var worldpos = WorldPosition + Vector3.Up * bounds.Size.z;
 		var pos = Scene.Camera.PointToScreenPixels( worldpos, out var behind );
+
 		if ( behind ) return;
 
 		var str = $"{ActiveSchedule?.GetDebugString()}";
