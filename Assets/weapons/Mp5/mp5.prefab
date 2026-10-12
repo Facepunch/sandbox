@@ -87,7 +87,7 @@
         "FirstShellReloadTime": 0,
         "GrenadePrefab": {
           "_type": "gameobject",
-          "prefab": "weapons/grenade/thrown_grenade.prefab"
+          "prefab": "weapons/mp5/mp5_projectile.prefab"
         },
         "GrenadeSpeed": 1500,
         "Handedness": "Both",

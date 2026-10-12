@@ -2,7 +2,7 @@
 public sealed class Mp5Weapon : BaseBulletWeapon
 {
 	/// <summary>
-	/// The grenade the launcher fires.
+	/// The round the launcher fires - needs an <see cref="ImpactGrenade"/>.
 	/// </summary>
 	[Property, Feature( "Grenade Launcher" )] public GameObject GrenadePrefab { get; set; }
 
@@ -46,13 +46,17 @@ public sealed class Mp5Weapon : BaseBulletWeapon
 		if ( !GrenadePrefab.IsValid() )
 			return;
 
-		var go = GrenadePrefab.Clone( start );
+		var go = GrenadePrefab.Clone( new Transform( start, Rotation.LookAt( direction, Vector3.Up ) ) );
 
-		var explosive = go.GetOrAddComponent<TimedExplosive>();
-		explosive.Attacker = Attacker;
+		var grenade = go.GetComponent<ImpactGrenade>();
+		Assert.True( grenade.IsValid(), "ImpactGrenade not on grenade prefab" );
 
-		if ( go.GetComponent<Rigidbody>() is { } rb )
-			rb.Velocity = direction * GrenadeSpeed + Vector3.Up * 100f;
+		if ( Owner.IsValid() )
+			grenade.Instigator = Owner;
+		else if ( ControlContext.Player.IsValid() )
+			grenade.Instigator = ControlContext.Player;
+
+		grenade.Rigidbody.Velocity = direction * GrenadeSpeed;
 
 		// Don't collide with the weapon it launched from
 		var filter = go.AddComponent<PhysicsFilter>();

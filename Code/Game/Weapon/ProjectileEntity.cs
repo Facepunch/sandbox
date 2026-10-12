@@ -52,6 +52,40 @@ public class ProjectileEntity : Component, Component.ICollisionListener
 	}
 
 	/// <summary>
+	/// Spawns the medium explosion here, credited to the <see cref="Instigator"/>, and destroys the
+	/// projectile. Host only - the explosion is network spawned.
+	/// </summary>
+	protected void Explode( float radius, float damage, float forceScale )
+	{
+		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
+		if ( explosionPrefab == null )
+		{
+			Log.Warning( $"{GetType().Name}: Can't find /prefabs/engine/explosion_med.prefab" );
+			GameObject.Destroy();
+			return;
+		}
+
+		var go = GameObject.Clone( explosionPrefab, new CloneConfig { Transform = WorldTransform.WithScale( 1 ), StartEnabled = false } );
+		if ( go.IsValid() )
+		{
+			go.RunEvent<RadiusDamage>( x =>
+			{
+				x.Radius = radius;
+				x.PhysicsForceScale = forceScale;
+				x.DamageAmount = damage;
+				x.Attacker = Instigator?.GameObject;
+				x.DamageTags ??= new();
+				x.DamageTags.Add( DamageTags.Explosion );
+			}, FindMode.EverythingInSelfAndDescendants );
+
+			go.Enabled = true;
+			go.NetworkSpawn( true, null );
+		}
+
+		GameObject.Destroy();
+	}
+
+	/// <summary>
 	/// Updates the current direction of the projectile
 	/// </summary>
 	/// <param name="direction"></param>

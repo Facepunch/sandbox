@@ -38,37 +38,7 @@ public sealed partial class RpgProjectile : ProjectileEntity
 
 	protected override void OnHit( Collision collision = default )
 	{
-		Explode();
-	}
-
-	void Explode()
-	{
-		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
-		if ( explosionPrefab == null )
-		{
-			Log.Warning( "RpgProjectile: Can't find /prefabs/engine/explosion_med.prefab" );
-			GameObject.Destroy();
-			return;
-		}
-
-		var go = GameObject.Clone( explosionPrefab, new CloneConfig { Transform = WorldTransform.WithScale( 1 ), StartEnabled = false } );
-		if ( go.IsValid() )
-		{
-			go.RunEvent<RadiusDamage>( x =>
-			{
-				x.Radius = ExplosionRadius;
-				x.PhysicsForceScale = ExplosionForce;
-				x.DamageAmount = ExplosionDamage;
-				x.Attacker = Instigator.GameObject;
-				x.DamageTags ??= new();
-				x.DamageTags.Add( DamageTags.Explosion );
-			}, FindMode.EverythingInSelfAndDescendants );
-
-			go.Enabled = true;
-			go.NetworkSpawn( true, null );
-		}
-
-		GameObject.Destroy();
+		Explode( ExplosionRadius, ExplosionDamage, ExplosionForce );
 	}
 
 	/// <summary>
