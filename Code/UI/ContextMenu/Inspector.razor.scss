@@ -70,13 +70,6 @@ Inspector .window-frame
     pointer-events: all;
 }
 
-Inspector .title-bar
-{
-    @include ui-title-bar;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 Inspector .window-stack
 {
     width: 100%;
@@ -90,7 +83,7 @@ Inspector .window-stack .window
     padding: 12px 10px 8px 10px;
     width: 100%;
     min-height: 0px;
-    border-radius: 0px 0px 2px 2px;
+    border-radius: 2px;
     pointer-events: all;
     z-index: 200;
 
@@ -133,3 +126,19 @@ Inventory.hidden
     opacity: 0;
 }
 
+
+Inspector .window UISlider
+{
+    min-width: 0px;
+
+    .track
+    {
+        max-width: 100%;
+        min-width: 0px;
+    }
+
+    .entry
+    {
+        margin-left: 0px;
+    }
+}

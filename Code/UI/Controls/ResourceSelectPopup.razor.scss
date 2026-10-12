@@ -1,7 +1,7 @@
 @import "/UI/Popup.scss";
 @import "/UI/UiCommon.scss";
 
-ResourceSelectPopup .inner
+ResourceSelectPopup.popup .inner
 {
     @include ui-block;
     width: 800px;
@@ -53,7 +53,7 @@ ResourceSelectPopup .inner
     }
 }
 
-ResourceSelectPopup .inner .grid
+ResourceSelectPopup.popup .inner .grid
 {
     @include ui-section;
     @include ui-scroll;
@@ -64,7 +64,7 @@ ResourceSelectPopup .inner .grid
     padding: 8px;
 }
 
-ResourceSelectPopup .inner .grid .item
+ResourceSelectPopup.popup .inner .grid .item
 {
     @include ui-selectable;
     width: 100%;
@@ -80,7 +80,7 @@ ResourceSelectPopup .inner .grid .item
 
     .icon
     {
-        height: 100px;
+        height: 96px;
         font-size: 60px;
         overflow: hidden;
         justify-content: center;
@@ -106,7 +106,7 @@ ResourceSelectPopup .inner .grid .item
     }
 }
 
-ResourceSelectPopup .inner .popup-footer
+ResourceSelectPopup.popup .inner .popup-footer
 {
     flex-direction: row;
     justify-content: flex-end;

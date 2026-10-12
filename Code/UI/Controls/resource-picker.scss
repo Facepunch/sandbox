@@ -16,6 +16,7 @@
 
 	&:hover
 	{
+		background-color: $ui-blue-soft;
 		border-color: $ui-control-border-hover;
 		sound-in: ui.hover;
 	}

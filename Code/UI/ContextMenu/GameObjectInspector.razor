@@ -36,10 +36,8 @@
                         var currentGroup = Renderers[0].MaterialGroup ?? MaterialGroups[0];
                         <div class="material-row">
                         <label>#spawnmenu.inspect.skin</label>
-                            <div class="material-button" @onclick="@PickMaterialGroup">
-                                <label>@currentGroup</label>
-                                <label class="material-group-arrow">▾</label>
-                            </div>
+                            <UIDropdown Items=@MaterialGroups.Select( group => new UIDropdown.Item( group, group ) ).ToList()
+                                        Value=@currentGroup ValueChanged=@((object value) => SetMaterialGroup( (string)value )) Tokenize=@false></UIDropdown>
                         </div>
                     }
 
@@ -53,13 +51,11 @@
 
                         <div class="material-row @(hasOverride ? "overridden" : "")">
                         <label>@Game.Language.GetPhrase( "ui.inspect.material_number", new() { { "number", index + 1 } } )</label>
-                            <div class="material-button" @onclick=@(() => PickMaterial(index))>
-                                <div class="material-preview" style="background-image: url( thumb:@(mat?.ResourcePath) )"></div>
-                                <label>@name</label>
-                            </div>
+                            <UIDropdown class="material-picker" Items=@(new List<UIDropdown.Item> { new( name, index ) })
+                                        Value=@index OpenPicker=@(() => PickMaterial(index))></UIDropdown>
                             @if (hasOverride)
                             {
-                                <div class="material-revert" @onclick=@(() => RevertMaterial(index))>x</div>
+                                <UIButton class="material-revert" Text="x" @onclick=@(() => RevertMaterial(index))></UIButton>
                             }
                         </div>
                     }
@@ -233,18 +229,6 @@
         }
     }
 
-    void PickMaterialGroup()
-    {
-        var menu = new Sandbox.UI.Menu();
-        var current = Renderers[0].MaterialGroup ?? MaterialGroups.FirstOrDefault();
-        foreach ( var group in MaterialGroups )
-        {
-            var g = group;
-            menu.AddOption( g, current == g ? "check" : "", () => SetMaterialGroup( g ) );
-        }
-
-        menu.Open( this, Popup.PositionMode.UnderMouse );
-    }
 
     void SetMaterialGroup( string group )
     {

@@ -32,6 +32,12 @@ public class UIDropdown : Panel
 	public bool Tokenize { get; set; } = true;
 
 	/// <summary>
+	/// Opens a custom picker instead of the item list when provided.
+	/// </summary>
+	[Parameter]
+	public Action OpenPicker { get; set; }
+
+	/// <summary>
 	/// The picked value, shown in the box.
 	/// </summary>
 	[Parameter]
@@ -104,6 +110,12 @@ public class UIDropdown : Panel
 	public void Open()
 	{
 		if ( IsListOpen ) return;
+		if ( OpenPicker is not null )
+		{
+			OpenPicker();
+			return;
+		}
+
 
 		_list = new UIDropdownList( this, Items, _value, Tokenize, picked =>
 		{

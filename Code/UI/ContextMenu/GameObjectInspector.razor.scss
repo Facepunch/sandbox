@@ -37,7 +37,7 @@ GameObjectInspector .material-row
 {
     flex-direction: row;
     align-items: center;
-    gap: 6px;
+    gap: 0px;
     padding: 2px 0;
     width: 100%;
 
@@ -50,54 +50,27 @@ GameObjectInspector .material-row
         padding-right: 6px;
     }
 
-    .material-button
+    UIDropdown
     {
-        @include ui-button;
-        flex-grow: 1;
         min-width: 0px;
-        justify-content: flex-start;
-        padding: 0 6px;
-        overflow: hidden;
-
-        label
-        {
-            font-size: $ui-settings-font;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .material-group-arrow
-        {
-            flex-shrink: 0;
-            margin-left: auto;
-            font-size: 10px;
-            color: $ui-text-muted;
-        }
-
-        .material-preview
-        {
-            width: 20px;
-            height: 20px;
-            border-radius: 2px;
-            flex-shrink: 0;
-            background-size: cover;
-            background-position: center;
-            background-color: $ui-tile-bg;
-        }
     }
 
     .material-revert
     {
-        @include ui-button;
         flex-shrink: 0;
         width: 24px;
         padding: 0;
+        margin-left: 6px;
     }
 
-    &.overridden .material-button
+    &.overridden .material-picker
     {
         border-color: $ui-blue;
         color: $ui-blue;
     }
+}
+
+GameObjectInspector UISheet UIColor
+{
+    justify-content: flex-end;
 }

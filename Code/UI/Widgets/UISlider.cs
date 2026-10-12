@@ -10,6 +10,8 @@ public class UISlider : BaseControl
 {
 	const float ThumbWidth = 10f;
 	const int MaxStepTicks = 24;
+	const int DefaultDivisions = 10;
+	static readonly float[] NiceMultiples = { 1f, 2f, 5f };
 
 	readonly Panel _entryHolder;
 	readonly NumberEntry _entry;
@@ -57,7 +59,8 @@ public class UISlider : BaseControl
 	}
 
 	/// <summary>
-	/// Values snap to this, and it's marked under the bar when there aren't too many. 0 for none.
+	/// Values snap to this, and it's marked under the bar - coarsened to a round multiple when there
+	/// would be too many marks. 0 for none, which marks tenths of the range instead.
 	/// </summary>
 	[Parameter]
 	public float Step
@@ -148,15 +151,20 @@ public class UISlider : BaseControl
 		if ( _max <= _min ) return;
 
 		var positions = new List<float> { 0f, 1f };
+		var range = _max - _min;
+		var interval = TickInterval( range );
 
-		if ( _step > 0f )
+		// marks sit on the same absolute grid values snap to, not offsets from Min
+		var first = (long)MathF.Ceiling( _min / interval );
+		var last = (long)MathF.Floor( _max / interval );
+		var epsilon = interval * 0.001f;
+
+		for ( var i = first; i <= last; i++ )
 		{
-			var count = (int)MathF.Floor( (_max - _min) / _step );
-			if ( count > 1 && count <= MaxStepTicks )
-			{
-				for ( int i = 1; i < count; i++ )
-					positions.Add( i * _step / (_max - _min) );
-			}
+			var value = i * interval;
+			if ( value - _min < epsilon || _max - value < epsilon ) continue; // the ends are already marked
+
+			positions.Add( (value - _min) / range );
 		}
 
 		foreach ( var position in positions )
@@ -166,6 +174,27 @@ public class UISlider : BaseControl
 			tick.Style.MarginLeft = -position; // the 1px tick stays inside the bar at the end
 			_ticks.Add( tick );
 		}
+	}
+
+	/// <summary>
+	/// The step, or a tenth of the range without one, grown by 2/5/10-style multiples until it
+	/// marks at most <see cref="MaxStepTicks"/> divisions.
+	/// </summary>
+	float TickInterval( float range )
+	{
+		var baseInterval = _step > 0f ? _step : range / DefaultDivisions;
+		var interval = baseInterval;
+
+		for ( var decade = 1f; range / interval > MaxStepTicks; decade *= 10f )
+		{
+			foreach ( var multiple in NiceMultiples )
+			{
+				interval = baseInterval * multiple * decade;
+				if ( range / interval <= MaxStepTicks ) break;
+			}
+		}
+
+		return interval;
 	}
 
 	void UpdateVisuals()
