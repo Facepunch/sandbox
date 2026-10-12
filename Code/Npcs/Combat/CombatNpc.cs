@@ -1,3 +1,4 @@
+using Sandbox.Npcs.Layers;
 using Sandbox.Npcs.Schedules;
 
 namespace Sandbox.Npcs.CombatNpc;
@@ -144,7 +145,7 @@ public class CombatNpc : Npc, Component.IPressable
 
 		if ( visible.IsValid() && Weapon.IsValid() )
 		{
-			_lastKnownPosition = visible.WorldPosition;
+			_lastKnownPosition = AnimationLayer.GetEyePosition( visible );
 			_timeSinceLastSeen = 0;
 
 			var engage = GetSchedule<CombatEngageSchedule>();
@@ -196,7 +197,7 @@ public class CombatNpc : Npc, Component.IPressable
 			// If we can hear the attacker, treat their position as the last known location.
 			if ( WorldPosition.Distance( damage.Attacker.WorldPosition ) <= Senses.HearingRange )
 			{
-				_lastKnownPosition = damage.Attacker.WorldPosition;
+				_lastKnownPosition = AnimationLayer.GetEyePosition( damage.Attacker );
 				_timeSinceLastSeen = 0;
 			}
 		}
