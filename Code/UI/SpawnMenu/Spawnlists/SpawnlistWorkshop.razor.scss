@@ -1,4 +1,8 @@
 @import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
+
+$info-height: 62px;
+$info-hover-color: #e6e6e6;
 
 SpawnlistWorkshop
 {
@@ -9,7 +13,7 @@ SpawnlistWorkshop
 
 		.cell
 		{
-			padding: 5px;
+			padding: 0px;
 			background-color: transparent;
 			border: 0;
 			box-shadow: none;
@@ -20,50 +24,102 @@ SpawnlistWorkshop
 	{
 		width: 100%;
 		height: 100%;
-		flex-direction: column;
-		background-color: rgba( 6, 16, 24, 0.86 );
-		border: 1px solid rgba( white, 0.07 );
-		border-radius: 10px;
+		position: relative;
 		overflow: hidden;
+		border: 1px solid transparent;
+		border-radius: 2px;
+		background-color: rgba( 0, 0, 0, 0.16 );
+		background-position: center;
+		background-size: cover;
+		background-repeat: no-repeat;
+		font-family: $body-font;
 		cursor: pointer;
-		box-shadow: 0 8px 24px rgba( black, 0.18 );
-		transition: transform 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
+		transition: border-color 0.1s ease;
+
+		&.no-thumbnail
+		{
+			background-color: rgba( 102, 102, 102, 0.5 );
+		}
+
+		@include ui-card-description;
 
 		&:hover
 		{
-			transform: translateY( -2px );
-			border-color: rgba( $menu-accent, 0.5 );
-			box-shadow: 0 10px 28px rgba( black, 0.28 ), 0 0 14px rgba( $menu-accent, 0.12 );
-			sound-in: ui.button.over;
+			sound-in: ui.hover;
+			border-color: white;
 
-			.install-button
+			.info
 			{
-				background-color: rgba( $menu-accent, 0.9 );
-				color: white;
+				background-color: $info-hover-color;
+
+				.title
+				{
+					color: #3a3a3a;
+				}
+
+				.meta
+				{
+					color: rgba( 0, 0, 0, 0.6 );
+				}
+			}
+
+			.install
+			{
+				opacity: 1;
+			}
+
+			// the description strip slides over it
+			&.has-description .likes
+			{
+				opacity: 0;
 			}
 		}
 
 		&:active
 		{
-			transform: translateY( 0 );
+			sound-in: ui.select;
 		}
 	}
 
-	.content-preview
+	.no-preview
 	{
-		min-height: 100px;
-		width: 100%;
-		flex-grow: 1;
-		flex-shrink: 1;
-		background-color: rgba( black, 0.22 );
-		overflow: hidden;
-		padding: 3px;
+		position: absolute;
+		left: 0px;
+		right: 0px;
+		top: 0px;
+		bottom: $info-height;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+
+		.no-preview-icon
+		{
+			width: 40px;
+			height: 48px;
+			background-image: url( /ui/no_preview.png );
+			background-size: contain;
+			background-position: center;
+			background-repeat: no-repeat;
+			opacity: 0.4;
+		}
+
+		label
+		{
+			font-size: 11px;
+			font-weight: 700;
+			color: rgba( white, 0.43 );
+		}
 	}
 
+	// the first items of the list, for when the workshop item has no thumbnail of its own
 	.preview-collage
 	{
-		width: 100%;
-		height: 100%;
+		position: absolute;
+		left: 3px;
+		right: 3px;
+		top: 3px;
+		bottom: $info-height + 3px;
 		gap: 3px;
 	}
 
@@ -73,13 +129,11 @@ SpawnlistWorkshop
 		height: 100%;
 		flex-grow: 1;
 		position: relative;
-		background-color: rgba( 18, 39, 52, 0.9 );
+		background-color: rgba( 0, 0, 0, 0.16 );
 		background-position: center;
 		background-repeat: no-repeat;
 		background-size: contain;
 		overflow: hidden;
-		border-radius: 5px;
-		border: 1px solid rgba( white, 0.045 );
 
 		.preview-title
 		{
@@ -87,221 +141,159 @@ SpawnlistWorkshop
 			left: 5px;
 			right: 5px;
 			bottom: 4px;
-			padding: 2px 5px;
-			border-radius: 4px;
-			background-color: rgba( 3, 10, 15, 0.82 );
 			color: white;
 			font-size: 9px;
 			font-weight: 700;
 			text-align: center;
-			justify-content: center;
 			white-space: nowrap;
 			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
 		.more-count
 		{
 			position: absolute;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
+			left: 0px;
+			right: 0px;
+			top: 0px;
+			bottom: 0px;
 			align-items: center;
 			justify-content: center;
-			background-color: rgba( 2, 10, 16, 0.7 );
-			backdrop-filter: blur( 2px );
-			color: white;
+			background-color: rgba( 0, 0, 0, 0.55 );
+			color: $ui-control-bg;
 			font-family: $title-font;
 			font-size: 18px;
 			font-weight: 800;
 		}
 	}
 
-	.workshop-preview
+	.likes
 	{
-		width: 100%;
-		height: 100%;
-		flex-direction: column;
+		position: absolute;
+		left: 12px;
+		top: 12px;
+		height: 24px;
+		padding: 0 8px;
+		flex-direction: row;
 		align-items: center;
-		justify-content: center;
-		gap: 6px;
-		background-position: center;
-		background-repeat: no-repeat;
-		background-size: cover;
-		color: rgba( white, 0.38 );
+		gap: 5px;
+		border-radius: 2px;
+		background-color: rgba( 0, 0, 0, 0.4 );
+		color: $ui-control-bg;
+		font-size: 12px;
+		font-weight: 700;
+		transition: opacity 0.1s ease;
 
 		i
 		{
-			font-size: 36px;
-		}
-
-		label
-		{
-			font-size: 11px;
-			font-weight: 600;
-			color: rgba( white, 0.42 );
-		}
-
-		.placeholder-art
-		{
-			width: 64px;
-			height: 52px;
-			position: relative;
-			margin-bottom: 3px;
-		}
-
-		.placeholder-sheet
-		{
-			position: absolute;
-			width: 44px;
-			height: 38px;
-			border-radius: 5px;
-			border: 1px solid rgba( white, 0.1 );
-			background-color: rgba( 28, 54, 69, 0.95 );
-
-			&.back
-			{
-				left: 2px;
-				top: 2px;
-				opacity: 0.35;
-			}
-
-			&.middle
-			{
-				left: 10px;
-				top: 7px;
-				opacity: 0.6;
-			}
-
-			&.front
-			{
-				left: 18px;
-				top: 12px;
-				align-items: center;
-				justify-content: center;
-				background-color: rgba( $menu-accent, 0.18 );
-				border-color: rgba( $menu-accent, 0.35 );
-
-				i
-				{
-					font-size: 21px;
-					color: rgba( $menu-text-strong, 0.65 );
-				}
-			}
+			font-size: 15px;
 		}
 	}
 
-	.card-details
+	.info
 	{
-		height: 64px;
-		flex-grow: 0;
-		flex-shrink: 0;
+		position: absolute;
+		left: 0px;
+		right: 0px;
+		bottom: 0px;
+		height: $info-height;
+		padding: 0 12px;
 		flex-direction: column;
-		padding: 5px 8px;
-		gap: 2px;
-	}
-
-	.title-row
-	{
-		align-items: center;
-		gap: 8px;
-
-		.name
-		{
-			flex-grow: 1;
-			font-family: $title-font;
-			font-size: 13px;
-			font-weight: 700;
-			color: $menu-text-strong;
-			white-space: nowrap;
-			overflow: hidden;
-		}
-
-		.item-count
-		{
-			align-items: center;
-			gap: 4px;
-			padding: 3px 7px;
-			border-radius: 10px;
-			background-color: rgba( $menu-accent, 0.14 );
-			color: $menu-text;
-			font-size: 11px;
-			flex-shrink: 0;
-		}
-	}
-
-	.type-summary,
-	.description
-	{
-		height: 12px;
-		flex-shrink: 0;
-		font-size: 10px;
-		font-weight: 500;
-		color: rgba( $menu-text-strong, 0.55 );
-		white-space: nowrap;
-		overflow: hidden;
-	}
-
-	.card-footer
-	{
-		margin-top: auto;
-		align-items: center;
-		gap: 8px;
-	}
-
-	.author
-	{
-		align-items: center;
+		justify-content: center;
 		gap: 6px;
-		min-width: 0;
+		overflow: hidden;
+		background-color: rgba( 0, 0, 0, 0.25 );
+		transition: background-color 0.1s ease;
 
-		.avatar
+		.title
 		{
-			width: 18px;
-			height: 18px;
-			border-radius: 50%;
-			background-position: center;
-			background-size: cover;
-			flex-shrink: 0;
-		}
-
-		.author-name
-		{
-			max-width: 90px;
-			font-size: 9px;
-			color: rgba( $menu-text-strong, 0.58 );
+			color: white;
+			font-size: 14px;
+			font-weight: 700;
 			white-space: nowrap;
 			overflow: hidden;
+			text-overflow: ellipsis;
+			transition: color 0.1s ease;
+		}
+
+		.meta
+		{
+			flex-direction: row;
+			align-items: center;
+			gap: 6px;
+			color: rgba( white, 0.72 );
+			font-size: 11px;
+			font-weight: 500;
+			white-space: nowrap;
+			overflow: hidden;
+			transition: color 0.1s ease;
+
+			.avatar
+			{
+				width: 18px;
+				height: 18px;
+				flex-shrink: 0;
+				border-radius: 3px;
+				background-position: center;
+				background-size: cover;
+			}
+
+			.author-name
+			{
+				max-width: 110px;
+				flex-shrink: 1;
+				min-width: 0px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.meta-text
+			{
+				flex-direction: row;
+				gap: 4px;
+				flex-shrink: 0;
+			}
 		}
 	}
 
-	.workshop-stats
+	// shows over the end of the info on hover, and fades out whatever is behind it
+	.install
 	{
-		flex-grow: 1;
+		position: absolute;
+		right: 0px;
+		top: 0px;
+		bottom: 0px;
+		padding: 0 12px 0 48px;
+		flex-direction: row;
 		align-items: center;
 		justify-content: flex-end;
-		gap: 8px;
-		color: rgba( $menu-text-strong, 0.42 );
-		font-size: 9px;
+		background-image: linear-gradient( to right, rgba( $info-hover-color, 0 ), $info-hover-color 40px );
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.1s ease;
 
-		span
+		.install-button
 		{
+			height: 28px;
+			padding: 0 12px;
+			flex-direction: row;
 			align-items: center;
-			gap: 3px;
-		}
-	}
+			gap: 6px;
+			border-radius: 2px;
+			background-color: $ui-blue;
+			color: white;
+			font-size: 11px;
+			font-weight: 700;
 
-	.install-button
-	{
-		align-items: center;
-		gap: 4px;
-		padding: 3px 7px;
-		border-radius: 5px;
-		background-color: rgba( white, 0.07 );
-		color: $menu-text;
-		font-size: 9px;
-		font-weight: 700;
-		transition: background-color 0.1s ease, color 0.1s ease;
-		flex-shrink: 0;
+			i
+			{
+				font-size: 15px;
+			}
+
+			label
+			{
+				text-transform: uppercase;
+			}
+		}
 	}
 }

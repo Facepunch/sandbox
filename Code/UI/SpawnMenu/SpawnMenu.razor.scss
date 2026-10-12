@@ -141,6 +141,11 @@ VirtualGrid, MixedVirtualGrid
     padding: 0;
 }
 
+.menuinner > VirtualGrid
+{
+    padding: 0px 16px 0px 0px;
+}
+
 MixedVirtualGrid
 {
     .cell.full-row, .cell.full-row:hover, .cell.full-row:active

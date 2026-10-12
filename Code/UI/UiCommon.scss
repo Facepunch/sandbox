@@ -301,6 +301,61 @@ $ui-section-gap: 20px;
 	pointer-events: none;
 }
 
+// the description strip that slides down from the top of a card on hover
+@mixin ui-card-description
+{
+	// description block (if available & hovered), parked above the visible area for animation
+	.description
+	{
+		position: absolute;
+		left: 0px;
+		right: 0px;
+		top: -60px;
+		padding: 6px 8px;
+		overflow: hidden;
+		background-color: rgba( 255, 255, 255, 0.35 );
+		color: white;
+		font-size: 12px;
+		font-weight: 600;
+		line-height: 12px;
+		pointer-events: none;
+		transition: top 0.1s ease;
+
+		.viewport
+		{
+			position: relative;
+			width: 100%;
+			height: 0px;
+			overflow: hidden;
+			mask-size: 100% 100%;
+			mask-repeat: no-repeat;
+			mask-mode: alpha;
+		}
+
+		.text
+		{
+			position: relative;
+			width: 100%;
+			flex-shrink: 0;
+		}
+
+		.sizer
+		{
+			position: absolute;
+			left: 0px;
+			right: 0px;
+			top: 0px;
+			opacity: 0;
+			pointer-events: none;
+		}
+	}
+
+	&:hover .description
+	{
+		top: 0px;
+	}
+}
+
 // slots in dupes menu
 @mixin ui-dupe-card
 {
@@ -357,52 +412,7 @@ $ui-section-gap: 20px;
 		}
 	}
 
-	// dupe description block (if available & hovered), parked above the visible area for animation
-	.description
-	{
-		position: absolute;
-		left: 0px;
-		right: 0px;
-		top: -60px;
-		padding: 6px 8px;
-		overflow: hidden;
-		background-color: rgba( 255, 255, 255, 0.35 );
-		color: white;
-		font-size: 12px;
-		font-weight: 600;
-		line-height: 12px;
-		pointer-events: none;
-		transition: top 0.1s ease;
-
-		.viewport
-		{
-			position: relative;
-			width: 100%;
-			height: 0px;
-			overflow: hidden;
-			// the fade is set by DupeDescription as a mask-image
-			mask-size: 100% 100%;
-			mask-repeat: no-repeat;
-			mask-mode: alpha;
-		}
-
-		.text
-		{
-			position: relative;
-			width: 100%;
-			flex-shrink: 0;
-		}
-
-		.sizer
-		{
-			position: absolute;
-			left: 0px;
-			right: 0px;
-			top: 0px;
-			opacity: 0;
-			pointer-events: none;
-		}
-	}
+	@include ui-card-description;
 
 	&:hover
 	{
@@ -417,11 +427,6 @@ $ui-section-gap: 20px;
 			{
 				color: #444444;
 			}
-		}
-
-		.description
-		{
-			top: 0px;
 		}
 	}
 

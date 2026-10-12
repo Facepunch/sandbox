@@ -23,82 +23,70 @@
         }
         else
         {
-            <VirtualGrid Items=@Items ItemSize=@(new Vector2( 340, 170 )) OnLastCell="@(() => { _ = QueryNext(); })">
+            <VirtualGrid Items=@Items ItemSize=@(new Vector2( 340, 190 )) OnLastCell="@(() => { _ = QueryNext(); })">
                 <Item Context="context">
                     @if ( context is WorkshopSpawnlist entry )
                     {
-                        <div class="workshop-spawnlist" @onclick="@(() => _ = OnInstall( entry.Item ))">
-                            <div class="content-preview">
-                                @if ( entry.PreviewItems.Count > 0 )
-                                {
-                                    var visibleCount = Math.Min( entry.PreviewItems.Count, 3 );
-                                    var hiddenCount = Math.Max( entry.ItemCount, entry.PreviewItems.Count ) - visibleCount;
+                        var hasThumbnail = !string.IsNullOrWhiteSpace( entry.Item.Preview );
+                        var hasCollage = !hasThumbnail && entry.PreviewItems.Count > 0;
 
-                                    <div class="preview-collage">
-                                        @for ( var index = 0; index < visibleCount; index++ )
-                                        {
-                                            var preview = entry.PreviewItems[index];
-                                            <div class="preview-item" style="@GetPreviewStyle( preview )">
-                                                <label class="preview-title">@preview.Title</label>
-                                                @if ( index == visibleCount - 1 && hiddenCount > 0 )
-                                                {
-                                                    <div class="more-count">+@hiddenCount</div>
-                                                }
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="workshop-preview" style="@GetWorkshopPreviewStyle( entry.Item )">
-                                        @if ( string.IsNullOrWhiteSpace( entry.Item.Preview ) )
-                                        {
-                                            <div class="placeholder-art">
-                                                <div class="placeholder-sheet back"></div>
-                                                <div class="placeholder-sheet middle"></div>
-                                                <div class="placeholder-sheet front"><i>collections_bookmark</i></div>
-                                            </div>
-                                            <label>#spawnmenu.spawnlist.preview_unavailable</label>
-                                        }
-                                    </div>
-                                }
-                            </div>
+                        <div class="workshop-spawnlist @( hasThumbnail || hasCollage ? "" : "no-thumbnail" ) @( string.IsNullOrWhiteSpace( entry.Item.Description ) ? "" : "has-description" )" style="@GetWorkshopPreviewStyle( entry.Item )" @onclick="@(() => _ = OnInstall( entry.Item ))">
 
-                            <div class="card-details">
-                                <div class="title-row">
-                                    <div class="name">@entry.Item.Title</div>
+                            @if ( hasCollage )
+                            {
+                                var visibleCount = Math.Min( entry.PreviewItems.Count, 3 );
+                                var hiddenCount = Math.Max( entry.ItemCount, entry.PreviewItems.Count ) - visibleCount;
+
+                                <div class="preview-collage">
+                                    @for ( var index = 0; index < visibleCount; index++ )
+                                    {
+                                        var preview = entry.PreviewItems[index];
+                                        <div class="preview-item" style="@GetPreviewStyle( preview )">
+                                            <label class="preview-title">@preview.Title</label>
+                                            @if ( index == visibleCount - 1 && hiddenCount > 0 )
+                                            {
+                                                <div class="more-count">+@hiddenCount</div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else if ( !hasThumbnail )
+                            {
+                                <div class="no-preview">
+                                    <div class="no-preview-icon"></div>
+                                    <label>#spawnmenu.spawnlist.preview_unavailable</label>
+                                </div>
+                            }
+
+                            @if ( entry.Item.VotesUp > 0 )
+                            {
+                                <div class="likes"><i>thumb_up</i><label>@entry.Item.VotesUp</label></div>
+                            }
+
+                            @if ( !string.IsNullOrWhiteSpace( entry.Item.Description ) )
+                            {
+                                <DupeDescription class="description" Text="@entry.Item.Description" />
+                            }
+
+                            <div class="info">
+                                <div class="title">@entry.Item.Title</div>
+
+                                <div class="meta">
+                                    <div class="avatar" style="background-image: url('@entry.Item.Owner.Avatar');"></div>
+                                    <div class="author-name">@entry.Item.Owner.Name</div>
+                                    <div class="meta-text" Tooltip="@entry.Item.Updated.ToString()">• @entry.Item.Updated.Humanize()</div>
                                     @if ( entry.ItemCount > 0 )
                                     {
-                                        <div class="item-count"><i>widgets</i> @entry.ItemCount</div>
+                                        <div class="meta-text">• @ContentCountText( null, entry.ItemCount )</div>
                                     }
                                 </div>
 
-                                @if ( !string.IsNullOrWhiteSpace( FormatTypeSummary( entry.ContentTypes ) ) )
-                                {
-                                    <div class="type-summary">@FormatTypeSummary( entry.ContentTypes )</div>
-                                }
-                                @if ( !string.IsNullOrWhiteSpace( entry.Item.Description ) )
-                                {
-                                    <div class="description">@entry.Item.Description</div>
-                                }
-
-                                <div class="card-footer">
-                                    <div class="author">
-                                        <div class="avatar" style="background-image: url('@entry.Item.Owner.Avatar');"></div>
-                                        <div class="author-name">@entry.Item.Owner.Name</div>
-                                    </div>
-
-                                    <div class="workshop-stats">
-                                        @if ( entry.Item.VotesUp > 0 )
-                                        {
-                                            <span><i>thumb_up</i> @entry.Item.VotesUp</span>
-                                        }
-                                        <span Tooltip="@entry.Item.Updated.ToString()"><i>schedule</i> @entry.Item.Updated.Humanize()</span>
-                                    </div>
-
-                                    <div class="install-button"><i>download</i> <label>#spawnmenu.spawnlist.install</label></div>
+                                <div class="install">
+                                    <div class="install-button"><i>download</i><label>#spawnmenu.spawnlist.install</label></div>
                                 </div>
                             </div>
+
                         </div>
                     }
                 </Item>
@@ -258,16 +246,6 @@
     static int ReadMetaInt( Storage.QueryItem item, string key )
     {
         return int.TryParse( ReadMeta( item, key ), out var value ) ? value : 0;
-    }
-
-    static string FormatTypeSummary( Dictionary<string, int> types )
-    {
-        if ( types is null || types.Count == 0 ) return null;
-
-        return string.Join( "  ·  ", types
-            .OrderByDescending( pair => pair.Value )
-            .Take( 4 )
-            .Select( pair => ContentCountText( pair.Key, pair.Value ) ) );
     }
 
     static string ContentCountText( string type, int count )
