@@ -43,6 +43,7 @@
     "spawnmenu.tab.tools": "Tools",
     "spawnmenu.tools.none_selected": "No tool selected",
     "spawnmenu.tools.none_selected_hint": "Select any tool in menu on the left to see its settings!",
+    "spawnmenu.tools.no_settings": "This tool has no settings...",
     "spawnmenu.tab.utilities": "Utilities",
 
     "spawnmenu.section.props": "Props",

@@ -22,7 +22,14 @@
         }
         else if ( CurrentMode is { } mode )
         {
-            <UISheet PropertyFilter="@UISheet.PropertiesAndButtons" Target="@mode"></UISheet>
+            @if ( HasSettings( mode ) )
+            {
+                <UISheet PropertyFilter="@UISheet.PropertiesAndButtons" Target="@mode"></UISheet>
+            }
+            else
+            {
+                <div class="note">#spawnmenu.tools.no_settings</div>
+            }
         }
         else
         {
@@ -39,6 +46,11 @@
     PostProcessManager PostProcessManager => Game.ActiveScene.GetSystem<PostProcessManager>();
 
     protected override int BuildHash() => HashCode.Combine( CurrentMode, PostProcessManager?.SelectedPath, PostProcessManager?.GetSelectedComponents().Count, Game.Language.SelectedCode );
+
+    /// <summary>
+    /// Whether the sheet would have a single row for this tool.
+    /// </summary>
+    static bool HasSettings( ToolMode mode ) => Game.TypeLibrary.GetSerializedObject( mode ).Any( UISheet.PropertiesAndButtons );
 
     /// <summary>
     /// Every tool under its group, both sorted by what the player reads.
