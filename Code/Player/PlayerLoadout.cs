@@ -1,5 +1,6 @@
 /// <summary>
-/// Manages loadout persistence and restoration for a player.
+/// Remembers the weapons a player carries and, when the server has Re-equip Last on
+/// (<see cref="ServerSettings.ReEquipLast"/>), gives them back on respawn instead of the starter items.
 /// Lives on the Player GameObject alongside PlayerInventory.
 /// Listens to inventory events to auto-save, and handles all loadout RPCs directly.
 /// </summary>
@@ -98,12 +99,19 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 	[Rpc.Owner]
 	private void RequestClientLoadout()
 	{
-		var json = LocalData.Get<string>( "hotbar" );
+		var json = GetSpawnLoadout();
 		if ( string.IsNullOrEmpty( json ) )
 			HostGiveStarterItems();
 		else
 			HostRestoreLoadoutFromClient( json );
 	}
+
+	/// <summary>
+	/// The saved hotbar to restore on spawn, or null for the starter items. Read on the owning client,
+	/// where the hotbar is stored; the replicated server setting decides whether it's used.
+	/// </summary>
+	private static string GetSpawnLoadout()
+		=> ServerSettings.ReEquipLast ? LocalData.Get<string>( "hotbar" ) : null;
 
 	/// <summary>
 	/// Clears the current inventory, waits a frame, then gives the loadout from JSON and equips the best weapon.
@@ -163,7 +171,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 			return;
 		}
 
-		var json = LocalData.Get<string>( "hotbar" );
+		var json = GetSpawnLoadout();
 		if ( !string.IsNullOrEmpty( json ) )
 		{
 			await ReplaceLoadoutAsync( json );

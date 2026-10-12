@@ -13,6 +13,14 @@ internal static class ServerSettings
 	public static bool DeveloperEntities { get; set; } = false;
 
 	/// <summary>
+	/// On respawn, players get back the weapons they were carrying instead of the starter items.
+	/// </summary>
+	[Title( "Re-equip Last" )]
+	[Group( "Players" )]
+	[ConVar( "sandbox.reequiplast", ConVarFlags.Replicated | ConVarFlags.GameSetting | ConVarFlags.Server, Help = "Give players back the weapons they were carrying when they respawn." )]
+	public static bool ReEquipLast { get; set; } = false;
+
+	/// <summary>
 	/// Returns true if developer entities should be shown.
 	/// </summary>
 	public static bool ShowDeveloperEntities => Game.IsEditor || DeveloperEntities;
