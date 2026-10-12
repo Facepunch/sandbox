@@ -62,6 +62,10 @@
     "tool.hint.remover.description": "Removes objects from the world",
     "tool.hint.remover.remove": "Remove",
 
+    "tool.hint.colour.description": "Changes the colour of an object",
+    "tool.hint.colour.apply": "Apply colour",
+    "tool.hint.colour.reset": "Reset to white",
+
     "tool.hint.resizer.description": "Resizes an object",
     "tool.hint.resizer.grow": "Grow",
     "tool.hint.resizer.shrink": "Shrink",
@@ -145,6 +149,7 @@
     "tool.name.keepupright": "Upright",
     "tool.name.wire": "Wire",
     "tool.name.remover": "Remover",
+    "tool.name.colour": "Colour",
     "tool.name.resizer": "Resizer",
     "tool.name.mass": "Mass",
     "tool.name.unbreakable": "Unbreakable",

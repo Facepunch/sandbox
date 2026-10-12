@@ -1,13 +1,36 @@
 @import "/UI/Popup.scss";
+@import "/UI/UiCommon.scss";
 
 ResourceSelectPopup .inner
 {
+    @include ui-block;
     width: 800px;
     height: 800px;
+    max-width: 90vw;
+    max-height: 90vh;
+    gap: 8px;
+    font-family: $body-font;
+    font-size: $ui-settings-font;
+    color: $ui-text;
 
-    .popup-header h2
+    .popup-header
     {
-        flex-grow: 1;
+        @include ui-title-bar;
+        margin: 0;
+        height: auto;
+        min-height: 23px;
+        padding: 3px 10px;
+        gap: 8px;
+
+        h2
+        {
+            flex-grow: 1;
+            font-family: $body-font;
+            font-size: $ui-settings-font;
+            font-weight: 800;
+            height: auto;
+            color: white;
+        }
     }
 
     .sort-buttons
@@ -15,27 +38,16 @@ ResourceSelectPopup .inner
         flex-shrink: 0;
         flex-direction: row;
         gap: 2px;
-        border-radius: 6px;
-        overflow: hidden;
 
         .sort-button
         {
-            font-size: 1.1rem;
-            padding: 0.4rem 0.8rem;
-            color: rgba( white, 0.5 );
-            background-color: rgba( white, 0.05 );
-            cursor: pointer;
-
-            &:hover
-            {
-                color: white;
-                background-color: rgba( white, 0.12 );
-            }
+            @include ui-button;
+            text-transform: none;
 
             &.active
             {
-                color: white;
-                background-color: #08f5;
+                @include ui-selected;
+                background-image: none;
             }
         }
     }
@@ -43,28 +55,28 @@ ResourceSelectPopup .inner
 
 ResourceSelectPopup .inner .grid
 {
+    @include ui-section;
+    @include ui-scroll;
     width: 100%;
     flex-grow: 1;
-    gap: 1rem;
-    background-color: #222a;
-    padding: 1rem;
-    border-radius: 10px;
+    min-height: 0px;
+    gap: 8px;
+    padding: 8px;
 }
 
 ResourceSelectPopup .inner .grid .item
 {
+    @include ui-selectable;
     width: 100%;
     height: 100%;
-    color: #aaa;
+    color: $ui-text;
     pointer-events: all;
-    border-radius: 10px;
-    margin: 0.25rem;
-    cursor: pointer;
+    margin: 2px;
     position: relative;
     flex-direction: column;
-    padding: 1rem;
-    font-size: 1rem;
-    background-color: #0088ff02;
+    padding: 8px;
+    font-size: $ui-settings-font;
+    background-color: $ui-row-alt;
 
     .icon
     {
@@ -82,24 +94,15 @@ ResourceSelectPopup .inner .grid .item
     .title
     {
         font-weight: 700;
-        font-size: 1.5rem;
-        color: white;
+        font-size: 13px;
         flex-shrink: 0;
     }
 
     .desc
     {
+        font-size: 11px;
         overflow: hidden;
-    }
-
-    &:hover
-    {
-        background-color: #08f5;
-    }
-
-    &.active
-    {
-        background-color: #08f5;
+        opacity: 0.75;
     }
 }
 
@@ -107,42 +110,13 @@ ResourceSelectPopup .inner .popup-footer
 {
     flex-direction: row;
     justify-content: flex-end;
-    padding: 0.5rem 0;
     flex-shrink: 0;
-    gap: 0.5rem;
+    gap: 6px;
 
-    .clear-button
+    .clear-button, .select-button
     {
-        padding: 0.6rem 2rem;
-        background-color: rgba( white, 0.1 );
-        color: rgba( white, 0.7 );
-        font-weight: 700;
-        font-size: 1.2rem;
-        border-radius: 6px;
-        cursor: pointer;
+        @include ui-button;
+        min-width: 100px;
         pointer-events: all;
-
-        &:hover
-        {
-            background-color: rgba( white, 0.2 );
-            color: white;
-        }
-    }
-
-    .select-button
-    {
-        padding: 0.6rem 2rem;
-        background-color: #08f;
-        color: white;
-        font-weight: 700;
-        font-size: 1.2rem;
-        border-radius: 6px;
-        cursor: pointer;
-        pointer-events: all;
-
-        &:hover
-        {
-            background-color: #09f;
-        }
     }
 }

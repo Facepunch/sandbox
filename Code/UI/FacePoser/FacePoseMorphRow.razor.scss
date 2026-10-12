@@ -1,4 +1,5 @@
 ﻿@import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
 
 FacePoseMorphRow
 {
@@ -6,27 +7,27 @@ FacePoseMorphRow
     align-items: center;
     padding: 2px 6px;
     min-height: 24px;
-    border-radius: 4px;
+    border-radius: 2px;
 
     &:hover
     {
-        background-color: rgba( 255, 255, 255, 0.04 );
+        background-color: $ui-blue-soft;
     }
 }
 
 FacePoseMorphRow .label
 {
-    width: 130px;
+    width: 121px;
     flex-shrink: 0;
-    font-size: 12px;
-    color: rgba( 255, 255, 255, 0.35 );
+    font-size: $ui-settings-font;
+    color: $ui-text-muted;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 
     &.active
     {
-        color: rgba( 255, 255, 255, 0.9 );
+        color: $ui-text;
     }
 }
 
@@ -34,11 +35,12 @@ FacePoseMorphRow .sliders
 {
     flex-direction: row;
     flex-grow: 1;
+    min-width: 0px;
     gap: 4px;
 }
 
-FacePoseMorphRow SliderControl
+FacePoseMorphRow UISlider
 {
     flex-grow: 1;
-    height: 18px;
+    min-width: 0px;
 }

@@ -6,10 +6,10 @@
 <root>
     <div class="label @(IsActive ? "active" : "")">@Title</div>
     <div class="sliders">
-        <SliderControl Property=@_so?.GetProperty(nameof(Strength)) ShowTextEntry=@(false) ShowValueTooltip=@(false)></SliderControl>
+        <UISlider Property=@_so?.GetProperty(nameof(Strength))></UISlider>
         @if (IsPaired)
         {
-            <SliderControl Property=@_so?.GetProperty(nameof(Side)) ShowTextEntry=@(false) ShowValueTooltip=@(false)></SliderControl>
+            <UISlider Property=@_so?.GetProperty(nameof(Side))></UISlider>
         }
     </div>
 </root>

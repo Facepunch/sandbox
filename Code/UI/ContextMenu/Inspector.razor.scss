@@ -1,10 +1,13 @@
 @import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
 
 Inspector
 {
-    font-size: 1.0rem;
+    font-family: $body-font;
+    font-size: $ui-settings-font;
+    font-weight: 500;
     width: 100%;
-    color: #ddd;
+    color: $ui-text;
     transition: all 0.2s linear;
 
     > .canvas
@@ -26,6 +29,7 @@ Inspector .inspector-panel
     bottom: $deadzone-y;
     width: 100%;
     max-width: 500px;
+    max-height: 80%;
     flex-direction: column;
     pointer-events: none;
 
@@ -38,71 +42,55 @@ Inspector .inspector-panel
 Inspector .tab-bar
 {
     flex-direction: row;
-    margin-left: 0;
-    margin-bottom: 8px;
-    padding: 3px;
-    gap: 2px;
+    align-items: flex-end;
+    margin-left: 9px;
+    height: 25px;
     align-self: flex-start;
-    background-color: rgba( 6, 16, 24, 0.82 );
-    backdrop-filter: blur( 8px );
-    border: 1px solid rgba( white, 0.06 );
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba( black, 0.25 );
     z-index: 10;
     flex-shrink: 0;
-    font-size: 14px;
-    font-weight: 650;
-    font-family: $subtitle-font;
     pointer-events: all;
 }
 
 Inspector .tab
 {
-    padding: 0.45rem 0.8rem;
-    cursor: pointer;
-    color: #D1D7E3AA;
-    border-radius: 5px;
-    background-color: transparent;
-    border: 1px solid transparent;
-    transition: color 0.1s ease, background-color 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;
-    gap: 0.4rem;
-    align-items: center;
+    @include ui-tab;
     pointer-events: all;
-
-    &:hover
-    {
-        color: $menu-color;
-        background-color: rgba( white, 0.06 );
-        box-shadow: 0 0 10px rgba( $menu-accent, 0.12 );
-        transform: translateY( -1px );
-        sound-in: ui.hover;
-    }
 
     &.active
     {
-        color: $menu-text-strong;
-        background-color: rgba( $menu-accent, 0.2 );
-        border-color: rgba( $menu-accent, 0.5 );
-        box-shadow: 0 0 10px rgba( $menu-accent, 0.16 );
         pointer-events: none;
     }
+}
+
+Inspector .window-frame
+{
+    @include ui-block;
+    flex-direction: column;
+    min-height: 0px;
+    pointer-events: all;
+}
+
+Inspector .title-bar
+{
+    @include ui-title-bar;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 Inspector .window-stack
 {
     width: 100%;
+    min-height: 0px;
     pointer-events: all;
 }
 
 Inspector .window-stack .window
 {
-    background-color: rgba( 9, 21, 31, 0.88 );
-    backdrop-filter: blur( 8px );
-    border: 1px solid rgba( white, 0.06 );
-    box-shadow: 0 8px 24px rgba( black, 0.5 );
-    padding: 1rem;
+    @include ui-section;
+    padding: 12px 10px 8px 10px;
     width: 100%;
-    border-radius: 8px;
+    min-height: 0px;
+    border-radius: 0px 0px 2px 2px;
     pointer-events: all;
     z-index: 200;
 
@@ -114,10 +102,17 @@ Inspector .window-stack .window
 
 Inspector .window-stack .window .body
 {
+    @include ui-scroll;
     flex-direction: column;
     flex-grow: 1;
+    min-height: 0px;
     overflow-y: scroll;
     gap: 2px;
+
+    > *
+    {
+        flex-shrink: 0;
+    }
 }
 
 Inspector .window-stack .window .footer
@@ -127,7 +122,7 @@ Inspector .window-stack .window .footer
     padding-top: 8px;
     flex-shrink: 0;
 
-    Button
+    UIButton
     {
         flex-grow: 1;
     }
@@ -137,3 +132,4 @@ Inventory.hidden
 {
     opacity: 0;
 }
+

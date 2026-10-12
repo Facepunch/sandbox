@@ -1,10 +1,12 @@
+@import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
+
 ComponentHandle
 {
+	@include ui-button-face;
 	width: 38px;
 	height: 38px;
-	background-color: #eee;
-	box-shadow: 2px 2px 16px black;
-	border-radius: 20px;
+	border-radius: 2px;
 	position: absolute;
 	justify-content: center;
 	align-items: center;
@@ -15,7 +17,7 @@ ComponentHandle
 	.icon
 	{
 		font-family: "Material Icons";
-		color: #08f;
+		color: $ui-blue;
 		font-size: 23px;
 		pointer-events: none;
 	}
@@ -23,21 +25,22 @@ ComponentHandle
 	&:hover
 	{
 		opacity: 1;
-		background-color: #fff;
+		background-color: $ui-blue-soft;
 	}
 
 	&:active
 	{
-		border: 1px solid #08f;
-		background-color: #fff;
+		border-color: $ui-blue;
+		background-color: $ui-blue-soft;
 		opacity: 1;
 		transform: scale( 0.95 ) translateX( -50% ) translateY( -50% );
 	}
 
 	&.active
 	{
-		border: 2px solid #fff;
-		background-color: #08f;
+		@include ui-selected;
+		background-image: none;
+		border-color: $ui-blue;
 		opacity: 1;
 
 		.icon

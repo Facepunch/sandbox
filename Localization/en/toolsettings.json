@@ -12,6 +12,7 @@
     "tool.setting.mass_kg": "Mass (kg)",
     "tool.setting.line": "Line",
     "tool.setting.trail_color": "Trail Color",
+    "tool.setting.colour": "Colour",
     "tool.setting.start_width": "Start Width",
     "tool.setting.end_width": "End Width",
     "tool.setting.lifetime": "Lifetime",

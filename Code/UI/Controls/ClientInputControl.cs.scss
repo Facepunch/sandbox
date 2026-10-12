@@ -6,20 +6,20 @@ ClientInputControl
 
 	&.no-binding
 	{
-		background-color: #0088ff0a;
-		border-color: #0088ff22;
+		background-color: $ui-control-bg;
+		border-color: $ui-control-border;
 
 		&:hover
 		{
-			background-color: #0088ff22;
-			border-color: #0088ff44;
+			background-color: $ui-blue-soft;
+			border-color: $ui-control-border-hover;
 		}
 	}
 
 	.preview
 	{
-		width: 2.5rem;
-		height: 2.5rem;
+		width: 24px;
+		height: 24px;
 		flex-shrink: 0;
 		align-items: center;
 		justify-content: center;
@@ -37,8 +37,8 @@ ClientInputControl
 
 		.fallback
 		{
-			font-size: 1.1rem;
-			color: rgba( 255, 255, 255, 0.5 );
+			font-size: 14px;
+			color: $ui-text-muted;
 
 			&.hidden { display: none; }
 		}
@@ -47,8 +47,8 @@ ClientInputControl
 	.bind-label
 	{
 		flex-grow: 1;
-		font-size: 0.95rem;
-		font-weight: 600;
-		color: #fff;
+		font-size: $ui-settings-font;
+		font-weight: 500;
+		color: $ui-text;
 	}
 }
