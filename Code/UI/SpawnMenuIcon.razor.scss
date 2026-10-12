@@ -1,5 +1,4 @@
 @import "/UI/Theme.scss";
-@import "/UI/UiCommon.scss";
 
 SpawnMenuIcon
 {
@@ -38,7 +37,7 @@ SpawnMenuIcon
 		top: 0px;
 		right: 0px;
 		bottom: 0px;
-		border: 1px solid white;
+		border: 1px solid $ui-tile-outline;
 		opacity: 0;
 		pointer-events: none;
 	}

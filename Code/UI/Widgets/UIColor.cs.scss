@@ -1,4 +1,4 @@
-@import "/UI/UiCommon.scss";
+@import "/UI/Theme.scss";
 
 UIColor
 {
@@ -57,7 +57,7 @@ UIColor
 
 		&.invalid .content-label
 		{
-			color: #d33;
+			color: $ui-danger;
 		}
 	}
 }

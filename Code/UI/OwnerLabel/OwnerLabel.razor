@@ -4,44 +4,50 @@
 @namespace Sandbox
 
 <root>
-	<div class="owner-label hud-panel">
-		<label class="name">@Game.Language.GetPhrase( "ui.owner.owned_by", new() { { "name", _ownerName } } )</label>
-	</div>
 </root>
 
 @code
 {
-    string _ownerName;
+    // The label is painted by the shared HUD layer (see HudLayer, OwnerLabelSection)
+    OwnerLabelSection section;
+    string _name, _language, _text;
 
-    Player Player => Player.FindLocalPlayer();
+    protected override void OnDisabled()
+    {
+        if ( section is not null ) section.Text = null;
+    }
 
 	protected override void OnUpdate()
 	{
+        section = HudLayer.FindSection( this, section );
+        if ( section is null ) return;
+
+        var name = FindOwnerName();
+        if ( name != _name || Game.Language.SelectedCode != _language )
+        {
+            _name = name;
+            _language = Game.Language.SelectedCode;
+            _text = name is null ? null : Game.Language.GetPhrase( "ui.owner.owned_by", new() { { "name", name } } );
+        }
+
+        section.Text = _text;
+	}
+
+    string FindOwnerName()
+    {
 		var camera = Scene.Camera;
-        if (camera is null || !Hud.IsVisible( HudElement.OwnerLabel ) )
-		{
-			Panel.SetClass( "visible", false );
-			return;
-		}
+        if ( camera is null || !Hud.IsVisible( HudElement.OwnerLabel ) ) return null;
 
 		var tr = Scene.Trace
 			.Ray( camera.Transform.World.ForwardRay, 2048 )
 			.WithoutTags( "player", "trigger" )
 			.Run();
 
-		if ( tr.Hit && tr.GameObject.IsValid() )
-		{
-			var ownable = tr.GameObject.GetComponentInParent<Ownable>( true );
-			if ( ownable.IsValid() && ownable.Owner is not null )
-			{
-				_ownerName = ownable.Owner.DisplayName;
-				Panel.SetClass( "visible", true );
-				return;
-			}
-		}
+		if ( !tr.Hit || !tr.GameObject.IsValid() ) return null;
 
-		Panel.SetClass( "visible", false );
-	}
+		var ownable = tr.GameObject.GetComponentInParent<Ownable>( true );
+		return ownable.IsValid() ? ownable.Owner?.DisplayName : null;
+    }
 
-	protected override int BuildHash() => System.HashCode.Combine( _ownerName, Game.Language.SelectedCode );
+	protected override int BuildHash() => 0;
 }

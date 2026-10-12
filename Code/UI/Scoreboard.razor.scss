@@ -1,5 +1,4 @@
 @import "/UI/Theme.scss";
-@import "/UI/UiCommon.scss";
 
 Scoreboard
 {
@@ -51,16 +50,13 @@ Scoreboard .heading
 
 Scoreboard .section
 {
-	@include ui-section;
-	flex-direction: column;
-	overflow: hidden;
+	@include ui-table;
 	border-radius: 0px;
 }
 
 Scoreboard .title-bar
 {
-	@include ui-title-bar;
-	gap: 8px;
+	@include ui-table-header;
 	border-radius: 0px;
 	padding: 0 6px;
 }
@@ -105,23 +101,14 @@ Scoreboard .mute-btn, Scoreboard .mute-spacer
 
 Scoreboard .row
 {
-	flex-shrink: 0;
-	flex-direction: row;
-	align-items: center;
+	@include ui-table-row;
 	height: 40px;
 	padding: 0 6px;
 	gap: 8px;
-	color: $ui-text;
 	font-size: 15px;
 	font-weight: 600;
-	border-bottom: 1px solid $ui-separator;
 	@include ui-selectable;
 	border-radius: 0px;
-
-	&:nth-child( even )
-	{
-		background-color: $ui-row-alt;
-	}
 
 	&:hover
 	{
@@ -173,7 +160,7 @@ Scoreboard .row
 
 		&.muted
 		{
-			color: #d04040;
+			color: $ui-danger;
 		}
 	}
 }

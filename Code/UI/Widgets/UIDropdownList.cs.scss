@@ -1,4 +1,4 @@
-@import "/UI/UiCommon.scss";
+@import "/UI/Theme.scss";
 
 UIDropdownList.popup-panel
 {
@@ -6,7 +6,7 @@ UIDropdownList.popup-panel
 	margin-top: -1px;
 	padding: 0;
 	overflow: hidden;
-	background-color: #e8e8e8;
+	background-color: $ui-popup-bg;
 	border: 1px solid $ui-control-border;
 	border-radius: 0;
 	box-shadow: none;
@@ -28,7 +28,7 @@ UIDropdownList.popup-panel
 
 		&.alt
 		{
-			background-color: #d6d6d6;
+			background-color: $ui-popup-hover;
 		}
 
 		&:hover

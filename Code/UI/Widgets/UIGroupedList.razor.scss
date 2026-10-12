@@ -1,5 +1,4 @@
 @import "/UI/Theme.scss";
-@import "/UI/UiCommon.scss";
 
 UIGroupedList
 {
@@ -21,12 +20,9 @@ UIGroupedList .filter.textentry
 // white area section
 UIGroupedList .list
 {
-	@include ui-section;
-	@include ui-scroll;
-	flex-direction: column;
+	@include ui-sidebar;
 	flex-grow: 1;
 	flex-shrink: 1;
-	min-height: 0px;
 	padding: 1px;
 	overflow-y: scroll;
 }

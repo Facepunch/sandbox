@@ -1,4 +1,4 @@
-@import "/UI/UiCommon.scss";
+@import "/UI/Theme.scss";
 
 UIDropdown
 {
@@ -28,6 +28,6 @@ UIDropdown
 	{
 		flex-shrink: 0;
 		font-size: 14px;
-		color: #444444;
+		color: $ui-text-strong;
 	}
 }

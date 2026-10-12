@@ -1,8 +1,7 @@
 @import "/UI/Theme.scss";
-@import "/UI/UiCommon.scss";
 
 $info-height: 62px;
-$info-hover-color: #e6e6e6;
+$info-hover-color: $ui-card-hover-bg;
 
 SpawnlistWorkshop
 {
@@ -37,12 +36,12 @@ SpawnlistWorkshop
 
 				.title
 				{
-					color: #3a3a3a;
+					color: $ui-card-hover-text;
 				}
 
 				.meta
 				{
-					color: rgba( 0, 0, 0, 0.6 );
+					color: $ui-card-hover-subtext;
 				}
 			}
 

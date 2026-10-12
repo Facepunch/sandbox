@@ -1,4 +1,4 @@
-@import "/UI/UiCommon.scss";
+@import "/UI/Theme.scss";
 
 UIResourceGrid
 {
@@ -36,7 +36,7 @@ UIResourceGrid .resource-cell
 	height: 91px;
 	flex-shrink: 0;
 	padding: 1px;
-	background-color: #d9d9d9;
+	background-color: $ui-well;
 	border: 1px solid $ui-control-border;
 	cursor: pointer;
 

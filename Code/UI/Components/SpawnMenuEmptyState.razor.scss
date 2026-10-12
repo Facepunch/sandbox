@@ -1,5 +1,4 @@
 @import "/UI/Theme.scss";
-@import "/UI/UiCommon.scss";
 
 SpawnMenuEmptyState
 {
@@ -27,17 +26,14 @@ SpawnMenuEmptyState
 
     .title
     {
-        color: white;
+        color: $ui-heading-on-gray;
         font-size: 14px;
         font-weight: 800;
     }
 
     .subtitle
     {
+        @include ui-subtitle-on-gray;
         max-width: 320px;
-        color: $ui-text-on-gray;
-        font-size: 12px;
-        font-weight: 500;
-        line-height: 1.35;
     }
 }
