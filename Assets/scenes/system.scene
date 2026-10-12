@@ -41,21 +41,21 @@
           "__guid": "14b7901f-78bd-4bdf-a260-847ffb944905",
           "__enabled": true,
           "Flags": 0,
-          "DigitExponent": 0.7404255,
-          "GlowRadius": 20.425533,
-          "GlowStrength": 0.21702127,
+          "DigitExponent": 0.9191489,
+          "GlowRadius": 11.029787,
+          "GlowStrength": 0.69787234,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "ScanlineIntensity": 0.4638298,
+          "ScanlineIntensity": 0.32340425,
           "ScanlinePeriod": 3.7021275,
           "ScanlineSoftness": 0.04255319,
           "ScanlineThickness": 0.5489362,
           "TextExponent": 0.15931919,
-          "Tint": "0.94902,0.72941,0.21569,1"
+          "Tint": "0.91628,0.64182,0.23014,1"
         }
       ],
       "Children": [

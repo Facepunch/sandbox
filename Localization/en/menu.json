@@ -41,6 +41,9 @@
     "spawnmenu.empty.mount_unavailable": "This mount may no longer be available.",
 
     "spawnmenu.tab.tools": "Tools",
+    "spawnmenu.tools.none_selected": "No tool selected",
+    "spawnmenu.tools.none_selected_hint": "Select any tool in menu on the left to see its settings!",
+    "spawnmenu.tools.no_settings": "This tool has no settings...",
     "spawnmenu.tab.utilities": "Utilities",
 
     "spawnmenu.section.props": "Props",
@@ -108,7 +111,7 @@
     "spawnmenu.spawnlist.by": "By",
     "spawnmenu.spawnlist.items": "items",
     "spawnmenu.spawnlist.install": "Install",
-    "spawnmenu.spawnlist.preview_unavailable": "Preview not provided",
+    "spawnmenu.spawnlist.preview_unavailable": "no preview available",
     "spawnmenu.spawnlist.edit": "Edit Spawnlist",
     "spawnmenu.spawnlist.add_title": "Add Title",
     "spawnmenu.spawnlist.add_divider": "Add Divider",
@@ -190,6 +193,7 @@
     "spawnmenu.common.delete": "Delete",
     "spawnmenu.common.publish": "Publish",
     "spawnmenu.common.search": "Search...",
+    "spawnmenu.common.filter": "Quick filter...",
     "spawnmenu.common.host_only": "Host only",
     "spawnmenu.common.save": "Save",
     "spawnmenu.common.load": "Load",

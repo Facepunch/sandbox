@@ -8,26 +8,14 @@
 @attribute [Group( "#spawnmenu.utility.group.world" )]
 @attribute [Order( 1 )]
 
-<root class="page" style="flex-direction: column;">
+<root class="page">
     @if ( Connection.Local.HasPermission( "admin" ) )
     {
-        <div class="control-row" Tooltip=@EnabledDescription>
-            <div class="left"><label>#spawnmenu.utility.ai_enabled</label></div>
-            <div style="flex-grow: 1;"></div>
-            <SwitchControl Value="@NpcConVars.Enabled" OnValueChanged=@( (bool value) => SetAiEnabled( value ) ) />
-        </div>
-
-        <div class="control-row" Tooltip=@NoTargetDescription>
-            <div class="left"><label>#spawnmenu.utility.no_target</label></div>
-            <div style="flex-grow: 1;"></div>
-            <SwitchControl Value="@NpcConVars.NoTarget" OnValueChanged=@( (bool value) => SetNoTarget( value ) ) />
-        </div>
+        <UISheet Target="@Settings" PropertyFilter="@UISheet.PropertiesAndButtons" />
     }
     else
     {
-        <div class="control-row">
-            <div class="left"><label>⚠️ </label><label>#spawnmenu.common.host_only</label></div>
-        </div>
+        <Label class="note" Tokenize=@false Text=@( $"⚠️ {Game.Language.GetPhrase( "spawnmenu.common.host_only" )}" ) />
     }
 </root>
 
@@ -35,9 +23,23 @@
 {
     public override bool IsPageVisible() => Connection.Local.HasPermission( "admin" );
 
-    static readonly string EnabledDescription = "#spawnmenu.utility.ai_enabled_description";
-    static readonly string NoTargetDescription = "#spawnmenu.utility.no_target_description";
+    readonly NpcSettings Settings = new();
 
-    void SetAiEnabled( bool enabled ) => GameManager.SetConVar( "sandbox.ai.enabled", enabled );
-    void SetNoTarget( bool noTarget ) => GameManager.SetConVar( "sandbox.ai.notarget", noTarget );
+    // Write through the host so the replicated convars change for everyone.
+    sealed class NpcSettings
+    {
+        [Property, Title( "#spawnmenu.utility.ai_enabled" ), Description( "#spawnmenu.utility.ai_enabled_description" ), Order( 0 )]
+        public bool AiEnabled
+        {
+            get => NpcConVars.Enabled;
+            set => GameManager.SetConVar( "sandbox.ai.enabled", value );
+        }
+
+        [Property, Title( "#spawnmenu.utility.no_target" ), Description( "#spawnmenu.utility.no_target_description" ), Order( 1 )]
+        public bool NoTarget
+        {
+            get => NpcConVars.NoTarget;
+            set => GameManager.SetConVar( "sandbox.ai.notarget", value );
+        }
+    }
 }

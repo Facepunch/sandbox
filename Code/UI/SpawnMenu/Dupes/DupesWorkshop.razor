@@ -12,7 +12,7 @@
                 <TextEntry Placeholder="#spawnmenu.common.search" class="filter menu-input" Value:bind=@Filter />
             </Left>
             <Right>
-                <DropDown Value:bind=@SortOrder />
+                <UIDropdown class="big" Items=@SortItems Value=@SortOrder ValueChanged=@OnSortChanged />
             </Right>
         </SpawnMenuToolbar>
     </Header>
@@ -35,6 +35,13 @@
 
 @code
 {
+    List<UIDropdown.Item> SortItems => UIDropdown.ForEnum<WorkshopSortMode>();
+
+    void OnSortChanged( object value )
+    {
+        if ( value is WorkshopSortMode mode ) SortOrder = mode;
+    }
+
     string _filter;
     public string Filter
     {

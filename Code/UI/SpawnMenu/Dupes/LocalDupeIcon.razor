@@ -5,12 +5,21 @@
 @namespace Sandbox
 
 <root>
-    <div class="name">@(Content.GetMeta<string>( "name" ) ?? "#ui.dupe.untitled")</div>
+    @if ( !string.IsNullOrWhiteSpace( Description ) )
+    {
+        <UICardDescription class="description" Text="@Description" />
+    }
+
+    <div class="footer">
+        <div class="name">@(Content.GetMeta<string>( "name" ) ?? "#ui.dupe.untitled")</div>
+    </div>
 </root>
 
 @code
 {
     public Storage.Entry Content;
+
+    string Description => Content.GetMeta<string>( "description", "" );
 
     protected override void OnParametersSet()
     {

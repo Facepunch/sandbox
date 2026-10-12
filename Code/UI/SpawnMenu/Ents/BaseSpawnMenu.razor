@@ -6,34 +6,57 @@
 
 <SpawnMenuPage>
     <Left>
-        <div class="menuinner">
+        <div class="tree">
+            @foreach ( var section in GetSections() )
+            {
+                if ( section.IsGrow )
+                {
+                    <div class="tree-grow"></div>
+                    continue;
+                }
 
-            <VerticalMenu Value="@activeOption">
-                <Options>
-                    @foreach (var p in options)
-                    {
-                        if (p.Type == "header")
-                        {
-                            <h1>@p.Name</h1>
-                        }
-                        else if (p.Type == "grow")
-                        {
-                            <div class="grow"></div>
-                        }
-                        else if (p.Type == "skeleton")
-                        {
-                            <SpawnlistSkeleton></SpawnlistSkeleton>
-                        }
-                        else
-                        {
-                            <MenuOption Icon="@p.Icon" Value="@p" Tokenize=@p.Tokenize Text="@p.Name" Enabled="@p.Enabled" onclick="@( () => OnOptionClick( p ) )" @onmousedown="@( (PanelEvent e) => OnOptionMouseDown( p, e ) )"></MenuOption>
-                        }
-                    }
-                </Options>
-            </VerticalMenu>
+                var header = section.Header;
+                var isCollapsed = header is not null && collapsedSections.Contains( header.Name );
 
-            <div class="menu-footer" @ref=MenuFooter></div>
+                @if ( header is not null )
+                {
+                    <div class="tree-header" @onclick=@( () => ToggleSection( header ) )>
+                        <div class="box"><IconPanel Text=@( isCollapsed ? "add" : "remove" ) /></div>
+                        <Label Text="@header.Name" />
+                    </div>
+                }
+
+                @if ( !isCollapsed )
+                {
+                    <div class="tree-items @( header is null ? "flat" : "" )">
+                        @for ( int i = 0; i < section.Items.Count; i++ )
+                        {
+                            var p = section.Items[i];
+                            var rowClass = $"tree-row{(p == activeOption ? " active" : "")}{(i == section.Items.Count - 1 ? " last" : "")}{(!p.Enabled ? " disabled" : "")}";
+
+                            if ( p.Type == "skeleton" )
+                            {
+                                <div class="@rowClass">
+                                    <SpawnlistSkeleton></SpawnlistSkeleton>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="@rowClass" @onclick="@( () => OnOptionClick( p ) )" @onmousedown="@( (PanelEvent e) => OnOptionMouseDown( p, e ) )">
+                                    @if ( !string.IsNullOrWhiteSpace( p.Icon ) )
+                                    {
+                                        <IconPanel Text="@p.Icon"></IconPanel>
+                                    }
+                                    <Label Tokenize=@p.Tokenize Text="@p.Name"></Label>
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+            }
         </div>
+
+        <div class="menu-footer" @ref=MenuFooter></div>
     </Left>
 
     <Body>

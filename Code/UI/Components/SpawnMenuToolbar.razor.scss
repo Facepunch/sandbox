@@ -1,95 +1,38 @@
 @import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
 
 SpawnMenuToolbar
 {
 	width: 100%;
-	padding: 1px 1px 2px 1px;
-	gap: 0.5rem;
-}
-
-.body, .left, .right
-{
-	gap: 0.5rem;
+	flex-direction: row;
 	align-items: center;
-	justify-content: center;
+	height: 24px;
+	gap: 6px;
 }
 
-TextEntry
+SpawnMenuToolbar > .left,
+SpawnMenuToolbar > .right,
+SpawnMenuToolbar > .body
 {
-	border: 1px solid rgba( white, 0.07 );
-	transition: border-color 0.1s ease;
-
-	&:hover, &:focus
-	{
-		border-color: rgba( white, 0.13 );
-	}
-	min-width: 256px;
-}
-
-DropDown
-{
-	min-height: 36px;
-	padding: 0 8px 0 10px;
-	gap: 8px;
+	flex-direction: row;
 	align-items: center;
-	justify-content: center;
-	background-color: rgba( black, 0.2 );
-	border: 1px solid rgba( white, 0.07 );
-	border-radius: 6px;
-	transition: background-color 0.1s ease, border-color 0.1s ease;
-
-	&:hover
-	{
-		background-color: rgba( white, 0.06 );
-		border-color: rgba( white, 0.13 );
-	}
-
-	.dropdown_indicator
-	{
-		width: 16px;
-		height: 16px;
-		margin-left: 4px;
-		justify-content: center;
-		align-items: center;
-	}
+	gap: 6px;
 }
 
-.body
+SpawnMenuToolbar > .body
 {
 	flex-grow: 1;
 }
 
-SpawnMenuToolbar .icon-button, SpawnMenuToolbar .menu-button
+SpawnMenuToolbar .textentry.menu-input
 {
-	min-height: 36px;
-	padding: 0 10px;
-	gap: 8px;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	color: rgba( white, 0.55 );
-	background-color: rgba( black, 0.2 );
-	border: 1px solid rgba( white, 0.07 );
-	border-radius: 6px;
-	transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
-
-	&:hover
-	{
-		color: white;
-		background-color: rgba( white, 0.06 );
-		border-color: rgba( white, 0.13 );
-	}
-
-	&.active
-	{
-		color: white;
-		background-color: rgba( $color-accent, 0.24 );
-		border-color: rgba( $color-accent, 0.65 );
-	}
+	@include ui-text-entry;
+	width: 205px;
+	min-width: 205px;
 }
 
-SpawnMenuToolbar .icon-button
+SpawnMenuToolbar UIDropdown
 {
-	min-width: 36px;
-	padding: 0;
+	width: 166px;
+	flex-grow: 0;
 }

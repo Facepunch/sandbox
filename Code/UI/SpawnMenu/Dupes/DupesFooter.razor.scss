@@ -1,13 +1,11 @@
+@import "/UI/UiCommon.scss";
+
 DupesFooter
 {
-    width: 100%;
-    flex-shrink: 0;
-    padding: 8px;
+    @include ui-footer-bar;
 }
 
-.menu-action
+DupesFooter UIButton
 {
-    padding: 8px 16px;
-    gap: 1rem;
+    width: 100%;
 }
-

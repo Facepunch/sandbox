@@ -1,0 +1,38 @@
+@import "/UI/Theme.scss";
+@import "/UI/UiCommon.scss";
+
+UIModal
+{
+	@include ui-block;
+	flex-direction: column;
+	flex-shrink: 0;
+	width: 380px;
+	max-width: 90vw;
+	pointer-events: all;
+	font-family: $body-font;
+	transition: opacity 0.1s ease-out, transform 0.1s ease-out;
+
+	&:intro
+	{
+		opacity: 0;
+		transform: translateY( 8px );
+	}
+
+	> .window
+	{
+		@include ui-section;
+		flex-direction: column;
+		padding: 1px;
+
+		> .title-bar
+		{
+			@include ui-title-bar;
+		}
+
+		> .body
+		{
+			flex-direction: column;
+			padding: 10px;
+		}
+	}
+}

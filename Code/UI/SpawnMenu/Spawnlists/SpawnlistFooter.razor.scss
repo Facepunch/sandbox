@@ -1,15 +1,8 @@
+@import "/UI/UiCommon.scss";
+
 SpawnlistFooter
 {
-    width: 100%;
-    flex-shrink: 0;
+    @include ui-footer-bar;
     flex-direction: column;
-    padding: 8px;
     gap: 4px;
 }
-
-.menu-action
-{
-    padding: 8px 16px;
-    gap: 1rem;
-}
-

@@ -37,7 +37,7 @@ ToolInfoPanel
 		top: 0;
 		bottom: 0;
 		width: 280px;
-		background-image: linear-gradient( to right, rgba( 77, 144, 252, 0.6 ), rgba( 77, 144, 252, 0 ) );
+		background-image: linear-gradient( to right, rgba( $hud-accent, 0.6 ), rgba( $hud-accent, 0 ) );
 	}
 
 	.grid-mask
@@ -92,7 +92,7 @@ ToolInfoPanel
 		align-items: center;
 		gap: 50px;
 		padding: 6px 52px;
-		background-image: linear-gradient( to right, $bg, rgba( 38, 38, 38, 0 ) );
+		background-image: linear-gradient( to right, $bg, $bg-clear );
 	}
 
 	.hint

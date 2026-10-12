@@ -25,9 +25,10 @@ public sealed class InventorySection : HudSection
 	const float TileWidth = 230;
 	const float TileHeight = 120;
 	const float IconAreaHeight = 108; // the icon is centred in the top part, the rest holds the name
-	const float CollapsedHeight = 12.6f;
-	const float Gap = 10; // between buckets
-	const float IndexInset = 2; // from the edge of the bucket
+	const float CollapsedTileSize = 60; // unselected tile
+	const float CollapsedHeight = 6f; // child tiles of unselected tiles
+	const float Gap = 7; // between buckets
+	const float IndexInset = 1; // from the edge of the bucket
 	const float IndexBoxSize = 15;
 	const float IndexDigitSize = 7; // height of the SandboxID digit, centred in the box
 	const float NameFontSize = 16;
@@ -43,8 +44,7 @@ public sealed class InventorySection : HudSection
 	// flat greys that are never tinted by the HUD colour
 	static readonly Color TileColor = PanelColor;
 	static readonly Color HighlightTileColor = new Color( 0.29f, 0.29f, 0.29f, PanelColor.a ); // 4A4A4A
-	static readonly Color DimIcon = Gray( 1f, 0.51f ); // icon of unselected slots
-	static readonly Color DimName = Gray( 1f, 0.51f ); // name of unselected slots
+	static readonly Color DimContent = Color.White.WithAlpha( 0.51f ); // icon and name of unselected slots
 
 	float _slide;
 	float[] _expand = Array.Empty<float>();
@@ -59,9 +59,7 @@ public sealed class InventorySection : HudSection
 	readonly Dictionary<string, string> _nameLabels = new();
 
 	Rect _menuRect;
-	float _tileHeight, _gap;
-
-	static Color Gray( float value, float alpha = 1 ) => new( value, value, value, alpha );
+	float _gap;
 
 	int ColumnCount => Inventory.IsValid() ? Inventory.MaxSlots : 0;
 
@@ -121,15 +119,17 @@ public sealed class InventorySection : HudSection
 	}
 
 	/// <summary>
-	/// Collapsed columns are square, the selected one widens to 2:1 as it expands
+	/// Collapsed columns are small squares, the selected one grows to 2:1 as it expands
 	/// </summary>
-	float ColumnWidth( int column, float scale ) => MathF.Round( MathX.Lerp( TileHeight, TileWidth, _expandEased[column] ) * scale );
+	float ColumnWidth( int column, float scale ) => MathF.Round( MathX.Lerp( CollapsedTileSize, TileWidth, _expandEased[column] ) * scale );
+
+	float HeadHeight( int column, float scale ) => MathF.Round( MathX.Lerp( CollapsedTileSize, TileHeight, _expandEased[column] ) * scale );
 
 	float ColumnHeight( int column, float scale )
 	{
 		var items = Math.Max( _columns[column].Count, 1 );
 		var child = MathX.Lerp( CollapsedHeight, TileHeight, _expandEased[column] );
-		return (TileHeight + (items - 1) * (child + Gap)) * scale;
+		return MathX.Lerp( CollapsedTileSize, TileHeight, _expandEased[column] ) * scale + (items - 1) * (child + Gap) * scale;
 	}
 
 	/// <summary>
@@ -144,7 +144,6 @@ public sealed class InventorySection : HudSection
 		var scale = ScaleToScreen;
 		var columns = ColumnCount;
 
-		_tileHeight = MathF.Round( TileHeight * scale );
 		_gap = MathF.Max( 1, MathF.Round( Gap * scale ) );
 
 		var totalWidth = (columns - 1) * _gap;
@@ -167,7 +166,6 @@ public sealed class InventorySection : HudSection
 
 		var scale = ScaleToScreen;
 		var columns = ColumnCount;
-		var tileHeight = _tileHeight;
 		var gap = _gap;
 		var left = _menuRect.Left;
 		var y0 = _menuRect.Top;
@@ -176,6 +174,7 @@ public sealed class InventorySection : HudSection
 		for ( int c = 0; c < columns; c++ )
 		{
 			var tileWidth = ColumnWidth( c, scale );
+			var tileHeight = HeadHeight( c, scale );
 			var items = _columns[c];
 			var expand = _expandEased[c];
 			var childHeight = MathF.Round( MathX.Lerp( CollapsedHeight, TileHeight, expand ) * scale );
@@ -229,8 +228,8 @@ public sealed class InventorySection : HudSection
 		painter.Opacity = contentAlpha;
 
 		var glow = Glowing( Tinted( Color.White ) );
-		var iconColor = highlighted ? glow : Tinted( DimIcon );
-		var nameColor = highlighted ? glow : Tinted( DimName );
+		var iconColor = highlighted ? glow : Tinted( DimContent );
+		var nameColor = highlighted ? glow : Tinted( DimContent );
 
 		if ( GetIcon( weapon ) is { } icon && icon.Width > 0 && icon.Height > 0 )
 		{

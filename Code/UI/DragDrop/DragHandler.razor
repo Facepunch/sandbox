@@ -10,11 +10,14 @@
 		var mouse = Mouse.Position;
 		var left = mouse.x * Panel.ScaleFromScreen - 32;
 		var top = mouse.y * Panel.ScaleFromScreen - 32;
-		var iconStyle = string.IsNullOrEmpty( Current.Icon ) ? "" : $"background-image: url({Current.Icon}); ";
-		<div class="dragging" style="@(iconStyle)left: @(left)px; top: @(top)px;" @ref="DragVisual">
+		<div class="dragging" style="left: @(left)px; top: @(top)px;" @ref="DragVisual">
 			@if ( string.IsNullOrEmpty( Current.Icon ) )
 			{
 				<div class="drag-title">@Current.Title</div>
+			}
+			else
+			{
+				<div class="thumb" style="background-image: url( @Current.Icon )"></div>
 			}
 		</div>
 	}

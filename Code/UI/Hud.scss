@@ -1,5 +1,4 @@
 $hud-element-bg: #0006;
-$hud-text: #fafaff;
 
 $hud-radius: 8px;
 $hud-radius-sm: 4px;
@@ -31,7 +30,7 @@ $hud-icon-size: 30px;
 	{
 		font-size: 29px;
 		font-weight: 700;
-		color: $hud-text;
+		color: $color-text;
 	}
 
 	.alternate

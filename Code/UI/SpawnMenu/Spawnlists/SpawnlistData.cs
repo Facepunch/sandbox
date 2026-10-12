@@ -38,7 +38,9 @@ public class SpawnlistItem : IMixedVirtualGridFullRow
 	public bool IsFullRow => !IsContent;
 
 	[JsonIgnore]
-	public float Height => Kind == SpawnlistItemKind.Title ? 56f : 32f;
+	public float Height => Kind == SpawnlistItemKind.Title ? TitleHeight : DividerHeight;
+	const float DividerHeight = 42f;
+	const float TitleHeight = 72f;
 
 	public static string MakeIdent( string type, string path, string source = "local" )
 	{
@@ -105,6 +107,32 @@ public class SpawnlistData
 		SpawnlistCreated?.Invoke();
 		return data;
 	}
+
+	/// <summary>
+	/// Asks for a name in a window over the menu, then makes the spawnlist.
+	/// </summary>
+	/// <param name="initialItem">An item the new list starts with.</param>
+	/// <param name="name">What the name box starts with.</param>
+	public static void PromptCreate( Panel source, Action onCreated = null, Action<Storage.Entry> onEntryCreated = null, SpawnlistItem initialItem = null, string name = null )
+	{
+		UIModal.Prompt( source, "#spawnmenu.spawnlist.create_title", name, newName =>
+		{
+			Create( newName, out var entry );
+			if ( initialItem is not null )
+				AddItem( entry, initialItem );
+
+			Notices.AddNotice( "list_alt", Color.Cyan, Game.Language.GetPhrase( "spawnmenu.spawnlist.created_notice", new() { { "name", newName } } ) );
+
+			onCreated?.Invoke();
+			onEntryCreated?.Invoke( entry );
+		}, "#spawnmenu.spawnlist.name_placeholder", "#spawnmenu.spawnlist.create_button", "add" );
+	}
+
+	/// <summary>
+	/// "1 item" or "N items", in the player's language.
+	/// </summary>
+	public static string ItemCountText( int count )
+		=> Game.Language.GetPhrase( count == 1 ? "ui.spawnlist.one_item" : "ui.spawnlist.items", new() { { "count", count } } );
 
 	public static void Save( Storage.Entry entry, SpawnlistData data )
 	{
@@ -251,12 +279,12 @@ public class SpawnlistData
 
 		if ( entries.Count > 0 )
 		{
-			var sub = menu.AddMenu( "#spawnmenu.spawnlist.add_to_submenu", "📋" );
+			var sub = menu.AddMenu( "#spawnmenu.spawnlist.add_to_submenu", "playlist_add" );
 			foreach ( var entry in entries )
 			{
 				var data = Load( entry );
 				var capturedEntry = entry;
-				var option = sub.AddOption( null, "📋", () => AddItem( capturedEntry, item ) );
+				var option = sub.AddOption( null, "collections_bookmark", () => AddItem( capturedEntry, item ) );
 
 				// List names are authored content, even when they begin with a phrase prefix.
 				foreach ( var label in option.Children.OfType<Label>() )
@@ -272,18 +300,18 @@ public class SpawnlistData
 
 		var (type, path, source) = SpawnlistItem.ParseIdent( item.Ident );
 
-		menu.AddOption( "#spawnmenu.spawnlist.create_new_option", "➕", () =>
+		menu.AddOption( "#spawnmenu.spawnlist.create_new_option", "add", () =>
 		{
-			var popup = new SpawnlistCreatePopup
-			{
-				Name = (type == "dupe" ? item.Title : LocalizedText.Resolve( item.Title ))
-					?? Game.Language.GetPhrase( "spawnmenu.spawnlist.new_button" ),
-				InitialItem = item,
-				Parent = sourcePanel.FindPopupPanel()
-			};
+			var name = (type == "dupe" ? item.Title : LocalizedText.Resolve( item.Title ))
+				?? Game.Language.GetPhrase( "spawnmenu.spawnlist.new_button" );
+
+			// open the list that was made
+			Action<Storage.Entry> opened = null;
 			var spawnMenu = sourcePanel.Ancestors.OfType<SpawnMenu>().FirstOrDefault();
 			if ( spawnMenu is not null )
-				popup.OnEntryCreated = spawnMenu.OpenSpawnlist;
+				opened = spawnMenu.OpenSpawnlist;
+
+			PromptCreate( sourcePanel, onEntryCreated: opened, initialItem: item, name: name );
 		} );
 
 		var spawner = ISpawner.Create( type, path, source );
@@ -293,7 +321,7 @@ public class SpawnlistData
 		{
 			menu.AddSeparator();
 
-			menu.AddOption( "#ui.open_workshop", "🌐", () =>
+			menu.AddOption( "#ui.open_workshop", "public", () =>
 			{
 				Game.Overlay.ShowPackageModal( fullIdent );
 			} );

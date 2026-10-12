@@ -1,4 +1,4 @@
-﻿using Sandbox.UI;
+using Sandbox.UI;
 namespace Sandbox;
 
 public partial class SpawnlistFooter : Panel
@@ -10,11 +10,9 @@ public partial class SpawnlistFooter : Panel
 		return true;
 	}
 
-	void CreatePopup()
+	void CreateSpawnlist()
 	{
-		var popup = new SpawnlistCreatePopup();
-		popup.Parent = FindPopupPanel();
-		popup.OnCreated = () => Ancestors.OfType<SpawnlistsPage>().FirstOrDefault()?.RefreshList();
+		SpawnlistData.PromptCreate( this, onCreated: () => Ancestors.OfType<SpawnlistsPage>().FirstOrDefault()?.RefreshList() );
 	}
 
 	void Refresh()
