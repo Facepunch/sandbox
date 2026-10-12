@@ -6,12 +6,15 @@
 
 <root>
 
-	<div class="title">@Item.Title</div>
+	@if ( !string.IsNullOrWhiteSpace( Item.Description ) )
+	{
+		<DupeDescription class="description" Text="@Item.Description" />
+	}
 
-	<div class="author">
+	<div class="footer">
 
 		<div class="avatar" style="background-image: url('@Item.Owner.Avatar');"></div>
-		<div class="name">@Item.Owner.Name</div>
+		<div class="name">@Item.Title</div>
 
 	</div>
 

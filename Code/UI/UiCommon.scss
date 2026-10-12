@@ -300,3 +300,133 @@ $ui-section-gap: 20px;
 	border-bottom: 0px;
 	pointer-events: none;
 }
+
+// slots in dupes menu
+@mixin ui-dupe-card
+{
+	width: 100%;
+	height: 100%;
+	position: relative;
+	overflow: hidden;
+	border: 1px solid transparent;
+	border-radius: 2px;
+	background-color: rgba( 0, 0, 0, 0.16 );
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+	font-family: $body-font;
+	cursor: pointer;
+	transition: border-color 0.1s ease;
+
+	.footer
+	{
+		position: absolute;
+		left: 0px;
+		right: 0px;
+		bottom: 0px;
+		height: 36px;
+		padding: 0 8px;
+		flex-direction: row;
+		align-items: center;
+		gap: 6px;
+		background-color: rgba( 0, 0, 0, 0.4 );
+		transition: background-color 0.1s ease;
+
+		.avatar
+		{
+			width: 24px;
+			height: 24px;
+			flex-shrink: 0;
+			border-radius: 3px;
+			background-position: center;
+			background-size: cover;
+		}
+
+		.name
+		{
+			flex-grow: 1;
+			flex-shrink: 1;
+			min-width: 0px;
+			color: white;
+			font-size: 12px;
+			font-weight: 700;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			transition: color 0.1s ease;
+		}
+	}
+
+	// dupe description block (if available & hovered), parked above the visible area for animation
+	.description
+	{
+		position: absolute;
+		left: 0px;
+		right: 0px;
+		top: -60px;
+		padding: 6px 8px;
+		overflow: hidden;
+		background-color: rgba( 255, 255, 255, 0.35 );
+		color: white;
+		font-size: 12px;
+		font-weight: 600;
+		line-height: 12px;
+		pointer-events: none;
+		transition: top 0.1s ease;
+
+		.viewport
+		{
+			position: relative;
+			width: 100%;
+			height: 0px;
+			overflow: hidden;
+			// the fade is set by DupeDescription as a mask-image
+			mask-size: 100% 100%;
+			mask-repeat: no-repeat;
+			mask-mode: alpha;
+		}
+
+		.text
+		{
+			position: relative;
+			width: 100%;
+			flex-shrink: 0;
+		}
+
+		.sizer
+		{
+			position: absolute;
+			left: 0px;
+			right: 0px;
+			top: 0px;
+			opacity: 0;
+			pointer-events: none;
+		}
+	}
+
+	&:hover
+	{
+		sound-in: ui.hover;
+		border-color: white;
+
+		.footer
+		{
+			background-color: white;
+
+			.name
+			{
+				color: #444444;
+			}
+		}
+
+		.description
+		{
+			top: 0px;
+		}
+	}
+
+	&:active
+	{
+		sound-in: ui.select;
+	}
+}
