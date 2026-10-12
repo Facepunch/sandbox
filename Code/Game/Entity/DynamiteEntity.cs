@@ -54,6 +54,8 @@ public sealed class DynamiteEntity : Component, Component.IDamageable, IPlayerCo
 			x.PhysicsForceScale = Force;
 			x.DamageAmount = Damage;
 			x.Attacker = go;
+			x.DamageTags ??= new();
+			x.DamageTags.Add( DamageTags.Explosion );
 		}, FindMode.EverythingInSelfAndDescendants );
 
 		go.Enabled = true;

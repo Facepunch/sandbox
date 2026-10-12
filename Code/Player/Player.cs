@@ -442,12 +442,41 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		}
 	}
 
+	/// <summary>
+	/// Launch velocity for a living player caught in a blast: away from the blast origin and upward,
+	/// stronger the closer they were.
+	/// </summary>
+	Vector3 GetExplosionKnockback( in DamageInfo damage )
+	{
+		var offset = WorldPosition - damage.Origin;
+		var strength = MathX.Remap( offset.Length, 0, 512, 900, 300, true );
+
+		return (offset.Normal + Vector3.Up).Normal * strength;
+	}
+
+	/// <summary>
+	/// Movement is simulated by the owner, so the velocity change has to happen there.
+	/// </summary>
+	[Rpc.Owner( NetFlags.HostOnly | NetFlags.Reliable )]
+	void ApplyKnockback( Vector3 velocity )
+	{
+		if ( !Controller.IsValid() || !Controller.Body.IsValid() ) return;
+
+		Controller.PreventGrounding( 0.3f );
+		Controller.Body.Velocity += velocity;
+	}
+
 	public void OnDamage( in DamageInfo dmg )
 	{
 		if ( Health < 1 ) return;
 		if ( !PlayerData.IsValid() ) return;
-		if ( PlayerData.IsGodMode ) return;
 		if ( IsSpawnProtected ) return;
+
+		// Explosions throw the player even when god mode stops the damage.
+		if ( dmg.Tags.Contains( DamageTags.Explosion ) && dmg.Origin != Vector3.Zero )
+			ApplyKnockback( GetExplosionKnockback( dmg ) );
+
+		if ( PlayerData.IsGodMode ) return;
 
 		//
 		// Ignore impact damage from the world, for now
