@@ -27,11 +27,6 @@ SpawnMenuModeBar .mode-tab
 {
 	@include ui-tab;
 
-	&:first-child
-	{
-		border-left: 1px solid #464646;
-	}
-
 	&.active
 	{
 		border-bottom: 1px solid $ui-block-border;
