@@ -11,9 +11,14 @@ UIResourceGrid
 	margin: 0px 0px 20px 0px;
 	gap: 1px;
 	border: 1px solid $ui-control-border;
-	overflow-y: scroll;
+	overflow: hidden;
 	@include ui-scroll;
 	pointer-events: all;
+
+	&.scrolls
+	{
+		overflow-y: scroll;
+	}
 
 	&.empty
 	{

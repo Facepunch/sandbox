@@ -70,10 +70,13 @@ public class UIResourceGrid : BaseControl
 	float _fittedWidth;
 	int _fittedCount = -1;
 
-	// the grid's border and padding top and bottom, the room of a scrollbar, and the tallest it gets
+	// the grid's border and padding top and bottom
 	const float Frame = 2f + 2f;
 	const float BarRoom = 9f;
-	const float MaxHeight = 237f;
+
+	// minimum/maximum amount of rows that can be displayed in a resource grid panel
+	const int MinRows = 1;
+	const int MaxRows = 5;
 
 	/// <summary>
 	/// Make sure all cells fit in grid space properly regardless of screen resolution
@@ -89,10 +92,11 @@ public class UIResourceGrid : BaseControl
 		_fittedCount = _cells.Count;
 
 		var toDesign = ScaleFromScreen;
-		var rows = Math.Max( 1, (int)MathF.Ceiling( _cells.Count / 3f ) );
+		var rows = (int)MathF.Ceiling( _cells.Count / 3f );
+		var shownRows = rows.Clamp( MinRows, MaxRows );
 
 		var cell = CellPixels( inner );
-		var scrolls = Frame + (rows * (cell * toDesign + 1f)) + (rows - 1) > MaxHeight;
+		var scrolls = rows > MaxRows;
 
 		var bar = scrolls ? MathF.Round( BarRoom * ScaleToScreen ) : 0f;
 		if ( scrolls )
@@ -101,9 +105,18 @@ public class UIResourceGrid : BaseControl
 		// the bar is drawn over the right edge of the grid, so its room is padding on that side
 		Style.PaddingRight = 1f + (scrolls ? BarRoom : 0f);
 
+		// the bar only shows when some of the rows are out of view
+		SetClass( "scrolls", scrolls );
+
 		// whole pixels for the gaps too, the last pixel of slack stays at the right
 		var gap = MathF.Max( 1f, MathF.Floor( (inner - bar - 3f * cell - 1f) / 2f ) );
 		Style.ColumnGap = gap * toDesign;
+
+		// an empty grid keeps the short height of its style
+		var height = _cells.Count == 0 ? (float?)null : Frame + (shownRows * (cell * toDesign + 1f)) + (shownRows - 1);
+		Style.Height = height;
+		Style.MinHeight = height;
+		Style.MaxHeight = height;
 
 		foreach ( var c in _cells )
 		{
