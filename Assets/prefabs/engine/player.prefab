@@ -45,7 +45,7 @@
         "__enabled": true,
         "Flags": 0,
         "__version": 1,
-        "AccelerationTime": 0.1,
+        "AccelerationTime": 0.05,
         "AimStrengthBody": 1,
         "AimStrengthEyes": 1,
         "AimStrengthHead": 1,
@@ -61,7 +61,7 @@
         "BodyHeight": 72,
         "BodyMass": 500,
         "BodyRadius": 16,
-        "BrakePower": 1,
+        "BrakePower": 1.25,
         "CameraCollisionIgnore": "",
         "CameraOffset": "96,0,-4",
         "ColliderObject": {
@@ -71,7 +71,7 @@
         "CoyoteTime": 0.33,
         "DeaccelerationTime": 0.1,
         "DuckedHeight": 36,
-        "DuckedSpeed": 70,
+        "DuckedSpeed": 110,
         "EnableFootstepSounds": true,
         "EnablePressing": true,
         "EyeDistanceFromTop": 5,
@@ -101,7 +101,7 @@
         "RotationAngleLimit": 45,
         "RotationSpeed": 1,
         "RunByDefault": false,
-        "RunSpeed": 350,
+        "RunSpeed": 475,
         "ShowColliderComponents": true,
         "ShowRigidbodyComponent": true,
         "ThirdPerson": false,
@@ -112,7 +112,7 @@
         "UseFovFromPreferences": true,
         "UseInputControls": true,
         "UseLookControls": true,
-        "WalkSpeed": 230
+        "WalkSpeed": 275
       },
       {
         "__type": "PlayerFallDamage",
@@ -177,7 +177,7 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/9f8a5ff24ced21a2.vtex"
         }
       },
       {
@@ -372,7 +372,7 @@
             "__enabled": true,
             "Flags": 0,
             "AnimationGraph": null,
-            "BodyGroups": 5441,
+            "BodyGroups": 5185,
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": true,
@@ -3115,6 +3115,73 @@
             "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
+            "Children": []
+          },
+          {
+            "__guid": "739e6457-58aa-4f5b-ad5b-be72e85d6b31",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "Clothing - y_front_pants_white",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "clothing",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [
+              {
+                "__type": "Sandbox.SkinnedModelRenderer",
+                "__guid": "80fee590-ddc7-4666-a263-66a299b72243",
+                "__enabled": true,
+                "Flags": 0,
+                "AnimationGraph": null,
+                "BodyGroups": 18446744073709551615,
+                "BoneMergeTarget": {
+                  "_type": "component",
+                  "component_id": "088ccdf7-7a51-47f6-be5c-88081217e16e",
+                  "go": "d0a8e1e1-bce2-477a-908c-3cfc0ac57de8",
+                  "component_type": "SkinnedModelRenderer"
+                },
+                "CreateAttachments": false,
+                "CreateBoneObjects": false,
+                "DeformationMode": "Normal",
+                "LodOverride": null,
+                "MaterialGroup": null,
+                "MaterialOverride": null,
+                "Materials": null,
+                "Model": {
+                  "Id": "a66a2113-828a-4612-958b-ac0e726233f6",
+                  "Path": "models/citizen_clothes/underwear/y_front_pants/models/y_front_pants_m_human.vmdl"
+                },
+                "Morphs": {},
+                "OnComponentDestroy": null,
+                "OnComponentDisabled": null,
+                "OnComponentEnabled": null,
+                "OnComponentFixedUpdate": null,
+                "OnComponentStart": null,
+                "OnComponentUpdate": null,
+                "Parameters": {},
+                "PlaybackRate": 1,
+                "RenderOptions": {
+                  "GameLayer": true,
+                  "OverlayLayer": false,
+                  "BloomLayer": false,
+                  "AfterUILayer": false
+                },
+                "RenderType": "On",
+                "Sequence": {
+                  "Name": null,
+                  "Looping": true,
+                  "Blending": false
+                },
+                "Tint": "1,1,1,1",
+                "UseAnimGraph": true
+              }
+            ],
             "Children": []
           }
         ]
