@@ -4,24 +4,23 @@
 @namespace Sandbox
 
 <root>
+    @if ( !string.IsNullOrEmpty( _shownText ) )
+    {
+        <div class="box">
+            <Label Tokenize=@false Text=@_shownText />
+        </div>
+    }
 </root>
 
 @code
 {
-    // The label is painted by the shared HUD layer (see HudLayer, OwnerLabelSection)
-    OwnerLabelSection section;
     string _name, _language, _text;
 
-    protected override void OnDisabled()
-    {
-        if ( section is not null ) section.Text = null;
-    }
+    // the last text that was shown, kept so the label can fade out with it
+    string _shownText;
 
 	protected override void OnUpdate()
 	{
-        section = HudLayer.FindSection( this, section );
-        if ( section is null ) return;
-
         var name = FindOwnerName();
         if ( name != _name || Game.Language.SelectedCode != _language )
         {
@@ -30,7 +29,8 @@
             _text = name is null ? null : Game.Language.GetPhrase( "ui.owner.owned_by", new() { { "name", name } } );
         }
 
-        section.Text = _text;
+        if ( _text is not null ) _shownText = _text;
+        Panel.SetClass( "visible", _text is not null );
 	}
 
     string FindOwnerName()
@@ -38,8 +38,11 @@
 		var camera = Scene.Camera;
         if ( camera is null || !Hud.IsVisible( HudElement.OwnerLabel ) ) return null;
 
+		// only while the Inspect menu is open, where the cursor is free and picks what to look at
+		if ( !Input.Down( "inspectmenu" ) ) return null;
+
 		var tr = Scene.Trace
-			.Ray( camera.Transform.World.ForwardRay, 2048 )
+			.Ray( camera.ScreenPixelToRay( Mouse.Position ), 2048 )
 			.WithoutTags( "player", "trigger" )
 			.Run();
 
@@ -49,5 +52,5 @@
 		return ownable.IsValid() ? ownable.Owner?.DisplayName : null;
     }
 
-	protected override int BuildHash() => 0;
+	protected override int BuildHash() => System.HashCode.Combine( _shownText );
 }
