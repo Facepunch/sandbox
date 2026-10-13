@@ -1,74 +1,57 @@
-﻿@using Sandbox;
+@using Sandbox;
 @using Sandbox.UI;
 @namespace Sandbox
 @inherits Panel
-@attribute [SpawnMenuHost.SpawnMenuMode<SpawnMenuHost.HostOnly>]
+@attribute [ContextMenuHost.Tab<SpawnMenuHost.HostOnly>]
 @attribute [Icon( "💾" )]
 @attribute [Title( "#spawnmenu.tab.saves" )]
-@attribute [Order( 150 )]
+@attribute [Order( 100 )]
 
 <root>
-    <div class="save-layout">
-        <div class="save-tabs">
-            <div class="save-tab active">
-                <div class="save-tab-icon">
-                    <IconPanel Text="save" />
+    <div class="save-list">
+        @if ( !SaveFiles.Any() )
+        {
+            <div class="empty-state">
+                <IconPanel Text="bookmark_border" />
+                <label>#spawnmenu.saves.empty</label>
+            </div>
+        }
+        @foreach ( var save in SaveFiles )
+        {
+            var s = save;
+            <div class="save-card @(!s.IsCompatible ? "outdated" : "")"
+                 @onclick="@(() => ConfirmLoad( s ))"
+                 @onmousedown="@((PanelEvent e) => OnCardMouseDown( s, e ))">
+                <div class="save-preview">
+                    @if ( s.Thumbnail != null )
+                    {
+                        <Image class="save-thumb" Texture="@s.Thumbnail" />
+                    }
+                    else
+                    {
+                        <IconPanel class="save-preview-placeholder" Text="image" />
+                    }
                 </div>
-                <label>#spawnmenu.saves.header</label>
-            </div>
-        </div>
-        <div class="save-window">
-            <div class="save-list">
-                @if ( !SaveFiles.Any() )
-                {
-                    <div class="empty-state">
-                        <IconPanel Text="bookmark_border" />
-                        <label>#spawnmenu.saves.empty</label>
+                <div class="save-info">
+                    <label class="save-name">@s.DisplayName</label>
+                    <div class="save-meta">
+                        @if ( !string.IsNullOrEmpty( s.Timestamp ) )
+                        {
+                            <label class="save-timestamp">@s.Timestamp</label>
+                        }
+                        @if ( !s.IsCompatible )
+                        {
+                            <label class="save-outdated-badge">#spawnmenu.saves.outdated_badge</label>
+                        }
                     </div>
-                }
-                @foreach ( var save in SaveFiles )
-                {
-                    var s = save;
-                    <div class="save-card @(!s.IsCompatible ? "outdated" : "")"
-                         @onclick="@(() => ConfirmLoad( s ))"
-                         @onmousedown="@((PanelEvent e) => OnCardMouseDown( s, e ))">
-                        <div class="save-preview">
-                            @if ( s.Thumbnail != null )
-                            {
-                                <Image class="save-thumb" Texture="@s.Thumbnail" />
-                            }
-                            else
-                            {
-                                <IconPanel class="save-preview-placeholder" Text="image" />
-                            }
-                        </div>
-                        <div class="save-info">
-                            <label class="save-name">@s.DisplayName</label>
-                            <div class="save-meta">
-                                @if ( !string.IsNullOrEmpty( s.Timestamp ) )
-                                {
-                                    <label class="save-timestamp">@s.Timestamp</label>
-                                }
-                                @if ( !s.IsCompatible )
-                                {
-                                    <label class="save-outdated-badge">#spawnmenu.saves.outdated_badge</label>
-                                }
-                            </div>
-                        </div>
-                        <div class="save-dots">
-                            <IconPanel Text="more_vert" />
-                        </div>
-                    </div>
-                }
+                </div>
+                <UIButton class="save-delete" Icon="delete" @onclick="@((PanelEvent e) => OnDeletePressed( s, e ))"></UIButton>
             </div>
-            <div class="footer">
-                <TextEntry @ref="SaveNameEntry" Placeholder="#spawnmenu.saves.name_placeholder" @onsubmit="@OnSave"></TextEntry>
-                <button @onclick="@OnSave">
-                    <IconPanel class="save-button-icon" Text="save" />
-                    <label>#spawnmenu.saves.save_button</label>
-                </button>
-            </div>
-        </div>
+        }
+    </div>
+    <div class="footer">
+        <TextEntry @ref="SaveNameEntry" Placeholder="#spawnmenu.saves.name_placeholder" @onsubmit="@OnSave"></TextEntry>
+        <UIButton Text="#spawnmenu.saves.save_button" @onclick="@OnSave"></UIButton>
     </div>
 </root>
 
@@ -132,6 +115,7 @@
         if ( e is MousePanelEvent { MouseButton: MouseButtons.Right } me )
         {
             me.StopPropagation();
+
             var menu = new Sandbox.UI.Menu();
             menu.AddOption( "#spawnmenu.saves.load_context", "download", () => ConfirmLoad( save ) );
             menu.AddOption( "#spawnmenu.saves.delete_context", "delete", () => ConfirmDelete( save ) );
@@ -140,44 +124,33 @@
         }
     }
 
+    // the trash button sits on the card, pressing it shouldn't count as a click on the card
+    void OnDeletePressed( SaveFileEntry save, PanelEvent e )
+    {
+        e.StopPropagation();
+        ConfirmDelete( save );
+    }
+
+    static string Phrase( string token, SaveFileEntry save ) => Game.Language.GetPhrase( token, new() { { "name", UIModal.Escape( save.DisplayName ) } } );
+
     void ConfirmLoad( SaveFileEntry save )
     {
         if ( !save.IsCompatible )
         {
-            _ = new StringQueryPopup
-            {
-                Title = "#spawnmenu.saves.incompatible_title",
-                Prompt = Game.Language.GetPhrase( "spawnmenu.saves.incompatible_message", new() { { "name", save.DisplayName } } ),
-                ConfirmLabel = "#spawnmenu.common.ok",
-                ShowInput = false,
-                Parent = FindPopupPanel()
-            };
+            UIModal.Confirm( this, "#spawnmenu.saves.incompatible_title", Phrase( "spawnmenu.saves.incompatible_message", save ), null, "#spawnmenu.common.ok", null );
             return;
         }
 
-        _ = new StringQueryPopup
-        {
-            Title = "#spawnmenu.saves.load_title",
-            Prompt = Game.Language.GetPhrase( "spawnmenu.saves.load_confirm", new() { { "name", save.DisplayName } } ),
-            ConfirmLabel = "#spawnmenu.saves.load_button",
-            ShowInput = false,
-            OnConfirm = _ => LoadSave( save.FileName ),
-            Parent = FindPopupPanel()
-        };
+        UIModal.Confirm( this, "#spawnmenu.saves.load_title", Phrase( "spawnmenu.saves.load_confirm", save ),
+            () => LoadSave( save.FileName ), "#spawnmenu.saves.load_button", "#spawnmenu.saves.cancel_button" );
     }
 
     void ConfirmDelete( SaveFileEntry save )
     {
-        var popup = new StringQueryPopup
-        {
-            Title = "#spawnmenu.saves.delete_title",
-            Prompt = Game.Language.GetPhrase( "spawnmenu.saves.delete_confirm", new() { { "name", save.DisplayName } } ),
-            ConfirmLabel = "#spawnmenu.saves.delete_button",
-            ShowInput = false,
-            OnConfirm = _ => DeleteSave( save.FileName ),
-            Parent = FindPopupPanel()
-        };
+        UIModal.Confirm( this, "#spawnmenu.saves.delete_title", Phrase( "spawnmenu.saves.delete_confirm", save ),
+            () => DeleteSave( save.FileName ), "#spawnmenu.saves.delete_button", "#spawnmenu.saves.cancel_button" );
     }
+
     void OnSave()
     {
         var saveName = SaveNameEntry?.Text?.Trim();

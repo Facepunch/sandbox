@@ -262,6 +262,9 @@ public class UISheetRow : Panel
 		if ( type == typeof( Color ) )
 			return new UIColor { Property = property };
 
+		if ( UIVector.Supports( type ) )
+			return new UIVector { Property = property };
+
 		if ( type == typeof( string ) && property.HasAttribute<ResourceSelectAttribute>() )
 		{
 			wide = true;

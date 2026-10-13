@@ -24,3 +24,43 @@ ContextMenuHost
 		pointer-events: none;
 	}
 }
+
+// the window of saves, effects.. in the top left, the inspector keeps the rest of the screen
+ContextMenuHost > .tool-window
+{
+	position: absolute;
+	top: $deadzone-y;
+	left: $deadzone-x;
+	flex-direction: column;
+	pointer-events: all;
+	z-index: 200;
+
+	> .tabs
+	{
+		flex-direction: row;
+		align-items: flex-end;
+		flex-shrink: 0;
+		height: 25px;
+		margin-left: 9px;
+		align-self: flex-start;
+		z-index: 10;
+
+		> *
+		{
+			@include ui-tab;
+		}
+	}
+
+	// sized by the page in it
+	> .body
+	{
+		@include ui-block;
+		flex-direction: column;
+		min-height: 0px;
+
+		> .hidden
+		{
+			display: none;
+		}
+	}
+}

@@ -1,0 +1,63 @@
+@import "/UI/Theme.scss";
+
+// design for vector control sheets
+UIVector
+{
+	flex-direction: row;
+	flex-grow: 1;
+	gap: 6px;
+
+	.axis
+	{
+		flex-direction: row;
+		flex-grow: 1;
+		flex-shrink: 1;
+		flex-basis: 0px;
+		min-width: 0px;
+		height: 22px;
+		border: 1px solid $ui-control-border;
+
+		.letter
+		{
+			width: 20px;
+			flex-shrink: 0;
+			align-items: center;
+			justify-content: center;
+			color: white;
+			font-size: 11px;
+			font-weight: 800;
+			background-color: $ui-control-border;
+		}
+
+		.textentry
+		{
+			flex-grow: 1;
+			min-width: 0px;
+			height: 100%;
+			padding: 0px 4px;
+			justify-content: center;
+			background-color: $ui-input-bg;
+			font-size: $ui-settings-font;
+			font-weight: 500;
+			color: $ui-text-label;
+			cursor: text;
+
+			.content-label
+			{
+				flex-grow: 1;
+				text-align: center;
+			}
+		}
+
+		&.x { border-color: $ui-axis-x; .letter { background-color: $ui-axis-x; } }
+		&.y { border-color: $ui-axis-y; .letter { background-color: $ui-axis-y; } }
+		&.z { border-color: $ui-axis-z; .letter { background-color: $ui-axis-z; } }
+		&.w { border-color: $ui-axis-w; .letter { background-color: $ui-axis-w; } }
+
+		// the empty slot after a Vector2
+		&.filler
+		{
+			border: 0px;
+		}
+	}
+}

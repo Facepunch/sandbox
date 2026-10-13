@@ -1,127 +1,43 @@
 @import "/UI/Theme.scss";
 
+// the settings of the picked effect, or what the page is for when none is picked
 EffectsProperties
 {
     flex-direction: column;
-    overflow: hidden;
-
-    .header
-    {
-        padding: 10px 14px;
-        flex-shrink: 0;
-
-        h2
-        {
-            gap: 0.5rem;
-            align-items: center;
-            font-size: 14px;
-            font-weight: 650;
-            font-family: $subtitle-font;
-            color: $menu-color;
-        }
-    }
+    flex-grow: 1;
+    min-width: 0px;
 
     .empty-state
     {
-        font-family: $subtitle-font;
-        padding: 16px 12px;
-        text-align: center;
-        color: $menu-text;
         flex-grow: 1;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-    }
+        padding-bottom: 40px;
+        text-align: center;
 
-    ControlSheet
-    {
-        flex-grow: 1;
-        overflow-y: scroll;
-        padding: 8px;
-
-        .body
+        IconPanel
         {
-            padding: 0;
-            margin: 0;
+            font-size: 64px;
+            color: $ui-blue;
         }
 
-        .controlgroup
+        .title
         {
-            padding: 0;
-
-            > .body
-            {
-                padding: 0;
-            }
-        }
-    }
-
-    ControlSheetGroup
-    {
-        > .body
-        {
-            padding: 0;
-            margin: 0;
-            gap: 2px;
-        }
-    }
-
-    .page
-    {
-        gap: 2px;
-    }
-
-    controlsheetrow, .control-row
-    {
-        width: 100%;
-        background-color: #53698111;
-        border: 1px solid transparent;
-        padding: 8px;
-        border-radius: 4px;
-        max-height: auto;
-        gap: 4px;
-        transition: background-color 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;
-
-        &:hover
-        {
-            background-color: #53698122;
-
-            > .left
-            {
-                color: #fff;
-            }
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: $ui-blue;
         }
 
-        &.action
+        .hint
         {
-            cursor: pointer;
-
-            &:hover
-            {
-                background-color: $menu-accent-soft;
-                border-color: rgba( $color-accent, 0.4 );
-                box-shadow: 0 0 10px rgba( $menu-accent, 0.12 );
-                transform: translateY( -1px );
-            }
-
-            &:active
-            {
-                background-color: $menu-accent;
-                box-shadow: 0 0 6px rgba( $menu-accent, 0.1 );
-                transform: translateY( 0 );
-            }
-        }
-
-        > .left
-        {
-            width: 150px;
-            overflow: hidden;
-            flex-shrink: 0;
-            gap: 4px;
-        }
-
-        > .right, > .left
-        {
-            flex-shrink: 0;
+            max-width: 400px;
+            margin-top: 14px;
+            font-size: 12px;
+            font-weight: 500;
+            color: $ui-text;
         }
     }
 }

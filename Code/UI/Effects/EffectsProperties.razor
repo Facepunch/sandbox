@@ -4,21 +4,29 @@
 @namespace Sandbox
 
 <root>
-    @if ( _selected.IsValid() )
-    {
-        @if ( _properties.Count > 0 )
+    <UISettingsPane Title=@GetTitle() Revision=@BuildHash()>
+        <Body>
+        @if ( _selected.IsValid() )
         {
-            <ControlSheet Target="@_properties" />
+            @if ( _properties.Count > 0 )
+            {
+                <UISheet Target=@_properties PropertyFilter=@UISheet.PropertiesAndButtons />
+            }
+            else
+            {
+                <div class="note">#spawnmenu.effects.no_properties</div>
+            }
         }
         else
         {
-            <div class="empty-state">#spawnmenu.effects.no_properties</div>
+            <div class="empty-state">
+                <IconPanel Text="auto_fix_high" />
+                <label class="title">#spawnmenu.effects.empty_title</label>
+                <label class="hint">#spawnmenu.effects.select_effect</label>
+            </div>
         }
-    }
-    else
-    {
-        <div class="empty-state">#spawnmenu.effects.select_effect</div>
-    }
+        </Body>
+    </UISettingsPane>
 </root>
 
 @code
@@ -29,8 +37,9 @@
 
     public override void Tick()
     {
-        if ( _manager is null )
-            _manager = Game.ActiveScene.GetSystem<PostProcessManager>();
+        base.Tick();
+
+        _manager ??= Game.ActiveScene.GetSystem<PostProcessManager>();
 
         var selectedPath = _manager?.SelectedPath;
         var resource = selectedPath != null
@@ -41,45 +50,28 @@
         {
             _selected = resource;
             RebuildProperties();
-        }
-
-        if ( _selected is not null )
             StateHasChanged();
+        }
     }
 
+    string GetTitle() => _selected.IsValid() ? LocalizedText.Resolve( _selected.Title ) : Game.Language.GetPhrase( "spawnmenu.mode.effects" );
+
+    // the settings of every component of the effect in one sheet, changes go through the game manager
     void RebuildProperties()
     {
-        var path = _selected?.ResourcePath;
-        if ( path is null )
-        {
-            _properties = [];
-            return;
-        }
-
         var props = new List<SerializedProperty>();
-        props.Add( TypeLibrary.CreateProperty( "#spawnmenu.common.on",
-            () => _manager?.IsEnabled( path ) ?? false,
-            v => _manager?.Set( path, v ) ) );
 
-        foreach ( var component in _manager?.GetSelectedComponents() ?? [] )
+        if ( _selected.IsValid() )
         {
-            var so = TypeLibrary.GetSerializedObject( component );
-            so.OnPropertyChanged = OnPropertyChanged;
-            props.AddRange( so.Where( FilterProperties ) );
+            foreach ( var component in _manager?.GetSelectedComponents() ?? [] )
+            {
+                var so = TypeLibrary.GetSerializedObject( component );
+                so.OnPropertyChanged = OnPropertyChanged;
+                props.AddRange( so.Where( UISheet.PropertiesAndButtons ) );
+            }
         }
 
         _properties = props;
-    }
-
-    static bool FilterProperties( SerializedProperty o )
-    {
-        if ( o.PropertyType is null ) return false;
-        if ( o.PropertyType.IsAssignableTo( typeof(Delegate) ) ) return false;
-
-        if ( o.IsMethod ) return true;
-        if ( !o.HasAttribute<PropertyAttribute>() ) return false;
-
-        return true;
     }
 
     void OnPropertyChanged( SerializedProperty prop )
@@ -91,5 +83,5 @@
         }
     }
 
-    protected override int BuildHash() => HashCode.Combine( _manager?.SelectedPath );
+    protected override int BuildHash() => HashCode.Combine( _selected, _properties.Count, Game.Language.SelectedCode );
 }

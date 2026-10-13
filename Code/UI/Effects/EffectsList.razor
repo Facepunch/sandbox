@@ -4,46 +4,47 @@
 @namespace Sandbox
 
 <root>
-    <div class="scroll-body">
-            @if ( _tab == 0 )
-            {
-            @foreach ( var group in _groups )
-            {
-                <div class="group-header">@(DisplayInfo.ForEnumValues<PostProcessGroup>().FirstOrDefault( entry => entry.value == group.Key ).info.Name)</div>
+    <UIEnumControl class="source" Property=@Source />
 
-                @foreach ( var entry in group )
+    <div class="list-section">
+        @if ( _tab == EffectsSource.Workshop )
+        {
+            <div class="search">
+                <TextEntry Placeholder="#spawnmenu.common.search" Value:bind=@_filter HasClearButton=@false @onsubmit=@OnFilterInput />
+            </div>
+        }
+
+        <div class="list">
+            @if ( _tab == EffectsSource.Installed )
+            {
+                @foreach ( var group in _groups )
                 {
-                    var path = entry.ResourcePath;
-                    var enabled = _manager?.IsEnabled( path ) ?? false;
-                    var selected = _manager?.SelectedPath == path;
+                    <div class="group-header">@(DisplayInfo.ForEnumValues<PostProcessGroup>().FirstOrDefault( entry => entry.value == group.Key ).info.Name)</div>
 
-                    <div class="effect-row @( selected ? "selected" : "" )"
-                         @onclick="@(() => OnClick( entry ))"
-                         @onmouseenter="@(() => _manager?.Preview( path ))"
-                         @onmouseleave="@(() => _manager?.Unpreview())">
+                    <div class="group-items">
+                        @foreach ( var entry in group )
+                        {
+                            var path = entry.ResourcePath;
+                            var enabled = _manager?.IsEnabled( path ) ?? false;
+                            var selected = _manager?.SelectedPath == path;
 
-                        <div class="thumb emoji">@GroupEmoji( entry.Group )</div>
-                        <div class="name">@entry.Title</div>
-                        <div class="toggle @( enabled ? "on" : "" )" @onclick:stopPropagation="true" @onclick="@(() => OnToggle( entry ))">
-                            <div class="checkmark">✓</div>
-                        </div>
-
+                            <div class="effect-row @( selected ? "active" : "" )"
+                                 @onclick="@(() => OnClick( entry ))"
+                                 @onmouseenter="@(() => _manager?.Preview( path ))"
+                                 @onmouseleave="@(() => _manager?.Unpreview())">
+                                <UICheckbox Value=@enabled OnValueChanged=@((bool _) => OnToggle( entry )) />
+                                <label class="name">@entry.Title</label>
+                            </div>
+                        }
                     </div>
                 }
-            }
 
-            @if ( !_groups.Any() )
-            {
-                <div class="empty-state">#spawnmenu.effects.no_installed</div>
+                @if ( !_groups.Any() )
+                {
+                    <div class="empty-state">#spawnmenu.effects.no_installed</div>
+                }
             }
-        }
-        else
-        {
-            <div class="workshop-search">
-                <TextEntry class="search-input" placeholder="#spawnmenu.common.search" value="@_filter"/>
-            </div>
-
-            @if ( _loadingWorkshop )
+            else if ( _loadingWorkshop )
             {
                 <div class="empty-state">#spawnmenu.common.loading</div>
             }
@@ -53,52 +54,61 @@
             }
             else
             {
-                @foreach ( var pkg in _workshopPackages )
-                {
-                    var mounted = _mountedResources.GetValueOrDefault( pkg.FullIdent );
-                    var resourcePath = mounted?.ResourcePath;
-                    var enabled = resourcePath != null && (_manager?.IsEnabled( resourcePath ) ?? false);
-                    var selected = resourcePath != null && _manager?.SelectedPath == resourcePath;
-                    var mounting = _mounting.Contains( pkg.FullIdent );
-                    var thumbUrl = mounted?.Icon != null ? $"thumb:{mounted.Icon.ResourcePath}" : pkg.Thumb;
+                <div class="group-items">
+                    @foreach ( var pkg in _workshopPackages )
+                    {
+                        var mounted = _mountedResources.GetValueOrDefault( pkg.FullIdent );
+                        var resourcePath = mounted?.ResourcePath;
+                        var enabled = resourcePath != null && (_manager?.IsEnabled( resourcePath ) ?? false);
+                        var selected = resourcePath != null && _manager?.SelectedPath == resourcePath;
+                        var mounting = _mounting.Contains( pkg.FullIdent );
+                        var thumbUrl = mounted?.Icon != null ? $"thumb:{mounted.Icon.ResourcePath}" : pkg.Thumb;
 
-                    <div class="effect-row @( selected ? "selected" : "" )"
-                         @onclick="@(() => OnWorkshopClick( pkg ))"
-                         @onmouseenter="@(() => { if ( resourcePath != null ) _manager?.Preview( resourcePath ); })"
-                         @onmouseleave="@(() => _manager?.Unpreview())">
-
-                        <div class="thumb" style="background-image: url(@thumbUrl)"></div>
-                        <div class="info">
-                            <div class="name">@pkg.Title</div>
-                            <div class="author">
-                                <div class="author-avatar" style="background-image: url(@pkg.Org.Thumb)"></div>
-                                <span>@pkg.Org.Title</span>
+                        <div class="effect-row workshop @( selected ? "active" : "" ) @( mounting ? "loading" : "" )"
+                             @onclick="@(() => OnWorkshopClick( pkg ))"
+                             @onmouseenter="@(() => { if ( resourcePath != null ) _manager?.Preview( resourcePath ); })"
+                             @onmouseleave="@(() => _manager?.Unpreview())">
+                            <UICheckbox Value=@enabled OnValueChanged=@((bool _) => OnWorkshopToggle( pkg )) />
+                            <div class="thumb" style="background-image: url(@thumbUrl)"></div>
+                            <div class="info">
+                                <label class="name">@pkg.Title</label>
+                                <div class="author">
+                                    <div class="author-avatar" style="background-image: url(@pkg.Org.Thumb)"></div>
+                                    <label>@pkg.Org.Title</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="toggle @( enabled ? "on" : "" ) @( mounting ? "loading" : "" )"
-                             @onclick:stopPropagation="true" @onclick="@(() => OnWorkshopToggle( pkg ))">
-                            <div class="checkmark">@( mounting ? "…" : "✓" )</div>
-                        </div>
-
-                    </div>
-                }
+                    }
+                </div>
             }
+        </div>
+
+        @if ( _tab == EffectsSource.Installed )
+        {
+            <div class="footer">
+                <UIButton Text="#spawnmenu.effects.presets" @onclick=@OpenPresetsMenu />
+            </div>
         }
     </div>
-
-    @if ( _tab == 0 )
-    {
-        <div class="footer">
-            <Button class="menu-action primary" Text="#spawnmenu.effects.presets" Icon="📋" onclick=@OpenPresetsMenu></Button>
-        </div>
-    }
 </root>
 
 @code
 {
+    /// <summary>
+    /// Where the listed effects come from.
+    /// </summary>
+    public enum EffectsSource
+    {
+        [Title( "#spawnmenu.effects.installed" )] Installed,
+        [Title( "#spawnmenu.effects.workshop" )] Workshop
+    }
+
     PostProcessManager _manager;
     IGrouping<PostProcessGroup, PostProcessResource>[] _groups = [];
-    int _tab = 0;
+    EffectsSource _tab = EffectsSource.Installed;
+
+    SerializedProperty _source;
+    SerializedProperty Source => _source ??= Game.TypeLibrary.CreateProperty( "Source", () => _tab, SwitchTab );
 
     // Workshop
     string _filter = "";
@@ -135,10 +145,10 @@
         StateHasChanged();
     }
 
-    public void SwitchTab( int tab )
+    public void SwitchTab( EffectsSource tab )
     {
         _tab = tab;
-        if ( tab == 1 && _workshopPackages.Count == 0 )
+        if ( tab == EffectsSource.Workshop && _workshopPackages.Count == 0 )
             _ = FetchWorkshop();
         StateHasChanged();
     }
@@ -148,7 +158,8 @@
         _loadingWorkshop = true;
         StateHasChanged();
 
-        var query = string.IsNullOrEmpty(_filter) ? "sort:newest" : $"sort:newest {_filter}";
+        // only effects, the newest of every type can have none of them
+        var query = string.IsNullOrEmpty( _filter ) ? "type:spp sort:newest" : $"type:spp sort:newest {_filter}";
         var result = await Package.FindAsync( query );
         _workshopPackages = result?.Packages.Where( p => p.TypeName == "spp" ).ToList() ?? new();
 
@@ -207,15 +218,6 @@
         _manager?.Toggle( entry.ResourcePath );
         StateHasChanged();
     }
-
-    static string GroupEmoji( PostProcessGroup group ) => group switch
-    {
-        PostProcessGroup.Effects  => "✨",
-        PostProcessGroup.Overlay  => "🎭",
-        PostProcessGroup.Shaders  => "⚡",
-        PostProcessGroup.Textures => "🧱",
-        _                         => "🔧",
-    };
 
     const string PresetsKey = "effects/presets";
 
@@ -326,15 +328,7 @@
 
         menu.AddOption( Game.Language.GetPhrase( "spawnmenu.effects.save_new_preset" ), "save", () =>
         {
-            var popup = new StringQueryPopup
-            {
-                Title = "#spawnmenu.effects.save_preset",
-                Prompt = "#spawnmenu.effects.save_preset_prompt",
-                Placeholder = "#spawnmenu.effects.preset_name_placeholder",
-                ConfirmLabel = "#spawnmenu.common.save",
-                OnConfirm = name => SaveNewPreset( name )
-            };
-            popup.Parent = FindPopupPanel();
+            UIModal.Prompt( this, "#spawnmenu.effects.save_preset", "", SaveNewPreset, "#spawnmenu.effects.preset_name_placeholder", "#spawnmenu.common.save", "save" );
         } );
 
         var list = LoadPresetList();
@@ -353,7 +347,23 @@
         menu.Open( this, Popup.PositionMode.UnderMouse );
     }
 
-    protected override int BuildHash() =>
-        HashCode.Combine( _tab, _manager?.SelectedPath, _manager?.IsEnabled( _manager?.SelectedPath ?? "" ), _loadingWorkshop );
-}
+    protected override int BuildHash()
+    {
+        var hash = new HashCode();
+        hash.Add( _tab );
+        hash.Add( _manager?.SelectedPath );
+        hash.Add( _loadingWorkshop );
+        hash.Add( _mounting.Count );
+        hash.Add( _workshopPackages.Count );
 
+        // the checkboxes follow the effects, which presets and the inspector can switch too
+        foreach ( var group in _groups )
+            foreach ( var entry in group )
+                hash.Add( _manager?.IsEnabled( entry.ResourcePath ) ?? false );
+
+        foreach ( var resource in _mountedResources.Values )
+            hash.Add( _manager?.IsEnabled( resource.ResourcePath ) ?? false );
+
+        return hash.ToHashCode();
+    }
+}

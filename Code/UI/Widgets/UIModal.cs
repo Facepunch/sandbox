@@ -8,10 +8,14 @@ namespace Sandbox;
 /// </summary>
 public class UIModal : Panel
 {
-	readonly UISheet _sheet;
 	bool _wired;
 	bool _focused;
 	int _framesLaidOut;
+
+	/// <summary>
+	/// What goes under the title bar.
+	/// </summary>
+	public Panel Body { get; }
 
 	/// <summary>
 	/// Called when Enter is pressed in one of its text boxes.
@@ -23,30 +27,40 @@ public class UIModal : Panel
 	/// </summary>
 	public Action OnClosed { get; set; }
 
-	public UIModal( string title, object target )
+	public UIModal( string title, object target ) : this( title )
+	{
+		var sheet = Body.AddChild<UISheet>();
+		sheet.PropertyFilter = UISheet.PropertiesAndButtons;
+		sheet.Target = target;
+	}
+
+	UIModal( string title )
 	{
 		AddClass( "modal" );
 
 		var window = Add.Panel( "window" );
 		window.Add.Panel( "title-bar" ).Add.Label( title );
 
-		_sheet = window.Add.Panel( "body" ).AddChild<UISheet>();
-		_sheet.PropertyFilter = UISheet.PropertiesAndButtons;
-		_sheet.Target = target;
+		Body = window.Add.Panel( "body" );
 	}
 
 	/// <summary>
 	/// Opens a window over the menu the panel is in. Only one stays open, a new one replaces it.
 	/// </summary>
-	public static UIModal Show( Panel source, string title, object target )
+	public static UIModal Show( Panel source, string title, object target ) => Open( source, new UIModal( title, target ) );
+
+	static UIModal Open( Panel source, UIModal modal )
 	{
 		var layer = SpawnMenuHost.ModalLayer ?? source.FindPopupPanel();
-		if ( layer is null ) return null;
+		if ( layer is null )
+		{
+			modal.Delete( true );
+			return null;
+		}
 
 		foreach ( var other in layer.Children.OfType<UIModal>().ToList() )
 			other.Close();
 
-		var modal = new UIModal( title, target );
 		modal.Parent = layer;
 
 		return modal;
@@ -93,6 +107,50 @@ public class UIModal : Panel
 
 		return modal;
 	}
+
+	/// <summary>
+	/// A confirmation window with buttons underneath
+	/// </summary>
+	/// <param name="title">The title bar, can be a localization token.</param>
+	/// <param name="message">The question, rich text, so &lt;b&gt; works. Escape names in it with <see cref="Escape"/>.</param>
+	/// <param name="onConfirm">Called when it is confirmed.</param>
+	/// <param name="confirmText">What the confirm button says.</param>
+	/// <param name="cancelText">What the cancel button says, no cancel button when null.</param>
+	public static UIModal Confirm( Panel source, string title, string message, Action onConfirm, string confirmText = "#ui.common.confirm", string cancelText = "#spawnmenu.common.cancel" )
+	{
+		var modal = new UIModal( title );
+		modal.AddClass( "confirm" );
+
+		var text = modal.Body.Add.Label( "", "message" );
+		text.IsRich = true;
+		text.Text = message;
+
+		modal.Body.AddChild<UISeparator>();
+
+		var buttons = modal.Body.Add.Panel( "buttons" );
+		AddButton( buttons, confirmText, () =>
+		{
+			onConfirm?.Invoke();
+			modal.Close();
+		} );
+
+		if ( cancelText is not null )
+			AddButton( buttons, cancelText, modal.Close );
+
+		return Open( source, modal );
+	}
+
+	static void AddButton( Panel row, string text, Action action )
+	{
+		var button = row.AddChild<UIButton>();
+		button.Text = text;
+		button.AddEventListener( "onclick", action );
+	}
+
+	/// <summary>
+	/// Makes text safe to put in the rich message of <see cref="Confirm"/>
+	/// </summary>
+	public static string Escape( string text ) => text?.Replace( "&", "&amp;" ).Replace( "<", "&lt;" ).Replace( ">", "&gt;" );
 
 	public void Submit() => OnSubmit?.Invoke();
 

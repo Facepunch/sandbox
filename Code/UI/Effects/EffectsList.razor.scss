@@ -2,182 +2,180 @@
 
 EffectsList
 {
-	flex-direction: column;
-	min-height: 0;
-	position: relative;
+    flex-direction: column;
+    width: 228px;
+    flex-shrink: 0;
+    gap: 8px;
+    font-family: $body-font;
 
-	.scroll-body
-	{
-		flex: 1 1 0;
-		min-height: 0;
-		flex-direction: column;
-		overflow-y: scroll;
-	}
+    > .source
+    {
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
 
-	.footer
-	{
-		flex-shrink: 0;
-		flex-direction: row;
-		padding: 6px 8px;
-		justify-content: flex-end;
-	}
+    > .list-section
+    {
+        @include ui-section;
+        flex-direction: column;
+        flex-grow: 1;
+        min-height: 0px;
+        padding: 1px;
+    }
 
-	.workshop-search
-	{
-		padding: 6px 8px;
-		.search-input
-		{
-			width: 100%;
-			background-color: rgba( white, 0.06 );
-			border: 1px solid rgba( white, 0.1 );
-			border-radius: 4px;
-			padding: 5px 8px;
-			font-size: 1rem;
-			font-family: $body-font;
-			color: white;
-		}
-	}
+    .search
+    {
+        flex-shrink: 0;
+        padding: 6px;
+        border-bottom: 1px solid $ui-separator;
 
-	.group-header
-	{
-		font-family: $subtitle-font;
-		@include ui-heading-text-on-dark;
-		letter-spacing: 1px;
-		margin-top: 8px;
-		margin-bottom: 4px;
-		margin-left: 12px;
-		margin-right: 10px;
-		flex-shrink: 0;
-	}
+        TextEntry
+        {
+            @include ui-text-entry;
+            flex-grow: 1;
+        }
+    }
 
-	.empty-state
-	{
-		font-family: $subtitle-font;
-		padding: 16px 12px;
-		text-align: center;
-		color: $menu-text;
-	}
+    .list
+    {
+        @include ui-scroll;
+        flex-direction: column;
+        flex-grow: 1;
+        min-height: 0px;
+        overflow-y: scroll;
+    }
 
-	.effect-row
-	{
-		flex-direction: row;
-		align-items: center;
-		padding: 6px 8px;
-		border-radius: 4px;
-		margin: 2px 4px;
-		transition: background-color 0.08s ease;
-		cursor: pointer;
-		flex-shrink: 0;
+    .group-header
+    {
+        @include ui-title-bar;
+        border-radius: 0px;
 
-		.thumb
-		{
-			width: 28px;
-			height: 28px;
-			border-radius: 4px;
-			background-size: cover;
-			background-position: center;
-			background-color: rgba( white, 0.05 );
-			flex-shrink: 0;
+        &:first-child
+        {
+            border-radius: 2px 2px 0px 0px;
+        }
+    }
 
-			&.emoji
-			{
-				background-image: none;
-				background-color: rgba( white, 0.07 );
-				justify-content: center;
-				align-items: center;
-				font-size: 1rem;
-			}
-		}
+    .group-items
+    {
+        flex-direction: column;
+        flex-shrink: 0;
+    }
 
-		.name
-		{
-			flex-grow: 1;
-			font-size: 1rem;
-			font-weight: 500;
-			font-family: $body-font;
-			color: $menu-text;
-			margin: 0 8px;
-		}
+    .empty-state
+    {
+        flex-shrink: 0;
+        padding: 16px 12px;
+        justify-content: center;
+        text-align: center;
+        color: $ui-text-muted;
+        font-size: 12px;
+    }
 
-		.info
-		{
-			flex-grow: 1;
-			flex-direction: column;
-			justify-content: center;
-			margin: 0 8px;
+    .footer
+    {
+        flex-shrink: 0;
+        padding: 8px 7px 7px 7px;
 
-			.name
-			{
-				flex-grow: 0;
-				margin: 0;
-			}
+        UIButton
+        {
+            flex-grow: 1;
+        }
+    }
+}
 
-			.author
-			{
-				flex-direction: row;
-				align-items: center;
-				font-size: 0.9rem;
-				font-family: $body-font;
-				color: rgba( white, 0.35 );
-				margin-top: 2px;
+EffectsList .effect-row
+{
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 9px;
+    height: 33px;
+    padding: 0px 7px;
+    border: 1px solid transparent;
+    color: $ui-text;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
 
-				.author-avatar
-				{
-					width: 12px;
-					height: 12px;
-					border-radius: 2px;
-					background-size: cover;
-					background-position: center;
-					background-color: rgba( white, 0.1 );
-					margin-right: 4px;
-					flex-shrink: 0;
-				}
-			}
-		}
+    &:nth-child( even )
+    {
+        background-color: $ui-row-alt;
+    }
 
-		.toggle
-		{
-			width: 20px;
-			height: 20px;
-			border-radius: 4px;
-			border: 1.5px solid rgba( white, 0.2 );
-			background-color: rgba( black, 0.4 );
-			flex-shrink: 0;
-			justify-content: center;
-			align-items: center;
+    &:hover
+    {
+        background-color: $ui-blue-soft;
+        sound-in: ui.hover;
+    }
 
-			.checkmark { font-size: 12px; color: transparent; }
+    &:active
+    {
+        sound-in: ui.select;
+    }
 
-			&.on
-			{
-				border-color: $color-accent;
-				background-color: rgba( $color-accent, 0.2 );
-				.checkmark { color: $color-accent; }
-			}
+    // the one whose settings are shown
+    &.active
+    {
+        border-color: $ui-blue;
+    }
 
-			&.loading
-			{
-				opacity: 0.5;
-				pointer-events: none;
-				.checkmark { color: rgba( white, 0.5 ); }
-			}
+    .name
+    {
+        flex-grow: 1;
+        min-width: 0px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
 
-			&:hover { border-color: rgba( $color-accent, 0.8 ); }
-		}
+    // packages from the workshop, with their picture and who made them
+    &.workshop
+    {
+        height: 44px;
 
-		&:hover
-		{
-			background-color: $menu-accent-soft;
-			.name { color: $menu-text-strong; }
-			.info .name { color: $menu-text-strong; }
-		}
+        .thumb
+        {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            background-color: $ui-tile-bg;
+            background-size: cover;
+            background-position: center;
+        }
 
-		&.selected
-		{
-			background-color: $menu-accent-soft;
-			.name { color: $menu-color; }
-			.info .name { color: $menu-color; }
-			.thumb { border: 1px solid rgba( $color-accent, 0.4 ); }
-		}
-	}
+        .info
+        {
+            flex-direction: column;
+            flex-grow: 1;
+            min-width: 0px;
+            gap: 2px;
+        }
+
+        .author
+        {
+            flex-direction: row;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: $ui-text-muted;
+        }
+
+        .author-avatar
+        {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+            background-size: cover;
+            background-position: center;
+            background-color: $ui-tile-bg;
+        }
+    }
+
+    // mounting the package before it can be used
+    &.loading
+    {
+        opacity: 0.5;
+        pointer-events: none;
+    }
 }
