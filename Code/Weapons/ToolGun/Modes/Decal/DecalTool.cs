@@ -106,8 +106,8 @@ public sealed class DecalTool : ToolMode
 	}
 
 	// Decal preview visuals settings
-	const float PreviewOpacityMax = 0.25f;
-	const float PreviewOpacityMin = 0.1f;
+	const float PreviewOpacityMax = 0.35f;
+	const float PreviewOpacityMin = 0.2f;
 	const float PreviewPulsePeriod = 1f; // how long it takes to go from Max to Min, and vice versa
 
 	/// <summary>
@@ -150,6 +150,7 @@ public sealed class DecalTool : ToolMode
 		_previewDecal.ColorTint = Tint.WithAlpha( Tint.a * opacity );
 		_previewDecal.Scale = Scale.Clamp( 0.1f, 4f );
 		_previewDecal.AttenuationAngle = Attenuation.Clamp( 0f, 1f );
+		_previewDecal.SortLayer = uint.MaxValue;
 
 		_preview.Enabled = true;
 	}
