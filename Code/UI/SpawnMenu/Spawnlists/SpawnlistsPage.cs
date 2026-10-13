@@ -77,8 +77,6 @@ public abstract class SpawnlistsPage : BaseSpawnMenu
 						: () => OnInstalledRightClick( captured ) );
 				_spawnlistOptions[entry.StorageEntry.Id].Tokenize = false;
 			}
-
-			AddSkeletons( Collection.PendingCount );
 		}
 
 		AddHeader( "#spawnmenu.section.workshop" );

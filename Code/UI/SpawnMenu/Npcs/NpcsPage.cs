@@ -3,7 +3,6 @@ public class NpcsPage : BaseSpawnMenu
 {
 	protected override void Rebuild()
 	{
-		AddHeader( "#spawnmenu.section.categories" );
 		AddOption( "📦", "#spawnmenu.entity.all", () => new EntityListCloud { LocalCategory = "Npc", Query = "+npc" } );
 		AddOption( "🧍", "#spawnmenu.npc.humanoid", () => new EntityListCloud { LocalCategory = "Npc/Humanoid", Query = "+npc +humanoid" } );
 		AddOption( "🤖", "#spawnmenu.npc.other", () => new EntityListCloud { LocalCategory = "Npc/Other", Query = "+npc -humanoid" } );

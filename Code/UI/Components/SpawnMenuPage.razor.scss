@@ -27,156 +27,32 @@ SpawnMenuPage > .body
 
 SpawnMenuPage .tree
 {
-	flex-direction: column;
 	flex-grow: 1;
-	flex-shrink: 1;
 	min-height: 0px;
-	padding: 0px;
-	overflow-y: scroll;
-	@include ui-scroll;
 
-	> *
+	.treeview
 	{
-		flex-shrink: 0;
+		flex-grow: 1;
+		@include ui-scroll;
 	}
 }
 
-SpawnMenuPage .tree-grow
+SpawnMenuPage .treeview .tree-row
 {
-	flex-grow: 1;
-	flex-shrink: 1;
-	min-height: 12px;
-}
-
-SpawnMenuPage .tree-header
-{
-	flex-direction: row;
-	align-items: center;
-	height: 29px;
-	padding-left: 10px;
-	gap: 9px;
-	margin-top: 12px;
-	cursor: pointer;
-
-	&:first-child
-	{
-		margin-top: 0px;
-	}
-
-	.box
-	{
-		flex-direction: row;
-		align-items: center;
-		justify-content: center;
-		width: 13px;
-		height: 13px;
-		flex-shrink: 0;
-		border: 1px solid $ui-text;
-		background-color: $ui-check-bg;
-
-		IconPanel
-		{
-			font-size: 11px;
-			font-weight: 700;
-			color: $ui-text;
-		}
-	}
-
-	label
-	{
-		@include ui-heading-text;
-		white-space: nowrap;
-	}
-
-	&:hover
-	{
-		label
-		{
-			color: $ui-text;
-		}
-	}
-}
-
-// the vertical line goes down the left of the rows, each row adds its own tick
-SpawnMenuPage .tree-items
-{
-	flex-direction: column;
-	margin-left: 15px;
-	padding-left: 17px;
-
-	&.flat
-	{
-		margin-left: 8px;
-		padding-left: 0px;
-	}
-}
-
-SpawnMenuPage .tree-row
-{
-	position: relative;
-	flex-direction: row;
-	align-items: center;
-	height: 19px;
-	gap: 5px;
-	padding: 0 4px 0 6px;
 	color: $ui-text;
 	font-size: 12px;
 	font-weight: 500;
-	cursor: pointer;
-
-	// vertical segment
-	&::before
-	{
-		content: "";
-		position: absolute;
-		left: -17px;
-		top: 0px;
-		bottom: 0px;
-		width: 2px;
-		background-color: $ui-tree-line;
-	}
-
-	// horizontal tick
-	&::after
-	{
-		content: "";
-		position: absolute;
-		left: -17px;
-		top: 9px;
-		width: 17px;
-		height: 2px;
-		background-color: $ui-tree-line;
-	}
-
-	&.last::before
-	{
-		bottom: 9px;
-	}
-
-	IconPanel
-	{
-		width: 13px;
-		flex-shrink: 0;
-		font-size: 13px;
-		color: $ui-text-muted;
-	}
-
-	label
-	{
-		flex-grow: 1;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
-	}
 
 	@include ui-selectable;
 
+	&.selected
+	{
+		background-color: transparent;
+	}
+
 	&.active
 	{
-		IconPanel
-		{
-			color: white;
-		}
+		@include ui-selected;
 	}
 
 	&.disabled
@@ -184,13 +60,27 @@ SpawnMenuPage .tree-row
 		opacity: 0.45;
 		pointer-events: none;
 	}
-}
 
-SpawnMenuPage .tree-items.flat .tree-row
-{
-	&::before, &::after
+	// every pooled row carries a skeleton once it's been a loading row, only loading rows show it
+	SpawnlistSkeleton
 	{
 		display: none;
+	}
+
+	&.loading
+	{
+		opacity: 1;
+
+		.tree-content
+		{
+			flex-grow: 1;
+			align-self: stretch;
+		}
+
+		SpawnlistSkeleton
+		{
+			display: flex;
+		}
 	}
 }
 
