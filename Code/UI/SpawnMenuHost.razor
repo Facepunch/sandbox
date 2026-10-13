@@ -63,7 +63,9 @@
         var openInspectMenu = Input.Down("inspectmenu");
         var openAnyMenu = openSpawnMenu || openInspectMenu;
 
-        stickOpen = stickOpen || (Sandbox.UI.InputFocus.Current?.Ancestors.Contains(Panel) ?? false);
+        // Stay open while typing in one of our text entries, so letting go of the key doesn't eat the input.
+        // Other focusable controls, like the trees, shouldn't pin the menu just because they were clicked.
+        stickOpen = stickOpen || (Sandbox.UI.InputFocus.Current is TextEntry entry && entry.Ancestors.Contains(Panel));
 
         if (stickOpen && Input.Pressed("spawnmenu")) stickOpen = false;
 
