@@ -17,17 +17,7 @@
 
     <Header>
         <SpawnMenuToolbar>
-			<Left>
-				@*
-				<Button Icon="home" @onclick="@GoHome"></Button>
-				<Button Icon="arrow_upward" Disabled=@( currentDir?.Parent == null ) @onclick="@GoUp"></Button>
-				*@
-			</Left>
 			<Body>
-				@*
-				<SpawnMenuPath Path=@CurrentPath></SpawnMenuPath>
-				*@
-
 				<label>@Game.Language.GetPhrase( "ui.mounts.item_count", new() { { "mount", mount.Title }, { "count", GetData().Count() } } )</label>
 			</Body>
 			<Right>
@@ -40,14 +30,6 @@
 		
         <VirtualGrid Items=@( GetData() ) ItemSize=@(new Vector2( 123, 123 ))>
             <Item Context="item">
-
-				@if (item is ResourceFolder dir)
-                {
-                    <div class="folder" @onclick=@( () => currentDir = dir )>
-						<div><i>folder</i></div>
-						<div class="name">@dir.Name</div>
-					</div>
-                }
 
                 @if (item is ResourceLoader loader)
                 {
@@ -66,38 +48,23 @@
     public string Ident { get; set; }
     public string Filter { get; set; }
 
-	ResourceFolder currentDir;
+	/// <summary>
+	/// Show the models in this folder and everything under it. Null shows the whole mount.
+	/// </summary>
+	public ResourceFolder Folder { get; set; }
 
     BaseGameMount mount;
 
-	protected override int BuildHash() => HashCode.Combine(Ident, Filter);
+	protected override int BuildHash() => HashCode.Combine(Ident, Folder, Filter);
 
     protected override void OnParametersSet()
     {
         mount = Sandbox.Mounting.Directory.Get( Ident );
     }
 
-	void GoHome()
-	{
-		currentDir = mount.RootFolder;
-	}
-
-	void GoUp()
-	{
-		if ( currentDir.Parent != null )
-		{
-			currentDir = currentDir.Parent;
-		}
-	}
-
-	string CurrentPath
-	{
-		get => currentDir?.Path ?? "/";
-	}
-
     IEnumerable<object> GetData()
     {
-		var q = mount.GetAll( ResourceType.Model )
+		var q = (Folder?.GetAllFilesRecursive().Where( x => x.Type == ResourceType.Model ) ?? mount.GetAll( ResourceType.Model ))
 						.Where( x => !x.Flags.Contains( Sandbox.Mounting.ResourceFlags.DeveloperOnly ) ); // Hide dev-only junk models
 
 		if ( !string.IsNullOrWhiteSpace( Filter ) )

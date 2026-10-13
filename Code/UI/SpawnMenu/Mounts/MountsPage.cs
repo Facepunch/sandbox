@@ -30,8 +30,11 @@ public class MountsPage : BaseSpawnMenu
 
 			foreach ( var entry in available.OrderBy( x => x.Title ) )
 			{
-				var o = AddOption( entry.Title, () => new MountContent() { Ident = entry.Ident } );
+				var ident = entry.Ident;
+				var o = AddOption( entry.Title, () => new MountContent() { Ident = ident } );
 				o.Enabled = entry.Mounted;
+				o.Key = ident;
+				o.LoadChildren = () => FolderOptions( ident, Sandbox.Mounting.Directory.Get( ident )?.RootFolder );
 
 				mountOptions[entry.Ident] = o;
 			}
@@ -48,6 +51,30 @@ public class MountsPage : BaseSpawnMenu
 
 				mountOptions[entry.Ident] = o;
 			}
+		}
+	}
+
+	/// <summary>
+	/// The folders under this one that have models somewhere inside, each opening onto its own.
+	/// </summary>
+	IEnumerable<SpawnMenuOption> FolderOptions( string ident, ResourceFolder folder )
+	{
+		if ( folder is null ) yield break;
+
+		foreach ( var child in folder.Folders.OrderBy( x => x.Name, StringComparer.OrdinalIgnoreCase ) )
+		{
+			if ( !child.ContainsType( ResourceType.Model ) ) continue;
+
+			var captured = child;
+			yield return new SpawnMenuOption
+			{
+				Icon = "folder",
+				Name = child.Name,
+				Key = $"{ident}:{child.Path}",
+				Tokenize = false,
+				PanelCreator = () => new MountContent() { Ident = ident, Folder = captured },
+				LoadChildren = captured.Folders.Any( x => x.ContainsType( ResourceType.Model ) ) ? () => FolderOptions( ident, captured ) : null
+			};
 		}
 	}
 

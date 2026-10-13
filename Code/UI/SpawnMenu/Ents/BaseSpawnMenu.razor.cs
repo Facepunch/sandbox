@@ -34,6 +34,7 @@ public partial class BaseSpawnMenu : Panel
 		Tree.Comparer = new OptionComparer();
 		Tree.GetChildren = o => o.Children;
 		Tree.GetParent = o => o.Parent;
+		Tree.CanExpand = o => o.Enabled && o.HasChildren;
 		Tree.OnRow = BindRow;
 		Tree.OnSelect = OnTreeSelect;
 		Tree.OnContextMenu = o => o.OnRightClick?.Invoke();
@@ -166,13 +167,16 @@ public partial class BaseSpawnMenu : Panel
 		// Clicking empty space drops the selection but still reports the cursor row
 		if ( !Tree.IsSelected( o ) ) return;
 
-		if ( o.Children.Count > 0 )
+		if ( !o.Enabled ) return;
+
+		// Headers only group things, clicking one opens or closes it
+		if ( o.PanelCreator is null && o.Panel is null && o.OnClick is null )
 		{
 			Tree.Toggle( o );
 			return;
 		}
 
-		if ( !o.Enabled ) return;
+		if ( o.HasChildren ) Tree.Open( o );
 
 		if ( o.OnClick != null )
 		{
@@ -244,17 +248,57 @@ public partial class BaseSpawnMenu : Panel
 		public Action OnClick { get; set; }
 		public Action OnRightClick { get; set; }
 
+		/// <summary>
+		/// Identifies this option across rebuilds, so the tree keeps it open and selected.
+		/// Defaults to the name - set it when names can repeat, like folders.
+		/// </summary>
+		public string Key
+		{
+			get => field ?? Name;
+			set => field = value;
+		}
+
 		public SpawnMenuOption Parent { get; set; }
-		public List<SpawnMenuOption> Children { get; } = new();
+
+		/// <summary>
+		/// Makes the children the first time the option is opened, for trees too big to build up front.
+		/// </summary>
+		public Func<IEnumerable<SpawnMenuOption>> LoadChildren { get; set; }
+
+		List<SpawnMenuOption> _children;
+
+		public List<SpawnMenuOption> Children
+		{
+			get
+			{
+				if ( _children is not null ) return _children;
+
+				_children = new();
+				if ( LoadChildren is null ) return _children;
+
+				foreach ( var child in LoadChildren() )
+				{
+					child.Parent = this;
+					_children.Add( child );
+				}
+
+				return _children;
+			}
+		}
+
+		/// <summary>
+		/// Whether this can be opened, without loading the children to find out.
+		/// </summary>
+		public bool HasChildren => _children is null ? LoadChildren is not null : _children.Count > 0;
 	}
 
 	/// <summary>
-	/// Options are recreated on every rebuild. Match them by name so open headers stay open.
+	/// Options are recreated on every rebuild. Match them by key so open ones stay open.
 	/// </summary>
 	class OptionComparer : IEqualityComparer<SpawnMenuOption>
 	{
-		public bool Equals( SpawnMenuOption a, SpawnMenuOption b ) => a?.Name == b?.Name;
-		public int GetHashCode( SpawnMenuOption o ) => o.Name?.GetHashCode() ?? 0;
+		public bool Equals( SpawnMenuOption a, SpawnMenuOption b ) => a?.Key == b?.Key;
+		public int GetHashCode( SpawnMenuOption o ) => o.Key?.GetHashCode() ?? 0;
 	}
 }
 
