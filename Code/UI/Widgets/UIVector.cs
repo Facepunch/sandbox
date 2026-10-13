@@ -4,13 +4,17 @@ using Sandbox.UI.Construct;
 namespace Sandbox;
 
 /// <summary>
-/// A Vector2, Vector3 or Vector4 property, a number box for each axis with the axis letter in its color in front of it.
+/// A Vector2, Vector3 or Vector4 property, a number box for each axis with the axis letter in front of it.
 /// </summary>
 public class UIVector : BaseControl
 {
 	static readonly string[] Axes = { "x", "y", "z", "w" };
 
-	readonly List<NumberEntry> _entries = new();
+	readonly List<UIVectorAxis> _entries = new();
+
+	const float ScrubSnap = 0.01f;
+
+	float _snap = ScrubSnap;
 
 	/// <summary>
 	/// Whether we have a control for this type.
@@ -33,17 +37,23 @@ public class UIVector : BaseControl
 		if ( Property is null ) return;
 
 		var count = AxisCount( Property.PropertyType );
+		var hasRange = Property.TryGetAttribute<RangeAttribute>( out var range );
+		_snap = hasRange ? MathF.Min( ScrubSnap, (range.Max - range.Min) / 10f ) : ScrubSnap;
 
 		for ( int i = 0; i < count; i++ )
 		{
-			var axis = Add.Panel( $"axis {Axes[i]}" );
-			axis.Add.Panel( "letter" ).Add.Label( Axes[i].ToUpperInvariant() );
-
-			var entry = axis.AddChild<NumberEntry>();
+			var entry = AddChild<UIVectorAxis>( $"axis {Axes[i]}" );
+			entry.Prefix = Axes[i].ToUpperInvariant();
 			entry.NumberFormat = "0.###";
 
+			if ( hasRange )
+			{
+				entry.MinValue = range.Min;
+				entry.MaxValue = range.Max;
+			}
+
 			var index = i;
-			entry.OnTextEdited = text => SetAxis( index, text );
+			entry.OnTextEdited = text => SetAxis( index, text, !entry.HasFocus );
 
 			_entries.Add( entry );
 		}
@@ -72,10 +82,15 @@ public class UIVector : BaseControl
 		}
 	}
 
-	void SetAxis( int index, string text )
+	void SetAxis( int index, string text, bool scrubbed )
 	{
 		var values = Read();
-		values[index] = text.ToFloat( values[index] );
+		var value = text.ToFloat( values[index] );
+
+		if ( scrubbed && _snap > 0f )
+			value = MathF.Round( value / _snap ) * _snap;
+
+		values[index] = value;
 		Write( values );
 	}
 
@@ -109,5 +124,69 @@ public class UIVector : BaseControl
 			Property.SetValue( new Vector3( values[0], values[1], values[2] ) );
 		else
 			Property.SetValue( new Vector4( values[0], values[1], values[2], values[3] ) );
+	}
+}
+
+/// <summary>
+/// One axis of a <see cref="UIVector"/>.
+/// </summary>
+public class UIVectorAxis : NumberEntry
+{
+	Panel _cover;
+
+	public UIVectorAxis()
+	{
+		FocusOnClick = false;
+	}
+
+	protected override void OnMouseDown( MousePanelEvent e )
+	{
+		// the same press NumberEntry starts its scrub on
+		var scrub = CanEdit && e.Button == "mouseleft" && e.Target == PrefixLabel;
+
+		if ( e.Target != PrefixLabel )
+			Focus();
+
+		base.OnMouseDown( e );
+
+		if ( scrub ) StartDrag();
+	}
+
+	protected override void OnMouseUp( MousePanelEvent e )
+	{
+		base.OnMouseUp( e );
+		EndDrag();
+	}
+
+	public override void Tick()
+	{
+		base.Tick();
+
+		// the press can end without a mouse up reaching us, the cover never outlives it
+		if ( _cover is not null && !HasActive )
+			EndDrag();
+	}
+
+	public override void OnDeleted()
+	{
+		base.OnDeleted();
+		EndDrag();
+	}
+
+	void StartDrag()
+	{
+		EndDrag();
+
+		var root = FindRootPanel();
+		if ( root is null ) return;
+
+		_cover = root.Add.Panel( "vector-drag-cover" );
+		_cover.Style.Set( "position: fixed; left: 0px; top: 0px; right: 0px; bottom: 0px; pointer-events: all; cursor: ew-resize; z-index: 100000;" );
+	}
+
+	void EndDrag()
+	{
+		_cover?.Delete( true );
+		_cover = null;
 	}
 }

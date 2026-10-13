@@ -63,7 +63,8 @@
         // Other focusable controls, like the trees, shouldn't pin the menu just because they were clicked.
         stickOpen = stickOpen || (Sandbox.UI.InputFocus.Current is TextEntry entry && entry.Ancestors.Contains(Panel));
 
-        if (stickOpen && Input.Pressed("spawnmenu")) stickOpen = false;
+        // either menu key lets go of a menu that stayed up for typing, it then closes when the key is released
+        if (stickOpen && (Input.Pressed("spawnmenu") || Input.Pressed("inspectmenu"))) stickOpen = false;
 
         bool state = stickOpen || openAnyMenu;
 
