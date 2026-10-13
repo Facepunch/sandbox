@@ -3,7 +3,6 @@ public class WeaponsPage : BaseSpawnMenu
 {
 	protected override void Rebuild()
 	{
-		AddHeader( "#spawnmenu.section.categories" );
 		AddOption( "📦", "#spawnmenu.entity.all", () => new EntityListCloud { LocalCategory = "Weapon", Query = "+weapon" } );
 		AddOption( "🗡️", "#spawnmenu.weapon.melee", () => new EntityListCloud { LocalCategory = "Weapon/Melee", Query = "+weapon +melee" } );
 		AddOption( "🛠️", "#spawnmenu.weapon.utility", () => new EntityListCloud { LocalCategory = "Weapon/Utility", Query = "+weapon +utility" } );

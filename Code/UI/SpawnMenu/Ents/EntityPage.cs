@@ -29,7 +29,6 @@ public class EntityPage : BaseSpawnMenu
 
 	protected override void Rebuild()
 	{
-		AddHeader( "#spawnmenu.section.categories" );
 		AddOption( "\U0001f9e0", "#spawnmenu.entity.all", () => new EntityListCloud { IncludeLocalEntities = true, ExcludedLocalCategoryRoots = new[] { "Weapon", "Npc" }, Query = "-cat:weapon -cat:npc" } );
 
 		var categories = ResourceLibrary.GetAll<ScriptedEntity>()
