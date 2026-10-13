@@ -109,7 +109,7 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "PreferredSlot": 1,
+        "PreferredSlot": 0,
         "PrimaryAmmoType": null,
         "PrimaryAutomatic": true,
         "PrimaryDelay": 0.1,
