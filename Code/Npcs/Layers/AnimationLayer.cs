@@ -537,6 +537,11 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		_renderer.Set( "move_z", velocity.z );
 		_renderer.Set( "speed_move", Speed );
 		_renderer.Set( "move_rotationspeed", rotationSpeed );
+
+		_renderer.Set( "wish_groundspeed", velocity.WithZ( 0f ).Length );
+		_renderer.Set( "wish_x", forward );
+		_renderer.Set( "wish_y", sideward );
+		_renderer.Set( "wish_z", velocity.z );
 	}
 
 	/// <summary>
@@ -583,6 +588,11 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		_renderer.Set( "b_grounded", false );
 		_renderer.Set( "speed_move", 1f );
 		_renderer.Set( "move_rotationspeed", 0f );
+		_renderer.Set( "wish_speed", 0f );
+		_renderer.Set( "wish_groundspeed", 0f );
+		_renderer.Set( "wish_y", 0f );
+		_renderer.Set( "wish_x", 0f );
+		_renderer.Set( "wish_z", 0f );
 
 		ResetAim();
 	}
