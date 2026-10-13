@@ -23,8 +23,6 @@ public class DupesPage : BaseSpawnMenu
 			} );
 		}
 
-
-		AddGrow();
 		AddHeader( "#spawnmenu.section.local" );
 		AddOption( "📂", "#spawnmenu.dupes.local", () => new DupesLocal() );
 	}

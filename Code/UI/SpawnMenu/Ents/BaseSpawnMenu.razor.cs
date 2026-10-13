@@ -1,4 +1,4 @@
-﻿using Sandbox.UI;
+using Sandbox.UI;
 namespace Sandbox;
 
 public partial class BaseSpawnMenu : Panel
@@ -10,12 +10,43 @@ public partial class BaseSpawnMenu : Panel
 	protected Panel MenuFooter;
 	bool _addedFooter;
 
+	Panel TreeContainer;
+	readonly TreeView<SpawnMenuOption> Tree = new();
+
+	/// <summary>
+	/// Top level options and headers.
+	/// </summary>
+	readonly List<SpawnMenuOption> roots = new();
+
+	/// <summary>
+	/// The header new options are added under, or null for the root.
+	/// </summary>
+	SpawnMenuOption currentHeader;
+
+	/// <summary>
+	/// Headers we've opened once already. New headers start open, after that the tree remembers.
+	/// </summary>
+	readonly HashSet<string> knownHeaders = new();
+
+	public BaseSpawnMenu()
+	{
+		Tree.Roots = roots;
+		Tree.Comparer = new OptionComparer();
+		Tree.GetChildren = o => o.Children;
+		Tree.GetParent = o => o.Parent;
+		Tree.OnRow = BindRow;
+		Tree.OnSelect = OnTreeSelect;
+		Tree.OnContextMenu = o => o.OnRightClick?.Invoke();
+	}
+
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
-		options.Clear();
+		roots.Clear();
+		currentHeader = null;
 		Rebuild();
+		Tree.Refresh();
 		StateHasChanged();
 	}
 
@@ -28,6 +59,13 @@ public partial class BaseSpawnMenu : Panel
 			_addedFooter = true;
 			OnMenuFooter( MenuFooter );
 		}
+
+		if ( TreeContainer.IsValid() && Tree.Parent != TreeContainer )
+		{
+			TreeContainer.AddChild( Tree );
+		}
+
+		Tree.RebindRows();
 	}
 
 	protected bool _firstViewed;
@@ -38,11 +76,11 @@ public partial class BaseSpawnMenu : Panel
 
 		if ( !IsVisible ) return;
 		if ( _firstViewed ) return;
-		if ( options.Count == 0 ) return;
+		if ( roots.Count == 0 ) return;
 		if ( !Switcher.IsValid() ) return;
 
 		_firstViewed = true;
-		SwitchOption( options.Where( x => x.PanelCreator != null || x.Panel != null ).FirstOrDefault() );
+		SwitchOption( AllOptions().FirstOrDefault( x => x.PanelCreator != null || x.Panel != null ) );
 	}
 
 
@@ -56,68 +94,86 @@ public partial class BaseSpawnMenu : Panel
 
 	}
 
+	/// <summary>
+	/// Start a collapsible section. Options added after this go inside it.
+	/// </summary>
 	public void AddHeader( string name )
 	{
-		var o = new SpawnMenuOption
-		{
-			Type = "header",
-			Name = name
-		};
+		currentHeader = new SpawnMenuOption { Name = name };
+		roots.Add( currentHeader );
 
-		options.Add( o );
+		if ( knownHeaders.Add( name ) ) Tree.Open( currentHeader );
 	}
 
-	public void AddGrow()
+	SpawnMenuOption Add( SpawnMenuOption o )
 	{
-		var o = new SpawnMenuOption
-		{
-			Type = "grow"
-		};
-
-		options.Add( o );
+		o.Parent = currentHeader;
+		(currentHeader?.Children ?? roots).Add( o );
+		return o;
 	}
 
 	public SpawnMenuOption AddOption( string name, Func<Panel> createPanelFunction )
 	{
-		var o = new SpawnMenuOption
+		return Add( new SpawnMenuOption
 		{
 			Name = name,
 			PanelCreator = createPanelFunction
-		};
-
-		options.Add( o );
-		return o;
+		} );
 	}
 
 	public SpawnMenuOption AddOption( string icon, string name, Func<Panel> createPanelFunction )
 	{
-		var o = new SpawnMenuOption
+		return Add( new SpawnMenuOption
 		{
 			Icon = icon,
 			Name = name,
 			PanelCreator = createPanelFunction
-		};
-
-		options.Add( o );
-		return o;
+		} );
 	}
 
 	public SpawnMenuOption AddOption( string icon, string name, Func<Panel> createPanelFunction, Action onRightClick )
 	{
-		var o = new SpawnMenuOption
+		return Add( new SpawnMenuOption
 		{
 			Icon = icon,
 			Name = name,
 			PanelCreator = createPanelFunction,
 			OnRightClick = onRightClick
-		};
-
-		options.Add( o );
-		return o;
+		} );
 	}
 
-	void OnOptionClick( SpawnMenuOption o )
+	public void AddAction( string icon, string name, Action action )
 	{
+		Add( new SpawnMenuOption
+		{
+			Icon = icon,
+			Name = name,
+			OnClick = action
+		} );
+	}
+
+	IEnumerable<SpawnMenuOption> AllOptions()
+	{
+		foreach ( var o in roots )
+		{
+			yield return o;
+			foreach ( var child in o.Children ) yield return child;
+		}
+	}
+
+	void OnTreeSelect( SpawnMenuOption o )
+	{
+		// Clicking empty space drops the selection but still reports the cursor row
+		if ( !Tree.IsSelected( o ) ) return;
+
+		if ( o.Children.Count > 0 )
+		{
+			Tree.Toggle( o );
+			return;
+		}
+
+		if ( !o.Enabled ) return;
+
 		if ( o.OnClick != null )
 		{
 			o.OnClick.Invoke();
@@ -127,13 +183,14 @@ public partial class BaseSpawnMenu : Panel
 		SwitchOption( o );
 	}
 
-	void OnOptionMouseDown( SpawnMenuOption o, PanelEvent e )
+	void BindRow( TreeRow row, SpawnMenuOption o )
 	{
-		if ( e is MousePanelEvent me && me.MouseButton == MouseButtons.Right && o.OnRightClick != null )
-		{
-			o.OnRightClick.Invoke();
-			e.StopPropagation();
-		}
+		row.SetClass( "active", activeOption is not null && Tree.Comparer.Equals( o, activeOption ) );
+		row.SetClass( "disabled", !o.Enabled );
+
+		row.IconName = o.Icon;
+		row.Label.Tokenize = o.Tokenize;
+		row.Text = o.Name;
 	}
 
 	protected void SwitchOption( SpawnMenuOption o )
@@ -151,24 +208,13 @@ public partial class BaseSpawnMenu : Panel
 		}
 
 		activeOption?.Panel?.SetClass( "hidden", false );
+		Tree.RebindRows();
 		StateHasChanged();
-	}
-
-	public void AddAction( string icon, string name, Action action )
-	{
-		var o = new SpawnMenuOption
-		{
-			Icon = icon,
-			Name = name,
-			OnClick = action
-		};
-
-		options.Add( o );
 	}
 
 	public void SelectOption( string name )
 	{
-		var option = options.FirstOrDefault( o => o.Name == name && (o.PanelCreator != null || o.Panel != null) );
+		var option = AllOptions().FirstOrDefault( o => o.Name == name && (o.PanelCreator != null || o.Panel != null) );
 		if ( option != null ) SwitchOption( option );
 	}
 
@@ -176,77 +222,12 @@ public partial class BaseSpawnMenu : Panel
 	{
 		activeOption?.Panel?.SetClass( "hidden", true );
 		activeOption = null;
-		StateHasChanged();
-	}
-
-	public void AddSkeletons( int count )
-	{
-		for ( int i = 0; i < count; i++ )
-		{
-			options.Add( new SpawnMenuOption { Type = "skeleton" } );
-		}
-		StateHasChanged();
-	}
-
-	/// <summary>
-	/// Headers the user has collapsed, by name.
-	/// </summary>
-	readonly HashSet<string> collapsedSections = new();
-
-	/// <summary>
-	/// A header and the options that follow it, or a flexible gap.
-	/// </summary>
-	class Section
-	{
-		public SpawnMenuOption Header;
-		public List<SpawnMenuOption> Items = new();
-		public bool IsGrow;
-	}
-
-	List<Section> GetSections()
-	{
-		var sections = new List<Section>();
-		Section current = null;
-
-		foreach ( var o in options )
-		{
-			if ( o.Type == "grow" )
-			{
-				sections.Add( new Section { IsGrow = true } );
-				current = null;
-				continue;
-			}
-
-			if ( o.Type == "header" )
-			{
-				current = new Section { Header = o };
-				sections.Add( current );
-				continue;
-			}
-
-			if ( current is null )
-			{
-				current = new Section();
-				sections.Add( current );
-			}
-
-			current.Items.Add( o );
-		}
-
-		return sections;
-	}
-
-	void ToggleSection( SpawnMenuOption header )
-	{
-		if ( !collapsedSections.Remove( header.Name ) )
-			collapsedSections.Add( header.Name );
-
+		Tree.RebindRows();
 		StateHasChanged();
 	}
 
 	public class SpawnMenuOption
 	{
-		public string Type { get; set; } = "option";
 		public string Name { get; set; }
 
 		/// <summary>
@@ -257,12 +238,23 @@ public partial class BaseSpawnMenu : Panel
 
 		public string Icon { get; set; }
 		public bool Enabled { get; set; } = true;
+
 		public Func<Panel> PanelCreator { get; set; }
 		public Panel Panel { get; set; }
 		public Action OnClick { get; set; }
 		public Action OnRightClick { get; set; }
+
+		public SpawnMenuOption Parent { get; set; }
+		public List<SpawnMenuOption> Children { get; } = new();
 	}
 
-	List<SpawnMenuOption> options = new();
+	/// <summary>
+	/// Options are recreated on every rebuild. Match them by name so open headers stay open.
+	/// </summary>
+	class OptionComparer : IEqualityComparer<SpawnMenuOption>
+	{
+		public bool Equals( SpawnMenuOption a, SpawnMenuOption b ) => a?.Name == b?.Name;
+		public int GetHashCode( SpawnMenuOption o ) => o.Name?.GetHashCode() ?? 0;
+	}
 }
 
