@@ -1,0 +1,178 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<root @onmousedown=@WindowPress>
+
+    <div class="tabs">
+        @foreach ( var tab in _tabs.Where( IsAvailable ) )
+        {
+            <div class="tab @( tab == _active ? "active" : "" )" @onclick=@(() => OnTabClicked( tab ))>@TitleOf( tab )</div>
+        }
+    </div>
+
+    <div class="body" @ref="Body"></div>
+
+</root>
+
+@code
+{
+    /// <summary>
+    /// Puts a panel in the window at the top left of the inspect menu, under a tab of its own, can be implemented this way:
+    /// <code>
+    /// [InspectWindow.Tab, Title( "My Tab" ), Order( 300 )]
+    /// public class MyTab : Panel { }
+    /// </code>
+    /// Tabs are sorted by [Order], then by title.
+    /// </summary>
+    public class Tab : System.Attribute
+    {
+        public virtual bool CheckCondition() => true;
+    }
+
+    /// <summary>
+    /// A tab that only shows while <typeparamref name="T"/> says so, like <see cref="SpawnMenuHost.HostOnly"/>.
+    /// </summary>
+    public class Tab<T> : Tab where T : SpawnMenuHost.ISpawnMenuCondition
+    {
+        public override bool CheckCondition() => T.IsVisible();
+    }
+
+    // the type of the open tab, or empty when the window was collapsed
+    const string CookieKey = "inspectmenu.tab";
+
+    Panel Body = default;
+
+    readonly List<Panel> _tabs = new();
+    readonly HashSet<Type> _failed = new();
+    Panel _active;
+    bool _restored;
+    int _revision;
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        ScanTabs();
+
+        if ( _active is not null && !IsAvailable( _active ) )
+            Show( _tabs.FirstOrDefault( IsAvailable ), false );
+
+        SetClass( "collapsed", _active is null );
+    }
+
+    /// <summary>
+    /// Makes a panel for every tab type and drops the ones whose type is gone
+    /// </summary>
+    void ScanTabs()
+    {
+        if ( !Body.IsValid() ) return;
+
+        var types = Game.TypeLibrary.GetTypesWithAttribute<Tab>().Select( x => x.Type ).Where( x => !x.IsAbstract ).ToList();
+        var changed = false;
+
+        foreach ( var panel in _tabs.ToList() )
+        {
+            if ( panel.IsValid() && types.Any( t => t.TargetType == panel.GetType() ) ) continue;
+
+            if ( panel.IsValid() ) panel.Delete( true );
+            if ( _active == panel ) _active = null;
+
+            _tabs.Remove( panel );
+            changed = true;
+        }
+
+        foreach ( var type in types )
+        {
+            if ( _failed.Contains( type.TargetType ) ) continue;
+            if ( _tabs.Any( p => p.GetType() == type.TargetType ) ) continue;
+
+            Panel panel = null;
+
+            try
+            {
+                panel = type.Create<Panel>();
+            }
+            catch ( Exception e )
+            {
+                Log.Warning( e, $"Couldn't create the inspect menu tab {type.FullName}" );
+            }
+
+            // not tried again every frame, a hotload makes a new type that gets its own go
+            if ( panel is null )
+            {
+                _failed.Add( type.TargetType );
+                continue;
+            }
+
+            panel.AddClass( "hidden" );
+            Body.AddChild( panel );
+            _tabs.Add( panel );
+            changed = true;
+        }
+
+        if ( !changed ) return;
+
+        _tabs.Sort( CompareTabs );
+        _revision++;
+
+        if ( !_restored && _tabs.Count > 0 )
+        {
+            _restored = true;
+            Restore();
+        }
+
+        StateHasChanged();
+    }
+
+    static int CompareTabs( Panel a, Panel b )
+    {
+        var typeA = Game.TypeLibrary.GetType( a.GetType() );
+        var typeB = Game.TypeLibrary.GetType( b.GetType() );
+
+        var order = (typeA?.Order ?? 0).CompareTo( typeB?.Order ?? 0 );
+        if ( order != 0 ) return order;
+
+        return StringComparer.CurrentCultureIgnoreCase.Compare( LocalizedText.Resolve( typeA?.Title ), LocalizedText.Resolve( typeB?.Title ) );
+    }
+
+    void Restore()
+    {
+        var saved = Game.Cookies.Get<string>( CookieKey, null );
+
+        if ( saved == "" )
+        {
+            Show( null, false );
+            return;
+        }
+
+        Show( _tabs.FirstOrDefault( x => x.GetType().FullName == saved && IsAvailable( x ) ) ?? _tabs.FirstOrDefault( IsAvailable ), false );
+    }
+
+    static string TitleOf( Panel tab ) => Game.TypeLibrary.GetType( tab.GetType() )?.Title;
+
+    static bool IsAvailable( Panel tab ) => tab.IsValid() && (Game.TypeLibrary.GetType( tab.GetType() )?.GetAttribute<Tab>()?.CheckCondition() ?? false);
+
+    // the open tab closes the window when clicked again, leaving only the tabs
+    void OnTabClicked( Panel tab ) => Show( _active == tab ? null : tab );
+
+    void Show( Panel tab, bool remember = true )
+    {
+        _active = tab;
+        if ( remember ) Game.Cookies.Set( CookieKey, tab?.GetType().FullName ?? "" );
+
+        foreach ( var t in _tabs )
+            t.SetClass( "hidden", t != tab );
+
+        StateHasChanged();
+    }
+
+    void WindowPress( PanelEvent e )
+    {
+        Sandbox.UI.InputFocus.Clear();
+        e.StopPropagation();
+    }
+
+    protected override int BuildHash() => HashCode.Combine( _active, _revision, _tabs.Count( IsAvailable ), Game.Language.SelectedCode );
+}

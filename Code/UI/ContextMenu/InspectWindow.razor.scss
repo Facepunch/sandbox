@@ -1,0 +1,64 @@
+@import "/UI/Theme.scss";
+
+// the window of saves and effects in the top left of the inspect menu.
+InspectWindow
+{
+	@include ui-block;
+	position: absolute;
+	top: $deadzone-y;
+	left: $deadzone-x;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+	pointer-events: all;
+	z-index: 200;
+
+	> .tabs
+	{
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-content: flex-start;
+		flex-shrink: 0;
+		max-width: 724px;
+		gap: 2px;
+	}
+
+	> .tabs > .tab
+	{
+		@include ui-tab;
+		border: 1px solid $ui-tab-border;
+		border-radius: 2px;
+
+		// the open one, clicking it again collapses the window
+		&.active
+		{
+			height: 24px;
+			padding-top: 0px;
+			border: 1px solid $ui-block-border;
+			pointer-events: all;
+
+			&:hover
+			{
+				background-color: $ui-tab-bg-active;
+				filter: brightness( 1.1 );
+			}
+		}
+	}
+
+	// sized by the page in it
+	> .body
+	{
+		flex-direction: column;
+		min-height: 0px;
+
+		> .hidden
+		{
+			display: none;
+		}
+	}
+
+	&.collapsed > .body
+	{
+		display: none;
+	}
+}

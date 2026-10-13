@@ -15,49 +15,16 @@
 
     </div>
 
-    <div class="tool-window" @onmousedown="@WindowPress">
-
-        <div class="tabs">
-
-            @foreach ( var tab in _tabs.Where( IsAvailable ) )
-            {
-                var t = tab;
-                var type = Game.TypeLibrary.GetType( t.GetType() );
-
-                <div class="@( _activeTab == t ? "active" : "" )" @onclick="@(() => SwitchTab( t ))">@type.Title</div>
-            }
-
-        </div>
-
-        <div class="body" @ref="TabContainer"></div>
-
-    </div>
+    <InspectWindow />
 
 </root>
 
 @code
 {
     Inspector Inspector = default;
-    Panel TabContainer = default;
-
-    List<Panel> _tabs = new();
-    Panel _activeTab;
 
     public HighlightOutline SelectedOutline;
     public HighlightOutline HoveredOutline;
-
-    /// <summary>
-    /// Puts a panel in the window at the top left of the inspect menu, with a tab next to the others.
-    /// </summary>
-    public class Tab : System.Attribute
-    {
-        public virtual bool CheckCondition() => true;
-    }
-
-    public class Tab<T> : Tab where T : SpawnMenuHost.ISpawnMenuCondition
-    {
-        public override bool CheckCondition() => T.IsVisible();
-    }
 
     protected override void OnAfterTreeRender(bool firstTime)
     {
@@ -71,54 +38,11 @@
             SelectedOutline.OverrideTargets = true;
             HoveredOutline.OverrideTargets = true;
         }
-
-        if ( firstTime && TabContainer.IsValid() )
-            BuildTabs();
     }
-
-    void BuildTabs()
-    {
-        foreach ( var type in Game.TypeLibrary.GetTypesWithAttribute<Tab>().OrderBy( x => x.Type.Order ) )
-        {
-            var panel = type.Type.Create<Panel>();
-            if ( panel is null ) continue;
-
-            TabContainer.AddChild( panel );
-            _tabs.Add( panel );
-        }
-
-        var saved = Game.Cookies.Get<string>( "inspectmenu.tab", null );
-        SwitchTab( _tabs.FirstOrDefault( x => x.GetType().Name == saved && IsAvailable( x ) ) ?? _tabs.FirstOrDefault( IsAvailable ), false );
-    }
-
-    static bool IsAvailable( Panel tab ) => Game.TypeLibrary.GetType( tab.GetType() )?.GetAttribute<Tab>()?.CheckCondition() ?? false;
-
-    void SwitchTab( Panel tab, bool remember = true )
-    {
-        _activeTab = tab;
-        if ( remember ) Game.Cookies.Set( "inspectmenu.tab", tab?.GetType().Name );
-
-        foreach ( var t in _tabs )
-            t.SetClass( "hidden", t != tab );
-
-        StateHasChanged();
-    }
-
-    // the window takes the mouse, clicks in it don't pick things in the world
-    void WindowPress( PanelEvent e )
-    {
-        Sandbox.UI.InputFocus.Clear();
-        e.StopPropagation();
-    }
-
-    protected override int BuildHash() => HashCode.Combine( _activeTab, _tabs.Count( IsAvailable ) );
 
     public override void Tick()
     {
         base.Tick();
-
-        if ( _activeTab is not null && !IsAvailable( _activeTab ) )
-            SwitchTab( _tabs.FirstOrDefault( IsAvailable ), false );
 
         UpdateCursor();
         DrawHandles();
