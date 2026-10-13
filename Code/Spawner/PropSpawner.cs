@@ -19,7 +19,6 @@ public sealed class PropSpawner : ISpawner
 		Path = path;
 		DisplayName = null;
 		Loading = LoadAsync();
-		CloudLoadTracker.Track( Loading );
 	}
 
 	private async Task<bool> LoadAsync()

@@ -107,6 +107,9 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 	private void OnPayloadDataChanged()
 	{
 		Spawner = DeserializeSpawner( SpawnerData );
+
+		// Only the player holding it sees the loading ring - never the host on someone else's behalf
+		if ( Owner?.IsLocalPlayer == true ) CloudLoadTracker.Track( Spawner?.Loading );
 	}
 	/// <summary>
 	/// Serialize a spawner for networking to <c>type:data</c>

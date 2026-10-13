@@ -183,6 +183,7 @@ public sealed partial class DuplicatorTool : ToolMode
 			return;
 
 		spawner = DuplicatorSpawner.FromJson( CopiedJson );
+		if ( Player?.IsLocalPlayer == true ) CloudLoadTracker.Track( spawner.Loading );
 	}
 
 	void DrawPreview()
