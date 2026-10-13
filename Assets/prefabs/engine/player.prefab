@@ -68,7 +68,7 @@
           "_type": "gameobject",
           "go": "3dc9b5dd-44a4-4ac8-a4cb-2a632afbc3f3"
         },
-        "CoyoteTime": 0.33,
+        "CoyoteTime": 0.19,
         "DeaccelerationTime": 0.1,
         "DuckedHeight": 36,
         "DuckedSpeed": 110,
@@ -3122,7 +3122,7 @@
             "Children": []
           },
           {
-            "__guid": "739e6457-58aa-4f5b-ad5b-be72e85d6b31",
+            "__guid": "babb18c2-372f-48d8-9998-668d2c218261",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - y_front_pants_white",
@@ -3139,7 +3139,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "80fee590-ddc7-4666-a263-66a299b72243",
+                "__guid": "75dd4289-adca-43c4-aa4b-bc794eae3e05",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
