@@ -203,6 +203,10 @@
         "StartingItems": [
           {
             "_type": "gameobject",
+            "prefab": "weapons/crowbar/crowbar.prefab"
+          },
+          {
+            "_type": "gameobject",
             "prefab": "weapons/physgun/physgun.prefab"
           },
           {
