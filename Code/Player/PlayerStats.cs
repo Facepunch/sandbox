@@ -10,7 +10,7 @@ internal sealed class PlayerStats : Component, Local.IPlayerEvents
 
 	protected override void OnFixedUpdate()
 	{
-		if ( IsProxy ) return;
+		if ( !Player.IsLocalPlayer ) return;
 
 		var delta = WorldPosition - lastPosition;
 		lastPosition = WorldPosition;
@@ -36,28 +36,28 @@ internal sealed class PlayerStats : Component, Local.IPlayerEvents
 
 	void Local.IPlayerEvents.OnJump()
 	{
-		if ( IsProxy ) return;
+		if ( !Player.IsLocalPlayer ) return;
 
 		Sandbox.Services.Stats.Increment( "jump", 1 );
 	}
 
 	void Local.IPlayerEvents.OnDamage( PlayerDamageParams args )
 	{
-		if ( IsProxy ) return;
+		if ( !Player.IsLocalPlayer ) return;
 
 		Sandbox.Services.Stats.Increment( "damage_taken", args.Damage );
 	}
 
 	void Local.IPlayerEvents.OnDied( PlayerDiedParams args )
 	{
-		if ( IsProxy ) return;
+		if ( !Player.IsLocalPlayer ) return;
 
 		Sandbox.Services.Stats.Increment( "deaths", 1 );
 	}
 
 	void Local.IPlayerEvents.OnSuicide()
 	{
-		if ( IsProxy ) return;
+		if ( !Player.IsLocalPlayer ) return;
 
 		Sandbox.Services.Stats.Increment( "suicides", 1 );
 	}

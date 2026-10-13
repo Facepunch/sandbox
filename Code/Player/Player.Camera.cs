@@ -39,7 +39,7 @@ public sealed partial class Player : ICameraModifier
 	// game's view pass: preference FOV, first person tags, movement roll and the seated camera.
 	void ICameraModifier.ModifyCamera( CameraComponent camera, ref CameraView view )
 	{
-		if ( IsProxy || Scene.Camera != camera ) return;
+		if ( !IsLocalPlayer || Scene.Camera != camera ) return;
 		if ( !Controller.IsValid() ) return;
 
 		// Keep the engine's camera effects scaled by the player's screenshake preference.

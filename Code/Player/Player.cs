@@ -42,7 +42,10 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		}
 	}
 
-	public bool IsLocalPlayer => !IsProxy;
+	// A bot the host runs, it has no camera, HUD or saved data of its own
+	public bool IsBot => Network.Owner?.IsBot ?? false;
+
+	public bool IsLocalPlayer => !IsProxy && !IsBot;
 
 	string IKillSource.DisplayName => Network.Owner?.DisplayName ?? "Unknown";
 	long IKillSource.SteamId => (long)(Network.Owner?.SteamId ?? default);
@@ -408,7 +411,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		var inventory = GetComponent<PlayerInventory>();
 		inventory?.OnControl();
 
-		var weaponSelection = Scene.Get<Inventory>();
+		var weaponSelection = IsLocalPlayer ? Scene.Get<Inventory>() : null;
 		weaponSelection?.HandleInput();
 
 		if ( inventory.IsValid() && inventory.ManualPumping )

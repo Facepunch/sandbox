@@ -40,7 +40,7 @@ internal sealed class PlayerObserver : Component
 
 	protected override void OnPreRender()
 	{
-		if ( IsProxy ) return;
+		if ( IsProxy || Network.Owner is { IsBot: true } ) return;
 
 		if ( _cachedCorpse.IsValid() )
 		{

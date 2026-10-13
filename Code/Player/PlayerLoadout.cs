@@ -35,6 +35,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 	public void SaveLoadout()
 	{
 		if ( _isRestoringLoadout ) return;
+		if ( Player.IsBot ) return;
 
 		var json = SerializeLoadout();
 		if ( string.IsNullOrEmpty( json ) ) return;
@@ -157,13 +158,13 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 
 	private async Task RestoreOnSpawnAsync()
 	{
-		if ( !Player.IsLocalPlayer )
+		if ( !Player.IsLocalPlayer && !Player.IsBot )
 		{
 			RequestClientLoadout();
 			return;
 		}
 
-		var json = GetSpawnLoadout();
+		var json = Player.IsBot ? null : GetSpawnLoadout();
 		if ( !string.IsNullOrEmpty( json ) )
 		{
 			await ReplaceLoadoutAsync( json );
