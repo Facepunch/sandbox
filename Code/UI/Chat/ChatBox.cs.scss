@@ -3,6 +3,7 @@
 $text: rgb(224, 224, 215);
 $inset-bg: rgba( 0, 0, 0, 0.24 );
 $inset-border: rgba( 255, 255, 255, 0.25 );
+$text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
 
 ChatBox
 {
@@ -37,7 +38,7 @@ ChatBox
 	{
 		padding: 2px 0 2px $deadzone-x;
 		background-image: linear-gradient( to right, rgba( 0, 0, 0, 0.2 ), rgba( 0, 0, 0, 0 ) );
-		animation: chat-line-in 0.25s ease-in-out;
+		animation: chat-line-in 0.08s ease-in-out;
 
 		&:first-child
 		{
@@ -70,6 +71,9 @@ ChatBox
 
 	.history
 	{
+		@include ui-scroll;
+
+		scrollbar-color: #c8c8c8 $inset-bg;
 		flex-grow: 1;
 		flex-direction: column;
 		overflow-y: scroll;
@@ -81,6 +85,7 @@ ChatBox
 	.history ChatLine
 	{
 		padding: 2px 12px;
+		flex-shrink: 0;
 
 		&:hover
 		{
@@ -103,6 +108,7 @@ ChatBox
 		background-color: $inset-bg;
 		border: 1px solid $inset-border;
 		color: $text;
+		text-shadow: $text-shadow;
 	}
 
 	&.open
@@ -135,6 +141,7 @@ ChatBox
 		align-items: flex-start;
 		gap: 7px;
 		pointer-events: none;
+		text-shadow: $text-shadow;
 
 		.avatar
 		{
