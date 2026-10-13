@@ -74,6 +74,8 @@
     "tool.hint.decaltool.description": "Sprays decals onto surfaces",
     "tool.hint.decaltool.place": "Place",
     "tool.hint.decaltool.paint": "Paint",
+    "tool.hint.decaltool.rotate": "Hold to rotate",
+    "tool.hint.decaltool.scale": "Hold to scale",
 
     "tool.hint.nocollide.stage0": "Disables collision between two objects",
     "tool.hint.nocollide.stage1": "Select the second object",

@@ -7,13 +7,22 @@ using Sandbox.UI;
 [Group( "#tool.group.render" )]
 public sealed class DecalTool : ToolMode
 {
+	// Minimum and maximum scale of painted decal
+	const float MinScale = 0.1f;
+	const float MaxScale = 4f;
+
+	/// <summary>
+	/// How fast we're scaling this decal depending on player's mouse input
+	/// </summary>
+	const float ScaleSpeed = 0.032f;
+
 	[Property, ResourceSelect( Extension = "decal", AllowPackages = true ), Title( "#tool.name.decal" )]
 	public string Decal { get; set; }
 
 	[Property, Title( "#tool.setting.tint" )]
 	public Color Tint { get; set; } = Color.White;
 
-	[Range( 0.1f, 4f ), Step( 0.1f ), Separator]
+	[Range( MinScale, MaxScale ), Step( 0.1f ), Separator]
 	[Property, Title( "#tool.setting.scale" )]
 	public float Scale { get; set; } = 1f;
 
@@ -24,7 +33,26 @@ public sealed class DecalTool : ToolMode
 	[Property, Title( "#tool.setting.attenuation" )]
 	public float Attenuation { get; set; } = 1f;
 
+	/// <summary>
+	/// If enabled, each decal will be applied with random rotation
+	/// </summary>
+	[Property, Title( "#tool.setting.decal_random_rotation" )]
+	public bool ApplyRandomRotation { get; set; } = false;
+
 	public override string Description => "#tool.hint.decaltool.description";
+
+	/// <summary>
+	/// The rotation hint is pointless when random rotation is enabled, hide it if true
+	/// </summary>
+	public override string ReloadAction => ApplyRandomRotation ? null : "#tool.hint.decaltool.rotate";
+
+	/// <summary>
+	/// Reload and secondary held together scale the decal
+	/// </summary>
+	public override string ReloadSecondaryAction => "#tool.hint.decaltool.scale";
+
+	float _rotation;
+	bool _absorbLook;
 
 	TimeSince timeSinceShoot = 0;
 	[Sync] bool IsPainting { get; set; }
@@ -49,8 +77,45 @@ public sealed class DecalTool : ToolMode
 	UndoSystem.Entry _sprayUndo;
 	int _hostSprayId;
 
+	public override void OnCameraMove( Player player, ref Angles angles )
+	{
+		base.OnCameraMove( player, ref angles );
+
+		if ( _absorbLook )
+			angles = default;
+	}
+
 	public override void OnControl()
 	{
+		var reload = Input.Down( "reload" );
+		var scaling = reload && Input.Down( "attack2" );
+		var rotating = reload && !scaling && !ApplyRandomRotation;
+
+		_absorbLook = scaling || rotating;
+		Toolgun.SetIsUsingJoystick( _absorbLook );
+
+		if ( _absorbLook )
+		{
+			var look = Input.AnalogLook;
+
+			if ( scaling )
+			{
+				Scale = (Scale - look.pitch * ScaleSpeed).Clamp( MinScale, MaxScale );
+				Toolgun.UpdateJoystick( new Angles( 0, look.pitch, 0 ) );
+			}
+			else
+			{
+				_rotation = (_rotation + look.yaw).UnsignedMod( 360f );
+				Toolgun.UpdateJoystick( new Angles( look.yaw, 0, 0 ) );
+			}
+		}
+
+		if ( reload )
+		{
+			Input.Clear( "reload" );
+			if ( scaling ) Input.Clear( "attack2" );
+		}
+
 		var wasPainting = IsPainting;
 		IsPainting = Input.Down( "attack2" );
 
@@ -58,6 +123,8 @@ public sealed class DecalTool : ToolMode
 
 		base.OnControl();
 	}
+
+	float GetRotation() => ApplyRandomRotation ? Game.Random.Float( 0f, 360f ) : _rotation;
 
 	protected override void OnUpdate()
 	{
@@ -148,8 +215,9 @@ public sealed class DecalTool : ToolMode
 		var pulse = 0.5f + 0.5f * MathF.Cos( Time.Now * MathF.Tau / PreviewPulsePeriod );
 		var opacity = MathX.Lerp( PreviewOpacityMin, PreviewOpacityMax, pulse );
 		_previewDecal.ColorTint = Tint.WithAlpha( Tint.a * opacity );
-		_previewDecal.Scale = Scale.Clamp( 0.1f, 4f );
+		_previewDecal.Scale = Scale.Clamp( MinScale, MaxScale );
 		_previewDecal.AttenuationAngle = Attenuation.Clamp( 0f, 1f );
+		_previewDecal.Rotation = ApplyRandomRotation ? new ParticleFloat( 0f, 360f ) : _rotation;
 		_previewDecal.SortLayer = uint.MaxValue;
 
 		_preview.Enabled = true;
@@ -188,7 +256,7 @@ public sealed class DecalTool : ToolMode
 		var resource = ResourceLibrary.Get<DecalDefinition>( Decal );
 		if ( resource == null ) return;
 
-		SpawnDecal( select, resource, Tint, Scale, Attenuation, 0 );
+		SpawnDecal( select, resource, Tint, Scale, Attenuation, GetRotation(), 0 );
 		PlayPlaceSound();
 	}
 
@@ -203,7 +271,7 @@ public sealed class DecalTool : ToolMode
 		if ( resource == null ) return;
 
 		timeSinceShoot = 0;
-		SpawnDecal( select, resource, Tint, Scale, Attenuation, _sprayId );
+		SpawnDecal( select, resource, Tint, Scale, Attenuation, GetRotation(), _sprayId );
 	}
 
 	uint _layer = 0;
@@ -214,7 +282,7 @@ public sealed class DecalTool : ToolMode
 	/// The settings come with the call, since only the owner has their current values.
 	/// </summary>
 	[Rpc.Host]
-	public void SpawnDecal( SelectionPoint point, DecalDefinition def, Color tint, float scale, float attenuation, int sprayId )
+	public void SpawnDecal( SelectionPoint point, DecalDefinition def, Color tint, float scale, float attenuation, float rotation, int sprayId )
 	{
 		if ( def == null ) return;
 
@@ -230,8 +298,9 @@ public sealed class DecalTool : ToolMode
 		decal.Decals = [def];
 		decal.SortLayer = _layer++;
 		decal.ColorTint = tint;
-		decal.Scale = scale.Clamp( 0.1f, 4f );
+		decal.Scale = scale.Clamp( MinScale, MaxScale );
 		decal.AttenuationAngle *= attenuation.Clamp( 0f, 1f );
+		decal.Rotation = rotation;
 
 		go.NetworkSpawn();
 

@@ -93,12 +93,17 @@ ToolInfoPanel
 		gap: 50px;
 		padding: 6px 52px;
 		background-image: linear-gradient( to right, $bg, $bg-clear );
+
+		// grows with its hints instead of squeezing them onto a second line
+		align-self: flex-start;
+		min-width: 100%;
 	}
 
 	.hint
 	{
 		flex-direction: row;
 		align-items: center;
+		flex-shrink: 0;
 		gap: 14px;
 	}
 
@@ -108,10 +113,20 @@ ToolInfoPanel
 		min-width: 32px;
 	}
 
+	.plus
+	{
+		margin-left: -6px;
+		margin-right: -6px;
+		font-size: 15px;
+		font-weight: 700;
+		color: rgba( white, 0.92 );
+	}
+
 	.text
 	{
 		font-size: 15px;
 		font-weight: 700;
+		white-space: nowrap;
 		text-transform: uppercase;
 		color: rgba( white, 0.92 );
 	}

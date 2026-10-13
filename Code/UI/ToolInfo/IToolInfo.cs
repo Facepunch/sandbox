@@ -7,4 +7,9 @@ public interface IToolInfo : IValid
 	string PrimaryAction => null;
 	string SecondaryAction => null;
 	string ReloadAction => null;
+
+	/// <summary>
+	/// Label for reload and secondary held together, or null if none.
+	/// </summary>
+	string ReloadSecondaryAction => null;
 }

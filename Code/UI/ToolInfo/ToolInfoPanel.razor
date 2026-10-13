@@ -49,6 +49,15 @@
      <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.ReloadAction ) />
     </div>
    }
+   @if ( !string.IsNullOrEmpty( Info.ReloadSecondaryAction ) )
+   {
+    <div class="hint">
+     <InputHint Action="reload" class="key" />
+     <Label class="plus" Text="+" />
+     <InputHint Action="attack2" class="key" />
+     <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.ReloadSecondaryAction ) />
+    </div>
+   }
   </div>
  }
 </root>
@@ -77,12 +86,13 @@
 
 	bool HasAnyAction => !string.IsNullOrEmpty( Info?.PrimaryAction )
 	                     || !string.IsNullOrEmpty( Info?.SecondaryAction )
-	                     || !string.IsNullOrEmpty( Info?.ReloadAction );
+	                     || !string.IsNullOrEmpty( Info?.ReloadAction )
+	                     || !string.IsNullOrEmpty( Info?.ReloadSecondaryAction );
 
 	protected override void OnUpdate()
 	{
 		SetClass( "visible", CurrentToolInfo is not null );
 	}
 
-	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Hud.IsVisible( HudElement.ToolInfo ), Game.Language.SelectedCode );
+	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Info?.ReloadSecondaryAction, Hud.IsVisible( HudElement.ToolInfo ), Game.Language.SelectedCode );
 }

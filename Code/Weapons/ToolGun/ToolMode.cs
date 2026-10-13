@@ -43,6 +43,11 @@
 	public virtual string ReloadAction => GetActionName( ToolInput.Reload );
 
 	/// <summary>
+	/// Label for reload and secondary held together, or null if none.
+	/// </summary>
+	public virtual string ReloadSecondaryAction => null;
+
+	/// <summary>
 	/// Tags that TraceSelect will ignore. Override per-tool to filter out specific objects.
 	/// Defaults to "player" so tools cannot target players.
 	/// </summary>
