@@ -31,7 +31,7 @@ public class MountsPage : BaseSpawnMenu
 			foreach ( var entry in available.OrderBy( x => x.Title ) )
 			{
 				var ident = entry.Ident;
-				var o = AddOption( entry.Title, () => new MountContent() { Ident = ident } );
+				var o = AddOption( "sports_esports", entry.Title, () => new MountContent() { Ident = ident } );
 				o.Enabled = entry.Mounted;
 				o.Key = ident;
 				o.LoadChildren = () => FolderOptions( ident, Sandbox.Mounting.Directory.Get( ident )?.RootFolder );

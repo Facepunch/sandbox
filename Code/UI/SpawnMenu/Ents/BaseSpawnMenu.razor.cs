@@ -98,9 +98,9 @@ public partial class BaseSpawnMenu : Panel
 	/// <summary>
 	/// Start a collapsible section. Options added after this go inside it.
 	/// </summary>
-	public void AddHeader( string name )
+	public void AddHeader( string name, string icon = null )
 	{
-		currentHeader = new SpawnMenuOption { Name = name };
+		currentHeader = new SpawnMenuOption { Name = name, Icon = icon };
 		roots.Add( currentHeader );
 
 		if ( knownHeaders.Add( name ) ) Tree.Open( currentHeader );
