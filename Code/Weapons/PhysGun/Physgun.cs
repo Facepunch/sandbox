@@ -176,6 +176,9 @@ public partial class Physgun : Local.IPlayerEvents
 
 	[Sync] public GrabState _stateHovered { get; set; } = default;
 
+	// Where the holder wants the body, from their own aim, so the host doesn't steer by the interpolated one
+	[Sync] public Transform _holdTarget { get; set; }
+
 	Transform _lastAimTransform;
 	Transform CurrentAimTransform => HasOwner ? Owner.EyeTransform : _lastAimTransform;
 
@@ -705,6 +708,9 @@ public partial class Physgun : Local.IPlayerEvents
 	{
 		base.OnFixedUpdate();
 
+		if ( !IsProxy && _state.Body.IsValid() )
+			_holdTarget = GetHoldTarget();
+
 		if ( !CanMove( _state ) )
 		{
 			RemoveJoint();
@@ -725,11 +731,7 @@ public partial class Physgun : Local.IPlayerEvents
 
 		_body ??= new PhysicsBody( Scene.PhysicsWorld ) { BodyType = PhysicsBodyType.Keyframed, AutoSleep = false };
 
-		var eyeTransform = CurrentAimTransform;
-		var grabDistance = ClampGrabDistance( _state.Body, _state.EndPoint, eyeTransform, _state.GrabDistance );
-		var targetPosition = eyeTransform.Position + eyeTransform.Rotation.Forward * grabDistance;
-		var targetRotation = _state.Pulling ? eyeTransform.Rotation * _state.GrabOffset : Rotation.FromYaw( eyeTransform.Rotation.Yaw() ) * _state.GrabOffset;
-		_body.Transform = new Transform( targetPosition, targetRotation );
+		_body.Transform = IsProxy ? ClampToRange( _holdTarget ) : _holdTarget;
 
 		if ( _joint is null )
 		{
@@ -745,6 +747,22 @@ public partial class Physgun : Local.IPlayerEvents
 			_joint.LinearSpring = new PhysicsSpring( 32, 4, maxForce );
 			_joint.AngularSpring = new PhysicsSpring( 64, 4, maxForce * 3 );
 		}
+	}
+
+	Transform GetHoldTarget()
+	{
+		var eyeTransform = CurrentAimTransform;
+		var grabDistance = ClampGrabDistance( _state.Body, _state.EndPoint, eyeTransform, _state.GrabDistance );
+		var targetPosition = eyeTransform.Position + eyeTransform.Rotation.Forward * grabDistance;
+		var targetRotation = _state.Pulling ? eyeTransform.Rotation * _state.GrabOffset : Rotation.FromYaw( eyeTransform.Rotation.Yaw() ) * _state.GrabOffset;
+		return new Transform( targetPosition, targetRotation );
+	}
+
+	// The holder sends the target, keep it within reach of where we see them
+	Transform ClampToRange( Transform target )
+	{
+		var eye = CurrentAimTransform.Position;
+		return target.WithPosition( eye + (target.Position - eye).ClampLength( Range ) );
 	}
 
 	/// <summary>
