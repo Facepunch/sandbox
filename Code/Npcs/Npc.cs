@@ -52,7 +52,11 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 			return;
 
 		CategorizeGround();
-		TickSchedule();
+		UpdateAirborne();
+
+		// No thinking in mid-air - the schedule picks up again once we land
+		if ( !IsAirborne )
+			TickSchedule();
 
 		if ( ShowDebugOverlay )
 		{

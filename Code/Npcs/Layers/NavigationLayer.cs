@@ -101,6 +101,9 @@ public class NavigationLayer : BaseNpcLayer
 		if ( IsProxy ) return;
 		if ( !Agent.IsValid() ) return;
 
+		// Thrown or dropped - physics has us, not the navmesh, and the animation follows the body
+		if ( Npc.IsAirborne ) return;
+
 		Agent.MaxSpeed = ResolveSpeed();
 		FaceMovement();
 
