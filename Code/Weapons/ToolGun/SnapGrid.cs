@@ -83,7 +83,7 @@ public sealed class SnapGrid
 	/// Returns the nearest grid corner index (cx, cy) and its world-space position,
 	/// given the face plane in world space and the aim world position.
 	/// </summary>
-	public static (int cx, int cy, Vector3 snapPos, float snapU, float snapV, bool snapAxisX, bool snapAxisY) ComputeSnap(
+	public static (int cx, int cy, Vector3 snapPos) ComputeSnap(
 		Vector3 faceOriginWs,
 		Vector3 faceRightWs,
 		Vector3 faceUpWs,
@@ -91,43 +91,11 @@ public sealed class SnapGrid
 		Vector3 aimPosWs )
 	{
 		var offset = aimPosWs - faceOriginWs;
-		var u = Vector3.Dot( offset, faceRightWs );
-		var v = Vector3.Dot( offset, faceUpWs );
+		var cx = (int)MathF.Round( Vector3.Dot( offset, faceRightWs ) / cellSize );
+		var cy = (int)MathF.Round( Vector3.Dot( offset, faceUpWs ) / cellSize );
 
-		var cx = (int)MathF.Round( u / cellSize );
-		var cy = (int)MathF.Round( v / cellSize );
-
-		var distX = MathF.Abs( u - cx * cellSize );
-		var distY = MathF.Abs( v - cy * cellSize );
-
-		float snapU, snapV;
-		bool snapAxisX, snapAxisY;
-
-		// Near a corner: snap to intersection and show both lines.
-		if ( distX < cellSize * 0.35f && distY < cellSize * 0.35f )
-		{
-			snapU = cx * cellSize;
-			snapV = cy * cellSize;
-			snapAxisX = true;
-			snapAxisY = true;
-		}
-		else if ( distX <= distY )
-		{
-			snapU = cx * cellSize;
-			snapV = v;
-			snapAxisX = true;
-			snapAxisY = false;
-		}
-		else
-		{
-			snapU = u;
-			snapV = cy * cellSize;
-			snapAxisX = false;
-			snapAxisY = true;
-		}
-
-		var snapPos = faceOriginWs + faceRightWs * snapU + faceUpWs * snapV;
-		return (cx, cy, snapPos, snapU, snapV, snapAxisX, snapAxisY);
+		var snapPos = faceOriginWs + faceRightWs * (cx * cellSize) + faceUpWs * (cy * cellSize);
+		return (cx, cy, snapPos);
 	}
 
 	/// <summary>
@@ -147,13 +115,11 @@ public sealed class SnapGrid
 		// Only recalculate the plane when the surface normal or hovered object changes
 		var faceNormal = hitNormalWorld.Normal;
 		var isWorld = hoveredObject.Tags.Has( "world" );
-		var holdingUse = Input.Down( "use" );
-		var objectChanged = hoveredObject != _cachedObject;
-		var planeChanged = !_hasPlane || (objectChanged) || (!holdingUse && Vector3.Dot( faceNormal, _cachedNormal ) < 0.999f);
+		var planeChanged = !_hasPlane || hoveredObject != _cachedObject || Vector3.Dot( faceNormal, _cachedNormal ) < 0.999f;
 
 		if ( isWorld )
 		{
-			UpdateWorldPlane( hoveredObject, aimWorldPos, faceNormal, holdingUse );
+			UpdateWorldPlane( hoveredObject, aimWorldPos, faceNormal );
 		}
 		else if ( planeChanged )
 		{
@@ -219,7 +185,7 @@ public sealed class SnapGrid
 			cellSize *= 0.5f;
 
 		// Compute the nearest snap line
-		var (cx, cy, snapPos, snapU, snapV, snapAxisX, snapAxisY) = ComputeSnap( _cachedOrigin, _cachedRight, _cachedUp, cellSize, aimWorldPos );
+		var (cx, cy, snapPos) = ComputeSnap( _cachedOrigin, _cachedRight, _cachedUp, cellSize, aimWorldPos );
 		LastSnapWorldPos = snapPos;
 
 		var boundsOrigin = isWorld ? _worldPatchCenter : _cachedOrigin;
@@ -233,17 +199,15 @@ public sealed class SnapGrid
 		_sceneObj.Attributes.Set( "MaskRadius", NoFade ? float.MaxValue : MaskRadius );
 		_sceneObj.Attributes.Set( "HalfExtents", halfExtents );
 		_sceneObj.Attributes.Set( "CellSize", cellSize );
-		_sceneObj.Attributes.Set( "SnapCornerX", snapU / cellSize );
-		_sceneObj.Attributes.Set( "SnapCornerY", snapV / cellSize );
-		_sceneObj.Attributes.Set( "SnapAxisX", snapAxisX ? 1.0f : 0.0f );
-		_sceneObj.Attributes.Set( "SnapAxisY", snapAxisY ? 1.0f : 0.0f );
+		_sceneObj.Attributes.Set( "SnapCornerX", (float)cx );
+		_sceneObj.Attributes.Set( "SnapCornerY", (float)cy );
 	}
 
-	private void UpdateWorldPlane( GameObject hoveredObject, Vector3 aimPos, Vector3 normal, bool holdingUse )
+	private void UpdateWorldPlane( GameObject hoveredObject, Vector3 aimPos, Vector3 normal )
 	{
-		var planeChanged = !_hasPlane || hoveredObject != _cachedObject || (!holdingUse &&
-			(Vector3.Dot( normal, _cachedNormal ) < 0.9999f ||
-			MathF.Abs( Vector3.Dot( aimPos - _cachedOrigin, _cachedNormal ) ) > 0.01f));
+		var planeChanged = !_hasPlane || hoveredObject != _cachedObject ||
+			Vector3.Dot( normal, _cachedNormal ) < 0.9999f ||
+			MathF.Abs( Vector3.Dot( aimPos - _cachedOrigin, _cachedNormal ) ) > 0.01f;
 
 		if ( planeChanged )
 		{

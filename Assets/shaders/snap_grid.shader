@@ -76,8 +76,6 @@ PS
 
 	float SnapCornerX < Attribute( "SnapCornerX" ); Default( 0 ); >;
 	float SnapCornerY < Attribute( "SnapCornerY" ); Default( 0 ); >;
-	float SnapAxisX < Attribute( "SnapAxisX" ); Default( 1.0 ); >;
-	float SnapAxisY < Attribute( "SnapAxisY" ); Default( 0.0 ); >;
 
 	float4 GridColor < Attribute( "GridColor" ); Default4( 1.0, 1.0, 1.0, 0.5 ); >;
 	float4 CornerColor < Attribute( "CornerColor" ); Default4( 0.2, 0.6, 1.0, 1.0 ); >;
@@ -134,7 +132,7 @@ PS
 		float fadeVert  = 1.0 - saturate( abs( facePos.y - aimOffset2.y ) / fadeRadius );
 		float fadeHoriz = 1.0 - saturate( abs( facePos.x - aimOffset2.x ) / fadeRadius );
 
-		float cross = saturate( barY * SnapAxisX * fadeVert + barX * SnapAxisY * fadeHoriz );
+		float cross = saturate( barY * fadeVert + barX * fadeHoriz );
 
 		float4 col = GridColor * grid;
 

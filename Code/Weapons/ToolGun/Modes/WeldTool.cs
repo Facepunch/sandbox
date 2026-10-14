@@ -83,13 +83,13 @@ public sealed class WeldTool : BaseConstraintToolMode
 			ShootEffects( select );
 		}
 
-		if ( stageBefore == 0 && Stage == 1 && Point1.IsValid() && Input.Down( "use" ) )
+		if ( stageBefore == 0 && Stage == 1 && Point1.IsValid() && Input.Down( "snap" ) )
 			Point1 = SnapSelectionPoint( Point1 );
 
 		if ( _easyMode && Stage == 1 && IsValidState )
 		{
 			var select = TraceSelect();
-			select = Input.Down( "use" ) ? SnapSelectionPoint( select ) : select;
+			select = Input.Down( "snap" ) ? SnapSelectionPoint( select ) : select;
 			if ( select.IsValid() )
 				DrawEasyModePreview( GetEasyModePlacement( Point1, select ) );
 		}

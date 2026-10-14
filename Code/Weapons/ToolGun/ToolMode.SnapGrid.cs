@@ -12,40 +12,63 @@ public abstract partial class ToolMode
 	/// </summary>
 	protected SnapGrid SnapGrid { get; private set; }
 
-	private Vector3? _lockedSnapTarget;
+	/// <summary>
+	/// While snapping, the unsnapped aim driven by the mouse. The grid is traced from this,
+	/// and the real camera is steered onto the resulting snap point.
+	/// </summary>
+	private Angles? _snapFreeAim;
+
+	/// <summary>
+	/// True when the snap grid was updated from a valid surface this frame.
+	/// </summary>
+	private bool _hasSnapTarget;
 
 	private void DisableSnapGrid()
 	{
 		SnapGrid?.Destroy();
 		SnapGrid = null;
-		_lockedSnapTarget = null;
+		_snapFreeAim = null;
+		_hasSnapTarget = false;
 	}
 
 	/// <summary>
-	/// While hovering an object, hold E to lock the camera aim onto the nearest snap corner.
+	/// While hovering an object, hold alt key to keep the camera aim snapped to the grid
 	/// </summary>
 	public virtual void OnCameraMove( Player player, ref Angles angles )
 	{
 		// Skip when the mode is absorbing mouse input for its own purposes (e.g. Weld rotation stage).
-		if ( AbsorbMouseInput || SnapGrid == null )
+		if ( AbsorbMouseInput || SnapGrid == null || !Input.Down( "snap" ) )
+		{
+			_snapFreeAim = null;
 			return;
+		}
 
-		if ( Input.Pressed( "use" ) )
-			_lockedSnapTarget = SnapGrid.LastSnapWorldPos;
-
-		if ( !Input.Down( "use" ) || _lockedSnapTarget == null )
-			return;
-
-		var eyePos = player.EyeTransform.Position;
-		var desiredAngles = Rotation.LookAt( _lockedSnapTarget.Value - eyePos ).Angles();
 		var currentAngles = player.Controller.EyeAngles;
 
+		var freeAim = (_snapFreeAim ?? currentAngles) + angles;
+		freeAim.pitch = freeAim.pitch.Clamp( -89f, 89f );
+		_snapFreeAim = freeAim;
+
+		var desiredAngles = _hasSnapTarget
+			? Rotation.LookAt( SnapGrid.LastSnapWorldPos - player.EyeTransform.Position ).Angles()
+			: freeAim;
+
 		angles = desiredAngles - currentAngles;
+	}
 
-		if ( Input.Released( "use" ) )
-			_lockedSnapTarget = null;
+	/// <summary>
+	/// The ray the snap grid is traced from, free aim while snapping, otherwise the eyes.
+	/// </summary>
+	private SelectionPoint TraceSnapGrid()
+	{
+		var player = Toolgun?.Owner;
+		if ( !player.IsValid() ) return default;
 
-		Input.Clear( "use" );
+		if ( _snapFreeAim is not { } freeAim )
+			return TraceSelect();
+
+		var ray = new Ray( player.EyeTransform.Position, freeAim.Forward );
+		return TraceFromRay( ray, 4096, player.GameObject );
 	}
 
 	/// <summary>
@@ -62,8 +85,9 @@ public abstract partial class ToolMode
 
 		if ( !UseSnapGrid ) return;
 
-		var preview = TraceSelect();
-		if ( preview.IsValid() && ShouldDisplaySnapGrid( preview.GameObject ) )
+		var preview = TraceSnapGrid();
+		_hasSnapTarget = preview.IsValid() && ShouldDisplaySnapGrid( preview.GameObject );
+		if ( _hasSnapTarget )
 		{
 			SnapGrid ??= new SnapGrid();
 			SnapGrid.Update( Scene.SceneWorld, preview.GameObject, preview.WorldPosition(), preview.WorldTransform().Rotation.Forward );
