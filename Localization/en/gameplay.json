@@ -21,6 +21,7 @@
     "spawner.name": "Spawner",
     "spawner.spawn": "Spawn",
     "spawner.clear": "Clear",
+    "spawner.rotate": "Hold to rotate",
     "spawner.placing": "Placing {name}",
     "spawner.spawn_in_world": "Spawn in World",
     "spawner.duplication": "Duplication",

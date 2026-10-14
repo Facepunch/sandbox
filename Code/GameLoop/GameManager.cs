@@ -371,42 +371,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		renderer.Materials.SetOverride( materialIndex, material );
 
 		renderer.GameObject.Network?.Refresh();
-	}
-
-	[Rpc.Host]
-	internal static void GiveSpawnerWeapon( string type, string path, string data = null, string icon = null, string title = null )
-	{
-		var player = Player.FindForConnection( Rpc.Caller );
-		if ( player is null ) return;
-
-		var inventory = player.GetComponent<PlayerInventory>();
-		if ( !inventory.IsValid() ) return;
-
-		ISpawner s = type switch
-		{
-			"prop" or "mount" => new PropSpawner( path ),
-			"entity" or "sent" => new EntitySpawner( path ),
-			"dupe" when data is not null => DuplicatorSpawner.FromJson( data, title, icon ),
-			_ => null
-		};
-
-		if ( s is null ) return;
-
-		var loadout = player.GetComponent<PlayerLoadout>();
-
-		var spawner = inventory.GetWeapon<SpawnerWeapon>();
-		if ( !spawner.IsValid() )
-		{
-			inventory.Pickup( "weapons/spawner/spawner.prefab", false );
-			spawner = inventory.GetWeapon<SpawnerWeapon>();
-		}
-
-		if ( !spawner.IsValid() ) return;
-
-		spawner.SetSpawner( s );
-		inventory.SwitchWeapon( spawner );
-		loadout?.SaveLoadout();
-	}
+	}	
 
 	void IScenePhysicsEvents.OnOutOfBounds( Rigidbody body )
 	{

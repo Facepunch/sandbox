@@ -1,9 +1,0 @@
-{
-  "Prefab": "entities/sents/entity_spawner.prefab",
-  "Title": "#asset.entity_spawner.title",
-  "Description": "#asset.entity_spawner.description",
-  "Category": "World",
-  "IncludeCode": false,
-  "__references": [],
-  "__version": 0
-}

@@ -87,7 +87,7 @@
 
 		var current = inventory.GetWeapon<Toolgun>()?.GetCurrentMode()?.GetType();
 		var modes = Game.TypeLibrary.GetTypes<ToolMode>()
-			.Where( x => !x.IsAbstract && x.TargetType != current )
+			.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() && x.TargetType != current )
 			.ToArray();
 
 		if ( modes.Length == 0 ) return;
@@ -127,6 +127,45 @@
 		{
 			BroadcastSwitchToolMode();
 		}
+	}
+
+	[Rpc.Host]
+	internal static void SetSpawner( string type, string path, string data = null, string icon = null, string title = null )
+	{
+		var player = Player.FindForConnection( Rpc.Caller );
+		if ( player is null ) return;
+
+		var inventory = player.GetComponent<PlayerInventory>();
+		if ( !inventory.IsValid() ) return;
+
+		ISpawner s = type switch
+		{
+			"prop" or "mount" => new PropSpawner( path ),
+			"entity" or "sent" => new EntitySpawner( path ),
+			"dupe" when data is not null => DuplicatorSpawner.FromJson( data, title, icon ),
+			_ => null
+		};
+
+		if ( s is null ) return;
+
+		if ( !inventory.HasWeapon<Toolgun>() )
+		{
+			inventory.Pickup( "weapons/toolgun/toolgun.prefab", false );
+		}
+
+		var toolgun = inventory.GetWeapon<Toolgun>();
+		if ( !toolgun.IsValid() ) return;
+
+		var mode = toolgun.GetMode<SpawnerTool>();
+		if ( !mode.IsValid() ) return;
+
+		// Remember what we were using, so clearing the payload can go back to it
+		var current = toolgun.GetCurrentMode();
+		if ( current.IsValid() && current != mode )
+			mode.PreviousMode = current.TypeDescription.ClassName;
+
+		mode.SetSpawner( s );
+		inventory.SetToolMode( mode.TypeDescription.ClassName );
 	}
 
 	[Rpc.Broadcast( NetFlags.HostOnly )]

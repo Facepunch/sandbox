@@ -281,7 +281,7 @@ public class SpawnlistData
 
 		if ( Type != "dupe" )
 		{
-			menu.AddOption( "#spawnmenu.spawn_with_toolgun", "my_location", () => GameManager.GiveSpawnerWeapon( Type, Path, null, item.Icon, item.Title ) );
+			menu.AddOption( "#spawnmenu.spawn_with_toolgun", "my_location", () => Toolgun.SetSpawner( Type, Path, null, item.Icon, item.Title ) );
 		}
 
 		menu.AddOption( "#spawnmenu.copy", "content_copy", () => Clipboard.SetText( item.Ident ) );

@@ -1,11 +1,15 @@
 /// <summary>
-/// A weapon that previews and places objects into the world. 
+/// Previews and places objects into the world.
 /// Accepts any <see cref="ISpawner"/> to define what to spawn.
-/// The spawn menu (or any other system) sets the payload, and this weapon handles
+/// The spawn menu (or any other system) sets the payload, and this mode handles
 /// aiming, previewing, and placement.
 /// </summary>
+[Hide]
 [Icon( "📦" )]
-public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
+[Title( "#spawner.name" )]
+[ClassName( "spawner" )]
+[Group( "#tool.group.building" )]
+public sealed class SpawnerTool : ToolMode
 {
 	/// <summary>
 	/// Synced payload descriptor. When this changes on any client,
@@ -15,30 +19,21 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 	public string SpawnerData { get; set; }
 
 	/// <summary>
+	/// The mode that was active before the spawner took over, restored when the payload is cleared.
+	/// </summary>
+	[Sync( SyncFlags.FromHost )]
+	public string PreviousMode { get; set; }
+
+	/// <summary>
 	/// The local spawner, built from <see cref="SpawnerData"/>.
 	/// </summary>
 	public ISpawner Spawner { get; private set; }
-
-	/// <summary>
-	/// Override the inventory icon with the payload's cloud thumbnail.
-	/// </summary>
-	public override string InventoryIconOverride => Spawner?.Icon switch
-	{
-		null => null,
-		var icon when icon.StartsWith( "http", StringComparison.OrdinalIgnoreCase ) => icon,
-		var icon => $"thumb:{icon}"
-	};
-
-	/// <summary>
-	/// Whether the current aim position is a valid placement target.
-	/// </summary>
-	private bool _isValidPlacement;
 
 	private Material _previewMaterial;
 	private Material _previewMaterialInvalid;
 
 	/// <summary>
-	/// True while the player is holding Use to rotate the preview.
+	/// True while the player is holding reload to rotate the preview.
 	/// </summary>
 	private bool _isRotating;
 
@@ -51,14 +46,24 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 	private Rotation _spinRotation = Rotation.Identity;
 	private bool _isSnapping;
 
+	public override string Description => Spawner is null
+		? "#spawner.name"
+		: LocalizedText.Literal( Game.Language.GetPhrase( "spawner.placing", new() { { "name", LocalizedText.Resolve( Spawner.DisplayName ) } } ) );
+
+	public override string PrimaryAction => Spawner is not null ? "#spawner.spawn" : null;
+	public override string ReloadAction => Spawner is not null ? "#spawner.rotate" : null;
+
+	/// <summary>
+	/// Hold snap to steer the aim onto the grid, so placement lands on grid points.
+	/// </summary>
+	public override bool UseSnapGrid => Spawner is not null;
+
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
 		base.OnCameraMove( player, ref angles );
 
 		if ( _isRotating )
-		{
 			angles = default;
-		}
 	}
 
 	protected override void OnStart()
@@ -70,34 +75,21 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 	}
 
 	/// <summary>
-	/// Set what this spawner should spawn. Serializes the payload and syncs to all clients via <see cref="SpawnerData"/>.
+	/// Set what this mode should spawn. Host only, syncs to all clients via <see cref="SpawnerData"/>.
 	/// </summary>
 	public void SetSpawner( ISpawner payload )
 	{
 		Spawner = payload;
-		SyncPayload( SerializeSpawner( payload ) );
+		SpawnerData = SerializeSpawner( payload );
 	}
 
 	/// <summary>
 	/// Clear the current payload, returning to an idle state.
 	/// </summary>
-	public void ClearPayload()
-	{
-		SetSpawner( null );
-	}
-
-	/// <summary>
-	/// Directly restores a previously serialized payload string
-	/// </summary>
-	public void RestoreSpawnerData( string serialisedData )
-	{
-		SyncPayload( serialisedData );
-	}
-
 	[Rpc.Host]
-	private void SyncPayload( string data )
+	private void ClearPayload()
 	{
-		SpawnerData = data;
+		SpawnerData = null;
 	}
 
 	/// <summary>
@@ -109,8 +101,9 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 		Spawner = DeserializeSpawner( SpawnerData );
 
 		// Only the player holding it sees the loading ring - never the host on someone else's behalf
-		if ( Owner?.IsLocalPlayer == true ) CloudLoadTracker.Track( Spawner?.Loading );
+		if ( Player?.IsLocalPlayer == true ) CloudLoadTracker.Track( Spawner?.Loading );
 	}
+
 	/// <summary>
 	/// Serialize a spawner for networking to <c>type:data</c>
 	/// </summary>
@@ -146,19 +139,23 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 		};
 	}
 
-	protected override void OnControl()
+	/// <summary>
+	/// Handles placing, clearing, and rotating the preview while reload is held.
+	/// </summary>
+	public override void OnControl()
 	{
-		var player = Owner;
-
-		UpdateViewmodelScreen();
-		ApplyCoilSpin();
-
+		base.OnControl();
 
 		if ( Spawner is null )
+		{
+			// The base stops updating the grid once UseSnapGrid goes false, so don't leave it hanging
+			SnapGrid?.Hide();
+			IsValidState = false;
 			return;
+		}
 
-		_isRotating = Input.Down( "use" );
-		SetIsUsingJoystick( _isRotating );
+		_isRotating = Input.Down( "reload" );
+		Toolgun.SetIsUsingJoystick( _isRotating );
 
 		var isSnapping = Input.Down( "run" );
 		if ( !isSnapping && _isSnapping ) _spinRotation = _snapRotation;
@@ -166,7 +163,7 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 
 		if ( _isRotating )
 		{
-			var look = Input.AnalogLook with { pitch = 0 } * 1;
+			var look = Input.AnalogLook with { pitch = 0 };
 
 			if ( _isSnapping )
 			{
@@ -175,7 +172,7 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 			}
 
 			_spinRotation = Rotation.From( look ) * _spinRotation;
-			Input.Clear( "use" );
+			Input.Clear( "reload" );
 
 			if ( _isSnapping )
 			{
@@ -189,46 +186,36 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 
 			_snapRotation = _rotationOffset;
 
-			UpdateJoystick( new Angles( look.yaw, look.pitch, 0 ) );
+			Toolgun.UpdateJoystick( new Angles( look.yaw, look.pitch, 0 ) );
 		}
 
+		var placement = GetPlacementInfo();
+		IsValidState = placement.Hit && Spawner.IsReady;
 
-		var placement = GetPlacementInfo( player );
-		_isValidPlacement = placement.Hit;
-
-		if ( _isValidPlacement && Spawner.IsReady && Input.Pressed( "attack1" ) )
+		if ( IsValidState && Input.Pressed( "attack1" ) )
 		{
-			var transform = GetSpawnTransform( placement, player );
+			var transform = GetSpawnTransform( placement );
 			DoSpawn( transform, new Transform( placement.EndPosition, Rotation.LookAt( placement.Normal ) ) );
 			_rotationOffset = Rotation.Identity;
-		}
-
-		if ( Input.Pressed( "attack2" ) )
-		{
-			RemoveFromInventory();
+			_spinRotation = Rotation.Identity;
 		}
 	}
 
-	/// <summary>
-	/// Remove this weapon from the player's inventory entirely.
-	/// Holsters first, then destroys the game object.
-	/// </summary>
-	[Rpc.Host]
-	private void RemoveFromInventory()
+	protected override void OnDisabled()
 	{
-		var inventory = Owner?.GetComponent<PlayerInventory>();
-		if ( !inventory.IsValid() ) return;
+		base.OnDisabled();
 
-		inventory.SwitchWeapon( null );
-		DestroyGameObject();
+		_isRotating = false;
+		Toolgun?.SetIsUsingJoystick( false );
 	}
 
 	protected override void OnUpdate()
 	{
 		base.OnUpdate();
 
+		if ( Application.IsDedicatedServer ) return;
 		if ( Spawner is null ) return;
-		if ( !Owner.IsValid() ) return;
+		if ( !Player.IsValid() ) return;
 
 		// Draw preview on all clients, so everyone can see what's being placed
 		DrawPreview();
@@ -236,33 +223,31 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 
 	private void DrawPreview()
 	{
-		var player = Owner;
-
-		var placement = GetPlacementInfo( player );
+		var placement = GetPlacementInfo();
 		if ( !placement.Hit ) return;
 
-		var transform = GetSpawnTransform( placement, player );
+		var transform = GetSpawnTransform( placement );
 
 		// Use a different material for other players' previews, same as the Duplicator
 		var material = IsProxy
 			? _previewMaterialInvalid
-			: (_isValidPlacement && Spawner.IsReady) ? _previewMaterial : _previewMaterialInvalid;
+			: IsValidState ? _previewMaterial : _previewMaterialInvalid;
 
 		Spawner.DrawPreview( transform, material );
 	}
 
-	private SceneTraceResult GetPlacementInfo( Player player )
+	private SceneTraceResult GetPlacementInfo()
 	{
-		return Scene.Trace.Ray( player.EyeTransform.ForwardRay, 4096 )
-			.IgnoreGameObjectHierarchy( player.GameObject )
+		return Scene.Trace.Ray( Player.EyeTransform.ForwardRay, 4096 )
+			.IgnoreGameObjectHierarchy( Player.GameObject )
 			.WithoutTags( "player" )
 			.Run();
 	}
 
-	private Transform GetSpawnTransform( SceneTraceResult trace, Player player )
+	private Transform GetSpawnTransform( SceneTraceResult trace )
 	{
 		var up = trace.Normal;
-		var backward = -player.EyeTransform.Forward;
+		var backward = -Player.EyeTransform.Forward;
 		var right = Vector3.Cross( up, backward ).Normal;
 		var forward = Vector3.Cross( right, up ).Normal;
 		var facingAngle = Rotation.LookAt( forward, up );
@@ -286,11 +271,13 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null ) return;
 
+		var spawner = Spawner;
+
 		var spawnData = new Global.ISpawnEvents.SpawnData
 		{
-			Spawner = Spawner,
+			Spawner = spawner,
 			Transform = transform,
-			Player = player?.Network.Owner
+			Player = player.Network.Owner
 		};
 
 		Scene.RunEvent<Global.ISpawnEvents>( x => x.OnSpawn( spawnData ) );
@@ -298,7 +285,7 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 		if ( spawnData.Cancelled )
 			return;
 
-		var objects = await Spawner.Spawn( transform, player );
+		var objects = await spawner.Spawn( transform, player );
 
 		if ( objects is { Count: > 0 } )
 		{
@@ -306,70 +293,47 @@ public partial class SpawnerWeapon : ScreenWeapon, IToolInfo
 
 			var undo = player.Undo.Create();
 			undo.Name = "#undo.spawn";
-			undo.NameTokens = new() { { "name", Spawner.DisplayName } };
+			undo.NameTokens = new() { { "name", spawner.DisplayName } };
 			undo.Add( objects );
 
 			Scene.RunEvent<Global.ISpawnEvents>( x => x.OnPostSpawn( new Global.ISpawnEvents.PostSpawnData
 			{
-				Spawner = Spawner,
+				Spawner = spawner,
 				Transform = transform,
-				Player = player?.Network.Owner,
+				Player = player.Network.Owner,
 				Objects = objects
 			} ) );
 		}
 	}
 
 	[Rpc.Broadcast( NetFlags.HostOnly )]
-	private void SpawnEffects( Transform target ) => PlayToolEffects( target );
+	private void SpawnEffects( Transform target ) => Toolgun?.PlayToolEffects( target );
 
 	/// <summary>
-	/// Draws the placement crosshair with the current spawner's readiness and validity.
+	/// Draws the payload's icon on the viewmodel screen, falling back to the scrolling tool name.
 	/// </summary>
-	public override void DrawHud( Painter painter, Vector2 crosshair )
+	public override void DrawScreen( Rect rect, Painter paint )
 	{
-		using var scope = painter.Scope();
-		painter.BlendMode = BlendMode.Normal;
-
-		if ( Spawner is null )
+		var icon = Spawner?.Icon switch
 		{
-			// Idle crosshair
-			painter.Fill = Color.White.WithAlpha( 0.3f );
-			painter.Stroke = Stroke.None;
-			painter.Circle( crosshair, 1.5f );
+			null => null,
+			var i when i.StartsWith( "http", StringComparison.OrdinalIgnoreCase ) => Texture.Load( i ),
+			var i => Texture.Load( $"thumb:{i}" )
+		};
+
+		if ( icon is null )
+		{
+			base.DrawScreen( rect, paint );
 			return;
 		}
 
-		var color = (_isValidPlacement && Spawner.IsReady) ? Color.White : new Color( 0.9f, 0.3f, 0.2f );
-
-		painter.Fill = color;
-		painter.Stroke = Stroke.Solid( color.Darken( 0.3f ), 1f ).WithAlignment( Stroke.StrokeAlignment.Outside );
-		painter.Circle( crosshair, 1.5f );
+		var size = rect.Height;
+		var iconRect = new Rect(
+			rect.Center.x - size * 0.5f,
+			rect.Center.y - size * 0.5f,
+			size,
+			size
+		);
+		paint.Texture( icon, iconRect );
 	}
-
-	/// <summary>
-	/// Draws the current inventory icon on the viewmodel screen.
-	/// </summary>
-	protected override void DrawScreenContent( Rect rect, Painter paint )
-	{
-		var icon = Texture.Load( this.InventoryIconOverride );
-		if ( icon is not null )
-		{
-			var size = rect.Height;
-			var iconRect = new Rect(
-				rect.Center.x - size * 0.5f,
-				rect.Center.y - size * 0.5f,
-				size,
-				size
-			);
-			paint.Texture( icon, iconRect );
-		}
-	}
-
-
-	string IToolInfo.Name => "#spawner.name";
-	string IToolInfo.Description => Spawner is null
-		? "#spawner.name"
-		: LocalizedText.Literal( Game.Language.GetPhrase( "spawner.placing", new() { { "name", LocalizedText.Resolve( Spawner.DisplayName ) } } ) );
-	string IToolInfo.PrimaryAction => "#spawner.spawn";
-	string IToolInfo.SecondaryAction => "#spawner.clear";
 }

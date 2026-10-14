@@ -12,12 +12,11 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 	private bool _isRestoringLoadout;
 
 	/// <summary>
-	/// One entry in a serialized loadout: the prefab resource path, plus the spawner payload for spawner weapons.
+	/// One entry in a serialized loadout: the prefab resource path.
 	/// </summary>
 	public struct LoadoutEntry
 	{
 		public string PrefabPath { get; set; }
-		public string SpawnerDataPayload { get; set; }
 	}
 
 	public string SerializeLoadout()
@@ -26,8 +25,7 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 			.Where( w => !string.IsNullOrEmpty( w.GameObject.PrefabInstanceSource ) )
 			.Select( w => new LoadoutEntry
 			{
-				PrefabPath = w.GameObject.PrefabInstanceSource,
-				SpawnerDataPayload = (w as SpawnerWeapon)?.SpawnerData
+				PrefabPath = w.GameObject.PrefabInstanceSource
 			} )
 			.ToList();
 
@@ -61,33 +59,13 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 		{
 			foreach ( var entry in entries )
 			{
-				if ( !Inventory.Pickup( entry.PrefabPath, false ) )
-					continue;
-
-				if ( !string.IsNullOrEmpty( entry.SpawnerDataPayload ) && Inventory.GetWeapon<SpawnerWeapon>() is { } spawnerWeapon )
-				{
-					spawnerWeapon.RestoreSpawnerData( entry.SpawnerDataPayload );
-				}
+				Inventory.Pickup( entry.PrefabPath, false );
 			}
 		}
 		finally
 		{
 			_isRestoringLoadout = false;
 		}
-	}
-
-	private static async Task EnsureMountedAsync( string json )
-	{
-		var entries = Json.Deserialize<List<LoadoutEntry>>( json );
-		if ( entries is null ) return;
-
-		var needsMounts = entries.Any( e => !string.IsNullOrEmpty( e.SpawnerDataPayload )
-			&& e.SpawnerDataPayload.EndsWith( ".vmdl", StringComparison.OrdinalIgnoreCase ) );
-
-		if ( !needsMounts ) return;
-
-		foreach ( var entry in Sandbox.Mounting.Directory.GetAll().Where( e => e.Available ) )
-			await Sandbox.Mounting.Directory.Mount( entry.Ident );
 	}
 
 	[Rpc.Owner]
@@ -124,7 +102,6 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 
 		await Task.Yield();
 
-		await EnsureMountedAsync( json );
 		GiveLoadoutWeapons( json );
 
 		GiveStarterItemsIfEmpty();
