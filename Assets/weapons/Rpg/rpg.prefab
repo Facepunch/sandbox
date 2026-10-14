@@ -25,7 +25,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "d62f1ddf-8d6b-4567-ab24-45c57374b9ff",
+          "Id": "b958d2e0-019a-43f4-bf28-2d9a98fa4d60",
           "Path": "models/weapons/sbox_rpg_recoillessrifle/w_recoillessrifle.vmdl"
         },
         "OnComponentDestroy": null,
@@ -54,6 +54,7 @@
         "Gravity": true,
         "GravityScale": 1,
         "ImpactDamage": 0,
+        "InertiaScale": 1,
         "LinearDamping": 0,
         "Locking": {
           "X": false,
@@ -137,9 +138,9 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/4a9e10201eb6f873.vtex"
         },
-        "DisplayName": "Ashford R-7",
+        "DisplayName": "Rocket Launcher",
         "DroppedGameObject": {
           "_type": "gameobject",
           "go": "00edf338-ad8d-4472-9725-250b57efbaba"
@@ -265,7 +266,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "d62f1ddf-8d6b-4567-ab24-45c57374b9ff",
+              "Id": "b958d2e0-019a-43f4-bf28-2d9a98fa4d60",
               "Path": "models/weapons/sbox_rpg_recoillessrifle/w_recoillessrifle.vmdl"
             },
             "Morphs": {},

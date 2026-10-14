@@ -78,7 +78,7 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/c32ae5e3ab92dd2.vtex"
         },
         "DisplayName": "UP-45",
         "DroppedGameObject": {
@@ -115,6 +115,8 @@
         },
         "PrimaryAutomatic": true,
         "PrimaryDelay": 0.1,
+        "RagdollBodyShare": 0.3,
+        "RagdollImpactScale": 1,
         "RecoilPitch": "-0.300000012,-0.100000001",
         "RecoilYaw": "-0.100000001,0.100000001",
         "ReloadStartTime": 0,
@@ -156,7 +158,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "45a633f3-fca2-451c-a92c-813422886001",
+          "Id": "45193ba2-8692-4b84-97d7-9e2d2a18c6c2",
           "Path": "models/weapons/sbox_pistol_usp/w_usp.vmdl"
         },
         "OnComponentDestroy": null,
@@ -185,6 +187,7 @@
         "Gravity": true,
         "GravityScale": 1,
         "ImpactDamage": 0,
+        "InertiaScale": 1,
         "LinearDamping": 0,
         "Locking": {
           "X": false,
@@ -279,7 +282,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "45a633f3-fca2-451c-a92c-813422886001",
+              "Id": "45193ba2-8692-4b84-97d7-9e2d2a18c6c2",
               "Path": "models/weapons/sbox_pistol_usp/w_usp.vmdl"
             },
             "Morphs": {},

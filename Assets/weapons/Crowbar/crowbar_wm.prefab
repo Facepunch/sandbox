@@ -41,8 +41,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Object",
-        "Position": "4.83433342,2.85260534,-8.00271893",
-        "Rotation": "-0.14440985,-0.0359661989,0.95266813,-0.265096068",
+        "Position": "1.88815475,1.01860487,-7.88101959",
+        "Rotation": "-0.0615801364,-0.0129331984,0.96158129,-0.267211974",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -68,7 +68,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "72fde87c-a95d-494a-be3c-95b48a6021db",
+              "Id": "937f0415-6d31-4530-8f96-9468cedfce2e",
               "Path": "models/weapons/sbox_melee_crowbar/w_crowbar.vmdl"
             },
             "Morphs": {},

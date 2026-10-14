@@ -78,9 +78,9 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/6b37734531b6a4a1.vtex"
         },
-        "DisplayName": "Heritage .45",
+        "DisplayName": "1911",
         "DroppedGameObject": {
           "_type": "gameobject",
           "go": "e2753d64-19ba-46a0-a05b-b1f8115a1a01"
@@ -115,6 +115,8 @@
         },
         "PrimaryAutomatic": true,
         "PrimaryDelay": 0.1,
+        "RagdollBodyShare": 0.3,
+        "RagdollImpactScale": 1,
         "RecoilPitch": "-0.5,-0.200000003",
         "RecoilYaw": "-0.150000006,0.150000006",
         "ReloadStartTime": 0,
@@ -156,7 +158,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "8b7f633d-d349-44f5-b8a9-02122a04b468",
+          "Id": "b43c3668-195e-47df-86a3-ffc54ce96890",
           "Path": "models/weapons/sbox_pistol_1911/w_1911.vmdl"
         },
         "OnComponentDestroy": null,
@@ -185,6 +187,7 @@
         "Gravity": true,
         "GravityScale": 1,
         "ImpactDamage": 0,
+        "InertiaScale": 1,
         "LinearDamping": 0,
         "Locking": {
           "X": false,
@@ -279,7 +282,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "8b7f633d-d349-44f5-b8a9-02122a04b468",
+              "Id": "b43c3668-195e-47df-86a3-ffc54ce96890",
               "Path": "models/weapons/sbox_pistol_1911/w_1911.vmdl"
             },
             "Morphs": {},

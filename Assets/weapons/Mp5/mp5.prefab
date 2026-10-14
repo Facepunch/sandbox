@@ -76,9 +76,9 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/e7a747901ede360f.vtex"
         },
-        "DisplayName": "SG-5",
+        "DisplayName": "SMG",
         "DroppedGameObject": {
           "_type": "gameobject",
           "go": "4c0e80fa-adda-4379-9f2c-57d9fddc85f1"
@@ -117,6 +117,8 @@
         },
         "PrimaryAutomatic": true,
         "PrimaryDelay": 0.09,
+        "RagdollBodyShare": 0.3,
+        "RagdollImpactScale": 1,
         "RecoilPitch": "-0.300000012,-0.100000001",
         "RecoilYaw": "-0.100000001,0.100000001",
         "ReloadStartTime": 0,
@@ -162,7 +164,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "181ff015-7e7e-4e04-b9e3-5211f94ad750",
+          "Id": "7256b832-eb42-4d84-85d3-213f19e8ab97",
           "Path": "models/weapons/sbox_smg_mp5/w_mp5.vmdl"
         },
         "OnComponentDestroy": null,
@@ -191,6 +193,7 @@
         "Gravity": true,
         "GravityScale": 1,
         "ImpactDamage": 0,
+        "InertiaScale": 1,
         "LinearDamping": 0,
         "Locking": {
           "X": false,
@@ -282,7 +285,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "181ff015-7e7e-4e04-b9e3-5211f94ad750",
+              "Id": "7256b832-eb42-4d84-85d3-213f19e8ab97",
               "Path": "models/weapons/sbox_smg_mp5/w_mp5.vmdl"
             },
             "Morphs": {},

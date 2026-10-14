@@ -78,9 +78,9 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/9a3905a639169a1f.vtex"
         },
-        "DisplayName": "AR-4",
+        "DisplayName": "M4A1",
         "DroppedGameObject": {
           "_type": "gameobject",
           "go": "e7dc7a22-b5a7-41c9-9aa9-ed48c0a053e8"
@@ -115,6 +115,8 @@
         },
         "PrimaryAutomatic": true,
         "PrimaryDelay": 0.1,
+        "RagdollBodyShare": 0.3,
+        "RagdollImpactScale": 1,
         "RecoilPitch": "-0.300000012,-0.100000001",
         "RecoilYaw": "-0.100000001,0.100000001",
         "ReloadStartTime": 0,
@@ -156,7 +158,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "79986ccf-583c-4f1b-b2cd-e23cf1de5193",
+          "Id": "216f2d3d-31ad-44b4-baea-d0db60071ddf",
           "Path": "models/weapons/sbox_assault_m4a1/w_m4a1.vmdl"
         },
         "OnComponentDestroy": null,
@@ -185,6 +187,7 @@
         "Gravity": true,
         "GravityScale": 1,
         "ImpactDamage": 0,
+        "InertiaScale": 1,
         "LinearDamping": 0,
         "Locking": {
           "X": false,
@@ -279,7 +282,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "79986ccf-583c-4f1b-b2cd-e23cf1de5193",
+              "Id": "216f2d3d-31ad-44b4-baea-d0db60071ddf",
               "Path": "models/weapons/sbox_assault_m4a1/w_m4a1.vmdl"
             },
             "Morphs": {},
