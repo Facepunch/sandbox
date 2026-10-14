@@ -25,10 +25,22 @@ public sealed class PhysicalProperties : Component
 			rb.GravityScale = GravityScale;
 		}
 
+		ApplyGravityToModelPhysics();
+
 		if ( Health > 0f )
 		{
 			var prop = GameObject.Root.GetComponent<Prop>();
 			if ( prop.IsValid() ) prop.Health = Health;
+		}
+	}
+
+	private void ApplyGravityToModelPhysics()
+	{
+		if ( !Components.TryGet<ModelPhysics>( out var modelPhysics ) ) return;
+
+		foreach ( var body in modelPhysics.GetComponentsInChildren<Rigidbody>( true ) )
+		{
+			body.GravityScale = GravityScale;
 		}
 	}
 }

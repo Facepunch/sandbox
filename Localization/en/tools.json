@@ -95,6 +95,11 @@
     "tool.hint.mass.copy": "Copy mass",
     "tool.hint.mass.reset": "Reset mass",
 
+    "tool.hint.gravity.description": "Sets the gravity scale of an object",
+    "tool.hint.gravity.set": "Set gravity",
+    "tool.hint.gravity.copy": "Copy gravity",
+    "tool.hint.gravity.reset": "Reset gravity",
+
     "tool.hint.unbreakable.description": "Makes an object immune to damage",
     "tool.hint.unbreakable.set": "Set Unbreakable",
     "tool.hint.unbreakable.unset": "Reset",
@@ -161,6 +166,7 @@
     "tool.name.colour": "Colour",
     "tool.name.resizer": "Resizer",
     "tool.name.mass": "Mass",
+    "tool.name.gravity": "Gravity",
     "tool.name.unbreakable": "Unbreakable",
     "tool.name.balloon": "Balloon",
     "tool.name.thruster": "Thruster",

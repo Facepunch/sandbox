@@ -62,7 +62,15 @@ public sealed class MassTool : ToolMode
 
 		if ( mass <= 0f )
 		{
-			rb.GetComponent<PhysicalProperties>()?.Destroy();
+			var existing = rb.GetComponent<PhysicalProperties>();
+			if ( existing.IsValid() )
+			{
+				// Keep the component if it still carries a gravity override or health
+				existing.Mass = 0f;
+				if ( existing.GravityScale == 1f && existing.Health <= 0f )
+					existing.Destroy();
+			}
+
 			rb.MassOverride = 0f;
 			return;
 		}
