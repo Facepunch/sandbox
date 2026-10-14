@@ -5,6 +5,7 @@
     "tool.hint.duplicator.place": "Place",
     "tool.hint.duplicator.copy": "Copy",
     "tool.hint.duplicator.rotate": "Hold to rotate",
+    "tool.hint.duplicator.align": "Hold to align to surface",
 
     "tool.hint.weld.stage0": "Welds two objects together",
     "tool.hint.weld.stage1": "Select the second object to weld",

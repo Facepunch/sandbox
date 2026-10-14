@@ -24,6 +24,11 @@ public sealed partial class DuplicatorTool : ToolMode
 	bool _isSnapping;
 	bool _isRotating;
 
+	/// <summary>
+	/// While held, the duplication's up axis follows the surface normal instead of world up
+	/// </summary>
+	[Sync] public bool AlignToSurface { get; set; }
+
 	public override string Description => "#tool.hint.duplicator.description";
 	public override string PrimaryAction => spawner is not null ? "#tool.hint.duplicator.place" : null;
 	public override string SecondaryAction => "#tool.hint.duplicator.copy";
@@ -32,6 +37,8 @@ public sealed partial class DuplicatorTool : ToolMode
 	/// Shows the rotation hint while a duplication is available to place.
 	/// </summary>
 	public override string ReloadAction => spawner is not null ? "#tool.hint.duplicator.rotate" : null;
+
+	public override string SnapAction => spawner is not null ? "#tool.hint.duplicator.align" : null;
 
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
@@ -83,6 +90,8 @@ public sealed partial class DuplicatorTool : ToolMode
 			Toolgun.UpdateJoystick( new Angles( look.yaw, look.pitch, 0 ) );
 		}
 
+		AlignToSurface = Input.Down( "snap" );
+
 		var select = TraceSelect();
 		IsValidState = IsValidTarget( select );
 
@@ -94,13 +103,7 @@ public sealed partial class DuplicatorTool : ToolMode
 				return;
 			}
 
-			var tx = new Transform();
-			tx.Position = select.WorldPosition() + Vector3.Down * spawner.Bounds.Mins.z;
-
-			var relative = Player.EyeTransform.Rotation.Angles();
-			tx.Rotation = Rotation.From( new Angles( 0, relative.yaw, 0 ) ) * _rotationOffset;
-
-			Duplicate( tx );
+			Duplicate( GetPlacement( select ) );
 			ShootEffects( select );
 			_rotationOffset = Rotation.Identity;
 			_spinRotation = Rotation.Identity;
@@ -193,15 +196,24 @@ public sealed partial class DuplicatorTool : ToolMode
 		var select = TraceSelect();
 		if ( !IsValidPlacementTarget( select ) ) return;
 
-		var tx = new Transform();
-
-		tx.Position = select.WorldPosition() + Vector3.Down * spawner.Bounds.Mins.z;
-
-		var relative = Player.EyeTransform.Rotation.Angles();
-		tx.Rotation = Rotation.From( new Angles( 0, relative.yaw, 0 ) ) * _rotationOffset;
-
 		var overlayMaterial = IsProxy ? Material.Load( "materials/effects/duplicator_override_other.vmat" ) : Material.Load( "materials/effects/duplicator_override.vmat" );
-		spawner.DrawPreview( tx, overlayMaterial );
+		spawner.DrawPreview( GetPlacement( select ), overlayMaterial );
+	}
+
+	Transform GetPlacement( SelectionPoint select )
+	{
+		var eyeRotation = Player.EyeTransform.Rotation;
+		var up = AlignToSurface ? select.WorldTransform().Rotation.Forward : Vector3.Up;
+
+		// Face the view direction projected onto the surface, falling back to view up when looking straight at it.
+		var forward = eyeRotation.Forward - up * Vector3.Dot( eyeRotation.Forward, up );
+		if ( forward.LengthSquared < 0.01f )
+			forward = eyeRotation.Up - up * Vector3.Dot( eyeRotation.Up, up );
+
+		var rotation = Rotation.LookAt( forward.Normal, up ) * _rotationOffset;
+		var position = select.WorldPosition() - up * spawner.Bounds.Mins.z;
+
+		return new Transform( position, rotation );
 	}
 
 
