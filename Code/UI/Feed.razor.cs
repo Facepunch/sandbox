@@ -25,12 +25,18 @@ partial class Feed : PanelComponent
 		bool isSuicide = damageTags.Contains( "suicide" );
 
 		Panel panel = new Panel();
+		panel.AddClass( "entry" );
 
 		if ( !string.IsNullOrEmpty( attackerName ) && !isSuicide )
 		{
-			if ( attackerTags.Contains( "npc" ) ) AddIcon( panel, NpcIcon );
-			var left = panel.AddChild<Label>();
+			if ( attackerTags.Contains( "npc" ) ) AddIcon( panel, NpcIcon )?.AddClass( "npc-icon" );
+			var left = panel.AddChild<Label>( "name attacker" );
 			left.Text = attackerName;
+			left.SetClass( "npc", attackerTags.Contains( "npc" ) );
+		}
+		else
+		{
+			panel.AddClass( "no-attacker" );
 		}
 
 		Panel icons = panel.AddChild<Panel>( "icons" );
@@ -38,8 +44,9 @@ partial class Feed : PanelComponent
 		{
 			AddIcon( icons, weaponIcon );
 		}
-		else if ( damageTags.Contains( DamageTags.Fall ) )
+		else if ( damageTags.Contains( DamageTags.Fall ) || damageTags.Contains( DamageTags.Crush ) )
 		{
+			// thrown into a wall reads the same as a hard landing
 			AddIcon( icons, FallIcon );
 		}
 		else
@@ -47,12 +54,13 @@ partial class Feed : PanelComponent
 			AddIcon( icons, isSuicide ? SuicideIcon : DeathIcon );
 		}
 
-		if ( damageTags.Contains( DamageTags.Headshot ) ) AddIcon( icons, HeadshotIcon );
-		if ( damageTags.Contains( DamageTags.Explosion ) ) AddIcon( icons, ExplosionIcon );
+		if ( damageTags.Contains( DamageTags.Headshot ) ) AddIcon( icons, HeadshotIcon )?.AddClass( "modifier" );
+		if ( damageTags.Contains( DamageTags.Explosion ) ) AddIcon( icons, ExplosionIcon )?.AddClass( "modifier" );
 
-		if ( victimTags.Contains( "npc" ) ) AddIcon( panel, NpcIcon );
-		var right = panel.AddChild<Label>();
+		if ( victimTags.Contains( "npc" ) ) AddIcon( panel, NpcIcon )?.AddClass( "npc-icon" );
+		var right = panel.AddChild<Label>( "name victim" );
 		right.Text = victimName;
+		right.SetClass( "npc", victimTags.Contains( "npc" ) );
 
 		bool isMe = attackerSteamId > 0 && attackerSteamId == Connection.Local.SteamId;
 		if ( isMe )

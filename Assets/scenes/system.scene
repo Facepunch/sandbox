@@ -645,7 +645,7 @@
           "RenderTexture": null,
           "TargetEye": "None",
           "Viewport": "0,0,1,1",
-          "ZFar": 32000,
+          "ZFar": 100000,
           "ZNear": 1
         },
         {

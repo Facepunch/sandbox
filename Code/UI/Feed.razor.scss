@@ -1,21 +1,28 @@
 @import "/UI/Theme.scss";
 
+// HL2 / GMod style death notices stacked in the top right,
+// killer, kill icon, victim. Amber is HudLayer.DefaultTint so it matches the painted HUD.
+$feed-amber: #f7c44d;
+$feed-icon: #ffa01e;
+$feed-npc: #ff4b3c;
+$feed-height: 36px;
+
 Feed
 {
 	position: absolute;
-	top: 10%;
-	right: 10%;
-	border-radius: 20px;
+	top: $deadzone-y;
+	right: $deadzone-x;
 	flex-direction: column;
 	align-items: flex-end;
-	font-size: 22px;
-	font-family: $body-font;
-	font-weight: semibold;
-	color: #fff4;
-	text-shadow: 0px 0px 5px #fffa;
 	gap: 4px;
-	margin: auto;
+	font-size: 20px;
+	font-family: $body-font;
+	font-weight: 700;
+	color: $feed-amber;
+	text-shadow: 1px 1px 2px #000e;
+	pointer-events: none;
 	z-index: -1000;
+	transition: opacity 0.2s ease;
 
 	&.hide
 	{
@@ -23,73 +30,79 @@ Feed
 	}
 }
 
-Feed > *
+Feed > .entry
 {
-	padding: 0px 16px;
-	top: 0px;
-	left: -16px;
-	height: 50px;
-	transition: all 0.1s ease-out;
-	opacity: 1;
-	transform: scale( 1 );
-	position: relative;
-	gap: 16px;
+	flex-shrink: 0;
+	height: $feed-height;
+	padding: 0px 12px;
+	gap: 10px;
 	align-items: center;
-	
+	border: 1px solid transparent;
+	border-radius: 4px;
+	opacity: 1;
+	transform: translateX( 0px );
+	transition: all 0.15s ease-out;
+
+	.name
+	{
+		white-space: nowrap;
+		color: $feed-amber;
+
+		&.npc
+		{
+			color: $feed-npc;
+		}
+	}
+
 	.icons
 	{
-		gap: 0px;
+		height: 100%;
+		gap: 2px;
+		align-items: center;
 	}
 
 	.icon
 	{
-		transition: all 0.1s ease-in;
+		height: 28px;
 		background-position: center;
 		background-size: contain;
 		background-repeat: no-repeat;
-		background-tint: #fff4;
-		height: 80%;
-		transform: rotateY(180deg);
+		background-tint: $feed-icon;
+		transform: rotateY( 180deg );
+
+		&.modifier
+		{
+			height: 22px;
+		}
+	}
+
+	// the little robot head in front of an NPC's name
+	.npc-icon
+	{
+		height: 18px;
+		margin-right: -4px;
+		background-tint: $feed-npc;
+		opacity: 0.85;
+		transform: none;
+	}
+
+	// kills the local player made
+	&.is-me
+	{
+		border: 1px solid rgba( 247, 196, 77, 0.6 );
 	}
 
 	&:intro
 	{
-		transform: scale( 0.7 );
-		left: 200px;
-		height: 0px;
 		opacity: 0;
+		transform: translateX( 40px );
 	}
 
 	&:outro
 	{
-		left: 300px;
-		height: 0px;
 		opacity: 0;
-		transition: all 0.2s ease-in;
-	}
-	
-	&.is-me
-	{
-		border-radius: 8px;
-		background-color: #0c202faa;
-	}
-
-	&.important
-	{
-		position: relative;
-		animation: bounce-scale 0.25s infinite alternate;
-	}
-}
-
-@keyframes bounce-scale
-{
-	0%
-	{
-		transform: scale(1);
-	}
-
-	100%
-	{
-		transform: scale(1.1);
+		height: 0px;
+		margin-top: -4px;
+		transition: opacity 0.35s ease-in, height 0.2s ease-in 0.3s, margin-top 0.2s ease-in 0.3s;
 	}
 }
