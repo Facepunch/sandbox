@@ -45,7 +45,8 @@
         "Flags": 0,
         "AimSpreadScale": 1,
         "CalloutRange": 1500,
-        "DisplayName": "#asset.combat_npc.title",
+        "DisplayName": "Soldier",
+        "DroppedWeaponLifetime": 20,
         "EngageSpeed": 150,
         "FollowDistance": 150,
         "Friendly": false,
@@ -57,16 +58,27 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "PatrolRadius": 2048,
+        "Patrols": false,
+        "PatrolSpeed": 85,
+        "ReactionTimeAlert": "0.5,0.899999976",
+        "ReactionTimeRelaxed": "1,1.60000002",
+        "RelaxDelay": 5,
         "Renderer": {
           "_type": "component",
           "component_id": "2d981081-c1b7-4be7-b39c-529e7f3fb0f2",
           "go": "20ebc983-bcde-4769-9dda-e8b4ae45a063",
           "component_type": "SkinnedModelRenderer"
         },
-        "PatrolSpeed": 85,
         "SearchSpeed": 85,
         "SearchTimeout": 20,
+        "ShowDebugOverlay": false,
         "SpeedVariation": 0.05,
+        "Weapon": {
+          "_type": "component",
+          "component_id": "6bb4a3cc-497d-46c1-a2cf-76c3950f9027",
+          "go": "bdce6722-1340-444b-b8e7-9686d99c71a7",
+          "component_type": "M4a1Weapon"
+        },
         "WeaponChoices": [
           {
             "_type": "gameobject",
@@ -84,14 +96,7 @@
             "_type": "gameobject",
             "prefab": "weapons/shotgun/shotgun.prefab"
           }
-        ],
-        "ShowDebugOverlay": false,
-        "Weapon": {
-          "_type": "component",
-          "component_id": "6bb4a3cc-497d-46c1-a2cf-76c3950f9027",
-          "go": "bdce6722-1340-444b-b8e7-9686d99c71a7",
-          "component_type": "M4a1Weapon"
-        }
+        ]
       },
       {
         "__type": "Sandbox.Npcs.NpcOutfits",
@@ -104,34 +109,156 @@
           "go": "20ebc983-bcde-4769-9dda-e8b4ae45a063",
           "component_type": "Dresser"
         },
-        "Faces": [
-          {
-            "Id": "9573d45b-3b65-45f1-83d3-cee801aea261",
-            "Path": "models/citizen_clothes/body/human01.clothing"
-          },
-          {
-            "Id": "996e506d-fa15-4c30-8d05-ce21b818bd4d",
-            "Path": "models/citizen_clothes/body/human03.clothing"
-          },
-          {
-            "Id": "cbba9073-225b-4a84-9bbf-ce9436615597",
-            "Path": "models/citizen_clothes/body/human05.clothing"
-          },
-          {
-            "Id": "ee787b9d-b3f2-41da-9082-bdbfa59fbcbf",
-            "Path": "models/citizen_clothes/body/human06.clothing"
-          },
-          {
-            "Id": "9b7d1bd0-ec3a-479c-8b6c-70476dd7ba74",
-            "Path": "models/citizen_clothes/body/human07.clothing"
-          }
-        ],
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "FacialAppearances": [
+          {
+            "Name": "Dreads",
+            "Head": {
+              "Id": "9573d45b-3b65-45f1-83d3-cee801aea261",
+              "Path": "models/citizen_clothes/body/human01.clothing"
+            },
+            "Hair": {
+              "Id": "095e844b-f53a-42dd-857b-b0f3508d85b6",
+              "Path": "models/citizen_clothes/hair/hair_short_dreadlocks/short_dreadlocks.clothing"
+            },
+            "Beard": null,
+            "HairTint": 0.85
+          },
+          {
+            "Name": "Bald Goatee",
+            "Head": {
+              "Id": "ee787b9d-b3f2-41da-9082-bdbfa59fbcbf",
+              "Path": "models/citizen_clothes/body/human06.clothing"
+            },
+            "Hair": null,
+            "Beard": {
+              "Id": "f9d0ce0d-7082-4238-9bcd-6549d90bd337",
+              "Path": "models/citizen_clothes/hair/goatee/goatee.clothing"
+            },
+            "HairTint": 0.95
+          },
+          {
+            "Name": "Scruffy",
+            "Head": {
+              "Id": "9573d45b-3b65-45f1-83d3-cee801aea261",
+              "Path": "models/citizen_clothes/body/human01.clothing"
+            },
+            "Hair": {
+              "Id": "d4f5edd1-bcf6-4236-baa5-3eeae725454a",
+              "Path": "models/citizen_clothes/hair/hair_shortscruffy/hair_shortscruffy_brown.clothing"
+            },
+            "Beard": {
+              "Id": "e0a1f52f-82fa-42cc-bd9c-8bb669c53388",
+              "Path": "models/citizen_clothes/hair/patchy_beard/patchy_beard.clothing"
+            },
+            "HairTint": 0.95
+          },
+          {
+            "Name": "Slick",
+            "Head": {
+              "Id": "ee787b9d-b3f2-41da-9082-bdbfa59fbcbf",
+              "Path": "models/citizen_clothes/body/human06.clothing"
+            },
+            "Hair": {
+              "Id": "e6f19be9-8c98-4892-826c-4f43ee340ac0",
+              "Path": "models/citizen_clothes/hair/hair_slickedback/hair_slickedback.clothing"
+            },
+            "Beard": null,
+            "HairTint": 0.95
+          },
+          {
+            "Name": "Ginger",
+            "Head": {
+              "Id": "cbba9073-225b-4a84-9bbf-ce9436615597",
+              "Path": "models/citizen_clothes/body/human05.clothing"
+            },
+            "Hair": {
+              "Id": "d4f5edd1-bcf6-4236-baa5-3eeae725454a",
+              "Path": "models/citizen_clothes/hair/hair_shortscruffy/hair_shortscruffy_brown.clothing"
+            },
+            "Beard": {
+              "Id": "33908b41-82d0-49ef-b116-53f8cbe7a23d",
+              "Path": "models/citizen_clothes/hair/medium_beard/medium_beard.clothing"
+            },
+            "HairTint": 0.58
+          },
+          {
+            "Name": "Dark Slick",
+            "Head": {
+              "Id": "996e506d-fa15-4c30-8d05-ce21b818bd4d",
+              "Path": "models/citizen_clothes/body/human03.clothing"
+            },
+            "Hair": {
+              "Id": "e6f19be9-8c98-4892-826c-4f43ee340ac0",
+              "Path": "models/citizen_clothes/hair/hair_slickedback/hair_slickedback.clothing"
+            },
+            "Beard": null,
+            "HairTint": 0.8
+          },
+          {
+            "Name": "Blonde",
+            "Head": {
+              "Id": "9b7d1bd0-ec3a-479c-8b6c-70476dd7ba74",
+              "Path": "models/citizen_clothes/body/human07.clothing"
+            },
+            "Hair": {
+              "Id": "d4f5edd1-bcf6-4236-baa5-3eeae725454a",
+              "Path": "models/citizen_clothes/hair/hair_shortscruffy/hair_shortscruffy_brown.clothing"
+            },
+            "Beard": null,
+            "HairTint": 0.18
+          },
+          {
+            "Name": "Brown Beard",
+            "Head": {
+              "Id": "996e506d-fa15-4c30-8d05-ce21b818bd4d",
+              "Path": "models/citizen_clothes/body/human03.clothing"
+            },
+            "Hair": {
+              "Id": "51103552-5505-493d-be9a-fdd8e750970a",
+              "Path": "models/citizen_clothes/hair/hair_thinning_short/thinning_short.clothing"
+            },
+            "Beard": {
+              "Id": "33908b41-82d0-49ef-b116-53f8cbe7a23d",
+              "Path": "models/citizen_clothes/hair/medium_beard/medium_beard.clothing"
+            },
+            "HairTint": 0.4
+          },
+          {
+            "Name": "Moustache",
+            "Head": {
+              "Id": "9b7d1bd0-ec3a-479c-8b6c-70476dd7ba74",
+              "Path": "models/citizen_clothes/body/human07.clothing"
+            },
+            "Hair": {
+              "Id": "a476260a-8fcd-46c2-8f39-7ec89d30622c",
+              "Path": "models/citizen_clothes/hair/hair_slicked_back_balding/hair_slicked_back_balding.clothing"
+            },
+            "Beard": {
+              "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
+              "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
+            },
+            "HairTint": 0.75
+          },
+          {
+            "Name": "Bald Goatee Light",
+            "Head": {
+              "Id": "cbba9073-225b-4a84-9bbf-ce9436615597",
+              "Path": "models/citizen_clothes/body/human05.clothing"
+            },
+            "Hair": null,
+            "Beard": {
+              "Id": "f9d0ce0d-7082-4238-9bcd-6549d90bd337",
+              "Path": "models/citizen_clothes/hair/goatee/goatee.clothing"
+            },
+            "HairTint": 0.8
+          }
+        ],
         "Outfits": [
           {
             "Name": "SWAT",
@@ -2433,7 +2560,7 @@
             ]
           },
           {
-            "__guid": "3f43d6da-2753-482c-9c48-0e0f1e2706eb",
+            "__guid": "c55f1d80-42db-4f0e-9c1a-f229640096bc",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - black_boots",
@@ -2450,7 +2577,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "9b7cc1a5-400e-4088-a92c-2745e4d9c593",
+                "__guid": "d7251478-3af8-4dcb-9fe1-8096c600301f",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2500,7 +2627,7 @@
             "Children": []
           },
           {
-            "__guid": "8df448be-59e1-471c-8bd7-53ae003ffe63",
+            "__guid": "ec0fd79c-1731-4606-b182-5552b16277c6",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - tactical_trousers",
@@ -2517,7 +2644,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "22ac4e09-0532-45b2-8ac2-c00c42ab508b",
+                "__guid": "dc6038b7-8563-4ec5-ba4c-272326ad6a9f",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2567,7 +2694,7 @@
             "Children": []
           },
           {
-            "__guid": "6cac6ce8-9229-4f8a-89e4-02d3e64c7c1b",
+            "__guid": "4986559a-ba54-455f-969e-0142cf7e3d2f",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - tactical_armour",
@@ -2584,7 +2711,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "0adee1b8-69c7-4e77-b97d-df8ad97ed558",
+                "__guid": "8752d815-2477-4950-9d00-f31fc29d4df0",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2634,7 +2761,7 @@
             "Children": []
           },
           {
-            "__guid": "262f2a06-2f29-4782-9cbb-07a2b1a440dc",
+            "__guid": "8e508cfa-572a-4e1d-8812-f1c0f9446428",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - tactical_gasmask",
@@ -2651,7 +2778,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "3d1aa120-604f-4ee0-8f68-6419b1d0d940",
+                "__guid": "f022f4fe-e426-48a4-ae31-3c8caa7c5870",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2701,7 +2828,7 @@
             "Children": []
           },
           {
-            "__guid": "b04553c5-9e8c-435d-a25f-deb057e2a5f3",
+            "__guid": "a62b2581-a9ba-4c26-969f-af36c9fd4b46",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - tactical_gloves",
@@ -2718,7 +2845,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "dcb372a5-e1a5-46a1-a393-8471aafe6ca4",
+                "__guid": "c1490537-02e5-435b-b6ae-294dc3ad9a0a",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2844,7 +2971,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Thumbnail Camera",
-        "Position": "78.9342,28.7297,61",
+        "Position": "78.9341965,28.7297001,61",
         "Rotation": "0,0,0.984807789,-0.173648193",
         "Scale": "1,1,1",
         "Tags": "",

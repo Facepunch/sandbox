@@ -109,34 +109,107 @@
           "go": "20ebc983-bcde-4769-9dda-e8b4ae45a063",
           "component_type": "Dresser"
         },
-        "Faces": [
-          {
-            "Id": "9573d45b-3b65-45f1-83d3-cee801aea261",
-            "Path": "models/citizen_clothes/body/human01.clothing"
-          },
-          {
-            "Id": "996e506d-fa15-4c30-8d05-ce21b818bd4d",
-            "Path": "models/citizen_clothes/body/human03.clothing"
-          },
-          {
-            "Id": "cbba9073-225b-4a84-9bbf-ce9436615597",
-            "Path": "models/citizen_clothes/body/human05.clothing"
-          },
-          {
-            "Id": "ee787b9d-b3f2-41da-9082-bdbfa59fbcbf",
-            "Path": "models/citizen_clothes/body/human06.clothing"
-          },
-          {
-            "Id": "9b7d1bd0-ec3a-479c-8b6c-70476dd7ba74",
-            "Path": "models/citizen_clothes/body/human07.clothing"
-          }
-        ],
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "FacialAppearances": [
+          {
+            "Name": "Professor",
+            "Head": {
+              "Id": "996e506d-fa15-4c30-8d05-ce21b818bd4d",
+              "Path": "models/citizen_clothes/body/human03.clothing"
+            },
+            "Hair": {
+              "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
+              "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
+            },
+            "Beard": {
+              "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
+              "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
+            },
+            "HairTint": 0
+          },
+          {
+            "Name": "Grey",
+            "Head": {
+              "Id": "cbba9073-225b-4a84-9bbf-ce9436615597",
+              "Path": "models/citizen_clothes/body/human05.clothing"
+            },
+            "Hair": {
+              "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
+              "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
+            },
+            "Beard": null,
+            "HairTint": 0
+          },
+          {
+            "Name": "Goatee",
+            "Head": {
+              "Id": "9b7d1bd0-ec3a-479c-8b6c-70476dd7ba74",
+              "Path": "models/citizen_clothes/body/human07.clothing"
+            },
+            "Hair": {
+              "Id": "51103552-5505-493d-be9a-fdd8e750970a",
+              "Path": "models/citizen_clothes/hair/hair_thinning_short/thinning_short.clothing"
+            },
+            "Beard": {
+              "Id": "f9d0ce0d-7082-4238-9bcd-6549d90bd337",
+              "Path": "models/citizen_clothes/hair/goatee/goatee.clothing"
+            },
+            "HairTint": 0.8
+          },
+          {
+            "Name": "Elder",
+            "Head": {
+              "Id": "9573d45b-3b65-45f1-83d3-cee801aea261",
+              "Path": "models/citizen_clothes/body/human01.clothing"
+            },
+            "Hair": {
+              "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
+              "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
+            },
+            "Beard": {
+              "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
+              "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
+            },
+            "HairTint": 0.95
+          },
+          {
+            "Name": "Bearded",
+            "Head": {
+              "Id": "ee787b9d-b3f2-41da-9082-bdbfa59fbcbf",
+              "Path": "models/citizen_clothes/body/human06.clothing"
+            },
+            "Hair": {
+              "Id": "51103552-5505-493d-be9a-fdd8e750970a",
+              "Path": "models/citizen_clothes/hair/hair_thinning_short/thinning_short.clothing"
+            },
+            "Beard": {
+              "Id": "33908b41-82d0-49ef-b116-53f8cbe7a23d",
+              "Path": "models/citizen_clothes/hair/medium_beard/medium_beard.clothing"
+            },
+            "HairTint": 0.95
+          },
+          {
+            "Name": "Brown",
+            "Head": {
+              "Id": "cbba9073-225b-4a84-9bbf-ce9436615597",
+              "Path": "models/citizen_clothes/body/human05.clothing"
+            },
+            "Hair": {
+              "Id": "a476260a-8fcd-46c2-8f39-7ec89d30622c",
+              "Path": "models/citizen_clothes/hair/hair_slicked_back_balding/hair_slicked_back_balding.clothing"
+            },
+            "Beard": {
+              "Id": "f867a4af-bf31-455b-9541-5f3f35ed941b",
+              "Path": "models/citizen_clothes/hair/handlebar_moustache/handlebar_moustache.clothing"
+            },
+            "HairTint": 0.75
+          }
+        ],
         "Outfits": [
           {
             "Name": "Blue Shirt",
@@ -150,20 +223,12 @@
                 "Path": "models/citizen_clothes/jacket/labcoat/labcoat.clothing"
               },
               {
-                "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
-                "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
-              },
-              {
                 "Id": "a69dd926-ff63-4953-bcc3-811b918d7981",
                 "Path": "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing"
               },
               {
                 "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
                 "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
-              },
-              {
-                "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
-                "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
               },
               "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing"
             ]
@@ -180,20 +245,12 @@
                 "Path": "models/citizen_clothes/jacket/labcoat/labcoat.clothing"
               },
               {
-                "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
-                "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
-              },
-              {
                 "Id": "a69dd926-ff63-4953-bcc3-811b918d7981",
                 "Path": "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing"
               },
               {
                 "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
                 "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
-              },
-              {
-                "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
-                "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
               },
               "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing"
             ]
@@ -210,20 +267,12 @@
                 "Path": "models/citizen_clothes/jacket/labcoat/labcoat.clothing"
               },
               {
-                "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
-                "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
-              },
-              {
                 "Id": "a69dd926-ff63-4953-bcc3-811b918d7981",
                 "Path": "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing"
               },
               {
                 "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
                 "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
-              },
-              {
-                "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
-                "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
               },
               "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing"
             ]
@@ -240,20 +289,12 @@
                 "Path": "models/citizen_clothes/jacket/labcoat/labcoat.clothing"
               },
               {
-                "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
-                "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
-              },
-              {
                 "Id": "a69dd926-ff63-4953-bcc3-811b918d7981",
                 "Path": "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing"
               },
               {
                 "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
                 "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
-              },
-              {
-                "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
-                "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
               },
               "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing"
             ]
@@ -270,20 +311,12 @@
                 "Path": "models/citizen_clothes/jacket/labcoat/labcoat.clothing"
               },
               {
-                "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
-                "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
-              },
-              {
                 "Id": "a69dd926-ff63-4953-bcc3-811b918d7981",
                 "Path": "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing"
               },
               {
                 "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
                 "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
-              },
-              {
-                "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
-                "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
               },
               "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing"
             ]
@@ -300,20 +333,12 @@
                 "Path": "models/citizen_clothes/jacket/labcoat/labcoat.clothing"
               },
               {
-                "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
-                "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
-              },
-              {
                 "Id": "a69dd926-ff63-4953-bcc3-811b918d7981",
                 "Path": "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing"
               },
               {
                 "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
                 "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
-              },
-              {
-                "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
-                "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
               },
               "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing"
             ]

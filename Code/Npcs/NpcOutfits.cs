@@ -1,7 +1,8 @@
 namespace Sandbox.Npcs;
 
 /// <summary>
-/// A designed outfit - a set of clothing to dress an NPC in.
+/// A designed outfit - a set of clothing to dress an NPC in. Just clothes: heads, hair and facial
+/// hair come from a <see cref="FacialAppearance"/>.
 /// </summary>
 public sealed class ClothingPreset
 {
@@ -10,9 +11,34 @@ public sealed class ClothingPreset
 }
 
 /// <summary>
-/// Dresses an NPC in one of a few designed outfits and one of a few faces, each picked at random
-/// when it spawns. Replaces whatever's set on the <see cref="Sandbox.Dresser"/>, which still does the
-/// actual dressing.
+/// A head with the hair and beard that go with it, picked together - so nobody ends up with jet
+/// black hair and a blonde beard, or a beard that doesn't suit their face.
+/// </summary>
+public sealed class FacialAppearance
+{
+	public string Name { get; set; }
+
+	/// <summary>The head (skin clothing).</summary>
+	public Clothing Head { get; set; }
+
+	/// <summary>Hair, if any.</summary>
+	public Clothing Hair { get; set; }
+
+	/// <summary>Beard, moustache or the like, if any. Coloured to match the hair.</summary>
+	public Clothing Beard { get; set; }
+
+	/// <summary>
+	/// Where on the hair's colour range to tint it - 0 is white, through blonde, brown and ginger, to
+	/// black at 1. The beard is matched to whatever colour that gives.
+	/// </summary>
+	[Range( 0, 1 )]
+	public float HairTint { get; set; } = 0.5f;
+}
+
+/// <summary>
+/// Dresses an NPC in one of a few designed outfits and one of a few facial appearances, each picked
+/// at random when it spawns. Replaces whatever's set on the <see cref="Sandbox.Dresser"/>, which
+/// still does the actual dressing.
 /// </summary>
 public sealed class NpcOutfits : Component
 {
@@ -23,16 +49,17 @@ public sealed class NpcOutfits : Component
 	public Dresser Dresser { get; set; }
 
 	/// <summary>
-	/// Outfits to pick from. Empty leaves the dresser as it is.
+	/// Outfits to pick from. Empty leaves the dresser's clothes as they are.
 	/// </summary>
 	[Property]
 	public List<ClothingPreset> Outfits { get; set; } = [];
 
 	/// <summary>
-	/// Heads (skin clothing) to pick from, on top of the outfit. Empty leaves the face alone.
+	/// Heads with their hair and beard, picked on top of the outfit. Empty leaves the face alone.
+	/// Headgear in the outfit wins: hair or a beard that can't be worn with it is left off.
 	/// </summary>
 	[Property]
-	public List<Clothing> Faces { get; set; } = [];
+	public List<FacialAppearance> FacialAppearances { get; set; } = [];
 
 	protected override void OnValidate()
 	{
@@ -72,27 +99,68 @@ public sealed class NpcOutfits : Component
 		if ( !Dresser.IsValid() )
 			return;
 
-		var clothing = Dresser.Clothing.Select( x => x.Clothing ).ToList();
+		var clothing = Dresser.Clothing.Select( x => x.Clothing ).Where( x => x is not null ).ToList();
 
 		if ( Outfits is { Count: > 0 } && Pick( Outfits )?.Clothing is { Count: > 0 } outfit )
-			clothing = outfit.ToList();
+			clothing = outfit.Where( x => x is not null ).ToList();
 
-		if ( Faces is { Count: > 0 } && Pick( Faces ) is { } face )
+		var look = FacialAppearances is { Count: > 0 } ? Pick( FacialAppearances ) : null;
+		if ( look is not null )
 		{
-			// One head only - the face replaces any skin the outfit came with
-			clothing.RemoveAll( x => x?.Category == Clothing.ClothingCategory.Skin );
-			clothing.Add( face );
+			// The look replaces any head, hair and facial hair already there
+			clothing.RemoveAll( IsFacial );
+
+			if ( look.Head is not null )
+				clothing.Add( look.Head );
+
+			AddIfItFits( clothing, look.Hair );
+
+			// Masks and balaclavas say a beard fits, but it pokes straight through them
+			if ( !clothing.Any( CoversFace ) )
+				AddIfItFits( clothing, look.Beard );
 		}
 
 		// Keep the dresser's own settings (tint etc.) for anything it already had on
 		var existing = Dresser.Clothing.Where( x => x.Clothing is not null ).DistinctBy( x => x.Clothing ).ToDictionary( x => x.Clothing );
-
-		Dresser.Clothing = clothing
-			.Where( x => x is not null )
+		var entries = clothing
 			.Select( x => existing.GetValueOrDefault( x ) ?? new ClothingContainer.ClothingEntry( x ) )
 			.ToList();
 
-		MatchFacialHair( Dresser.Clothing );
+		if ( look is not null )
+		{
+			var hair = entries.FirstOrDefault( x => x.Clothing == look.Hair );
+			var beard = entries.FirstOrDefault( x => x.Clothing == look.Beard );
+
+			if ( hair is not null )
+				hair.Tint = look.HairTint;
+			else if ( beard is not null )
+				beard.Tint = look.HairTint;
+		}
+
+		MatchFacialHair( entries );
+		Dresser.Clothing = entries;
+	}
+
+	private static bool IsFacial( Clothing clothing )
+	{
+		var category = clothing.Category.ToString();
+		return clothing.Category == Clothing.ClothingCategory.Skin || category.StartsWith( "Hair" ) || category.StartsWith( "FacialHair" );
+	}
+
+	private const Clothing.Slots FaceSlots = Clothing.Slots.HeadBottom | Clothing.Slots.Face | Clothing.Slots.Chin | Clothing.Slots.Lips | Clothing.Slots.Philtrum;
+
+	// Balaclavas, gas masks, bandanas - anything over the lower face
+	private static bool CoversFace( Clothing clothing )
+	{
+		return clothing.Category == Clothing.ClothingCategory.HeadSpecial
+			|| ((clothing.SlotsOver | clothing.SlotsUnder) & FaceSlots) != 0;
+	}
+
+	// Headgear wins - leave hair or a beard off rather than have the dresser drop a hat for it
+	private static void AddIfItFits( List<Clothing> clothing, Clothing item )
+	{
+		if ( item is not null && clothing.All( x => x.CanBeWornWith( item ) ) )
+			clothing.Add( item );
 	}
 
 	/// <summary>
