@@ -158,6 +158,14 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 
 			var lookPos = LookObject.IsValid() ? (Vector3?)GetEyePosition( LookObject ) : LookTarget;
 
+			// Held or thrown - let go of whatever we were looking at, or the head and upper body keep
+			// twisting back toward it while the body gets turned around
+			if ( Npc.IsAirborne )
+			{
+				LookObject = null;
+				lookPos = null;
+			}
+
 			IsLooking = lookPos.HasValue;
 			if ( lookPos.HasValue )
 			{

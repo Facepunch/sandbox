@@ -23,6 +23,7 @@ public partial class Npc : Component.ICollisionListener
 
 	private TimeSince _timeSinceImpact;
 	private bool _wasAirborne;
+	private bool _wasCarried;
 
 	// Our velocity last frame in the air - by the time we land or hit something, it's already slowed us
 	private Vector3 _airVelocity;
@@ -37,8 +38,18 @@ public partial class Npc : Component.ICollisionListener
 
 		// The ground check catches us a few units up, a frame before the body touches down - so a
 		// landing often never reports a collision. Take the hit here, from how fast we were falling.
+		if ( isPickedUp )
+			_wasCarried = true;
+
 		if ( _wasAirborne && !airborne )
+		{
 			TakeImpact( MathF.Max( -_airVelocity.z, 0f ), WorldPosition, Vector3.Up, GroundObject, DamageTags.Fall );
+
+			if ( _wasCarried && Health >= 1f )
+				OnPutDown();
+
+			_wasCarried = false;
+		}
 
 		_wasAirborne = airborne;
 		Animation.Grounded = !airborne;
@@ -48,6 +59,16 @@ public partial class Npc : Component.ICollisionListener
 
 		_airVelocity = _rigidbody.Velocity;
 		Animation.SetMove( _airVelocity, WorldRotation );
+	}
+
+	/// <summary>
+	/// Back on our feet after a physgun carried us - keep whichever way it turned us, rather than
+	/// snapping back to whatever we were looking at or doing before.
+	/// </summary>
+	protected virtual void OnPutDown()
+	{
+		Animation.ClearLookTarget();
+		EndCurrentSchedule();
 	}
 
 	/// <summary>

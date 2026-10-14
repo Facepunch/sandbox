@@ -463,6 +463,15 @@ public class CombatNpc : Npc, Component.IPressable
 		return idle;
 	}
 
+	protected override void OnPutDown()
+	{
+		base.OnPutDown();
+
+		// Someone put us here and turned us this way - this is our post now
+		_post = WorldPosition;
+		_postForward = WorldRotation.Forward;
+	}
+
 	protected override void OnUpdate()
 	{
 		base.OnUpdate();
