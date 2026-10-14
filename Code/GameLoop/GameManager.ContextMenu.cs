@@ -14,21 +14,26 @@ public sealed partial class GameManager : IContextMenuEvent
 
 		if ( IsOnFire( target ) )
 		{
-			e.AddOption( "🧯", Game.Language.GetPhrase( "spawnmenu.inspect.extinguish" ), () => ExtinguishInspectedObject( target ), 100 );
+			e.AddOption( "fire_extinguisher", Game.Language.GetPhrase( "spawnmenu.inspect.extinguish" ), () => ExtinguishInspectedObject( target ), 100 );
 		}
 		else if ( !isPlayer )
 		{
-			e.AddOption( "🔥", Game.Language.GetPhrase( "spawnmenu.inspect.ignite" ), () => IgniteInspectedObject( target ), 100 );
+			e.AddOption( "local_fire_department", Game.Language.GetPhrase( "spawnmenu.inspect.ignite" ), () => IgniteInspectedObject( target ), 100 );
+		}
+
+		if ( prop.IsValid() )
+		{
+			e.AddSubmenu( "lock", Game.Language.GetPhrase( "spawnmenu.inspect.axis_lock" ), menu => BuildAxisLockMenu( menu, target ), 150 );
 		}
 
 		if ( !isPlayer )
 		{
-			e.AddOption( "🗑️", Game.Language.GetPhrase( "spawnmenu.inspect.delete" ), () => DeleteInspectedObject( target ), 200 );
+			e.AddOption( "delete", Game.Language.GetPhrase( "spawnmenu.inspect.delete" ), () => DeleteInspectedObject( target ), 200 );
 		}
 
 		if ( prop.IsValid() && prop.Health > 0 )
 		{
-			e.AddOption( "💥", Game.Language.GetPhrase( "spawnmenu.inspect.break" ), () => BreakInspectedProp( prop ), 300 );
+			e.AddOption( "flare", Game.Language.GetPhrase( "spawnmenu.inspect.break" ), () => BreakInspectedProp( prop ), 300 );
 		}
 	}
 
@@ -45,6 +50,111 @@ public sealed partial class GameManager : IContextMenuEvent
 		if ( !go.HasAccess( Rpc.Caller ) ) return;
 
 		go.Destroy();
+	}
+
+	/// <summary>
+	/// Axis lock menu
+	/// </summary>
+	private static void BuildAxisLockMenu( Sandbox.UI.Menu menu, GameObject target )
+	{
+		Sandbox.UI.Menu pitch = null, yaw = null, roll = null, unlock = null;
+
+		pitch = AddAxisLockOption( menu, target, "Pitch", Apply );
+		yaw = AddAxisLockOption( menu, target, "Yaw", Apply );
+		roll = AddAxisLockOption( menu, target, "Roll", Apply );
+
+		menu.AddSeparator();
+
+		AddAxisLockPreset( menu, "spawnmenu.inspect.axis_lock_full", "lock", () => Set( true, true, true ) );
+		AddAxisLockPreset( menu, "spawnmenu.inspect.axis_lock_upright", "vertical_align_top", () => Set( true, false, true ) );
+		unlock = AddAxisLockPreset( menu, "spawnmenu.inspect.axis_lock_unlock_all", "lock_open", () => Set( false, false, false ) );
+
+		UpdateUnlock();
+
+		void Set( bool p, bool y, bool r )
+		{
+			pitch.Checked = p;
+			yaw.Checked = y;
+			roll.Checked = r;
+			Apply();
+		}
+
+		void Apply()
+		{
+			SetAxisLocks( target, pitch.Checked, yaw.Checked, roll.Checked );
+			UpdateUnlock();
+		}
+
+		void UpdateUnlock() => unlock.Enabled = pitch.Checked || yaw.Checked || roll.Checked;
+	}
+
+	private static Sandbox.UI.Menu AddAxisLockOption( Sandbox.UI.Menu menu, GameObject target, string axis, Action changed )
+	{
+		var text = Game.Language.GetPhrase( $"spawnmenu.inspect.lock_{axis.ToLowerInvariant()}" );
+		var option = menu.AddOption( text, _ => changed() );
+		option.Checked = IsAxisLocked( target, axis );
+		return option;
+	}
+
+	private static Sandbox.UI.Menu AddAxisLockPreset( Sandbox.UI.Menu menu, string phrase, string icon, Action action )
+	{
+		var option = menu.AddOption( Game.Language.GetPhrase( phrase ), icon, action );
+		option.StaysOpen = true;
+		return option;
+	}
+
+	/// <summary>
+	/// Set the object's rotation locks from the Inspector context menu
+	/// </summary>
+	[Rpc.Host]
+	internal static void SetAxisLocks( GameObject go, bool pitch, bool yaw, bool roll )
+	{
+		if ( !go.IsValid() || go.IsProxy ) return;
+		if ( !go.HasAccess( Rpc.Caller ) ) return;
+
+		PhysicsLock Change( PhysicsLock locking )
+		{
+			locking.Pitch = pitch;
+			locking.Yaw = yaw;
+			locking.Roll = roll;
+			return locking;
+		}
+
+		foreach ( var rb in go.GetComponentsInChildren<Rigidbody>( true ) )
+		{
+			rb.Locking = Change( rb.Locking );
+		}
+
+		foreach ( var mp in go.GetComponentsInChildren<ModelPhysics>( true ) )
+		{
+			mp.Locking = Change( mp.Locking );
+		}
+
+		// Locking isn't synced, so send a snapshot for clients' menu state
+		if ( go.Network.Active )
+		{
+			go.Network.Refresh();
+		}
+	}
+
+	/// <summary>
+	/// Is this rotation axis locked on the object's physics bodies?
+	/// </summary>
+	internal static bool IsAxisLocked( GameObject go, string axis )
+	{
+		if ( !go.IsValid() ) return false;
+
+		var rb = go.GetComponentInChildren<Rigidbody>( true );
+		if ( !rb.IsValid() ) return false;
+
+		var locking = rb.Locking;
+		return axis switch
+		{
+			"Pitch" => locking.Pitch,
+			"Yaw" => locking.Yaw,
+			"Roll" => locking.Roll,
+			_ => false
+		};
 	}
 
 	/// <summary>

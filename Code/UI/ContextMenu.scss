@@ -105,10 +105,20 @@ menulist.menulist
 			}
 		}
 
-		// the rows are not divided, a separator added to a menu takes no room
+		// a separator added to a menu is a thin line between groups of rows
 		&.separator
 		{
-			display: none;
+			height: 1px;
+			min-height: 1px;
+			margin: 3px 4px;
+			padding: 0px;
+			border: none;
+			background-color: $ui-separator;
+
+			> *
+			{
+				display: none;
+			}
 		}
 	}
 }

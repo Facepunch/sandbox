@@ -21,6 +21,13 @@
     "spawnmenu.inspect.material": "Material",
     "spawnmenu.inspect.delete": "Delete",
     "spawnmenu.inspect.break": "Break",
+    "spawnmenu.inspect.axis_lock": "Axis Lock",
+    "spawnmenu.inspect.lock_pitch": "Lock Pitch",
+    "spawnmenu.inspect.lock_yaw": "Lock Yaw",
+    "spawnmenu.inspect.lock_roll": "Lock Roll",
+    "spawnmenu.inspect.axis_lock_full": "Full Lock",
+    "spawnmenu.inspect.axis_lock_upright": "Keep Upright",
+    "spawnmenu.inspect.axis_lock_unlock_all": "Unlock All",
     "spawnmenu.inspect.ignite": "Ignite",
     "spawnmenu.inspect.extinguish": "Extinguish",
 
