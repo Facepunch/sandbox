@@ -1,0 +1,975 @@
+{
+  "Title": "Robotics",
+  "Description": "",
+  "Icon": "settings",
+  "RequiredMount": "gmod",
+  "Parent": {
+    "Id": "881eeef9-7802-4ab2-b0a8-7a4335c15b87",
+    "Path": "spawnlists/garrysmod/garrys_mod/builder.spawn"
+  },
+  "Order": 12,
+  "Items": [
+    {
+      "Kind": "Title",
+      "Model": null,
+      "Entity": null,
+      "Ident": null,
+      "Title": "Normal",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/a1.mdl.vmdl",
+      "Title": "a1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/a2.mdl.vmdl",
+      "Title": "a2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/a3.mdl.vmdl",
+      "Title": "a3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/a4.mdl.vmdl",
+      "Title": "a4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/b1.mdl.vmdl",
+      "Title": "b1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/b2.mdl.vmdl",
+      "Title": "b2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/b3.mdl.vmdl",
+      "Title": "b3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/b4.mdl.vmdl",
+      "Title": "b4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/c1.mdl.vmdl",
+      "Title": "c1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/c2.mdl.vmdl",
+      "Title": "c2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/c3.mdl.vmdl",
+      "Title": "c3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/c4.mdl.vmdl",
+      "Title": "c4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/d1.mdl.vmdl",
+      "Title": "d1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/d2.mdl.vmdl",
+      "Title": "d2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/d3.mdl.vmdl",
+      "Title": "d3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/d4.mdl.vmdl",
+      "Title": "d4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/e1.mdl.vmdl",
+      "Title": "e1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/e2.mdl.vmdl",
+      "Title": "e2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/e3.mdl.vmdl",
+      "Title": "e3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/e4.mdl.vmdl",
+      "Title": "e4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/f1.mdl.vmdl",
+      "Title": "f1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/f2.mdl.vmdl",
+      "Title": "f2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/f3.mdl.vmdl",
+      "Title": "f3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/g1.mdl.vmdl",
+      "Title": "g1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/g2.mdl.vmdl",
+      "Title": "g2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/g3.mdl.vmdl",
+      "Title": "g3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/g4.mdl.vmdl",
+      "Title": "g4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/h1.mdl.vmdl",
+      "Title": "h1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/h2.mdl.vmdl",
+      "Title": "h2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/h3.mdl.vmdl",
+      "Title": "h3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/h4.mdl.vmdl",
+      "Title": "h4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/i1.mdl.vmdl",
+      "Title": "i1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/i2.mdl.vmdl",
+      "Title": "i2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/i3.mdl.vmdl",
+      "Title": "i3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/i4.mdl.vmdl",
+      "Title": "i4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/j1.mdl.vmdl",
+      "Title": "j1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/j2.mdl.vmdl",
+      "Title": "j2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/j3.mdl.vmdl",
+      "Title": "j3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/j4.mdl.vmdl",
+      "Title": "j4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/k1.mdl.vmdl",
+      "Title": "k1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/k2.mdl.vmdl",
+      "Title": "k2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/k3.mdl.vmdl",
+      "Title": "k3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/k4.mdl.vmdl",
+      "Title": "k4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/l1.mdl.vmdl",
+      "Title": "l1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/l2.mdl.vmdl",
+      "Title": "l2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/l3.mdl.vmdl",
+      "Title": "l3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/l4.mdl.vmdl",
+      "Title": "l4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/m3.mdl.vmdl",
+      "Title": "m3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/m4.mdl.vmdl",
+      "Title": "m4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/xfoot.mdl.vmdl",
+      "Title": "xfoot",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/claw.mdl.vmdl",
+      "Title": "claw",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/claw2.mdl.vmdl",
+      "Title": "claw2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/claw_guide2.mdl.vmdl",
+      "Title": "claw_guide2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/claw_guide2a.mdl.vmdl",
+      "Title": "claw_guide2a",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/claw_guide.mdl.vmdl",
+      "Title": "claw_guide",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/stand.mdl.vmdl",
+      "Title": "stand",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/claw_hub_8.mdl.vmdl",
+      "Title": "claw_hub_8",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/articulating/foot_s.mdl.vmdl",
+      "Title": "foot_s",
+      "Icon": null
+    },
+    {
+      "Kind": "Title",
+      "Model": null,
+      "Entity": null,
+      "Ident": null,
+      "Title": "Big",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/a1.mdl.vmdl",
+      "Title": "a1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/a2.mdl.vmdl",
+      "Title": "a2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/a3.mdl.vmdl",
+      "Title": "a3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/a4.mdl.vmdl",
+      "Title": "a4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/b1.mdl.vmdl",
+      "Title": "b1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/b2.mdl.vmdl",
+      "Title": "b2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/b3.mdl.vmdl",
+      "Title": "b3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/b4.mdl.vmdl",
+      "Title": "b4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/c1.mdl.vmdl",
+      "Title": "c1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/c2.mdl.vmdl",
+      "Title": "c2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/c3.mdl.vmdl",
+      "Title": "c3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/c4.mdl.vmdl",
+      "Title": "c4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/d1.mdl.vmdl",
+      "Title": "d1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/d2.mdl.vmdl",
+      "Title": "d2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/d3.mdl.vmdl",
+      "Title": "d3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/d4.mdl.vmdl",
+      "Title": "d4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/e1.mdl.vmdl",
+      "Title": "e1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/e2.mdl.vmdl",
+      "Title": "e2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/e3.mdl.vmdl",
+      "Title": "e3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/e4.mdl.vmdl",
+      "Title": "e4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/f1.mdl.vmdl",
+      "Title": "f1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/f2.mdl.vmdl",
+      "Title": "f2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/f3.mdl.vmdl",
+      "Title": "f3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/g1.mdl.vmdl",
+      "Title": "g1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/g2.mdl.vmdl",
+      "Title": "g2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/g3.mdl.vmdl",
+      "Title": "g3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/g4.mdl.vmdl",
+      "Title": "g4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/h1.mdl.vmdl",
+      "Title": "h1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/h2.mdl.vmdl",
+      "Title": "h2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/h3.mdl.vmdl",
+      "Title": "h3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/h4.mdl.vmdl",
+      "Title": "h4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/i1.mdl.vmdl",
+      "Title": "i1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/i2.mdl.vmdl",
+      "Title": "i2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/i3.mdl.vmdl",
+      "Title": "i3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/i4.mdl.vmdl",
+      "Title": "i4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/j1.mdl.vmdl",
+      "Title": "j1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/j2.mdl.vmdl",
+      "Title": "j2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/j3.mdl.vmdl",
+      "Title": "j3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/j4.mdl.vmdl",
+      "Title": "j4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/k1.mdl.vmdl",
+      "Title": "k1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/k2.mdl.vmdl",
+      "Title": "k2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/k3.mdl.vmdl",
+      "Title": "k3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/k4.mdl.vmdl",
+      "Title": "k4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/l1.mdl.vmdl",
+      "Title": "l1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/l2.mdl.vmdl",
+      "Title": "l2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/l3.mdl.vmdl",
+      "Title": "l3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/l4.mdl.vmdl",
+      "Title": "l4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/m3.mdl.vmdl",
+      "Title": "m3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/m4.mdl.vmdl",
+      "Title": "m4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/xfoot.mdl.vmdl",
+      "Title": "xfoot",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/clawl.mdl.vmdl",
+      "Title": "clawl",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/claw2l.mdl.vmdl",
+      "Title": "claw2l",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/claw_guide2l.mdl.vmdl",
+      "Title": "claw_guide2l",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/claw_guide2la.mdl.vmdl",
+      "Title": "claw_guide2la",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/articulating/stand.mdl.vmdl",
+      "Title": "stand",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/roboticslarge/claw_hub_8l.mdl.vmdl",
+      "Title": "claw_hub_8l",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/robotics/foot.mdl.vmdl",
+      "Title": "foot",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/articulating/arm_base_b.mdl.vmdl",
+      "Title": "arm_base_b",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/articulating/arm2x20d.mdl.vmdl",
+      "Title": "arm2x20d",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/mechanics/articulating/arm2x20d2.mdl.vmdl",
+      "Title": "arm2x20d2",
+      "Icon": null
+    }
+  ],
+  "__references": [],
+  "__version": 0
+}

@@ -1,0 +1,1711 @@
+{
+  "Title": "Rails and Tracks",
+  "Description": "",
+  "Icon": "collections_bookmark",
+  "RequiredMount": "gmod",
+  "Parent": {
+    "Id": "881eeef9-7802-4ab2-b0a8-7a4335c15b87",
+    "Path": "spawnlists/garrysmod/garrys_mod/builder.spawn"
+  },
+  "Order": 13,
+  "Items": [
+    {
+      "Kind": "Title",
+      "Model": null,
+      "Entity": null,
+      "Ident": null,
+      "Title": "Vehicles",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/quarterlife/fsd-overrun-toy.mdl.vmdl",
+      "Title": "fsd-overrun-toy",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/fsd-overrun.mdl.vmdl",
+      "Title": "fsd-overrun",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/fsd-overrun2.mdl.vmdl",
+      "Title": "fsd-overrun2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrain1seat.mdl.vmdl",
+      "Title": "coastertrain1seat",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrain2seat.mdl.vmdl",
+      "Title": "coastertrain2seat",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrain1.mdl.vmdl",
+      "Title": "coastertrain1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/train_1.mdl.vmdl",
+      "Title": "train_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/train_car_1.mdl.vmdl",
+      "Title": "train_car_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/train_2.mdl.vmdl",
+      "Title": "train_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/track_guide.mdl.vmdl",
+      "Title": "track_guide",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/wheel_base.mdl.vmdl",
+      "Title": "wheel_base",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/medium_wheel_2.mdl.vmdl",
+      "Title": "medium_wheel_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/wheel_medium.mdl.vmdl",
+      "Title": "wheel_medium",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/double_wheels_base.mdl.vmdl",
+      "Title": "double_wheels_base",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/double_wheels.mdl.vmdl",
+      "Title": "double_wheels",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/double_wheels2.mdl.vmdl",
+      "Title": "double_wheels2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/trackslides_outer.mdl.vmdl",
+      "Title": "trackslides_outer",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/trackslides_inner.mdl.vmdl",
+      "Title": "trackslides_inner",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/trackslides_both.mdl.vmdl",
+      "Title": "trackslides_both",
+      "Icon": null
+    },
+    {
+      "Kind": "Title",
+      "Model": null,
+      "Entity": null,
+      "Ident": null,
+      "Title": "Monorails",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/monorail1.mdl.vmdl",
+      "Title": "monorail1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/monorail2.mdl.vmdl",
+      "Title": "monorail2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/monorail3.mdl.vmdl",
+      "Title": "monorail3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/monorail4.mdl.vmdl",
+      "Title": "monorail4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/monorail_curve.mdl.vmdl",
+      "Title": "monorail_curve",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/monorail_curve2.mdl.vmdl",
+      "Title": "monorail_curve2",
+      "Icon": null
+    },
+    {
+      "Kind": "Title",
+      "Model": null,
+      "Entity": null,
+      "Ident": null,
+      "Title": "Roller Coaster Parts",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_station.mdl.vmdl",
+      "Title": "special_station",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/straight_1.mdl.vmdl",
+      "Title": "straight_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/straight_2.mdl.vmdl",
+      "Title": "straight_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/straight_3.mdl.vmdl",
+      "Title": "straight_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/straight_4.mdl.vmdl",
+      "Title": "straight_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_sturn_left_2.mdl.vmdl",
+      "Title": "special_sturn_left_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_sturn_left_3.mdl.vmdl",
+      "Title": "special_sturn_left_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_sturn_left_4.mdl.vmdl",
+      "Title": "special_sturn_left_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_sturn_right_2.mdl.vmdl",
+      "Title": "special_sturn_right_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_sturn_right_3.mdl.vmdl",
+      "Title": "special_sturn_right_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_sturn_right_4.mdl.vmdl",
+      "Title": "special_sturn_right_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_45_1.mdl.vmdl",
+      "Title": "turn_45_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_45_2.mdl.vmdl",
+      "Title": "turn_45_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_45_3.mdl.vmdl",
+      "Title": "turn_45_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_45_4.mdl.vmdl",
+      "Title": "turn_45_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_90_1.mdl.vmdl",
+      "Title": "turn_90_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_90_2.mdl.vmdl",
+      "Title": "turn_90_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_90_3.mdl.vmdl",
+      "Title": "turn_90_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_90_4.mdl.vmdl",
+      "Title": "turn_90_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_180_1.mdl.vmdl",
+      "Title": "turn_180_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_180_2.mdl.vmdl",
+      "Title": "turn_180_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_180_3.mdl.vmdl",
+      "Title": "turn_180_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_180_4.mdl.vmdl",
+      "Title": "turn_180_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_90_tight_1.mdl.vmdl",
+      "Title": "turn_90_tight_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_90_tight_2.mdl.vmdl",
+      "Title": "turn_90_tight_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_90_tight_3.mdl.vmdl",
+      "Title": "turn_90_tight_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_90_tight_4.mdl.vmdl",
+      "Title": "turn_90_tight_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_180_tight_2.mdl.vmdl",
+      "Title": "turn_180_tight_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_180_tight_3.mdl.vmdl",
+      "Title": "turn_180_tight_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_180_tight_4.mdl.vmdl",
+      "Title": "turn_180_tight_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_full_loop_3.mdl.vmdl",
+      "Title": "special_full_loop_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_full_loop_4.mdl.vmdl",
+      "Title": "special_full_loop_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_start_left_1.mdl.vmdl",
+      "Title": "bank_start_left_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_start_left_2.mdl.vmdl",
+      "Title": "bank_start_left_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_start_left_3.mdl.vmdl",
+      "Title": "bank_start_left_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_start_left_4.mdl.vmdl",
+      "Title": "bank_start_left_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_start_right_1.mdl.vmdl",
+      "Title": "bank_start_right_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_start_right_2.mdl.vmdl",
+      "Title": "bank_start_right_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_start_right_3.mdl.vmdl",
+      "Title": "bank_start_right_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_start_right_4.mdl.vmdl",
+      "Title": "bank_start_right_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_turn_45_1.mdl.vmdl",
+      "Title": "bank_turn_45_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_turn_45_2.mdl.vmdl",
+      "Title": "bank_turn_45_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_turn_45_3.mdl.vmdl",
+      "Title": "bank_turn_45_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_turn_45_4.mdl.vmdl",
+      "Title": "bank_turn_45_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_turn_90_1.mdl.vmdl",
+      "Title": "bank_turn_90_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_turn_90_2.mdl.vmdl",
+      "Title": "bank_turn_90_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_turn_90_3.mdl.vmdl",
+      "Title": "bank_turn_90_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_turn_90_4.mdl.vmdl",
+      "Title": "bank_turn_90_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_turn_180_1.mdl.vmdl",
+      "Title": "bank_turn_180_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_turn_180_2.mdl.vmdl",
+      "Title": "bank_turn_180_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_turn_180_3.mdl.vmdl",
+      "Title": "bank_turn_180_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/bank_turn_180_4.mdl.vmdl",
+      "Title": "bank_turn_180_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_225_1.mdl.vmdl",
+      "Title": "slope_225_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_225_2.mdl.vmdl",
+      "Title": "slope_225_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_225_3.mdl.vmdl",
+      "Title": "slope_225_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_225_4.mdl.vmdl",
+      "Title": "slope_225_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_225_down_1.mdl.vmdl",
+      "Title": "slope_225_down_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_225_down_2.mdl.vmdl",
+      "Title": "slope_225_down_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_225_down_3.mdl.vmdl",
+      "Title": "slope_225_down_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_225_down_4.mdl.vmdl",
+      "Title": "slope_225_down_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_45_1.mdl.vmdl",
+      "Title": "slope_45_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_45_2.mdl.vmdl",
+      "Title": "slope_45_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_45_3.mdl.vmdl",
+      "Title": "slope_45_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_45_4.mdl.vmdl",
+      "Title": "slope_45_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_45_down_1.mdl.vmdl",
+      "Title": "slope_45_down_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_45_down_2.mdl.vmdl",
+      "Title": "slope_45_down_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_45_down_3.mdl.vmdl",
+      "Title": "slope_45_down_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_45_down_4.mdl.vmdl",
+      "Title": "slope_45_down_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_90_1.mdl.vmdl",
+      "Title": "slope_90_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_90_2.mdl.vmdl",
+      "Title": "slope_90_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_90_3.mdl.vmdl",
+      "Title": "slope_90_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_90_4.mdl.vmdl",
+      "Title": "slope_90_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_90_down_1.mdl.vmdl",
+      "Title": "slope_90_down_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_90_down_2.mdl.vmdl",
+      "Title": "slope_90_down_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_90_down_3.mdl.vmdl",
+      "Title": "slope_90_down_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/slope_90_down_4.mdl.vmdl",
+      "Title": "slope_90_down_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_full_corkscrew_left_1.mdl.vmdl",
+      "Title": "special_full_corkscrew_left_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_full_corkscrew_left_2.mdl.vmdl",
+      "Title": "special_full_corkscrew_left_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_full_corkscrew_left_3.mdl.vmdl",
+      "Title": "special_full_corkscrew_left_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_full_corkscrew_left_4.mdl.vmdl",
+      "Title": "special_full_corkscrew_left_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_full_corkscrew_right_1.mdl.vmdl",
+      "Title": "special_full_corkscrew_right_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_full_corkscrew_right_2.mdl.vmdl",
+      "Title": "special_full_corkscrew_right_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_full_corkscrew_right_3.mdl.vmdl",
+      "Title": "special_full_corkscrew_right_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_full_corkscrew_right_4.mdl.vmdl",
+      "Title": "special_full_corkscrew_right_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_half_corkscrew_left_1.mdl.vmdl",
+      "Title": "special_half_corkscrew_left_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_half_corkscrew_left_2.mdl.vmdl",
+      "Title": "special_half_corkscrew_left_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_half_corkscrew_left_3.mdl.vmdl",
+      "Title": "special_half_corkscrew_left_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_half_corkscrew_left_4.mdl.vmdl",
+      "Title": "special_half_corkscrew_left_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_half_corkscrew_right_1.mdl.vmdl",
+      "Title": "special_half_corkscrew_right_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_half_corkscrew_right_2.mdl.vmdl",
+      "Title": "special_half_corkscrew_right_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_half_corkscrew_right_3.mdl.vmdl",
+      "Title": "special_half_corkscrew_right_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_half_corkscrew_right_4.mdl.vmdl",
+      "Title": "special_half_corkscrew_right_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_helix_middle_2.mdl.vmdl",
+      "Title": "special_helix_middle_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_helix_middle_3.mdl.vmdl",
+      "Title": "special_helix_middle_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_helix_middle_4.mdl.vmdl",
+      "Title": "special_helix_middle_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_helix_middle_full_2.mdl.vmdl",
+      "Title": "special_helix_middle_full_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_helix_middle_full_3.mdl.vmdl",
+      "Title": "special_helix_middle_full_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/special_helix_middle_full_4.mdl.vmdl",
+      "Title": "special_helix_middle_full_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_45_1.mdl.vmdl",
+      "Title": "turn_slope_45_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_45_2.mdl.vmdl",
+      "Title": "turn_slope_45_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_45_3.mdl.vmdl",
+      "Title": "turn_slope_45_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_45_4.mdl.vmdl",
+      "Title": "turn_slope_45_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_90_1.mdl.vmdl",
+      "Title": "turn_slope_90_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_90_2.mdl.vmdl",
+      "Title": "turn_slope_90_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_90_3.mdl.vmdl",
+      "Title": "turn_slope_90_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_90_4.mdl.vmdl",
+      "Title": "turn_slope_90_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_180_1.mdl.vmdl",
+      "Title": "turn_slope_180_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_180_2.mdl.vmdl",
+      "Title": "turn_slope_180_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_180_3.mdl.vmdl",
+      "Title": "turn_slope_180_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_180_4.mdl.vmdl",
+      "Title": "turn_slope_180_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_down_45_1.mdl.vmdl",
+      "Title": "turn_slope_down_45_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_down_45_2.mdl.vmdl",
+      "Title": "turn_slope_down_45_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_down_45_3.mdl.vmdl",
+      "Title": "turn_slope_down_45_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_down_45_4.mdl.vmdl",
+      "Title": "turn_slope_down_45_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_down_90_1.mdl.vmdl",
+      "Title": "turn_slope_down_90_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_down_90_2.mdl.vmdl",
+      "Title": "turn_slope_down_90_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_down_90_3.mdl.vmdl",
+      "Title": "turn_slope_down_90_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_down_90_4.mdl.vmdl",
+      "Title": "turn_slope_down_90_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_down_180_1.mdl.vmdl",
+      "Title": "turn_slope_down_180_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_down_180_2.mdl.vmdl",
+      "Title": "turn_slope_down_180_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_down_180_3.mdl.vmdl",
+      "Title": "turn_slope_down_180_3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/coastertrack/turn_slope_down_180_4.mdl.vmdl",
+      "Title": "turn_slope_down_180_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Title",
+      "Model": null,
+      "Entity": null,
+      "Ident": null,
+      "Title": "Ball Tracks",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/gumball_1.mdl.vmdl",
+      "Title": "gumball_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/trackball_1.mdl.vmdl",
+      "Title": "trackball_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/cap.mdl.vmdl",
+      "Title": "cap",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/funnel.mdl.vmdl",
+      "Title": "funnel",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/tunnel_1.mdl.vmdl",
+      "Title": "tunnel_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/tunnel_2.mdl.vmdl",
+      "Title": "tunnel_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/tunnel_4.mdl.vmdl",
+      "Title": "tunnel_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/tunnel_8.mdl.vmdl",
+      "Title": "tunnel_8",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/tunnel_16.mdl.vmdl",
+      "Title": "tunnel_16",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/twist_45_left.mdl.vmdl",
+      "Title": "twist_45_left",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/twist_45_right.mdl.vmdl",
+      "Title": "twist_45_right",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/twist_90_right.mdl.vmdl",
+      "Title": "twist_90_right",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/twist_90_left.mdl.vmdl",
+      "Title": "twist_90_left",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/loop_left.mdl.vmdl",
+      "Title": "loop_left",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/loop_right.mdl.vmdl",
+      "Title": "loop_right",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/straight_1.mdl.vmdl",
+      "Title": "straight_1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/straight_2.mdl.vmdl",
+      "Title": "straight_2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/straight_4.mdl.vmdl",
+      "Title": "straight_4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/straight_8.mdl.vmdl",
+      "Title": "straight_8",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/straight_16.mdl.vmdl",
+      "Title": "straight_16",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/slope_down_15.mdl.vmdl",
+      "Title": "slope_down_15",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/slope_down_30.mdl.vmdl",
+      "Title": "slope_down_30",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/slope_down_45.mdl.vmdl",
+      "Title": "slope_down_45",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/slope_down_90.mdl.vmdl",
+      "Title": "slope_down_90",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/slope_up_15.mdl.vmdl",
+      "Title": "slope_up_15",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/slope_up_30.mdl.vmdl",
+      "Title": "slope_up_30",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/slope_up_45.mdl.vmdl",
+      "Title": "slope_up_45",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/slope_up_90.mdl.vmdl",
+      "Title": "slope_up_90",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/turn_15.mdl.vmdl",
+      "Title": "turn_15",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/turn_30.mdl.vmdl",
+      "Title": "turn_30",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/turn_45.mdl.vmdl",
+      "Title": "turn_45",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/turn_90.mdl.vmdl",
+      "Title": "turn_90",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/xqm/rails/turn_180.mdl.vmdl",
+      "Title": "turn_180",
+      "Icon": null
+    },
+    {
+      "Kind": "Title",
+      "Model": null,
+      "Entity": null,
+      "Ident": null,
+      "Title": "Train Tracks",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_crossing.mdl.vmdl",
+      "Title": "track_crossing",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_pass.mdl.vmdl",
+      "Title": "track_pass",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_single.mdl.vmdl",
+      "Title": "track_single",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_1x.mdl.vmdl",
+      "Title": "track_1x",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_2x.mdl.vmdl",
+      "Title": "track_2x",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_4x.mdl.vmdl",
+      "Title": "track_4x",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_8x.mdl.vmdl",
+      "Title": "track_8x",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_16x.mdl.vmdl",
+      "Title": "track_16x",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_225_down.mdl.vmdl",
+      "Title": "track_225_down",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_45_down.mdl.vmdl",
+      "Title": "track_45_down",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_225_up.mdl.vmdl",
+      "Title": "track_225_up",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_45_up.mdl.vmdl",
+      "Title": "track_45_up",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_x.mdl.vmdl",
+      "Title": "track_x",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_switch.mdl.vmdl",
+      "Title": "track_switch",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_switch2.mdl.vmdl",
+      "Title": "track_switch2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_switcher.mdl.vmdl",
+      "Title": "track_switcher",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_switcher2.mdl.vmdl",
+      "Title": "track_switcher2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_turn45.mdl.vmdl",
+      "Title": "track_turn45",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/tracks/track_turn90.mdl.vmdl",
+      "Title": "track_turn90",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/track_32.mdl.vmdl",
+      "Title": "track_32",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/track_64.mdl.vmdl",
+      "Title": "track_64",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/track_128.mdl.vmdl",
+      "Title": "track_128",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/track_256.mdl.vmdl",
+      "Title": "track_256",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/track_512.mdl.vmdl",
+      "Title": "track_512",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/track_1024.mdl.vmdl",
+      "Title": "track_1024",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/track_2048.mdl.vmdl",
+      "Title": "track_2048",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Model": null,
+      "Entity": null,
+      "Ident": "mount:mount://gmod/models/props_phx/trains/track_4096.mdl.vmdl",
+      "Title": "track_4096",
+      "Icon": null
+    }
+  ],
+  "__references": [],
+  "__version": 0
+}
