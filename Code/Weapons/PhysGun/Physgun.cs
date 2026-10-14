@@ -899,6 +899,10 @@ public partial class Physgun : Local.IPlayerEvents
 	{
 		if ( !body.IsValid() ) return;
 
+		var go = body.GameObject;
+		if ( go.Tags.Has( "npc" ) )
+			return;
+
 		var effect = FreezeEffectPrefab.Clone( body.WorldTransform );
 
 		foreach ( var emitter in effect.GetComponentsInChildren<ParticleModelEmitter>() )
