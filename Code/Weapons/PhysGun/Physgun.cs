@@ -671,6 +671,24 @@ public partial class Physgun : Local.IPlayerEvents
 	Sandbox.Physics.ControlJoint _joint;
 	PhysicsBody _body;
 
+	/// <summary>
+	/// The object our joint is moving
+	/// </summary>
+	GameObject _held;
+
+	/// <summary>
+	/// Tells the object we were moving that we let go of it
+	/// </summary>
+	void DropHeld()
+	{
+		var held = _held;
+		_held = null;
+
+		if ( !held.IsValid() ) return;
+
+		held.Root.RunEvent<IPhysgunEvent>( x => x.OnPhysgunDrop() );
+	}
+
 	void RemoveJoint()
 	{
 		_joint?.Remove();
@@ -685,6 +703,7 @@ public partial class Physgun : Local.IPlayerEvents
 		base.OnDisabled();
 
 		RemoveJoint();
+		DropHeld();
 		CloseBeam();
 		_gravityHoldSound?.Stop( 0.2f );
 		_gravityHoldSound = null;
@@ -711,9 +730,17 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( !IsProxy && _state.Body.IsValid() )
 			_holdTarget = GetHoldTarget();
 
+		// switched straight to another object, the joint still holds the old one
+		if ( _held.IsValid() && _held != _state.GameObject )
+		{
+			RemoveJoint();
+			DropHeld();
+		}
+
 		if ( !CanMove( _state ) )
 		{
 			RemoveJoint();
+			DropHeld();
 
 			if ( CanMove( _stateHovered ) && _stateHovered.Pulling )
 			{
@@ -729,6 +756,7 @@ public partial class Physgun : Local.IPlayerEvents
 		// If we just launched, don't add a joint until state has let go.
 		if ( _launched ) return;
 
+		_held = _state.GameObject;
 		_body ??= new PhysicsBody( Scene.PhysicsWorld ) { BodyType = PhysicsBodyType.Keyframed, AutoSleep = false };
 
 		_body.Transform = IsProxy ? ClampToRange( _holdTarget ) : _holdTarget;

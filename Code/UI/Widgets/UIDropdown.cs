@@ -6,9 +6,9 @@ namespace Sandbox;
 public class UIDropdown : Panel
 {
 	/// <summary>
-	/// One entry of the list. The label can be a localization token.
+	/// One entry of the list. The label can be a localization token, and is drawn in <paramref name="Font"/> when one is given.
 	/// </summary>
-	public record Item( string Label, object Value );
+	public record Item( string Label, object Value, string Font = null );
 
 	[Parameter]
 	public List<Item> Items { get; set; } = new();
@@ -85,6 +85,7 @@ public class UIDropdown : Panel
 		var current = Items.FirstOrDefault( x => Equals( x.Value, _value ) );
 		_label.Tokenize = Tokenize;
 		_label.Text = current?.Label ?? "";
+		_label.Style.FontFamily = current?.Font;
 	}
 
 	protected override void OnMouseDown( MousePanelEvent e )

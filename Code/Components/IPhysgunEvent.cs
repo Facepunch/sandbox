@@ -18,4 +18,10 @@ public interface IPhysgunEvent : ISceneEvent<IPhysgunEvent>
 	/// Set <see cref="GrabEvent.Cancelled"/> to true to reject the grab.
 	/// </summary>
 	void OnPhysgunGrab( GrabEvent e ) { }
+
+	/// <summary>
+	/// Called when a physgun stops moving this object, because it was let go, frozen or launched.
+	/// Runs on the instance that simulates the object, the only one that can change its body.
+	/// </summary>
+	void OnPhysgunDrop() { }
 }

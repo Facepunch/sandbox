@@ -25,6 +25,9 @@ public class UIDropdownList : Popup
 			label.Tokenize = tokenize;
 			label.Text = item.Label;
 
+			if ( item.Font is not null )
+				label.Style.FontFamily = item.Font;
+
 			row.AddEventListener( "onclick", () =>
 			{
 				onPick?.Invoke( item );

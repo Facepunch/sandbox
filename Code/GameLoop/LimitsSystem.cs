@@ -47,6 +47,11 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 	[ConVar( "sandbox.limit.wheels", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum wheels per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxWheels { get; set; } = -1;
 
+	[Range( -1, 256 )]
+	[Title( "Max Texts Per Player" ), Group( "Limits" )]
+	[ConVar( "sandbox.limit.texts", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum placed texts per player. -1 = unlimited, 0 = none allowed." )]
+	public static int MaxTexts { get; set; } = -1;
+
 	/// <summary>
 	/// Per-player tracked objects keyed by SteamId.
 	/// </summary>
@@ -209,6 +214,7 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 		if ( CheckToolLimit<EmitterTool, EmitterEntity>( e, MaxEmitters, ToolInput.Primary ) ) return;
 		if ( CheckToolLimit<HoverballTool, HoverballEntity>( e, MaxHoverballs, ToolInput.Primary ) ) return;
 		if ( CheckToolLimit<WheelTool, WheelEntity>( e, MaxWheels, ToolInput.Primary ) ) return;
+		if ( CheckToolLimit<TextTool, TextEntity>( e, MaxTexts, ToolInput.Primary ) ) return;
 
 		// TODO: same here :S
 		if ( MaxConstraints >= 0 && ( e.Tool is BaseConstraintToolMode || e.Tool is KeepUprightTool ) )

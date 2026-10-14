@@ -8,7 +8,7 @@ public partial class Notices : PanelComponent
 	/// <summary>
 	/// The notice display in the active scene.
 	/// </summary>
-	public static Notices Current => Game.ActiveScene.Get<Notices>();
+	public static Notices Current => Game.ActiveScene?.Get<Notices>();
 
 	/// <summary>
 	/// Space between the list of who is talking and the notices above it

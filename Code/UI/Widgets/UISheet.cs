@@ -168,10 +168,11 @@ public class UISheetRow : Panel
 {
 	SerializedProperty _property;
 	InspectorVisibilityAttribute[] _visibility;
+	EnabledIfAttribute _enabledIf;
 	Panel _holder;
 
-	// the controls of the properties added with [SameLine], they show and hide by their own conditions
-	readonly List<(Panel control, SerializedProperty property, InspectorVisibilityAttribute[] visibility)> _sharing = new();
+	// the controls of the properties added with [SameLine], they show, hide and grey out by their own conditions
+	readonly List<(Panel control, SerializedProperty property, InspectorVisibilityAttribute[] visibility, EnabledIfAttribute enabledIf)> _sharing = new();
 
 	public UISheetRow()
 	{
@@ -182,6 +183,10 @@ public class UISheetRow : Panel
 	{
 		_property = property;
 		_visibility = property.GetAttributes<InspectorVisibilityAttribute>()?.ToArray();
+
+		// a button checks its own condition
+		if ( !property.IsMethod )
+			property.TryGetAttribute( out _enabledIf );
 
 		var control = CreateControl( property, out var wide );
 		var isButton = control is UIButton;
@@ -216,8 +221,14 @@ public class UISheetRow : Panel
 		_holder.AddChild( control );
 
 		var visibility = property.GetAttributes<InspectorVisibilityAttribute>()?.ToArray();
-		if ( visibility?.Length > 0 )
-			_sharing.Add( (control, property, visibility) );
+
+		// a button checks its own condition
+		EnabledIfAttribute enabledIf = null;
+		if ( !property.IsMethod )
+			property.TryGetAttribute( out enabledIf );
+
+		if ( visibility?.Length > 0 || enabledIf is not null )
+			_sharing.Add( (control, property, visibility, enabledIf) );
 	}
 
 	public override void Tick()
@@ -227,10 +238,18 @@ public class UISheetRow : Panel
 		if ( _visibility?.Length > 0 && _property?.Parent is { } parent )
 			SetClass( "hidden", IsHidden( _visibility, parent ) );
 
-		foreach ( var (control, property, visibility) in _sharing )
+		if ( _enabledIf is not null )
+			SetClass( "disabled", !_enabledIf.Test( _property?.Parent ) );
+
+		foreach ( var (control, property, visibility, enabledIf) in _sharing )
 		{
-			if ( property.Parent is not null )
+			if ( property.Parent is null ) continue;
+
+			if ( visibility?.Length > 0 )
 				control.SetClass( "hidden", IsHidden( visibility, property.Parent ) );
+
+			if ( enabledIf is not null )
+				control.SetClass( "disabled", !enabledIf.Test( property.Parent ) );
 		}
 	}
 
@@ -271,6 +290,9 @@ public class UISheetRow : Panel
 			return new UIResourceGrid { Property = property };
 		}
 
+		if ( type == typeof( string ) && property.HasAttribute<FontNameAttribute>() )
+			return new UIFontControl { Property = property };
+
 		var isNumber = type == typeof( float ) || type == typeof( double ) || type == typeof( int );
 		if ( isNumber && property.HasAttribute<RangeAttribute>() )
 			return new UISlider { Property = property };
@@ -285,6 +307,14 @@ public class UISheetRow : Panel
 
 			if ( property.TryGetAttribute<PlaceholderAttribute>( out var placeholder ) )
 				entry.Placeholder = placeholder.Value;
+
+			// [TextArea] is a tall box that takes new lines, under the name like the other wide controls
+			if ( property.HasAttribute<TextAreaAttribute>() )
+			{
+				wide = true;
+				entry.Multiline = true;
+				entry.AddClass( "text-area" );
+			}
 		}
 
 		return control;

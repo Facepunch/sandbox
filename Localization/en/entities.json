@@ -1,5 +1,6 @@
 {
     "entity.name.pointlightentity": "Point Light",
+    "entity.name.textentity": "Text Entity",
     "entity.property.on": "On",
     "entity.description.on": "Whether the light is switched on.",
     "entity.group.light": "Light",

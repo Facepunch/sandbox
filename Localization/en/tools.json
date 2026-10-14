@@ -80,6 +80,10 @@
     "tool.hint.decaltool.rotate": "Hold to rotate",
     "tool.hint.decaltool.scale": "Hold to scale",
 
+    "tool.hint.texttool.description": "Places text on surfaces",
+    "tool.hint.texttool.place": "Place",
+    "tool.hint.texttool.rotate": "Hold to rotate",
+
     "tool.hint.nocollide.stage0": "Disables collision between two objects",
     "tool.hint.nocollide.stage1": "Select the second object",
     "tool.hint.nocollide.source": "Select source",
@@ -169,6 +173,7 @@
     "tool.name.motor": "Motor",
     "tool.name.emitter": "Emitter",
     "tool.name.decal": "Decal",
+    "tool.name.text": "Text",
     "tool.name.trail": "Trail",
     "tool.name.duplicator": "Duplicator",
     "tool.name.stacker": "Stacker",

@@ -25,9 +25,9 @@ public sealed class HideLabelAttribute : Attribute
 }
 
 /// <summary>
-/// A button in a <see cref="UISheet"/> only works while a property of the same object has this value.
+/// A button or property in a <see cref="UISheet"/> only works while a property of the same object has this value, otherwise it shows greyed out.
 /// </summary>
-[AttributeUsage( AttributeTargets.Method )]
+[AttributeUsage( AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method )]
 public sealed class EnabledIfAttribute : Attribute
 {
 	public string PropertyName { get; }

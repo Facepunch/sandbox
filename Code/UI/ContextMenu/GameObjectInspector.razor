@@ -216,7 +216,8 @@
             Properties.Add(so.GetProperty(nameof(ModelRenderer.RenderType)));
         }
 
-        if (firstComponent is Collider)
+        // the surface only matters to things that collide, noclip objects like placed text have no use for it
+        if (firstComponent is Collider && !components.Any(x => x.Tags.Has("noclip")))
             Properties.Add(so.GetProperty(nameof(Collider.Surface)));
     }
 
