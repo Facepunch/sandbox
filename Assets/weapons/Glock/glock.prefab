@@ -158,7 +158,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "45193ba2-8692-4b84-97d7-9e2d2a18c6c2",
+          "Id": "412b6aa2-7b35-43b2-8fe4-f8c81a604bc1",
           "Path": "models/weapons/sbox_pistol_usp/w_usp.vmdl"
         },
         "OnComponentDestroy": null,
@@ -282,7 +282,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "45193ba2-8692-4b84-97d7-9e2d2a18c6c2",
+              "Id": "412b6aa2-7b35-43b2-8fe4-f8c81a604bc1",
               "Path": "models/weapons/sbox_pistol_usp/w_usp.vmdl"
             },
             "Morphs": {},
@@ -348,6 +348,43 @@
             "Children": []
           }
         ]
+      },
+      {
+        "__guid": "3a5883df-a493-430a-b90b-24307cda87c2",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "Thumbnail Camera",
+        "Position": "27.5527496,51.8191833,12.4747009",
+        "Rotation": "0.036979001,-0.258468986,0.814125001,-0.518676996",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "ThumbnailCamera",
+            "__guid": "7486e699-37eb-4ac7-b5f5-8009ebef53e8",
+            "__enabled": true,
+            "Flags": 0,
+            "FieldOfView": 12,
+            "FitToBounds": true,
+            "Focus": "0.100000001,0",
+            "GizmoDistance": 60,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Padding": 0.08,
+            "Zoom": 1.15
+          }
+        ],
+        "Children": []
       }
     ],
     "__properties": {

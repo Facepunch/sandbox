@@ -307,6 +307,43 @@
           }
         ],
         "Children": []
+      },
+      {
+        "__guid": "c6916312-612a-440b-9277-2756045ea584",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "Thumbnail Camera",
+        "Position": "40.980762,-40.980762,15.529143",
+        "Rotation": "-0.146763,-0.014067,0.917229,0.370073",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "ThumbnailCamera",
+            "__guid": "6a0d5d45-a876-41c3-b177-6d516e27d82a",
+            "__enabled": true,
+            "Flags": 0,
+            "FieldOfView": 12,
+            "FitToBounds": true,
+            "GizmoDistance": 60,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Focus": "0,0",
+            "Padding": 0.08,
+            "Zoom": 1.16
+          }
+        ],
+        "Children": []
       }
     ],
     "__properties": {
