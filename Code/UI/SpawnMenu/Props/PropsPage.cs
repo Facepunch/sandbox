@@ -19,5 +19,9 @@ public class PropsPage : SpawnlistsPage
 		AddOption( "gps_fixed", "#spawnmenu.props.guns", () => new SpawnPageCloud() { Category = "weapon" } );
 
 		AddSpawnlistOptions();
+
+		AddHeader( "#spawnmenu.section.workshop" );
+		AddOption( "trending_up", "#spawnmenu.spawnlist.popular", () => new SpawnlistWorkshop { SortOrder = WorkshopSortMode.Popular } );
+		AddOption( "fiber_new", "#spawnmenu.spawnlist.newest", () => new SpawnlistWorkshop { SortOrder = WorkshopSortMode.Newest } );
 	}
 }

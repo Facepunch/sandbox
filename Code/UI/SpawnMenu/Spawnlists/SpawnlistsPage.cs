@@ -36,7 +36,7 @@ public abstract class SpawnlistsPage : BaseSpawnMenu
 
 		// A removed list must stop refreshing its deleted storage and leave the
 		// content area on a valid page, whether removed here or from the sidebar.
-		if ( ActivePanel is SpawnlistView view &&
+		if ( ActivePanel is SpawnlistView { Entry: not null } view &&
 			!Collection.Entries.Any( entry => entry.StorageEntry.Id == view.Entry.Id ) )
 		{
 			DeselectOption();
@@ -61,12 +61,53 @@ public abstract class SpawnlistsPage : BaseSpawnMenu
 
 	protected void AddSpawnlistOptions()
 	{
-		_spawnlistOptions.Clear();
+		SpawnMenuOption header = AddHeader( "#spawnmenu.section.workshop_spawnlists" );
 
+		AddResourceSpawnlists();
+		AddUserSpawnlists();
+
+		// hide the header if there are no spawnlists to show
+		if ( !header.HasChildren )
+		{
+			RemoveOption( header );
+		}
+	}
+
+	void AddResourceSpawnlists()
+	{
+		var resources = SpawnlistResource.GetVisible().ToList();
+		var visible = resources.ToHashSet();
+		var added = new HashSet<SpawnlistResource>();
+
+		void AddWithChildren( SpawnlistResource resource, SpawnMenuOption parent )
+		{
+			if ( !added.Add( resource ) ) return;
+
+			var option = AddOption( parent, new SpawnMenuOption
+			{
+				Icon = resource.Icon ?? "collections_bookmark",
+				Name = resource.DisplayName,
+				Key = resource.ResourcePath,
+				Tokenize = false,
+				PanelCreator = () => new SpawnlistView { Resource = resource }
+			} );
+
+			foreach ( var child in resources.Where( x => x.Parent == resource ) )
+				AddWithChildren( child, option );
+		}
+
+		foreach ( var resource in resources.Where( x => x.Parent is null || !visible.Contains( x.Parent ) ) )
+			AddWithChildren( resource, null );
+
+		foreach ( var resource in resources )
+			AddWithChildren( resource, null );
+	}
+
+	void AddUserSpawnlists()
+	{
+		_spawnlistOptions.Clear();
 		if ( Collection.Entries.Count > 0 || Collection.PendingCount > 0 )
 		{
-			AddHeader( "#spawnmenu.section.workshop_spawnlists" );
-
 			foreach ( var entry in Collection.Entries )
 			{
 				var captured = entry;
@@ -78,10 +119,6 @@ public abstract class SpawnlistsPage : BaseSpawnMenu
 				_spawnlistOptions[entry.StorageEntry.Id].Tokenize = false;
 			}
 		}
-
-		AddHeader( "#spawnmenu.section.workshop" );
-		AddOption( "trending_up", "#spawnmenu.spawnlist.popular", () => new SpawnlistWorkshop { SortOrder = WorkshopSortMode.Popular } );
-		AddOption( "fiber_new", "#spawnmenu.spawnlist.newest", () => new SpawnlistWorkshop { SortOrder = WorkshopSortMode.Newest } );
 	}
 
 	protected override void OnMenuFooter( Panel footer )

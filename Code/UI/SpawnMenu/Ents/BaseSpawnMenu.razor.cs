@@ -98,18 +98,28 @@ public partial class BaseSpawnMenu : Panel
 	/// <summary>
 	/// Start a collapsible section. Options added after this go inside it.
 	/// </summary>
-	public void AddHeader( string name, string icon = null )
+	public SpawnMenuOption AddHeader( string name, string icon = null )
 	{
 		currentHeader = new SpawnMenuOption { Name = name, Icon = icon };
 		roots.Add( currentHeader );
 
 		if ( knownHeaders.Add( name ) ) Tree.Open( currentHeader );
+		return currentHeader;
 	}
 
 	SpawnMenuOption Add( SpawnMenuOption o )
 	{
 		o.Parent = currentHeader;
 		(currentHeader?.Children ?? roots).Add( o );
+		return o;
+	}
+
+	public SpawnMenuOption AddOption( SpawnMenuOption parent, SpawnMenuOption o )
+	{
+		if ( parent is null ) return Add( o );
+
+		o.Parent = parent;
+		parent.Children.Add( o );
 		return o;
 	}
 
@@ -160,6 +170,12 @@ public partial class BaseSpawnMenu : Panel
 			yield return o;
 			foreach ( var child in o.Children ) yield return child;
 		}
+	}
+
+	public void RemoveOption( SpawnMenuOption o )
+	{
+		(o.Parent?.Children ?? roots).Remove( o );
+		StateHasChanged();
 	}
 
 	void OnTreeSelect( SpawnMenuOption o )
