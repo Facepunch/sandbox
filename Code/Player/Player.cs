@@ -433,7 +433,9 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			}
 			else if ( args.Tags.Contains( DamageTags.Fall ) )
 			{
-				_dmgSound = Sound.Play( "damage_taken_fall" );
+				// Only a really hard landing gets the hurt sound - small falls just shake the view
+				if ( args.Damage > 40f )
+					_dmgSound = Sound.Play( "damage_taken_fall" );
 			}
 			else
 			{
