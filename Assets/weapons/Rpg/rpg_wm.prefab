@@ -52,7 +52,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_rocketlauncher",
-        "Position": "-9.46805859,0.47770381,-7.40770531",
+        "Position": "-9.66765404,0.324513793,-7.40770531",
         "Rotation": "0,0,0.0601243563,0.99819088",
         "Scale": "1,1,1",
         "Tags": "",
@@ -79,7 +79,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "4b342e5e-cdfa-4fd5-bfa4-f124c0ae6c75",
+              "Id": "b64f868b-03bf-490b-93d5-4de7336ecfb2",
               "Path": "models/weapons/sbox_rpg_recoillessrifle/w_recoillessrifle.vmdl"
             },
             "Morphs": {},

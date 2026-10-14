@@ -20,7 +20,7 @@
         "__guid": "2991cab1-d97e-411c-aee6-2053c42c6516",
         "__enabled": true,
         "Flags": 0,
-        "Acceleration": 250,
+        "Acceleration": 150,
         "AllowDefaultArea": true,
         "AllowedAreas": [],
         "AutoTraverseLinks": true,
@@ -44,8 +44,10 @@
         "__enabled": true,
         "Flags": 0,
         "AimSpreadScale": 1,
+        "CalloutRange": 1500,
         "DisplayName": "#asset.combat_npc_friendly.title",
-        "EngageSpeed": 180,
+        "DroppedWeaponLifetime": 20,
+        "EngageSpeed": 150,
         "FollowDistance": 256,
         "Friendly": true,
         "Health": 100,
@@ -56,20 +58,361 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "PatrolRadius": 2048,
+        "Patrols": false,
+        "PatrolSpeed": 85,
+        "ReactionTimeAlert": "0.5,0.899999976",
+        "ReactionTimeRelaxed": "1,1.60000002",
+        "RelaxDelay": 5,
         "Renderer": {
           "_type": "component",
           "component_id": "2d981081-c1b7-4be7-b39c-529e7f3fb0f2",
           "go": "20ebc983-bcde-4769-9dda-e8b4ae45a063",
           "component_type": "SkinnedModelRenderer"
         },
-        "SearchTimeout": 10,
+        "SearchSpeed": 85,
+        "SearchTimeout": 20,
         "ShowDebugOverlay": false,
+        "SpeedVariation": 0.05,
         "Weapon": {
           "_type": "component",
           "component_id": "6bb4a3cc-497d-46c1-a2cf-76c3950f9027",
           "go": "bdce6722-1340-444b-b8e7-9686d99c71a7",
           "component_type": "M4a1Weapon"
-        }
+        },
+        "WeaponChoices": [
+          {
+            "_type": "gameobject",
+            "prefab": "weapons/glock/glock.prefab"
+          },
+          {
+            "_type": "gameobject",
+            "prefab": "weapons/m4a1/m4a1.prefab"
+          },
+          {
+            "_type": "gameobject",
+            "prefab": "weapons/mp5/mp5.prefab"
+          },
+          {
+            "_type": "gameobject",
+            "prefab": "weapons/shotgun/shotgun.prefab"
+          }
+        ]
+      },
+      {
+        "__type": "Sandbox.Npcs.NpcOutfits",
+        "__guid": "80ed648e-90c3-4051-b673-c7361dbbd2e7",
+        "__enabled": true,
+        "Flags": 0,
+        "Dresser": {
+          "_type": "component",
+          "component_id": "fdd452e4-e05d-4dcc-9717-aaa4c59c4099",
+          "go": "20ebc983-bcde-4769-9dda-e8b4ae45a063",
+          "component_type": "Dresser"
+        },
+        "Faces": [
+          {
+            "Id": "9573d45b-3b65-45f1-83d3-cee801aea261",
+            "Path": "models/citizen_clothes/body/human01.clothing"
+          },
+          {
+            "Id": "996e506d-fa15-4c30-8d05-ce21b818bd4d",
+            "Path": "models/citizen_clothes/body/human03.clothing"
+          },
+          {
+            "Id": "cbba9073-225b-4a84-9bbf-ce9436615597",
+            "Path": "models/citizen_clothes/body/human05.clothing"
+          },
+          {
+            "Id": "ee787b9d-b3f2-41da-9082-bdbfa59fbcbf",
+            "Path": "models/citizen_clothes/body/human06.clothing"
+          },
+          {
+            "Id": "9b7d1bd0-ec3a-479c-8b6c-70476dd7ba74",
+            "Path": "models/citizen_clothes/body/human07.clothing"
+          }
+        ],
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "Outfits": [
+          {
+            "Name": "Rebel",
+            "Clothing": [
+              {
+                "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
+                "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
+              },
+              {
+                "Id": "67b7e638-61d3-46c4-93e2-22eb089281f8",
+                "Path": "models/citizen_clothes/shirt/tshirt/tshirt.clothing"
+              },
+              {
+                "Id": "da391d9c-d6fc-4635-95e0-f7c979dc5fe2",
+                "Path": "models/citizen_clothes/trousers/cargopants/brown_cargo_pants.clothing"
+              },
+              {
+                "Id": "f3141e2b-75ed-4dbd-bd5e-5fdedc66a30f",
+                "Path": "clothing/fishing_vest/fishing_vest.clothing"
+              }
+            ]
+          },
+          {
+            "Name": "Militia",
+            "Clothing": [
+              {
+                "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
+                "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
+              },
+              {
+                "Id": "67b7e638-61d3-46c4-93e2-22eb089281f8",
+                "Path": "models/citizen_clothes/shirt/tshirt/tshirt.clothing"
+              },
+              {
+                "Id": "da391d9c-d6fc-4635-95e0-f7c979dc5fe2",
+                "Path": "models/citizen_clothes/trousers/cargopants/brown_cargo_pants.clothing"
+              },
+              {
+                "Id": "f81fdeb5-0b99-40ea-8a19-2d0384f9f0b1",
+                "Path": "models/citizen_clothes/hat/balaclava/balaclava.clothing"
+              },
+              {
+                "Id": "30395d14-f8af-4f86-a423-006927e7f0bb",
+                "Path": "models/citizen_clothes/vest/tactical_vest/models/tactical_vest.clothing"
+              }
+            ]
+          },
+          {
+            "Name": "Flannel Fighter",
+            "Clothing": [
+              {
+                "Id": "46b57b4f-4ce5-41a5-82a5-62b30b838e14",
+                "Path": "models/citizen_clothes/shirt/flannel_shirt/flannel_shirt.clothing"
+              },
+              {
+                "Id": "d9a7cc5b-386e-4545-8b4c-99a688d0b989",
+                "Path": "models/citizen_clothes/trousers/jeans/jeans.clothing"
+              },
+              {
+                "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
+                "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
+              },
+              {
+                "Id": "30395d14-f8af-4f86-a423-006927e7f0bb",
+                "Path": "models/citizen_clothes/vest/tactical_vest/models/tactical_vest.clothing"
+              },
+              {
+                "Id": "6781e7eb-7b3a-413e-9d66-4f1a2ede7b4a",
+                "Path": "models/citizen_clothes/hat/beanie/beanie_green.clothing"
+              },
+              {
+                "Id": "ad245ae6-3e58-4fac-9775-c51704c46820",
+                "Path": "models/citizen_clothes/gloves/fingerless_gloves/fingerless_gloves.clothing"
+              }
+            ]
+          },
+          {
+            "Name": "Bandana",
+            "Clothing": [
+              {
+                "Id": "67b7e638-61d3-46c4-93e2-22eb089281f8",
+                "Path": "models/citizen_clothes/shirt/tshirt/tshirt.clothing"
+              },
+              {
+                "Id": "da391d9c-d6fc-4635-95e0-f7c979dc5fe2",
+                "Path": "models/citizen_clothes/trousers/cargopants/brown_cargo_pants.clothing"
+              },
+              {
+                "Id": "522c5b11-7284-4956-a26a-ec9980a6db0d",
+                "Path": "models/citizen_clothes/shoes/boots/army_boots.clothing"
+              },
+              {
+                "Id": "d1ef1626-5cc9-46d3-b1fd-977132873aaa",
+                "Path": "models/citizen_clothes/hat/bandana_mask/bandana_mask.clothing"
+              },
+              {
+                "Id": "d4f5edd1-bcf6-4236-baa5-3eeae725454a",
+                "Path": "models/citizen_clothes/hair/hair_shortscruffy/hair_shortscruffy_brown.clothing"
+              },
+              {
+                "Id": "f3141e2b-75ed-4dbd-bd5e-5fdedc66a30f",
+                "Path": "clothing/fishing_vest/fishing_vest.clothing"
+              }
+            ]
+          },
+          {
+            "Name": "Hoodie",
+            "Clothing": [
+              {
+                "Id": "87e5bc4d-cfce-4003-9dee-83c51e9d40c7",
+                "Path": "models/citizen_clothes/jacket/hoodie/hoodie_black.clothing"
+              },
+              {
+                "Id": "9831674c-50d4-4752-a032-9bce08b829c3",
+                "Path": "models/citizen_clothes/trousers/jeans/jeans_black.clothing"
+              },
+              {
+                "Id": "d63384f6-6eb6-4a3f-a193-c94f4d41559b",
+                "Path": "models/citizen_clothes/shoes/sneakers/sneakers.clothing"
+              },
+              {
+                "Id": "30395d14-f8af-4f86-a423-006927e7f0bb",
+                "Path": "models/citizen_clothes/vest/tactical_vest/models/tactical_vest.clothing"
+              },
+              {
+                "Id": "ad245ae6-3e58-4fac-9775-c51704c46820",
+                "Path": "models/citizen_clothes/gloves/fingerless_gloves/fingerless_gloves.clothing"
+              },
+              {
+                "Id": "095e844b-f53a-42dd-857b-b0f3508d85b6",
+                "Path": "models/citizen_clothes/hair/hair_short_dreadlocks/short_dreadlocks.clothing"
+              }
+            ]
+          },
+          {
+            "Name": "Leather",
+            "Clothing": [
+              {
+                "Id": "67b7e638-61d3-46c4-93e2-22eb089281f8",
+                "Path": "models/citizen_clothes/shirt/tshirt/tshirt.clothing"
+              },
+              {
+                "Id": "3eeb1e19-6a7d-4729-92d1-b3f01d978c27",
+                "Path": "models/citizen_clothes/jacket/brown_leather_jacket/brown_leather_jacket.clothing"
+              },
+              {
+                "Id": "a8ed238c-a820-41a7-ba78-5891a02f4ab7",
+                "Path": "models/citizen_clothes/trousers/cargopants/cargo_pants_army.clothing"
+              },
+              {
+                "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
+                "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
+              },
+              {
+                "Id": "33908b41-82d0-49ef-b116-53f8cbe7a23d",
+                "Path": "models/citizen_clothes/hair/medium_beard/medium_beard.clothing"
+              },
+              {
+                "Id": "51103552-5505-493d-be9a-fdd8e750970a",
+                "Path": "models/citizen_clothes/hair/hair_thinning_short/thinning_short.clothing"
+              }
+            ]
+          },
+          {
+            "Name": "Scavenger",
+            "Clothing": [
+              {
+                "Id": "c9084d49-7b3b-4e80-ae52-e620ef68658d",
+                "Path": "models/citizen_clothes/jumper/loose_jumper/loose_jumper_wooly.clothing"
+              },
+              {
+                "Id": "847ac264-5019-48c6-96f3-423425ef9024",
+                "Path": "models/citizen_clothes/trousers/loosejeans/loose_jeans.clothing"
+              },
+              {
+                "Id": "522c5b11-7284-4956-a26a-ec9980a6db0d",
+                "Path": "models/citizen_clothes/shoes/boots/army_boots.clothing"
+              },
+              {
+                "Id": "98a53f72-032e-44a7-9e63-35432f04aa76",
+                "Path": "models/citizen_clothes/hat/trapper_hat/trapper_hat.clothing"
+              },
+              {
+                "Id": "b5572030-82e7-4aaf-ade9-aaa7b29c33fe",
+                "Path": "models/citizen_clothes/vest/tactical_vest/models/tactical_vest_army.clothing"
+              },
+              {
+                "Id": "ad245ae6-3e58-4fac-9775-c51704c46820",
+                "Path": "models/citizen_clothes/gloves/fingerless_gloves/fingerless_gloves.clothing"
+              }
+            ]
+          },
+          {
+            "Name": "Medic",
+            "Clothing": [
+              {
+                "Id": "f5552543-9aad-4b56-9ae6-f77357c315ec",
+                "Path": "models/citizen_clothes/shirt/polo_shirt/polo_shirt_white.clothing"
+              },
+              {
+                "Id": "da391d9c-d6fc-4635-95e0-f7c979dc5fe2",
+                "Path": "models/citizen_clothes/trousers/cargopants/brown_cargo_pants.clothing"
+              },
+              {
+                "Id": "d7d41c42-1b99-4d44-8658-0c684909cec3",
+                "Path": "models/citizen_clothes/shoes/trainers/trainers.clothing"
+              },
+              {
+                "Id": "f3141e2b-75ed-4dbd-bd5e-5fdedc66a30f",
+                "Path": "clothing/fishing_vest/fishing_vest.clothing"
+              },
+              {
+                "Id": "8d89eaec-2d46-494d-a6c8-04526e09d188",
+                "Path": "models/citizen_clothes/hair/hair_tight_ponytail/hair_tight_ponytail_brown.clothing"
+              }
+            ]
+          },
+          {
+            "Name": "Bomber",
+            "Clothing": [
+              {
+                "Id": "f57151f6-56bd-4987-b319-0f5078529c21",
+                "Path": "models/citizen_clothes/shirt/tanktop/tanktop.clothing"
+              },
+              {
+                "Id": "14dfeb4b-e877-40cd-bd72-f519e3e6e474",
+                "Path": "models/citizen_clothes/jacket/bomber_jacket/bomber_jacket.clothing"
+              },
+              {
+                "Id": "a8ed238c-a820-41a7-ba78-5891a02f4ab7",
+                "Path": "models/citizen_clothes/trousers/cargopants/cargo_pants_army.clothing"
+              },
+              {
+                "Id": "522c5b11-7284-4956-a26a-ec9980a6db0d",
+                "Path": "models/citizen_clothes/shoes/boots/army_boots.clothing"
+              },
+              {
+                "Id": "e7ccaf56-352c-472b-a928-ea3d672da5fe",
+                "Path": "models/citizen_clothes/hat/baseball_cap/baseball_cap_black.clothing"
+              },
+              {
+                "Id": "e0a1f52f-82fa-42cc-bd9c-8bb669c53388",
+                "Path": "models/citizen_clothes/hair/patchy_beard/patchy_beard.clothing"
+              }
+            ]
+          },
+          {
+            "Name": "Gilet",
+            "Clothing": [
+              {
+                "Id": "cb65e00c-3830-4cd8-a2a5-a2d52b19b2f9",
+                "Path": "models/citizen_clothes/shirt/flannel_shirt/variations/blue_shirt/blue_shirt.clothing"
+              },
+              {
+                "Id": "14931285-7b05-4d58-b71f-a674e58cef55",
+                "Path": "models/citizen_clothes/jacket/sleeveless_jacket/sleeveless_jacket.clothing"
+              },
+              {
+                "Id": "d9a7cc5b-386e-4545-8b4c-99a688d0b989",
+                "Path": "models/citizen_clothes/trousers/jeans/jeans.clothing"
+              },
+              {
+                "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
+                "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
+              },
+              {
+                "Id": "7cdc1c55-ef1e-4f66-bc37-3fbbf80d1ad6",
+                "Path": "models/citizen_clothes/hat/beanie/beanie_red.clothing"
+              },
+              {
+                "Id": "f9d0ce0d-7082-4238-9bcd-6549d90bd337",
+                "Path": "models/citizen_clothes/hair/goatee/goatee.clothing"
+              }
+            ]
+          }
+        ]
       },
       {
         "__type": "Sandbox.Npcs.Layers.NavigationLayer",
@@ -119,13 +462,14 @@
         "__enabled": true,
         "Flags": 0,
         "FieldOfView": 200,
-        "HearingRange": 512,
+        "HearingRange": 1200,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "QuietSpeed": 120,
         "ScanTags": "player,npc",
         "SightRange": 8192
       },
@@ -288,14 +632,8 @@
               },
               {
                 "Clothing": {
-                  "Id": "f81fdeb5-0b99-40ea-8a19-2d0384f9f0b1",
-                  "Path": "models/citizen_clothes/hat/balaclava/balaclava.clothing"
-                }
-              },
-              {
-                "Clothing": {
-                  "Id": "30395d14-f8af-4f86-a423-006927e7f0bb",
-                  "Path": "models/citizen_clothes/vest/tactical_vest/models/tactical_vest.clothing"
+                  "Id": "f3141e2b-75ed-4dbd-bd5e-5fdedc66a30f",
+                  "Path": "clothing/fishing_vest/fishing_vest.clothing"
                 }
               },
               {
@@ -2324,7 +2662,7 @@
             ]
           },
           {
-            "__guid": "bf748245-95d8-4d69-9591-1d7b2d5db4e6",
+            "__guid": "60e255fe-b51c-4385-9bb1-5fbde758f5a7",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - black_boots",
@@ -2341,7 +2679,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "b639239f-8126-4c26-9159-48a580be9021",
+                "__guid": "137dc269-228f-4fb9-9cbe-94901f8d4735",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2391,7 +2729,7 @@
             "Children": []
           },
           {
-            "__guid": "b0f242d1-272c-4a07-a9b3-9d8e1eee3fbb",
+            "__guid": "130c8096-d3b0-4914-8388-9bd60684a4af",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - tshirt",
@@ -2408,7 +2746,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "55b1effa-9881-4403-b356-586543ce16d6",
+                "__guid": "13e9484d-052d-4dee-9dbe-7b46c7739c19",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2458,7 +2796,7 @@
             "Children": []
           },
           {
-            "__guid": "af7eb879-1ed4-4be4-b67f-76737d9ae711",
+            "__guid": "c099f1c2-fcf7-41ec-817d-34a36bae3152",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - brown_cargo_pants",
@@ -2475,7 +2813,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "fbd62767-d39e-4ea9-b475-5520b34903be",
+                "__guid": "c13ae29d-02bd-4861-8c68-10865aacb41b",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2525,10 +2863,10 @@
             "Children": []
           },
           {
-            "__guid": "2b3d5efa-6659-462a-8372-16458dad1d43",
+            "__guid": "5ed9e360-8c7b-4037-8e32-fb7c7233f818",
             "__version": 2,
             "Flags": 0,
-            "Name": "Clothing - balaclava",
+            "Name": "Clothing - fishing_vest",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
@@ -2542,7 +2880,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "c6acfe43-b9ef-4c92-b846-acc83a589047",
+                "__guid": "d5e7866e-38fe-4a11-a57a-497793468f69",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2561,75 +2899,8 @@
                 "MaterialOverride": null,
                 "Materials": null,
                 "Model": {
-                  "Id": "2c18d58c-c774-44dd-b065-8e6a9d250dbe",
-                  "Path": "models/citizen_clothes/hat/balaclava/models/balaclava_m_human.vmdl"
-                },
-                "Morphs": {},
-                "OnComponentDestroy": null,
-                "OnComponentDisabled": null,
-                "OnComponentEnabled": null,
-                "OnComponentFixedUpdate": null,
-                "OnComponentStart": null,
-                "OnComponentUpdate": null,
-                "Parameters": {},
-                "PlaybackRate": 1,
-                "RenderOptions": {
-                  "GameLayer": true,
-                  "OverlayLayer": false,
-                  "BloomLayer": false,
-                  "AfterUILayer": false
-                },
-                "RenderType": "On",
-                "Sequence": {
-                  "Name": null,
-                  "Looping": true,
-                  "Blending": false
-                },
-                "Tint": "1,1,1,1",
-                "UseAnimGraph": true
-              }
-            ],
-            "Children": []
-          },
-          {
-            "__guid": "20786f2f-ef7c-42bb-adc4-e0cd0e33e487",
-            "__version": 2,
-            "Flags": 0,
-            "Name": "Clothing - tactical_vest",
-            "Position": "0,0,0",
-            "Rotation": "0,0,0,1",
-            "Scale": "1,1,1",
-            "Tags": "clothing",
-            "Enabled": true,
-            "NetworkMode": 2,
-            "NetworkFlags": 0,
-            "NetworkOrphaned": 0,
-            "NetworkTransmit": true,
-            "OwnerTransfer": 1,
-            "Components": [
-              {
-                "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "ac2ac82e-b0d7-4905-b3be-0d89cfdc9c47",
-                "__enabled": true,
-                "Flags": 0,
-                "AnimationGraph": null,
-                "BodyGroups": 18446744073709551615,
-                "BoneMergeTarget": {
-                  "_type": "component",
-                  "component_id": "2d981081-c1b7-4be7-b39c-529e7f3fb0f2",
-                  "go": "20ebc983-bcde-4769-9dda-e8b4ae45a063",
-                  "component_type": "SkinnedModelRenderer"
-                },
-                "CreateAttachments": false,
-                "CreateBoneObjects": false,
-                "DeformationMode": "Normal",
-                "LodOverride": null,
-                "MaterialGroup": null,
-                "MaterialOverride": null,
-                "Materials": null,
-                "Model": {
-                  "Id": "feac2a02-5484-4b6f-8ea9-398a33ffc74b",
-                  "Path": "models/citizen_clothes/vest/tactical_vest/models/tactical_vest_m_human.vmdl"
+                  "Id": "860a3a9d-e726-4465-ad17-bfc82b295e5f",
+                  "Path": "clothing/fishing_vest/fishing_vest_m_human.vmdl"
                 },
                 "Morphs": {},
                 "OnComponentDestroy": null,
@@ -2729,6 +3000,39 @@
           }
         ],
         "Children": []
+      },
+      {
+        "__guid": "85e1282d-b029-4536-9ad3-6b13c427163d",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "Thumbnail Camera",
+        "Position": "78.9342,28.7297,61",
+        "Rotation": "0,0,0.984807789,-0.173648193",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "ThumbnailCamera",
+            "__guid": "0a76d90e-a9ef-4efa-b742-fffe728cde3f",
+            "__enabled": true,
+            "Flags": 0,
+            "FieldOfView": 15,
+            "GizmoDistance": 84,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null
+          }
+        ],
+        "Children": []
       }
     ],
     "__properties": {
@@ -2759,6 +3063,8 @@
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "__references": [],
+  "__references": [
+    "facepunch.fishing_vest#314083"
+  ],
   "__version": 2
 }

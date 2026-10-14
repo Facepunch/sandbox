@@ -55,8 +55,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_usp",
-        "Position": "3.70865583,0.317522317,-2.83900452",
-        "Rotation": "0.0596619397,0,0,0.998218656",
+        "Position": "1.5562042,-0.0353811085,-2.69271922",
+        "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -82,7 +82,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "fb54509a-1509-4ff9-b21f-441252309557",
+              "Id": "e490edd9-8f60-4999-94b2-856fc36e3bff",
               "Path": "models/weapons/sbox_pistol_usp/w_usp.vmdl"
             },
             "Morphs": {},

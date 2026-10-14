@@ -61,8 +61,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_sniper",
-        "Position": "5.13857174,1.08153677,-4.80170965",
-        "Rotation": "0.00162038556,-0.0803265572,0.0201031733,0.996564507",
+        "Position": "5.44423389,-0.108581923,-4.86040783",
+        "Rotation": "-0.000147118539,0.00689103035,-0.0213439334,0.999748409",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -88,7 +88,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "638e00af-b463-4cf7-b633-5c250135647e",
+              "Id": "5191dbb8-d91b-4d7a-951c-7a87a8cd23af",
               "Path": "models/weapons/sbox_sniper_m700/w_m700.vmdl"
             },
             "Morphs": {},

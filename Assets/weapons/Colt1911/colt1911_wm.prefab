@@ -61,7 +61,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_1911",
-        "Position": "4.0678668,-0.128500968,-3.20000005",
+        "Position": "1.5562042,-0.0353811085,-2.69271922",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -88,7 +88,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "a8b73aac-8f14-4c69-9a8b-8314014febd1",
+              "Id": "0862da70-b2d1-4a33-b71a-0561db20d5e4",
               "Path": "models/weapons/sbox_pistol_1911/w_1911.vmdl"
             },
             "Morphs": {},

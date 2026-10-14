@@ -1,3 +1,5 @@
+using Sandbox.Npcs;
+
 public partial class BaseBulletWeapon : BaseSandboxWeapon
 {
 	//
@@ -79,8 +81,26 @@ public partial class BaseBulletWeapon : BaseSandboxWeapon
 	{
 		base.OnShootEffects( shot );
 
+		EmitGunfireNoise( shot );
+
 		if ( shot.Hit )
 			PushRagdoll( shot.HitObject, shot.HitPosition, shot.Origin ?? GetMuzzleTransform().Position );
+	}
+
+	private TimeSince _timeSinceNoise;
+
+	/// <summary>
+	/// Gunfire is loud - let NPCs hear a player shooting. NPC shooters announce their own bursts.
+	/// </summary>
+	void EmitGunfireNoise( ShotEffect shot )
+	{
+		if ( !Networking.IsHost || shot.NoEvents || _timeSinceNoise < 0.25f ) return;
+
+		var owner = Owner;
+		if ( !owner.IsValid() ) return;
+
+		_timeSinceNoise = 0;
+		Scene.GetSystem<NpcStimulusSystem>()?.Broadcast( StimulusKind.Gunshot, owner.WorldPosition, owner.GameObject, radius: 3000f, lifetime: 1.5f );
 	}
 
 	void PushRagdoll( GameObject hitObject, Vector3 hitPosition, Vector3 origin )

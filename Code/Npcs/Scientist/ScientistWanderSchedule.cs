@@ -8,6 +8,11 @@ namespace Sandbox.Npcs.Schedules;
 /// </summary>
 public sealed class ScientistWanderSchedule : ScheduleBase
 {
+	/// <summary>
+	/// Walking pace.
+	/// </summary>
+	public float Speed { get; set; } = 85f;
+
 	protected override void OnStart()
 	{
 		var randomDir = Vector3.Random.WithZ( 0 ).Normal;
@@ -26,7 +31,7 @@ public sealed class ScientistWanderSchedule : ScheduleBase
 
 		var wanderTarget = GameObject.WorldPosition + randomDir * Game.Random.Float( 150f, 350f );
 
-		AddTask( new MoveTo( wanderTarget, 15f ) );
+		AddTask( new MoveTo( wanderTarget, 15f ) { Speed = Speed } );
 		AddTask( new Wait( Game.Random.Float( 1f, 2f ) ) );
 	}
 }

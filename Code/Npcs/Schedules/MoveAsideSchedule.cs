@@ -17,6 +17,9 @@ public sealed class MoveAsideSchedule : ScheduleBase
 	/// <summary>How far to step out of the way.</summary>
 	public float StepDistance { get; set; } = 80f;
 
+	/// <summary>Speed to step aside at. Null uses the NPC's walk.</summary>
+	public float? Speed { get; set; }
+
 	// Above ambient behaviour like following and idling, below fleeing and combat --
 	// we step out of the way unless something more important is going on.
 	public override int Priority => SchedulePriority.Alert;
@@ -45,7 +48,7 @@ public sealed class MoveAsideSchedule : ScheduleBase
 		// turning our back on them
 		Npc.Animation.AddLookTarget( Blocker, 2f );
 
-		AddTask( new MoveTo( Npc.WorldPosition + side * StepDistance, 8f ) { FaceTarget = Blocker } );
+		AddTask( new MoveTo( Npc.WorldPosition + side * StepDistance, 8f ) { Speed = Speed, FaceTarget = Blocker } );
 		AddTask( new Wait( 0.5f ) );
 	}
 

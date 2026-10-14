@@ -61,9 +61,9 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "2.80602264,0.959587336,-6.78652668",
-        "Rotation": "0,0,0.0532705747,0.998580098",
-        "Scale": "1,1,1",
+        "Position": "0.475215912,-0.062651813,-5.54097509",
+        "Rotation": "0,0.0389618203,0,0.999240696",
+        "Scale": "1,1,1.04999995",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
@@ -88,7 +88,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "d2b4bcd1-dcb6-4f80-bc47-b6f3f79dcbcf",
+              "Id": "16ead69d-0a61-44f2-9b18-2906fd23615d",
               "Path": "models/weapons/sbox_smg_mp5/w_mp5.vmdl"
             },
             "Morphs": {},

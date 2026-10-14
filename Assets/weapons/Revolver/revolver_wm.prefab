@@ -4,7 +4,7 @@
     "__version": 2,
     "Flags": 0,
     "Name": "revolver_wm",
-    "Position": "0,0.0524120107,0",
+    "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
     "Tags": "",
@@ -55,7 +55,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_usp",
-        "Position": "4.23561573,0.200439095,-3.52260733",
+        "Position": "2.13098049,0.0641112626,-2.613096",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -82,7 +82,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "90cd3411-0425-45db-9d1b-d40e3ced8512",
+              "Id": "3f5b177b-4ea0-48a7-ba55-4cf0c40e4942",
               "Path": "models/weapons/sbox_revolver_magnum/w_magnum.vmdl"
             },
             "Morphs": {},

@@ -48,6 +48,33 @@ public class CombatEngageSchedule : ScheduleBase
 	public float EngageSpeed { get; set; } = 180f;
 
 	/// <summary>
+	/// Speed the NPC strafes at when it repositions without sprinting.
+	/// </summary>
+	public float StrafeSpeed { get; set; } = 85f;
+
+	/// <summary>
+	/// Chance to reposition after a burst. Otherwise the NPC holds its ground and fires again.
+	/// </summary>
+	public float RepositionChance { get; set; } = 0.35f;
+
+	/// <summary>
+	/// Seconds to react before the first burst - set for a fresh contact, zero while a fight is
+	/// already going. The NPC calls the contact out, turns to face it and brings its weapon up in
+	/// this time, and won't fire before it's up however quickly those finish.
+	/// </summary>
+	public float ReactionTime { get; set; }
+
+	private TimeUntil _reacted;
+
+	/// <summary>
+	/// How long the target can drop out of sight (ducking behind something, a glimpse through a
+	/// gap) before we give up on this engagement and go searching instead.
+	/// </summary>
+	public float LostSightGrace { get; set; } = 0.75f;
+
+	private TimeSince _timeSinceVisible;
+
+	/// <summary>
 	/// Radius around the current position to pick a flanking point.
 	/// </summary>
 	public float FlankRadius { get; set; } = 250f;
@@ -67,8 +94,14 @@ public class CombatEngageSchedule : ScheduleBase
 		// movement, firing, waiting, and repositioning.
 		Npc.Animation.SetLookTarget( Target );
 
-		// Spot the target on engage start
-		if ( Npc.Speech.CanSpeak )
+		_timeSinceVisible = 0;
+
+		// A fresh contact gets called out (if the speech system lets us), then we hold fire until
+		// the reaction time is up - counted from now, so the callout and the turn eat into it
+		var freshContact = ReactionTime > 0f;
+		_reacted = ReactionTime;
+
+		if ( freshContact && Npc.Speech.CanSpeak )
 			AddTask( new Say( Game.Random.FromArray( SpotLines ), 1.5f, Target )
 			{
 				Tags = ["combat", "spot"],
@@ -76,6 +109,9 @@ public class CombatEngageSchedule : ScheduleBase
 			} );
 
 		AddTask( new LookAt( Target ) );
+
+		if ( freshContact )
+			AddTask( new AwaitReaction( this ) );
 
 		// Advance to comfortably inside the weapon's reach, not right on the edge of it.
 		AddTask( new MoveTo( Target, Weapon.Npc.MaxRange * 0.8f ) { Speed = EngageSpeed, FaceTarget = Target } );
@@ -91,7 +127,9 @@ public class CombatEngageSchedule : ScheduleBase
 		else
 			AddTask( new Wait( rest ) );
 
-		AddTask( new MoveTo( GetFlankPosition(), 20f ) { Speed = EngageSpeed, FaceTarget = Target } );
+		// Now and then, strafe to a new spot - most of the time hold position and keep shooting
+		if ( Game.Random.Float() < RepositionChance )
+			AddTask( new MoveTo( GetFlankPosition(), 20f ) { Speed = StrafeSpeed, FaceTarget = Target } );
 	}
 
 	protected override void OnEnd()
@@ -104,7 +142,22 @@ public class CombatEngageSchedule : ScheduleBase
 		if ( !Target.IsValid() || !Weapon.IsValid() )
 			return true;
 
-		return !Npc.Senses.VisibleTargets.Contains( Target );
+		if ( Npc.Senses.VisibleTargets.Contains( Target ) )
+			_timeSinceVisible = 0;
+
+		return _timeSinceVisible > LostSightGrace;
+	}
+
+	/// <summary>
+	/// Holds until the schedule's reaction time is up, however long the tasks before it took.
+	/// </summary>
+	private sealed class AwaitReaction : TaskBase
+	{
+		private readonly CombatEngageSchedule _engage;
+
+		public AwaitReaction( CombatEngageSchedule engage ) => _engage = engage;
+
+		protected override TaskStatus OnUpdate() => _engage._reacted ? TaskStatus.Success : TaskStatus.Running;
 	}
 
 	/// <summary>

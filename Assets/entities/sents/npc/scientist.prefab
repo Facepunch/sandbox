@@ -42,6 +42,7 @@
         "__type": "Sandbox.Npcs.Scientist.ScientistNpc",
         "__guid": "9e7014a2-de94-4f9f-852e-871f9fd821ef",
         "__enabled": true,
+        "WalkSpeed": 85,
         "Flags": 0,
         "DisplayName": "Darren",
         "FearDecayRate": 0.15,
@@ -96,6 +97,228 @@
         "OnComponentUpdate": null,
         "ScanTags": "player,npc",
         "SightRange": 500
+      },
+      {
+        "__type": "Sandbox.Npcs.NpcOutfits",
+        "__guid": "c7ecca74-647c-4295-a311-ac4e2590c711",
+        "__enabled": true,
+        "Flags": 0,
+        "Dresser": {
+          "_type": "component",
+          "component_id": "fdd452e4-e05d-4dcc-9717-aaa4c59c4099",
+          "go": "20ebc983-bcde-4769-9dda-e8b4ae45a063",
+          "component_type": "Dresser"
+        },
+        "Faces": [
+          {
+            "Id": "9573d45b-3b65-45f1-83d3-cee801aea261",
+            "Path": "models/citizen_clothes/body/human01.clothing"
+          },
+          {
+            "Id": "996e506d-fa15-4c30-8d05-ce21b818bd4d",
+            "Path": "models/citizen_clothes/body/human03.clothing"
+          },
+          {
+            "Id": "cbba9073-225b-4a84-9bbf-ce9436615597",
+            "Path": "models/citizen_clothes/body/human05.clothing"
+          },
+          {
+            "Id": "ee787b9d-b3f2-41da-9082-bdbfa59fbcbf",
+            "Path": "models/citizen_clothes/body/human06.clothing"
+          },
+          {
+            "Id": "9b7d1bd0-ec3a-479c-8b6c-70476dd7ba74",
+            "Path": "models/citizen_clothes/body/human07.clothing"
+          }
+        ],
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "Outfits": [
+          {
+            "Name": "Blue Shirt",
+            "Clothing": [
+              {
+                "Id": "cb65e00c-3830-4cd8-a2a5-a2d52b19b2f9",
+                "Path": "models/citizen_clothes/shirt/flannel_shirt/variations/blue_shirt/blue_shirt.clothing"
+              },
+              {
+                "Id": "6728630a-cec6-43e7-bf40-8c3e94c97de1",
+                "Path": "models/citizen_clothes/jacket/labcoat/labcoat.clothing"
+              },
+              {
+                "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
+                "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
+              },
+              {
+                "Id": "a69dd926-ff63-4953-bcc3-811b918d7981",
+                "Path": "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing"
+              },
+              {
+                "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
+                "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
+              },
+              {
+                "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
+                "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
+              },
+              "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing"
+            ]
+          },
+          {
+            "Name": "Flannel",
+            "Clothing": [
+              {
+                "Id": "46b57b4f-4ce5-41a5-82a5-62b30b838e14",
+                "Path": "models/citizen_clothes/shirt/flannel_shirt/flannel_shirt.clothing"
+              },
+              {
+                "Id": "6728630a-cec6-43e7-bf40-8c3e94c97de1",
+                "Path": "models/citizen_clothes/jacket/labcoat/labcoat.clothing"
+              },
+              {
+                "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
+                "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
+              },
+              {
+                "Id": "a69dd926-ff63-4953-bcc3-811b918d7981",
+                "Path": "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing"
+              },
+              {
+                "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
+                "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
+              },
+              {
+                "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
+                "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
+              },
+              "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing"
+            ]
+          },
+          {
+            "Name": "Polo",
+            "Clothing": [
+              {
+                "Id": "636f884d-a553-44dd-9934-2c8c76e1908f",
+                "Path": "models/citizen_clothes/shirt/polo_shirt/polo_shirt.clothing"
+              },
+              {
+                "Id": "6728630a-cec6-43e7-bf40-8c3e94c97de1",
+                "Path": "models/citizen_clothes/jacket/labcoat/labcoat.clothing"
+              },
+              {
+                "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
+                "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
+              },
+              {
+                "Id": "a69dd926-ff63-4953-bcc3-811b918d7981",
+                "Path": "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing"
+              },
+              {
+                "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
+                "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
+              },
+              {
+                "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
+                "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
+              },
+              "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing"
+            ]
+          },
+          {
+            "Name": "White Polo",
+            "Clothing": [
+              {
+                "Id": "f5552543-9aad-4b56-9ae6-f77357c315ec",
+                "Path": "models/citizen_clothes/shirt/polo_shirt/polo_shirt_white.clothing"
+              },
+              {
+                "Id": "6728630a-cec6-43e7-bf40-8c3e94c97de1",
+                "Path": "models/citizen_clothes/jacket/labcoat/labcoat.clothing"
+              },
+              {
+                "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
+                "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
+              },
+              {
+                "Id": "a69dd926-ff63-4953-bcc3-811b918d7981",
+                "Path": "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing"
+              },
+              {
+                "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
+                "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
+              },
+              {
+                "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
+                "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
+              },
+              "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing"
+            ]
+          },
+          {
+            "Name": "Waistcoat",
+            "Clothing": [
+              {
+                "Id": "fe9a94e4-1e7d-4411-83d6-13632fbc003f",
+                "Path": "models/citizen_clothes/shirt/waistcoat_and_shirt/waistcoat_and_shirt.clothing"
+              },
+              {
+                "Id": "6728630a-cec6-43e7-bf40-8c3e94c97de1",
+                "Path": "models/citizen_clothes/jacket/labcoat/labcoat.clothing"
+              },
+              {
+                "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
+                "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
+              },
+              {
+                "Id": "a69dd926-ff63-4953-bcc3-811b918d7981",
+                "Path": "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing"
+              },
+              {
+                "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
+                "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
+              },
+              {
+                "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
+                "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
+              },
+              "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing"
+            ]
+          },
+          {
+            "Name": "T-Shirt",
+            "Clothing": [
+              {
+                "Id": "67b7e638-61d3-46c4-93e2-22eb089281f8",
+                "Path": "models/citizen_clothes/shirt/tshirt/tshirt.clothing"
+              },
+              {
+                "Id": "6728630a-cec6-43e7-bf40-8c3e94c97de1",
+                "Path": "models/citizen_clothes/jacket/labcoat/labcoat.clothing"
+              },
+              {
+                "Id": "778ff773-2000-4cb5-8ab7-d8461d804115",
+                "Path": "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing"
+              },
+              {
+                "Id": "a69dd926-ff63-4953-bcc3-811b918d7981",
+                "Path": "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing"
+              },
+              {
+                "Id": "ac691bb6-27ca-4897-9363-1c707b16d34e",
+                "Path": "models/citizen_clothes/shoes/boots/black_boots.clothing"
+              },
+              {
+                "Id": "06941b88-2575-43da-857d-5a8bd580fde5",
+                "Path": "models/citizen_clothes/hair/moustache/moustache.clothing"
+              },
+              "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing"
+            ]
+          }
+        ]
       },
       {
         "__type": "Sandbox.Npcs.Layers.NavigationLayer",
@@ -2790,6 +3013,39 @@
             "Static": false,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
+          }
+        ],
+        "Children": []
+      },
+      {
+        "__guid": "bd0410e3-3745-4acf-aa86-cd99d8dbd188",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "Thumbnail Camera",
+        "Position": "78.9342,28.7297,61",
+        "Rotation": "0,0,0.984807789,-0.173648193",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "ThumbnailCamera",
+            "__guid": "21defde7-3628-488e-a608-0d1d48ab73b2",
+            "__enabled": true,
+            "Flags": 0,
+            "FieldOfView": 15,
+            "GizmoDistance": 84,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null
           }
         ],
         "Children": []

@@ -34,6 +34,9 @@ public class FireWeapon : TaskBase
 
 		_shotsLeft = Game.Random.Int( Weapon.Npc.BurstMin, Weapon.Npc.BurstMax );
 
+		// Shoot at the target, not wherever the animated barrel happens to point.
+		Weapon.NpcAimTarget = Target;
+
 		// A burst that can't land its shots (target keeps out of range) gives up rather than stall.
 		_timeout = 4f;
 
@@ -54,9 +57,9 @@ public class FireWeapon : TaskBase
 
 		RotateBodyTowardTarget();
 
-		// Only fire once we're facing the target and it's inside the weapon's engagement band.
-		// FirePrimary respects the weapon's fire rate - the burst paces itself.
-		if ( Npc.Animation.IsFacingTarget() && InRange() && Weapon.FirePrimary() )
+		// Only fire once we're facing the target, can see it, and it's inside the weapon's engagement
+		// band. FirePrimary respects the weapon's fire rate - the burst paces itself.
+		if ( Npc.Animation.IsFacingTarget() && CanSee() && InRange() && Weapon.FirePrimary() )
 		{
 			Npc.Animation.TriggerAttack();
 			_shotsLeft--;
@@ -64,6 +67,14 @@ public class FireWeapon : TaskBase
 
 		return _shotsLeft <= 0 ? TaskStatus.Success : TaskStatus.Running;
 	}
+
+	protected override void OnEnd()
+	{
+		if ( Weapon.IsValid() )
+			Weapon.NpcAimTarget = null;
+	}
+
+	private bool CanSee() => Npc.Senses.VisibleTargets.Contains( Target );
 
 	private bool InRange()
 	{

@@ -61,8 +61,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "4.26789999,1.26339936,-6.31674767",
-        "Rotation": "0.0113283191,-0.0615313314,0.0794907361,0.994870305",
+        "Position": "1.70430064,-0.197153091,-5.87681484",
+        "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -78,7 +78,7 @@
             "__enabled": true,
             "Flags": 0,
             "AnimationGraph": null,
-            "BodyGroups": 171,
+            "BodyGroups": 43,
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": true,
@@ -88,7 +88,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "f1a7eb9e-e1cb-484b-b078-e6cde04c6762",
+              "Id": "77668501-6ec5-464c-8621-8c959d254510",
               "Path": "models/weapons/sbox_assault_m4a1/w_m4a1.vmdl"
             },
             "Morphs": {},

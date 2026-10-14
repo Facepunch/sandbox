@@ -80,6 +80,11 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	[Sync] public bool IsLooking { get; set; }
 	[Sync] public string HoldType { get; set; } = "none";
 
+	/// <summary>
+	/// Hold the weapon lowered, at ease, instead of up and ready. Synced to all clients.
+	/// </summary>
+	[Sync] public bool WeaponLowered { get; set; }
+
 	// The object being looked at, if the look target is an object. Synced so every
 	// client resolves the eye position locally - that way the player being looked
 	// at sees the NPC looking at their camera, while everyone else sees it looking
@@ -185,6 +190,8 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 
 		if ( !string.IsNullOrEmpty( HoldType ) )
 			_renderer?.Set( "holdtype", HoldType );
+
+		_renderer?.Set( "b_weapon_lower", WeaponLowered );
 
 		_renderer?.Set( "b_grounded", Grounded );
 
@@ -568,6 +575,7 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		IsLooking = false;
 		MoveVelocity = default;
 		HoldType = "none";
+		WeaponLowered = false;
 		_lastYaw = float.NaN;
 
 		ClearHeldProp();

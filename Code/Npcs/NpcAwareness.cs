@@ -21,4 +21,9 @@ public enum NpcAwareness
 
 	/// <summary>A player is walking into us -- they want to get past and we're in the way.</summary>
 	PlayerPushing = 1 << 3,
+
+	/// <summary>
+	/// Learned where a hostile is without seeing it -- heard it moving or shooting, or an ally called it out.
+	/// </summary>
+	HostileIntel = 1 << 4,
 }

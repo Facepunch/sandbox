@@ -56,7 +56,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "3.76020765,-0.112608522,-4.74860382",
+        "Position": "1.34259844,-0.604999542,-3.45999551",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -79,7 +79,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "2d5bba3c-5369-4c90-9c5d-68c82309bab3",
+              "Id": "ee63cba3-2787-4f6c-a3e1-f072defa173f",
               "Path": "models/weapons/sbox_toolgun/v_toolgun.vmdl"
             },
             "OnComponentDestroy": null,

@@ -65,6 +65,9 @@ public partial class Npc : Component
 
 			if ( Senses.GetPushingPlayer().IsValid() )
 				a |= NpcAwareness.PlayerPushing;
+
+			if ( Senses.GetHeardHostile().IsValid() )
+				a |= NpcAwareness.HostileIntel;
 		}
 
 		return a;

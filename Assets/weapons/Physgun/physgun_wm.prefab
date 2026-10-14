@@ -46,11 +46,8 @@
         "__guid": "765ebd37-c91f-4058-8815-f4b7df6f24b0",
         "__enabled": true,
         "Flags": 0,
+        "DeploySound": null,
         "EjectBrass": null,
-        "ShellEjectGameObject": {
-          "_type": "gameobject",
-          "go": "1d5347e0-820c-4015-96dc-4efd0679eca3"
-        },
         "MuzzleEffect": {
           "_type": "gameobject",
           "go": "e4312b65-c2f9-4ab7-bdb5-2e6bc4b67507"
@@ -71,6 +68,10 @@
           "go": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
           "component_type": "SkinnedModelRenderer"
         },
+        "ShellEjectGameObject": {
+          "_type": "gameobject",
+          "go": "1d5347e0-820c-4015-96dc-4efd0679eca3"
+        },
         "TracerEffect": null
       }
     ],
@@ -80,7 +81,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_physgun",
-        "Position": "3.8309741,-0.307367802,-5.30106878",
+        "Position": "4.04115534,-0.41742152,-6.38978481",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -101,11 +102,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": true,
             "CreateBoneObjects": true,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_physgun/w_physgun.vmdl",
+            "Model": {
+              "Id": "4d939235-5c36-40c0-bfbe-ff0495d5a8a8",
+              "Path": "models/weapons/sbox_physgun/w_physgun.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -113,13 +118,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
@@ -141,7 +140,7 @@
           {
             "__guid": "e4312b65-c2f9-4ab7-bdb5-2e6bc4b67507",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "muzzle",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -158,7 +157,10 @@
               {
                 "__guid": "fabe23f5-e124-4a06-a96b-e9b6d7ea598a",
                 "__version": 2,
-                "__Prefab": "weapons/physgun/effects/wm-glow.prefab",
+                "__Prefab": {
+                  "Id": "9ae80f7b-f980-48f9-80a7-d10a4a34927a",
+                  "Path": "weapons/physgun/effects/wm-glow.prefab"
+                },
                 "__PrefabInstancePatch": {
                   "AddedObjects": [],
                   "RemovedObjects": [],
@@ -177,8 +179,8 @@
                 "__PrefabIdToInstanceId": {
                   "e5cf5f34-17b5-4e70-b8db-d7f54a8ad61d": "fabe23f5-e124-4a06-a96b-e9b6d7ea598a",
                   "3c06d747-a92f-49b3-9749-0902446440a0": "b19c76d9-cfd2-4ded-bebc-295aa6a821c4",
-                  "1eade6ef-bca3-4844-967d-98d7e79c224e": "ae72664f-fbc1-4486-9ac1-640063658a9a",
                   "14848a05-e916-4b3f-abdf-34cf6ff912c9": "978d3b0c-a5e3-40df-98f6-0d7422643bde",
+                  "1eade6ef-bca3-4844-967d-98d7e79c224e": "ae72664f-fbc1-4486-9ac1-640063658a9a",
                   "41ef4816-f57a-420c-bc59-2411a9f5251a": "2137ee9f-b86d-4a59-9ee7-7cf8cfb8fa1d",
                   "feb67b66-6937-4970-b707-655e5b1eb784": "8719f679-5e74-4b73-bebc-5466540b8acb",
                   "aa79498c-82a3-4823-9f26-a5eda7dac889": "e68cb065-f4a6-49f3-8a66-cfe6d802ec5a"
@@ -225,7 +227,7 @@
           {
             "__guid": "6c53b6bd-5b01-4573-8658-47ced12735d2",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "stylus_L",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -243,7 +245,7 @@
           {
             "__guid": "ca9977c5-b882-4141-984e-dd7d156b4221",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "stylus_C",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -261,7 +263,7 @@
           {
             "__guid": "09a548c7-0c3d-484b-b9f4-e6f03480910e",
             "__version": 2,
-            "Flags": 8,
+            "Flags": 0,
             "Name": "stylus_R",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
@@ -281,6 +283,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},

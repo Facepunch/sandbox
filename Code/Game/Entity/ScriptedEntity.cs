@@ -41,7 +41,9 @@ public class ScriptedEntity : GameResource, IDefinitionResource
 		var bitmap = new Bitmap( options.Width, options.Height );
 		bitmap.Clear( Color.Transparent );
 
-		SceneUtility.RenderGameObjectToBitmap( Prefab.GetScene(), bitmap );
+		// A ThumbnailCamera in the prefab frames the shot, otherwise fit the whole thing
+		if ( !ThumbnailCamera.TryRender( Prefab, bitmap ) )
+			SceneUtility.RenderGameObjectToBitmap( Prefab.GetScene(), bitmap );
 
 		return bitmap;
 	}

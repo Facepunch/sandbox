@@ -32,6 +32,13 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 	[Property, Group( "Balance" )]
 	private float FearDecayRate { get; set; } = 0.15f;
 
+	/// <summary>
+	/// Walking pace while pottering about. Scientists only run when they're scared, or to keep up
+	/// with a player they're following.
+	/// </summary>
+	[Property, Group( "Balance" )]
+	public float WalkSpeed { get; set; } = 85f;
+
 	private float _peakFear;
 	private GameObject _attacker;
 	private TimeSince _timeSinceHurt;
@@ -57,8 +64,8 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 	IPressable.Tooltip? IPressable.GetTooltip( IPressable.Event e )
 	{
 		return Leader.IsValid()
-			? new IPressable.Tooltip( "#npc.action.stop_following", "person_off", DisplayName )
-			: new IPressable.Tooltip( "#npc.action.follow", "follow_the_signs", DisplayName );
+			? new IPressable.Tooltip( "#npc.action.stop_following", "person_off", null )
+			: new IPressable.Tooltip( "#npc.action.follow", "follow_the_signs", null );
 	}
 
 	bool IPressable.CanPress( IPressable.Event e ) => true;
@@ -162,6 +169,7 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 		{
 			var moveAside = GetSchedule<MoveAsideSchedule>();
 			moveAside.Blocker = pusher;
+			moveAside.Speed = WalkSpeed;
 			return moveAside;
 		}
 
@@ -212,8 +220,10 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 		var roll = Game.Random.Float();
 
 		if ( roll < 0.35f )
-		{ 
-			return GetSchedule<ScientistWanderSchedule>();
+		{
+			var wander = GetSchedule<ScientistWanderSchedule>();
+			wander.Speed = WalkSpeed;
+			return wander;
 		}
 
 		if ( roll < 0.60f )
@@ -223,6 +233,7 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 			{
 				var inspect = GetSchedule<ScientistInspectPropSchedule>();
 				inspect.PropTarget = prop;
+				inspect.Speed = WalkSpeed;
 				return inspect;
 			}
 		}

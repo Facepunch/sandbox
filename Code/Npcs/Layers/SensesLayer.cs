@@ -26,8 +26,14 @@ public class SensesLayer : BaseNpcLayer
 	public float PersonalSpace { get; set; } = 80f;
 
 	/// <summary>
-	/// All tags the NPC should scan for and cache. This is just the broad-phase filter --
-	/// disposition decides who counts as hostile. Defaults to other agents.
+	/// Hostiles moving slower than this can't be heard -- creep (crouch-walk) to sneak up on someone.
+	/// </summary>
+	[Property]
+	public float QuietSpeed { get; set; } = 120f;
+
+	/// <summary>
+	/// Which agents the NPC scans for and caches: "npc" for other NPCs, "player" for players.
+	/// This is just the broad-phase filter -- disposition decides who counts as hostile.
 	/// </summary>
 	[Property]
 	public TagSet ScanTags { get; set; } = ["player", "npc"];
@@ -59,6 +65,9 @@ public class SensesLayer : BaseNpcLayer
 	protected override void OnUpdate()
 	{
 		if ( IsProxy ) return;
+
+		// The Npc can be gone while we're being torn down (death destroys the hierarchy).
+		if ( !Npc.IsValid() ) return;
 
 		if ( _lastScan > ScanInterval )
 		{
@@ -121,41 +130,55 @@ public class SensesLayer : BaseNpcLayer
 			return;
 
 		var senseRange = MathF.Max( SightRange, HearingRange );
-		var nearbyObjects = Npc.Scene.FindInPhysics( new Sphere( Npc.WorldPosition, senseRange ) );
 
-		foreach ( var obj in nearbyObjects )
+		// TODO: spatial query or something, this sucks ass
+		if ( ScanTags.Has( "npc" ) )
 		{
-			if ( obj == Npc.GameObject ) continue;
-			if ( !obj.Tags.HasAny( ScanTags ) ) continue;
+			foreach ( var npc in Npc.Scene.GetAll<Npc>() )
+				ScanCandidate( npc.GameObject, senseRange );
+		}
 
-			var distance = Npc.WorldPosition.Distance( obj.WorldPosition );
-			var disposition = Npc.GetDisposition( obj );
-			bool isHostile = disposition == Disposition.Hostile;
-			bool isFeared = disposition == Disposition.Fearful;
+		if ( ScanTags.Has( "player" ) )
+		{
+			foreach ( var player in Npc.Scene.GetAll<Player>() )
+				ScanCandidate( player.GameObject, senseRange );
+		}
+	}
 
-			// Track nearest hostile target
-			if ( isHostile && distance < DistanceToNearest )
-			{
-				DistanceToNearest = distance;
-				Nearest = obj;
-			}
+	private void ScanCandidate( GameObject obj, float senseRange )
+	{
+		if ( obj == Npc.GameObject ) return;
+		if ( !obj.Tags.HasAny( ScanTags ) ) return;
 
-			bool isAudible = distance <= HearingRange;
-			bool isVisible = distance <= SightRange && IsInViewCone( obj, distance ) && HasLineOfSight( obj );
+		var distance = Npc.WorldPosition.Distance( obj.WorldPosition );
+		if ( distance > senseRange ) return;
 
-			if ( isAudible )
-			{
-				AddToTagCache( _audibleByTag, obj );
-				if ( isHostile ) AudibleTargets.Add( obj );
-			}
+		var disposition = Npc.GetDisposition( obj );
+		bool isHostile = disposition == Disposition.Hostile;
+		bool isFeared = disposition == Disposition.Fearful;
 
-			if ( isVisible )
-			{
-				_visibleAll.Add( obj );
-				AddToTagCache( _visibleByTag, obj );
-				if ( isHostile ) VisibleTargets.Add( obj );
-				if ( isFeared ) VisibleThreats.Add( obj );
-			}
+		// Track nearest hostile target
+		if ( isHostile && distance < DistanceToNearest )
+		{
+			DistanceToNearest = distance;
+			Nearest = obj;
+		}
+
+		bool isAudible = distance <= HearingRange;
+		bool isVisible = distance <= SightRange && IsInViewCone( obj, distance ) && HasLineOfSight( obj );
+
+		if ( isAudible )
+		{
+			AddToTagCache( _audibleByTag, obj );
+			if ( isHostile ) AudibleTargets.Add( obj );
+		}
+
+		if ( isVisible )
+		{
+			_visibleAll.Add( obj );
+			AddToTagCache( _visibleByTag, obj );
+			if ( isHostile ) VisibleTargets.Add( obj );
+			if ( isFeared ) VisibleThreats.Add( obj );
 		}
 	}
 
@@ -264,6 +287,31 @@ public class SensesLayer : BaseNpcLayer
 	}
 
 	/// <summary>
+	/// The nearest hostile we can hear moving -- inside <see cref="HearingRange"/> and going faster
+	/// than <see cref="QuietSpeed"/>. Null when nobody's making noise.
+	/// </summary>
+	public GameObject GetHeardHostile()
+	{
+		GameObject nearest = null;
+		float nearestDist = float.MaxValue;
+
+		foreach ( var obj in AudibleTargets )
+		{
+			if ( !obj.IsValid() ) continue;
+			if ( GetVelocity( obj ).WithZ( 0 ).Length < QuietSpeed ) continue;
+
+			var dist = Npc.WorldPosition.Distance( obj.WorldPosition );
+			if ( dist < nearestDist )
+			{
+				nearestDist = dist;
+				nearest = obj;
+			}
+		}
+
+		return nearest;
+	}
+
+	/// <summary>
 	/// A player inside our personal space who's moving toward us -- they're trying to
 	/// get past and we're in their way. Returns null when nobody is barging in.
 	/// </summary>
@@ -297,6 +345,10 @@ public class SensesLayer : BaseNpcLayer
 
 		if ( obj.Root.GetComponent<PlayerController>() is { } controller )
 			return controller.Velocity;
+
+		// NPCs walk on the navmesh -- their rigidbody sits still
+		if ( obj.GetComponent<NavMeshAgent>() is { } agent )
+			return agent.Velocity;
 
 		if ( obj.GetComponent<Rigidbody>() is { } rb )
 			return rb.Velocity;

@@ -24,15 +24,20 @@ public class CombatPatrolSchedule : ScheduleBase
 	/// </summary>
 	public float PatrolRadius { get; set; } = 400f;
 
+	/// <summary>
+	/// Walking pace between patrol points.
+	/// </summary>
+	public float Speed { get; set; } = 85f;
+
 	protected override void OnStart()
 	{
 		var dest = GetPatrolDestination();
-		AddTask( new MoveTo( dest, 15f ) );
+		AddTask( new MoveTo( dest, 15f ) { Speed = Speed } );
 
 		if ( Npc.Speech.CanSpeak && Game.Random.Float() < 0.2f )
 			AddTask( new Say( Game.Random.FromArray( PatrolLines ), 2.5f ) );
 		else
-			AddTask( new Wait( Game.Random.Float( 1f, 2.5f ) ) );
+			AddTask( new Wait( Game.Random.Float( 3f, 7f ) ) );
 	}
 
 

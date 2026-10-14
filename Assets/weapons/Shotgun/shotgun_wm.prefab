@@ -61,8 +61,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "model",
-        "Position": "5.8701582,1.49775386,-6.04613161",
-        "Rotation": "0.00560664944,-0.0533439405,0.104377538,0.993090391",
+        "Position": "4.92797899,-0.054270342,-5.33736801",
+        "Rotation": "4.68262484E-10,9.3598948E-12,-0.0199845731,0.999800265",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -88,7 +88,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "271573a7-0908-41ef-afe0-6a7ce81906be",
+              "Id": "61720e4e-3ae8-469c-a637-9e556baad541",
               "Path": "models/weapons/sbox_shotgun_spaghellim4/w_spaghellim4.vmdl"
             },
             "Morphs": {},

@@ -47,8 +47,14 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 	public virtual bool IsTargetedAim => false;
 
 	/// <summary>
-	/// Controlled from a seat with targeted aim fires where the camera looks; otherwise the engine's
-	/// muzzle-based unheld aim applies.
+	/// What an NPC holding this weapon is shooting at. While set, shots go from the muzzle to the
+	/// target's chest instead of along the barrel, which follows the animation and drifts high.
+	/// </summary>
+	public GameObject NpcAimTarget { get; set; }
+
+	/// <summary>
+	/// Controlled from a seat with targeted aim fires where the camera looks; an NPC fires at its
+	/// <see cref="NpcAimTarget"/>; otherwise the engine's muzzle-based unheld aim applies.
 	/// </summary>
 	protected override Ray UnheldAimRay
 	{
@@ -58,8 +64,23 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 			if ( seated.IsValid() && IsTargetedAim && Scene.Camera.IsValid() )
 				return Scene.Camera.Transform.World.ForwardRay;
 
+			if ( NpcAimTarget.IsValid() )
+			{
+				var muzzle = GetMuzzleTransform().Position;
+				return new Ray( muzzle, (GetChestPosition( NpcAimTarget ) - muzzle).Normal );
+			}
+
 			return base.UnheldAimRay;
 		}
+	}
+
+	/// <summary>
+	/// Roughly chest height - most of the way from the feet up to the eyes, so it follows crouching.
+	/// </summary>
+	private static Vector3 GetChestPosition( GameObject target )
+	{
+		var eyes = Sandbox.Npcs.Layers.AnimationLayer.GetEyePosition( target );
+		return Vector3.Lerp( target.WorldPosition, eyes, 0.7f );
 	}
 
 	/// <summary>

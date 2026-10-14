@@ -1,12 +1,12 @@
 namespace Sandbox.Npcs.Layers;
 
 /// <summary>
-/// Manages NPC speech state, plays sound files, and renders subtitle text above their head.
+/// Manages NPC speech state and plays sound files.
 /// </summary>
 public class SpeechLayer : BaseNpcLayer
 {
 	/// <summary>
-	/// The subtitle text currently being shown, if any. Synced to all clients.
+	/// The subtitle text of the current line, if any. Synced to all clients.
 	/// </summary>
 	[Sync] public string CurrentSpeech { get; set; }
 
@@ -42,7 +42,7 @@ public class SpeechLayer : BaseNpcLayer
 	public bool CanSpeak => _lastSpoke > Cooldown;
 
 	/// <summary>
-	/// Play a sound event and show its subtitle (if one exists) above the NPC.
+	/// Play a sound event, with its subtitle (if one exists) as the current speech.
 	/// If <paramref name="lookAt"/> is given, the NPC looks them in the eyes
 	/// while talking.
 	/// </summary>
@@ -122,7 +122,7 @@ public class SpeechLayer : BaseNpcLayer
 	}
 
 	/// <summary>
-	/// Say a string message using the fallback sound, with the string shown as a subtitle.
+	/// Say a string message using the fallback sound, with the string as the subtitle.
 	/// </summary>
 	public void Say( string message, float duration = 3f, GameObject lookAt = null )
 	{
@@ -241,43 +241,6 @@ public class SpeechLayer : BaseNpcLayer
 		{
 			Npc.Animation?.AddLookTarget( _speechTarget, 1f );
 		}
-
-		// All clients draw the subtitle when speech is active
-		if ( CurrentSpeech is not null )
-		{
-			DrawSpeech();
-		}
-	}
-
-	/// <summary>
-	/// Draw a simple speech bubble above the NPC.
-	/// </summary>
-	private void DrawSpeech()
-	{
-		var camera = Npc.Scene.Camera;
-		if ( !camera.IsValid() ) return;
-
-		var worldPos = Npc.WorldPosition + Vector3.Up * 80f;
-		var screenPos = camera.PointToScreenPixels( worldPos, out var behind );
-		if ( behind ) return;
-
-		// Don't show subtitles through walls
-		var tr = Npc.Scene.Trace.Ray( camera.WorldPosition, worldPos )
-			.WithTag( "world" )
-			.Run();
-
-		if ( tr.Hit ) return;
-
-		var text = TextRendering.Scope.Default;
-		text.Text = LocalizedText.Resolve( CurrentSpeech );
-		text.FontSize = 14;
-		text.FontName = "Poppins";
-		text.FontWeight = 500;
-		text.TextColor = Color.White;
-		text.Outline = new TextRendering.Outline { Color = Color.Black.WithAlpha( 0.8f ), Size = 3, Enabled = true };
-		text.FilterMode = Rendering.FilterMode.Point;
-
-		Npc.DebugOverlay.ScreenText( screenPos, text, TextFlag.CenterBottom );
 	}
 
 	public override void ResetLayer()

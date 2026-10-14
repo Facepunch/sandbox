@@ -22,7 +22,7 @@ public abstract class ScheduleBase
 	/// </summary>
 	public virtual NpcAwareness InterruptedBy =>
 		NpcAwareness.SeesHostile | NpcAwareness.SeesThreat | NpcAwareness.HeardDisturbance
-		| NpcAwareness.PlayerPushing;
+		| NpcAwareness.PlayerPushing | NpcAwareness.HostileIntel;
 
 	private List<TaskBase> _tasks = new();
 	private int _currentTaskIndex = 0;

@@ -11,6 +11,11 @@ public sealed class ScientistInspectPropSchedule : ScheduleBase
 {
 	public GameObject PropTarget { get; set; }
 
+	/// <summary>
+	/// Walking pace.
+	/// </summary>
+	public float Speed { get; set; } = 85f;
+
 	protected override void OnStart()
 	{
 		if ( !PropTarget.IsValid() ) return;
@@ -20,7 +25,7 @@ public sealed class ScientistInspectPropSchedule : ScheduleBase
 		Npc.Animation.SetLookTarget( PropTarget );
 
 		// Walk toward the prop — tracks it if it moves
-		AddTask( new MoveTo( PropTarget, 40f ) );
+		AddTask( new MoveTo( PropTarget, 40f ) { Speed = Speed } );
 
 		AddTask( new Wait( 1 ) );
 
@@ -38,7 +43,7 @@ public sealed class ScientistInspectPropSchedule : ScheduleBase
 
 			if ( Npc.Scene.NavMesh.GetClosestPoint( wanderTarget ) is Vector3 navPoint )
 			{
-				AddTask( new MoveTo( navPoint, 15f ) );
+				AddTask( new MoveTo( navPoint, 15f ) { Speed = Speed } );
 			}
 
 			// Always added — even if MoveTo was skipped or would have failed,

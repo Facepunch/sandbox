@@ -136,11 +136,15 @@ public class NavigationLayer : BaseNpcLayer
 		Npc.WorldRotation = Rotation.Slerp( Npc.WorldRotation, targetRotation, TurnSpeed * Time.Delta );
 	}
 
-	// Walk normally; break into a run when the destination is a good distance off. Hysteresis
-	// stops it flickering between walk and run near the threshold.
+	// A speed given with the move is used as-is. Otherwise walk, and break into a run when the
+	// destination is a good distance off. Hysteresis stops it flickering between walk and run
+	// near the threshold.
 	private float ResolveSpeed()
 	{
-		var speed = _moveSpeed ?? WishSpeed;
+		if ( _moveSpeed.HasValue )
+			return _moveSpeed.Value;
+
+		var speed = WishSpeed;
 
 		if ( !MoveTarget.HasValue )
 			return speed;

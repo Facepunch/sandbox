@@ -64,6 +64,11 @@ public partial class BaseSandboxWeapon
 		if ( worldModel.IsValid() )
 		{
 			worldModel.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked;
+
+			// NPCs don't eject brass
+			foreach ( var model in worldModel.GetComponentsInChildren<BaseWeaponModel>( true ) )
+				model.EjectBrass = null;
+
 			WorldModel = worldModel;
 			IEvent.PostToGameObject( WorldModel, x => x.OnCreateWorldModel() );
 		}
