@@ -10,7 +10,7 @@ namespace Sandbox.Npcs.Layers;
 public sealed partial class AnimationLayer : BaseNpcLayer
 {
 	public float Speed { get; set; } = 1.0f;
-	public bool IsGrounded { get; set; } = true;
+	public bool IsGrounded => Npc.IsOnGround;
 
 	/// <summary>
 	/// How fast the body turns to face a look target, in degrees per second.
@@ -120,17 +120,12 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 
 	private void PlayFootstepSound( Vector3 position, float volume, int foot )
 	{
-		var trace = Scene.Trace
-			.Ray( position + Vector3.Up * 20f, position - Vector3.Up * 20f )
-			.IgnoreGameObjectHierarchy( Npc.GameObject )
-			.Run();
 
-		if ( !trace.Hit || trace.Surface is null )
-			return;
+		var surface = Npc.GroundSurface;
 
 		var soundEvent = foot == 0
-			? trace.Surface.SoundCollection.FootLeft
-			: trace.Surface.SoundCollection.FootRight;
+			? surface.SoundCollection.FootLeft
+			: surface.SoundCollection.FootRight;
 
 		if ( soundEvent is null )
 			return;
@@ -566,7 +561,6 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 	{
 		if ( _renderer is null ) return;
 
-		IsGrounded = false;
 		Speed = 1.0f;
 		LookTarget = null;
 		LookTargetObject = null;
