@@ -24,4 +24,5 @@ public interface IPhysgunEvent : ISceneEvent<IPhysgunEvent>
 	/// Runs on the instance that simulates the object, the only one that can change its body.
 	/// </summary>
 	void OnPhysgunDrop() { }
+	void OnPhysgunPickup( ) { }
 }

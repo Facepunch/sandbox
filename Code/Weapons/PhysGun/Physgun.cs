@@ -471,6 +471,11 @@ public partial class Physgun : Local.IPlayerEvents
 
 			_state = _stateHovered with { Active = true, Pulling = false };
 
+			if ( _state.GameObject is { } go )
+			{
+				go.Root.RunEvent<IPhysgunEvent>( x => x.OnPhysgunPickup() );
+			}
+
 			if ( _state.IsValid() )
 			{
 				Unfreeze( _state.Body );
@@ -650,6 +655,11 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( _primaryControlDown )
 		{
 			_state = _stateHovered with { Active = true, Pulling = false };
+
+			if ( _state.GameObject is { } go )
+			{
+				go.Root.RunEvent<IPhysgunEvent>( x => x.OnPhysgunPickup() );
+			}
 
 			if ( _state.IsValid() )
 				Unfreeze( _state.Body );
