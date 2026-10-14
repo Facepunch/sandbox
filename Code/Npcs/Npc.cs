@@ -136,8 +136,14 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 	}
 
 	/// <summary>
+	/// How hard a melee kill knocks the body - a solid whack, not a launch.
+	/// </summary>
+	private const float MeleeKnockback = 200f;
+
+	/// <summary>
 	/// Calculates the launch velocity for a ragdoll based on the damage source.
-	/// For explosions, uses the direction from the blast origin to this NPC.
+	/// For explosions, uses the direction from the blast origin to this NPC. Bullets push along the
+	/// shot by the weapon's ballistic force, melee gives a shove along the swing.
 	/// Otherwise, falls back to the attacker's physical velocity.
 	/// </summary>
 	protected Vector3 GetDeathLaunchVelocity( in DamageInfo damage )
@@ -155,10 +161,19 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 			return dir * strength;
 		}
 
-		var ballisticForce = damage.Weapon?.GetComponent<BaseCombatWeapon>()?.Ballistics.Force ?? 0f;
-		if ( ballisticForce > 0 && damage.Position != damage.Origin )
+		// Only guns use their ballistics - melee weapons carry an unused ballistic config (the crowbar's
+		// says 3000) that would throw the body across the map
+		var weapon = damage.Weapon?.GetComponent<BaseCombatWeapon>();
+		var force = weapon switch
 		{
-			return Vector3.Direction( damage.Origin, damage.Position ) * ballisticForce;
+			MeleeWeapon => MeleeKnockback,
+			BaseBulletWeapon bullets => bullets.Ballistics.Force,
+			_ => 0f,
+		};
+
+		if ( force > 0 && damage.Position != damage.Origin )
+		{
+			return Vector3.Direction( damage.Origin, damage.Position ) * force;
 		}
 
 		return GetAttackerVelocity( damage.Attacker );
