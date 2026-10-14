@@ -12,4 +12,9 @@ public interface IToolInfo : IValid
 	/// Label for reload and secondary held together, or null if none.
 	/// </summary>
 	string ReloadSecondaryAction => null;
+
+	/// <summary>
+	/// Label for holding snap, or null if none.
+	/// </summary>
+	string SnapAction => null;
 }

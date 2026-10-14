@@ -7,6 +7,11 @@ public abstract partial class ToolMode
 	public virtual bool UseSnapGrid => false;
 
 	/// <summary>
+	/// Label for the snap hint, shown whenever this tool uses the snap grid.
+	/// </summary>
+	public virtual string SnapAction => UseSnapGrid && !AbsorbMouseInput ? "#tool.hint.snap" : null;
+
+	/// <summary>
 	/// The active snap grid, updated every frame in <see cref="OnControl"/>.
 	/// Null when snap grid is disabled or the tool is inactive.
 	/// </summary>

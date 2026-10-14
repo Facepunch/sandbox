@@ -58,6 +58,13 @@
      <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.ReloadSecondaryAction ) />
     </div>
    }
+   @if ( !string.IsNullOrEmpty( Info.SnapAction ) )
+   {
+    <div class="hint">
+     <InputHint Action="snap" class="key" />
+     <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.SnapAction ) />
+    </div>
+   }
   </div>
  }
 </root>
@@ -87,12 +94,13 @@
 	bool HasAnyAction => !string.IsNullOrEmpty( Info?.PrimaryAction )
 	                     || !string.IsNullOrEmpty( Info?.SecondaryAction )
 	                     || !string.IsNullOrEmpty( Info?.ReloadAction )
-	                     || !string.IsNullOrEmpty( Info?.ReloadSecondaryAction );
+	                     || !string.IsNullOrEmpty( Info?.ReloadSecondaryAction )
+	                     || !string.IsNullOrEmpty( Info?.SnapAction );
 
 	protected override void OnUpdate()
 	{
 		SetClass( "visible", CurrentToolInfo is not null );
 	}
 
-	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Info?.ReloadSecondaryAction, Hud.IsVisible( HudElement.ToolInfo ), Game.Language.SelectedCode );
+	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Info?.ReloadSecondaryAction, Info?.SnapAction, System.HashCode.Combine( Hud.IsVisible( HudElement.ToolInfo ), Game.Language.SelectedCode ) );
 }

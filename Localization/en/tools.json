@@ -1,4 +1,6 @@
 {
+    "tool.hint.snap": "Snap to grid",
+
     "tool.hint.duplicator.description": "Used to copy, paste and save whole contraptions",
     "tool.hint.duplicator.place": "Place",
     "tool.hint.duplicator.copy": "Copy",
