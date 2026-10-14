@@ -107,7 +107,7 @@ public partial class BaseSpawnMenu : Panel
 		return currentHeader;
 	}
 
-	SpawnMenuOption Add( SpawnMenuOption o )
+	SpawnMenuOption AddOption( SpawnMenuOption o )
 	{
 		o.Parent = currentHeader;
 		(currentHeader?.Children ?? roots).Add( o );
@@ -116,7 +116,7 @@ public partial class BaseSpawnMenu : Panel
 
 	public SpawnMenuOption AddOption( SpawnMenuOption parent, SpawnMenuOption o )
 	{
-		if ( parent is null ) return Add( o );
+		if ( parent is null ) return AddOption( o );
 
 		o.Parent = parent;
 		parent.Children.Add( o );
@@ -125,7 +125,7 @@ public partial class BaseSpawnMenu : Panel
 
 	public SpawnMenuOption AddOption( string name, Func<Panel> createPanelFunction )
 	{
-		return Add( new SpawnMenuOption
+		return AddOption( new SpawnMenuOption
 		{
 			Name = name,
 			PanelCreator = createPanelFunction
@@ -134,7 +134,7 @@ public partial class BaseSpawnMenu : Panel
 
 	public SpawnMenuOption AddOption( string icon, string name, Func<Panel> createPanelFunction )
 	{
-		return Add( new SpawnMenuOption
+		return AddOption( new SpawnMenuOption
 		{
 			Icon = icon,
 			Name = name,
@@ -144,7 +144,7 @@ public partial class BaseSpawnMenu : Panel
 
 	public SpawnMenuOption AddOption( string icon, string name, Func<Panel> createPanelFunction, Action onRightClick )
 	{
-		return Add( new SpawnMenuOption
+		return AddOption( new SpawnMenuOption
 		{
 			Icon = icon,
 			Name = name,
@@ -155,7 +155,7 @@ public partial class BaseSpawnMenu : Panel
 
 	public void AddAction( string icon, string name, Action action )
 	{
-		Add( new SpawnMenuOption
+		AddOption( new SpawnMenuOption
 		{
 			Icon = icon,
 			Name = name,
