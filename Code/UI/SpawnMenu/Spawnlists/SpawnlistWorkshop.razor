@@ -17,7 +17,11 @@
     </Header>
 
     <Body>
-        @if ( Items.Count == 0 && !Loading )
+        @if ( Items.Count == 0 && Loading )
+        {
+            <UILoadingState />
+        }
+        else if ( Items.Count == 0 )
         {
             <SpawnMenuEmptyState Icon="search_off" Subtitle="#spawnmenu.empty.try_another_category" />
         }

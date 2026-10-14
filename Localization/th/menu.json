@@ -30,7 +30,6 @@
     "spawnmenu.effects.installed": "ติดตั้งแล้ว",
     "spawnmenu.effects.workshop": "เวิร์กชอป",
     "spawnmenu.effects.no_installed": "ไม่มีเอฟเฟกต์ที่ติดตั้ง.",
-    "spawnmenu.common.loading": "กำลังโหลด...",
     "spawnmenu.common.no_results": "ไม่มีผลลัพธ์.",
     "spawnmenu.empty.try_another_category": "ลองหมวดหมู่อื่นหรือปรับการค้นหา",
     "spawnmenu.empty.mount_unavailable": "เนื้อหาที่เมานต์นี้อาจไม่พร้อมใช้งานแล้ว",

@@ -72,6 +72,19 @@ EffectsList
         font-size: 12px;
     }
 
+    // on the white list, not the gray block it's made for
+    UILoadingState
+    {
+        flex-grow: 1;
+        height: auto;
+        color: $ui-text;
+
+        .spinner
+        {
+            color: $ui-text-muted;
+        }
+    }
+
     .footer
     {
         flex-shrink: 0;

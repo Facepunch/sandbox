@@ -20,7 +20,11 @@
     </Header>
 
     <Body>
-        @if ( Entries.Count == 0 && !Loading )
+        @if ( Entries.Count == 0 && Loading )
+        {
+            <UILoadingState />
+        }
+        else if ( Entries.Count == 0 )
         {
             if ( string.IsNullOrEmpty( EmptyTitle ) )
             {

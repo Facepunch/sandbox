@@ -27,6 +27,7 @@
     "ui.common.clear": "Clear",
     "ui.common.select": "Select",
     "ui.common.confirm": "Confirm",
+    "ui.common.loading_workshop": "Loading workshop content",
     "ui.common.randomize": "Randomize",
     "ui.common.reset": "Reset",
     "ui.resource.select": "Select Resource",

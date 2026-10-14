@@ -30,7 +30,6 @@
     "spawnmenu.effects.installed": "Telepítve",
     "spawnmenu.effects.workshop": "Műhely",
     "spawnmenu.effects.no_installed": "Nincsenek telepített effektek.",
-    "spawnmenu.common.loading": "Betöltés...",
     "spawnmenu.common.no_results": "Nincs találat.",
     "spawnmenu.empty.try_another_category": "Próbálj másik kategóriát, vagy módosítsd a keresést.",
     "spawnmenu.empty.mount_unavailable": "Ez a csatolt tartalom már nem biztos, hogy elérhető.",

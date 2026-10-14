@@ -30,7 +30,6 @@
     "spawnmenu.effects.installed": "Установлено",
     "spawnmenu.effects.workshop": "Мастерская",
     "spawnmenu.effects.no_installed": "Нет установленных эффектов.",
-    "spawnmenu.common.loading": "Загрузка...",
     "spawnmenu.common.no_results": "Нет результатов.",
     "spawnmenu.empty.try_another_category": "Попробуйте другую категорию или измените запрос.",
     "spawnmenu.empty.mount_unavailable": "Этот подключённый контент может быть больше недоступен.",

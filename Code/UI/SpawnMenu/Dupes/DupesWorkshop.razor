@@ -18,17 +18,27 @@
     </Header>
 
     <Body>
-		
-        <VirtualGrid Items=@Items ItemSize=@(new Vector2( 240, 180 )) OnLastCell="@(() => { _ = QueryNext(); })">
-            <Item Context="context">
+        @if ( Items.Count == 0 && Loading )
+        {
+            <UILoadingState />
+        }
+        else if ( Items.Count == 0 )
+        {
+            <SpawnMenuEmptyState Icon="search_off" Subtitle="#spawnmenu.empty.try_another_category" />
+        }
+        else
+        {
+            <VirtualGrid Items=@Items ItemSize=@(new Vector2( 240, 180 )) OnLastCell="@(() => { _ = QueryNext(); })">
+                <Item Context="context">
 
-				@if (context is Storage.QueryItem item)
-                {
-					<WorkshopIcon Item="@item" @onclick=@( () => _ = DuplicatorTool.FromWorkshop( item ) )></WorkshopIcon>
-                }
+                    @if (context is Storage.QueryItem item)
+                    {
+                        <WorkshopIcon Item="@item" @onclick=@( () => _ = DuplicatorTool.FromWorkshop( item ) )></WorkshopIcon>
+                    }
 
-            </Item>
-        </VirtualGrid>
+                </Item>
+            </VirtualGrid>
+        }
     </Body>
 
 </SpawnMenuContent>
@@ -77,6 +87,9 @@
     List<Storage.QueryItem> Items = new();
     Storage.QueryResult LastResult;
 
+    // the first page is on its way, the grid has nothing to show yet
+    bool Loading;
+
     async Task QueryNext()
     {
         if ( LastResult != null )
@@ -93,6 +106,9 @@
             return;
         }
 
+		Loading = true;
+		StateHasChanged();
+
 		var query = new Storage.Query();
 		query.KeyValues["package"] = "facepunch.sandbox";
 		query.KeyValues["type"] = "dupe";
@@ -102,9 +118,11 @@
         if (Category != null) query.KeyValues["Category"] = Category;
 
 		LastResult = await query.Run();
-		if ( LastResult.Items == null ) return;
+		Loading = false;
 
-		Items.AddRange( LastResult.Items );
+		if ( LastResult.Items != null )
+			Items.AddRange( LastResult.Items );
+
 		StateHasChanged();
 	}
 

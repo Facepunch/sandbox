@@ -30,7 +30,6 @@
     "spawnmenu.effects.installed": "Установлено",
     "spawnmenu.effects.workshop": "Майстерня",
     "spawnmenu.effects.no_installed": "Немає встановлених ефектів.",
-    "spawnmenu.common.loading": "Завантаження...",
     "spawnmenu.common.no_results": "Немає результатів.",
     "spawnmenu.empty.try_another_category": "Спробуйте іншу категорію або змініть запит.",
     "spawnmenu.empty.mount_unavailable": "Цей підключений вміст може бути більше недоступним.",

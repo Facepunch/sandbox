@@ -30,7 +30,6 @@
     "spawnmenu.effects.installed": "インストール済み",
     "spawnmenu.effects.workshop": "ワークショップ",
     "spawnmenu.effects.no_installed": "エフェクトがインストールされていません。",
-    "spawnmenu.common.loading": "読み込み中...",
     "spawnmenu.common.no_results": "結果はありません。",
     "spawnmenu.empty.try_another_category": "別のカテゴリを選ぶか、検索条件を変更してください。",
     "spawnmenu.empty.mount_unavailable": "このマウントは利用できなくなった可能性があります。",
