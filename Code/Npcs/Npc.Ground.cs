@@ -61,13 +61,13 @@ public partial class Npc : IPhysgunEvent
 	void IPhysgunEvent.OnPhysgunPickup()
 	{
 		isPickedUp = true;
-		_navAgent.UpdateRotation = false;
+		if ( _navAgent.IsValid() ) _navAgent.UpdateRotation = false;
 	}
 
 	void IPhysgunEvent.OnPhysgunDrop()
 	{
 		isPickedUp = false;
-		_navAgent.UpdateRotation = true;
+		if ( _navAgent.IsValid() ) _navAgent.UpdateRotation = true;
 	}
 
 	void UpdateGroundFromTraceResult( SceneTraceResult tr )
