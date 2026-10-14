@@ -277,6 +277,17 @@ public class SpawnlistData
 			.Where( e => skipEntry is null || e.Id != skipEntry.Id )
 			.ToList();
 
+		( string Type, string Path, string Source ) = SpawnlistItem.ParseIdent( item.Ident );
+
+		if ( Type != "dupe" )
+		{
+			menu.AddOption( "#spawnmenu.spawn_with_toolgun", "my_location", () => GameManager.GiveSpawnerWeapon( Type, Path, null, item.Icon, item.Title ) );
+		}
+
+		menu.AddOption( "#spawnmenu.copy", "content_copy", () => Clipboard.SetText( item.Ident ) );
+
+		menu.AddSeparator();
+
 		if ( entries.Count > 0 )
 		{
 			var sub = menu.AddMenu( "#spawnmenu.spawnlist.add_to_submenu", "playlist_add" );

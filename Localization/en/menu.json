@@ -83,6 +83,9 @@
     "spawnmenu.dupes.publish_title": "My Dupe",
     "spawnmenu.dupes.publish_category": "Category",
     "spawnmenu.dupes.publish_movement": "Movement",
+    
+    "spawnmenu.spawn_with_toolgun": "Spawn using Tool Gun",
+    "spawnmenu.copy": "Copy to clipboard",
 
     "spawnmenu.spawnlist.popular": "Popular",
     "spawnmenu.spawnlist.newest": "Newest",
