@@ -90,7 +90,7 @@ public sealed class ChatBox : PanelComponent, IChatEvent
 		_recentList.AddChild( new ChatLine( entry, fades: true ) );
 
 		while ( _history.ChildrenCount > MaxEntries )
-			_history.GetChild( 0 ).Delete();
+			_history.GetChild( 0 ).Delete( true );
 	}
 
 	protected override void OnUpdate()
