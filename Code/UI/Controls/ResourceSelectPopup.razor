@@ -2,6 +2,7 @@
 @using Sandbox.UI;
 @namespace Sandbox
 @inherits BasePopup
+@implements IKeepsMenuOpen
 
 <root class="popup">
 
@@ -10,6 +11,7 @@
         <div class="list">
             <div class="popup-header">
                 <h2>@Title</h2>
+                <TextEntry class="search" Placeholder="#spawnmenu.common.search" Value:bind=@Search HasClearButton></TextEntry>
                 @if (AllowPackages)
                 {
                     <UIDropdown class="sort-dropdown" Items=@SortItems Value=@SortMode
@@ -139,10 +141,57 @@
         }
     }
 
+    string _search = "";
+    bool _searchDirty;
+    TimeSince _lastSearchEdit;
+
+    /// <summary>
+    /// What's typed in the search box. Local items are filtered right away, the workshop is asked once typing pauses.
+    /// </summary>
+    string Search
+    {
+        get => _search;
+        set
+        {
+            value ??= "";
+            if ( _search == value ) return;
+
+            _search = value;
+            _searchDirty = true;
+            _lastSearchEdit = 0;
+
+            RebuildFilteredItems();
+            StateHasChanged();
+        }
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if ( !_searchDirty || _lastSearchEdit < 0.4f ) return;
+
+        _searchDirty = false;
+        if ( AllowPackages )
+            _ = LoadCloudPackages();
+    }
+
+    bool MatchesSearch( Resource res )
+    {
+        var text = _search.Trim();
+        if ( text.Length == 0 ) return true;
+
+        if ( res.ResourceName?.Contains( text, StringComparison.OrdinalIgnoreCase ) == true ) return true;
+        if ( res is not IDefinitionResource definition ) return false;
+
+        return definition.Title?.Contains( text, StringComparison.OrdinalIgnoreCase ) == true
+            || definition.Description?.Contains( text, StringComparison.OrdinalIgnoreCase ) == true;
+    }
+
     void RebuildFilteredItems()
     {
         var items = new List<object>();
-        items.AddRange( _localResources );
+        items.AddRange( _localResources.Where( MatchesSearch ) );
         items.AddRange( _cloudPackages );
         _filteredItems = items;
     }
@@ -154,6 +203,7 @@
     {
         var id = ++_loadId;
         var query = $"sort:{SortMode.ToIdentifier()} type:{Extension}";
+        if ( !string.IsNullOrWhiteSpace( _search ) ) query += $" {_search.Trim()}";
 
         // the old sort's packages are stale, show the loader until the new ones arrive
         _loading = true;

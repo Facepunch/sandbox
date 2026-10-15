@@ -42,6 +42,15 @@ ResourceSelectPopup.popup .inner
             color: white;
         }
 
+        .search
+        {
+            @include ui-text-entry;
+            flex-grow: 0;
+            width: 205px;
+            min-width: 205px;
+            text-transform: none;
+        }
+
         .sort-dropdown
         {
             flex-grow: 0;

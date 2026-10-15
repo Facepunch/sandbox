@@ -53,6 +53,21 @@
         base.OnUpdate();
     }
 
+    // popups are children of the popup layer, so there is no need to look any deeper than that
+    bool IsHeldOpenByPopup()
+    {
+        var layer = Panel.FindPopupPanel();
+        if ( !layer.IsValid() ) return false;
+
+        foreach ( var child in layer.Children )
+        {
+            if ( child is IKeepsMenuOpen { KeepsMenuOpen: true } && child.IsValid() && !child.IsDeleting )
+                return true;
+        }
+
+        return false;
+    }
+
     void UpdateSpawnMenuState()
     {
         var openSpawnMenu = Input.Down("spawnmenu");
@@ -66,7 +81,8 @@
         // either menu key lets go of a menu that stayed up for typing, it then closes when the key is released
         if (stickOpen && (Input.Pressed("spawnmenu") || Input.Pressed("inspectmenu"))) stickOpen = false;
 
-        bool state = stickOpen || openAnyMenu;
+        // A popup that asks for it (IKeepsMenuOpen) holds the menu up while it exists
+        bool state = stickOpen || openAnyMenu || IsHeldOpenByPopup();
 
         SetClass("open", state);
         IsOpen = state;
