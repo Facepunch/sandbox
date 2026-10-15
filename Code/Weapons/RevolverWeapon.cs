@@ -6,6 +6,19 @@ public sealed class RevolverWeapon : IronSightsWeapon
 		return Input.Pressed( "attack1" );
 	}
 
+	protected override void DoRecoil()
+	{
+		base.DoRecoil();
+
+		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
+		{
+			Scene.Camera?.AddPunch( new Angles(
+			-30,
+			0,
+			0 ), 1, 1.2f );
+		}
+	}
+
 	/// <summary>
 	/// Draws the outlined aiming dot with the current firing status.
 	/// </summary>
