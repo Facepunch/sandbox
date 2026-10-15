@@ -126,9 +126,6 @@ public class SensesLayer : BaseNpcLayer
 		Nearest = null;
 		DistanceToNearest = float.MaxValue;
 
-		if ( NpcConVars.NoTarget )
-			return;
-
 		var senseRange = MathF.Max( SightRange, HearingRange );
 
 		// TODO: spatial query or something, this sucks ass
@@ -138,7 +135,7 @@ public class SensesLayer : BaseNpcLayer
 				ScanCandidate( npc.GameObject, senseRange );
 		}
 
-		if ( ScanTags.Has( "player" ) )
+		if ( !NpcConVars.NoTarget && ScanTags.Has( "player" ) )
 		{
 			foreach ( var player in Npc.Scene.GetAll<Player>() )
 				ScanCandidate( player.GameObject, senseRange );
