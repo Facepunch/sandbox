@@ -138,14 +138,7 @@
 		var inventory = player.GetComponent<PlayerInventory>();
 		if ( !inventory.IsValid() ) return;
 
-		ISpawner s = type switch
-		{
-			"prop" or "mount" => new PropSpawner( path ),
-			"entity" or "sent" => new EntitySpawner( path ),
-			"dupe" when data is not null => DuplicatorSpawner.FromJson( data, title, icon ),
-			_ => null
-		};
-
+		ISpawner s = ISpawner.Create( type, path );
 		if ( s is null ) return;
 
 		if ( !inventory.HasWeapon<Toolgun>() )

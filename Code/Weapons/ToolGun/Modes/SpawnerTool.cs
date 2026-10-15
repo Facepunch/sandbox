@@ -111,6 +111,7 @@ public sealed class SpawnerTool : ToolMode
 	{
 		PropSpawner => $"prop:{spawner.Data}",
 		EntitySpawner => $"entity:{spawner.Data}",
+		MountSpawner => $"mount:{spawner.Data}",
 		DuplicatorSpawner => $"dupe:{spawner.Data}",
 		_ => null
 	};
@@ -130,13 +131,7 @@ public sealed class SpawnerTool : ToolMode
 		var type = data[..colonIndex];
 		var value = data[(colonIndex + 1)..];
 
-		return type switch
-		{
-			"prop" => new PropSpawner( value ),
-			"entity" => new EntitySpawner( value ),
-			"dupe" => DuplicatorSpawner.FromData( value ),
-			_ => null
-		};
+		return ISpawner.Create( type, value );
 	}
 
 	/// <summary>
