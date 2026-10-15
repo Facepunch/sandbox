@@ -17,6 +17,10 @@ public sealed class RemoverTool : ToolMode
 	bool CanDestroy( GameObject go )
 	{
 		if ( !go.IsValid() ) return false;
+
+		// gibs can always go
+		if ( go.Tags.Contains( "debris" ) ) return true;
+
 		if ( !go.Tags.Contains( "removable" ) ) return false;
 
 		return true;
