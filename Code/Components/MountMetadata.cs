@@ -15,6 +15,17 @@ public sealed class MountMetadata : Component
 
 	protected override async void OnStart()
 	{
+		UpdateVisual();
+	}
+
+	protected override void OnRefresh()
+	{
+		base.OnRefresh();
+		UpdateVisual();
+	}
+
+	void UpdateVisual()
+	{
 		_material ??= Material.Load( "materials/effects/mount_fallback.vmat" );
 
 		var prop = GameObject.GetComponentInChildren<Prop>();
