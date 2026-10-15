@@ -20,8 +20,12 @@
         "__guid": "a7340e51-220e-495a-b2e1-8ba650b8fdd4",
         "__enabled": true,
         "Flags": 0,
+        "ADSInertiaScale": 0.3,
         "AnimationSpeed": 1,
-        "DeploySound": "weapons/common/foley/foley_deploy_weapon_03.sound",
+        "DeploySound": {
+          "Id": "c5b093b4-f006-457c-bbd6-916200f842e1",
+          "Path": "weapons/common/foley/foley_deploy_weapon_03.sound"
+        },
         "EjectBrass": null,
         "IncrementalAnimationSpeed": 1.75,
         "IncrementalReloadFinishSounds": [],
@@ -52,11 +56,31 @@
         "ReloadSoundEvents": [
           {
             "Time": 0,
-            "Sound": "weapons/revolver/reload/pistol_mag_out.sound"
+            "Sound": {
+              "Id": "0ad27fd5-66b0-4d39-9e6b-4dcbe0e39a02",
+              "Path": "weapons/revolver/revolver_cylinder_open.sound"
+            }
           },
           {
-            "Time": 0.6,
-            "Sound": "weapons/revolver/reload/pistol_mag_in.sound"
+            "Time": 0.8,
+            "Sound": {
+              "Id": "9ae4675a-7ada-461a-9a7d-84e2dc6b5ae0",
+              "Path": "weapons/revolver/revolver_cylinder_empty.sound"
+            }
+          },
+          {
+            "Time": 1.7,
+            "Sound": {
+              "Id": "182175c1-ac0c-40d9-b3fd-e9e9ab6118bd",
+              "Path": "weapons/revolver/revolver_cylinder_insert.sound"
+            }
+          },
+          {
+            "Time": 3.3,
+            "Sound": {
+              "Id": "e690cfb7-d4d5-46cb-a4ae-94d238eaca08",
+              "Path": "weapons/revolver/revolver_cylinder_close.sound"
+            }
           }
         ],
         "Renderer": {
@@ -103,11 +127,15 @@
             "BoneMergeTarget": null,
             "CreateAttachments": false,
             "CreateBoneObjects": true,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/weapons/sbox_revolver_magnum/v_magnum.vmdl",
+            "Model": {
+              "Id": "ee8fc8ba-005c-471b-b880-09c3a9d0cd10",
+              "Path": "models/weapons/sbox_revolver_magnum/v_magnum.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -124,9 +152,7 @@
               },
               "floats": {
                 "holdtype_pose": 8
-              },
-              "vectors": {},
-              "rotations": {}
+              }
             },
             "PlaybackRate": 1,
             "RenderOptions": {
@@ -1956,11 +1982,15 @@
             },
             "CreateAttachments": false,
             "CreateBoneObjects": false,
+            "DeformationMode": "Normal",
             "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "models/first_person/v_first_person_arms_human.vmdl",
+            "Model": {
+              "Id": "58ca58bd-7639-497d-bccd-082616575346",
+              "Path": "models/first_person/v_first_person_arms_human.vmdl"
+            },
             "Morphs": {},
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -1968,13 +1998,7 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
+            "Parameters": {},
             "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": false,
@@ -1997,6 +2021,7 @@
     ],
     "__properties": {
       "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
       "TimeScale": 1,
       "WantsSystemScene": true,
       "Metadata": {},
