@@ -74,6 +74,7 @@ internal static class LocalizedText
 			"hdef" => "#tool.name.hoverball",
 			"ldef" => "#tool.setting.line",
 			"sndef" => "#tool.setting.group.sound",
+			"surface" => "#ui.resource.type.surface",
 			"sent" => "#entity.property.entity",
 			"semit" => "#tool.setting.effect",
 			"smemit" => "#entity.name.emitter",

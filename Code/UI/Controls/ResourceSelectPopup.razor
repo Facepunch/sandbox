@@ -6,65 +6,69 @@
 <root class="popup">
 
     <div class="inner" onclick:preventDefault=@true>
-        
-        <div class="popup-header">
-            <h2>@Title</h2>
-            @if (AllowPackages)
+
+        <div class="list">
+            <div class="popup-header">
+                <h2>@Title</h2>
+                @if (AllowPackages)
+                {
+                    <UIDropdown class="sort-dropdown" Items=@SortItems Value=@SortMode
+                                ValueChanged=@((object value) => SetSort( (PackageSortMode)value ))></UIDropdown>
+                }
+            </div>
+
+            @if ( _loading && _filteredItems.Count == 0 )
             {
-                <div class="sort-buttons">
-                    @foreach ( var (mode, info) in DisplayInfo.ForEnumValues<PackageSortMode>() )
+                <UILoadingState class="loading" />
+            }
+            else
+            {
+            <VirtualGrid Items=@(_filteredItems) ItemSize=@(new Vector2( 190, 238 )) class="grid">
+                <Item Context="item">
+                    @if (item is Resource res)
                     {
-                        var m = mode;
-                        <div class="sort-button @(SortMode == m ? "active" : "")" @onclick=@(() => SetSort(m))>@info.Name</div>
+                        bool selected = res.ResourcePath.Equals(_pendingValue ?? CurrentValue, StringComparison.OrdinalIgnoreCase);
+                        string itemClass = selected ? "item active" : "item";
+                        string thumbUrl = $"thumb:{res.ResourcePath}";
+
+                        <div @key=@res.ResourcePath class="@itemClass" @onclick=@(() => OnItemClicked(res)) @ondoubleclick=@(() => { OnItemClicked(res); ConfirmSelection(); })>
+
+                            <div class="icon" style="background-image: url( @thumbUrl )"></div>
+
+                            @if ( res is IDefinitionResource definitionResource )
+                            {
+                                <div class="title">@definitionResource.Title</div>
+                                <div class="desc">@definitionResource.Description</div>
+                            }
+                            else
+                            {
+                                <div class="title">@res.ResourceName</div>
+                                <div class="desc"></div>
+                            }
+
+                        </div>
                     }
-                </div>
+                    else if ( item is Package pkg )
+                    {
+                        bool selected = pkg.FullIdent.Equals(_pendingValue ?? CurrentValue, StringComparison.OrdinalIgnoreCase);
+                        string itemClass = selected ? "item active" : "item";
+
+                        <div @key=@pkg.FullIdent class="@itemClass" @onclick=@(() => OnPackageClicked(pkg)) @ondoubleclick=@(() => { OnPackageClicked(pkg); ConfirmSelection(); })>
+
+                            <div class="icon" style="background-image: url( @pkg.Thumb )"></div>
+                            <div class="title">@pkg.Title</div>
+                            <div class="desc">@pkg.Org.Title</div>
+
+                        </div>
+                    }
+                </Item>
+            </VirtualGrid>
             }
         </div>
 
-        <VirtualGrid Items=@(_filteredItems) ItemSize=@(new Vector2( 128, 136 )) class="grid">
-            <Item Context="item">
-                @if (item is Resource res)
-                {
-                    bool selected = res.ResourcePath.Equals(_pendingValue ?? CurrentValue, StringComparison.OrdinalIgnoreCase);
-                    string itemClass = selected ? "item active" : "item";
-                    string thumbUrl = $"thumb:{res.ResourcePath}";
-
-                    <div @key=@res.ResourcePath class="@itemClass" @onclick=@(() => { OnItemClicked(res); })>
-
-                        <div class="icon" style="background-image: url( @thumbUrl )"></div>
-
-                        @if ( res is IDefinitionResource definitionResource )
-                        {
-                            <div class="title">@definitionResource.Title</div>
-                            <div class="desc">@definitionResource.Description</div>
-                        }
-                        else
-                        {
-                            <div class="title">@res.ResourceName</div>
-                            <div class="desc"></div>
-                        }
-                        
-                    </div>
-                }
-                else if ( item is Package pkg )
-                {
-                    bool selected = pkg.FullIdent.Equals(CurrentValue, StringComparison.OrdinalIgnoreCase);
-                    string itemClass = selected ? "item active" : "item";
-
-                    <div @key=@pkg.FullIdent class="@itemClass" @onclick=@(() => { SelectPackage(pkg); })>
-
-                        <div class="icon" style="background-image: url( @pkg.Thumb )"></div>
-                        <div class="title">@pkg.Title</div>
-                        <div class="desc">@pkg.Org.Title</div>
-                        
-                    </div>
-                }
-            </Item>
-        </VirtualGrid>
-
         <div class="popup-footer">
-            <div class="clear-button" @onclick=@ClearSelection>#ui.common.clear</div>
-            <div class="select-button" @onclick=@ConfirmSelection>#ui.common.select</div>
+            <UIButton Text="#ui.common.clear" @onclick=@ClearSelection></UIButton>
+            <UIButton Text="#ui.common.apply" @onclick=@ConfirmSelection></UIButton>
         </div>
 
     </div>
@@ -73,18 +77,40 @@
 
 @code
 {
-    public string Title { get; set; } = "#ui.resource.select";
+    /// <summary>
+    /// Title bar text, "Surface Selection" or similar when not set.
+    /// </summary>
+    public string Title
+    {
+        get => _title ?? DefaultTitle();
+        set => _title = value;
+    }
+
     public string Extension { get; set; } = "vmdl";
     public string CurrentValue { get; set; }
     public bool AllowPackages { get; set; }
     public Action<string> OnSelectedFile;
 
+    static readonly List<UIDropdown.Item> SortItems = UIDropdown.ForEnum<PackageSortMode>();
+
+    string _title;
     string _pendingValue;
     IResourcePreview _previewingResource;
 
     public string Category { get; set; }
 
     PackageSortMode SortMode { get; set; } = PackageSortMode.Popular;
+
+    string DefaultTitle()
+    {
+        var type = AssetTypeAttribute.FindTypeByExtension( Extension )?.GetAttribute<AssetTypeAttribute>();
+        if ( type is null ) return "#ui.resource.select";
+
+        var name = LocalizedText.ResourceTypeName( type );
+        if ( name.StartsWith( '#' ) ) name = Game.Language.GetPhrase( name.Substring( 1 ) );
+
+        return Game.Language.GetPhrase( "ui.resource.selection", new() { { "type", name } } );
+    }
 
     void SetSort( PackageSortMode mode )
     {
@@ -121,13 +147,34 @@
         _filteredItems = items;
     }
 
+    int _loadId;
+    bool _loading;
+
     async Task LoadCloudPackages()
     {
+        var id = ++_loadId;
         var query = $"sort:{SortMode.ToIdentifier()} type:{Extension}";
 
-        var result = await Package.FindAsync( query );
-
+        // the old sort's packages are stale, show the loader until the new ones arrive
+        _loading = true;
         _cloudPackages.Clear();
+        RebuildFilteredItems();
+        StateHasChanged();
+
+        Package.FindResult result = null;
+        try
+        {
+            result = await Package.FindAsync( query );
+        }
+        finally
+        {
+            // a newer request owns the state now
+            if ( id == _loadId )
+                _loading = false;
+        }
+
+        if ( id != _loadId ) return;
+
         if ( result?.Packages != null )
         {
             _cloudPackages.AddRange( result.Packages );
@@ -172,6 +219,15 @@
         StateHasChanged();
     }
 
+    void OnPackageClicked( Package pkg )
+    {
+        StopPreview();
+
+        _pendingValue = pkg.FullIdent;
+
+        StateHasChanged();
+    }
+
     void StopPreview()
     {
         _previewingResource?.OnPreviewStop();
@@ -187,9 +243,8 @@
     void ClearSelection()
     {
         StopPreview();
-        _pendingValue = null;
         OnSelectedFile?.Invoke( null );
-        StateHasChanged();
+        Delete();
     }
 
     void ConfirmSelection()
@@ -197,10 +252,9 @@
         StopPreview();
 
         if ( _pendingValue != null )
-        {
             OnSelectedFile?.Invoke( _pendingValue );
-            Delete();
-        }
+
+        Delete();
     }
 
     protected override void OnMouseDown(MousePanelEvent e)
@@ -212,18 +266,6 @@
             StopPreview();
             Delete();
         }
-    }
-
-    void SelectResource(Resource res)
-    {
-        OnSelectedFile?.Invoke(res.ResourcePath);
-        Delete();
-    }
-
-    void SelectPackage(Package pkg)
-    {
-        OnSelectedFile?.Invoke(pkg.FullIdent);
-        Delete();
     }
 
 }

@@ -4,8 +4,8 @@
 ResourceSelectPopup.popup .inner
 {
     @include ui-block;
-    width: 800px;
-    height: 800px;
+    width: 1000px;
+    height: 820px;
     max-width: 90vw;
     max-height: 90vh;
     gap: 8px;
@@ -13,13 +13,23 @@ ResourceSelectPopup.popup .inner
     font-size: $ui-settings-font;
     color: $ui-text;
 
+    // the title bar and the grid, one white section like the windows of UIModal
+    .list
+    {
+        @include ui-section;
+        flex-direction: column;
+        flex-grow: 1;
+        min-height: 0px;
+        padding: 1px;
+    }
+
     .popup-header
     {
         @include ui-title-bar;
         margin: 0;
         height: auto;
-        min-height: 23px;
-        padding: 3px 10px;
+        min-height: 44px;
+        padding: 0 10px;
         gap: 8px;
 
         h2
@@ -31,61 +41,48 @@ ResourceSelectPopup.popup .inner
             height: auto;
             color: white;
         }
-    }
 
-    .sort-buttons
-    {
-        flex-shrink: 0;
-        flex-direction: row;
-        gap: 2px;
-
-        .sort-button
+        .sort-dropdown
         {
-            @include ui-button;
+            flex-grow: 0;
+            width: 170px;
             text-transform: none;
-
-            &.active
-            {
-                @include ui-selected;
-                background-image: none;
-            }
         }
     }
 }
 
 ResourceSelectPopup.popup .inner .grid
 {
-    @include ui-section;
     @include ui-scroll;
     width: 100%;
     flex-grow: 1;
     min-height: 0px;
-    gap: 8px;
-    padding: 8px;
+    padding: 5px;
 }
 
 ResourceSelectPopup.popup .inner .grid .item
 {
-    @include ui-selectable;
     width: 100%;
-    height: 100%;
-    color: $ui-text;
-    pointer-events: all;
-    margin: 2px;
+    margin: 5px;
+    padding: 10px;
+    gap: 0px;
     position: relative;
     flex-direction: column;
-    padding: 8px;
+    color: $ui-text-strong;
     font-size: $ui-settings-font;
     background-color: $ui-row-alt;
+    border: 1px solid $ui-separator;
+    border-radius: 2px;
+    cursor: pointer;
+    pointer-events: all;
 
     .icon
     {
-        height: 96px;
-        font-size: 60px;
-        overflow: hidden;
-        justify-content: center;
-        align-items: center;
+        width: 100%;
+        aspect-ratio: 1;
+        margin-bottom: 10px;
         flex-shrink: 0;
+        background-color: $ui-tile-bg;
         background-position: center;
         background-size: contain;
         background-repeat: no-repeat;
@@ -94,15 +91,41 @@ ResourceSelectPopup.popup .inner .grid .item
     .title
     {
         font-weight: 700;
-        font-size: 13px;
+        line-height: 15px;
+        font-size: $ui-settings-font;
         flex-shrink: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .desc
     {
         font-size: 11px;
+        flex-shrink: 0;
+        line-height: 15px;
+        color: $ui-text-muted;
+        white-space: nowrap;
         overflow: hidden;
-        opacity: 0.75;
+        text-overflow: ellipsis;
+    }
+
+    &:hover
+    {
+        background-color: $ui-popup-hover;
+        border-color: $ui-control-border;
+        sound-in: ui.hover;
+    }
+
+    &:active
+    {
+        sound-in: ui.select;
+    }
+
+    &.active
+    {
+        background-color: $ui-hover-fill;
+        border-color: $ui-blue;
     }
 }
 
@@ -111,12 +134,23 @@ ResourceSelectPopup.popup .inner .popup-footer
     flex-direction: row;
     justify-content: flex-end;
     flex-shrink: 0;
-    gap: 6px;
+    gap: 8px;
 
-    .clear-button, .select-button
+    UIButton
     {
-        @include ui-button;
-        min-width: 100px;
+        width: 146px;
         pointer-events: all;
+    }
+}
+
+// the loader is made for the gray menu, here it sits on the white list
+ResourceSelectPopup.popup .inner .list UILoadingState
+{
+    flex-grow: 1;
+    color: $ui-text-muted;
+
+    .spinner
+    {
+        color: $ui-text-disabled-hover;
     }
 }

@@ -24,6 +24,7 @@
 				<SpawnMenuFilter Query:bind="@Filter"></SpawnMenuFilter>
 			</Right>
 		</SpawnMenuToolbar>
+        <Label class="mount-title" Tokenize=@false Text=@( Folder?.Name ?? mount.Title ) />
     </Header>
 
     <Body>

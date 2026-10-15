@@ -12,7 +12,7 @@ UIDropdownList.popup-panel
 	box-shadow: none;
 	transition: none;
 	font-family: "Inter";
-	z-index: 3000;
+	z-index: 10001; // above the modal popups (Popup.scss)
 
 	.option
 	{

@@ -5,6 +5,15 @@ MountContent
 	
 }
 
+MountContent .mount-title
+{
+	@include ui-display-heading;
+	flex-shrink: 0;
+	min-width: 0px;
+	margin-top: 8px;
+	text-transform: capitalize;
+}
+
 MountContent > .body
 {
 	flex-grow: 1;
