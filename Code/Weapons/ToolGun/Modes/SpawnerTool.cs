@@ -104,34 +104,42 @@ public sealed class SpawnerTool : ToolMode
 		if ( Player?.IsLocalPlayer == true ) CloudLoadTracker.Track( Spawner?.Loading );
 	}
 
-	/// <summary>
-	/// Serialize a spawner for networking to <c>type:data</c>
-	/// </summary>
-	private static string SerializeSpawner( ISpawner spawner ) => spawner switch
-	{
-		PropSpawner => $"prop:{spawner.Data}",
-		EntitySpawner => $"entity:{spawner.Data}",
-		MountSpawner => $"mount:{spawner.Data}",
-		DuplicatorSpawner => $"dupe:{spawner.Data}",
-		_ => null
-	};
+	record SpawnerPayload( string Type, string Data, string Metadata );
 
 	/// <summary>
-	/// Reconstruct an <see cref="ISpawner"/> from <c>type:data</c>
+	/// Serialize a spawner for networking, including its <see cref="ISpawner.Metadata"/>
+	/// so clients build it the same as the host, even if they're missing its content.
+	/// </summary>
+	private static string SerializeSpawner( ISpawner spawner )
+	{
+		var type = spawner switch
+		{
+			PropSpawner => "prop",
+			EntitySpawner => "entity",
+			MountSpawner => "mount",
+			DuplicatorSpawner => "dupe",
+			_ => null
+		};
+
+		if ( type is null )
+			return null;
+
+		return Json.Serialize( new SpawnerPayload( type, spawner.Data, spawner.Metadata ) );
+	}
+
+	/// <summary>
+	/// Reconstruct an <see cref="ISpawner"/> from <see cref="SerializeSpawner"/>
 	/// </summary>
 	private static ISpawner DeserializeSpawner( string data )
 	{
 		if ( string.IsNullOrWhiteSpace( data ) )
 			return null;
 
-		var colonIndex = data.IndexOf( ':' );
-		if ( colonIndex < 0 )
+		var payload = Json.Deserialize<SpawnerPayload>( data );
+		if ( payload is null )
 			return null;
 
-		var type = data[..colonIndex];
-		var value = data[(colonIndex + 1)..];
-
-		return ISpawner.Create( type, value );
+		return ISpawner.Create( payload.Type, payload.Data, metadata: payload.Metadata );
 	}
 
 	/// <summary>

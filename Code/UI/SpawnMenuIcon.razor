@@ -77,9 +77,11 @@
         DragHandler.StopDragging();
     }
 
-    protected override void OnClick( MousePanelEvent e )
+    protected override async void OnClick( MousePanelEvent e )
     {
-        GameManager.Spawn( Ident );
+        // Work out what we can locally first, the host might not have this content (e.g. mounts)
+        var metadata = await ISpawner.ResolveMetadata( Type, Path );
+        GameManager.Spawn( Ident, metadata );
     }
 
     protected override async void OnMouseDown( MousePanelEvent e )

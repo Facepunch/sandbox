@@ -281,7 +281,12 @@ public class SpawnlistData
 
 		if ( Type != "dupe" )
 		{
-			menu.AddOption( "#spawnmenu.spawn_with_toolgun", "my_location", () => Toolgun.SetSpawner( Type, Path, null, item.Icon, item.Title ) );
+			menu.AddOption( "#spawnmenu.spawn_with_toolgun", "my_location", async () =>
+			{
+				// Work out what we can locally first, the host might not have this content (e.g. mounts)
+				var metadata = await ISpawner.ResolveMetadata( Type, Path );
+				Toolgun.SetSpawner( Type, Path, metadata );
+			} );
 		}
 
 		menu.AddOption( "#spawnmenu.copy", "content_copy", () => Clipboard.SetText( item.Ident ) );

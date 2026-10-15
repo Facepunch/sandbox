@@ -40,6 +40,12 @@ public interface ISpawner
 	string Data { get; }
 
 	/// <summary>
+	/// Extra data resolved on the requesting client that the host might not be able to work out itself
+	/// (e.g. bounds and game title of mounted content). Passed alongside <see cref="Data"/> when networking.
+	/// </summary>
+	string Metadata => null;
+
+	/// <summary>
 	/// The unspawned prefab GameObject, if available. Allows inspecting components before spawning.
 	/// Returns null for spawners that don't use prefabs (e.g. props, duplicator).
 	/// </summary>

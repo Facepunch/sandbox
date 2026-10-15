@@ -130,7 +130,7 @@
 	}
 
 	[Rpc.Host]
-	internal static void SetSpawner( string type, string path, string data = null, string icon = null, string title = null )
+	internal static void SetSpawner( string type, string path, string metadata = null )
 	{
 		var player = Player.FindForConnection( Rpc.Caller );
 		if ( player is null ) return;
@@ -138,7 +138,7 @@
 		var inventory = player.GetComponent<PlayerInventory>();
 		if ( !inventory.IsValid() ) return;
 
-		ISpawner s = ISpawner.Create( type, path );
+		ISpawner s = ISpawner.Create( type, path, metadata: metadata );
 		if ( s is null ) return;
 
 		if ( !inventory.HasWeapon<Toolgun>() )
