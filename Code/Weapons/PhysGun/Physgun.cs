@@ -390,10 +390,7 @@ public partial class Physgun : Local.IPlayerEvents
 				if ( state.Pulling && MathF.Abs( move.x ) > 0.001f )
 					spinRotation = Rotation.From( new Angles( move.x * KeyboardRotateSpeed * Time.Delta, 0f, 0f ) ) * spinRotation;
 
-				// Gravity holds use the full eye rotation; beam grabs use only its yaw.
-				var eyeRotation = _state.Pulling
-					? player.EyeTransform.Rotation
-					: Rotation.FromYaw( player.Controller.EyeAngles.yaw );
+				var eyeRotation = HoldFrame;
 
 				// A/D rotates around world up through the hold's frame of reference.
 				if ( MathF.Abs( move.y ) > 0.001f )
@@ -442,7 +439,7 @@ public partial class Physgun : Local.IPlayerEvents
 			return;
 		}
 
-		FindGrabbedBody( out var sh, player.EyeTransform, player.Controller.EyeAngles.yaw, isPulling );
+		FindGrabbedBody( out var sh, player.EyeTransform, isPulling );
 		_stateHovered = sh;
 
 		if ( isPulling && Input.Pressed( "attack2" ) )
@@ -559,7 +556,7 @@ public partial class Physgun : Local.IPlayerEvents
 		{
 			if ( _preventReselect ) return;
 			var aim = AimTransform;
-			FindGrabbedBody( out var sh, aim, aim.Rotation.Yaw(), true );
+			FindGrabbedBody( out var sh, aim, true );
 			PlayGravityShotSound( sh.IsValid() && sh.Body.IsValid() && sh.Body.MotionEnabled );
 			return;
 		}
@@ -637,7 +634,7 @@ public partial class Physgun : Local.IPlayerEvents
 		_lastAimTransform = aim;
 
 		_stateHovered = default;
-		FindGrabbedBody( out var sh, aim, aim.Rotation.Yaw(), _secondaryControlDown );
+		FindGrabbedBody( out var sh, aim, _secondaryControlDown );
 		_stateHovered = sh;
 
 		if ( sh.IsValid() && sh.Pulling && sh.Body.MotionEnabled )
@@ -787,12 +784,32 @@ public partial class Physgun : Local.IPlayerEvents
 		}
 	}
 
+	/// <summary>
+	/// Using raw aim rotation on physgun results in jittering that feels very jarring when holding props with physgun and looking up/down.
+	/// Lets make sure that we get reliable rotation yaw when looking up/down to avoid this.
+	/// </summary>
+	static Rotation Stabilize( Rotation rotation )
+	{
+		var forward = rotation.Forward.WithZ( 0 );
+		var up = rotation.Up.WithZ( 0 );
+
+		// Looking up the top of the view points backwards, looking down it points forwards
+		var heading = forward.LengthSquared >= up.LengthSquared ? forward : (rotation.Forward.z > 0 ? -up : up);
+		return Rotation.FromYaw( MathX.RadianToDegree( MathF.Atan2( heading.y, heading.x ) ) );
+	}
+
+	/// <summary>
+	/// The frame <see cref="GrabState.GrabOffset"/> is relative to: the full aim rotation for gravity
+	/// holds, only the stabilized yaw for beam grabs.
+	/// </summary>
+	Rotation HoldFrame => _state.Pulling ? CurrentAimTransform.Rotation : Stabilize( CurrentAimTransform.Rotation );
+
 	Transform GetHoldTarget()
 	{
 		var eyeTransform = CurrentAimTransform;
 		var grabDistance = ClampGrabDistance( _state.Body, _state.EndPoint, eyeTransform, _state.GrabDistance );
 		var targetPosition = eyeTransform.Position + eyeTransform.Rotation.Forward * grabDistance;
-		var targetRotation = _state.Pulling ? eyeTransform.Rotation * _state.GrabOffset : Rotation.FromYaw( eyeTransform.Rotation.Yaw() ) * _state.GrabOffset;
+		var targetRotation = HoldFrame * _state.GrabOffset;
 		return new Transform( targetPosition, targetRotation );
 	}
 
@@ -835,7 +852,7 @@ public partial class Physgun : Local.IPlayerEvents
 		return true;
 	}
 
-	bool FindGrabbedBody( out GrabState state, Transform aim, float yaw, bool isPulling )
+	bool FindGrabbedBody( out GrabState state, Transform aim, bool isPulling )
 	{
 		state = default;
 
@@ -877,7 +894,7 @@ public partial class Physgun : Local.IPlayerEvents
 			state.LocalOffset = bodyTransform.PointToLocal( tr.HitPosition );
 			state.GrabDistance = Vector3.DistanceBetween( aim.Position, tr.HitPosition );
 			state.GrabDistance = ClampGrabDistance( state.Body, tr.HitPosition, aim, state.GrabDistance );
-			state.GrabOffset = Rotation.FromYaw( yaw ).Inverse * bodyTransform.Rotation;
+			state.GrabOffset = Stabilize( aim.Rotation ).Inverse * bodyTransform.Rotation;
 		}
 
 		_spinRotation = state.GrabOffset;
