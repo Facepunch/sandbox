@@ -87,7 +87,10 @@
           "_type": "gameobject",
           "go": "2ad75b15-d73d-4018-bc22-7407f67f909e"
         },
-        "DryFireSound": null,
+        "DryFireSound": {
+          "Id": "066c6fdf-2cb5-44dc-b97e-630b53d8ed25",
+          "Path": "sounds/dry_fire.sound"
+        },
         "FirstShellReloadTime": 0,
         "Handedness": "Both",
         "HoldBone": "hold_r",

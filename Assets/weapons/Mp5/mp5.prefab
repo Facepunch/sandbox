@@ -83,7 +83,10 @@
           "_type": "gameobject",
           "go": "4c0e80fa-adda-4379-9f2c-57d9fddc85f1"
         },
-        "DryFireSound": null,
+        "DryFireSound": {
+          "Id": "066c6fdf-2cb5-44dc-b97e-630b53d8ed25",
+          "Path": "sounds/dry_fire.sound"
+        },
         "FirstShellReloadTime": 0,
         "GrenadePrefab": {
           "_type": "gameobject",
