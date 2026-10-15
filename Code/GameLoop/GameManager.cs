@@ -371,7 +371,31 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		renderer.Materials.SetOverride( materialIndex, material );
 
 		renderer.GameObject.Network?.Refresh();
-	}	
+	}
+
+	/// <summary>
+	/// Set the material that replaces every slot on a renderer, or clear it with a null/empty path.
+	/// </summary>
+	[Rpc.Host]
+	internal static async void ChangeWholeMaterialOverride( ModelRenderer renderer, string materialPath )
+	{
+		if ( !renderer.IsValid() ) return;
+		if ( !renderer.GameObject.HasAccess( Rpc.Caller ) ) return;
+
+		Material material = null;
+
+		if ( !string.IsNullOrEmpty( materialPath ) )
+		{
+			material = Material.Load( materialPath );
+			material ??= await Cloud.Load<Material>( materialPath );
+		}
+
+		if ( !renderer.IsValid() ) return;
+
+		renderer.MaterialOverride = material;
+
+		renderer.GameObject.Network?.Refresh();
+	}
 
 	void IScenePhysicsEvents.OnOutOfBounds( Rigidbody body )
 	{

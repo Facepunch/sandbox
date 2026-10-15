@@ -41,7 +41,7 @@ GameObjectInspector .material-row
     padding: 2px 0;
     width: 100%;
 
-    > label
+    > label, > .label
     {
         flex-shrink: 0;
         font-size: $ui-settings-font;
@@ -68,6 +68,17 @@ GameObjectInspector .material-row
     {
         border-color: $ui-blue;
         color: $ui-blue;
+    }
+
+    // slots replaced by the whole-model override can't be edited until it's cleared
+    &.locked
+    {
+        opacity: 0.4;
+
+        .material-picker
+        {
+            pointer-events: none;
+        }
     }
 }
 

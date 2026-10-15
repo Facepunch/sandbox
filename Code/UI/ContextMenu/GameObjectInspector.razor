@@ -41,14 +41,43 @@
                         </div>
                     }
 
+                    var wholeOverride = Renderers[0].MaterialOverride;
+
+                    <div class="material-row @(wholeOverride is not null ? "overridden" : "")">
+                        <UIHintLabel class="label" Text="#ui.inspect.material_override" Hint="#ui.inspect.material_override_hint"></UIHintLabel>
+                        <div class="material-picker" @onclick=@PickWholeMaterial>
+                            <div class="preview">
+                                @if ( wholeOverride is not null )
+                                {
+                                    <div class="thumb" style="background-image: url( thumb:@wholeOverride.ResourcePath )"></div>
+                                }
+                                else
+                                {
+                                    <div class="ext-badge">-</div>
+                                }
+                            </div>
+                            <div class="content">
+                                <div class="title @(wholeOverride is null ? "empty" : "")">@(wholeOverride?.ResourceName ?? Game.Language.GetPhrase( "ui.inspect.no_material_override" ))</div>
+                                <div class="subtitle">#ui.resource.type.material</div>
+                            </div>
+                        </div>
+                        @if (wholeOverride is not null)
+                        {
+                            <UIButton class="material-revert" Text="x" @onclick=@(() => SetWholeMaterialOverride(null))></UIButton>
+                        }
+                    </div>
+
+                    <UISeparator />
+
                     var accessor = Renderers[0].Materials;
                     @for (int i = 0; i < accessor.Count; i++)
                     {
                         var index = i;
-                        var hasOverride = accessor.HasOverride(index);
-                        var mat = hasOverride ? accessor.GetOverride(index) : accessor.GetOriginal(index);
+                        var locked = wholeOverride is not null;
+                        var hasOverride = !locked && accessor.HasOverride(index);
+                        var mat = locked ? wholeOverride : hasOverride ? accessor.GetOverride(index) : accessor.GetOriginal(index);
 
-                        <div class="material-row @(hasOverride ? "overridden" : "")">
+                        <div class="material-row @(hasOverride ? "overridden" : "") @(locked ? "locked" : "")">
                         <label>@Game.Language.GetPhrase( "ui.inspect.material_number", new() { { "number", index + 1 } } )</label>
                             <div class="material-picker" @onclick=@(() => PickMaterial(index))>
                                 <div class="preview">
@@ -62,7 +91,7 @@
                                     }
                                 </div>
                                 <div class="content">
-                                    <div class="title @(mat is null ? "empty" : "")">@(mat?.ResourceName ?? "#ui.inspect.default_material")</div>
+                                    <div class="title @(mat is null ? "empty" : "")">@(mat?.ResourceName ?? Game.Language.GetPhrase( "ui.inspect.default_material" ))</div>
                                     <div class="subtitle">#ui.resource.type.material</div>
                                 </div>
                             </div>
@@ -146,6 +175,7 @@
 
             if ( renderer.IsValid() )
             {
+                hc.Add( renderer.MaterialOverride?.ResourcePath );
                 for ( int i = 0; i < renderer.Materials.Count; i++ )
                     hc.Add( renderer.Materials.HasOverride( i ) ? renderer.Materials.GetOverride( i )?.ResourcePath : null );
             }
@@ -257,8 +287,28 @@
             GameManager.ChangeProperty( renderer, nameof( ModelRenderer.MaterialGroup ), group );
     }
 
+    void PickWholeMaterial()
+    {
+        var popup = new ResourceSelectPopup();
+        popup.Extension = "material";
+        popup.Title = "#ui.resource.material_selection";
+        popup.CurrentValue = Renderers[0].MaterialOverride?.ResourcePath;
+        popup.AllowPackages = true;
+        popup.Parent = FindPopupPanel();
+        popup.OnSelectedFile = SetWholeMaterialOverride;
+    }
+
+    void SetWholeMaterialOverride(string path)
+    {
+        foreach (var renderer in Renderers)
+            GameManager.ChangeWholeMaterialOverride(renderer, path);
+    }
+
     void PickMaterial(int index)
     {
+        // individual slots are locked while a whole-model override is set
+        if (Renderers[0].MaterialOverride is not null) return;
+
         var accessor = Renderers[0].Materials;
         var mat = accessor.HasOverride(index) ? accessor.GetOverride(index) : accessor.GetOriginal(index);
 
