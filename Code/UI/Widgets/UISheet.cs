@@ -284,8 +284,11 @@ public class UISheetRow : Panel
 		if ( UIVector.Supports( type ) )
 			return new UIVector { Property = property };
 
-		if ( type == typeof( string ) && property.HasAttribute<ResourceSelectAttribute>() )
+		if ( type == typeof( string ) && property.TryGetAttribute<ResourceSelectAttribute>( out var resourceSelect ) )
 		{
+			if ( resourceSelect.Popup )
+				return new ResourceSelectControl { Property = property };
+
 			wide = true;
 			return new UIResourceGrid { Property = property };
 		}

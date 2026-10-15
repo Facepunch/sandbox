@@ -68,6 +68,10 @@
     "tool.hint.colour.description": "Changes the colour of an object",
     "tool.hint.colour.apply": "Apply colour",
     "tool.hint.colour.reset": "Reset to white",
+    "tool.hint.material.description": "Changes the material of an object",
+    "tool.hint.material.apply": "Apply material",
+    "tool.hint.material.copy": "Copy material",
+    "tool.hint.material.reset": "Reset to default",
 
     "tool.hint.resizer.description": "Resizes an object",
     "tool.hint.resizer.grow": "Grow",
@@ -164,6 +168,7 @@
     "tool.name.wire": "Wire",
     "tool.name.remover": "Remover",
     "tool.name.colour": "Colour",
+    "tool.name.material": "Material",
     "tool.name.resizer": "Resizer",
     "tool.name.mass": "Mass",
     "tool.name.gravity": "Gravity",

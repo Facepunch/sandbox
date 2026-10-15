@@ -8,13 +8,13 @@
 
 <root>
     <div class="preview">
-        @if ( ResourcePath != null )
+        @if ( ThumbUrl != null )
         {
-            <div class="thumb" style="background-image: url( thumb:@ResourcePath )"></div>
+            <div class="thumb" style="background-image: url( @ThumbUrl )"></div>
         }
-        else if ( ResourceAttribute != null )
+        else if ( Extension != null )
         {
-            <div class="ext-badge">@ResourceAttribute.Extension?.ToUpperInvariant()</div>
+            <div class="ext-badge">@Extension.ToUpperInvariant()</div>
         }
         else
         {
@@ -23,7 +23,7 @@
     </div>
 
     <div class="content">
-        @if ( ResourceType == null )
+        @if ( ResourceType == null && Extension == null )
         {
             <div class="title">#ui.resource.unknown_type</div>
         }
@@ -36,9 +36,9 @@
             <div class="title">@Title</div>
         }
 
-        @if ( ResourceAttribute != null )
+        @if ( TypeName != null )
         {
-            <div class="subtitle">@LocalizedText.ResourceTypeName( ResourceAttribute )</div>
+            <div class="subtitle">@TypeName</div>
         }
     </div>
 
@@ -48,9 +48,25 @@
 {
 
     string Title;
-    string ResourcePath;
+    string ThumbUrl;
     TypeDescription ResourceType;
     AssetTypeAttribute ResourceAttribute;
+    ResourceSelectAttribute SelectAttribute;
+
+    /// <summary>
+    /// The extension being picked, from the asset type or straight from the attribute for types without one (materials).
+    /// </summary>
+    string Extension => ResourceAttribute?.Extension ?? SelectAttribute?.Extension;
+
+    string TypeName
+    {
+        get
+        {
+            if ( ResourceAttribute != null ) return LocalizedText.ResourceTypeName( ResourceAttribute );
+            if ( Extension == "material" ) return "#ui.resource.type.material";
+            return null;
+        }
+    }
 
     /// <summary>
     /// Refreshes the resource type metadata and current selection.
@@ -61,6 +77,7 @@
 
         if (Property.TryGetAttribute<ResourceSelectAttribute>(out var resTypeAttr))
         {
+            SelectAttribute = resTypeAttr;
             ResourceType = AssetTypeAttribute.FindTypeByExtension(resTypeAttr.Extension);
             ResourceAttribute = ResourceType?.GetAttribute<AssetTypeAttribute>();
         }
@@ -78,16 +95,24 @@
         if (string.IsNullOrWhiteSpace(path))
         {
             Title = null;
-            ResourcePath = null;
+            ThumbUrl = null;
             return;
         }
 
-        ResourcePath = path;
+        ThumbUrl = $"thumb:{path}";
+
+        // a workshop pick is stored as the package ident
+        if ( IsPackageIdent( path ) )
+        {
+            ShowPackage( path );
+            return;
+        }
 
         var resource = ResourceLibrary.Get<GameResource>(path);
         if ( resource == null )
         {
-            Title = "#ui.resource.unknown";
+            // materials and other native resources aren't in the library, the file name is the best we have
+            Title = ResourceAttribute == null ? System.IO.Path.GetFileNameWithoutExtension( path ) : "#ui.resource.unknown";
             return;
         }
 
@@ -99,6 +124,48 @@
         }
 
     }
+
+    static bool IsPackageIdent( string path ) => !path.Contains( '/' ) && Package.TryParseIdent( path, out _ );
+
+    void ShowPackage( string ident )
+    {
+        if ( Package.TryGetCached( ident, out var package, false ) )
+        {
+            Title = package.Title;
+            ThumbUrl = package.Thumb;
+            return;
+        }
+
+        Title = ident;
+        ThumbUrl = null;
+        _ = FetchPackage( ident );
+    }
+
+    async Task FetchPackage( string ident )
+    {
+        var package = await Package.FetchAsync( ident, true );
+        if ( package is null || !IsValid || Property?.As.String != ident ) return;
+
+        Title = package.Title;
+        ThumbUrl = package.Thumb;
+        StateHasChanged();
+    }
+
+    protected override int BuildHash() => HashCode.Combine( Title, ThumbUrl );
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        // the value can change from outside, like a tool copying a material into its setting
+        if ( Property is not null && Property.As.String != _shownValue )
+        {
+            _shownValue = Property.As.String;
+            OnValueChanged();
+        }
+    }
+
+    string _shownValue;
 
     void SelectFile( string filePath )
     {
@@ -116,8 +183,12 @@
 		// if (Property.TryGetAttribute<ResourceSelectAttribute>(out var attr))
 		//     allowPackages = attr.AllowPackages;
 
+        // popup pickers are for types we can't list locally, they need the workshop
+        if ( SelectAttribute?.Popup == true )
+            allowPackages = SelectAttribute.AllowPackages;
+
         var popup = new ResourceSelectPopup();
-        popup.Extension = ResourceAttribute?.Extension;
+        popup.Extension = Extension;
         popup.CurrentValue = Property.As.String;
         popup.AllowPackages = allowPackages;
         popup.Parent = FindPopupPanel();
