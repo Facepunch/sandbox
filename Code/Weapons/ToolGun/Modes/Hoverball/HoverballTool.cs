@@ -10,7 +10,7 @@ public sealed class HoverballTool : ToolMode
 	public override IEnumerable<string> TraceIgnoreTags => ["constraint", "collision"];
 
 	[Property, ResourceSelect( Extension = "hdef", AllowPackages = true ), Title( "#tool.name.hoverball" )]
-	public string Definition { get; set; } = "entities/hoverball/basic.hdef";
+	public string Definition { get; set; } = "entities/hoverball/hoverball.hdef";
 
 	public override string Description => "#tool.hint.hoverballtool.description";
 
