@@ -18,7 +18,7 @@ public sealed class MountMetadata : Component
 		_material ??= Material.Load( "materials/effects/mount_fallback.vmat" );
 
 		var prop = GameObject.GetComponentInChildren<Prop>();
-		var modelMissing = prop.IsValid() && !prop.Model.IsValid() && !prop.Model.IsError;
+		var modelMissing = !prop.IsValid() || !prop.Model.IsValid() || prop.Model.IsError;
 		if ( !modelMissing ) return;
 
 		// Client doesn't have the mount — hide the error model and show fallback overlay
