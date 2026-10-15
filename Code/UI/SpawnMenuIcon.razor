@@ -23,7 +23,6 @@
     [Parameter] public string Icon { get; set; }
     [Parameter] public string Title { get; set; }
     [Parameter] public bool HideText { get; set; }
-    [Parameter] public string Metadata { get; set; }
     [Parameter] public bool Developer { get; set; }
     [Parameter] public Guid SpawnlistItemId { get; set; }
 
@@ -80,7 +79,7 @@
 
     protected override void OnClick( MousePanelEvent e )
     {
-        GameManager.Spawn( Ident, Metadata );
+        GameManager.Spawn( Ident );
     }
 
     protected override async void OnMouseDown( MousePanelEvent e )
@@ -128,10 +127,10 @@
         // generic spawnlist and workshop options empty if it fails.
         try
         {
-            var spawner = ISpawner.Create( Type, Path, metadata: Metadata );
+            var spawner = ISpawner.Create( Type, Path );
             if ( spawner is not null && await spawner.Loading )
             {
-                spawner.PopulateContextMenu( menu, Ident, Metadata );
+                spawner.PopulateContextMenu( menu, Ident );
             }
         }
         catch

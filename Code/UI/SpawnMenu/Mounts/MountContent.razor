@@ -34,7 +34,7 @@
                 @if (item is ResourceLoader loader)
                 {
                     var nameWithoutExt = System.IO.Path.GetFileNameWithoutExtension(loader.Name);
-                    <SpawnMenuIcon Ident=@($"mount:{loader.Path}") Title="@nameWithoutExt" Metadata=@MountSpawner.SerializeMetadata( mount.Title )></SpawnMenuIcon>
+                    <SpawnMenuIcon Ident=@($"mount:{loader.Path}") Title="@nameWithoutExt" />
                 }
 
             </Item>

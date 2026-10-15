@@ -50,7 +50,7 @@ public sealed partial class GameManager
 
 		var (type, path, source) = SpawnlistItem.ParseIdent( ident );
 
-		var spawner = ISpawner.Create( type, path, source, metadata );
+		var spawner = ISpawner.Create( type, path, source );
 		CloudLoadTracker.Track( spawner?.Loading, Rpc.Caller );
 
 		if ( spawner is not null && await spawner.Loading )

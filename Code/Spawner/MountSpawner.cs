@@ -1,3 +1,5 @@
+using Sandbox.Mounting;
+
 /// <summary>
 /// Like <see cref="PropSpawner"/>, but attaches <see cref="MountMetadata"/> to the spawned object
 /// so clients without the mount installed can show a fallback cube and install prompt.
@@ -15,24 +17,23 @@ public sealed class MountSpawner : ISpawner
 
 	public Model Model { get; private set; }
 	public string Path { get; }
+	public string GameTitle { get; private set; }
 
-	readonly Metadata _meta;
-
-	public MountSpawner( string path, string metadataJson )
+	public MountSpawner( string path )
 	{
 		Path = path;
 
-		if ( string.IsNullOrEmpty( metadataJson ) )
+		if ( MountUtility.TryParse( path, out string sourceName ) )
 		{
-			Log.Warning( $"[MountSpawner] No metadata JSON for '{path}'" );
-			_meta = new Metadata( string.Empty );
-		}
-		else
-		{
-			_meta = Json.Deserialize<Metadata>( metadataJson );
-			if ( _meta is null )
-				Log.Warning( $"[MountSpawner] Failed to deserialize metadata for '{path}': {metadataJson}" );
-			_meta ??= new Metadata( string.Empty );
+			var source = Directory.Get( sourceName );
+			if ( source is null )
+			{
+				Log.Warning( $"Couldn't find source \"{sourceName}\"" );
+			}
+			else
+			{
+				GameTitle = source.Title;
+			}
 		}
 
 		DisplayName = System.IO.Path.GetFileNameWithoutExtension( path );
@@ -42,7 +43,7 @@ public sealed class MountSpawner : ISpawner
 	private async Task<bool> LoadAsync()
 	{
 		Model = await ResourceLibrary.LoadAsync<Model>( Path );
-		Log.Info( $"[MountSpawner] path='{Path}' model={(Model.IsValid() ? "loaded" : "missing")} title='{_meta.GameTitle}'" );
+		Log.Info( $"[MountSpawner] path='{Path}' model={(Model.IsValid() ? "loaded" : "missing")} title='{GameTitle}'" );
 		return true; // missing model uses placeholder
 	}
 
@@ -90,7 +91,7 @@ public sealed class MountSpawner : ISpawner
 		}
 
 		var meta = go.AddComponent<MountMetadata>();
-		meta.GameTitle = _meta.GameTitle;
+		meta.GameTitle = GameTitle;
 		meta.BoundsSize = effectiveBounds.Size;
 		meta.BoundsCenter = effectiveBounds.Center;
 
