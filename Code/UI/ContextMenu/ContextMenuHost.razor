@@ -17,11 +17,14 @@
 
     <InspectWindow />
 
+    <div class="settings-bar" @ref="SettingsBar" @onmousedown=@SettingsBarPress></div>
+
 </root>
 
 @code
 {
     Inspector Inspector = default;
+    Panel SettingsBar = default;
 
     public HighlightOutline SelectedOutline;
     public HighlightOutline HoveredOutline;
@@ -29,6 +32,12 @@
     protected override void OnAfterTreeRender(bool firstTime)
     {
         base.OnAfterTreeRender(firstTime);
+
+        // built here rather than on first render so it comes back after a hotload
+        if ( SettingsBar.IsValid() && !SettingsBar.Children.Any() )
+        {
+            BuildMenuBar();
+        }
 
         //if (firstTime)
         {
@@ -38,6 +47,30 @@
             SelectedOutline.OverrideTargets = true;
             HoveredOutline.OverrideTargets = true;
         }
+    }
+
+    /// <summary>
+    /// The strip of settings along the top, like Garry's Mod's context menu bar. Its menus come from <see cref="IMenuBarEvent"/>.
+    /// </summary>
+    void BuildMenuBar()
+    {
+        var ev = new IMenuBarEvent.Event();
+        Scene.RunEvent<IMenuBarEvent>( listener => listener.PopulateMenuBar( ev ) );
+
+        var bar = new MenuBar();
+        foreach ( var menu in ev.Menus )
+        {
+            bar.AddMenu( menu );
+        }
+
+        SettingsBar.AddChild( bar );
+    }
+
+    // keep clicks on the bar from selecting whatever is in the world behind it
+    void SettingsBarPress( PanelEvent e )
+    {
+        Sandbox.UI.InputFocus.Clear();
+        e.StopPropagation();
     }
 
     public override void Tick()

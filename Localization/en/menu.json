@@ -31,6 +31,11 @@
     "spawnmenu.inspect.ignite": "Ignite",
     "spawnmenu.inspect.extinguish": "Extinguish",
 
+    "spawnmenu.menubar.client": "Client",
+    "spawnmenu.menubar.npcs": "NPCs",
+    "spawnmenu.menubar.server": "Server",
+    "spawnmenu.menubar.reequip_last": "Re-equip Last Weapons",
+
     "spawnmenu.effects.presets": "Presets",
     "spawnmenu.effects.save_new_preset": "Save New Preset...",
     "spawnmenu.effects.save_preset": "Save Preset",
