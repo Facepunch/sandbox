@@ -248,3 +248,9 @@
 		Sandbox.Services.Stats.SetValue( "tool.contraption.chair", chairs );
 	}
 }
+
+
+/// <summary>
+/// Not shown in the tool list, seperate from <see cref="HideAttribute"/> because that's a much more general thing.
+/// </summary>
+public class HiddenToolMode : Attribute { }

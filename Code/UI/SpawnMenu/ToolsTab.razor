@@ -58,7 +58,7 @@
     List<UIGroupedList.ListGroup> GetGroups()
     {
         return Game.TypeLibrary.GetTypes<ToolMode>()
-            .Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() )
+			.Where(x => !x.IsAbstract && !x.HasAttribute<HiddenToolMode>() )
             .GroupBy( x => x.Group )
             .OrderBy( x => LocalizedText.Resolve( x.Key ), StringComparer.CurrentCultureIgnoreCase )
             .Select( group => new UIGroupedList.ListGroup( group.Key, group

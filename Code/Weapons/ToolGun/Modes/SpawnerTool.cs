@@ -5,6 +5,7 @@
 /// aiming, previewing, and placement.
 /// </summary>
 [Hide]
+[HiddenToolMode]
 [Icon( "📦" )]
 [Title( "#spawner.name" )]
 [ClassName( "spawner" )]
