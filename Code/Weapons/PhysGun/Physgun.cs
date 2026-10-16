@@ -929,7 +929,7 @@ public partial class Physgun : Local.IPlayerEvents
 
 		if ( !IsProxy )
 		{
-			OutlineFlash.Play( GetHighlightTarget( body.GameObject ),HighlightColor, HighlightObscuredColor, HighlightWidth, _freezeFlashDuration, 3.0f );
+			ObjectHighlight.Flash( GetHighlightTarget( body.GameObject ), HighlightStyle.Selected );
 		}
 
 		if ( body.IsProxy ) return;
@@ -974,7 +974,7 @@ public partial class Physgun : Local.IPlayerEvents
 			// Flash everything that got unfrozen, same as freezing does
 			foreach ( var target in bodies.Select( x => GetHighlightTarget( x.GameObject ) ).Distinct() )
 			{
-				OutlineFlash.Play( target, HighlightColor, HighlightObscuredColor, HighlightWidth, _freezeFlashDuration, 3.0f );
+				ObjectHighlight.Flash( target, HighlightStyle.Selected );
 			}
 		}
 

@@ -1,49 +1,26 @@
 using Sandbox.Utility;
 
 /// <summary>
-/// A short-lived outline that fades in, peaks at boosted brightness and fades back out.
+/// A short-lived outline that fades in, peaks at boosted brightness and fades back out. Start one with <see cref="ObjectHighlight.Flash"/>.
 /// </summary>
 public sealed class OutlineFlash : Component
 {
-	public Color Color { get; set; }
-	public Color ObscuredColor { get; set; }
-	public float Width { get; set; } = 0.2f;
-	public float Duration { get; set; } = 0.1f;
+	public HighlightStyle Style { get; set; }
+	public float Duration { get; set; } = 0.25f;
 
 	/// <summary>
 	/// Color multiplier at the peak of the flash effect
 	/// </summary>
-	public float Brightness { get; set; } = 2.0f;
+	public float Brightness { get; set; } = 3.0f;
 
 	HighlightOutline _outline;
 	TimeSince _timeSinceStart;
 
-	/// <summary>
-	/// Flash an outline around <paramref name="target"/>
-	/// </summary>
-	public static OutlineFlash Play( GameObject target, Color color, Color obscuredColor, float width = 0.2f, float duration = 0.1f, float brightness = 2.0f )
+	internal void Play( HighlightOutline outline )
 	{
-		if ( !target.IsValid() ) return null;
-
-		var go = new GameObject( true, "Outline Flash" );
-		go.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked;
-
-		var flash = go.AddComponent<OutlineFlash>();
-		flash.Color = color;
-		flash.ObscuredColor = obscuredColor;
-		flash.Width = width;
-		flash.Duration = duration;
-		flash.Brightness = brightness;
-
-		flash._timeSinceStart = 0;
-
-		flash._outline = go.AddComponent<HighlightOutline>();
-		flash._outline.OverrideTargets = true;
-		flash._outline.Targets = new();
-		AddRenderers( target, flash._outline.Targets );
-
-		flash.Apply( 0 );
-		return flash;
+		_outline = outline;
+		_timeSinceStart = 0;
+		Apply( 0 );
 	}
 
 	protected override void OnPreRender()
@@ -65,23 +42,8 @@ public sealed class OutlineFlash : Component
 
 		var boost = MathX.Lerp( 1, Brightness, weight );
 
-		_outline.Width = Width;
-		_outline.Color = (Color * boost).WithAlpha( Color.a * weight );
-		_outline.ObscuredColor = (ObscuredColor * boost).WithAlpha( ObscuredColor.a * weight );
-	}
-
-	/// <summary>
-	/// Collect the renderers and its non-networked children
-	/// </summary>
-	public static void AddRenderers( GameObject o, List<Renderer> renderers )
-	{
-		renderers.AddRange( o.GetComponents<Renderer>() );
-
-		foreach ( var c in o.Children )
-		{
-			if ( c.NetworkMode == NetworkMode.Object ) continue;
-
-			AddRenderers( c, renderers );
-		}
+		_outline.Width = Style.Width;
+		_outline.Color = (Style.Color * boost).WithAlpha( Style.Color.a * weight );
+		_outline.ObscuredColor = (Style.ObscuredColor * boost).WithAlpha( Style.ObscuredColor.a * weight );
 	}
 }

@@ -149,53 +149,17 @@
         var host = Ancestors.OfType<ContextMenuHost>().FirstOrDefault();
         if ( host is null ) return;
 
-        if ( host.SelectedOutline is null || host.HoveredOutline is null )
+        if ( !IsVisible )
+        {
+            host.SelectedOutline.Hide();
+            host.HoveredOutline.Hide();
             return;
-
-        host.SelectedOutline.Targets ??= new();
-        host.SelectedOutline.Targets.Clear();
-        host.SelectedOutline.Color = new Color( 4.7f, 10.1f, 30.6f, 1 );
-        host.SelectedOutline.ObscuredColor = new Color( 2.2f, 2.3f, 2.9f, 0.1f );
-        host.SelectedOutline.Width = 0.2f;
-
-        host.HoveredOutline.Targets ??= new();
-        host.HoveredOutline.Targets.Clear();
-        host.HoveredOutline.Color = new Color( 2.6f, 2.0f, 0.2f, 1 );
-        host.HoveredOutline.ObscuredColor = new Color( 2.6f, 2.0f, 0.2f, 0.1f );
-        host.HoveredOutline.Width = 0.2f;
-
-        if ( !IsVisible ) return;
-
-        host.SelectedOutline.Targets.AddRange( _selected.SelectMany( x => GetRenderers( x ) ) ?? [] );
-
-        if ( !_selected.Contains( hovered ) )
-        {
-            host.HoveredOutline.Targets = GetRenderers( hovered ).ToList();
-        }
-        else
-        {
-            host.HoveredOutline.Targets = default;
-        }
-    }
-
-    IEnumerable<Renderer> GetRenderers( GameObject o )
-    {
-        if ( !o.IsValid() ) yield break;
-
-        foreach ( var r in o.GetComponents<Renderer>() )
-        {
-            yield return r;
         }
 
-        foreach ( var c in o.Children )
-        {
-            if ( c.NetworkMode == NetworkMode.Object ) continue;
+        host.SelectedOutline.Show( _selected, HighlightStyle.Selected );
 
-            foreach ( var rr in GetRenderers( c ) )
-            {
-                yield return rr;
-            }
-        }
+        // Something already selected keeps its selection outline when hovered
+        host.HoveredOutline.Show( _selected.Contains( hovered ) ? null : hovered, HighlightStyle.Hovered );
     }
 
     GameObject hovered;

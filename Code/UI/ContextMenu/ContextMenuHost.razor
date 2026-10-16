@@ -39,14 +39,8 @@
             BuildMenuBar();
         }
 
-        //if (firstTime)
-        {
-            SelectedOutline ??= GameObject.AddComponent<HighlightOutline>();
-            HoveredOutline ??= GameObject.AddComponent<HighlightOutline>();
-
-            SelectedOutline.OverrideTargets = true;
-            HoveredOutline.OverrideTargets = true;
-        }
+        SelectedOutline ??= ObjectHighlight.Create( GameObject );
+        HoveredOutline ??= ObjectHighlight.Create( GameObject );
     }
 
     /// <summary>
