@@ -152,11 +152,6 @@
 		var mode = toolgun.GetMode<SpawnerTool>();
 		if ( !mode.IsValid() ) return;
 
-		// Remember what we were using, so clearing the payload can go back to it
-		var current = toolgun.GetCurrentMode();
-		if ( current.IsValid() && current != mode )
-			mode.PreviousMode = current.TypeDescription.ClassName;
-
 		mode.SetSpawner( s );
 		inventory.SetToolMode( mode.TypeDescription.ClassName );
 	}

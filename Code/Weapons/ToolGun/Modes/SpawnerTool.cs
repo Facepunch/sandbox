@@ -20,12 +20,6 @@ public sealed class SpawnerTool : ToolMode
 	public string SpawnerData { get; set; }
 
 	/// <summary>
-	/// The mode that was active before the spawner took over, restored when the payload is cleared.
-	/// </summary>
-	[Sync( SyncFlags.FromHost )]
-	public string PreviousMode { get; set; }
-
-	/// <summary>
 	/// The local spawner, built from <see cref="SpawnerData"/>.
 	/// </summary>
 	public ISpawner Spawner { get; private set; }
