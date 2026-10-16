@@ -105,8 +105,6 @@ public sealed partial class DuplicatorTool : ToolMode
 
 			Duplicate( GetPlacement( select ) );
 			ShootEffects( select );
-			_rotationOffset = Rotation.Identity;
-			_spinRotation = Rotation.Identity;
 			return;
 		}
 
@@ -181,6 +179,10 @@ public sealed partial class DuplicatorTool : ToolMode
 	void JsonChanged()
 	{
 		spawner = null;
+
+		_rotationOffset = Rotation.Identity;
+		_spinRotation = Rotation.Identity;
+		_snapRotation = Rotation.Identity;
 
 		if ( string.IsNullOrWhiteSpace( CopiedJson ) )
 			return;
