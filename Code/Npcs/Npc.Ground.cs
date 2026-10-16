@@ -87,7 +87,7 @@ public partial class Npc : IPhysgunEvent
 
 	private void OnGroundedChanged()
 	{
-		_rigidbody.MotionEnabled = !IsOnGround;
-		_navAgent.Enabled = IsOnGround;
+		if ( _rigidbody.IsValid() ) _rigidbody.MotionEnabled = !IsOnGround;
+		if ( _navAgent.IsValid() ) _navAgent.Enabled = IsOnGround;
 	}
 }
