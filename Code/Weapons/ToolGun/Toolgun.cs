@@ -69,7 +69,7 @@
 		currentMode?.DrawHud( painter, crosshair );
 	}
 
-	public ToolMode GetCurrentMode() => GetComponent<ToolMode>();
+	public ToolMode GetCurrentMode() => GetComponents<ToolMode>( true ).FirstOrDefault( x => x.Enabled );
 
 	public T GetMode<T>() where T : ToolMode
 	{
