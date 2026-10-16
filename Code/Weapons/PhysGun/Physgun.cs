@@ -136,6 +136,16 @@ public partial class Physgun : Local.IPlayerEvents
 		public Rotation GrabOffset { get; set; }
 		public float GrabDistance { get; set; }
 
+		/// <summary>
+		/// Gravity pulls only: the pull cone's apex, as a world-space offset from the aim position.
+		/// </summary>
+		public Vector3 PullApex { get; set; }
+
+		/// <summary>
+		/// Gravity pulls only: how strongly the object is pulled, depending on how well we aim at it.
+		/// </summary>
+		public float PullStrength { get; set; }
+
 		public readonly Vector3 EndPoint
 		{
 			get
@@ -160,15 +170,17 @@ public partial class Physgun : Local.IPlayerEvents
 
 		public override readonly int GetHashCode()
 		{
-			return HashCode.Combine(
-				Active,
-				Pulling,
-				GameObject,
-				LocalOffset,
-				LocalNormal,
-				GrabOffset,
-				GrabDistance
-			);
+			var hash = new HashCode();
+			hash.Add( Active );
+			hash.Add( Pulling );
+			hash.Add( GameObject );
+			hash.Add( LocalOffset );
+			hash.Add( LocalNormal );
+			hash.Add( GrabOffset );
+			hash.Add( GrabDistance );
+			hash.Add( PullApex );
+			hash.Add( PullStrength );
+			return hash.ToHashCode();
 		}
 	}
 
@@ -301,6 +313,7 @@ public partial class Physgun : Local.IPlayerEvents
 
 		ViewModel?.RunEvent<ViewModel>( UpdateViewModel );
 
+		var pullLock = _stateHovered;
 		_stateHovered = default;
 
 		if ( _state.IsValid() )
@@ -440,6 +453,7 @@ public partial class Physgun : Local.IPlayerEvents
 		}
 
 		FindGrabbedBody( out var sh, player.EyeTransform, isPulling );
+		if ( isPulling ) sh = UpdatePullLock( pullLock, sh, player.EyeTransform );
 		_stateHovered = sh;
 
 		if ( isPulling && Input.Pressed( "attack2" ) )
@@ -633,8 +647,10 @@ public partial class Physgun : Local.IPlayerEvents
 		var aim = AimTransform;
 		_lastAimTransform = aim;
 
+		var pullLock = _stateHovered;
 		_stateHovered = default;
 		FindGrabbedBody( out var sh, aim, _secondaryControlDown );
+		if ( _secondaryControlDown ) sh = UpdatePullLock( pullLock, sh, aim );
 		_stateHovered = sh;
 
 		if ( sh.IsValid() && sh.Pulling && sh.Body.MotionEnabled )
@@ -750,10 +766,7 @@ public partial class Physgun : Local.IPlayerEvents
 			DropHeld();
 
 			if ( CanMove( _stateHovered ) && _stateHovered.Pulling )
-			{
-				var force = CurrentAimTransform.Rotation.Backward * _stateHovered.Body.Mass * PullForce;
-				_stateHovered.Body.ApplyForceAt( _stateHovered.EndPoint, force );
-			}
+				ApplyPullForce( _stateHovered );
 
 			_launched = false;
 
