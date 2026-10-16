@@ -1,5 +1,5 @@
 {
-  "Prefab": "weapons/toolgun/item_toolgun.prefab",
+  "Prefab": "weapons/toolgun/toolgun.prefab",
   "Title": "#asset.toolgun.title",
   "Description": "#asset.toolgun.description",
   "Category": "Weapon/Utility",
