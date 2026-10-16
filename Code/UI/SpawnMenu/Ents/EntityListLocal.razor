@@ -31,7 +31,7 @@
         base.OnParametersSet();
 
         var all = ResourceLibrary.GetAll<ScriptedEntity>()
-            .Where( e => !e.Developer || ServerSettings.ShowDeveloperEntities );
+            .Where( e => !e.IsRemote && ( !e.Developer || ServerSettings.ShowDeveloperEntities ) );
 
         Entities = (Category is null
             ? all
