@@ -110,12 +110,37 @@ public partial class Physgun : Local.IPlayerEvents
 		GameObject.PlaySound( GravityDropSound );
 	}
 
+	[Rpc.Broadcast]
+	void PlayGravityLockSound()
+	{
+		GameObject.PlaySound( GravityDropSound );
+	}
+
+	/// <summary>
+	/// The gravity hold loop plays at <see cref="HoldSoundFarPitch"/> when the object is this far away or further.
+	/// </summary>
+	const float HoldSoundFarDistance = 1024f;
+
+	/// <summary>
+	/// The gravity hold loop plays at full pitch when the object is this close or closer.
+	/// </summary>
+	const float HoldSoundNearDistance = 128f;
+
+	const float HoldSoundFarPitch = 0.5f;
+
 	void UpdateGravityHoldSound()
 	{
-		if ( _state.Active && _state.Pulling && _state.IsValid() && _state.Body.IsValid() && _state.Body.MotionEnabled )
+		// Plays while holding an object, and while pulling one in
+		var state = _state.Active && _state.Pulling ? _state : _stateHovered;
+
+		if ( state.Pulling && state.IsValid() && state.Body.IsValid() && state.Body.MotionEnabled )
 		{
+			var eye = CurrentAimTransform.Position;
+			var distance = state.Body.FindClosestPoint( eye ).Distance( eye );
+
 			_gravityHoldSound ??= GameObject.PlaySound( GravityHoldSound );
 			_gravityHoldSound?.Position = GetMuzzleTransform().Position;
+			_gravityHoldSound?.Pitch = MathX.Remap( distance, HoldSoundFarDistance, HoldSoundNearDistance, HoldSoundFarPitch, 1f );
 		}
 		else
 		{

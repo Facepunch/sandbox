@@ -43,6 +43,10 @@ public partial class Physgun
 
 		found.PullApex = aim.Forward * PullConeApexDistance;
 		found.PullStrength = GetPullStrength( found, aim );
+
+		if ( IsPullLock( found ) )
+			PlayGravityLockSound();
+
 		return found;
 	}
 
