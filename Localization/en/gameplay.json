@@ -46,6 +46,8 @@
     "server.limit.hoverballs.description": "Maximum hoverballs per player. -1 = unlimited, 0 = none allowed.",
     "server.limit.wheels": "Max Wheels Per Player",
     "server.limit.wheels.description": "Maximum wheels per player. -1 = unlimited, 0 = none allowed.",
+    "server.limit.texts": "Max Texts Per Player",
+    "server.limit.texts.description": "Maximum placed texts per player. -1 = unlimited, 0 = none allowed.",
     "package.sort.popular": "Popular",
     "package.sort.newest": "Newest",
     "package.sort.trending": "Trending",
