@@ -59,6 +59,8 @@ public sealed class TimedExplosive : Component, Component.IDamageable
 			x.PhysicsForceScale = Force;
 			x.DamageAmount = Damage;
 			x.Attacker = Attacker.IsValid() ? Attacker : go;
+			x.DamageTags ??= new();
+			x.DamageTags.Add( DamageTags.Explosion );
 		}, FindMode.EverythingInSelfAndDescendants );
 
 		go.Enabled = true;

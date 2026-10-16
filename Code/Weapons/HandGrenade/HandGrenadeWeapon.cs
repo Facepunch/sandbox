@@ -284,6 +284,8 @@ public sealed class HandGrenadeWeapon : BaseSandboxWeapon
 			x.PhysicsForceScale = Force;
 			x.DamageAmount = MaxDamage;
 			x.Attacker = Attacker;
+			x.DamageTags ??= new();
+			x.DamageTags.Add( DamageTags.Explosion );
 		}, FindMode.EverythingInSelfAndDescendants );
 
 		explosion.Enabled = true;
