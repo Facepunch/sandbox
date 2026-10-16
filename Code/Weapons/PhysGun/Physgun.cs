@@ -970,6 +970,12 @@ public partial class Physgun : Local.IPlayerEvents
 			var count = bodies.Select( x => x.GameObject.Root ).Distinct().Count();
 			var phrase = Game.Language.GetPhrase( "physgun.unfrozen", new() { { "count", count.ToString() } } );
 			Sandbox.UI.Notices.AddNotice( "ac_unit", Color.Cyan, phrase );
+
+			// Flash everything that got unfrozen, same as freezing does
+			foreach ( var target in bodies.Select( x => GetHighlightTarget( x.GameObject ) ).Distinct() )
+			{
+				OutlineFlash.Play( target, HighlightColor, HighlightObscuredColor, HighlightWidth, _freezeFlashDuration, 3.0f );
+			}
 		}
 
 		if ( body.IsProxy ) return;
