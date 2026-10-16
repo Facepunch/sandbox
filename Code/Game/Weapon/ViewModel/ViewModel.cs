@@ -73,6 +73,15 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 	Vector2 InertiaScale { get; set; } = new Vector2( 2, 2 );
 
 	/// <summary>
+	/// Limit the inertia to avoid extreme swaying at lower framerate.
+	/// </summary>
+	[Property, Group( "Inertia" )]
+	public float MaxInertia { get; set; } = 15.0f;
+
+	const float InertiaLagTime = 0.0167f;
+	const float InertiaSmoothingTime = 0.03f;
+
+	/// <summary>
 	/// Swing the viewmodel around based on the player's look direction, with a springy lag. This is purely cosmetic and does not affect the actual camera.
 	/// </summary>
 	[Property, Group( "Inertia" )]
@@ -158,8 +167,18 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 		var newPitch = rot.pitch;
 		var newYaw = rot.yaw;
 
-		currentInertia = new Vector2( Angles.NormalizeAngle( newPitch - lastInertia.x ), Angles.NormalizeAngle( lastInertia.y - newYaw ) );
+		var frameDelta = new Vector2( Angles.NormalizeAngle( newPitch - lastInertia.x ), Angles.NormalizeAngle( lastInertia.y - newYaw ) );
 		lastInertia = new( newPitch, newYaw );
+
+		var dt = Time.Delta;
+		if ( dt <= 0f ) return;
+
+		var turnSpeed = frameDelta / MathF.Max( dt, 1f / 500f );
+		var target = (turnSpeed * InertiaLagTime).Clamp( -MaxInertia, MaxInertia );
+
+		currentInertia = new Vector2(
+			MathX.ExponentialDecay( currentInertia.x, target.x, InertiaSmoothingTime, dt ),
+			MathX.ExponentialDecay( currentInertia.y, target.y, InertiaSmoothingTime, dt ) );
 	}
 
 	/// <summary>
