@@ -294,11 +294,15 @@
     bool HasAnyOverride => Renderers.Any( r => r.MaterialOverride is not null );
     bool HasMixedOverride => Renderers.Select( r => r.MaterialOverride ).Distinct().Skip( 1 ).Any();
 
+    // workshop materials are listed by package ident, not by their mounted path
+    static string PickerValue( Material material ) =>
+        material is null ? null : Cloud.ResolvePrimaryAsset( material.ResourcePath )?.FullIdent ?? material.ResourcePath;
+
     void PickWholeMaterial()
     {
         var popup = new ResourceSelectPopup();
         popup.Extension = "material";
-        popup.CurrentValue = HasMixedOverride ? null : Renderers[0].MaterialOverride?.ResourcePath;
+        popup.CurrentValue = HasMixedOverride ? null : PickerValue( Renderers[0].MaterialOverride );
         popup.AllowPackages = true;
         popup.Parent = FindPopupPanel();
         popup.OnSelectedFile = SetWholeMaterialOverride;
@@ -320,7 +324,7 @@
 
         var popup = new ResourceSelectPopup();
         popup.Extension = "material";
-        popup.CurrentValue = mat?.ResourcePath;
+        popup.CurrentValue = PickerValue( mat );
         popup.AllowPackages = true;
         popup.Parent = FindPopupPanel();
         popup.OnSelectedFile = (path) => SetMaterialOverride(index, path);
