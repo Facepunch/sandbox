@@ -69,6 +69,7 @@
     "ui.inspect.material_number": "Material {number}",
     "ui.inspect.material_override": "Override Material",
     "ui.inspect.no_material_override": "None",
+    "ui.inspect.mixed_material_override": "Mixed",
     "ui.inspect.material_override_hint": "Applies an override material, which will replace every other material on this object",
     "ui.inspect.additional_objects": "Object (+{count})",
     "ui.mounts.item_count": "{mount}, {count} items",
