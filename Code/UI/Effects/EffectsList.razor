@@ -254,7 +254,7 @@
                 {
                     var value = prop.GetValue<object>();
                     if ( value is not null )
-                        result[prop.Name] = value;
+                        result[$"{component.GetType().Name}.{prop.Name}"] = value;
                 }
                 catch { }
             }
@@ -267,9 +267,13 @@
         foreach ( var component in _manager.GetComponents( resourcePath ) )
         {
             var typeDesc = TypeLibrary.GetType( component.GetType() );
-            foreach ( var (name, value) in properties )
+            foreach ( var (key, value) in properties )
             {
-                var propDesc = typeDesc?.GetProperty( name );
+                // older presets saved just the property name
+                var split = key.LastIndexOf( '.' );
+                if ( split >= 0 && key[..split] != component.GetType().Name ) continue;
+
+                var propDesc = typeDesc?.GetProperty( key[(split + 1)..] );
                 if ( propDesc is null ) continue;
 
                 try
