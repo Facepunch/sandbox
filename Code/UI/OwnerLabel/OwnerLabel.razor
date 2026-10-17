@@ -35,20 +35,15 @@
 
     string FindOwnerName()
     {
-		var camera = Scene.Camera;
-        if ( camera is null || !Hud.IsVisible( HudElement.OwnerLabel ) ) return null;
+        if ( !Hud.IsVisible( HudElement.OwnerLabel ) ) return null;
 
-		// only while the Inspect menu is open, where the cursor is free and picks what to look at
-		if ( !Input.Down( "inspectmenu" ) ) return null;
+		// only while the Inspect menu is open, for the object it highlights
+		if ( !SpawnMenuHost.IsOpen || SpawnMenuHost.GetActiveMode() is not ContextMenuHost host ) return null;
 
-		var tr = Scene.Trace
-			.Ray( camera.ScreenPixelToRay( Mouse.Position ), 2048 )
-			.WithoutTags( "player", "trigger" )
-			.Run();
+		var hovered = host.Hovered;
+		if ( !hovered.IsValid() ) return null;
 
-		if ( !tr.Hit || !tr.GameObject.IsValid() ) return null;
-
-		var ownable = tr.GameObject.GetComponentInParent<Ownable>( true );
+		var ownable = hovered.GetComponentInParent<Ownable>( true );
 		return ownable.IsValid() ? ownable.Owner?.DisplayName : null;
     }
 
