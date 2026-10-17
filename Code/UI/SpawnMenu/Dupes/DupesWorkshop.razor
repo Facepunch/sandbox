@@ -87,7 +87,11 @@
     // bumped on every restart so replies to older queries are dropped
     int _queryGeneration;
 
-    void Rebuild() => _ = Restart();
+    // the first load comes from OnParametersSetAsync, initializers shouldn't start one too
+    void Rebuild()
+    {
+        if ( _queryGeneration > 0 ) _ = Restart();
+    }
 
     Task Restart()
     {
