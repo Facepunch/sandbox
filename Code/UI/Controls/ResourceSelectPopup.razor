@@ -12,6 +12,7 @@
             <div class="popup-header">
                 <h2>@Title</h2>
                 <TextEntry class="search" Placeholder="#spawnmenu.common.search" Value:bind=@Search HasClearButton></TextEntry>
+                <UIButton class="size-button" Icon=@IconSize.Icon() Tooltip="#ui.icon_size.title" @onclick=@(() => SpawnMenuIconSizeExtensions.OpenMenu( this, size => IconSize = size )) />
                 @if (AllowPackages)
                 {
                     <UIDropdown class="sort-dropdown" Items=@SortItems Value=@SortMode
@@ -25,15 +26,16 @@
             }
             else
             {
-            <VirtualGrid Items=@(_filteredItems) ItemSize=@(new Vector2( 190, 238 )) class="grid">
+            <MixedVirtualGrid @ref=Grid Items=@(_filteredItems) ItemSize=@ItemSize class="grid @IconSize.CssClass()">
                 <Item Context="item">
                     @if (item is Resource res)
                     {
                         bool selected = res.ResourcePath.Equals(_pendingValue ?? CurrentValue, StringComparison.OrdinalIgnoreCase);
                         string itemClass = selected ? "item active" : "item";
                         string thumbUrl = $"thumb:{res.ResourcePath}";
+                        string name = res is IDefinitionResource def ? def.Title : res.ResourceName;
 
-                        <div @key=@res.ResourcePath class="@itemClass" @onclick=@(() => OnItemClicked(res)) @ondoubleclick=@(() => { OnItemClicked(res); ConfirmSelection(); })>
+                        <div @key=@res.ResourcePath class="@itemClass" Tooltip=@SmallTooltip( name ) @onclick=@(() => OnItemClicked(res)) @ondoubleclick=@(() => { OnItemClicked(res); ConfirmSelection(); })>
 
                             <div class="icon" style="background-image: url( @thumbUrl )"></div>
 
@@ -55,7 +57,7 @@
                         bool selected = pkg.FullIdent.Equals(_pendingValue ?? CurrentValue, StringComparison.OrdinalIgnoreCase);
                         string itemClass = selected ? "item active" : "item";
 
-                        <div @key=@pkg.FullIdent class="@itemClass" @onclick=@(() => OnPackageClicked(pkg)) @ondoubleclick=@(() => { OnPackageClicked(pkg); ConfirmSelection(); })>
+                        <div @key=@pkg.FullIdent class="@itemClass" Tooltip=@SmallTooltip( pkg.Title ) @onclick=@(() => OnPackageClicked(pkg)) @ondoubleclick=@(() => { OnPackageClicked(pkg); ConfirmSelection(); })>
 
                             <div class="icon" style="background-image: url( @pkg.Thumb )"></div>
                             <div class="title">@pkg.Title</div>
@@ -64,7 +66,7 @@
                         </div>
                     }
                 </Item>
-            </VirtualGrid>
+            </MixedVirtualGrid>
             }
         </div>
 
@@ -102,6 +104,42 @@
     public string Category { get; set; }
 
     PackageSortMode SortMode { get; set; } = PackageSortMode.Popular;
+
+    const string IconSizeCookie = "resource_select.icon_size";
+    MixedVirtualGrid Grid;
+
+    /// <summary>
+    /// Tile size, kept apart from the spawn menu's since these tiles also show a description.
+    /// </summary>
+    SpawnMenuIconSize IconSize
+    {
+        get => Game.Cookies.Get( IconSizeCookie, SpawnMenuIconSize.Medium );
+        set
+        {
+            if ( value == IconSize ) return;
+            Game.Cookies.Set( IconSizeCookie, value );
+
+            // Cells are only rebuilt when their item changes, throw them away so
+            // the text and tooltips match the new size.
+            if ( Grid.IsValid() )
+            {
+                Grid.Clear();
+                Grid.Items = _filteredItems;
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    Vector2 ItemSize => IconSize switch
+    {
+        SpawnMenuIconSize.Small => new Vector2( 120, 120 ),
+        SpawnMenuIconSize.Large => new Vector2( 260, 308 ),
+        _ => new Vector2( 190, 238 )
+    };
+
+    // Small tiles drop the title, so it moves into a tooltip
+    string SmallTooltip( string title ) => IconSize == SpawnMenuIconSize.Small ? title : null;
 
     string DefaultTitle()
     {

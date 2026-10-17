@@ -150,17 +150,7 @@
             SortOrder = mode;
     }
 
-    void OpenIconSizeMenu()
-    {
-        var menu = new Sandbox.UI.Menu();
-        foreach ( var (size, info) in DisplayInfo.ForEnumValues<SpawnMenuIconSize>() )
-        {
-            var s = size;
-            menu.AddOption( info.Name, s.Icon(), () => IconSize = s );
-        }
-
-        menu.Open( this, Popup.PositionMode.UnderMouse );
-    }
+    void OpenIconSizeMenu() => SpawnMenuIconSizeExtensions.OpenMenu( this, size => IconSize = size );
 
     public override void Tick()
     {

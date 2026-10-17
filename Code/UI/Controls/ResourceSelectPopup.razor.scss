@@ -66,13 +66,14 @@ ResourceSelectPopup.popup .inner .grid
     width: 100%;
     flex-grow: 1;
     min-height: 0px;
-    padding: 5px;
+    padding: 10px;
+    gap: 10px;
 }
 
 ResourceSelectPopup.popup .inner .grid .item
 {
     width: 100%;
-    margin: 5px;
+    height: 100%;
     padding: 10px;
     gap: 0px;
     position: relative;
@@ -88,9 +89,9 @@ ResourceSelectPopup.popup .inner .grid .item
     .icon
     {
         width: 100%;
-        aspect-ratio: 1;
+        flex-grow: 1;
+        min-height: 0px;
         margin-bottom: 10px;
-        flex-shrink: 0;
         background-color: $ui-tile-bg;
         background-position: center;
         background-size: contain;
@@ -135,6 +136,22 @@ ResourceSelectPopup.popup .inner .grid .item
     {
         background-color: $ui-hover-fill;
         border-color: $ui-blue;
+    }
+}
+
+// icon only, the title is in the tooltip
+ResourceSelectPopup.popup .inner .grid.size-small .item
+{
+    padding: 6px;
+
+    .icon
+    {
+        margin-bottom: 0px;
+    }
+
+    .title, .desc
+    {
+        display: none;
     }
 }
 

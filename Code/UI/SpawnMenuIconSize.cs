@@ -1,3 +1,5 @@
+using Sandbox.UI;
+
 namespace Sandbox;
 
 /// <summary>
@@ -59,4 +61,19 @@ public static class SpawnMenuIconSizeExtensions
 		SpawnMenuIconSize.Large => "crop_square",
 		_ => "grid_view"
 	};
+
+	/// <summary>
+	/// Open the menu that picks a tile size, under the mouse.
+	/// </summary>
+	public static void OpenMenu( Panel source, Action<SpawnMenuIconSize> onPicked )
+	{
+		var menu = new Sandbox.UI.Menu();
+		foreach ( var (size, info) in DisplayInfo.ForEnumValues<SpawnMenuIconSize>() )
+		{
+			var s = size;
+			menu.AddOption( info.Name, s.Icon(), () => onPicked( s ) );
+		}
+
+		menu.Open( source, Popup.PositionMode.UnderMouse );
+	}
 }
