@@ -153,14 +153,19 @@
         StateHasChanged();
     }
 
+    int _workshopQuery;
+
     async Task FetchWorkshop()
     {
+        var id = ++_workshopQuery;
         _loadingWorkshop = true;
         StateHasChanged();
 
         // only effects, the newest of every type can have none of them
         var query = string.IsNullOrEmpty( _filter ) ? "type:spp sort:newest" : $"type:spp sort:newest {_filter}";
         var result = await Package.FindAsync( query );
+        if ( id != _workshopQuery ) return;
+
         _workshopPackages = result?.Packages.Where( p => p.TypeName == "spp" ).ToList() ?? new();
 
         _loadingWorkshop = false;
