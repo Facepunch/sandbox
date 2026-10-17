@@ -91,6 +91,7 @@
     public void OnValueChanged()
     {
         var path = Property.As.String;
+        _shownValue = path;
 
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -159,10 +160,7 @@
 
         // the value can change from outside, like a tool copying a material into its setting
         if ( Property is not null && Property.As.String != _shownValue )
-        {
-            _shownValue = Property.As.String;
             OnValueChanged();
-        }
     }
 
     string _shownValue;
