@@ -104,6 +104,10 @@
             // opened
             if (state)
             {
+                // a mouse button held into the menu can be let go while the UI has the cursor, and the weapon never hears it
+                Input.ReleaseAction( "attack1" );
+                Input.ReleaseAction( "attack2" );
+
                 if (Input.Pressed("inspectmenu"))
                 {
                     Hints.Current.Cancel("openinspectmenu");
