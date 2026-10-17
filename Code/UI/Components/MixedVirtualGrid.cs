@@ -32,7 +32,7 @@ public class MixedVirtualGrid : BaseVirtualPanel
 	private int _dropIndex = -1;
 
 	[Parameter] public Vector2 ItemSize { get; set; } = new( 100, 100 );
-	[Parameter] public bool ScaleUp { get; set; } = true;
+	[Parameter] public bool FillWidth { get; set; } = true;
 	[Parameter] public Func<PanelEvent, bool> CanAcceptDrop { get; set; }
 	[Parameter] public Action<int, PanelEvent> OnDropIndex { get; set; }
 	private bool _dragHover;
@@ -44,7 +44,7 @@ public class MixedVirtualGrid : BaseVirtualPanel
 
 	protected override bool UpdateLayout()
 	{
-		var geometryHash = HashCode.Combine( Box.RectInner, Box.Rect, ScaleFromScreen, ItemSize, ScaleUp, _spacing, _items.Count );
+		var geometryHash = HashCode.Combine( Box.RectInner, Box.Rect, ScaleFromScreen, ItemSize, FillWidth, _spacing, _items.Count );
 		if ( NeedsRebuild || geometryHash != _geometryHash )
 		{
 			_geometryHash = geometryHash;
@@ -72,14 +72,19 @@ public class MixedVirtualGrid : BaseVirtualPanel
 		var nominalWidth = MathF.Max( 1f, ItemSize.x );
 		var nominalHeight = MathF.Max( 1f, ItemSize.y );
 		var stepX = nominalWidth + _spacing.x;
-		_columns = Math.Max( 1, ((_innerRect.Width + _spacing.x) / stepX).FloorToInt() );
+		var fit = (_innerRect.Width + _spacing.x) / stepX;
 		_tileWidth = nominalWidth;
 		_tileHeight = nominalHeight;
 
-		if ( ScaleUp )
+		if ( FillWidth )
 		{
+			_columns = Math.Max( 1, (int)MathF.Round( fit ) );
 			_tileWidth = MathF.Max( 1f, (_innerRect.Width - (_columns - 1) * _spacing.x) / _columns );
 			_tileHeight = MathF.Max( 1f, _tileWidth * nominalHeight / nominalWidth );
+		}
+		else
+		{
+			_columns = Math.Max( 1, fit.FloorToInt() );
 		}
 
 		var top = _innerRect.Top;

@@ -37,7 +37,7 @@
         }
         else
         {
-            <MixedVirtualGrid @ref=Grid Items=@Entries ItemSize=@IconSize.ItemSize() ScaleUp=@false class=@IconSize.CssClass()>
+            <MixedVirtualGrid @ref=Grid Items=@Entries ItemSize=@IconSize.ItemSize() class=@IconSize.CssClass()>
                 <Item Context="item">
                     @if ( item is Entry entry )
                     {
