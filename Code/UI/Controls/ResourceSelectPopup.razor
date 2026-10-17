@@ -35,7 +35,7 @@
                         string thumbUrl = $"thumb:{res.ResourcePath}";
                         string name = res is IDefinitionResource def ? def.Title : res.ResourceName;
 
-                        <div @key=@res.ResourcePath class="@itemClass" Tooltip=@SmallTooltip( name ) @onclick=@(() => OnItemClicked(res)) @ondoubleclick=@(() => { OnItemClicked(res); ConfirmSelection(); })>
+                        <div @key=@res.ResourcePath class="@itemClass" Tooltip=@SmallTooltip( name ) @onclick=@(() => OnItemClicked(res)) @ondoubleclick=@(() => ConfirmItem(res.ResourcePath, () => OnItemClicked(res)))>
 
                             <div class="icon" style="background-image: url( @thumbUrl )"></div>
 
@@ -57,7 +57,7 @@
                         bool selected = pkg.FullIdent.Equals(_pendingValue ?? CurrentValue, StringComparison.OrdinalIgnoreCase);
                         string itemClass = selected ? "item active" : "item";
 
-                        <div @key=@pkg.FullIdent class="@itemClass" Tooltip=@SmallTooltip( pkg.Title ) @onclick=@(() => OnPackageClicked(pkg)) @ondoubleclick=@(() => { OnPackageClicked(pkg); ConfirmSelection(); })>
+                        <div @key=@pkg.FullIdent class="@itemClass" Tooltip=@SmallTooltip( pkg.Title ) @onclick=@(() => OnPackageClicked(pkg)) @ondoubleclick=@(() => ConfirmItem(pkg.FullIdent, () => OnPackageClicked(pkg)))>
 
                             <div class="icon" style="background-image: url( @pkg.Thumb )"></div>
                             <div class="title">@pkg.Title</div>
@@ -328,6 +328,13 @@
         _pendingValue = pkg.FullIdent;
 
         StateHasChanged();
+    }
+
+    // the first click of a double click has usually picked it already
+    void ConfirmItem( string value, Action pick )
+    {
+        if ( _pendingValue != value ) pick();
+        ConfirmSelection();
     }
 
     void StopPreview()
