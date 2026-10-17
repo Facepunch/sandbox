@@ -127,12 +127,14 @@ public class UIModal : Panel
 
 		modal.Body.AddChild<UISeparator>();
 
-		var buttons = modal.Body.Add.Panel( "buttons" );
-		AddButton( buttons, confirmText, () =>
+		modal.OnSubmit = () =>
 		{
 			onConfirm?.Invoke();
 			modal.Close();
-		} );
+		};
+
+		var buttons = modal.Body.Add.Panel( "buttons" );
+		AddButton( buttons, confirmText, modal.Submit );
 
 		if ( cancelText is not null )
 			AddButton( buttons, cancelText, modal.Close );
@@ -169,18 +171,25 @@ public class UIModal : Panel
 		if ( _focused ) return;
 
 		var entry = Descendants.OfType<TextEntry>().FirstOrDefault();
-		if ( entry is null ) return;
-
-		if ( !_wired )
+		if ( entry is not null && !_wired )
 		{
 			_wired = true;
 			entry.AddEventListener( "onsubmit", Submit );
 			entry.AddEventListener( "oncancel", Close );
 		}
 
-		if ( entry.Box.Rect.Width <= 0f || ++_framesLaidOut < 3 ) return;
+		if ( (entry ?? (Panel)this).Box.Rect.Width <= 0f || ++_framesLaidOut < 3 ) return;
 
 		_focused = true;
+
+		// nothing to type in, take focus so Enter and Escape still reach us
+		if ( entry is null )
+		{
+			AcceptsFocus = true;
+			Focus();
+			return;
+		}
+
 		entry.Focus();
 		entry.CaretPosition = entry.TextLength;
 	}
@@ -190,6 +199,13 @@ public class UIModal : Panel
 		if ( e.Button == "escape" )
 		{
 			Close();
+			e.StopPropagation = true;
+			return;
+		}
+
+		if ( e.Button is "enter" or "pad_enter" && InputFocus.Current == this )
+		{
+			Submit();
 			e.StopPropagation = true;
 			return;
 		}
