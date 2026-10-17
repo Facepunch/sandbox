@@ -28,7 +28,7 @@
         }
         else
         {
-            <VirtualGrid Items=@Items ItemSize=@(new Vector2( 240, 180 )) OnLastCell="@(() => { _ = QueryNext(); })">
+            <VirtualGrid Items=@Items ItemSize=@(new Vector2( 240, 180 )) OnLastCell="@LoadMore">
                 <Item Context="context">
 
                     @if (context is Storage.QueryItem item)
@@ -78,58 +78,74 @@
 
     public string Category { get; set; }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        Items.Clear();
-        await QueryNext();
-    }
+    protected override Task OnParametersSetAsync() => Restart();
 
     List<Storage.QueryItem> Items = new();
     Storage.QueryResult LastResult;
-
-    // the first page is on its way, the grid has nothing to show yet
     bool Loading;
+
+    // bumped on every restart so replies to older queries are dropped
+    int _queryGeneration;
+
+    void Rebuild() => _ = Restart();
+
+    Task Restart()
+    {
+        _queryGeneration++;
+        Items.Clear();
+        LastResult = null;
+        return QueryNext();
+    }
+
+    void LoadMore()
+    {
+        if ( Loading ) return;
+        _ = QueryNext();
+    }
 
     async Task QueryNext()
     {
+        var generation = _queryGeneration;
+        Loading = true;
+
         if ( LastResult != null )
         {
-            // No more items to load
-            if (!LastResult.HasMoreResults())
+            if ( !LastResult.HasMoreResults() )
+            {
+                Loading = false;
                 return;
+            }
 
-            LastResult = await LastResult.GetNextResults();
-            if (LastResult.Items == null) return;
+            var next = await LastResult.GetNextResults();
+            if ( generation != _queryGeneration ) return;
 
-            Items.AddRange(LastResult.Items);
+            LastResult = next;
+            if ( LastResult?.Items != null )
+                Items.AddRange( LastResult.Items );
+
+            Loading = false;
             StateHasChanged();
             return;
         }
 
-		Loading = true;
-		StateHasChanged();
+        StateHasChanged();
 
-		var query = new Storage.Query();
-		query.KeyValues["package"] = "facepunch.sandbox";
-		query.KeyValues["type"] = "dupe";
-		query.SortOrder = SortOrder.ToSortOrder();
+        var query = new Storage.Query();
+        query.KeyValues["package"] = "facepunch.sandbox";
+        query.KeyValues["type"] = "dupe";
+        query.SortOrder = SortOrder.ToSortOrder();
 
         if ( !string.IsNullOrWhiteSpace( Filter ) ) query.SearchText = Filter;
-        if (Category != null) query.KeyValues["Category"] = Category;
+        if ( Category != null ) query.KeyValues["Category"] = Category;
 
-		LastResult = await query.Run();
-		Loading = false;
+        var result = await query.Run();
+        if ( generation != _queryGeneration ) return;
 
-		if ( LastResult.Items != null )
-			Items.AddRange( LastResult.Items );
+        LastResult = result;
+        if ( LastResult?.Items != null )
+            Items.AddRange( LastResult.Items );
 
-		StateHasChanged();
-	}
-
-    async void Rebuild()
-    {
-        Items.Clear();
-        LastResult = null;
-        await QueryNext();
+        Loading = false;
+        StateHasChanged();
     }
 }
