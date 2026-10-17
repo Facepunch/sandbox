@@ -226,11 +226,23 @@
             || definition.Description?.Contains( text, StringComparison.OrdinalIgnoreCase ) == true;
     }
 
+    bool MatchesSearch( Package pkg )
+    {
+        var text = _search.Trim();
+        return pkg.Title?.Contains( text, StringComparison.OrdinalIgnoreCase ) == true
+            || pkg.FullIdent?.Contains( text, StringComparison.OrdinalIgnoreCase ) == true;
+    }
+
+    // the search the cloud packages were found with
+    string _cloudSearch = "";
+
     void RebuildFilteredItems()
     {
         var items = new List<object>();
         items.AddRange( _localResources.Where( MatchesSearch ) );
-        items.AddRange( _cloudPackages );
+
+        // until the workshop answers the new search, narrow the old results down by name
+        items.AddRange( _cloudSearch == _search.Trim() ? _cloudPackages : _cloudPackages.Where( MatchesSearch ) );
         _filteredItems = items;
     }
 
@@ -240,8 +252,9 @@
     async Task LoadCloudPackages()
     {
         var id = ++_loadId;
+        var search = _search.Trim();
         var query = $"sort:{SortMode.ToIdentifier()} type:{Extension}";
-        if ( !string.IsNullOrWhiteSpace( _search ) ) query += $" {_search.Trim()}";
+        if ( search.Length > 0 ) query += $" {search}";
 
         // the old sort's packages are stale, show the loader until the new ones arrive
         _loading = true;
@@ -268,6 +281,7 @@
             _cloudPackages.AddRange( result.Packages );
         }
 
+        _cloudSearch = search;
         RebuildFilteredItems();
         StateHasChanged();
     }
