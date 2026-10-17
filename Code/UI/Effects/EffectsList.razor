@@ -61,7 +61,7 @@
                         var resourcePath = mounted?.ResourcePath;
                         var enabled = resourcePath != null && (_manager?.IsEnabled( resourcePath ) ?? false);
                         var selected = resourcePath != null && _manager?.SelectedPath == resourcePath;
-                        var mounting = _mounting.Contains( pkg.FullIdent );
+                        var mounting = _mountTasks.ContainsKey( pkg.FullIdent );
                         var thumbUrl = mounted?.Icon != null ? $"thumb:{mounted.Icon.ResourcePath}" : pkg.Thumb;
 
                         <div class="effect-row workshop @( selected ? "active" : "" ) @( mounting ? "loading" : "" )"
@@ -115,7 +115,7 @@
     bool _loadingWorkshop;
     List<Package> _workshopPackages = new();
     Dictionary<string, PostProcessResource> _mountedResources = new();
-    HashSet<string> _mounting = new();
+    Dictionary<string, Task<PostProcessResource>> _mountTasks = new();
 
     protected override void OnAfterTreeRender( bool firstTime )
     {
@@ -172,17 +172,24 @@
         _ = FetchWorkshop();
     }
 
-    async Task<PostProcessResource> MountAndGet( Package pkg )
+    Task<PostProcessResource> MountAndGet( Package pkg )
     {
-        if ( _mountedResources.TryGetValue( pkg.FullIdent, out var cached ) ) return cached;
+        if ( _mountedResources.TryGetValue( pkg.FullIdent, out var cached ) ) return Task.FromResult( cached );
+        if ( _mountTasks.TryGetValue( pkg.FullIdent, out var pending ) ) return pending;
 
-        _mounting.Add( pkg.FullIdent );
+        var task = Mount( pkg );
+        if ( !task.IsCompleted ) _mountTasks[pkg.FullIdent] = task;
+        return task;
+    }
+
+    async Task<PostProcessResource> Mount( Package pkg )
+    {
         StateHasChanged();
 
         var resource = await ResourceLibrary.LoadAsync<PostProcessResource>( pkg.FullIdent );
         resource ??= await Cloud.Load<PostProcessResource>( pkg.FullIdent, true );
 
-        _mounting.Remove( pkg.FullIdent );
+        _mountTasks.Remove( pkg.FullIdent );
 
         if ( resource != null )
             _mountedResources[pkg.FullIdent] = resource;
@@ -353,7 +360,7 @@
         hash.Add( _tab );
         hash.Add( _manager?.SelectedPath );
         hash.Add( _loadingWorkshop );
-        hash.Add( _mounting.Count );
+        hash.Add( _mountTasks.Count );
         hash.Add( _workshopPackages.Count );
 
         // the checkboxes follow the effects, which presets and the inspector can switch too

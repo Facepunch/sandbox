@@ -189,6 +189,10 @@ EffectsList .effect-row
     &.loading
     {
         opacity: 0.5;
+    }
+
+    &.loading, &.loading *
+    {
         pointer-events: none;
     }
 }
