@@ -62,14 +62,13 @@
                         var enabled = resourcePath != null && (_manager?.IsEnabled( resourcePath ) ?? false);
                         var selected = resourcePath != null && _manager?.SelectedPath == resourcePath;
                         var mounting = _mountTasks.ContainsKey( pkg.FullIdent );
-                        var thumbUrl = mounted?.Icon != null ? $"thumb:{mounted.Icon.ResourcePath}" : pkg.Thumb;
 
                         <div class="effect-row workshop @( selected ? "active" : "" ) @( mounting ? "loading" : "" )"
                              @onclick="@(() => OnWorkshopClick( pkg ))"
                              @onmouseenter="@(() => { if ( resourcePath != null ) _manager?.Preview( resourcePath ); })"
                              @onmouseleave="@(() => _manager?.Unpreview())">
                             <UICheckbox Value=@enabled OnValueChanged=@((bool _) => OnWorkshopToggle( pkg )) />
-                            <div class="thumb" style="background-image: url(@thumbUrl)"></div>
+                            <div class="thumb" style="background-image: url(@pkg.Thumb)"></div>
                             <div class="info">
                                 <label class="name">@pkg.Title</label>
                                 <div class="author">
