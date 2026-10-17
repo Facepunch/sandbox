@@ -50,7 +50,7 @@ public sealed class VitalsSection : HudSection
 
 	// Settings for the box around the counters, and the spacing between them
 	const float BoxPadding = 15;
-	const float BoxSidePadding = BoxPadding * 2.5f;
+	const float BoxSidePadding = BoxPadding * 1.75f;
 	const float BoxGap = 10;
 	const float TitleTopInset = 5;
 	const float DigitBottomInset = 14;
