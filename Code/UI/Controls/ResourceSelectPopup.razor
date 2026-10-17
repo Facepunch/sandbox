@@ -144,12 +144,10 @@
     string DefaultTitle()
     {
         var type = AssetTypeAttribute.FindTypeByExtension( Extension )?.GetAttribute<AssetTypeAttribute>();
-        if ( type is null ) return "#ui.resource.select";
+        var name = LocalizedText.ResourceTypeName( Extension, type?.Name );
+        if ( name is null ) return "#ui.resource.select";
 
-        var name = LocalizedText.ResourceTypeName( type );
-        if ( name.StartsWith( '#' ) ) name = Game.Language.GetPhrase( name.Substring( 1 ) );
-
-        return Game.Language.GetPhrase( "ui.resource.selection", new() { { "type", name } } );
+        return Game.Language.GetPhrase( "ui.resource.selection", new() { { "type", LocalizedText.Resolve( name ) } } );
     }
 
     void SetSort( PackageSortMode mode )

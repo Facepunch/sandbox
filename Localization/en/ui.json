@@ -33,7 +33,6 @@
     "ui.common.reset": "Reset",
     "ui.resource.select": "Select Resource",
     "ui.resource.selection": "{type} Selection",
-    "ui.resource.material_selection": "Material Selection",
     "ui.resource.unknown_type": "Unknown Resource Type",
     "ui.resource.none_selected": "None Selected",
     "ui.resource.unknown": "Unknown Resource",

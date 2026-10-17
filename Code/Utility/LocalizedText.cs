@@ -66,8 +66,17 @@ internal static class LocalizedText
 	/// </summary>
 	public static string ResourceTypeName( AssetTypeAttribute assetType, string fallback = null )
 	{
-		return assetType?.Extension?.TrimStart( '.' ).ToLowerInvariant() switch
+		return ResourceTypeName( assetType?.Extension, assetType?.Name ?? fallback ?? "#ui.resource.title" );
+	}
+
+	/// <summary>
+	/// The same by extension, for types without an asset type like materials.
+	/// </summary>
+	public static string ResourceTypeName( string extension, string fallback )
+	{
+		return extension?.TrimStart( '.' ).ToLowerInvariant() switch
 		{
+			"material" or "vmat" => "#ui.resource.type.material",
 			"bdef" => "#tool.name.balloon",
 			"btndef" => "#tool.name.button",
 			"decal" => "#tool.name.decal",
@@ -81,7 +90,7 @@ internal static class LocalizedText
 			"spp" => "#tool.setting.effect",
 			"tdef" => "#tool.name.thruster",
 			"wdef" => "#tool.name.wheel",
-			_ => assetType?.Name ?? fallback ?? "#ui.resource.title"
+			_ => fallback
 		};
 	}
 

@@ -298,7 +298,6 @@
     {
         var popup = new ResourceSelectPopup();
         popup.Extension = "material";
-        popup.Title = "#ui.resource.material_selection";
         popup.CurrentValue = HasMixedOverride ? null : Renderers[0].MaterialOverride?.ResourcePath;
         popup.AllowPackages = true;
         popup.Parent = FindPopupPanel();
@@ -321,7 +320,6 @@
 
         var popup = new ResourceSelectPopup();
         popup.Extension = "material";
-        popup.Title = "#ui.resource.material_selection";
         popup.CurrentValue = mat?.ResourcePath;
         popup.AllowPackages = true;
         popup.Parent = FindPopupPanel();
