@@ -101,12 +101,14 @@
     int _rebuildVersion;
 
     const string VerifiedOnlyCookie = "spawnmenu.verified_only";
-    bool VerifiedOnly => Game.Cookies.Get( VerifiedOnlyCookie, false );
-    bool _lastVerifiedOnly;
+    static bool? _verifiedOnly;
+    static bool VerifiedOnly => _verifiedOnly ??= Game.Cookies.Get( VerifiedOnlyCookie, false );
+    bool _lastVerifiedOnly = VerifiedOnly;
 
     void ToggleVerified()
     {
-        Game.Cookies.Set( VerifiedOnlyCookie, !VerifiedOnly );
+        _verifiedOnly = !VerifiedOnly;
+        Game.Cookies.Set( VerifiedOnlyCookie, VerifiedOnly );
         _lastVerifiedOnly = VerifiedOnly;
         Rebuild();
     }

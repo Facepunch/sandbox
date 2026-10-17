@@ -33,9 +33,15 @@ public static class SpawnMenuIconSizeExtensions
 	/// </summary>
 	public static SpawnMenuIconSize Current
 	{
-		get => Game.Cookies.Get( Cookie, SpawnMenuIconSize.Medium );
-		set => Game.Cookies.Set( Cookie, value );
+		get => _current ??= Game.Cookies.Get( Cookie, SpawnMenuIconSize.Medium );
+		set
+		{
+			_current = value;
+			Game.Cookies.Set( Cookie, value );
+		}
 	}
+
+	static SpawnMenuIconSize? _current;
 
 	/// <summary>
 	/// Cell size to give a <see cref="Sandbox.UI.VirtualGrid"/> for this tile size.

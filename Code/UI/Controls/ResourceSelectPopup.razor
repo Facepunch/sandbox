@@ -107,16 +107,18 @@
 
     const string IconSizeCookie = "resource_select.icon_size";
     MixedVirtualGrid Grid;
+    SpawnMenuIconSize _iconSize = Game.Cookies.Get( IconSizeCookie, SpawnMenuIconSize.Medium );
 
     /// <summary>
     /// Tile size, kept apart from the spawn menu's since these tiles also show a description.
     /// </summary>
     SpawnMenuIconSize IconSize
     {
-        get => Game.Cookies.Get( IconSizeCookie, SpawnMenuIconSize.Medium );
+        get => _iconSize;
         set
         {
-            if ( value == IconSize ) return;
+            if ( value == _iconSize ) return;
+            _iconSize = value;
             Game.Cookies.Set( IconSizeCookie, value );
 
             // Cells are only rebuilt when their item changes, throw them away so
