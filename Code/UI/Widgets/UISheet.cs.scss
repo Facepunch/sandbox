@@ -95,7 +95,8 @@ UISheet
 		{
 			opacity: 0.4;
 
-			> .control
+			// widgets turn pointer-events back on, so switch them off on every child too
+			> .control, > .control *
 			{
 				pointer-events: none;
 			}
@@ -132,6 +133,10 @@ UISheet
 		> .control > .disabled
 		{
 			opacity: 0.4;
+		}
+
+		> .control > .disabled, > .control > .disabled *
+		{
 			pointer-events: none;
 		}
 
