@@ -31,8 +31,11 @@ public class UIDropdownList : Popup
 			row.AddEventListener( "onclick", () =>
 			{
 				onPick?.Invoke( item );
-				CloseAll();
+				Delete();
 			} );
 		}
 	}
+
+	// keeps a popup the dropdown sits in, like the resource picker, open while the list is used
+	protected override BasePopup ParentPopup => PopupSource?.AncestorsAndSelf.OfType<BasePopup>().FirstOrDefault();
 }
