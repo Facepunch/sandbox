@@ -41,7 +41,7 @@
                 <Item Context="item">
                     @if ( item is Entry entry )
                     {
-                        <SpawnMenuIcon Ident=@entry.Ident Title=@entry.Title Developer=@entry.Developer HideText=@(IconSize == SpawnMenuIconSize.Small) Tooltip=@(IconSize == SpawnMenuIconSize.Small ? entry.Title : null) />
+                        <SpawnMenuIcon Ident=@entry.Ident Title=@entry.Title Developer=@entry.Developer HideText=@(IconSize == SpawnMenuIconSize.Small) Tooltip=@(IconSize == SpawnMenuIconSize.Small ? entry.Title : "") />
                     }
                     else if ( item is CommunitySection )
                     {
