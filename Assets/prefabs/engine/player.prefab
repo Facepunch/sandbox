@@ -3122,7 +3122,7 @@
             "Children": []
           },
           {
-            "__guid": "babb18c2-372f-48d8-9998-668d2c218261",
+            "__guid": "b70e599e-7a69-486b-b8fc-4d99024e1e7f",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - y_front_pants_white",
@@ -3139,7 +3139,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "75dd4289-adca-43c4-aa4b-bc794eae3e05",
+                "__guid": "7e3889d5-51b8-431f-a1bf-0a635fdcb863",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -3411,6 +3411,13 @@
             "__guid": "0000897c-f685-40d2-bdcd-88b5663c0e09",
             "__enabled": true,
             "Flags": 0,
+            "FillDistance": 24,
+            "FillLight": {
+              "_type": "component",
+              "component_id": "f45643c9-eed1-40c1-9447-a57aa77e6f9e",
+              "go": "0c5ebcee-bc5a-4314-8bc4-b426e51f4973",
+              "component_type": "PointLight"
+            },
             "Light": {
               "_type": "component",
               "component_id": "b94699a4-3f31-4f22-9393-324e3cb589d6",
@@ -3437,9 +3444,10 @@
             "__guid": "b94699a4-3f31-4f22-9393-324e3cb589d6",
             "__enabled": true,
             "Flags": 0,
-            "Attenuation": 0.75581396,
-            "ConeInner": 18.313953,
-            "ConeOuter": 40.2907,
+            "Attenuation": 1.0931175,
+            "BakeLightIndex": -1,
+            "ConeInner": 19.676113,
+            "ConeOuter": 42,
             "Contribution": "Diffuse, Specular, Transmissive",
             "Cookie": {
               "Id": "2ef38fc1-eee3-4594-8ecc-11068b9854bd",
@@ -3447,20 +3455,66 @@
             },
             "FogMode": "Enabled",
             "FogStrength": 1,
-            "LightColor": "1,0.96549,0.91373,1",
+            "LightColor": "12.68,11.64494,10.37991,1",
+            "MixedShadows": false,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Radius": 500,
+            "Radius": 1500,
             "ShadowBias": 0.0005,
             "ShadowHardness": 0,
             "Shadows": true
           }
         ],
-        "Children": []
+        "Children": [
+          {
+            "__guid": "0c5ebcee-bc5a-4314-8bc4-b426e51f4973",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "FillLight",
+            "Position": "8,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "light_point",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [
+              {
+                "__type": "Sandbox.PointLight",
+                "__guid": "f45643c9-eed1-40c1-9447-a57aa77e6f9e",
+                "__enabled": true,
+                "Flags": 0,
+                "Attenuation": 24,
+                "BakeLightIndex": -1,
+                "ConstantAttenuation": 0,
+                "Contribution": "Diffuse, Specular, Transmissive",
+                "FogMode": "Enabled",
+                "FogStrength": 1,
+                "LightColor": "0.37209,0.32623,0.28037,1",
+                "LinearAttenuation": 0,
+                "MixedShadows": false,
+                "OnComponentDestroy": null,
+                "OnComponentDisabled": null,
+                "OnComponentEnabled": null,
+                "OnComponentFixedUpdate": null,
+                "OnComponentStart": null,
+                "OnComponentUpdate": null,
+                "Radius": 128,
+                "ShadowBias": 0.0005,
+                "ShadowHardness": 0,
+                "Shadows": false
+              }
+            ],
+            "Children": []
+          }
+        ]
       }
     ],
     "__properties": {
