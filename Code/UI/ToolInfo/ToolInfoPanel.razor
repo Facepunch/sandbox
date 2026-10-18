@@ -25,44 +25,22 @@
   }
  </div>
 
- @if ( HasAnyAction )
+ @{ var hints = Info.Hints.ToList(); }
+ @if ( hints.Count > 0 )
  {
   <div class="hints">
-   @if ( !string.IsNullOrEmpty( Info.PrimaryAction ) )
+   @foreach ( var hint in hints )
    {
     <div class="hint">
-     <InputHint Action="attack1" class="key" />
-     <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.PrimaryAction ) />
-    </div>
-   }
-   @if ( !string.IsNullOrEmpty( Info.SecondaryAction ) )
-   {
-    <div class="hint">
-     <InputHint Action="attack2" class="key" />
-     <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.SecondaryAction ) />
-    </div>
-   }
-   @if ( !string.IsNullOrEmpty( Info.ReloadAction ) )
-   {
-    <div class="hint">
-     <InputHint Action="reload" class="key" />
-     <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.ReloadAction ) />
-    </div>
-   }
-   @if ( !string.IsNullOrEmpty( Info.ReloadSecondaryAction ) )
-   {
-    <div class="hint">
-     <InputHint Action="reload" class="key" />
-     <Label class="plus" Text="+" />
-     <InputHint Action="attack2" class="key" />
-     <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.ReloadSecondaryAction ) />
-    </div>
-   }
-   @if ( !string.IsNullOrEmpty( Info.SnapAction ) )
-   {
-    <div class="hint">
-     <InputHint Action="snap" class="key" />
-     <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( Info.SnapAction ) />
+     @for ( int i = 0; i < hint.Actions.Length; i++ )
+     {
+      @if ( i > 0 )
+      {
+       <Label class="plus" Text="+" />
+      }
+      <InputHint Action=@hint.Actions[i] class="key" />
+     }
+     <Label class="text" Tokenize=@false Text=@LocalizedText.Resolve( hint.Label ) />
     </div>
    }
   </div>
@@ -91,16 +69,25 @@
 
 	IToolInfo Info => CurrentToolInfo;
 
-	bool HasAnyAction => !string.IsNullOrEmpty( Info?.PrimaryAction )
-	                     || !string.IsNullOrEmpty( Info?.SecondaryAction )
-	                     || !string.IsNullOrEmpty( Info?.ReloadAction )
-	                     || !string.IsNullOrEmpty( Info?.ReloadSecondaryAction )
-	                     || !string.IsNullOrEmpty( Info?.SnapAction );
-
 	protected override void OnUpdate()
 	{
 		SetClass( "visible", CurrentToolInfo is not null );
 	}
 
-	protected override int BuildHash() => System.HashCode.Combine( Info?.Name, Info?.Description, Info?.PrimaryAction, Info?.SecondaryAction, Info?.ReloadAction, Info?.ReloadSecondaryAction, Info?.SnapAction, System.HashCode.Combine( Hud.IsVisible( HudElement.ToolInfo ), Game.Language.SelectedCode ) );
+	protected override int BuildHash()
+	{
+		var hash = new System.HashCode();
+		hash.Add( Info?.Name );
+		hash.Add( Info?.Description );
+		hash.Add( Hud.IsVisible( HudElement.ToolInfo ) );
+		hash.Add( Game.Language.SelectedCode );
+
+		foreach ( var hint in Info?.Hints ?? [] )
+		{
+			hash.Add( hint.Label );
+			foreach ( var action in hint.Actions ) hash.Add( action );
+		}
+
+		return hash.ToHashCode();
+	}
 }

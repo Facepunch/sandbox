@@ -47,6 +47,18 @@
 	/// </summary>
 	public virtual string ReloadSecondaryAction => null;
 
+	public IEnumerable<ToolHint> Hints
+	{
+		get
+		{
+			if ( !string.IsNullOrEmpty( PrimaryAction ) ) yield return new( PrimaryAction, ["attack1"] );
+			if ( !string.IsNullOrEmpty( SecondaryAction ) ) yield return new( SecondaryAction, ["attack2"] );
+			if ( !string.IsNullOrEmpty( ReloadAction ) ) yield return new( ReloadAction, ["reload"] );
+			if ( !string.IsNullOrEmpty( ReloadSecondaryAction ) ) yield return new( ReloadSecondaryAction, ["reload", "attack2"] );
+			if ( !string.IsNullOrEmpty( SnapAction ) ) yield return new( SnapAction, ["snap"] );
+		}
+	}
+
 	/// <summary>
 	/// Tags that TraceSelect will ignore. Override per-tool to filter out specific objects.
 	/// Defaults to "player" so tools cannot target players.
