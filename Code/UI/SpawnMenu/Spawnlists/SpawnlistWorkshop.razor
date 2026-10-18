@@ -119,7 +119,7 @@
         {
             if ( _filter == value ) return;
             _filter = value;
-            _ = Restart();
+            Rebuild();
         }
     }
 
@@ -131,61 +131,28 @@
         {
             if ( _sortOrder == value ) return;
             _sortOrder = value;
-            _ = Restart();
+            Rebuild();
         }
     }
 
-    protected override Task OnParametersSetAsync() => Restart();
+    protected override Task OnParametersSetAsync() => Pager.Restart();
 
-    List<WorkshopSpawnlist> Items = new();
-    Storage.QueryResult LastResult;
-    bool Loading;
+    WorkshopPager<WorkshopSpawnlist> _pager;
+    WorkshopPager<WorkshopSpawnlist> Pager => _pager ??= new( CreateQuery, CreateViewModel, StateHasChanged );
 
-    /// <summary>
-    /// Bumped when the filter or sort changes, so a query that comes back after that is thrown away.
-    /// </summary>
-    int _queryGeneration;
+    List<WorkshopSpawnlist> Items => Pager.Items;
+    bool Loading => Pager.Loading;
 
-    Task Restart()
+    // the first load comes from OnParametersSetAsync, initializers shouldn't start one too
+    void Rebuild()
     {
-        _queryGeneration++;
-        Items.Clear();
-        LastResult = null;
-        return QueryNext();
+        if ( Pager.Started ) _ = Pager.Restart();
     }
 
-    /// <summary>
-    /// The next page, when the grid reaches its end. One page at a time.
-    /// </summary>
-    void LoadMore()
+    void LoadMore() => Pager.LoadMore();
+
+    Storage.Query CreateQuery()
     {
-        if ( Loading ) return;
-        _ = QueryNext();
-    }
-
-    async Task QueryNext()
-    {
-        var generation = _queryGeneration;
-        Loading = true;
-
-        if ( LastResult != null )
-        {
-            if ( !LastResult.HasMoreResults() )
-            {
-                Loading = false;
-                return;
-            }
-
-            var next = await LastResult.GetNextResults();
-            if ( generation != _queryGeneration ) return;
-
-            LastResult = next;
-            AddItems( LastResult?.Items );
-            Loading = false;
-            StateHasChanged();
-            return;
-        }
-
         var query = new Storage.Query();
         query.KeyValues["package"] = "facepunch.sandbox";
         query.KeyValues["type"] = "spawnlist";
@@ -194,20 +161,7 @@
         if ( !string.IsNullOrWhiteSpace( Filter ) )
             query.SearchText = Filter;
 
-        var result = await query.Run();
-        if ( generation != _queryGeneration ) return;
-
-        LastResult = result;
-        AddItems( LastResult?.Items );
-        Loading = false;
-        StateHasChanged();
-    }
-
-    void AddItems( IEnumerable<Storage.QueryItem> queryItems )
-    {
-        if ( queryItems is null ) return;
-
-        Items.AddRange( queryItems.Select( CreateViewModel ) );
+        return query;
     }
 
     static WorkshopSpawnlist CreateViewModel( Storage.QueryItem item )

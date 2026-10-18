@@ -78,62 +78,24 @@
 
     public string Category { get; set; }
 
-    protected override Task OnParametersSetAsync() => Restart();
+    protected override Task OnParametersSetAsync() => Pager.Restart();
 
-    List<Storage.QueryItem> Items = new();
-    Storage.QueryResult LastResult;
-    bool Loading;
+    WorkshopPager<Storage.QueryItem> _pager;
+    WorkshopPager<Storage.QueryItem> Pager => _pager ??= new( CreateQuery, item => item, StateHasChanged );
 
-    // bumped on every restart so replies to older queries are dropped
-    int _queryGeneration;
+    List<Storage.QueryItem> Items => Pager.Items;
+    bool Loading => Pager.Loading;
 
     // the first load comes from OnParametersSetAsync, initializers shouldn't start one too
     void Rebuild()
     {
-        if ( _queryGeneration > 0 ) _ = Restart();
+        if ( Pager.Started ) _ = Pager.Restart();
     }
 
-    Task Restart()
+    void LoadMore() => Pager.LoadMore();
+
+    Storage.Query CreateQuery()
     {
-        _queryGeneration++;
-        Items.Clear();
-        LastResult = null;
-        return QueryNext();
-    }
-
-    void LoadMore()
-    {
-        if ( Loading ) return;
-        _ = QueryNext();
-    }
-
-    async Task QueryNext()
-    {
-        var generation = _queryGeneration;
-        Loading = true;
-
-        if ( LastResult != null )
-        {
-            if ( !LastResult.HasMoreResults() )
-            {
-                Loading = false;
-                return;
-            }
-
-            var next = await LastResult.GetNextResults();
-            if ( generation != _queryGeneration ) return;
-
-            LastResult = next;
-            if ( LastResult?.Items != null )
-                Items.AddRange( LastResult.Items );
-
-            Loading = false;
-            StateHasChanged();
-            return;
-        }
-
-        StateHasChanged();
-
         var query = new Storage.Query();
         query.KeyValues["package"] = "facepunch.sandbox";
         query.KeyValues["type"] = "dupe";
@@ -142,14 +104,6 @@
         if ( !string.IsNullOrWhiteSpace( Filter ) ) query.SearchText = Filter;
         if ( Category != null ) query.KeyValues["Category"] = Category;
 
-        var result = await query.Run();
-        if ( generation != _queryGeneration ) return;
-
-        LastResult = result;
-        if ( LastResult?.Items != null )
-            Items.AddRange( LastResult.Items );
-
-        Loading = false;
-        StateHasChanged();
+        return query;
     }
 }
