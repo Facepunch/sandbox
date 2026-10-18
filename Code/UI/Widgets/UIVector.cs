@@ -16,6 +16,9 @@ public class UIVector : BaseControl
 
 	float _snap = ScrubSnap;
 
+	object _shownValue;
+	int _shownFocus = -1;
+
 	/// <summary>
 	/// Whether we have a control for this type.
 	/// </summary>
@@ -33,6 +36,7 @@ public class UIVector : BaseControl
 	{
 		DeleteChildren( true );
 		_entries.Clear();
+		_shownValue = null;
 
 		if ( Property is null ) return;
 
@@ -68,6 +72,14 @@ public class UIVector : BaseControl
 		base.Tick();
 
 		if ( Property is null || _entries.Count == 0 ) return;
+
+		// only touch the boxes when the value or the box being typed in changes
+		var value = Property.GetValue<object>();
+		var focused = _entries.FindIndex( x => x.HasFocus );
+		if ( Equals( value, _shownValue ) && focused == _shownFocus ) return;
+
+		_shownValue = value;
+		_shownFocus = focused;
 
 		var values = Read();
 
