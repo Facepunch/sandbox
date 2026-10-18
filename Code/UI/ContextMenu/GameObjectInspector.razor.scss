@@ -1,5 +1,4 @@
 @import "/UI/Theme.scss";
-@import "/UI/Controls/resource-picker.scss";
 
 GameObjectInspector
 {
@@ -52,7 +51,6 @@ GameObjectInspector .material-row
 
     .material-picker
     {
-        @include resource-picker-control;
         min-width: 0px;
     }
 

@@ -7,41 +7,7 @@
 
 
 <root>
-    <div class="preview">
-        @if ( ThumbUrl != null )
-        {
-            <div class="thumb" style="background-image: url( @ThumbUrl )"></div>
-        }
-        else if ( Extension != null )
-        {
-            <div class="ext-badge">@Extension.ToUpperInvariant()</div>
-        }
-        else
-        {
-            <div class="ext-badge">?</div>
-        }
-    </div>
-
-    <div class="content">
-        @if ( ResourceType == null && Extension == null )
-        {
-            <div class="title">#ui.resource.unknown_type</div>
-        }
-        else if ( Title == null )
-        {
-            <div class="title empty">#ui.resource.none_selected</div>
-        }
-        else
-        {
-            <div class="title">@Title</div>
-        }
-
-        @if ( TypeName != null )
-        {
-            <div class="subtitle">@TypeName</div>
-        }
-    </div>
-
+    <ResourcePickerButton Thumb=@ThumbUrl Badge=@(Extension?.ToUpperInvariant() ?? "?") Title=@DisplayTitle Empty=@(Title == null && !UnknownType) Subtitle=@TypeName />
 </root>
 
 @code
@@ -57,6 +23,9 @@
     /// The extension being picked, from the asset type or straight from the attribute for types without one (materials).
     /// </summary>
     string Extension => ResourceAttribute?.Extension ?? SelectAttribute?.Extension;
+
+    bool UnknownType => ResourceType == null && Extension == null;
+    string DisplayTitle => UnknownType ? "#ui.resource.unknown_type" : Title ?? "#ui.resource.none_selected";
 
     string TypeName
     {

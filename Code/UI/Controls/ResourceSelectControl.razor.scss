@@ -1,7 +1,5 @@
-
-@import 'resource-picker.scss';
-
 ResourceSelectControl
 {
-	@include resource-picker-control;
+	flex-grow: 1;
+	min-width: 0px;
 }

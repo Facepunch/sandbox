@@ -5,30 +5,7 @@
 @attribute [CustomEditor(typeof(GameResource))]
 
 <root>
-
-    <div class="preview">
-        @if ( ResourcePath != null )
-        {
-            <div class="thumb" style="background-image: url( thumb:@ResourcePath )"></div>
-        }
-        else
-        {
-            <div class="ext-badge">@Extension</div>
-        }
-    </div>
-
-    <div class="content">
-        @if ( Title == null )
-        {
-            <div class="title empty">#ui.resource.none_selected</div>
-        }
-        else
-        {
-            <div class="title">@Title</div>
-        }
-        <div class="subtitle">@TypeName</div>
-    </div>
-
+    <ResourcePickerButton Thumb=@(ResourcePath != null ? $"thumb:{ResourcePath}" : null) Badge=@Extension Title=@(Title ?? "#ui.resource.none_selected") Empty=@(Title == null) Subtitle=@TypeName />
 </root>
 
 @code
