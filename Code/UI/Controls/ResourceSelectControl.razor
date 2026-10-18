@@ -7,7 +7,7 @@
 
 
 <root>
-    <ResourcePickerButton Thumb=@ThumbUrl Badge=@(Extension?.ToUpperInvariant() ?? "?") Title=@DisplayTitle Empty=@(Title == null && !UnknownType) Subtitle=@TypeName />
+    <ResourcePickerButton Thumb=@ThumbUrl Badge=@(Extension ?? "?") Title=@DisplayTitle Empty=@(Title == null && !UnknownType) Subtitle=@TypeName />
 </root>
 
 @code
@@ -27,15 +27,7 @@
     bool UnknownType => ResourceType == null && Extension == null;
     string DisplayTitle => UnknownType ? "#ui.resource.unknown_type" : Title ?? "#ui.resource.none_selected";
 
-    string TypeName
-    {
-        get
-        {
-            if ( ResourceAttribute != null ) return LocalizedText.ResourceTypeName( ResourceAttribute );
-            if ( Extension == "material" ) return "#ui.resource.type.material";
-            return null;
-        }
-    }
+    string TypeName => ResourceAttribute != null ? LocalizedText.ResourceTypeName( ResourceAttribute ) : LocalizedText.ResourceTypeName( Extension, null );
 
     /// <summary>
     /// Refreshes the resource type metadata and current selection.

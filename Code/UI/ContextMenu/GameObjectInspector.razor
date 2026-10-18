@@ -50,7 +50,7 @@
                     <div class="material-row @(anyOverride ? "overridden" : "")">
                         <UIHintLabel class="label" Text="#ui.inspect.material_override" Hint="#ui.inspect.material_override_hint"></UIHintLabel>
                         <ResourcePickerButton class="material-picker" @onclick=@PickWholeMaterial Thumb=@MaterialThumb( wholeOverride ) Badge=@(mixedOverride ? "*" : "-")
-                                              Title=@overrideName Empty=@(!anyOverride) Subtitle="#ui.resource.type.material" />
+                                              Title=@overrideName Empty=@(!anyOverride) Subtitle=@MaterialType />
                         @if (anyOverride)
                         {
                             <UIButton class="material-revert" Text="x" @onclick=@(() => SetWholeMaterialOverride(null))></UIButton>
@@ -69,7 +69,7 @@
 
                         <div class="material-row @(hasOverride ? "overridden" : "") @(locked ? "locked" : "")">
                         <label>@Game.Language.GetPhrase( "ui.inspect.material_number", new() { { "number", index + 1 } } )</label>
-                            <ResourcePickerButton class="material-picker" @onclick=@(() => PickMaterial(index)) Thumb=@MaterialThumb( mat ) Empty=@(mat is null) Subtitle="#ui.resource.type.material"
+                            <ResourcePickerButton class="material-picker" @onclick=@(() => PickMaterial(index)) Thumb=@MaterialThumb( mat ) Empty=@(mat is null) Subtitle=@MaterialType
                                                   Title=@(locked && mat is null ? overrideName : mat?.ResourceName ?? Game.Language.GetPhrase( "ui.inspect.default_material" )) />
                             @if (hasOverride)
                             {
@@ -265,6 +265,8 @@
 
     bool HasAnyOverride => Renderers.Any( r => r.MaterialOverride is not null );
     bool HasMixedOverride => Renderers.Select( r => r.MaterialOverride ).Distinct().Skip( 1 ).Any();
+
+    static readonly string MaterialType = LocalizedText.ResourceTypeName( "material", null );
 
     static string MaterialThumb( Material material ) => material is null ? null : $"thumb:{material.ResourcePath}";
 

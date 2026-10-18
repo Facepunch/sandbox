@@ -24,7 +24,7 @@
 
         var typeDesc = TypeLibrary.GetType( Property.PropertyType );
         var assetType = typeDesc?.GetAttribute<AssetTypeAttribute>();
-        Extension = assetType?.Extension?.ToUpperInvariant().Truncate( 4 ) ?? "RES";
+        Extension = assetType?.Extension ?? "RES";
         TypeName = LocalizedText.ResourceTypeName( assetType, Property.PropertyType?.Name );
 
         OnValueChanged();

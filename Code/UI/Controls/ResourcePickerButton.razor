@@ -11,7 +11,7 @@
         }
         else
         {
-            <div class="ext-badge">@Badge</div>
+            <div class="ext-badge">@Badge?.ToUpperInvariant().Truncate( 3 )</div>
         }
     </div>
 
@@ -31,6 +31,9 @@
     /// </summary>
     [Parameter] public string Thumb { get; set; }
 
+    /// <summary>
+    /// Shown instead of the image, cut to three letters so it fits.
+    /// </summary>
     [Parameter] public string Badge { get; set; } = "?";
 
     [Parameter] public string Title { get; set; }
