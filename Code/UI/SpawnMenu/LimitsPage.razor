@@ -16,72 +16,27 @@
     // The limits are replicated server convars - only the host can change them.
     public override bool IsPageVisible() => Networking.IsHost;
 
-    readonly LimitSettings Settings = new();
+    readonly List<SerializedProperty> Settings = BuildSettings();
 
-    // Write through the console system on the host so the replicated convars change for everyone.
-    sealed class LimitSettings
+    // One row per limit convar, written through the console system so the replicated value changes for everyone.
+    static List<SerializedProperty> BuildSettings()
     {
-        [Property, Title( "#server.limit.props" ), Description( "#server.limit.props.description" ), Range( -1, 1024 ), Step( 1 ), Order( 0 )]
-        public int Props
-        {
-            get => LimitsSystem.MaxPropsPerPlayer;
-            set => ConsoleSystem.SetValue( "sandbox.limit.props", value );
-        }
+        var limits = Game.TypeLibrary.GetType( typeof( LimitsSystem ) );
 
-        [Property, Title( "#server.limit.explosives" ), Description( "#server.limit.explosives.description" ), Range( -1, 16 ), Step( 1 ), Order( 1 )]
-        public int Explosives
-        {
-            get => LimitsSystem.MaxExplosivesPerPlayer;
-            set => ConsoleSystem.SetValue( "sandbox.limit.explosives", value );
-        }
+        return limits.Properties
+            .Where( p => p.IsStatic && p.HasAttribute<ConVarAttribute>() )
+            .OrderBy( p => p.GetCustomAttribute<OrderAttribute>()?.Value ?? 0 )
+            .Select( p =>
+            {
+                var convar = p.GetCustomAttribute<ConVarAttribute>().Name;
+                var phrase = $"#server.{convar["sandbox.".Length..]}";
 
-        [Property, Title( "#server.limit.constraints" ), Description( "#server.limit.constraints.description" ), Range( -1, 512 ), Step( 1 ), Order( 2 )]
-        public int Constraints
-        {
-            get => LimitsSystem.MaxConstraints;
-            set => ConsoleSystem.SetValue( "sandbox.limit.constraints", value );
-        }
+                var attributes = new List<Attribute> { new PropertyAttribute(), new DescriptionAttribute( $"{phrase}.description" ), new StepAttribute( 1 ) };
+                if ( p.GetCustomAttribute<RangeAttribute>() is { } range ) attributes.Add( range );
 
-        [Property, Title( "#server.limit.balloons" ), Description( "#server.limit.balloons.description" ), Range( -1, 64 ), Step( 1 ), Order( 3 )]
-        public int Balloons
-        {
-            get => LimitsSystem.MaxBalloons;
-            set => ConsoleSystem.SetValue( "sandbox.limit.balloons", value );
-        }
-
-        [Property, Title( "#server.limit.emitters" ), Description( "#server.limit.emitters.description" ), Range( -1, 64 ), Step( 1 ), Order( 4 )]
-        public int Emitters
-        {
-            get => LimitsSystem.MaxEmitters;
-            set => ConsoleSystem.SetValue( "sandbox.limit.emitters", value );
-        }
-
-        [Property, Title( "#server.limit.thrusters" ), Description( "#server.limit.thrusters.description" ), Range( -1, 64 ), Step( 1 ), Order( 5 )]
-        public int Thrusters
-        {
-            get => LimitsSystem.MaxThrusters;
-            set => ConsoleSystem.SetValue( "sandbox.limit.thrusters", value );
-        }
-
-        [Property, Title( "#server.limit.hoverballs" ), Description( "#server.limit.hoverballs.description" ), Range( -1, 32 ), Step( 1 ), Order( 6 )]
-        public int Hoverballs
-        {
-            get => LimitsSystem.MaxHoverballs;
-            set => ConsoleSystem.SetValue( "sandbox.limit.hoverballs", value );
-        }
-
-        [Property, Title( "#server.limit.wheels" ), Description( "#server.limit.wheels.description" ), Range( -1, 32 ), Step( 1 ), Order( 7 )]
-        public int Wheels
-        {
-            get => LimitsSystem.MaxWheels;
-            set => ConsoleSystem.SetValue( "sandbox.limit.wheels", value );
-        }
-
-        [Property, Title( "#server.limit.texts" ), Description( "#server.limit.texts.description" ), Range( -1, 256 ), Step( 1 ), Order( 8 )]
-        public int Texts
-        {
-            get => LimitsSystem.MaxTexts;
-            set => ConsoleSystem.SetValue( "sandbox.limit.texts", value );
-        }
+                // the name is what the row shows
+                return Game.TypeLibrary.CreateProperty<int>( phrase, () => (int)p.GetValue( null ), v => ConsoleSystem.SetValue( convar, v ), attributes.ToArray() );
+            } )
+            .ToList();
     }
 }

@@ -8,47 +8,47 @@ using Sandbox.UI;
 internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpawnEvents, IToolActionEvents
 {
 	[Range( -1, 1024 )]
-	[Title( "Max Props Per Player" ), Group( "Limits" )]
+	[Title( "Max Props Per Player" ), Group( "Limits" ), Order( 0 )]
 	[ConVar( "sandbox.limit.props", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum props per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxPropsPerPlayer { get; set; } = -1;
 
 	[Range( -1, 16 )]
-	[Title( "Max Explosives Per Player" ), Group( "Limits" )]
+	[Title( "Max Explosives Per Player" ), Group( "Limits" ), Order( 1 )]
 	[ConVar( "sandbox.limit.explosives", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum explosive props per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxExplosivesPerPlayer { get; set; } = -1;
 
 	[Range( -1, 64 )]
-	[Title( "Max Balloons Per Player" ), Group( "Limits" )]
+	[Title( "Max Balloons Per Player" ), Group( "Limits" ), Order( 3 )]
 	[ConVar( "sandbox.limit.balloons", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum balloons per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxBalloons { get; set; } = -1;
 
 	[Range( -1, 512 )]
-	[Title( "Max Constraints Per Player" ), Group( "Limits" )]
+	[Title( "Max Constraints Per Player" ), Group( "Limits" ), Order( 2 )]
 	[ConVar( "sandbox.limit.constraints", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum constraints per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxConstraints { get; set; } = -1;
 
 	[Range( -1, 64 )]
-	[Title( "Max Emitters Per Player" ), Group( "Limits" )]
+	[Title( "Max Emitters Per Player" ), Group( "Limits" ), Order( 4 )]
 	[ConVar( "sandbox.limit.emitters", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum emitters per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxEmitters { get; set; } = -1;
 
 	[Range( -1, 64 )]
-	[Title( "Max Thrusters Per Player" ), Group( "Limits" )]
+	[Title( "Max Thrusters Per Player" ), Group( "Limits" ), Order( 5 )]
 	[ConVar( "sandbox.limit.thrusters", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum thrusters per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxThrusters { get; set; } = -1;
 
 	[Range( -1, 32 )]
-	[Title( "Max Hoverballs Per Player" ), Group( "Limits" )]
+	[Title( "Max Hoverballs Per Player" ), Group( "Limits" ), Order( 6 )]
 	[ConVar( "sandbox.limit.hoverballs", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum hoverballs per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxHoverballs { get; set; } = -1;
 
 	[Range( -1, 32 )]
-	[Title( "Max Wheels Per Player" ), Group( "Limits" )]
+	[Title( "Max Wheels Per Player" ), Group( "Limits" ), Order( 7 )]
 	[ConVar( "sandbox.limit.wheels", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum wheels per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxWheels { get; set; } = -1;
 
 	[Range( -1, 256 )]
-	[Title( "Max Texts Per Player" ), Group( "Limits" )]
+	[Title( "Max Texts Per Player" ), Group( "Limits" ), Order( 8 )]
 	[ConVar( "sandbox.limit.texts", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum placed texts per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxTexts { get; set; } = -1;
 
