@@ -2,6 +2,16 @@ public sealed class PlayerFlashlight : Component
 {
 	[Property, RequireComponent] public SpotLight Light { get; set; }
 
+	/// <summary>
+	/// Optional point light placed in front of the player, softly lighting what's right around them.
+	/// </summary>
+	[Property, Group( "Fill Light" )] public PointLight FillLight { get; set; }
+
+	/// <summary>
+	/// How far in front of the eyes the fill light sits. Pulled back if something is in the way.
+	/// </summary>
+	[Property, Group( "Fill Light" )] public float FillDistance { get; set; } = 24f;
+
 	[Property, Group( "Sound" )] public SoundEvent ToggleOnSound { get; set; }
 	[Property, Group( "Sound" )] public SoundEvent ToggleOffSound { get; set; }
 	[Sync, Change( nameof( UpdateLight ) )] public bool IsOn { get; set; } = false;
@@ -25,7 +35,21 @@ public sealed class PlayerFlashlight : Component
 			Toggle();
 		}
 
-		WorldTransform = _player.EyeTransform.ToWorld( _localOffset );
+		var eye = _player.EyeTransform;
+		WorldTransform = eye.ToWorld( _localOffset );
+
+		if ( IsOn && FillLight.IsValid() )
+		{
+			FillLight.WorldPosition = GetFillPosition( eye );
+		}
+	}
+
+	private Vector3 GetFillPosition( Transform eye )
+	{
+		var target = eye.Position + eye.Forward * FillDistance;
+		var tr = Scene.Trace.FromTo( eye.Position, target ).Radius( 4f ).WithoutTags( "ragdoll", "effect" ).IgnoreGameObjectHierarchy( _player.GameObject.Root ).Run();
+
+		return tr.Hit ? tr.EndPosition : target;
 	}
 
 	private void Toggle()
@@ -47,8 +71,10 @@ public sealed class PlayerFlashlight : Component
 
 	private void UpdateLight()
 	{
-		if ( !Light.IsValid() ) return;
-		
-		Light.Enabled = IsOn;
+		if ( Light.IsValid() )
+			Light.Enabled = IsOn;
+
+		if ( FillLight.IsValid() )
+			FillLight.Enabled = IsOn;
 	}
 }
