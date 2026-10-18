@@ -51,7 +51,8 @@ public class UIModal : Panel
 
 	static UIModal Open( Panel source, UIModal modal )
 	{
-		var layer = SpawnMenuHost.ModalLayer ?? source.FindPopupPanel();
+		// over the menu while it's open, so it closes with it, otherwise over the HUD
+		var layer = SpawnMenuHost.IsOpen ? SpawnMenuHost.ModalLayer : UIModalLayer.Find( source );
 		if ( layer is null )
 		{
 			modal.Delete( true );
@@ -75,7 +76,8 @@ public class UIModal : Panel
 	/// <param name="placeholder">What the empty text box says.</param>
 	/// <param name="confirmText">What the confirm button says.</param>
 	/// <param name="confirmIcon">The icon of the confirm button.</param>
-	public static UIModal Prompt( Panel source, string title, string value, Action<string> onConfirm, string placeholder = null, string confirmText = "#ui.common.confirm", string confirmIcon = "check" )
+	/// <param name="message">A line above the text box, rich text like <see cref="Confirm"/>'s.</param>
+	public static UIModal Prompt( Panel source, string title, string value, Action<string> onConfirm, string placeholder = null, string confirmText = "#ui.common.confirm", string confirmIcon = "check", string message = null )
 	{
 		value ??= "";
 		UIModal modal = null;
@@ -102,8 +104,18 @@ public class UIModal : Panel
 		};
 
 		modal = Show( source, title, properties );
-		if ( modal is not null )
-			modal.OnSubmit = Confirm;
+		if ( modal is null ) return null;
+
+		modal.AddClass( "prompt" );
+		modal.OnSubmit = Confirm;
+
+		if ( message is not null )
+		{
+			var text = modal.Body.Add.Label( "", "message" );
+			text.IsRich = true;
+			text.Text = message;
+			modal.Body.SetChildIndex( text, 0 );
+		}
 
 		return modal;
 	}
@@ -211,5 +223,27 @@ public class UIModal : Panel
 		}
 
 		base.OnButtonTyped( e );
+	}
+}
+
+/// <summary>
+/// Centers a <see cref="UIModal"/> over the HUD when it isn't opened from the menu. Goes away with its last modal.
+/// </summary>
+public class UIModalLayer : Panel
+{
+	public static Panel Find( Panel source )
+	{
+		var root = source.FindPopupPanel();
+		if ( root is null ) return null;
+
+		return root.ChildrenOfType<UIModalLayer>().FirstOrDefault( x => !x.IsDeleting ) ?? root.AddChild<UIModalLayer>();
+	}
+
+	public override void Tick()
+	{
+		base.Tick();
+
+		if ( !Children.Any( x => !x.IsDeleting ) )
+			Delete( true );
 	}
 }

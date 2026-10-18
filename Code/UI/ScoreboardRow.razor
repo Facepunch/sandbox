@@ -81,28 +81,16 @@
 
 	void OpenKickConfirm( Connection connection )
 	{
-		var popup = new StringQueryPopup
-		{
-			Title = "#ui.scoreboard.kick_player",
-			Prompt = Game.Language.GetPhrase( "ui.scoreboard.kick_prompt", new() { { "name", connection.DisplayName } } ),
-			ConfirmLabel = "#ui.scoreboard.kick",
-			OnConfirm = x =>
-			{
-				GameManager.RpcKickPlayer( connection, x );
-			}
-		};
-		popup.Parent = FindPopupPanel();
+		UIModal.Prompt( this, "#ui.scoreboard.kick_player", "", reason => GameManager.RpcKickPlayer( connection, reason ),
+			"#ui.query.placeholder", "#ui.scoreboard.kick", "check", ReasonPrompt( "ui.scoreboard.kick_prompt", connection ) );
 	}
 
 	void OpenBanConfirm( Connection connection )
 	{
-		var popup = new StringQueryPopup
-		{
-			Title = "#ui.scoreboard.ban_player",
-			Prompt = Game.Language.GetPhrase( "ui.scoreboard.ban_prompt", new() { { "name", connection.DisplayName } } ),
-			ConfirmLabel = "#ui.scoreboard.ban",
-			OnConfirm = x => BanSystem.RpcBanPlayer( connection, x )
-		};
-		popup.Parent = FindPopupPanel();
+		UIModal.Prompt( this, "#ui.scoreboard.ban_player", "", reason => BanSystem.RpcBanPlayer( connection, reason ),
+			"#ui.query.placeholder", "#ui.scoreboard.ban", "check", ReasonPrompt( "ui.scoreboard.ban_prompt", connection ) );
 	}
+
+	static string ReasonPrompt( string phrase, Connection connection ) =>
+		Game.Language.GetPhrase( phrase, new() { { "name", UIModal.Escape( connection.DisplayName ) } } );
 }

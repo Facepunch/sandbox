@@ -212,15 +212,7 @@
 
         menu.AddOption( "#spawnmenu.effects.save_new_preset", "save", () =>
         {
-            var popup = new StringQueryPopup
-            {
-                Title = "#spawnmenu.effects.save_preset",
-                Prompt = "#ui.faceposer.preset_prompt",
-                Placeholder = "#spawnmenu.effects.preset_name_placeholder",
-                ConfirmLabel = "#spawnmenu.common.save",
-                OnConfirm = name => SaveNewPreset( name )
-            };
-            popup.Parent = FindPopupPanel();
+            UIModal.Prompt( this, "#spawnmenu.effects.save_preset", "", SaveNewPreset, "#spawnmenu.effects.preset_name_placeholder", "#spawnmenu.common.save", "save", "#ui.faceposer.preset_prompt" );
         } );
 
         var list = LoadPresetList();

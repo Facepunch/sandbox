@@ -35,20 +35,25 @@ UIModal
 		}
 	}
 
+	.message
+	{
+		width: 100%;
+		justify-content: center;
+		text-align: center;
+		font-size: $ui-settings-font;
+		font-weight: 500;
+		color: $ui-text-strong;
+	}
+
+	&.prompt .message
+	{
+		margin-bottom: 10px;
+	}
+
 	// a question and the buttons to answer it, from UIModal.Confirm
 	&.confirm
 	{
 		width: 480px;
-
-		.message
-		{
-			width: 100%;
-			justify-content: center;
-			text-align: center;
-			font-size: $ui-settings-font;
-			font-weight: 500;
-			color: $ui-text-strong;
-		}
 
 		.buttons
 		{
@@ -62,6 +67,19 @@ UIModal
 			}
 		}
 	}
+}
+
+UIModalLayer
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	justify-content: center;
+	align-items: center;
+	pointer-events: none;
+	z-index: 10000;
 }
 
 // names in the rich text of a question, the tags of rich text only match plain selectors, not ones with the panels around them
