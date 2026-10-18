@@ -85,13 +85,7 @@
         var typeDesc = TypeLibrary.GetType( Property.PropertyType );
         var assetType = typeDesc?.GetAttribute<AssetTypeAttribute>();
 
-        var popup = new ResourceSelectPopup();
-        popup.Extension = assetType?.Extension;
-        popup.CurrentValue = Property.GetValue<GameResource>()?.ResourcePath;
-        popup.Parent = FindPopupPanel();
-        popup.OnSelectedFile = SelectFile;
-
-        if ( Property.TryGetAttribute<MetadataAttribute>( out var metadata ) )
-            popup.Category = metadata.Tag;
+        Property.TryGetAttribute<MetadataAttribute>( out var metadata );
+        ResourceSelectPopup.Open( this, assetType?.Extension, Property.GetValue<GameResource>()?.ResourcePath, SelectFile, category: metadata?.Tag );
     }
 }

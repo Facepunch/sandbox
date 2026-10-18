@@ -95,6 +95,24 @@
     public bool AllowPackages { get; set; }
     public Action<string> OnSelectedFile;
 
+    /// <summary>
+    /// Opens a picker over the menu <paramref name="source"/> is in.
+    /// </summary>
+    public static ResourceSelectPopup Open( Panel source, string extension, string currentValue, Action<string> onSelected, bool allowPackages = false, string category = null )
+    {
+        var popup = new ResourceSelectPopup
+        {
+            Extension = extension,
+            CurrentValue = currentValue,
+            AllowPackages = allowPackages,
+            Category = category,
+            OnSelectedFile = onSelected
+        };
+
+        popup.Parent = source.FindPopupPanel();
+        return popup;
+    }
+
     static readonly List<UIDropdown.Item> SortItems = UIDropdown.ForEnum<PackageSortMode>();
 
     string _title;

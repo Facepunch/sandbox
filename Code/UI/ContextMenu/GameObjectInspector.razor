@@ -300,12 +300,8 @@
 
     void PickWholeMaterial()
     {
-        var popup = new ResourceSelectPopup();
-        popup.Extension = "material";
-        popup.CurrentValue = HasMixedOverride ? null : PickerValue( Renderers[0].MaterialOverride );
-        popup.AllowPackages = true;
-        popup.Parent = FindPopupPanel();
-        popup.OnSelectedFile = SetWholeMaterialOverride;
+        var current = HasMixedOverride ? null : PickerValue( Renderers[0].MaterialOverride );
+        ResourceSelectPopup.Open( this, "material", current, SetWholeMaterialOverride, allowPackages: true );
     }
 
     void SetWholeMaterialOverride(string path)
@@ -322,12 +318,7 @@
         var accessor = Renderers[0].Materials;
         var mat = accessor.HasOverride(index) ? accessor.GetOverride(index) : accessor.GetOriginal(index);
 
-        var popup = new ResourceSelectPopup();
-        popup.Extension = "material";
-        popup.CurrentValue = PickerValue( mat );
-        popup.AllowPackages = true;
-        popup.Parent = FindPopupPanel();
-        popup.OnSelectedFile = (path) => SetMaterialOverride(index, path);
+        ResourceSelectPopup.Open( this, "material", PickerValue( mat ), path => SetMaterialOverride( index, path ), allowPackages: true );
     }
 
     void SetMaterialOverride(int index, string path)

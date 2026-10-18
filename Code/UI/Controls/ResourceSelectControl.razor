@@ -185,11 +185,6 @@
         if ( SelectAttribute?.Popup == true )
             allowPackages = SelectAttribute.AllowPackages;
 
-        var popup = new ResourceSelectPopup();
-        popup.Extension = Extension;
-        popup.CurrentValue = Property.As.String;
-        popup.AllowPackages = allowPackages;
-        popup.Parent = FindPopupPanel();
-        popup.OnSelectedFile = SelectFile;
+        ResourceSelectPopup.Open( this, Extension, Property.As.String, SelectFile, allowPackages );
     }
 }
