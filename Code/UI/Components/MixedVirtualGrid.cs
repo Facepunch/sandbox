@@ -37,6 +37,19 @@ public class MixedVirtualGrid : BaseVirtualPanel
 	[Parameter] public Action<int, PanelEvent> OnDropIndex { get; set; }
 	private bool _dragHover;
 
+	/// <summary>
+	/// Builds the cells again, for when they show more than their item, like the tile size.
+	/// </summary>
+	public void RecreateCells()
+	{
+		foreach ( var panel in _created.Values )
+			panel.Delete( true );
+
+		_created.Clear();
+		_cellData.Clear();
+		NeedsRebuild = true;
+	}
+
 	protected override void UpdateLayoutSpacing( Vector2 spacing )
 	{
 		_spacing = spacing;

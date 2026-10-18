@@ -130,14 +130,9 @@
     {
         _lastIconSize = IconSize;
 
-        // The grid only recreates cells when their data changes, so throw the
-        // existing tiles away to pick up the new size's text and tooltip. The
-        // render won't re-set Items for us as the list reference is unchanged.
+        // the tiles' text and tooltip depend on the size
         if ( Grid.IsValid() )
-        {
-            Grid.Clear();
-            Grid.Items = Entries;
-        }
+            Grid.RecreateCells();
 
         StateHasChanged();
     }

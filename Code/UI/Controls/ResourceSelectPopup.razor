@@ -139,13 +139,9 @@
             _iconSize = value;
             Game.Cookies.Set( IconSizeCookie, value );
 
-            // Cells are only rebuilt when their item changes, throw them away so
-            // the text and tooltips match the new size.
+            // the tiles' tooltips depend on the size
             if ( Grid.IsValid() )
-            {
-                Grid.Clear();
-                Grid.Items = _filteredItems;
-            }
+                Grid.RecreateCells();
 
             StateHasChanged();
         }
