@@ -268,12 +268,33 @@ public partial class Physgun : Local.IPlayerEvents
 		}
 	}
 
+	bool _beamPlacedThisFrame;
+
+	protected override void PlaceViewModel( CameraComponent camera, in CameraView view )
+	{
+		base.PlaceViewModel( camera, view );
+
+		UpdateBeamState();
+		_beamPlacedThisFrame = true;
+	}
+
 	protected override void OnPreRender()
 	{
 		base.OnPreRender();
 		UpdateGravityHoldSound();
 		UpdateClawSounds();
 
+		if ( _beamPlacedThisFrame )
+		{
+			_beamPlacedThisFrame = false;
+			return;
+		}
+
+		UpdateBeamState();
+	}
+
+	void UpdateBeamState()
+	{
 		if ( _state.Active && !_state.Pulling )
 		{
 			var muzzle = HasOwner ? GetMuzzleTransform() : CurrentAimTransform;
