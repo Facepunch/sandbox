@@ -333,9 +333,19 @@ public sealed class StackerTool : ToolMode
 	{
 		var overlayMaterial = Material.Load( "materials/effects/duplicator_override.vmat" );
 
-		foreach ( var tx in transforms )
+		foreach ( var renderer in target.GetComponentsInChildren<ModelRenderer>() )
 		{
-			DebugOverlay.GameObject( target, transform: tx, castShadows: false, materialOveride: overlayMaterial );
+			var model = renderer.Model ?? Model.Cube;
+			if ( model.IsError ) continue;
+
+			// Pass skinned bones so posed ragdolls preview in their current pose
+			var bones = renderer is SkinnedModelRenderer skinned ? skinned.GetBoneTransforms( false ) : null;
+			var localTx = target.WorldTransform.ToLocal( renderer.WorldTransform );
+
+			foreach ( var tx in transforms )
+			{
+				DebugOverlay.Model( model, color: renderer.Tint, transform: tx.ToWorld( localTx ), castShadows: false, materialOveride: overlayMaterial, localBoneTransforms: bones );
+			}
 		}
 	}
 
