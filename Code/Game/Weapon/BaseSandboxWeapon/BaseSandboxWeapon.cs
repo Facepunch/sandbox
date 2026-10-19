@@ -156,6 +156,15 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 		return !isLinked && !ShootInput.IsEnabled && !SecondaryInput.IsEnabled;
 	}
 
+	/// <summary>Stays put away while the owner sits with their weapons holstered (see <see cref="PlayerInventory.IsSeatHolstered"/>).</summary>
+	protected override bool OnCanSwitchTo()
+	{
+		if ( Inventory is PlayerInventory { IsSeatHolstered: true } )
+			return false;
+
+		return base.OnCanSwitchTo();
+	}
+
 	/// <summary>A seated player can only control this while not holding a weapon of their own.</summary>
 	public virtual bool CanControl( Player player )
 	{

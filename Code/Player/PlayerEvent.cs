@@ -67,6 +67,18 @@ public class PlayerMoveSlotEvent
 }
 
 /// <summary>
+/// Fired on the host when a player sits in a seat, before their weapon is put away. 
+/// Set <see cref="Cancelled"/> to true to let them keep weapons out in it.
+/// </summary>
+public class PlayerSeatHolsterEvent
+{
+	public Player Player { get; init; }
+	public GameObject Seat { get; init; }
+	public BaseSandboxWeapon Weapon { get; init; }
+	public bool Cancelled { get; set; }
+}
+
+/// <summary>
 /// Pre-damage event. Fired before damage is applied. Listeners can modify <see cref="Damage"/>
 /// or set <see cref="Cancelled"/> to block damage entirely.
 /// </summary>
@@ -122,6 +134,7 @@ public static partial class Local
 		void OnSwitchWeapon( PlayerSwitchWeaponEvent e ) { }
 		void OnRemoveWeapon( PlayerRemoveWeaponEvent e ) { }
 		void OnMoveSlot( PlayerMoveSlotEvent e ) { }
+		void OnSeatHolster( PlayerSeatHolsterEvent e ) { }
 		void OnDamaging( PlayerDamageEvent e ) { }
 		void OnKill( PlayerKillEvent e ) { }
 		void OnCameraMove( ref Angles angles ) { }
@@ -155,6 +168,7 @@ public static partial class Global
 		void OnPlayerSwitchWeapon( PlayerSwitchWeaponEvent e ) { }
 		void OnPlayerRemoveWeapon( PlayerRemoveWeaponEvent e ) { }
 		void OnPlayerMoveSlot( PlayerMoveSlotEvent e ) { }
+		void OnPlayerSeatHolster( PlayerSeatHolsterEvent e ) { }
 		void OnPlayerDamaging( PlayerDamageEvent e ) { }
 		void OnPlayerRespawning( PlayerRespawnEvent e ) { }
 		void OnPlayerKill( PlayerKillEvent e ) { }
