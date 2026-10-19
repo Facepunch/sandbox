@@ -178,9 +178,6 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 				// last glance left it
 				ClearAim();
 			}
-
-			if ( _heldProp.IsValid() )
-				UpdateHeldPropIk();
 		}
 		else
 		{
@@ -585,8 +582,6 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 		HoldType = "none";
 		WeaponLowered = false;
 		_lastYaw = float.NaN;
-
-		ClearHeldProp();
 
 		_renderer.Set( "b_attack", false );
 		_renderer.Set( "holdtype", "none" );
