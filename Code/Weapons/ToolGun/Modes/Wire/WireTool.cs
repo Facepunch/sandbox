@@ -122,11 +122,10 @@ public sealed class WireTool : BaseConstraintToolMode
 		var wheel = Input.MouseWheel.y;
 		if ( wheel.AlmostEqual( 0f ) ) return;
 
-		if ( _hoveredPorts.Length > 1 )
-		{
-			var direction = wheel > 0f ? -1 : 1;
-			_selectedPortIndex = (_selectedPortIndex + direction + _hoveredPorts.Length) % _hoveredPorts.Length;
-		}
+		if ( _hoveredPorts.Length <= 1 ) return;
+
+		var direction = wheel > 0f ? -1 : 1;
+		_selectedPortIndex = (_selectedPortIndex + direction + _hoveredPorts.Length) % _hoveredPorts.Length;
 
 		// Inventory reads this later in the frame. Wire tool owns the wheel while choosing a port.
 		Input.MouseWheel = default;
