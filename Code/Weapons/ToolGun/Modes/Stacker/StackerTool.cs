@@ -377,11 +377,6 @@ public sealed class StackerTool : ToolMode
 
 			if ( FreezeAll )
 			{
-				foreach ( var mp in clone.GetComponentsInChildren<ModelPhysics>() )
-				{
-					mp.MotionEnabled = false;
-				}
-
 				foreach ( var rb in clone.GetComponentsInChildren<Rigidbody>() )
 				{
 					rb.MotionEnabled = false;
