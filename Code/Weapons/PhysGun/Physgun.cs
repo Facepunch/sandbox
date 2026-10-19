@@ -42,7 +42,7 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( !body.IsValid() || !body.MotionEnabled ) return false;
 
 		var eyePosition = CurrentAimTransform.Position;
-		return body.FindClosestPoint( eyePosition ).Distance( eyePosition ) <= PullDistance;
+		return FindClosestPoint( body, eyePosition ).Distance( eyePosition ) <= PullDistance;
 	}
 
 	void UpdateClawSounds()
@@ -136,7 +136,7 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( state.Pulling && state.IsValid() && state.Body.IsValid() && state.Body.MotionEnabled )
 		{
 			var eye = CurrentAimTransform.Position;
-			var distance = state.Body.FindClosestPoint( eye ).Distance( eye );
+			var distance = FindClosestPoint( state.Body, eye ).Distance( eye );
 
 			_gravityHoldSound ??= GameObject.PlaySound( GravityHoldSound );
 			_gravityHoldSound?.Position = GetMuzzleTransform().Position;
@@ -508,7 +508,7 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( sh.IsValid() && sh.Pulling && sh.Body.MotionEnabled )
 		{
 			var eyePosition = player.EyeTransform.Position;
-			var closest = sh.Body.FindClosestPoint( eyePosition );
+			var closest = FindClosestPoint( sh.Body, eyePosition );
 			var distance = closest.Distance( eyePosition );
 
 			if ( distance <= PullDistance )
@@ -701,7 +701,7 @@ public partial class Physgun : Local.IPlayerEvents
 
 		if ( sh.IsValid() && sh.Pulling && sh.Body.MotionEnabled )
 		{
-			var closest = sh.Body.FindClosestPoint( aim.Position );
+			var closest = FindClosestPoint( sh.Body, aim.Position );
 			if ( closest.Distance( aim.Position ) <= PullDistance )
 			{
 				_state = sh with { Active = true, Pulling = true };
@@ -923,10 +923,21 @@ public partial class Physgun : Local.IPlayerEvents
 		state.LocalNormal = tr.Normal;
 		state.Pulling = isPulling;
 
-		if ( !tr.Hit || tr.Body is null ) return false;
-		if ( tr.Component is not Rigidbody ) return false;
+		var rb = tr.Hit && tr.Body is not null ? tr.Component as Rigidbody : null;
 
-		var go = tr.Body.GameObject;
+		if ( isPulling )
+		{
+			if ( !CanPull( rb ) )
+				rb = FindPullTarget( aim, tr ) ?? rb;
+
+			if ( GetRagdollRoot( rb ) is { } root )
+				rb = root;
+		}
+
+		if ( !rb.IsValid() || !rb.PhysicsBody.IsValid() ) return false;
+
+		var physicsBody = rb.PhysicsBody;
+		var go = physicsBody.GameObject;
 		if ( !go.IsValid() || go.IsDestroyed ) return false;
 
 		// Ask the object if it allows being grabbed (Ownable and others can reject via IPhysgunEvent)
@@ -935,7 +946,7 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( grabEvent.Cancelled ) return false;
 
 		// Trace hits physics, convert to local using scaled physics transform.
-		var bodyTransform = tr.Body.Transform.WithScale( go.WorldScale );
+		var bodyTransform = physicsBody.Transform.WithScale( go.WorldScale );
 
 		state.GameObject = go;
 		state.LocalNormal = bodyTransform.NormalToLocal( tr.Normal );
@@ -944,7 +955,7 @@ public partial class Physgun : Local.IPlayerEvents
 		{
 			// Scale is built into mass center, remove it.
 			var bodyScale = new Transform( Vector3.Zero, Rotation.Identity, bodyTransform.Scale );
-			state.LocalOffset = bodyScale.PointToLocal( tr.Body.LocalMassCenter );
+			state.LocalOffset = bodyScale.PointToLocal( physicsBody.LocalMassCenter );
 			state.GrabDistance = 0;
 			state.GrabOffset = aim.Rotation.Inverse * bodyTransform.Rotation;
 		}
