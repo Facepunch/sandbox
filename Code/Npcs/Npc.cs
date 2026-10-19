@@ -65,51 +65,71 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 	}
 
 	/// <summary>
-	/// Spawns a ragdoll at the NPC's current position, copying the renderer and clothing,
-	/// and optionally applies a launch velocity from the attacker.
+	/// Spawns a networked ragdoll prop at the NPC's current position, copying the renderer and clothing,
+	/// and optionally applies a launch velocity from the attacker. Host only.
 	/// </summary>
-	[Rpc.Broadcast( NetFlags.HostOnly )]
 	protected void CreateRagdoll( Vector3 velocity, Vector3 origin, float duration = 30 )
 	{
-		if ( !Renderer.IsValid() )
+		if ( IsProxy )
 			return;
 
-		var batch = Scene.BatchGroup();
+		if ( !Renderer.IsValid() || Renderer.Model is null )
+			return;
 
-		var go = new GameObject( true, "Ragdoll" );
+		var go = new GameObject( false, "Ragdoll" );
 		go.Tags.Add( "ragdoll" );
+		go.Tags.Add( "removable" );
 		go.WorldTransform = WorldTransform;
 
-		var mainBody = go.Components.Create<SkinnedModelRenderer>();
-		mainBody.CopyFrom( Renderer );
-		mainBody.UseAnimGraph = false;
+		var prop = go.AddComponent<Prop>();
+		prop.Model = Renderer.Model;
+		prop.BodyGroups = Renderer.BodyGroups;
+		prop.MaterialGroup = Renderer.MaterialGroup;
+		prop.Tint = Renderer.Tint;
 
-		// copy the clothes
-		foreach ( var clothing in Renderer.GameObject.Children.SelectMany( x => x.Components.GetAll<SkinnedModelRenderer>() ) )
+		if ( Components.TryGet<Ownable>( out var ownable ) )
+			Ownable.Set( go, ownable.Owner );
+
+		// The prop builds its renderer and ModelPhysics when it's enabled, which the batch defers to its end
+		using ( Scene.BatchGroup() )
 		{
-			if ( !clothing.IsValid() ) continue;
-
-			var newClothing = new GameObject( true, clothing.GameObject.Name );
-			newClothing.Parent = go;
-
-			var item = newClothing.Components.Create<SkinnedModelRenderer>();
-			item.CopyFrom( clothing );
-			item.BoneMergeTarget = mainBody;
+			go.Enabled = true;
 		}
 
-		var physics = go.Components.Create<ModelPhysics>();
-		physics.Model = mainBody.Model;
-		physics.Renderer = mainBody;
-		batch.Dispose();
+		var mainBody = go.GetComponent<SkinnedModelRenderer>();
+		var physics = go.GetComponent<ModelPhysics>();
 
-		physics.CopyBonesFrom( Renderer, true );
+		if ( mainBody.IsValid() )
+		{
+			mainBody.CopyFrom( Renderer );
+			mainBody.UseAnimGraph = false;
 
-		ApplyRagdollForce( physics, velocity, origin );
+			// copy the clothes
+			foreach ( var clothing in Renderer.GameObject.Children.SelectMany( x => x.Components.GetAll<SkinnedModelRenderer>() ) )
+			{
+				if ( !clothing.IsValid() ) continue;
+
+				var newClothing = new GameObject( true, clothing.GameObject.Name );
+				newClothing.Parent = go;
+
+				var item = newClothing.Components.Create<SkinnedModelRenderer>();
+				item.CopyFrom( clothing );
+				item.BoneMergeTarget = mainBody;
+			}
+		}
+
+		if ( physics.IsValid() )
+		{
+			physics.CopyBonesFrom( Renderer, true );
+			ApplyRagdollForce( physics, velocity, origin );
+		}
+
+		go.NetworkSpawn( true, null );
 
 		//
 		// Destroy after a while
 		//
-		mainBody.Invoke( duration, mainBody.DestroyGameObject );
+		prop.Invoke( duration, prop.DestroyGameObject );
 	}
 
 	void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
