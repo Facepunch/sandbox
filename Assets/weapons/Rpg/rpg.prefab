@@ -25,7 +25,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "b958d2e0-019a-43f4-bf28-2d9a98fa4d60",
+          "Id": "5efbf39d-7353-43ab-b0fd-8bef48835986",
           "Path": "models/weapons/sbox_rpg_recoillessrifle/w_recoillessrifle.vmdl"
         },
         "OnComponentDestroy": null,
@@ -141,10 +141,7 @@
           "compiled": "textures/generated/imagefile/4a9e10201eb6f873.vtex"
         },
         "DisplayName": "Rocket Launcher",
-        "DroppedGameObject": {
-          "_type": "gameobject",
-          "go": "00edf338-ad8d-4472-9725-250b57efbaba"
-        },
+        "DroppedGameObject": null,
         "DryFireSound": {
           "Id": "066c6fdf-2cb5-44dc-b97e-630b53d8ed25",
           "Path": "sounds/dry_fire.sound"
@@ -154,7 +151,7 @@
         "HoldBone": "hold_r",
         "HoldType": "RPG",
         "IncrementalReloading": false,
-        "IsTrackedAim": false,
+        "IsTrackedAim": true,
         "Npc": {
           "MinRange": 0,
           "MaxRange": 1400,
@@ -183,6 +180,10 @@
           "prefab": "weapons/rpg/rpg_projectile.prefab"
         },
         "ProjectileSpeed": 1024,
+        "PunchDuration": 0.66,
+        "PunchFrequency": 0.8,
+        "PunchPitch": "-15,-18",
+        "PunchYaw": "-2,2",
         "ReloadStartTime": 0,
         "ReloadTime": 4,
         "SecondaryAmmoType": null,
@@ -193,6 +194,9 @@
         "SecondaryInput": {
           "Action": null
         },
+        "ShakeAmplitude": 0.5,
+        "ShakeDuration": 1.25,
+        "ShakeFrequency": 0.75,
         "ShootInput": {
           "Action": null
         },
@@ -269,7 +273,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "b958d2e0-019a-43f4-bf28-2d9a98fa4d60",
+              "Id": "5efbf39d-7353-43ab-b0fd-8bef48835986",
               "Path": "models/weapons/sbox_rpg_recoillessrifle/w_recoillessrifle.vmdl"
             },
             "Morphs": {},
@@ -360,8 +364,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Thumbnail Camera",
-        "Position": "27.552749,51.819184,12.474701",
-        "Rotation": "0.068575,-0.307688,0.796828,-0.515452",
+        "Position": "27.5527496,51.8191833,12.4747009",
+        "Rotation": "0.0685750023,-0.307687998,0.796827972,-0.515452027",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -378,6 +382,7 @@
             "Flags": 0,
             "FieldOfView": 12,
             "FitToBounds": true,
+            "Focus": "-0.349999994,0",
             "GizmoDistance": 60,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -385,7 +390,6 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Focus": "-0.35,0",
             "Padding": 0.08,
             "Zoom": 1.8
           }
