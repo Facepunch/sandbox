@@ -1,9 +1,13 @@
 {
-  "Prefab": "vehicles/buggy/buggy.prefab",
+  "Prefab": {
+    "Id": "09952d7b-018f-4788-a700-df5e37b77c4c",
+    "Path": "vehicles/buggy/buggy.prefab"
+  },
   "Title": "#asset.buggy.title",
   "Description": "#asset.buggy.description",
   "Category": "Vehicle",
   "IncludeCode": false,
+  "Developer": true,
   "__references": [],
   "__version": 0
 }
