@@ -1,0 +1,9 @@
+{
+  "Prefab": "vehicles/buggy/buggy.prefab",
+  "Title": "#asset.buggy.title",
+  "Description": "#asset.buggy.description",
+  "Category": "Vehicle",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}

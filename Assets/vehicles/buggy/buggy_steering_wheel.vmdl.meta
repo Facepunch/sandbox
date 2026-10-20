@@ -1,0 +1,31 @@
+{
+  "guid": "77524fb2-10d3-4660-a282-c19fce002df7",
+  "publish": {
+    "Enabled": false,
+    "ProjectConfig": {
+      "Title": "Buggy Steering Wheel",
+      "Type": "model",
+      "Org": "local",
+      "Ident": "buggy_steering_wheel",
+      "Schema": 0,
+      "IncludeSourceFiles": false,
+      "Resources": null,
+      "PackageReferences": null,
+      "EditorReferences": [
+        "facepunch.beer_keg_a2#282208",
+        "facepunch.carseat#143559",
+        "facepunch.cartyre#275783",
+        "facepunch.tractorwheel#140646"
+      ],
+      "Mounts": null,
+      "IsStandaloneOnly": false,
+      "AI": {
+        "EnableMcpCommunication": true
+      },
+      "Metadata": {
+        "SingleAssetSource": "vehicles/buggy/buggy_steering_wheel.vmdl",
+        "ParentPackage": "facepunch.sandbox"
+      }
+    }
+  }
+}

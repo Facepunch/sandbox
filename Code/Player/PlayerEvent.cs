@@ -79,6 +79,16 @@ public class PlayerSeatHolsterEvent
 }
 
 /// <summary>
+/// Fired on the player's own machine when they press the flashlight key, before the flashlight toggles. Set
+/// <see cref="Cancelled"/> to true to keep the key for yourself - a vehicle uses it for its headlights.
+/// </summary>
+public class PlayerFlashlightEvent
+{
+	public Player Player { get; init; }
+	public bool Cancelled { get; set; }
+}
+
+/// <summary>
 /// Pre-damage event. Fired before damage is applied. Listeners can modify <see cref="Damage"/>
 /// or set <see cref="Cancelled"/> to block damage entirely.
 /// </summary>
@@ -135,6 +145,7 @@ public static partial class Local
 		void OnRemoveWeapon( PlayerRemoveWeaponEvent e ) { }
 		void OnMoveSlot( PlayerMoveSlotEvent e ) { }
 		void OnSeatHolster( PlayerSeatHolsterEvent e ) { }
+		void OnFlashlight( PlayerFlashlightEvent e ) { }
 		void OnDamaging( PlayerDamageEvent e ) { }
 		void OnKill( PlayerKillEvent e ) { }
 		void OnCameraMove( ref Angles angles ) { }
@@ -169,6 +180,7 @@ public static partial class Global
 		void OnPlayerRemoveWeapon( PlayerRemoveWeaponEvent e ) { }
 		void OnPlayerMoveSlot( PlayerMoveSlotEvent e ) { }
 		void OnPlayerSeatHolster( PlayerSeatHolsterEvent e ) { }
+		void OnPlayerFlashlight( PlayerFlashlightEvent e ) { }
 		void OnPlayerDamaging( PlayerDamageEvent e ) { }
 		void OnPlayerRespawning( PlayerRespawnEvent e ) { }
 		void OnPlayerKill( PlayerKillEvent e ) { }

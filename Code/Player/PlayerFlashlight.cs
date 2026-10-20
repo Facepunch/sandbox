@@ -30,7 +30,7 @@ public sealed class PlayerFlashlight : Component
 	{
 		if ( !_player.IsValid() ) return;
 
-		if ( !IsProxy && Input.Pressed( "Flashlight" ) )
+		if ( !IsProxy && Input.Pressed( "Flashlight" ) && !IsKeyTaken() )
 		{
 			Toggle();
 		}
@@ -42,6 +42,17 @@ public sealed class PlayerFlashlight : Component
 		{
 			FillLight.WorldPosition = GetFillPosition( eye );
 		}
+	}
+
+	/// <summary>
+	/// Ask whether anything else wants the flashlight key right now, like the headlights of a car we're driving.
+	/// </summary>
+	private bool IsKeyTaken()
+	{
+		var e = new PlayerFlashlightEvent { Player = _player };
+		Local.IPlayerEvents.PostToGameObject( _player.GameObject, x => x.OnFlashlight( e ) );
+		Global.IPlayerEvents.Post( x => x.OnPlayerFlashlight( e ) );
+		return e.Cancelled;
 	}
 
 	private Vector3 GetFillPosition( Transform eye )

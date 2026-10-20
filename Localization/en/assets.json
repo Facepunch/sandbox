@@ -71,6 +71,8 @@
     "asset.scientist.description": "It's a fucking scientist",
     "asset.tv.title": "TV",
     "asset.tv.description": "A screen that displays a linked camera's feed. Link a Camera to this with the Wire tool.",
+    "asset.buggy.title": "Buggy",
+    "asset.buggy.description": "Get in and drive. F for the headlights, hold F for the light bar.",
     "asset.thruster.basic.description": "A normal everyday thruster",
     "asset.beer_cask.title": "Beer Cask",
     "asset.beer_keg.title": "Beer Keg",

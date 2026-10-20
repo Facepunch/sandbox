@@ -12,7 +12,7 @@
 					{
 						_class = "RenderMeshFile"
 						filename = "vehicles/buggy/buggy.fbx"
-						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_translation = [ -80.9, 41.77295, -15.1 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
 						import_scale = 1.0
 						align_origin_x_type = "None"
@@ -91,8 +91,8 @@
 						surface_prop = "default"
 						collision_tags = "solid"
 						radius = 15.519099
-						point0 = [ 80.900002, -46.009453, 15.1 ]
-						point1 = [ 80.900002, -37.5364, 15.1 ]
+						point0 = [ 0.000002, -4.236503, 0.000000 ]
+						point1 = [ 0.000002, 4.236550, 0.000000 ]
 					},
 				]
 			},
