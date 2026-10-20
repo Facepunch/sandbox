@@ -103,7 +103,6 @@ public sealed partial class FourWheelVehicle
 	}
 
 	private readonly Wheel[] _wheels = new Wheel[WheelCount];
-
 	private static Wheel CreateWheel( GameObject wheelObject, VehicleAxleParams axle, Transform rest )
 	{
 		var (center, _, width) = WheelShape( wheelObject, rest );
@@ -253,11 +252,17 @@ public sealed partial class FourWheelVehicle
 		{
 			if ( !tr.Hit ) return default;
 
+			// On flat ground the whole width of the tyre touches, and the sweep reports anywhere along it - a different
+			// side each tick, rocking the car as the wheel's load jumps across. Take the point on the tyre's centre line.
+			var distance = (tr.EndPosition - start).Dot( down );
+			var center = hardPoint + down * (distance - radius);
+			var across = (axle - tr.Normal * axle.Dot( tr.Normal )).Normal;
+
 			return new WheelContact
 			{
 				Hit = true,
-				Distance = (tr.EndPosition - start).Dot( down ),
-				Point = tr.HitPosition,
+				Distance = distance,
+				Point = tr.HitPosition - across * (tr.HitPosition - center).Dot( across ),
 				Normal = tr.Normal,
 				Surface = tr.Surface,
 				Body = tr.Body,
@@ -396,7 +401,7 @@ public sealed partial class FourWheelVehicle
 			if ( wheel.Locked || parked )
 			{
 				wheel.AngularVelocity = 0.0f;
-				ApplyLockedWheelGrip( wheel, dt, maxForce, wheelsOnGround, ref needed[axis] );
+				ApplyLockedWheelGrip( wheel, dt, maxForce, ref needed[axis] );
 				continue;
 			}
 
@@ -475,16 +480,26 @@ public sealed partial class FourWheelVehicle
 	/// <summary>
 	/// A locked wheel slides with plain friction against wherever its contact patch is going - which includes the
 	/// patch swinging round as the car yaws, so a handbrake turn doesn't spin away.
+	///
+	/// Each locked wheel stops its patch exactly, for the car's real inertia at that point, and the next one works from
+	/// the car's motion after it. Pushed all at once from the same motion, the pushes below the centre of mass roll
+	/// the car under the other wheels, and a parked car rocks and creeps sideways.
 	/// </summary>
-	private void ApplyLockedWheelGrip( Wheel wheel, float dt, float maxForce, int wheelsOnGround, ref float neededSideways )
+	private void ApplyLockedWheelGrip( Wheel wheel, float dt, float maxForce, ref float neededSideways )
 	{
 		var velocity = PredictedVelocity( wheel.Contact ) * MetersPerInch;
 		var planar = velocity - wheel.GroundNormal * velocity.Dot( wheel.GroundNormal );
 		var speed = planar.Length;
 
-		// no harder than it takes to stop the patch this tick, so it holds still when parked instead of shuddering
-		var stop = speed * _body.PhysicsBody.Mass / dt / wheelsOnGround;
-		var force = speed > 1e-4f ? -planar / speed * MathF.Min( maxForce, stop ) : Vector3.Zero;
+		var force = Vector3.Zero;
+		var stop = 0.0f;
+		if ( speed > 1e-4f )
+		{
+			// the force that stops the patch this tick
+			var direction = -planar / speed;
+			stop = speed / InverseMass( wheel.Contact, direction, wheel.Contact, direction ) / dt;
+			force = direction * MathF.Min( maxForce, stop );
+		}
 
 		// a locked wheel that's still holding the car isn't sliding
 		wheel.AtGripLimit = stop > maxForce;
@@ -494,6 +509,23 @@ public sealed partial class FourWheelVehicle
 		neededSideways -= force.Dot( wheel.ProjectedAxle );
 
 		PushAt( wheel, force * dt );
+		TrackImpulse( wheel.Contact, force * dt * InchesPerMeter );
+	}
+
+	/// <summary>
+	/// Carry an impulse we've just pushed the body with (kg in/s, at a point) into this tick's idea of how it's moving.
+	/// </summary>
+	private void TrackImpulse( Vector3 point, Vector3 impulse )
+	{
+		var body = _body.PhysicsBody;
+		var inertiaRotation = body.Rotation * body.InertiaRotation;
+		var inertia = body.Inertia;
+
+		var angular = inertiaRotation.Inverse * (point - _tickMassCenter).Cross( impulse );
+		angular = new Vector3( angular.x / inertia.x, angular.y / inertia.y, angular.z / inertia.z );
+
+		_tickVelocity += impulse / body.Mass;
+		_tickAngularVelocity += inertiaRotation * angular;
 	}
 
 	/// <summary>

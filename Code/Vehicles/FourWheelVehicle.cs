@@ -292,9 +292,48 @@ public sealed partial class FourWheelVehicle : Component, IPlayerControllable
 		}
 
 		UpdateDriver();
-		UpdateDrivetrain( Time.Delta, _controls );
-		Simulate( Time.Delta );
+
+		if ( !ParkedAsleep() )
+		{
+			UpdateDrivetrain( Time.Delta, _controls );
+			Simulate( Time.Delta );
+		}
+
 		PublishState();
+	}
+
+	private TimeSince _timeSettled;
+
+	/// <summary>
+	/// A parked car that has settled goes to sleep, rather than being held up by its wheels every tick - that never
+	/// quite comes to rest, it jitters on the spot. Anything that wakes the body (a hit, the physgun, a driver getting
+	/// in) brings the wheels back.
+	/// </summary>
+	private bool ParkedAsleep()
+	{
+		var physics = _body.PhysicsBody;
+
+		if ( _hasDriver )
+		{
+			physics.Sleeping = false;
+			_timeSettled = 0;
+			return false;
+		}
+
+		if ( physics.Sleeping )
+			return true;
+
+		// still (the velocity we read carries half a tick of gravity, see MeasuredVelocity), on all four wheels
+		var velocity = _body.Velocity - BodyGravity * (Time.Delta * 0.5f);
+		var still = velocity.Length < 3f && _body.AngularVelocity.Length < 15f.DegreeToRadian() && _wheels.All( w => w.InContact );
+		if ( !still )
+			_timeSettled = 0;
+
+		if ( _timeSettled < 1.0f )
+			return false;
+
+		physics.Sleeping = true;
+		return true;
 	}
 
 	/// <summary>
