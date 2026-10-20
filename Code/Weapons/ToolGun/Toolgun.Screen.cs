@@ -12,7 +12,6 @@
 	ToolMode _screenTarget;
 	ToolMode _screenPrevious;
 
-	const int SwipeRows = 8;
 	const float SwipeJitter = 60f;
 	const float SwipeEdgeWidth = 6f;
 
@@ -36,13 +35,14 @@
 			return;
 		}
 
-		// the edge runs from just off the left to just off the right, each row of the screen offset at random
+		// the edge runs from just off the left to just off the right, each row of dots offset at random
 		var tick = (int)(Time.Now * 30f);
 		var edgeBase = rect.Left - SwipeJitter + TransitionProgress * (rect.Width + SwipeJitter * 2);
-		var rowHeight = rect.Height / SwipeRows;
+		var rows = (int)rect.Height;
+		const float rowHeight = 1f;
 		var edgeColor = ScreenColor;
 
-		for ( var row = 0; row < SwipeRows; row++ )
+		for ( var row = 0; row < rows; row++ )
 		{
 			var top = rect.Top + row * rowHeight;
 

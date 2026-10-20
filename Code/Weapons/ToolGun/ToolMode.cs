@@ -203,19 +203,24 @@
 	public virtual void DrawScreen( Rect rect, Painter paint )
 	{
 		using var state = paint.Scope();
-		const float nameSize = 6f;
 		const float scrollSpeed = 5f;
+
+		// these settings are set for the 'at01' font specifically, you need to adjust these values if you are changing the font
+		const float nameSize = 16f;
+		const float capHeight = 7f;
+		const float capTop = 4.375f;
 
 		var color = Toolgun.IsValid() ? Toolgun.ScreenColor : Color.White;
 		var title = Game.Language.GetPhrase( TypeDescription.Title.TrimStart( '#' ) ).ToUpperInvariant();
 
-		paint.TextStyle = new TextStyle( "Not Jam Chunky Sans 6", nameSize, color ) { Alignment = TextFlag.LeftTop | TextFlag.SingleLine };
+		paint.TextStyle = new TextStyle( "at01", nameSize, color ) { Alignment = TextFlag.LeftTop | TextFlag.SingleLine };
 		var textSize = paint.MeasureText( title );
 
-		// everything lands on whole pixels: the painter caps partly covered pixels at 1, which would dim the HDR colour
-		var top = MathF.Round( rect.Top + (rect.Height - textSize.y) * 0.5f );
+		var top = rect.Top + MathF.Floor( (rect.Height - capHeight) * 0.5f ) - capTop;
 
-		// copies a half screen apart loop right-to-left, entering from the right edge
+		paint.Translate( 0, top - MathF.Floor( top ) );
+		top = MathF.Floor( top );
+
 		var cycle = MathF.Ceiling( textSize.x + rect.Width * 0.5f );
 		var x = MathF.Round( rect.Right - (Time.Now * scrollSpeed) % cycle );
 

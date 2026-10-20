@@ -67,7 +67,9 @@ PS
 		//
 		// Pass 2: Inner LCD layer - dot matrix with per-dot normals and roughness
 		//
-		float2 grid = float2( 4, 1 ) * 8;
+		// One dot per pixel of the screen texture
+		float2 grid;
+		g_tSelfIllumMask.GetDimensions( grid.x, grid.y );
 
 		// Sample emissive content
 		float3 emissive = g_tSelfIllumMask.SampleLevel( g_sPointClamp, uv, 0 ).rgb;
@@ -76,7 +78,7 @@ PS
 		float2 cell = frac( uv * grid );
 		float2 cellCentered = cell - 0.5;
 
-		float dotRadius = 0.38;
+		float dotRadius = 0.35;
 		float dist = length( cellCentered );
 		float dotMask = 1.0 - smoothstep( dotRadius - 0.08, dotRadius + 0.08, dist );
 
