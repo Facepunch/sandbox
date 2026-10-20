@@ -1,5 +1,5 @@
 {
-  "guid": "0935566a-301b-4132-9122-23462f69abb4",
+  "guid": "16b1db62-3aea-4724-b37e-4abd46c23f90",
   "publish": {
     "Enabled": false,
     "ProjectConfig": {
@@ -12,7 +12,7 @@
       "Resources": null,
       "PackageReferences": null,
       "EditorReferences": [
-        "facepunch.beer_keg_a1#282207",
+        "facepunch.beer_keg_a2#282208",
         "facepunch.carseat#143559",
         "facepunch.cartyre#275783",
         "facepunch.tractorwheel#140646"
