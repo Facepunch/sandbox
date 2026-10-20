@@ -740,6 +740,10 @@ public partial class Physgun : Local.IPlayerEvents
 	Sandbox.Physics.ControlJoint _joint;
 	PhysicsBody _body;
 
+	Vector3 _massCenterOffset;
+
+	const float MaxLinearAcceleration = 700000.0f;
+
 	/// <summary>
 	/// The object our joint is moving
 	/// </summary>
@@ -825,22 +829,28 @@ public partial class Physgun : Local.IPlayerEvents
 		_held = _state.GameObject;
 		_body ??= new PhysicsBody( Scene.PhysicsWorld ) { BodyType = PhysicsBodyType.Keyframed, AutoSleep = false };
 
-		_body.Transform = IsProxy ? ClampToRange( _holdTarget ) : _holdTarget;
-
 		if ( _joint is null )
 		{
 			// Scale is built into physics, remove it.
 			var bodyTransform = _state.Body.WorldTransform.WithScale( 1.0f );
 
 			var body = _state.Body.PhysicsBody;
+			_massCenterOffset = body.LocalMassCenter - bodyTransform.PointToLocal( _state.EndPoint );
+
 			var point1 = new PhysicsPoint( _body );
-			var point2 = new PhysicsPoint( body, bodyTransform.PointToLocal( _state.EndPoint ) );
-			var maxForce = body.Mass * body.World.Gravity.LengthSquared;
+			var point2 = new PhysicsPoint( body, body.LocalMassCenter );
+			var maxForce = body.Mass * MaxLinearAcceleration;
+
+			var inertia = body.Inertia;
+			var maxTorque = MaxLinearAcceleration * MathF.Sqrt( body.Mass * MathF.Max( inertia.x, MathF.Max( inertia.y, inertia.z ) ) );
 
 			_joint = PhysicsJoint.CreateControl( point1, point2 );
 			_joint.LinearSpring = new PhysicsSpring( 32, 4, maxForce );
-			_joint.AngularSpring = new PhysicsSpring( 64, 4, maxForce * 3 );
+			_joint.AngularSpring = new PhysicsSpring( 64, 4, maxTorque );
 		}
+
+		var target = IsProxy ? ClampToRange( _holdTarget ) : _holdTarget;
+		_body.Transform = target.WithPosition( target.PointToWorld( _massCenterOffset ) );
 	}
 
 	/// <summary>
