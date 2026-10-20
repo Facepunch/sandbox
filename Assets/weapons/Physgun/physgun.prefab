@@ -40,7 +40,7 @@
           "go": "3c948bf4-5353-443a-bb65-8f28584fed1b",
           "component_type": "HighlightOutline"
         },
-        "BeamMaxSway": 5,
+        "BeamMaxSway": 2,
         "BeamRenderer": {
           "_type": "component",
           "component_id": "f3f80109-6fa0-4a11-a63e-0664044ed0b6",
@@ -95,7 +95,7 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/e5edd02486178849.vtex"
         },
         "DisplayName": "#weapon.name.physgun",
         "DroppedGameObject": {
@@ -135,13 +135,14 @@
           "Id": "8dd915d9-a147-4121-9339-6d36ecac4353",
           "Path": "weapons/physgun/sounds/gravgun.shoot.launch.sound"
         },
-        "GravityLookOpenSound": {
-          "Id": "bbb470b2-01e4-4fd3-be53-c4d1b9700533",
-          "Path": "weapons/physgun/sounds/gravgun.look.open.sound"
-        },
         "GravityLookCloseSound": {
           "Id": "911e2e0d-fef4-434f-9de5-135f582b65ac",
           "Path": "weapons/physgun/sounds/gravgun.look.close.sound"
+        },
+        "GravityLookDropCooldown": 0.5,
+        "GravityLookOpenSound": {
+          "Id": "bbb470b2-01e4-4fd3-be53-c4d1b9700533",
+          "Path": "weapons/physgun/sounds/gravgun.look.open.sound"
         },
         "GravityPullSound": {
           "Id": "577c6b4b-dd28-43ab-9ab4-795411f76cf0",
@@ -247,7 +248,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "4285f28f-d968-4902-bedb-205f4b7c08f9",
+          "Id": "9b88ece6-5987-4a58-9fc7-7f3be211c5ca",
           "Path": "models/weapons/sbox_physgun/w_physgun.vmdl"
         },
         "OnComponentDestroy": null,
@@ -276,6 +277,7 @@
         "Gravity": true,
         "GravityScale": 1,
         "ImpactDamage": 0,
+        "InertiaScale": 1,
         "LinearDamping": 0,
         "Locking": {
           "X": false,
@@ -330,8 +332,12 @@
               "blend": "Linear",
               "color": [
                 {
-                  "t": 0.51890755,
-                  "c": "1.74419,2.7907,3,1"
+                  "t": 0,
+                  "c": "1.93488,3.51814,4,1"
+                },
+                {
+                  "t": 1,
+                  "c": "0.6,1.6,3,1"
                 }
               ],
               "alpha": []
@@ -393,10 +399,10 @@
                 "Path": "weapons/physgun/physgun_beam.vmat"
               },
               "WorldSpace": true,
-              "UnitsPerTexture": 512,
+              "UnitsPerTexture": 2048,
               "Scale": 1,
               "Offset": 0,
-              "Scroll": 1,
+              "Scroll": -1,
               "FilterMode": "Anisotropic",
               "TextureAddressMode": "Wrap",
               "Clamp": false
@@ -408,11 +414,11 @@
               "307.799988,126.599998,0"
             ],
             "Width": {
-              "rangey": "0.167400002,5",
+              "rangey": "2.99999976,5",
               "frames": [
                 {
                   "x": 0,
-                  "y": 0.676678,
+                  "y": 0.21875724,
                   "in": -0.9629625,
                   "out": 0.9629625,
                   "mode": "Mirrored"
@@ -427,8 +433,8 @@
                 {
                   "x": 1,
                   "y": 0,
-                  "in": 5.7647076,
-                  "out": -5.7647076,
+                  "in": 0.03125016,
+                  "out": -0.03125016,
                   "mode": "Mirrored"
                 }
               ]
@@ -645,7 +651,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "4285f28f-d968-4902-bedb-205f4b7c08f9",
+              "Id": "9b88ece6-5987-4a58-9fc7-7f3be211c5ca",
               "Path": "models/weapons/sbox_physgun/w_physgun.vmdl"
             },
             "Morphs": {},
@@ -754,7 +760,42 @@
                 "__PrefabInstancePatch": {
                   "AddedObjects": [],
                   "RemovedObjects": [],
-                  "PropertyOverrides": [],
+                  "PropertyOverrides": [
+                    {
+                      "Target": {
+                        "Type": "Component",
+                        "IdValue": "feb67b66-6937-4970-b707-655e5b1eb784"
+                      },
+                      "Property": "Sprite",
+                      "Value": {
+                        "$compiler": "embed",
+                        "$source": null,
+                        "data": {
+                          "Animations": [
+                            {
+                              "Name": "Default",
+                              "FrameRate": 15,
+                              "Origin": "0.5,0.5",
+                              "LoopMode": "Loop",
+                              "LoopStart": -1,
+                              "LoopEnd": -1,
+                              "Frames": [
+                                {
+                                  "Texture": {
+                                    "Id": "35e7103a-860f-4a6d-820c-0d0e8926e31a",
+                                    "Path": "textures/lightcookies/lightcookies_09.vtex"
+                                  },
+                                  "BroadcastMessages": []
+                                }
+                              ]
+                            }
+                          ],
+                          "__references": null
+                        },
+                        "compiled": null
+                      }
+                    }
+                  ],
                   "MovedObjects": []
                 },
                 "__PrefabIdToInstanceId": {
@@ -776,8 +817,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Thumbnail Camera",
-        "Position": "10.191213,57.79724,12.474701",
-        "Rotation": "0.088109,-0.262081,0.718499,-0.638208",
+        "Position": "10.1912127,57.7972412,12.4747009",
+        "Rotation": "0.0881090015,-0.262080997,0.718499005,-0.638207972",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -794,6 +835,7 @@
             "Flags": 0,
             "FieldOfView": 12,
             "FitToBounds": true,
+            "Focus": "0.129999995,0",
             "GizmoDistance": 60,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -801,7 +843,6 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Focus": "0.13,0",
             "Padding": 0.08,
             "Zoom": 1.75
           }
