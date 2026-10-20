@@ -144,8 +144,10 @@ public partial class Physgun : ScreenWeapon
 		BeamRenderer.VectorPoints[0] = source.Position;
 		BeamRenderer.VectorPoints[1] = middleSpring.Current;
 
-		BeamRenderer.VectorPoints[2] = Vector3.Lerp( (end + endNormal * 10), BeamRenderer.VectorPoints[1], 0.3f + MathF.Sin( Time.Now * 10.0f ) * 0.2f );
-		BeamRenderer.VectorPoints[3] = end;
+		var beamEnd = grabbed ? end : end + endNormal * 3;
+		var endHook = grabbed ? end + endNormal * 10 : beamEnd;
+		BeamRenderer.VectorPoints[2] = Vector3.Lerp( endHook, BeamRenderer.VectorPoints[1], 0.3f + MathF.Sin( Time.Now * 10.0f ) * 0.2f );
+		BeamRenderer.VectorPoints[3] = beamEnd;
 
 		if ( justEnabled )
 		{
