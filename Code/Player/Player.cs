@@ -367,12 +367,15 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			return;
 		}
 
-		if ( Input.Pressed( "noclip" ) )
+		// no noclip from a seat - and jump there is often a vehicle's handbrake, so leave double taps alone
+		var seated = _cachedSeat is not null;
+
+		if ( !seated && Input.Pressed( "noclip" ) )
 		{
 			ToggleNoclip();
 		}
 
-		if ( Input.Pressed( "jump" ) )
+		if ( !seated && Input.Pressed( "jump" ) )
 		{
 			if ( _timeSinceJumpPressed < NoclipDoubleTapWindow )
 			{
