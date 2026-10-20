@@ -46,6 +46,11 @@ public sealed class SpotLightEntity : Component, IPlayerControllable
 	[Property, Title( "#entity.property.attenuation" ), Description( "#entity.description.attenuation" ), Range( 0, 16 ), ClientEditable, Group( "#entity.group.light" )]
 	public float Attenuation { get; set { field = value; UpdateLight(); } } = 2.4f;
 
+	/// <summary>
+	/// Whether the light's model casts shadows.
+	/// </summary>
+	[Property, Title( "#entity.property.castshadows" ), Description( "#entity.description.castshadows" ), ClientEditable, Group( "#entity.group.rendering" )]
+	public ModelRenderer.ShadowRenderType CastShadows { get; set { field = value; UpdateLight(); } } = ModelRenderer.ShadowRenderType.On;
 
 	/// <summary>
 	/// The input that switches the light on.
@@ -109,6 +114,9 @@ public sealed class SpotLightEntity : Component, IPlayerControllable
 	{
 		OnGameObject?.Enabled = On;
 		OffGameObject?.Enabled = !On;
+
+		foreach ( var renderer in GameObject.GetComponentsInChildren<ModelRenderer>( true ) )
+			renderer.RenderType = CastShadows;
 
 		if ( GetComponentInChildren<SpotLight>( true ) is not SpotLight light )
 			return;

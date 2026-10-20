@@ -40,6 +40,11 @@ public sealed class PointLightEntity : Component, IPlayerControllable
 	[Property, Title( "#entity.property.attenuation" ), Description( "#entity.description.attenuation" ), Range( 0, 16 ), ClientEditable, Group( "#entity.group.light" )]
 	public float Attenuation { get; set { field = value; UpdateLight(); } } = 2.4f;
 
+	/// <summary>
+	/// Whether the light's model casts shadows.
+	/// </summary>
+	[Property, Title( "#entity.property.castshadows" ), Description( "#entity.description.castshadows" ), ClientEditable, Group( "#entity.group.rendering" )]
+	public ModelRenderer.ShadowRenderType CastShadows { get; set { field = value; UpdateLight(); } } = ModelRenderer.ShadowRenderType.On;
 
 	/// <summary>
 	/// The input that switches the light on.
@@ -103,6 +108,13 @@ public sealed class PointLightEntity : Component, IPlayerControllable
 	{
 		OnGameObject?.Enabled = On;
 		OffGameObject?.Enabled = !On;
+
+		// the lit bulb surrounds its own light so it can never cast shadows, shadows only just hides it
+		foreach ( var renderer in OnGameObject?.GetComponentsInChildren<ModelRenderer>( true ) ?? [] )
+			renderer.Enabled = CastShadows != ModelRenderer.ShadowRenderType.ShadowsOnly;
+
+		foreach ( var renderer in OffGameObject?.GetComponentsInChildren<ModelRenderer>( true ) ?? [] )
+			renderer.RenderType = CastShadows;
 
 		if ( GetComponentInChildren<PointLight>( true ) is not PointLight light )
 			return;
