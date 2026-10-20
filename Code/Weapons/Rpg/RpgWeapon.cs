@@ -6,6 +6,27 @@ public sealed class RpgWeapon : BaseSandboxWeapon
 	[Property] public GameObject ProjectilePrefab { get; set; }
 	[Property] public float ProjectileSpeed { get; set; } = 1024f;
 
+	/// <summary>Random pitch of the first-person view punch per launch (min, max degrees).</summary>
+	[Property, Group( "Camera" )] public Vector2 PunchPitch { get; set; } = new( 35f, 45f );
+
+	/// <summary>Random yaw of the first-person view punch per launch (min, max degrees).</summary>
+	[Property, Group( "Camera" )] public Vector2 PunchYaw { get; set; } = new( -10f, -5f );
+
+	/// <summary>How many times the view punch oscillates before it lapses.</summary>
+	[Property, Group( "Camera" )] public float PunchFrequency { get; set; } = 2f;
+
+	/// <summary>How long the view punch lasts, in seconds.</summary>
+	[Property, Group( "Camera" )] public float PunchDuration { get; set; } = 1.5f;
+
+	/// <summary>First-person camera shake strength per launch, in world units.</summary>
+	[Property, Group( "Camera" )] public float ShakeAmplitude { get; set; } = 3f;
+
+	/// <summary>New shake offsets per second.</summary>
+	[Property, Group( "Camera" )] public float ShakeFrequency { get; set; } = 40f;
+
+	/// <summary>How long the shake takes to settle, in seconds.</summary>
+	[Property, Group( "Camera" )] public float ShakeDuration { get; set; } = 0.6f;
+
 	/// <summary>
 	/// When enabled, fired rockets will continuously track toward the player's crosshair.
 	/// Toggle with right-click (player) or SecondaryInput (standalone/seat).
@@ -133,8 +154,8 @@ public sealed class RpgWeapon : BaseSandboxWeapon
 			if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
 			{
 				// The launch throws the view up hard and rattles it.
-				Scene.Camera?.AddPunch( new Angles( Random.Shared.Float( 45, 35 ), Random.Shared.Float( -10, -5 ), 0 ), 2f, 1.5f );
-				Scene.Camera?.AddShake( 3f, 40f, 0.6f );
+				Scene.Camera?.AddPunch( new Angles( Random.Shared.Float( PunchPitch.x, PunchPitch.y ), Random.Shared.Float( PunchYaw.x, PunchYaw.y ), 0 ), PunchFrequency, PunchDuration );
+				Scene.Camera?.AddShake( ShakeAmplitude, ShakeFrequency, ShakeDuration );
 
 				_hasFired = true;
 			}
