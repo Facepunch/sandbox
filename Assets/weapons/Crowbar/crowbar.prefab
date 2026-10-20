@@ -75,13 +75,10 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/20615a690e2eee19.vtex"
         },
         "DisplayName": "#weapon.name.crowbar",
-        "DroppedGameObject": {
-          "_type": "gameobject",
-          "go": "ef4d5a6b-7f8e-9012-def0-123456789013"
-        },
+        "DroppedGameObject": null,
         "DryFireSound": null,
         "FirstShellReloadTime": 0,
         "Handedness": "Right",
@@ -113,6 +110,10 @@
         "PrimaryAmmoType": null,
         "PrimaryAutomatic": true,
         "PrimaryDelay": 0.1,
+        "PunchDuration": 0.3,
+        "PunchFrequency": 0.04,
+        "PunchPitch": "5,-5",
+        "PunchYaw": "15,5",
         "Range": 128,
         "ReloadStartTime": 0,
         "ReloadTime": 2,
@@ -124,6 +125,9 @@
         "SecondaryInput": {
           "Action": null
         },
+        "ShakeAmplitude": 1,
+        "ShakeDuration": 0.6,
+        "ShakeFrequency": 17.050022,
         "ShootInput": {
           "Action": null
         },
@@ -155,7 +159,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "0fd68abd-d503-4c1b-a03e-c25067e5c80b",
+          "Id": "1d8e37fa-fb50-45dd-8106-1ebbdcecb03f",
           "Path": "models/weapons/sbox_melee_crowbar/w_crowbar.vmdl"
         },
         "OnComponentDestroy": null,
@@ -184,6 +188,7 @@
         "Gravity": true,
         "GravityScale": 1,
         "ImpactDamage": 0,
+        "InertiaScale": 1,
         "LinearDamping": 0,
         "Locking": {
           "X": false,
@@ -266,7 +271,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "0fd68abd-d503-4c1b-a03e-c25067e5c80b",
+              "Id": "1d8e37fa-fb50-45dd-8106-1ebbdcecb03f",
               "Path": "models/weapons/sbox_melee_crowbar/w_crowbar.vmdl"
             },
             "Morphs": {},
@@ -301,8 +306,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Thumbnail Camera",
-        "Position": "27.552749,-51.819184,12.474701",
-        "Rotation": "0.000708,0.201048,0.830172,0.519994",
+        "Position": "27.5527496,-51.8191833,12.4747009",
+        "Rotation": "0.000707999978,0.201048002,0.830172002,0.51999402",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -319,6 +324,7 @@
             "Flags": 0,
             "FieldOfView": 12,
             "FitToBounds": true,
+            "Focus": "0,0",
             "GizmoDistance": 60,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -326,7 +332,6 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Focus": "0,0",
             "Padding": 0.08,
             "Zoom": 1.25
           }
