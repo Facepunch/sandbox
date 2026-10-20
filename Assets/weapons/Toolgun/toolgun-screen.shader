@@ -41,90 +41,83 @@ PS
     #include "common/pixel.hlsl"
 
 	Texture2D g_tSelfIllumMask < Attribute( "Emissive" ); >;
-
-	// the glass and the four LCDs under it, handed over from the model's own screen material by ScreenWeapon
-	Texture2D g_tPanelColor < Attribute( "PanelColor" ); >;
-	Texture2D g_tPanelNormal < Attribute( "PanelNormal" ); >;
-	Texture2D g_tPanelAo < Attribute( "PanelAmbientOcclusion" ); >;
-
-	SamplerState g_sPanel < Filter( ANISO ); AddressU( CLAMP ); AddressV( CLAMP ); >;
-
-	SamplerState g_sScreen < Filter( BILINEAR ); AddressU( CLAMP ); AddressV( CLAMP ); >;
-
-	// the panel is four square LCDs side by side under one sheet of glass, the picture spans all four
-	static const float Panels = 4.0;
-	static const float PanelGap = 0.035;		// dark border round each LCD, as a share of its width
-
-	// LCD cells across the whole strip, 4 texels each on the 512x128 picture
-	static const float CellsX = 128.0;
-	static const float CellsY = 32.0;
-
-	// HDR excess turns into glow, like the HUD composite (shaders/hud_composite.shader)
-	static const float GlowStrength = 0.22;
-	static const int GlowTaps = 32;
-	static const float GlowRadius = 14.0;		// in screen texels
-
-	// brightness of the picture, flared above 1 by ScreenWeapon while the tool changes
-	float g_flIntensity < Attribute( "ScreenIntensity" ); Default( 1.0 ); >;
-
-	float PanelMask( float2 uv )
-	{
-		float2 local = float2( frac( uv.x * Panels ), uv.y );
-		float2 edge = smoothstep( 0.0, PanelGap, local ) * smoothstep( 1.0, 1.0 - PanelGap, local );
-		return edge.x * edge.y;
-	}
+	CreateInputTexture2D( TextureAmbientOcclusion, Linear, 8, "", "_ao", "Material,10/Ambient Occlusion", Default( 1.0 ) );
+	CreateInputTexture2D( TextureRoughness, Linear, 8, "", "_rough", "Material,10/Roughness", Default( 0.5 ) );
+	CreateInputTexture2D( TextureNormal, Linear, 8, "NormalizeNormals", "_normal", "Material,10/Normal", Default3( 0.5, 0.5, 1.0 ) );
+	CreateTexture2D( g_tAo ) < Channel( R, Box( TextureAmbientOcclusion ), Linear ); OutputFormat( BC7 ); SrgbRead( false ); >;
+	CreateTexture2D( g_tRoughness ) < Channel( R, Box( TextureRoughness ), Linear ); OutputFormat( BC7 ); SrgbRead( false ); >;
+	CreateTexture2D( g_tNormal ) < Channel( RGB, Box( TextureNormal ), Linear ); OutputFormat( DXT5 ); SrgbRead( false ); >;
 
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
-		Material m = Material::From( i );
-
-		float2 size;
-		g_tSelfIllumMask.GetDimensions( size.x, size.y );
-
 		float2 uv = i.vTextureCoords.xy;
 
-		// each LCD cell shows the picture at its centre, a soft rounded dot with faint red/green/blue columns
-		float2 cells = float2( CellsX, CellsY );
-		float2 cellUv = uv * cells;
-		float2 inCell = frac( cellUv );
-		float3 picture = g_tSelfIllumMask.SampleLevel( g_sPointClamp, ( floor( cellUv ) + 0.5 ) / cells, 0 ).rgb;
+		//
+		// Pass 1: Outer layer - the physical screen surface
+		//
+		Material outer = Material::From( i );
+		outer.Albedo = 0.0f;
+		outer.AmbientOcclusion = g_tAo.Sample( g_sAniso, uv ).r;
+		outer.Roughness = g_tRoughness.Sample( g_sAniso, uv ).r;
+		outer.Normal = TransformNormal( DecodeNormal( g_tNormal.Sample( g_sAniso, uv ).rgb ), i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
+		outer.Emission = 0.0f;
 
-		float2 cellDot = smoothstep( 0.0, 0.18, inCell ) * smoothstep( 1.0, 0.82, inCell );
-		float3 columns = float3( inCell.x < 0.34, inCell.x >= 0.34 && inCell.x < 0.67, inCell.x >= 0.67 );
-		float3 subpixel = lerp( 1.0, columns * 3.0, 0.15 );
+		float4 outerShaded = ShadingModelStandard::Shade( i, outer );
 
-		// blurred HDR excess like the HUD's glow pass: a gaussian over a golden-angle spiral of taps, so the halo is
-		// smooth instead of picking out the shape of a few rings
-		float3 excess = 0;
-		float weight = 0;
-		[unroll]
-		for ( int k = 0; k < GlowTaps; k++ )
-		{
-			float t = ( k + 0.5 ) / GlowTaps;
-			float r = sqrt( t ) * GlowRadius;
-			float a = k * 2.39996;
-			float w = exp( -t * 3.0 );
-			excess += max( g_tSelfIllumMask.SampleLevel( g_sScreen, uv + float2( cos( a ), sin( a ) ) * r / size, 0 ).rgb - 1.0, 0 ) * w;
-			weight += w;
-		}
-		excess /= weight;
-		float3 glow = 1.0 - exp( -excess * GlowStrength * 6 );
+		//
+		// Pass 2: Inner LCD layer - dot matrix with per-dot normals and roughness
+		//
+		// One dot per pixel of the screen texture
+		float2 grid;
+		g_tSelfIllumMask.GetDimensions( grid.x, grid.y );
 
-		// the HUD's scanlines run through the glow too, one dark line per row of LCD cells
-		glow *= lerp( 0.55, 1.0, cellDot.y );
+		// Sample emissive content
+		float3 emissive = g_tSelfIllumMask.SampleLevel( g_sPointClamp, uv, 0 ).rgb;
 
-		float3 lcd = saturate( picture ) * cellDot.x * cellDot.y * subpixel * 2.0 + glow * 0.6;
+		// Dot matrix cell coordinates
+		float2 cell = frac( uv * grid );
+		float2 cellCentered = cell - 0.5;
 
-		// the light sits under the glass: the panel art keeps its shape and reflections on top, but the glass itself
-		// is glossy and the LCDs under it near black, so bright light shows up as a sheen rather than greying the panels
-		float2 artUv = i.vTextureCoords.xy;
-		float4 normalRough = g_tPanelNormal.Sample( g_sPanel, artUv );
-		m.Albedo = g_tPanelColor.Sample( g_sPanel, artUv ).rgb * 0.2;
-		m.Normal = TransformNormal( DecodeNormal( normalRough.rgb ), i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
-		m.Roughness = 0.12;
-		m.AmbientOcclusion = g_tPanelAo.Sample( g_sPanel, artUv ).r;
-		m.Metalness = 0;
-		m.Emission = lcd * PanelMask( uv ) * g_flIntensity;
-		return ShadingModelStandard::Shade( i, m );
+		float dotRadius = 0.35;
+		float dist = length( cellCentered );
+		float dotMask = 1.0 - smoothstep( dotRadius - 0.08, dotRadius + 0.08, dist );
+
+		// Per-dot hemisphere normals in tangent space
+		float2 nxy = cellCentered / dotRadius;
+		float nzSq = saturate( 1.0 - dot( nxy, nxy ) );
+		float3 domeNormalTs = float3( nxy.x, nxy.y, sqrt( nzSq ) );
+		domeNormalTs = normalize( domeNormalTs );
+
+		// Transform dome normal to world space, blend with flat normal outside dots
+		float3 domeNormalWs = TransformNormal( domeNormalTs, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
+		float3 lcdNormal = lerp( i.vNormalWs, domeNormalWs, dotMask );
+
+		// Dome shading falloff
+		float dome = 1.0 - smoothstep( 0.0, dotRadius, dist ) * 0.25;
+
+		// LCD emissive color
+		float3 lcdColor = emissive * dotMask * dome * 5.0f;
+
+		// Scanline refresh sweep
+		float scanline = sin( ( uv.y - g_flTime * 1.5 ) * 80.0 ) * 0.5 + 0.5;
+		scanline = smoothstep( 0.3, 0.7, scanline );
+		lcdColor *= lerp( 0.9, 1.0, scanline );
+
+		// Horizontal row gaps
+		float rowLine = smoothstep( 0.0, 0.06, abs( cellCentered.y ) );
+		lcdColor *= lerp( 0.85, 1.0, rowLine );
+
+		// LCD dots are glossy, gaps between are rough/invisible
+		Material lcd = Material::From( i );
+		lcd.Albedo = 0.0f;
+		lcd.AmbientOcclusion = 1.0f;
+		lcd.Roughness = lerp( 1.0, 0.25, dotMask );
+		lcd.Normal = lcdNormal;
+		lcd.Emission = lcdColor;
+
+		float4 lcdShaded = ShadingModelStandard::Shade( i, lcd );
+
+		// Composite: sum both layers
+		return outerShaded + lcdShaded;
 	}
 }

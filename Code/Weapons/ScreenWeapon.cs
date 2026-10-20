@@ -45,7 +45,10 @@ public partial class ScreenWeapon : BaseSandboxWeapon
 	/// </summary>
 	protected virtual string ScreenMaterialPath => "weapons/toolgun/toolgun-screen.vmat";
 
-	protected virtual Vector2Int ScreenTextureSize => new( 512, 128 );
+	/// <summary>
+	/// Size of the screen texture. The toolgun's dot matrix shader draws one dot per pixel.
+	/// </summary>
+	protected virtual Vector2Int ScreenTextureSize => new( 52, 13 );
 
 	/// <summary>
 	/// Minimum time in seconds between screen redraws

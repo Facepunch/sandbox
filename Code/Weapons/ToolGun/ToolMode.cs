@@ -198,27 +198,34 @@
 	}
 
 	/// <summary>
-	/// Scrolls the tool name across the viewmodel screen in the HUD's style, glowing like the HUD digits.
-	/// The screen shader splits it over the four LCDs under the glass.
+	/// Scrolls the tool name across the viewmodel screen's dot matrix in <see cref="Toolgun.ScreenColor"/>.
 	/// </summary>
 	public virtual void DrawScreen( Rect rect, Painter paint )
 	{
 		using var state = paint.Scope();
-		const float nameSize = 100f;
-		const float scrollSpeed = 120f;
+		const float scrollSpeed = 5f;
 
-		var look = HudStyle.For( Scene );
+		// these settings are set for the 'at01' font specifically, you need to adjust these values if you are changing the font
+		const float nameSize = 16f;
+		const float capHeight = 7f;
+		const float capTop = 4.375f;
+
+		var color = Toolgun.IsValid() ? Toolgun.ScreenColor : Color.White;
 		var title = Game.Language.GetPhrase( TypeDescription.Title.TrimStart( '#' ) ).ToUpperInvariant();
 
-		paint.TextStyle = new TextStyle( HudStyle.Font, nameSize, look.Glow( Color.White ) ) { FontWeight = 700, Alignment = TextFlag.LeftCenter | TextFlag.SingleLine };
-		var textWidth = paint.MeasureText( title ).x;
+		paint.TextStyle = new TextStyle( "at01", nameSize, color ) { Alignment = TextFlag.LeftTop | TextFlag.SingleLine };
+		var textSize = paint.MeasureText( title );
 
-		// copies a half screen apart loop right-to-left, entering from the right edge
-		var cycle = textWidth + rect.Width * 0.5f;
-		var x = rect.Right - (Time.Now * scrollSpeed) % cycle;
+		var top = rect.Top + MathF.Floor( (rect.Height - capHeight) * 0.5f ) - capTop;
 
-		for ( ; x > rect.Left - textWidth; x -= cycle )
-			paint.Text( title, new Rect( x, rect.Top, textWidth, rect.Height ) );
+		paint.Translate( 0, top - MathF.Floor( top ) );
+		top = MathF.Floor( top );
+
+		var cycle = MathF.Ceiling( textSize.x + rect.Width * 0.5f );
+		var x = MathF.Round( rect.Right - (Time.Now * scrollSpeed) % cycle );
+
+		for ( ; x > rect.Left - textSize.x; x -= cycle )
+			paint.Text( title, new Rect( x, top, textSize.x, textSize.y ) );
 	}
 
 	/// <summary>

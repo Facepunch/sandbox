@@ -106,6 +106,7 @@
         "PrimaryDelay": 0.1,
         "ReloadStartTime": 0,
         "ReloadTime": 2,
+        "ScreenColor": "1.77,0.91,0,1",
         "SecondaryAmmoType": null,
         "SecondaryAutomatic": false,
         "SecondaryClipSize": -1,
@@ -150,7 +151,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "3bdcce6c-7c51-45ca-a4d8-3854e61cbafa",
+          "Id": "4a9772e8-c6c3-466f-afa5-68b32d9768c6",
           "Path": "models/weapons/sbox_toolgun/w_toolgun.vmdl"
         },
         "OnComponentDestroy": null,
@@ -238,7 +239,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "3bdcce6c-7c51-45ca-a4d8-3854e61cbafa",
+              "Id": "4a9772e8-c6c3-466f-afa5-68b32d9768c6",
               "Path": "models/weapons/sbox_toolgun/w_toolgun.vmdl"
             },
             "Morphs": {},

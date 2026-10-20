@@ -1,12 +1,17 @@
 ﻿public partial class Toolgun : ScreenWeapon
 {
 	/// <summary>
+	/// Colour of the tool name and swipe edge on the viewmodel screen, independent of the HUD tint.
+	/// Goes past 1 for HDR glow.
+	/// </summary>
+	[Property] public Color ScreenColor { get; set; } = HudStyle.Brightened( HudLayer.DefaultTint, 2f );
+
+	/// <summary>
 	/// The mode the screen is switching to, and the one it showed before
 	/// </summary>
 	ToolMode _screenTarget;
 	ToolMode _screenPrevious;
 
-	const int SwipeRows = 8;
 	const float SwipeJitter = 60f;
 	const float SwipeEdgeWidth = 6f;
 
@@ -30,16 +35,19 @@
 			return;
 		}
 
-		// the edge runs from just off the left to just off the right, each row of the screen offset at random
+		// the edge runs from just off the left to just off the right, each row of dots offset at random
 		var tick = (int)(Time.Now * 30f);
 		var edgeBase = rect.Left - SwipeJitter + TransitionProgress * (rect.Width + SwipeJitter * 2);
-		var rowHeight = rect.Height / SwipeRows;
-		var edgeColor = HudStyle.For( Scene ).Glow( Color.White );
+		var rows = (int)rect.Height;
+		const float rowHeight = 1f;
+		var edgeColor = ScreenColor;
 
-		for ( var row = 0; row < SwipeRows; row++ )
+		for ( var row = 0; row < rows; row++ )
 		{
 			var top = rect.Top + row * rowHeight;
-			var edge = edgeBase + (Hash( row, tick ) - 0.5f) * SwipeJitter;
+
+			// whole pixels, so the dots either side of the edge are fully lit and keep their HDR glow
+			var edge = MathF.Round( edgeBase + (Hash( row, tick ) - 0.5f) * SwipeJitter );
 
 			if ( _screenTarget.IsValid() )
 			{
