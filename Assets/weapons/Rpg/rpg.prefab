@@ -141,7 +141,10 @@
           "compiled": "textures/generated/imagefile/4a9e10201eb6f873.vtex"
         },
         "DisplayName": "Rocket Launcher",
-        "DroppedGameObject": null,
+        "DroppedGameObject": {
+          "_type": "gameobject",
+          "go": "00edf338-ad8d-4472-9725-250b57efbaba"
+        },
         "DryFireSound": {
           "Id": "066c6fdf-2cb5-44dc-b97e-630b53d8ed25",
           "Path": "sounds/dry_fire.sound"

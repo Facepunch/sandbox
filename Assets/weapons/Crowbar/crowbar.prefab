@@ -78,7 +78,10 @@
           "compiled": "textures/generated/imagefile/20615a690e2eee19.vtex"
         },
         "DisplayName": "#weapon.name.crowbar",
-        "DroppedGameObject": null,
+        "DroppedGameObject": {
+          "_type": "gameobject",
+          "go": "ef4d5a6b-7f8e-9012-def0-123456789013"
+        },
         "DryFireSound": null,
         "FirstShellReloadTime": 0,
         "Handedness": "Right",
