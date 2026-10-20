@@ -9,7 +9,6 @@ public sealed partial class FourWheelVehicle
 {
 	private sealed class Wheel
 	{
-		public GameObject GameObject;
 		public VehicleAxleParams Axle;
 
 		/// <summary>
@@ -17,12 +16,8 @@ public sealed partial class FourWheelVehicle
 		/// </summary>
 		public Vector3 HardPoint;
 
-		/// <summary>
-		/// Tyre width, inches - the width of the cylinder swept for the ground.
-		/// </summary>
-		public float Width;
-
 		public float Radius => Axle.WheelRadius;
+		public float Width => Axle.TyreWidth;
 		public float SpringLength => Axle.SpringAdditionalLength;
 
 		/// <summary>
@@ -103,16 +98,12 @@ public sealed partial class FourWheelVehicle
 	}
 
 	private readonly Wheel[] _wheels = new Wheel[WheelCount];
-	private static Wheel CreateWheel( GameObject wheelObject, VehicleAxleParams axle, Transform rest )
+	private static Wheel CreateWheel( VehicleAxleParams axle, Vector3 hardPoint )
 	{
-		var (center, _, width) = WheelShape( wheelObject, rest );
-
 		return new Wheel
 		{
-			GameObject = wheelObject,
 			Axle = axle,
-			HardPoint = rest.PointToWorld( center ),
-			Width = width,
+			HardPoint = hardPoint,
 			TyreFriction = axle.Friction,
 			GroundDistance = axle.SpringAdditionalLength + axle.WheelRadius,
 		};
@@ -558,67 +549,4 @@ public sealed partial class FourWheelVehicle
 
 		return dirA.Dot( dirB ) / body.Mass + angular;
 	}
-
-	/// <summary>
-	/// Wheel visuals: every machine traces for itself, from wherever it has the body, and rolls them along at the
-	/// body's speed - the host's wheel state never goes over the network. The front hubs follow their wheels.
-	/// </summary>
-	private void UpdateWheelVisuals()
-	{
-		if ( _wheelRest is null ) return;
-
-		var tx = WorldTransform;
-		for ( int i = 0; i < Math.Min( Wheels.Count, _wheelRest.Length ); i++ )
-		{
-			var wheelObject = Wheels[i];
-			if ( !wheelObject.IsValid() ) continue;
-
-			var visual = _visuals[i] ??= new WheelVisual();
-			var rest = _wheelRest[i];
-			var (centerLocal, axleLocal, width) = visual.Shape ??= WheelShape( wheelObject, rest );
-			var axle = AxleOf( i );
-			var hardPoint = rest.PointToWorld( centerLocal );
-			var steer = i < 2 ? Rotation.FromAxis( Vector3.Up, -SteerAngle ) : Rotation.Identity;
-
-			// how far down the ground is
-			var contact = WheelSweep( tx.PointToWorld( hardPoint ), tx.Rotation.Down, tx.Rotation * (steer * Vector3.Left), axle.WheelRadius, width, axle.SpringAdditionalLength );
-			var dist = contact.Hit ? contact.Distance : axle.SpringAdditionalLength + axle.WheelRadius;
-			var center = hardPoint + Vector3.Down * (dist - axle.WheelRadius);
-
-			// a front wheel steers about its kingpin, inboard of the wheel, not about its own centre
-			if ( i < 2 && KingpinInset != 0 )
-			{
-				var inward = hardPoint.y > 0 ? Vector3.Right : Vector3.Left;
-				var kingpin = center + inward * KingpinInset;
-				center = kingpin + steer * (center - kingpin);
-			}
-
-			// roll, unless the wheels are locked
-			if ( !WheelsLocked )
-			{
-				visual.Spin += (Speed / axle.WheelRadius).RadianToDegree() * Time.Delta;
-				visual.Spin %= 360f;
-			}
-
-			var spin = Rotation.FromAxis( rest.Rotation * axleLocal, visual.Spin );
-			var rotation = steer * spin * rest.Rotation;
-			wheelObject.WorldTransform = tx.ToWorld( new Transform( center - rotation * centerLocal, rotation, rest.Scale ) );
-
-			// the hub turns with the wheel about the wheel's resting centre, and goes wherever the wheel centre is now
-			var hub = i == 0 ? FrontLeftHub : i == 1 ? FrontRightHub : null;
-			if ( hub.IsValid() )
-			{
-				var hubRest = i == 0 ? RestPose.FrontLeftHub : RestPose.FrontRightHub;
-				hub.LocalTransform = new Transform( center - steer * hardPoint, steer ).ToWorld( hubRest );
-			}
-		}
-	}
-
-	private sealed class WheelVisual
-	{
-		public (Vector3 Center, Vector3 Axle, float Width)? Shape;
-		public float Spin;
-	}
-
-	private readonly WheelVisual[] _visuals = new WheelVisual[WheelCount];
 }

@@ -135,6 +135,11 @@ public sealed class VehicleAxleParams
 	[Property, Group( "Wheel" )] public float WheelRadius { get; set; } = 18f;
 
 	/// <summary>
+	/// Inches. The width of the cylinder swept for the ground.
+	/// </summary>
+	[Property, Group( "Wheel" )] public float TyreWidth { get; set; } = 10f;
+
+	/// <summary>
 	/// Kilograms. Carried by the car, but standing on the ground rather than on the springs.
 	/// </summary>
 	[Property, Group( "Wheel" )] public float WheelMass { get; set; } = 100f;
@@ -186,17 +191,6 @@ public sealed class VehicleAxleParams
 
 	[Property] public float TorqueFactor { get; set; } = 0.5f;
 	[Property] public float BrakeFactor { get; set; } = 0.5f;
-}
-
-/// <summary>
-/// Where a vehicle's moving parts rest relative to its body, see <see cref="FourWheelVehicle.RestPose"/>.
-/// </summary>
-public sealed class VehicleRestPose
-{
-	[Property] public List<Transform> Wheels { get; set; } = [];
-	[Property] public Transform FrontLeftHub { get; set; }
-	[Property] public Transform FrontRightHub { get; set; }
-	[Property] public Rotation SteeringWheel { get; set; } = Rotation.Identity;
 }
 
 /// <summary>

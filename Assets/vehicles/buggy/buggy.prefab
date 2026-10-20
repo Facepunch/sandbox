@@ -25,8 +25,8 @@
         "IsStatic": false,
         "MaterialGroup": null,
         "Model": {
-          "Id": "31dc39aa-8ae2-4f24-bf8f-cef481470048",
-          "Path": "vehicles/buggy/buggy_chassis.vmdl"
+          "Id": "e80f3255-bba5-4b92-9e4d-8ad0003545a8",
+          "Path": "vehicles/buggy/buggy_rigged.vmdl"
         },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -41,26 +41,33 @@
         "Tint": "1,1,1,1"
       },
       {
-        "__type": "Sandbox.ModelRenderer",
+        "__type": "Sandbox.SkinnedModelRenderer",
         "__guid": "2516ca8f-68f5-4f07-9cb5-b6d678907754",
         "__enabled": true,
         "Flags": 0,
+        "AnimationGraph": null,
         "BodyGroups": 18446744073709551615,
+        "BoneMergeTarget": null,
         "CreateAttachments": false,
+        "CreateBoneObjects": true,
+        "DeformationMode": "Normal",
         "LodOverride": null,
         "MaterialGroup": null,
         "MaterialOverride": null,
         "Materials": null,
         "Model": {
-          "Id": "31dc39aa-8ae2-4f24-bf8f-cef481470048",
-          "Path": "vehicles/buggy/buggy_chassis.vmdl"
+          "Id": "e80f3255-bba5-4b92-9e4d-8ad0003545a8",
+          "Path": "vehicles/buggy/buggy_rigged.vmdl"
         },
+        "Morphs": {},
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "Parameters": {},
+        "PlaybackRate": 1,
         "RenderOptions": {
           "GameLayer": true,
           "OverlayLayer": false,
@@ -68,7 +75,13 @@
           "AfterUILayer": false
         },
         "RenderType": "On",
-        "Tint": "1,1,1,1"
+        "Sequence": {
+          "Name": null,
+          "Looping": true,
+          "Blending": false
+        },
+        "Tint": "1,1,1,1",
+        "UseAnimGraph": true
       },
       {
         "__type": "Sandbox.ModelCollider",
@@ -80,8 +93,8 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "31dc39aa-8ae2-4f24-bf8f-cef481470048",
-          "Path": "vehicles/buggy/buggy_chassis.vmdl"
+          "Id": "e80f3255-bba5-4b92-9e4d-8ad0003545a8",
+          "Path": "vehicles/buggy/buggy_rigged.vmdl"
         },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -120,7 +133,7 @@
           "Roll": false
         },
         "MassCenterOverride": "0,0,0",
-        "MassOverride": 100,
+        "MassOverride": 1000,
         "MinImpactDamageSpeed": 500,
         "MotionEnabled": true,
         "OnComponentDestroy": null,
@@ -180,6 +193,7 @@
         },
         "FrontAxle": {
           "WheelRadius": 15.5,
+          "TyreWidth": 8.6,
           "WheelMass": 100,
           "Friction": 1.337,
           "BrakeFriction": 0.6,
@@ -193,19 +207,10 @@
           "TorqueFactor": 0.3,
           "BrakeFactor": 0.4
         },
-        "FrontLeftHub": {
-          "_type": "gameobject",
-          "go": "b8ce9065-7580-4a3f-9596-57e8832a7f1e"
-        },
-        "FrontRightHub": {
-          "_type": "gameobject",
-          "go": "79c18f39-e668-4716-9bde-9e5325f98093"
-        },
         "Gravity": 600,
         "Handbrake": {
           "Action": "Jump"
         },
-        "KingpinInset": 5.6,
         "Left": {
           "Action": "Left"
         },
@@ -217,6 +222,7 @@
         "OnComponentUpdate": null,
         "RearAxle": {
           "WheelRadius": 21.6,
+          "TyreWidth": 14.8,
           "WheelMass": 100,
           "Friction": 1.337,
           "BrakeFriction": 0.6,
@@ -230,7 +236,6 @@
           "TorqueFactor": 0.7,
           "BrakeFactor": 0.6
         },
-        "RestPose": null,
         "Right": {
           "Action": "Right"
         },
@@ -259,30 +264,8 @@
           "BoostSteeringRateFactor": 1.7,
           "PowerSlideAccel": 125
         },
-        "SteeringWheel": {
-          "_type": "gameobject",
-          "go": "c810f93c-f8da-4f11-82c3-0b2361a3c81c"
-        },
         "SteeringWheelAngle": 90,
-        "SteeringWheelAxis": "-0.939999998,0,0.342000008",
-        "Wheels": [
-          {
-            "_type": "gameobject",
-            "go": "582b30f4-87da-48fa-a7bf-34eeea7152bf"
-          },
-          {
-            "_type": "gameobject",
-            "go": "f6a6979d-95e8-45d8-aa8f-078a9d35e8ff"
-          },
-          {
-            "_type": "gameobject",
-            "go": "c33560c7-21b5-40f2-90c3-a605c2b223b2"
-          },
-          {
-            "_type": "gameobject",
-            "go": "c26c12f0-52bb-4503-95a6-d95ec95224ec"
-          }
-        ]
+        "SteeringWheelAxis": "-0.939999998,0,0.342000008"
       },
       {
         "__type": "Sandbox.BaseChair",
@@ -618,300 +601,6 @@
     ],
     "Children": [
       {
-        "__guid": "79c18f39-e668-4716-9bde-9e5325f98093",
-        "__version": 2,
-        "Flags": 0,
-        "Name": "buggy_axil_fr",
-        "Position": "0,0,0",
-        "Rotation": "0,0,0,1",
-        "Scale": "1,1,1",
-        "Tags": "",
-        "Enabled": true,
-        "NetworkMode": 2,
-        "NetworkFlags": 0,
-        "NetworkOrphaned": 0,
-        "NetworkTransmit": true,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "Sandbox.ModelRenderer",
-            "__guid": "c2741149-cddd-49fb-be03-ec9430e11d16",
-            "__enabled": true,
-            "Flags": 0,
-            "BodyGroups": 18446744073709551615,
-            "CreateAttachments": false,
-            "LodOverride": null,
-            "MaterialGroup": null,
-            "MaterialOverride": null,
-            "Materials": null,
-            "Model": {
-              "Id": "aeb3255e-6b56-4abb-902c-e0821f8faa39",
-              "Path": "vehicles/buggy/buggy_axil_fr.vmdl"
-            },
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": false,
-              "AfterUILayer": false
-            },
-            "RenderType": "On",
-            "Tint": "1,1,1,1"
-          }
-        ],
-        "Children": []
-      },
-      {
-        "__guid": "b8ce9065-7580-4a3f-9596-57e8832a7f1e",
-        "__version": 2,
-        "Flags": 0,
-        "Name": "buggy_axil_fl",
-        "Position": "0,0,0",
-        "Rotation": "0,0,0,1",
-        "Scale": "1,1,1",
-        "Tags": "",
-        "Enabled": true,
-        "NetworkMode": 2,
-        "NetworkFlags": 0,
-        "NetworkOrphaned": 0,
-        "NetworkTransmit": true,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "Sandbox.ModelRenderer",
-            "__guid": "f3f0c356-b209-4386-b727-c53913e4a496",
-            "__enabled": true,
-            "Flags": 0,
-            "BodyGroups": 18446744073709551615,
-            "CreateAttachments": false,
-            "LodOverride": null,
-            "MaterialGroup": null,
-            "MaterialOverride": null,
-            "Materials": null,
-            "Model": {
-              "Id": "fb6bd803-6598-482d-bbf4-18c2d298ce4b",
-              "Path": "vehicles/buggy/buggy_axil_fl.vmdl"
-            },
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": false,
-              "AfterUILayer": false
-            },
-            "RenderType": "On",
-            "Tint": "1,1,1,1"
-          }
-        ],
-        "Children": []
-      },
-      {
-        "__guid": "c26c12f0-52bb-4503-95a6-d95ec95224ec",
-        "__version": 2,
-        "Flags": 0,
-        "Name": "buggy_wheel_rr",
-        "Position": "-51,-42.0602989,20.4550991",
-        "Rotation": "0,0,0,1",
-        "Scale": "1,1,1",
-        "Tags": "",
-        "Enabled": true,
-        "NetworkMode": 2,
-        "NetworkFlags": 0,
-        "NetworkOrphaned": 0,
-        "NetworkTransmit": true,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "Sandbox.ModelRenderer",
-            "__guid": "965b1895-56a1-4985-9961-3243b57b3843",
-            "__enabled": true,
-            "Flags": 0,
-            "BodyGroups": 18446744073709551615,
-            "CreateAttachments": false,
-            "LodOverride": null,
-            "MaterialGroup": null,
-            "MaterialOverride": null,
-            "Materials": null,
-            "Model": {
-              "Id": "e4d2ce64-bb67-4bae-8eff-2bb219bb5d06",
-              "Path": "vehicles/buggy/buggy_wheel_rr.vmdl"
-            },
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": false,
-              "AfterUILayer": false
-            },
-            "RenderType": "On",
-            "Tint": "1,1,1,1"
-          }
-        ],
-        "Children": []
-      },
-      {
-        "__guid": "c33560c7-21b5-40f2-90c3-a605c2b223b2",
-        "__version": 2,
-        "Flags": 0,
-        "Name": "buggy_wheel_rl",
-        "Position": "-51,42.0802002,20.7439003",
-        "Rotation": "0,0,0,1",
-        "Scale": "1,1,1",
-        "Tags": "",
-        "Enabled": true,
-        "NetworkMode": 2,
-        "NetworkFlags": 0,
-        "NetworkOrphaned": 0,
-        "NetworkTransmit": true,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "Sandbox.ModelRenderer",
-            "__guid": "e3a6bb75-5400-40a4-923a-808fb1256481",
-            "__enabled": true,
-            "Flags": 0,
-            "BodyGroups": 18446744073709551615,
-            "CreateAttachments": false,
-            "LodOverride": null,
-            "MaterialGroup": null,
-            "MaterialOverride": null,
-            "Materials": null,
-            "Model": {
-              "Id": "0935566a-301b-4132-9122-23462f69abb4",
-              "Path": "vehicles/buggy/buggy_wheel_rl.vmdl"
-            },
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": false,
-              "AfterUILayer": false
-            },
-            "RenderType": "On",
-            "Tint": "1,1,1,1"
-          }
-        ],
-        "Children": []
-      },
-      {
-        "__guid": "582b30f4-87da-48fa-a7bf-34eeea7152bf",
-        "__version": 2,
-        "Flags": 0,
-        "Name": "buggy_wheel_fl",
-        "Position": "80.9000015,41.8264999,15.1000004",
-        "Rotation": "0,0,0,1",
-        "Scale": "1,1,1",
-        "Tags": "",
-        "Enabled": true,
-        "NetworkMode": 2,
-        "NetworkFlags": 0,
-        "NetworkOrphaned": 0,
-        "NetworkTransmit": true,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "Sandbox.ModelRenderer",
-            "__guid": "ed710797-cf1d-4750-a9d1-9e488b1559e5",
-            "__enabled": true,
-            "Flags": 0,
-            "BodyGroups": 18446744073709551615,
-            "CreateAttachments": false,
-            "LodOverride": null,
-            "MaterialGroup": null,
-            "MaterialOverride": null,
-            "Materials": null,
-            "Model": {
-              "Id": "a76544ca-c241-43a4-9d55-f9d7c74b4b41",
-              "Path": "vehicles/buggy/buggy_wheel_fl.vmdl"
-            },
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": false,
-              "AfterUILayer": false
-            },
-            "RenderType": "On",
-            "Tint": "1,1,1,1"
-          }
-        ],
-        "Children": []
-      },
-      {
-        "__guid": "f6a6979d-95e8-45d8-aa8f-078a9d35e8ff",
-        "__version": 2,
-        "Flags": 0,
-        "Name": "buggy_wheel_fr",
-        "Position": "80.9000015,-41.7729492,15.1000004",
-        "Rotation": "0,0,0,1",
-        "Scale": "1,1,1",
-        "Tags": "",
-        "Enabled": true,
-        "NetworkMode": 2,
-        "NetworkFlags": 0,
-        "NetworkOrphaned": 0,
-        "NetworkTransmit": true,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "Sandbox.ModelRenderer",
-            "__guid": "aa90223d-0203-43d4-8693-3d2e879fe0fa",
-            "__enabled": true,
-            "Flags": 0,
-            "BodyGroups": 18446744073709551615,
-            "CreateAttachments": false,
-            "LodOverride": null,
-            "MaterialGroup": null,
-            "MaterialOverride": null,
-            "Materials": null,
-            "Model": {
-              "Id": "0c774b3b-5235-46b2-9b4a-a2d8a1fc633b",
-              "Path": "vehicles/buggy/buggy_wheel_fr.vmdl"
-            },
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": false,
-              "AfterUILayer": false
-            },
-            "RenderType": "On",
-            "Tint": "1,1,1,1"
-          }
-        ],
-        "Children": []
-      },
-      {
         "__guid": "a661012c-ba29-48f2-b4ab-90b92d36261a",
         "__version": 2,
         "Flags": 0,
@@ -1038,55 +727,6 @@
             ]
           }
         ]
-      },
-      {
-        "__guid": "c810f93c-f8da-4f11-82c3-0b2361a3c81c",
-        "__version": 2,
-        "Flags": 0,
-        "Name": "steering_wheel",
-        "Position": "9.88000011,13.1000004,41.2599983",
-        "Rotation": "0,0,0,1",
-        "Scale": "1,1,1",
-        "Tags": "",
-        "Enabled": true,
-        "NetworkMode": 2,
-        "NetworkFlags": 0,
-        "NetworkOrphaned": 0,
-        "NetworkTransmit": true,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "Sandbox.ModelRenderer",
-            "__guid": "5893ff33-fa7a-4df5-964b-86d85defe67f",
-            "__enabled": true,
-            "Flags": 0,
-            "BodyGroups": 18446744073709551615,
-            "CreateAttachments": false,
-            "LodOverride": null,
-            "MaterialGroup": null,
-            "MaterialOverride": null,
-            "Materials": null,
-            "Model": {
-              "Id": "77524fb2-10d3-4660-a282-c19fce002df7",
-              "Path": "vehicles/buggy/buggy_steering_wheel.vmdl"
-            },
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": false,
-              "AfterUILayer": false
-            },
-            "RenderType": "On",
-            "Tint": "1,1,1,1"
-          }
-        ],
-        "Children": []
       },
       {
         "__guid": "07d59a99-16b6-45c3-81a0-ef2228ec35f9",
@@ -1285,6 +925,229 @@
           }
         ],
         "Children": []
+      },
+      {
+        "__guid": "514e2d82-4abc-4222-83fe-583ae9c3734a",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "root",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [],
+        "Children": [
+          {
+            "__guid": "71f7fb34-d6fd-4c8a-9cde-953c0d4ed483",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "steering_wheel",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
+          },
+          {
+            "__guid": "8c0b01a4-1e66-4846-8b1d-b9e83b3fac07",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "wheel_fl",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": [
+              {
+                "__guid": "fdf34dc0-37ef-4e28-82f2-26b5bf652fd5",
+                "__version": 2,
+                "Flags": 0,
+                "Name": "wheel_fl_steer",
+                "Position": "0,0,0",
+                "Rotation": "0,0,0,1",
+                "Scale": "1,1,1",
+                "Tags": "",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "NetworkFlags": 0,
+                "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
+                "OwnerTransfer": 1,
+                "Components": [],
+                "Children": [
+                  {
+                    "__guid": "36a180d7-fbd8-44dc-8581-2a3afd8e9d0d",
+                    "__version": 2,
+                    "Flags": 0,
+                    "Name": "wheel_fl_spin",
+                    "Position": "0,0,0",
+                    "Rotation": "0,0,0,1",
+                    "Scale": "1,1,1",
+                    "Tags": "",
+                    "Enabled": true,
+                    "NetworkMode": 2,
+                    "NetworkFlags": 0,
+                    "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
+                    "OwnerTransfer": 1,
+                    "Components": [],
+                    "Children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "__guid": "860549ef-f856-4e97-a5f0-0b5a415e08ce",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "wheel_fr",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": [
+              {
+                "__guid": "e08dcf5f-de1e-400a-af44-94edcb967813",
+                "__version": 2,
+                "Flags": 0,
+                "Name": "wheel_fr_steer",
+                "Position": "0,0,0",
+                "Rotation": "0,0,0,1",
+                "Scale": "1,1,1",
+                "Tags": "",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "NetworkFlags": 0,
+                "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
+                "OwnerTransfer": 1,
+                "Components": [],
+                "Children": [
+                  {
+                    "__guid": "85600acb-50da-4edd-ad7c-4b763de6f5cf",
+                    "__version": 2,
+                    "Flags": 0,
+                    "Name": "wheel_fr_spin",
+                    "Position": "0,0,0",
+                    "Rotation": "0,0,0,1",
+                    "Scale": "1,1,1",
+                    "Tags": "",
+                    "Enabled": true,
+                    "NetworkMode": 2,
+                    "NetworkFlags": 0,
+                    "NetworkOrphaned": 0,
+                    "NetworkTransmit": true,
+                    "OwnerTransfer": 1,
+                    "Components": [],
+                    "Children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "__guid": "653f8969-a7d7-4b23-8aae-8a37445d9de9",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "wheel_rl",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": [
+              {
+                "__guid": "8088f199-b18e-4b8e-83a7-e4b662f1a995",
+                "__version": 2,
+                "Flags": 0,
+                "Name": "wheel_rl_spin",
+                "Position": "0,0,0",
+                "Rotation": "0,0,0,1",
+                "Scale": "1,1,1",
+                "Tags": "",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "NetworkFlags": 0,
+                "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
+                "OwnerTransfer": 1,
+                "Components": [],
+                "Children": []
+              }
+            ]
+          },
+          {
+            "__guid": "d2801357-79e4-4d72-94eb-3adcc2ca9232",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "wheel_rr",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": [
+              {
+                "__guid": "d19d2fc9-9874-47af-ab8e-26ccd54b5276",
+                "__version": 2,
+                "Flags": 0,
+                "Name": "wheel_rr_spin",
+                "Position": "0,0,0",
+                "Rotation": "0,0,0,1",
+                "Scale": "1,1,1",
+                "Tags": "",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "NetworkFlags": 0,
+                "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
+                "OwnerTransfer": 1,
+                "Components": [],
+                "Children": []
+              }
+            ]
+          }
+        ]
       }
     ],
     "__properties": {
