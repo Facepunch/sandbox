@@ -231,6 +231,20 @@ public sealed partial class ViewModel : Sandbox.BaseWeaponModel
 		WorldRotation = rotation;
 	}
 
+	/// <summary>
+	/// Follow the render-only camera shake after placement, without feeding it into look inertia.
+	/// Use the final camera view as the pivot to preserve the camera bone and procedural bob offsets.
+	/// </summary>
+	public void FollowCameraEffects( CameraComponent camera, in CameraView view )
+	{
+		var effects = CameraEffectSystem.Get( Scene );
+		if ( effects is null ) return;
+
+		effects.QueryOffsets( camera, out var offset, out var angles, out _ );
+		var renderTransform = new Transform( view.Position + view.Rotation * offset, view.Rotation * angles );
+		WorldTransform = renderTransform.ToWorld( view.Transform.ToLocal( WorldTransform ) );
+	}
+
 	Rotation ApplyLookInertia( Rotation rotation, out Vector3 pivotOffset )
 	{
 		var angles = rotation.Angles();

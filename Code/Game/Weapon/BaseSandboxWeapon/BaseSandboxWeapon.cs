@@ -259,7 +259,11 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 
 	protected override void PlaceViewModel( CameraComponent camera, in CameraView view )
 	{
-		ViewModel?.GetComponentInChildren<ViewModel>()?.Place( _viewModelView );
+		var model = ViewModel?.GetComponentInChildren<ViewModel>();
+		if ( !model.IsValid() ) return;
+
+		model.Place( _viewModelView );
+		model.FollowCameraEffects( camera, view );
 	}
 
 	/// <summary>
