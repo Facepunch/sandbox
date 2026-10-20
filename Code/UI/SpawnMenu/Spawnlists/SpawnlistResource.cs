@@ -41,18 +41,6 @@ public class SpawnlistResource : GameResource
 		public SpawnlistItemKind Kind { get; set; }
 
 		/// <summary>
-		/// A model to spawn as a prop.
-		/// </summary>
-		[Property, ShowIf( nameof( Kind ), SpawnlistItemKind.Item )]
-		public Model Model { get; set; }
-
-		/// <summary>
-		/// A scripted entity to spawn. Used when no model is set.
-		/// </summary>
-		[Property, ShowIf( nameof( Kind ), SpawnlistItemKind.Item )]
-		public ScriptedEntity Entity { get; set; }
-
-		/// <summary>
 		/// A raw spawn ident, for anything that isn't a local model or entity,
 		/// e.g. <c>prop:facepunch.wooden_crate</c>. Used when no model or entity is set.
 		/// </summary>
@@ -73,9 +61,9 @@ public class SpawnlistResource : GameResource
 
 		public string GetIdent()
 		{
-			if ( Model is not null ) return $"prop:{Model.ResourcePath}";
-			if ( Entity is not null ) return $"entity:{Entity.ResourcePath}";
-			return string.IsNullOrWhiteSpace( Ident ) ? null : Ident.Trim();
+			var ident = Ident.Trim();
+			if ( !ident.EndsWith( ".vmdl" ) ) ident += ".vmdl";
+			return ident;
 		}
 
 		public override string ToString()
@@ -107,7 +95,7 @@ public class SpawnlistResource : GameResource
 			{
 				Id = new Guid( i + 1, 0, 0, new byte[8] ),
 				Kind = entry.Kind,
-				Title = entry.Title ?? (entry.Kind == SpawnlistItemKind.Item ? entry.Model?.ResourceName ?? entry.Entity?.Title : null),
+				Title = entry.Title,
 			};
 
 			if ( entry.Kind == SpawnlistItemKind.Item )

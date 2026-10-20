@@ -11,289 +11,217 @@
   "Items": [
     {
       "Kind": "Title",
-      "Model": null,
-      "Entity": null,
       "Ident": null,
       "Title": "Effects",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/combineball.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/combineball.mdl",
       "Title": "combineball",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/portalfunnel.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/portalfunnel.mdl",
       "Title": "portalfunnel",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/portalrift.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/portalrift.mdl",
       "Title": "portalrift",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/splode.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/splode.mdl",
       "Title": "splode",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/props_combine/portalskydome.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/props_combine/portalskydome.mdl",
       "Title": "portalskydome",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/props_combine/portalball.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/props_combine/portalball.mdl",
       "Title": "portalball",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/splodearc.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/splodearc.mdl",
       "Title": "splodearc",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/splodeglass.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/splodeglass.mdl",
       "Title": "splodeglass",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/props_combine/stasisvortex.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/props_combine/stasisvortex.mdl",
       "Title": "stasisvortex",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/props_combine/stasisshield.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/props_combine/stasisshield.mdl",
       "Title": "stasisshield",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/vol_light.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/vol_light.mdl",
       "Title": "vol_light",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/vol_light128x128.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/vol_light128x128.mdl",
       "Title": "vol_light128x128",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/vol_light128x256.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/vol_light128x256.mdl",
       "Title": "vol_light128x256",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/vol_light128x384.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/vol_light128x384.mdl",
       "Title": "vol_light128x384",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/vol_light128x512.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/vol_light128x512.mdl",
       "Title": "vol_light128x512",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/vol_light256x384.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/vol_light256x384.mdl",
       "Title": "vol_light256x384",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/vol_light256x512.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/vol_light256x512.mdl",
       "Title": "vol_light256x512",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/vol_light64x128.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/vol_light64x128.mdl",
       "Title": "vol_light64x128",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/effects/vol_light64x256.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/effects/vol_light64x256.mdl",
       "Title": "vol_light64x256",
       "Icon": null
     },
     {
       "Kind": "Title",
-      "Model": null,
-      "Entity": null,
       "Ident": null,
       "Title": "Editor",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/air_node.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/air_node.mdl",
       "Title": "air_node",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/air_node_hint.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/air_node_hint.mdl",
       "Title": "air_node_hint",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/axis_helper.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/axis_helper.mdl",
       "Title": "axis_helper",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/axis_helper_thick.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/axis_helper_thick.mdl",
       "Title": "axis_helper_thick",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/camera.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/camera.mdl",
       "Title": "camera",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/climb_node.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/climb_node.mdl",
       "Title": "climb_node",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/cone_helper.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/cone_helper.mdl",
       "Title": "cone_helper",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/ground_node.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/ground_node.mdl",
       "Title": "ground_node",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/ground_node_hint.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/ground_node_hint.mdl",
       "Title": "ground_node_hint",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/node_hint.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/node_hint.mdl",
       "Title": "node_hint",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/overlay_helper.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/overlay_helper.mdl",
       "Title": "overlay_helper",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/playerstart.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/playerstart.mdl",
       "Title": "playerstart",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/scriptedsequence.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/scriptedsequence.mdl",
       "Title": "scriptedsequence",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/spot.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/spot.mdl",
       "Title": "spot",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Model": null,
-      "Entity": null,
-      "Ident": "mount:mount://gmod/models/editor/spot_cone.mdl.vmdl",
+      "Ident": "mount:mount://gmod/models/editor/spot_cone.mdl",
       "Title": "spot_cone",
       "Icon": null
     }
