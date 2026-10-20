@@ -198,8 +198,7 @@
 	}
 
 	/// <summary>
-	/// Scrolls the tool name across the viewmodel screen in the HUD's style, glowing like the HUD digits.
-	/// The screen shader splits it over the four LCDs under the glass.
+	/// Scrolls the tool name across the viewmodel screen's dot matrix in <see cref="Toolgun.ScreenColor"/>.
 	/// </summary>
 	public virtual void DrawScreen( Rect rect, Painter paint )
 	{
@@ -207,18 +206,21 @@
 		const float nameSize = 6f;
 		const float scrollSpeed = 5f;
 
-		var look = HudStyle.For( Scene );
+		var color = Toolgun.IsValid() ? Toolgun.ScreenColor : Color.White;
 		var title = Game.Language.GetPhrase( TypeDescription.Title.TrimStart( '#' ) ).ToUpperInvariant();
 
-		paint.TextStyle = new TextStyle( "Not Jam Chunky Sans 6", nameSize, look.Glow( Color.White ) ) { Alignment = TextFlag.LeftCenter | TextFlag.SingleLine };
-		var textWidth = paint.MeasureText( title ).x;
+		paint.TextStyle = new TextStyle( "Not Jam Chunky Sans 6", nameSize, color ) { Alignment = TextFlag.LeftTop | TextFlag.SingleLine };
+		var textSize = paint.MeasureText( title );
+
+		// everything lands on whole pixels: the painter caps partly covered pixels at 1, which would dim the HDR colour
+		var top = MathF.Round( rect.Top + (rect.Height - textSize.y) * 0.5f );
 
 		// copies a half screen apart loop right-to-left, entering from the right edge
-		var cycle = textWidth + rect.Width * 0.5f;
-		var x = rect.Right - (Time.Now * scrollSpeed) % cycle;
+		var cycle = MathF.Ceiling( textSize.x + rect.Width * 0.5f );
+		var x = MathF.Round( rect.Right - (Time.Now * scrollSpeed) % cycle );
 
-		for ( ; x > rect.Left - textWidth; x -= cycle )
-			paint.Text( title, new Rect( x, rect.Top, textWidth, rect.Height ) );
+		for ( ; x > rect.Left - textSize.x; x -= cycle )
+			paint.Text( title, new Rect( x, top, textSize.x, textSize.y ) );
 	}
 
 	/// <summary>
