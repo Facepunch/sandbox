@@ -78,7 +78,7 @@ PS
 		float2 cell = frac( uv * grid );
 		float2 cellCentered = cell - 0.5;
 
-		float dotRadius = 0.35;
+		float dotRadius = 0.5;
 		float dist = length( cellCentered );
 		float dotMask = 1.0 - smoothstep( dotRadius - 0.08, dotRadius + 0.08, dist );
 
