@@ -1,0 +1,31 @@
+{
+  "guid": "aeb3255e-6b56-4abb-902c-e0821f8faa39",
+  "publish": {
+    "Enabled": false,
+    "ProjectConfig": {
+      "Title": "Buggy Axil Fr",
+      "Type": "model",
+      "Org": "local",
+      "Ident": "buggy_axil_fr",
+      "Schema": 0,
+      "IncludeSourceFiles": false,
+      "Resources": null,
+      "PackageReferences": null,
+      "EditorReferences": [
+        "facepunch.beer_keg_a1#282207",
+        "facepunch.carseat#143559",
+        "facepunch.cartyre#275783",
+        "facepunch.tractorwheel#140646"
+      ],
+      "Mounts": null,
+      "IsStandaloneOnly": false,
+      "AI": {
+        "EnableMcpCommunication": true
+      },
+      "Metadata": {
+        "SingleAssetSource": "vehicles/buggy/buggy_axil_fr.vmdl",
+        "ParentPackage": "facepunch.sandbox"
+      }
+    }
+  }
+}

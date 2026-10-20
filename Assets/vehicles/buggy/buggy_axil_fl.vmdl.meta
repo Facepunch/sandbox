@@ -1,18 +1,18 @@
 {
-  "guid": "31dc39aa-8ae2-4f24-bf8f-cef481470048",
+  "guid": "fb6bd803-6598-482d-bbf4-18c2d298ce4b",
   "publish": {
     "Enabled": false,
     "ProjectConfig": {
-      "Title": "Buggy",
+      "Title": "Buggy Axil Fl",
       "Type": "model",
       "Org": "local",
-      "Ident": "buggy",
+      "Ident": "buggy_axil_fl",
       "Schema": 0,
       "IncludeSourceFiles": false,
       "Resources": null,
       "PackageReferences": null,
       "EditorReferences": [
-        "facepunch.beer_keg_a2#282208",
+        "facepunch.beer_keg_a1#282207",
         "facepunch.carseat#143559",
         "facepunch.cartyre#275783",
         "facepunch.tractorwheel#140646"
@@ -23,7 +23,7 @@
         "EnableMcpCommunication": true
       },
       "Metadata": {
-        "SingleAssetSource": "vehicles/buggy/buggy.vmdl",
+        "SingleAssetSource": "vehicles/buggy/buggy_axil_fl.vmdl",
         "ParentPackage": "facepunch.sandbox"
       }
     }

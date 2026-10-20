@@ -1,0 +1,31 @@
+{
+  "guid": "0935566a-301b-4132-9122-23462f69abb4",
+  "publish": {
+    "Enabled": false,
+    "ProjectConfig": {
+      "Title": "Buggy Chassis 2",
+      "Type": "model",
+      "Org": "local",
+      "Ident": "buggy_chassis_2",
+      "Schema": 0,
+      "IncludeSourceFiles": false,
+      "Resources": null,
+      "PackageReferences": null,
+      "EditorReferences": [
+        "facepunch.beer_keg_a1#282207",
+        "facepunch.carseat#143559",
+        "facepunch.cartyre#275783",
+        "facepunch.tractorwheel#140646"
+      ],
+      "Mounts": null,
+      "IsStandaloneOnly": false,
+      "AI": {
+        "EnableMcpCommunication": true
+      },
+      "Metadata": {
+        "SingleAssetSource": "vehicles/buggy/buggy_wheel_rl.vmdl",
+        "ParentPackage": "facepunch.sandbox"
+      }
+    }
+  }
+}

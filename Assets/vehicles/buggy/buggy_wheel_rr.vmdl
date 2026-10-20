@@ -24,14 +24,7 @@
 							exclude_by_default = true
 							exception_list = 
 							[
-								"buggy_chassis",
 								"rear_right_wheel",
-								"rear_left_wheel",
-								"steering_wheel",
-								"front_right_axil",
-								"front_right_wheel",
-								"front_left_axil",
-								"front_left_wheel",
 							]
 						}
 					},
@@ -78,7 +71,7 @@
 					{
 						_class = "PhysicsBodyMarkup"
 						target_body = ""
-						mass_override = 100.0
+						mass_override = 10.0
 						inertia_scale = 1.0
 						linear_damping = 0.0
 						angular_damping = 0.0
@@ -92,66 +85,6 @@
 				_class = "PhysicsShapeList"
 				children = 
 				[
-					{
-						_class = "PhysicsHullFile"
-						name = "buggy"
-						parent_bone = ""
-						surface_prop = "default"
-						collision_tags = "solid"
-						recenter_on_parent_bone = false
-						offset_origin = [ 0.0, 0.0, 0.0 ]
-						offset_angles = [ 0.0, 0.0, 0.0 ]
-						align_origin_x_type = "None"
-						align_origin_y_type = "None"
-						align_origin_z_type = "None"
-						filename = "vehicles/buggy/buggy.fbx"
-						import_scale = 1.0
-						faceMergeAngle = 10.0
-						maxHullVertices = 0
-						import_mode = "SingleHull"
-						optimization_algorithm = "QEM"
-						import_filter = 
-						{
-							exclude_by_default = false
-							exception_list = 
-							[
-								"front_left_wheel",
-								"front_left_axil",
-								"front_right_wheel",
-								"steering_wheel",
-								"rear_left_wheel",
-								"rear_right_wheel",
-								"front_right_axil",
-							]
-						}
-					},
-					{
-						_class = "PhysicsShapeCylinder"
-						parent_bone = ""
-						surface_prop = "default"
-						collision_tags = "solid"
-						radius = 15.519099
-						point0 = [ 80.900002, 37.534401, 15.1 ]
-						point1 = [ 80.900002, 46.118599, 15.1 ]
-					},
-					{
-						_class = "PhysicsShapeCylinder"
-						parent_bone = ""
-						surface_prop = "default"
-						collision_tags = "solid"
-						radius = 15.519099
-						point0 = [ 80.900002, -46.009453, 15.1 ]
-						point1 = [ 80.900002, -37.5364, 15.1 ]
-					},
-					{
-						_class = "PhysicsShapeCylinder"
-						parent_bone = ""
-						surface_prop = "default"
-						collision_tags = "solid"
-						radius = 21.610464
-						point0 = [ -51.0, 34.706551, 21.442711 ]
-						point1 = [ -51.0, 49.453823, 20.045141 ]
-					},
 					{
 						_class = "PhysicsShapeCylinder"
 						parent_bone = ""
