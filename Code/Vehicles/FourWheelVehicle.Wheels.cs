@@ -234,18 +234,23 @@ public sealed partial class FourWheelVehicle
 	private WheelContact WheelSweep( Vector3 hardPoint, Vector3 down, Vector3 axle, float radius, float width, float springLength )
 	{
 		var length = springLength + radius;
-		var start = hardPoint - down * radius;
-		var forward = axle.Cross( -down ).Normal;
+		var top = hardPoint - down * radius;
+		var end = top + down * length;
+		var rotation = Rotation.LookAt( axle.Cross( -down ).Normal, axle );
 
-		var tr = Ground( Scene.Trace.Cylinder( width, radius, start, start + down * length ).Rotated( Rotation.LookAt( forward, axle ) ) );
-
-		if ( !tr.StartedSolid && (!tr.Hit || tr.Normal.Dot( -down ) >= 0.1f) )
+		// Starting a radius up finds ground the wheel's been pushed up onto, but up there it can start inside something
+		// - a step's riser, the underside of stairs. Then start lower: from anywhere clear it finds the same ground, where
+		// the ray down the middle finds whatever's under the centre, and the wheel would flick between the two.
+		for ( var lift = 1.0f; lift >= 0.0f; lift -= 0.5f )
 		{
+			var tr = Ground( Scene.Trace.Cylinder( width, radius, hardPoint - down * (radius * lift), end ).Rotated( rotation ) );
+			if ( tr.StartedSolid ) continue;
 			if ( !tr.Hit ) return default;
+			if ( tr.Normal.Dot( -down ) < 0.1f ) break;
 
 			// On flat ground the whole width of the tyre touches, and the sweep reports anywhere along it - a different
 			// side each tick, rocking the car as the wheel's load jumps across. Take the point on the tyre's centre line.
-			var distance = (tr.EndPosition - start).Dot( down );
+			var distance = (tr.EndPosition - top).Dot( down );
 			var center = hardPoint + down * (distance - radius);
 			var across = (axle - tr.Normal * axle.Dot( tr.Normal )).Normal;
 
@@ -260,20 +265,20 @@ public sealed partial class FourWheelVehicle
 			};
 		}
 
-		// Started inside something, or touched it above the axle (a wall, an overhang) - nothing a wheel could roll
-		// up onto. Fall back to a ray from the hard point.
-		tr = Ground( Scene.Trace.Ray( hardPoint, hardPoint + down * length ) );
+		// Inside something all the way down, or touched it above the axle (a wall, an overhang) - nothing a wheel could
+		// roll up onto. Fall back to a ray from the hard point.
+		var ray = Ground( Scene.Trace.Ray( hardPoint, hardPoint + down * length ) );
 
-		if ( !tr.Hit ) return default;
+		if ( !ray.Hit ) return default;
 
 		return new WheelContact
 		{
 			Hit = true,
-			Distance = tr.StartedSolid ? 0.0f : tr.Distance,
-			Point = tr.StartedSolid ? hardPoint : tr.HitPosition,
-			Normal = tr.StartedSolid ? -down : tr.Normal,
-			Surface = tr.Surface,
-			Body = tr.Body,
+			Distance = ray.StartedSolid ? 0.0f : ray.Distance,
+			Point = ray.StartedSolid ? hardPoint : ray.HitPosition,
+			Normal = ray.StartedSolid ? -down : ray.Normal,
+			Surface = ray.Surface,
+			Body = ray.Body,
 		};
 	}
 

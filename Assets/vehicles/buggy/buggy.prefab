@@ -246,8 +246,8 @@
           "component_type": "BaseChair"
         },
         "Steering": {
-          "DegreesSlow": 50,
-          "DegreesFast": 35,
+          "DegreesSlow": 40,
+          "DegreesFast": 30,
           "DegreesBoost": 11,
           "SteeringExponent": 1.4,
           "SpeedSlow": 14,
