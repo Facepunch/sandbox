@@ -30,9 +30,18 @@ public sealed class PlayerFlashlight : Component
 	{
 		if ( !_player.IsValid() ) return;
 
-		if ( !IsProxy && Input.Pressed( "Flashlight" ) && !IsKeyTaken() )
+		if ( !IsProxy && (IsOn || Input.Pressed( "Flashlight" )) )
 		{
-			Toggle();
+			// once something else has the key - getting into a car we're driving - the flashlight goes off, or there's
+			// no way to turn it off again
+			if ( IsKeyTaken() )
+			{
+				if ( IsOn ) Toggle();
+			}
+			else if ( Input.Pressed( "Flashlight" ) )
+			{
+				Toggle();
+			}
 		}
 
 		var eye = _player.EyeTransform;
