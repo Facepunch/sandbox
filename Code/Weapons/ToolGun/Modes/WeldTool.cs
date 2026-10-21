@@ -14,6 +14,8 @@ public sealed class WeldTool : BaseConstraintToolMode
 	float _rawAngle = 0f;
 	bool _isSnapping;
 
+	readonly PlacementPreview _preview = new();
+
 	public override bool AbsorbMouseInput => _easyMode && Stage == 2;
 
 	public override string Description => Stage switch
@@ -50,6 +52,12 @@ public sealed class WeldTool : BaseConstraintToolMode
 	}
 
 	public override void OnControl()
+	{
+		ControlStages();
+		_preview.EndFrame();
+	}
+
+	void ControlStages()
 	{
 		Toolgun.SetIsUsingJoystick( _easyMode && Stage == 2 );
 
@@ -171,26 +179,17 @@ public sealed class WeldTool : BaseConstraintToolMode
 		base.OnDisabled();
 		ResetRotation();
 		_easyMode = false;
+		_preview.Clear();
 	}
 
 	/// <summary>
-	/// Draw a ghost preview of the source object and all its connected objects at the given placement.
+	/// Draw a ghost preview of the source object and all its connected objects at the given placement,
+	/// and fade the originals so it's clear they're the ones moving.
 	/// </summary>
 	void DrawEasyModePreview( Transform placement )
 	{
 		var go = Point1.GameObject.Network.RootGameObject ?? Point1.GameObject;
-
-		var builder = new LinkedGameObjectBuilder();
-		builder.AddConnected( go );
-
-		foreach ( var obj in builder.Objects )
-		{
-			var previewTransform = obj == go
-				? placement
-				: placement.ToWorld( go.WorldTransform.ToLocal( obj.WorldTransform ) );
-
-			DebugOverlay.GameObject( obj, transform: previewTransform, color: Color.White.WithAlpha( 0.3f ) );
-		}
+		_preview.Draw( Scene, go, placement );
 	}
 
 	Transform GetRotatedPlacement( SelectionPoint a, SelectionPoint b, float angle )

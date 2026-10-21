@@ -64,10 +64,15 @@
 
 		var tr = trace.Run();
 
+		// A collider riding on another object's body (a prop merged onto a bone) selects its own object, not the body's
+		var hit = tr.GameObject;
+		if ( tr.Collider?.GameObject is { } colliderObject && hit.IsValid() && colliderObject.Network.RootGameObject != hit.Network.RootGameObject )
+			hit = colliderObject;
+
 		var sp = new SelectionPoint
 		{
-			GameObject = tr.GameObject,
-			LocalTransform = tr.GameObject?.WorldTransform.ToLocal( new Transform( tr.EndPosition, Rotation.LookAt( tr.Normal ) ) ) ?? global::Transform.Zero
+			GameObject = hit,
+			LocalTransform = hit?.WorldTransform.ToLocal( new Transform( tr.EndPosition, Rotation.LookAt( tr.Normal ) ) ) ?? global::Transform.Zero
 		};
 
 		if ( sp.IsValid() )
