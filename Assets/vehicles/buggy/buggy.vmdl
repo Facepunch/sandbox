@@ -21,11 +21,8 @@
 						parent_bone = ""
 						import_filter = 
 						{
-							exclude_by_default = true
-							exception_list = 
-							[
-								"buggy_chassis",
-							]
+							exclude_by_default = false
+							exception_list = [  ]
 						}
 					},
 				]
@@ -57,6 +54,14 @@
 							{
 								from = "tractor_tyre.vmat"
 								to = "models/sbox_props/tractor_wheel/tractor_wheel.vmat"
+							},
+							{
+								from = "03 - default.vmat"
+								to = "vehicles/buggy/buggy.vmat"
+							},
+							{
+								from = "04 - default.vmat"
+								to = "vehicles/buggy/buggy.vmat"
 							},
 						]
 						use_global_default = false

@@ -14,7 +14,7 @@
 						filename = "vehicles/buggy/buggy_rigged.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
-						import_scale = 0.393701
+						import_scale = 1.0
 						align_origin_x_type = "None"
 						align_origin_y_type = "None"
 						align_origin_z_type = "None"
@@ -33,7 +33,7 @@
 						filename = "vehicles/buggy/buggy_rigged.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
-						import_scale = 0.393701
+						import_scale = 1.0
 						align_origin_x_type = "None"
 						align_origin_y_type = "None"
 						align_origin_z_type = "None"
@@ -52,7 +52,7 @@
 						filename = "vehicles/buggy/buggy_rigged.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
-						import_scale = 0.393701
+						import_scale = 1.0
 						align_origin_x_type = "None"
 						align_origin_y_type = "None"
 						align_origin_z_type = "None"
@@ -153,6 +153,8 @@
 								"rear_left_wheel",
 								"rear_right_wheel",
 								"front_right_axil",
+								"buggy_front",
+								"buggy_rear",
 							]
 						}
 					},
