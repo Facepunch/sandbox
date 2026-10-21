@@ -142,7 +142,7 @@ public sealed class VehicleCamera : Component, ICameraModifier
 
 		// a little of the slope, without the car's roll
 		var carPitch = rotation.Angles().pitch.Clamp( -30f, 30f );
-		_pitch = _pitch.LerpTo( carPitch * SlopeFollow, Ease( 3f, dt ) );
+		_pitch = _pitch.LerpTo( carPitch * SlopeFollow, Ease( 6f, dt ) );
 
 		// Look around with the mouse. It stays put until you've been driving a while without touching it.
 		var input = Input.AnalogLook;
@@ -161,7 +161,8 @@ public sealed class VehicleCamera : Component, ICameraModifier
 		}
 
 		// the camera rides a spring on the car's height, so it dips and settles after a landing
-		Spring( ref _height, ref _heightSpeed, tx.Position.z, 7f, dt );
+		// - moving with it, so it keeps up on a hill and only lags when the car's climb changes suddenly
+		Spring( ref _height, ref _heightSpeed, tx.Position.z, 10f, dt, _velocity.z );
 
 		// hangs back while accelerating, closes in under braking
 		var lag = (_acceleration * AccelerationLag).Clamp( -50f, 70f ) + SpeedDistance * MathF.Min( speedFraction, 1f );
@@ -227,11 +228,11 @@ public sealed class VehicleCamera : Component, ICameraModifier
 	}
 
 	/// <summary>
-	/// A critically damped spring towards a target, responding at about the given rate.
+	/// A critically damped spring towards a target moving at a given speed, responding at about the given rate.
 	/// </summary>
-	private static void Spring( ref float value, ref float speed, float target, float rate, float dt )
+	private static void Spring( ref float value, ref float speed, float target, float rate, float dt, float targetSpeed = 0f )
 	{
-		speed += ((target - value) * rate * rate - speed * 2f * rate) * dt;
+		speed += ((target - value) * rate * rate + (targetSpeed - speed) * 2f * rate) * dt;
 		value += speed * dt;
 	}
 
