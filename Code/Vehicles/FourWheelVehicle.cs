@@ -176,12 +176,12 @@ public sealed partial class FourWheelVehicle : Component, IPlayerControllable
 		// upside down, the wheels can't drive (including boost)
 		var overturned = IsOverturned();
 
+		// keys are all the way, a gamepad's triggers and stick anything between
 		UpdateDriverControls( new DriverInput
 		{
-			Forward = Forward.Down() && !overturned,
-			Back = Back.Down() && !overturned,
-			Left = Left.Down(),
-			Right = Right.Down(),
+			Forward = overturned ? 0.0f : Forward.GetAnalog(),
+			Back = overturned ? 0.0f : Back.GetAnalog(),
+			Steering = Right.GetAnalog() - Left.GetAnalog(),
 			Boost = Boost.Down() && !overturned,
 			Handbrake = Handbrake.Down(),
 		}, Time.Delta );

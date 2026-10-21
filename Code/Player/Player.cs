@@ -108,6 +108,13 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	[Sync]
 	public bool IsNoclipping { get; internal set; }
 
+	/// <summary>
+	/// How far each action is pushed, 0 to 1, when it's on a gamepad's trigger or stick rather than a key. What the
+	/// player drives from a seat runs on the host, which only gets whether actions are down, so they sync this with it.
+	/// See <see cref="ClientInput.GetAnalog"/>.
+	/// </summary>
+	[Sync] public NetDictionary<string, float> ActionAmounts { get; set; } = new();
+
 	/// <summary>Seconds of invulnerability after spawning, to stop spawn-killing. 0 disables it.</summary>
 	[ConVar( "sandbox.spawnprotection", ConVarFlags.Replicated | ConVarFlags.Saved, Help = "Seconds of invulnerability after spawning. 0 disables spawn protection." )]
 	public static float SpawnProtection { get; set; } = 5.0f;
@@ -370,6 +377,11 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		// no noclip from a seat - and jump there is often a vehicle's handbrake, so leave double taps alone
 		var seated = _cachedSeat is not null;
 
+		if ( seated )
+			PressSeatedGamepad();
+		else if ( ActionAmounts.Count > 0 )
+			ActionAmounts.Clear();
+
 		if ( !seated && Input.Pressed( "noclip" ) )
 		{
 			ToggleNoclip();
@@ -404,6 +416,34 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			inventory.Pump();
 
 		weaponSelection?.HandleScrollInput();
+	}
+
+	/// <summary>
+	/// Seated, a gamepad's triggers are forward and backward and its left stick steers: the same actions as the keys, so
+	/// whatever we're driving needs nothing new - plus how far each is pushed, in <see cref="ActionAmounts"/>.
+	/// </summary>
+	private void PressSeatedGamepad()
+	{
+		var steer = Input.GetAnalog( InputAnalog.LeftStickX );
+		PressAnalog( "Forward", Input.GetAnalog( InputAnalog.RightTrigger ), 0.05f );
+		PressAnalog( "Backward", Input.GetAnalog( InputAnalog.LeftTrigger ), 0.05f );
+		PressAnalog( "Left", -steer, 0.15f );
+		PressAnalog( "Right", steer, 0.15f );
+	}
+
+	/// <summary>
+	/// Press an action from an analog input past its deadzone, and note how far. A key on it counts as all the way.
+	/// </summary>
+	private void PressAnalog( string action, float value, float deadzone )
+	{
+		var amount = ((value - deadzone) / (1.0f - deadzone)).Clamp( 0.0f, 1.0f );
+		if ( Input.Down( action ) )
+			amount = 1.0f;
+		else if ( amount > 0.0f )
+			Input.SetAction( action, true );
+
+		if ( !ActionAmounts.TryGetValue( action, out var last ) || last != amount )
+			ActionAmounts[action] = amount;
 	}
 
 	void ToggleNoclip( bool fromJump = false )

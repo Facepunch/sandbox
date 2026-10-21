@@ -16,5 +16,16 @@ public struct ClientInput
 	public readonly bool Down() => IsEnabled && ControlContext.Connection?.Down( Action ) == true;
 	public readonly bool Pressed() => IsEnabled && ControlContext.Connection?.Pressed( Action ) == true;
 	public readonly bool Released() => IsEnabled && ControlContext.Connection?.Released( Action ) == true;
-	public readonly float GetAnalog() => Down() ? 1f : 0f;
+
+	/// <summary>
+	/// How far the action's pushed, 0 to 1: a key's all the way, a gamepad's trigger or stick anything between (see
+	/// <see cref="Player.ActionAmounts"/>).
+	/// </summary>
+	public readonly float GetAnalog()
+	{
+		if ( !Down() ) return 0f;
+
+		var amounts = ControlContext.Player?.ActionAmounts;
+		return amounts is not null && amounts.TryGetValue( Action, out var amount ) ? amount : 1f;
+	}
 }

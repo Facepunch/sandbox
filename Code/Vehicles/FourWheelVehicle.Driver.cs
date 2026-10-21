@@ -26,10 +26,18 @@ public sealed partial class FourWheelVehicle
 
 	private struct DriverInput
 	{
-		public bool Forward;
-		public bool Back;
-		public bool Left;
-		public bool Right;
+		/// <summary>
+		/// The pedals, 0 to 1. Keys are all or nothing, a gamepad's triggers anything between.
+		/// </summary>
+		public float Forward;
+		public float Back;
+
+
+		/// <summary>
+		/// Where to steer, -1 full left to 1 full right. Keys are full lock, a gamepad's stick anything between.
+		/// </summary>
+		public float Steering;
+
 		public bool Boost;
 		public bool Handbrake;
 	}
@@ -62,12 +70,11 @@ public sealed partial class FourWheelVehicle
 	}
 
 	/// <summary>
-	/// Steering towards full lock, slower the faster we're going - but snapping back through the centre when changing
-	/// direction, quicker on the brakes and while boosting.
+	/// Steering towards where the driver's steering (full lock on the keys), slower the faster we're going - but snapping
+	/// back through the centre when changing direction or easing off, quicker on the brakes and while boosting.
 	/// </summary>
-	private void SteeringTurn( float carSpeed, bool turnLeft, bool brake, bool throttle, float frameTime )
+	private void SteeringTurn( float carSpeed, float targetSteering, bool brake, bool throttle, float frameTime )
 	{
-		var targetSteering = turnLeft ? -1.0f : 1.0f;
 
 		// steering speeds are in mph, engine speeds in in/s
 		var steeringRestRate = RemapValClamped( carSpeed, Steering.SpeedSlow, Steering.SpeedFast,
@@ -95,7 +102,8 @@ public sealed partial class FourWheelVehicle
 		var steeringRate = RemapValClamped( carSpeed, Steering.SpeedSlow, Steering.SpeedFast,
 			Steering.SteeringRateSlow, Steering.SteeringRateFast );
 
-		if ( MathF.Abs( steeringRate ) < steeringRestRate && Sign( targetSteering ) != Sign( _controls.Steering ) )
+		var easingOff = Sign( targetSteering ) != Sign( _controls.Steering ) || MathF.Abs( targetSteering ) < MathF.Abs( _controls.Steering );
+		if ( MathF.Abs( steeringRate ) < steeringRestRate && easingOff )
 		{
 			steeringRate = steeringRestRate;
 		}
@@ -118,9 +126,12 @@ public sealed partial class FourWheelVehicle
 		var carSign = _state.Speed >= SpeedThrottleAsBrake ? 1.0f : _state.Speed <= -SpeedThrottleAsBrake ? -1.0f : 0.0f;
 		var carSpeed = MathF.Abs( InsToMph( _state.Speed ) );
 
-		if ( input.Left || input.Right )
+		var forward = input.Forward > 0.0f;
+		var back = input.Back > 0.0f;
+
+		if ( input.Steering != 0.0f )
 		{
-			SteeringTurn( carSpeed, input.Left, input.Back, input.Forward && !input.Back, frameTime );
+			SteeringTurn( carSpeed, input.Steering, back, forward && !back, frameTime );
 		}
 		else
 		{
@@ -133,25 +144,25 @@ public sealed partial class FourWheelVehicle
 		_controls.HandbrakeRight = false;
 		bool throttle;
 
-		if ( input.Forward )
+		if ( forward )
 		{
 			throttle = true;
 
 			// less throttle while turning, ramped in from a stop so it can still pull away
-			_controls.Throttle = 1.0f;
+			_controls.Throttle = input.Forward;
 			if ( _controls.Steering != 0 )
 			{
 				var throttleReduce = carSpeed < Steering.SpeedSlow
 					? RemapValClamped( carSpeed, 0, Steering.SpeedSlow, 0, Steering.TurnThrottleReduceSlow )
 					: RemapValClamped( carSpeed, Steering.SpeedSlow, Steering.SpeedFast, Steering.TurnThrottleReduceSlow, Steering.TurnThrottleReduceFast );
 
-				_controls.Throttle = MathF.Max( 0, 1.0f - (throttleReduce * MathF.Abs( _controls.Steering )) );
+				_controls.Throttle = input.Forward * MathF.Max( 0, 1.0f - (throttleReduce * MathF.Abs( _controls.Steering )) );
 			}
 
 			// rolling backwards: forward is the brake
 			if ( carSign < 0.0f )
 			{
-				_controls.Brake = Approach( 1.0f, _controls.Brake, frameTime * BrakeRate * BrakeBackForwardScalar );
+				_controls.Brake = Approach( input.Forward, _controls.Brake, frameTime * BrakeRate * BrakeBackForwardScalar );
 				_controls.Throttle = 0.0f;
 				throttle = false;
 			}
@@ -160,15 +171,15 @@ public sealed partial class FourWheelVehicle
 				_controls.Brake = 0.0f;
 			}
 		}
-		else if ( input.Back )
+		else if ( back )
 		{
 			throttle = true;
-			_controls.Throttle = -1.0f;
+			_controls.Throttle = -input.Back;
 
 			// rolling forwards: back is the brake
 			if ( carSign > 0.0f )
 			{
-				_controls.Brake = Approach( 1.0f, _controls.Brake, frameTime * BrakeRate );
+				_controls.Brake = Approach( input.Back, _controls.Brake, frameTime * BrakeRate );
 				_controls.Throttle = 0.0f;
 				throttle = false;
 			}
@@ -185,7 +196,7 @@ public sealed partial class FourWheelVehicle
 		}
 
 		// boost only going forward, and not while it's recharging
-		if ( input.Boost && throttle && !IsBoostRecovering && !input.Back )
+		if ( input.Boost && throttle && !IsBoostRecovering && !back )
 		{
 			_controls.Boost = 1.0f;
 		}
@@ -193,14 +204,14 @@ public sealed partial class FourWheelVehicle
 		if ( input.Handbrake )
 		{
 			_controls.Handbrake = true;
-			_controls.HandbrakeLeft = input.Left;
-			_controls.HandbrakeRight = !input.Left && input.Right;
+			_controls.HandbrakeLeft = input.Steering < 0.0f;
+			_controls.HandbrakeRight = input.Steering > 0.0f;
 
 			// no engine rev up while braking
 			throttle = false;
 		}
 
 		_throttleDown = throttle;
-		_freeRevving = _controls.Handbrake && (input.Forward || input.Back);
+		_freeRevving = _controls.Handbrake && (forward || back);
 	}
 }
