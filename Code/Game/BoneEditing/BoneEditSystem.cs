@@ -15,8 +15,8 @@ public sealed class BoneEditSystem : GameObjectSystem<BoneEditSystem>, IContextM
 	const float PickRadius = 14.0f;
 	const float SendInterval = 1.0f / 20.0f;
 	const float MaxOffsetDistance = 256.0f;
-	const float MinScale = 0.05f;
-	const float MaxScale = 10.0f;
+	public const float MinScale = 0.05f;
+	public const float MaxScale = 10.0f;
 
 	static readonly Color BoneColor = new( 0.6f, 0.6f, 0.6f, 0.5f );
 	static readonly Color HoveredColor = new( 0.9f, 0.9f, 0.9f );
@@ -366,8 +366,7 @@ public sealed class BoneEditSystem : GameObjectSystem<BoneEditSystem>, IContextM
 			_pendingBone = null;
 		}
 
-		ClearOffsets( smr, bone );
-		SendClearBoneOffsets( smr, bone ?? "" );
+		ClearBoneOffset( smr, bone );
 	}
 
 	void IContextMenuEvent.PopulateContextMenu( IContextMenuEvent.Event e )
@@ -453,6 +452,24 @@ public sealed class BoneEditSystem : GameObjectSystem<BoneEditSystem>, IContextM
 		var s = offset.Scale;
 		if ( !float.IsFinite( s.x ) || s.x < MinScale || s.x > MaxScale ) return false;
 		return MathF.Abs( s.y - s.x ) < 0.0001f && MathF.Abs( s.z - s.x ) < 0.0001f;
+	}
+
+	/// <summary>
+	/// Set a bone's offset here straight away and on everyone else through the host, which checks <see cref="CanEdit"/>.
+	/// </summary>
+	public static void SetBoneOffset( SkinnedModelRenderer smr, string bone, Transform offset )
+	{
+		smr.SetBoneOffset( bone, offset );
+		SendBoneOffset( smr, bone, offset );
+	}
+
+	/// <summary>
+	/// Clear one bone's offset, or all of them with a null bone name, here and on everyone else.
+	/// </summary>
+	public static void ClearBoneOffset( SkinnedModelRenderer smr, string bone )
+	{
+		ClearOffsets( smr, bone );
+		SendClearBoneOffsets( smr, bone ?? "" );
 	}
 
 	[Rpc.Host]

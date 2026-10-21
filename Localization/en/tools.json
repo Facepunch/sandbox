@@ -73,10 +73,11 @@
     "tool.hint.material.copy": "Copy material",
     "tool.hint.material.reset": "Reset to default",
 
-    "tool.hint.resizer.description": "Resizes an object",
+    "tool.hint.resizer.description": "Resizes an object, or the bone you aim at on characters and ragdolls",
     "tool.hint.resizer.grow": "Grow",
     "tool.hint.resizer.shrink": "Shrink",
     "tool.hint.resizer.reset": "Reset",
+    "tool.hint.resizer.whole": "(Hold) Resize whole object",
 
     "tool.hint.decaltool.description": "Sprays decals onto surfaces",
     "tool.hint.decaltool.place": "Place",
