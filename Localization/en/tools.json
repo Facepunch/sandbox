@@ -1,5 +1,6 @@
 {
     "tool.hint.snap": "Snap to grid",
+    "tool.hint.snap_bone": "Snap to bone",
 
     "tool.hint.duplicator.description": "Used to copy, paste and save whole contraptions",
     "tool.hint.duplicator.place": "Place",
@@ -16,6 +17,17 @@
     "tool.hint.weld.confirm": "Confirm",
     "tool.hint.weld.easy": "Easy Weld",
     "tool.hint.weld.cancel": "Cancel",
+
+    "tool.hint.bonemerger.stage0": "Parents a prop onto a bone of a character or ragdoll",
+    "tool.hint.bonemerger.stage1": "Aim at the bone to merge onto",
+    "tool.hint.bonemerger.stage1_in_place": "Aim at the bone to parent onto, the prop stays where it is",
+    "tool.hint.bonemerger.in_place": "Select prop to merge in place",
+    "tool.hint.bonemerger.stage2": "Rotate the object",
+    "tool.hint.bonemerger.source": "Select prop",
+    "tool.hint.bonemerger.bone": "Select bone",
+    "tool.hint.bonemerger.confirm": "Merge",
+    "tool.hint.bonemerger.cancel": "Cancel",
+    "tool.hint.bonemerger.remove": "Unmerge",
 
     "tool.hint.balloon.description": "Places a poppable balloon",
     "tool.hint.balloon.place_rope": "Place (rope)",
@@ -160,6 +172,7 @@
     "tool.hint.stacker.cycle_direction": "Cycle Direction",
 
     "tool.name.weld": "Weld",
+    "tool.name.bonemerger": "Bone Merger",
     "tool.name.rope": "Rope",
     "tool.name.elastic": "Elastic",
     "tool.name.ballsocket": "Ball Socket",

@@ -126,6 +126,8 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 
 		go.NetworkSpawn( true, null );
 
+		BoneMerge.MoveAll( Renderer, mainBody );
+
 		//
 		// Destroy after a while
 		//

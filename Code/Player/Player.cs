@@ -344,6 +344,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			inventory.ForceHolster();
 		}
 
+		BoneMerge.ReleaseAll( GameObject );
+
 		CreateRagdoll( GetDeathLaunchVelocity( d ), d.Origin );
 
 		//
