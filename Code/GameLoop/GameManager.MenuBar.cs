@@ -26,6 +26,7 @@ public sealed partial class GameManager : IMenuBarEvent
 
 		IMenuBarEvent.Event.AddHostToggle( server, Game.Language.GetPhrase( "entity.setting.prop_protection" ), () => Ownable.OwnershipChecks, v => SetConVar( "sandbox.ownership.checks", v ) );
 		IMenuBarEvent.Event.AddHostToggle( server, Game.Language.GetPhrase( "spawnmenu.menubar.reequip_last" ), () => ServerSettings.ReEquipLast, v => SetConVar( "sandbox.reequiplast", v ) );
+		IMenuBarEvent.Event.AddHostToggle( server, Game.Language.GetPhrase( "spawnmenu.menubar.edit_other_players_bones" ), () => ServerSettings.EditOtherPlayersBones, v => SetConVar( "sandbox.bones.otherplayers", v ) );
 		server.AddSeparator();
 		IMenuBarEvent.Event.AddHostToggle( server, Game.Language.GetPhrase( "server.developer_entities" ), () => ServerSettings.DeveloperEntities, v => SetConVar( "sandbox.developer.entities", v ) );
 	}

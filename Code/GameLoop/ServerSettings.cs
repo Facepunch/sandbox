@@ -21,6 +21,14 @@ internal static class ServerSettings
 	public static bool ReEquipLast { get; set; } = false;
 
 	/// <summary>
+	/// Players can edit and resize the bones of other players. When disabled, admins can still do it, and other players are restricted to edit only their own body.
+	/// </summary>
+	[Title( "Edit Other Players Bones" )]
+	[Group( "Players" )]
+	[ConVar( "sandbox.bones.otherplayers", ConVarFlags.Replicated | ConVarFlags.GameSetting | ConVarFlags.Server, Help = "Let players edit and resize the bones of other players. When off, only admins can." )]
+	public static bool EditOtherPlayersBones { get; set; } = true;
+
+	/// <summary>
 	/// Returns true if developer entities should be shown.
 	/// </summary>
 	public static bool ShowDeveloperEntities => Game.IsEditor || DeveloperEntities;

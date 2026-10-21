@@ -42,6 +42,7 @@
     "spawnmenu.menubar.npcs": "NPCs",
     "spawnmenu.menubar.server": "Server",
     "spawnmenu.menubar.reequip_last": "Re-equip Last Weapons",
+    "spawnmenu.menubar.edit_other_players_bones": "Edit Other Players Bones",
 
     "spawnmenu.effects.presets": "Presets",
     "spawnmenu.effects.save_new_preset": "Save New Preset...",

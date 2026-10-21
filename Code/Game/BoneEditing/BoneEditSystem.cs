@@ -424,14 +424,15 @@ public sealed class BoneEditSystem : GameObjectSystem<BoneEditSystem>, IContextM
 	static bool HasSkeleton( SkinnedModelRenderer smr ) => smr.IsValid() && smr.Model is { BoneCount: > 1 };
 
 	/// <summary>
-	/// Players can only edit their own body, everything else follows the usual ownership rules.
+	/// Players can always edit their own body, other players' bodies when <see cref="ServerSettings.EditOtherPlayersBones"/>
+	/// allows it or as an admin. Everything else follows the usual ownership rules.
 	/// </summary>
 	public static bool CanEdit( SkinnedModelRenderer smr, Connection caller )
 	{
 		if ( !smr.IsValid() || caller is null ) return false;
 
 		if ( smr.GetComponentInParent<Player>() is { } player )
-			return player.Network.Owner == caller || caller.HasPermission( "admin" );
+			return player.Network.Owner == caller || ServerSettings.EditOtherPlayersBones || caller.HasPermission( "admin" );
 
 		var root = smr.GameObject.FindNetworkRoot() ?? smr.GameObject.Root;
 		return root.HasAccess( caller );
