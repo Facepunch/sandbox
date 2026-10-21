@@ -5,7 +5,7 @@
 /// </summary>
 public interface IContextMenuEvent : ISceneEvent<IContextMenuEvent>
 {
-	public sealed record Option( string Icon, string Text, Action Action, Action<Sandbox.UI.Menu> SubmenuBuilder, int Order );
+	public sealed record Option( string Icon, string Text, Action Action, Action<Sandbox.UI.Menu> SubmenuBuilder, int Order, bool IsSeparator = false );
 
 	public sealed class Event( GameObject target )
 	{
@@ -32,16 +32,47 @@ public interface IContextMenuEvent : ISceneEvent<IContextMenuEvent>
 		}
 
 		/// <summary>
+		/// A line between options. Put one on each side of a group; separators at the top or bottom of the menu, or
+		/// next to another one, are left out.
+		/// </summary>
+		public void AddSeparator( int order = 0 )
+		{
+			_options.Add( new Option( null, null, null, null, order, IsSeparator: true ) );
+		}
+
+		/// <summary>
+		/// Whether there's anything to show besides separators.
+		/// </summary>
+		public bool HasOptions => _options.Any( o => !o.IsSeparator );
+
+		/// <summary>
 		/// Build the collected options into a menu.
 		/// </summary>
 		public void Populate( Sandbox.UI.Menu menu )
 		{
+			var addedAny = false;
+			var separatorPending = false;
+
 			foreach ( var option in Options )
 			{
+				if ( option.IsSeparator )
+				{
+					separatorPending = addedAny;
+					continue;
+				}
+
+				if ( separatorPending )
+				{
+					menu.AddSeparator();
+					separatorPending = false;
+				}
+
 				if ( option.SubmenuBuilder is not null )
 					option.SubmenuBuilder( menu.AddMenu( option.Text, option.Icon ) );
 				else
 					menu.AddOption( option.Text, option.Icon, option.Action );
+
+				addedAny = true;
 			}
 		}
 	}

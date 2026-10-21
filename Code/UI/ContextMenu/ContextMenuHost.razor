@@ -17,6 +17,8 @@
 
     <InspectWindow />
 
+    <BoneModeBar />
+
     <div class="settings-bar" @ref="SettingsBar" @onmousedown=@SettingsBarPress></div>
 
 </root>
@@ -79,7 +81,8 @@
 
     void UpdateCursor()
     {
-        Style.Cursor = (Inspector?.Hovered.IsValid() ?? false) ? "pointer" : null;
+        var hovered = (Inspector?.Hovered.IsValid() ?? false) || BoneEditSystem.Current?.HoveredBone is not null;
+        Style.Cursor = hovered ? "pointer" : null;
     }
 
     protected override void OnMouseDown(MousePanelEvent e)
@@ -92,7 +95,19 @@
             return;
         }
 
+        // while editing bones, left clicks pick joints and drive the gizmo
+        if ( BoneEditSystem.Current?.WorldMouseDown() == true )
+            return;
+
         Inspector?.WorldMouseDown( e );
+    }
+
+    protected override void OnMouseUp(MousePanelEvent e)
+    {
+        if ( e.MouseButton == MouseButtons.Left )
+        {
+            BoneEditSystem.Current?.WorldMouseUp();
+        }
     }
 
     Dictionary<Component, Panel> _handles = [];

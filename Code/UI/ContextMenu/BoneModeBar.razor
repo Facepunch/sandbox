@@ -1,0 +1,50 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<root class="@( IsShown ? "visible" : "" )">
+	<div class="box" @onmousedown=@Press>
+		<div class="segments">
+			@foreach ( var (mode, text) in Modes )
+			{
+				var m = mode;
+				<div class="segment @( Current == m ? "active" : "" )" @onclick=@(() => Pick( m ))>
+					<label>@text</label>
+				</div>
+			}
+		</div>
+	</div>
+</root>
+
+@code
+{
+	/// <summary>
+	/// Picks how the bone editor's gizmo edits the selected bone, shown in the inspect menu while a bone is selected.
+	/// </summary>
+	static readonly (BoneEditSystem.GizmoMode Mode, string Text)[] Modes =
+	[
+		(BoneEditSystem.GizmoMode.Move, "#spawnmenu.inspect.bone_move"),
+		(BoneEditSystem.GizmoMode.Rotate, "#spawnmenu.inspect.bone_rotate"),
+		(BoneEditSystem.GizmoMode.Scale, "#spawnmenu.inspect.bone_scale"),
+	];
+
+	static bool IsShown => BoneEditSystem.Current is { SelectedRenderer: not null, SelectedBone: not null };
+
+	static BoneEditSystem.GizmoMode Current => BoneEditSystem.Current?.Mode ?? default;
+
+	void Pick( BoneEditSystem.GizmoMode mode )
+	{
+		if ( BoneEditSystem.Current is { } editor )
+			editor.Mode = mode;
+	}
+
+	// keep clicks on the bar from reaching the world behind it
+	void Press( PanelEvent e )
+	{
+		Sandbox.UI.InputFocus.Clear();
+		e.StopPropagation();
+	}
+
+	protected override int BuildHash() => System.HashCode.Combine( IsShown, Current );
+}

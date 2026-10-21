@@ -176,7 +176,10 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 			var boneOnRagdoll = ragdollObjects[boneName].FirstOrDefault();
 
-			if ( boneOnRagdoll.IsValid() && boneObject.WorldScale != Vector3.One )
+			// scale from bone offsets comes over with the renderer, freezing the bone here would lose the rest of its offset
+			var scale = boneObject.WorldScale / BoneOffsetScale( playerRenderer, bone );
+
+			if ( boneOnRagdoll.IsValid() && !scale.AlmostEqual( Vector3.One ) )
 			{
 				boneOnRagdoll.Flags = boneOnRagdoll.Flags.WithFlag( GameObjectFlags.ProceduralBone, true );
 				boneOnRagdoll.WorldScale = boneObject.WorldScale;
@@ -186,6 +189,19 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 				z.WorldScale = boneObject.WorldScale;
 			}
 		}
+	}
+
+	static float BoneOffsetScale( SkinnedModelRenderer renderer, BoneCollection.Bone bone )
+	{
+		var scale = 1.0f;
+
+		for ( var b = bone; b is not null; b = b.Parent )
+		{
+			if ( renderer.TryGetBoneOffset( b, out var offset ) )
+				scale *= offset.Scale.x;
+		}
+
+		return scale;
 	}
 
 	/// <summary>

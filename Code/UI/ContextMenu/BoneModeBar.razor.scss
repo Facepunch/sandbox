@@ -1,0 +1,65 @@
+@import "/UI/Theme.scss";
+
+BoneModeBar
+{
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: calc( $deadzone-y + 34px );
+	flex-direction: column;
+	align-items: center;
+	pointer-events: none;
+	z-index: 200;
+
+	.box
+	{
+		@include ui-section;
+		padding: 4px;
+		opacity: 0;
+		transition: opacity 0.1s ease;
+	}
+
+	&.visible .box
+	{
+		opacity: 1;
+		pointer-events: all;
+	}
+
+	.segments
+	{
+		flex-direction: row;
+		height: 24px;
+		border: 1px solid $ui-control-border;
+		background-color: $ui-control-bg;
+	}
+
+	.segment
+	{
+		width: 80px;
+		justify-content: center;
+		align-items: center;
+		font-family: $body-font;
+		font-size: $ui-settings-font;
+		font-weight: 800;
+		color: $ui-text-disabled;
+		text-transform: uppercase;
+		cursor: pointer;
+
+		&:hover
+		{
+			color: $ui-text-disabled-hover;
+			sound-in: ui.hover;
+		}
+
+		&:active
+		{
+			sound-in: ui.select;
+		}
+
+		&.active
+		{
+			@include ui-selected;
+			pointer-events: none;
+		}
+	}
+}

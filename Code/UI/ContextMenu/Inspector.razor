@@ -218,7 +218,7 @@
         var target = hovered;
         var ev = new IContextMenuEvent.Event( target );
         Scene.RunEvent<IContextMenuEvent>( listener => listener.PopulateContextMenu( ev ) );
-        if ( !ev.Options.Any() ) return;
+        if ( !ev.HasOptions ) return;
 
         var menu = new Sandbox.UI.Menu();
         ev.Populate( menu );

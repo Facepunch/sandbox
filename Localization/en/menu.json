@@ -30,6 +30,13 @@
     "spawnmenu.inspect.axis_lock_unlock_all": "Unlock All",
     "spawnmenu.inspect.ignite": "Ignite",
     "spawnmenu.inspect.extinguish": "Extinguish",
+    "spawnmenu.inspect.edit_bones": "Edit Bones",
+    "spawnmenu.inspect.finish_editing": "Finish Editing",
+    "spawnmenu.inspect.bone_move": "Move",
+    "spawnmenu.inspect.bone_rotate": "Rotate",
+    "spawnmenu.inspect.bone_scale": "Scale",
+    "spawnmenu.inspect.reset_bone": "Reset Bone",
+    "spawnmenu.inspect.reset_bones": "Reset All Bones",
 
     "spawnmenu.menubar.client": "Client",
     "spawnmenu.menubar.npcs": "NPCs",
