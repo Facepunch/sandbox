@@ -18,11 +18,6 @@ public sealed class BoneEditSystem : GameObjectSystem<BoneEditSystem>, IContextM
 	public const float MinScale = 0.05f;
 	public const float MaxScale = 10.0f;
 
-	static readonly Color BoneColor = new( 0.6f, 0.6f, 0.6f, 0.5f );
-	static readonly Color HoveredColor = new( 0.9f, 0.9f, 0.9f );
-	static readonly Color SelectedColor = new( 1.0f, 0.6f, 0.1f );
-	const int GradientSteps = 8;
-
 	/// <summary>
 	/// The renderers being edited.
 	/// </summary>
@@ -181,19 +176,9 @@ public sealed class BoneEditSystem : GameObjectSystem<BoneEditSystem>, IContextM
 
 	void ReadBones( SkinnedModelRenderer target )
 	{
-		var bones = target.Model.Bones.AllBones;
-
-		if ( !_boneWorld.TryGetValue( target, out var world ) || world.Length != bones.Count )
-		{
-			world = new Transform[bones.Count];
-			_boneWorld[target] = world;
-		}
-
-		for ( int i = 0; i < bones.Count; i++ )
-		{
-			if ( !target.TryGetBoneTransform( bones[i], out world[i] ) )
-				world[i] = target.WorldTransform;
-		}
+		_boneWorld.TryGetValue( target, out var world );
+		SkeletonOverlay.ReadBones( target, ref world );
+		_boneWorld[target] = world;
 	}
 
 	/// <summary>
@@ -229,66 +214,13 @@ public sealed class BoneEditSystem : GameObjectSystem<BoneEditSystem>, IContextM
 
 	void DrawSkeleton( CameraComponent camera, SkinnedModelRenderer target )
 	{
-		var bones = target.Model.Bones.AllBones;
-		var world = _boneWorld[target];
 		var selectedBone = SelectedRenderer == target ? SelectedBone : null;
 		var hoveredBone = HoveredRenderer == target ? HoveredBone : null;
 
-		using var scope = Gizmo.Scope( "bone-editor" );
+		// Name the hovered joint, or the selected one while nothing is hovered
+		var labelled = hoveredBone ?? (HoveredBone is null ? selectedBone : null);
 
-		Gizmo.Draw.IgnoreDepth = true;
-		Gizmo.Draw.LineThickness = 2;
-
-		for ( int i = 0; i < bones.Count; i++ )
-		{
-			var bone = bones[i];
-			if ( bone.Parent is not { } parent )
-				continue;
-
-			var start = world[parent.Index].Position;
-			var end = world[i].Position;
-
-			if ( parent == selectedBone )
-				DrawGradientLine( start, end );
-			else if ( bone == selectedBone )
-				DrawGradientLine( end, start );
-			else
-			{
-				Gizmo.Draw.Color = BoneColor;
-				Gizmo.Draw.Line( start, end );
-			}
-		}
-
-		for ( int i = 0; i < bones.Count; i++ )
-		{
-			var bone = bones[i];
-			var position = world[i].Position;
-			var selected = bone == selectedBone;
-			var hovered = bone == hoveredBone;
-
-			Gizmo.Draw.Color = selected ? SelectedColor : hovered ? HoveredColor : BoneColor;
-			var radius = camera.WorldPosition.Distance( position ) * (selected || hovered ? 0.006f : 0.004f);
-			Gizmo.Draw.SolidSphere( position, radius, 6, 6 );
-		}
-
-		var labelled = hoveredBone ?? selectedBone;
-		if ( labelled is not null && (hoveredBone is not null || HoveredBone is null) )
-		{
-			Gizmo.Draw.Color = Color.White;
-			Gizmo.Draw.ScreenText( labelled.Name, world[labelled.Index].Position, new Vector2( 12, -18 ), size: 14 );
-		}
-	}
-
-	static void DrawGradientLine( Vector3 from, Vector3 to )
-	{
-		for ( int i = 0; i < GradientSteps; i++ )
-		{
-			var a = (float)i / GradientSteps;
-			var b = (float)(i + 1) / GradientSteps;
-
-			Gizmo.Draw.Color = Color.Lerp( SelectedColor, BoneColor, (a + b) * 0.5f );
-			Gizmo.Draw.Line( Vector3.Lerp( from, to, a ), Vector3.Lerp( from, to, b ) );
-		}
+		SkeletonOverlay.Draw( camera, target, _boneWorld[target], selectedBone, hoveredBone, labelled );
 	}
 
 	void DrawControl()
