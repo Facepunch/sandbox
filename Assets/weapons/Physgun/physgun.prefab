@@ -248,7 +248,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "9b88ece6-5987-4a58-9fc7-7f3be211c5ca",
+          "Id": "ed3663c4-3962-4357-9c64-97ae4c71a921",
           "Path": "models/weapons/sbox_physgun/w_physgun.vmdl"
         },
         "OnComponentDestroy": null,
@@ -337,7 +337,7 @@
                 },
                 {
                   "t": 1,
-                  "c": "0.6,1.6,3,1"
+                  "c": "1.93,3.52,4,1"
                 }
               ],
               "alpha": []
@@ -643,6 +643,7 @@
             "AnimationGraph": null,
             "BodyGroups": 18446744073709551615,
             "BoneMergeTarget": null,
+            "BoneOffsetData": null,
             "CreateAttachments": false,
             "CreateBoneObjects": false,
             "DeformationMode": "Normal",
@@ -651,7 +652,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "9b88ece6-5987-4a58-9fc7-7f3be211c5ca",
+              "Id": "ed3663c4-3962-4357-9c64-97ae4c71a921",
               "Path": "models/weapons/sbox_physgun/w_physgun.vmdl"
             },
             "Morphs": {},
