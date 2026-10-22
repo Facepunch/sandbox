@@ -12,6 +12,8 @@
 /// <item><c>wheel_{c}_spin</c> - a child of those at the tyre's centre, which is where the suspension holds the
 /// wheel. It rolls about whichever of its axes runs closest to the axle.</item>
 /// <item><c>steering_wheel</c> - turns about <see cref="SteeringWheelAxis"/>.</item>
+/// <item><c>pedal_gas</c>, <c>pedal_brake</c>, <c>pedal_clutch</c> - on their hinges, pushed forward
+/// <see cref="PedalTravel"/> - only for the driver, from their own feet (see <see cref="UpdatePedals"/>).</item>
 /// </list>
 /// Any other bone rides on its parent.
 /// </summary>
@@ -23,6 +25,19 @@ public sealed partial class FourWheelVehicle
 	private static string SteerBone( string corner ) => $"wheel_{corner}_steer";
 	private static string SpinBone( string corner ) => $"wheel_{corner}_spin";
 	private const string SteeringWheelBone = "steering_wheel";
+	private const string GasPedalBone = "pedal_gas";
+	private const string BrakePedalBone = "pedal_brake";
+	private const string ClutchPedalBone = "pedal_clutch";
+
+	/// <summary>
+	/// How far the pedals swing on their hinges when they're pushed all the way, degrees.
+	/// </summary>
+	[Property, Group( "Pedals" )] public float PedalTravel { get; set; } = 25f;
+
+	/// <summary>
+	/// How long the clutch is in for a gear change, seconds.
+	/// </summary>
+	[Property, Group( "Pedals" )] public float ClutchShiftTime { get; set; } = 0.3f;
 
 	private SkinnedModelRenderer _renderer;
 	private Model _rigModel;
@@ -34,6 +49,10 @@ public sealed partial class FourWheelVehicle
 	private Rig _wheelsRig;
 
 	private readonly float[] _spin = new float[WheelCount];
+
+	private float _gasPedal, _brakePedal, _clutchPedal;
+	private int _lastGear;
+	private TimeSince _timeSinceShift = 10f;
 
 	/// <summary>
 	/// The model's rig, or null if there's no model or it doesn't have the wheel bones.
@@ -96,6 +115,11 @@ public sealed partial class FourWheelVehicle
 		if ( rig.SteeringWheel >= 0 )
 			rig.Move( rig.SteeringWheel, Vector3.Zero, Rotation.FromAxis( SteeringWheelAxis, -_steerPose * SteeringWheelAngle ) );
 
+		UpdatePedals();
+		PushPedal( rig, rig.GasPedal, _gasPedal );
+		PushPedal( rig, rig.BrakePedal, _brakePedal );
+		PushPedal( rig, rig.ClutchPedal, _clutchPedal );
+
 		// parents first: moving a bone object carries its children
 		foreach ( var bone in rig.Order )
 		{
@@ -106,6 +130,69 @@ public sealed partial class FourWheelVehicle
 			boneObject.Flags |= GameObjectFlags.ProceduralBone;
 			boneObject.WorldTransform = tx.ToWorld( pose );
 		}
+	}
+
+	/// <summary>
+	/// The driver's feet, on their own machine - it's their input, and nobody else can see the pedals. Gas and brake are
+	/// what they're pressing, split the way the car splits it (the throttle brakes when it's against the way we're going).
+	/// The clutch goes in for a gear change, lifting off the gas, and is held in at a standstill until we pull away.
+	/// </summary>
+	private void UpdatePedals()
+	{
+		float gas = 0, brake = 0, clutch = 0;
+
+		var driver = Seat?.GetOccupant()?.GetComponent<Player>();
+		if ( driver.IsValid() && driver.IsLocalPlayer )
+		{
+			var forward = LocalAmount( Forward, driver );
+			var back = LocalAmount( Back, driver );
+
+			if ( forward > 0 )
+			{
+				if ( Speed <= -SpeedThrottleAsBrake ) brake = forward;
+				else gas = forward;
+			}
+			else if ( back > 0 )
+			{
+				if ( Speed >= SpeedThrottleAsBrake ) brake = back;
+				else gas = back;
+			}
+
+			if ( Gear != _lastGear )
+			{
+				_lastGear = Gear;
+				_timeSinceShift = 0;
+			}
+
+			var shifting = _timeSinceShift < ClutchShiftTime ? 1f : 0f;
+			var standstill = IsEngineOn ? 1f - (MathF.Abs( Speed ) / MphToIns( 5f )).Clamp( 0f, 1f ) : 0f;
+			clutch = MathF.Max( shifting, standstill );
+			gas *= 1f - shifting;
+		}
+
+		// feet take a moment
+		var ease = 1f - MathF.Exp( -15f * Time.Delta );
+		_gasPedal = _gasPedal.LerpTo( gas, ease );
+		_brakePedal = _brakePedal.LerpTo( brake, ease );
+		_clutchPedal = _clutchPedal.LerpTo( clutch, ease );
+	}
+
+	/// <summary>
+	/// How far the local driver's pressing an input, 0 to 1 - a gamepad's trigger part way (<see cref="Player.ActionAmounts"/>).
+	/// </summary>
+	private static float LocalAmount( ClientInput input, Player driver )
+	{
+		if ( !input.IsEnabled || !Input.Down( input.Action ) ) return 0f;
+		return driver.ActionAmounts.TryGetValue( input.Action, out var amount ) ? amount : 1f;
+	}
+
+	/// <summary>
+	/// Swing a pedal forward on its hinge, which runs across the car.
+	/// </summary>
+	private void PushPedal( Rig rig, int bone, float amount )
+	{
+		if ( bone >= 0 )
+			rig.Move( bone, Vector3.Zero, Rotation.FromAxis( Vector3.Left, amount * PedalTravel ) );
 	}
 
 	/// <summary>
@@ -126,6 +213,7 @@ public sealed partial class FourWheelVehicle
 		public readonly int[] Steer = new int[WheelCount];
 		public readonly int[] Spin = new int[WheelCount];
 		public int SteeringWheel;
+		public int GasPedal, BrakePedal, ClutchPedal;
 
 		/// <summary>
 		/// How each bone has been moved this frame, in its own rest frame.
@@ -144,6 +232,9 @@ public sealed partial class FourWheelVehicle
 				Rest = [.. bones.Select( b => b.LocalTransform )],
 				Parent = [.. bones.Select( b => b.Parent?.Index ?? -1 )],
 				SteeringWheel = Find( SteeringWheelBone ),
+				GasPedal = Find( GasPedalBone ),
+				BrakePedal = Find( BrakePedalBone ),
+				ClutchPedal = Find( ClutchPedalBone ),
 				_moved = new global::Transform[bones.Length],
 				_pose = new global::Transform[bones.Length],
 			};
