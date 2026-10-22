@@ -27,9 +27,9 @@ public sealed class DecalMerger : Component
 	static ComputeShader BakeShader => _bakeShader ??= new( "shaders/decal_merge_cs.shader" );
 
 	/// <summary>
-	/// A decal drawing some stamps. A merged one stays disabled while <see cref="Bake"/> runs on the GPU.
+	/// A decal drawing some stamps. A merged one stays disabled while <see cref="Bake"/> runs on the GPU, then only keeps its textures.
 	/// </summary>
-	record Renderer( GameObject GameObject, Guid[] Stamps, IDisposable[] Owned = null, CommandList Bake = null, CameraComponent Camera = null, uint Frame = 0 );
+	record Renderer( GameObject GameObject, Guid[] Stamps, Texture[] Textures = null, CommandList Bake = null, GpuBuffer Buffer = null, CameraComponent Camera = null, uint Frame = 0 );
 
 	readonly List<Renderer> _renderers = [];
 	bool _dirty;
@@ -62,10 +62,12 @@ public sealed class DecalMerger : Component
 		foreach ( var baked in _renderers.Where( x => !x.GameObject.Enabled && PerformanceStats.GpuFrameNumber > x.Frame + 1 ).ToList() )
 		{
 			baked.Camera.RemoveCommandList( baked.Bake );
+			baked.Buffer.Dispose();
 			foreach ( var old in _renderers.Where( x => x != baked && x.Stamps.Any( baked.Stamps.Contains ) ).ToList() )
 				Remove( old );
 
 			baked.GameObject.Enabled = true;
+			_renderers[_renderers.IndexOf( baked )] = baked with { Bake = null, Buffer = null, Camera = null };
 		}
 
 		if ( !_dirty ) return;
@@ -117,10 +119,11 @@ public sealed class DecalMerger : Component
 	{
 		_renderers.Remove( renderer );
 		renderer.Camera?.RemoveCommandList( renderer.Bake );
+		renderer.Buffer?.Dispose();
 		if ( renderer.GameObject.IsValid() ) renderer.GameObject.Destroy();
 
-		foreach ( var owned in renderer.Owned ?? [] )
-			owned.Dispose();
+		foreach ( var texture in renderer.Textures ?? [] )
+			texture.Dispose();
 	}
 
 	/// <summary>
@@ -352,8 +355,7 @@ public sealed class DecalMerger : Component
 		decal.Rotation = 0;
 		decal.AttenuationAngle = stamps[0].Attenuation;
 
-		IDisposable[] owned = [buffer, .. used.Select( x => x.Canvas )];
-		return new Renderer( decal.GameObject, [.. stamps.Select( x => x.Id )], owned, commands, camera, PerformanceStats.GpuFrameNumber );
+		return new Renderer( decal.GameObject, [.. stamps.Select( x => x.Id )], [.. used.Select( x => x.Canvas )], commands, buffer, camera, PerformanceStats.GpuFrameNumber );
 	}
 
 	/// <summary>
