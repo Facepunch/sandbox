@@ -37,8 +37,6 @@
           "SpreadGrowth": "3,3",
           "SpreadRecovery": 0.2
         },
-        "CameraRecoilFrequency": 1,
-        "CameraRecoilStrength": 2,
         "CanCancelReload": true,
         "ClipMaxSize": 6,
         "DeployTime": 0.2,
@@ -78,7 +76,7 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/7f412794c253a01d.vtex"
         },
         "DisplayName": "Ironwood .357",
         "DroppedGameObject": {
@@ -118,8 +116,16 @@
         },
         "PrimaryAutomatic": true,
         "PrimaryDelay": 0.3,
+        "PunchDuration": 1,
+        "PunchFrequency": 1,
+        "PunchPitch": "-8,-10",
+        "PunchRoll": "1,1",
+        "PunchYaw": "0,0",
+        "RagdollBodyShare": 0.3,
+        "RagdollImpactScale": 1,
         "RecoilPitch": "-0.600000024,-0.300000012",
         "RecoilYaw": "-0.200000003,0.200000003",
+        "ReloadCancelWindow": 0.7,
         "ReloadStartTime": 0,
         "ReloadTime": 3,
         "SecondaryAmmoType": null,
@@ -130,6 +136,9 @@
         "SecondaryInput": {
           "Action": null
         },
+        "ShakeAmplitude": 0.1,
+        "ShakeDuration": 0.3,
+        "ShakeFrequency": 40,
         "ShootForce": 100000,
         "ShootInput": {
           "Action": null
@@ -159,7 +168,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "45a633f3-fca2-451c-a92c-813422886001",
+          "Id": "245562da-7067-4fbd-af79-da51fbccd8fc",
           "Path": "models/weapons/sbox_pistol_usp/w_usp.vmdl"
         },
         "OnComponentDestroy": null,
@@ -188,6 +197,7 @@
         "Gravity": true,
         "GravityScale": 1,
         "ImpactDamage": 0,
+        "InertiaScale": 1,
         "LinearDamping": 0,
         "Locking": {
           "X": false,
@@ -274,6 +284,7 @@
             "AnimationGraph": null,
             "BodyGroups": 3,
             "BoneMergeTarget": null,
+            "BoneOffsetData": null,
             "CreateAttachments": true,
             "CreateBoneObjects": false,
             "DeformationMode": "Normal",
@@ -282,7 +293,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "22e91c76-7950-479f-91ed-7254f835e8ba",
+              "Id": "9e8156be-c8ea-4c3c-a06c-34cc807a404a",
               "Path": "models/weapons/sbox_revolver_magnum/w_magnum.vmdl"
             },
             "Morphs": {},
@@ -354,8 +365,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Thumbnail Camera",
-        "Position": "27.552749,51.819184,12.474701",
-        "Rotation": "0.036979,-0.258469,0.814125,-0.518677",
+        "Position": "27.5527496,51.8191833,12.4747009",
+        "Rotation": "0.036979001,-0.258468986,0.814125001,-0.518676996",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -372,6 +383,7 @@
             "Flags": 0,
             "FieldOfView": 12,
             "FitToBounds": true,
+            "Focus": "0.0500000007,0",
             "GizmoDistance": 60,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -379,7 +391,6 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Focus": "0.05,0",
             "Padding": 0.08,
             "Zoom": 1.15
           }
