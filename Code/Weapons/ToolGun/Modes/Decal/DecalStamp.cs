@@ -34,6 +34,11 @@ public sealed class DecalStamp : Component
 		}
 	}
 
-	protected override void OnEnabled() => DecalMerger.For( GameObject.Parent ).MarkDirty();
+	// nothing renders on a dedicated server, so nothing to draw it with
+	protected override void OnEnabled()
+	{
+		if ( !Application.IsDedicatedServer ) DecalMerger.For( GameObject.Parent ).MarkDirty();
+	}
+
 	protected override void OnDisabled() => DecalMerger.Find( GameObject.Parent )?.MarkDirty();
 }

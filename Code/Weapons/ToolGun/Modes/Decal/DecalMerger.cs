@@ -26,10 +26,12 @@ public sealed class DecalMerger : Component
 	static ComputeShader _bakeShader;
 	static ComputeShader BakeShader => _bakeShader ??= new( "shaders/decal_merge_cs.shader" );
 
-	record struct Renderer( GameObject GameObject, Texture[] Textures, Guid[] Stamps );
+	/// <summary>
+	/// A decal drawing some stamps. A merged one stays disabled while <see cref="Bake"/> runs on the GPU.
+	/// </summary>
+	record Renderer( GameObject GameObject, Guid[] Stamps, Texture[] Textures = null, CommandList Bake = null, CameraComponent Camera = null, uint Frame = 0 );
 
 	readonly List<Renderer> _renderers = [];
-	readonly List<(CommandList Commands, CameraComponent Camera, TimeUntil Remove)> _bakes = [];
 	bool _dirty;
 	TimeSince _sinceChange;
 
@@ -41,12 +43,8 @@ public sealed class DecalMerger : Component
 		var merger = Find( parent );
 		if ( merger.IsValid() ) return merger;
 
-		var go = new GameObject( false, "decal merger" );
-		go.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked | GameObjectFlags.Hidden;
-		go.NetworkMode = NetworkMode.Never;
-		go.SetParent( parent, false );
-		merger = go.AddComponent<DecalMerger>();
-		go.Enabled = true;
+		merger = CreateChild( parent, "decal merger" ).AddComponent<DecalMerger>();
+		merger.GameObject.Enabled = true;
 		return merger;
 	}
 
@@ -60,11 +58,14 @@ public sealed class DecalMerger : Component
 
 	protected override void OnUpdate()
 	{
-		// a bake runs every frame it's attached, it clears first so that's harmless, leaving it a moment makes sure it ran
-		foreach ( var bake in _bakes.Where( x => x.Remove ).ToList() )
+		// ponytail: a GPU frame finishing after the bake was added means it ran, assumes the main camera renders every frame
+		foreach ( var baked in _renderers.Where( x => !x.GameObject.Enabled && PerformanceStats.GpuFrameNumber > x.Frame + 1 ).ToList() )
 		{
-			bake.Camera?.RemoveCommandList( bake.Commands );
-			_bakes.Remove( bake );
+			baked.Camera.RemoveCommandList( baked.Bake );
+			foreach ( var old in _renderers.Where( x => x != baked && x.Stamps.Any( baked.Stamps.Contains ) ).ToList() )
+				Remove( old );
+
+			baked.GameObject.Enabled = true;
 		}
 
 		if ( !_dirty ) return;
@@ -74,49 +75,40 @@ public sealed class DecalMerger : Component
 			.Where( x => x.IsValid() && x.Active && x.Definition is not null )
 			.ToList();
 
-		if ( stamps.Count == 0 )
-		{
-			GameObject.Destroy();
-			return;
-		}
-
 		// show new stamps straight away, drop what was removed
 		var ids = stamps.Select( x => x.Id ).ToHashSet();
 
 		foreach ( var renderer in _renderers.Where( x => !x.Stamps.All( ids.Contains ) ).ToList() )
 			Remove( renderer );
 
-		var shown = _renderers.SelectMany( x => x.Stamps ).ToHashSet();
+		var shown = _renderers.Where( x => x.GameObject.Enabled ).SelectMany( x => x.Stamps ).ToHashSet();
 
 		foreach ( var stamp in stamps.Where( x => !shown.Contains( x.Id ) ) )
 			_renderers.Add( CreateSingle( stamp ) );
 
-		if ( _sinceChange < SettleTime ) return;
+		var camera = Scene.Camera;
+		if ( _sinceChange < SettleTime || !camera.IsValid() ) return;
 		_dirty = false;
 
-		// nothing renders on a dedicated server, the stamps on their own are fine
-		var camera = Scene.Camera;
-		if ( Application.IsDedicatedServer || !camera.IsValid() ) return;
+		// the order everything is drawn in right now, a merged decal's stamps in the order they were baked.
+		// Baking in it means swapping to the merged decal doesn't change what's on top
+		var drawn = new Dictionary<Guid, (uint Order, int Index)>();
+		foreach ( var renderer in _renderers.Where( x => x.GameObject.Enabled ) )
+			for ( var i = 0; i < renderer.Stamps.Length; i++ )
+				drawn[renderer.Stamps[i]] = (DrawOrder( renderer.GameObject.GetComponent<Decal>() ), i);
 
 		foreach ( var group in Cluster( stamps ) )
 		{
-			if ( group.Count < 2 ) continue;
+			// already drawn or baking as exactly this group
+			if ( group.Count < 2 || _renderers.Any( x => x.Stamps.Length == group.Count && group.All( s => x.Stamps.Contains( s.Id ) ) ) ) continue;
 
-			// already drawn as exactly this group
-			var members = group.Select( x => x.Id ).ToHashSet();
-			var existing = _renderers.Where( x => x.Stamps.Any( members.Contains ) ).ToList();
-			if ( existing.Count == 1 && existing[0].Stamps.Length == members.Count ) continue;
-
-			existing.ForEach( Remove );
+			group.Sort( ( a, b ) => drawn[a.Id].CompareTo( drawn[b.Id] ) );
 			_renderers.Add( CreateMerged( group, camera ) );
 		}
 	}
 
 	protected override void OnDestroy()
 	{
-		foreach ( var bake in _bakes )
-			bake.Camera?.RemoveCommandList( bake.Commands );
-
 		foreach ( var renderer in _renderers.ToList() )
 			Remove( renderer );
 	}
@@ -124,15 +116,16 @@ public sealed class DecalMerger : Component
 	void Remove( Renderer renderer )
 	{
 		_renderers.Remove( renderer );
+		renderer.Camera?.RemoveCommandList( renderer.Bake );
 		if ( renderer.GameObject.IsValid() ) renderer.GameObject.Destroy();
 
-		foreach ( var texture in renderer.Textures )
-			texture?.Dispose();
+		foreach ( var texture in renderer.Textures ?? [] )
+			texture.Dispose();
 	}
 
 	/// <summary>
-	/// Stamps merge when they'd draw the same way, the same texture channels, colour mix and attenuation.
-	/// Emissive, animated sprite sheet and non alpha blended decals stay on their own.
+	/// Stamps merge when they'd draw the same way, the same texture channels, filtering, colour mix and attenuation.
+	/// Emissive, animated sprite sheet, point filtered and non alpha blended decals stay on their own.
 	/// </summary>
 	static bool Compatible( DecalStamp a, DecalStamp b )
 	{
@@ -143,6 +136,7 @@ public sealed class DecalMerger : Component
 			&& x.BlendMode == DecalBlendMode.Alpha && y.BlendMode == DecalBlendMode.Alpha
 			&& !x.EmissiveTexture.IsValid() && !y.EmissiveTexture.IsValid()
 			&& !x.ColorTexture.HasAnimatedSequences && !y.ColorTexture.HasAnimatedSequences
+			&& x.FilterMode != FilterMode.Point && x.FilterMode == y.FilterMode
 			&& x.NormalTexture.IsValid() == y.NormalTexture.IsValid()
 			&& x.RoughMetalOcclusionTexture.IsValid() == y.RoughMetalOcclusionTexture.IsValid()
 			&& x.HeightTexture.IsValid() == y.HeightTexture.IsValid()
@@ -160,8 +154,17 @@ public sealed class DecalMerger : Component
 			for ( var j = i + 1; j < stamps.Count; j++ )
 				if ( Touches( stamps[i], stamps[j] ) ) root[Find( i )] = Find( j );
 
-		return Enumerable.Range( 0, stamps.Count ).GroupBy( Find ).Select( x => x.Select( i => stamps[i] )
-			.OrderBy( s => s.Layer ).ThenBy( s => s.Id ).ToList() );
+		return Enumerable.Range( 0, stamps.Count ).GroupBy( Find ).Select( x => x.Select( i => stamps[i] ).ToList() );
+	}
+
+	/// <summary>
+	/// The order the decal shader applies a decal in, later on top. Mirrors <c>Decal.UpdateSortLayer</c>:
+	/// 8 bits of sort layer, then 24 bits of the GameObject id
+	/// </summary>
+	static uint DrawOrder( Decal decal )
+	{
+		var id = decal.GameObject.Id.ToByteArray();
+		return ((decal.SortLayer & 0xFF) << 24) | (uint)(id[0] | (id[1] << 8) | (id[2] << 16));
 	}
 
 	static bool Touches( DecalStamp a, DecalStamp b )
@@ -180,33 +183,42 @@ public sealed class DecalMerger : Component
 
 	static float Radius( DecalStamp stamp ) => stamp.Box.Scale.WithX( 0 ).Length * 0.5f;
 
-	Decal CreateDecal( string name, Transform transform )
+	static GameObject CreateChild( GameObject parent, string name )
 	{
 		var go = new GameObject( false, name );
 		go.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked | GameObjectFlags.Hidden;
 		go.NetworkMode = NetworkMode.Never;
-		go.SetParent( GameObject, false );
-		go.LocalTransform = transform;
-		return go.AddComponent<Decal>();
+		go.SetParent( parent, false );
+		return go;
+	}
+
+	/// <summary>
+	/// <see cref="Decal.SortLayer"/> only keeps 8 bits, past that everything sits on top rather than wrapping under older decals
+	/// </summary>
+	Decal CreateDecal( string name, Transform transform, uint layer )
+	{
+		var decal = CreateChild( GameObject, name ).AddComponent<Decal>();
+		decal.GameObject.LocalTransform = transform;
+		decal.SortLayer = Math.Min( layer, 255 );
+		return decal;
 	}
 
 	Renderer CreateSingle( DecalStamp stamp )
 	{
-		var decal = CreateDecal( "decal", stamp.LocalTransform );
+		var decal = CreateDecal( "decal", stamp.LocalTransform, stamp.Layer );
 		decal.Decals = [stamp.Definition];
 		decal.ColorTint = stamp.Tint;
 		decal.Scale = stamp.Scale;
 		decal.Rotation = stamp.Rotation;
 		decal.AttenuationAngle = stamp.Attenuation;
-		decal.SortLayer = stamp.Layer;
 		decal.GameObject.Enabled = true;
 
-		return new Renderer( decal.GameObject, [], [stamp.Id] );
+		return new Renderer( decal.GameObject, [stamp.Id] );
 	}
 
 	/// <summary>
-	/// One decal covering every stamp in the group, its textures baked by a command list that runs on <paramref name="camera"/>
-	/// before the opaque pass, so it's ready the frame it first draws
+	/// One decal covering every stamp in the group, hidden while a command list on <paramref name="camera"/> bakes its textures
+	/// before the opaque pass
 	/// </summary>
 	Renderer CreateMerged( List<DecalStamp> stamps, CameraComponent camera )
 	{
@@ -215,17 +227,24 @@ public sealed class DecalMerger : Component
 		var frame = stamps[0].LocalTransform;
 		var min = new Vector2( float.MaxValue );
 		var max = new Vector2( float.MinValue );
+		var extents = new List<(Vector2 Min, Vector2 Max)>();
 		var density = 0f;
 
 		foreach ( var stamp in stamps )
 		{
 			var box = stamp.Box;
+			var lo = new Vector2( float.MaxValue );
+			var hi = new Vector2( float.MinValue );
 			foreach ( var corner in Corners )
 			{
 				var p = frame.PointToLocal( box.PointToWorld( corner ) );
-				min = Vector2.Min( min, new Vector2( p.y, p.z ) );
-				max = Vector2.Max( max, new Vector2( p.y, p.z ) );
+				lo = Vector2.Min( lo, new Vector2( p.y, p.z ) );
+				hi = Vector2.Max( hi, new Vector2( p.y, p.z ) );
 			}
+
+			extents.Add( (lo, hi) );
+			min = Vector2.Min( min, lo );
+			max = Vector2.Max( max, hi );
 
 			// texels per unit, the sharpest stamp sets the resolution
 			density = MathF.Max( density, stamp.Definition.ColorTexture.Width / (stamp.Definition.Width * stamp.Scale) );
@@ -240,36 +259,46 @@ public sealed class DecalMerger : Component
 		var transform = new Transform( frame.PointToWorld( new Vector3( 0, center.x, center.y ) ), frame.Rotation, frame.Scale );
 		var target = transform.WithScale( transform.Scale * new Vector3( DecalStamp.Depth, size.x, size.y ) );
 
-		// floating point and linear, the shader writes the values the decal shader reads
-		Texture Canvas( bool used ) => used ? Texture.Create( width, height, ImageFormat.RGBA16161616F ).WithUAVBinding().WithMips().Finish() : null;
+		// colour in float for the dark end, the rest is data that 8 bits (or one channel) holds fine.
+		// A channel only exists if the stamps have it, they all match
+		(string Name, Texture Canvas, Color Clear, Func<DecalDefinition, Texture> Source)[] channels =
+		[
+			("Color", Canvas( source.ColorTexture, ImageFormat.RGBA16161616F ), Color.Transparent, x => x.ColorTexture),
+			("Normal", Canvas( source.NormalTexture, ImageFormat.RGBA8888_LINEAR ), new Color( 0.5f, 0.5f, 1f ), x => x.NormalTexture),
+			("Rmo", Canvas( source.RoughMetalOcclusionTexture, ImageFormat.RGBA8888_LINEAR ), Color.White, x => x.RoughMetalOcclusionTexture),
+			("Height", Canvas( source.HeightTexture, ImageFormat.R16F ), Color.White, x => x.HeightTexture),
+		];
+		Texture Canvas( Texture used, ImageFormat format ) => used.IsValid() ? Texture.Create( width, height, format ).WithUAVBinding().WithMips().Finish() : null;
 
-		var color = Canvas( true );
-		var normal = Canvas( source.NormalTexture.IsValid() );
-		var rmo = Canvas( source.RoughMetalOcclusionTexture.IsValid() );
-		var heightMap = Canvas( source.HeightTexture.IsValid() );
+		var used = channels.Where( x => x.Canvas is not null ).ToArray();
 		var parallax = source.HeightTexture.IsValid() ? stamps.Max( x => x.Definition.ParallaxStrength ) : 0;
 
+		// clears first, so running more than once (several frames, reflection views) still comes out the same
 		var commands = new CommandList( "DecalMerge" );
-		commands.Clear( color, Color.Transparent );
-		if ( normal is not null ) commands.Clear( normal, new Color( 0.5f, 0.5f, 1f ) );
-		if ( rmo is not null ) commands.Clear( rmo, Color.Black );
-		if ( heightMap is not null ) commands.Clear( heightMap, Color.White );
-
 		var a = commands.Attributes;
-		a.Set( "ColorOut", color );
-		if ( normal is not null ) a.Set( "NormalOut", normal );
-		if ( rmo is not null ) a.Set( "RmoOut", rmo );
-		if ( heightMap is not null ) a.Set( "HeightOut", heightMap );
-		a.Set( "HasNormal", normal is null ? 0 : 1 );
-		a.Set( "HasRmo", rmo is null ? 0 : 1 );
-		a.Set( "HasHeight", heightMap is null ? 0 : 1 );
+		foreach ( var channel in channels )
+			a.Set( $"Has{channel.Name}", channel.Canvas is null ? 0 : 1 );
+
+		foreach ( var channel in used )
+		{
+			commands.Clear( channel.Canvas, channel.Clear );
+			a.Set( $"{channel.Name}Out", channel.Canvas );
+		}
 
 		var targetBasis = TangentBasis( target.Rotation );
 
-		foreach ( var stamp in stamps )
+		for ( var i = 0; i < stamps.Count; i++ )
 		{
-			var def = stamp.Definition;
-			var box = stamp.Box;
+			var def = stamps[i].Definition;
+			var box = stamps[i].Box;
+
+			// only the texels under this stamp, the merged decal's uv runs opposite to its local y and z
+			var (lo, hi) = extents[i];
+			var x0 = Math.Max( 0, (int)((max.x - hi.x) / size.x * width) );
+			var y0 = Math.Max( 0, (int)((max.y - hi.y) / size.y * height) );
+			var x1 = Math.Min( width, (int)MathF.Ceiling( (max.x - lo.x) / size.x * width ) );
+			var y1 = Math.Min( height, (int)MathF.Ceiling( (max.y - lo.y) / size.y * height ) );
+			if ( x1 <= x0 || y1 <= y0 ) continue;
 
 			// the decal shader samples at uv = 0.5 - local.yz, in both decals
 			Vector2 StampUv( float x, float y )
@@ -278,60 +307,45 @@ public sealed class DecalMerger : Component
 				return new Vector2( 0.5f - local.y, 0.5f - local.z );
 			}
 
-			// only the texels under this stamp
-			var lo = new Vector2( float.MaxValue );
-			var hi = new Vector2( float.MinValue );
-			foreach ( var corner in Corners )
-			{
-				var p = target.PointToLocal( box.PointToWorld( corner ) );
-				var texel = new Vector2( (0.5f - p.y) * width, (0.5f - p.z) * height );
-				lo = Vector2.Min( lo, texel );
-				hi = Vector2.Max( hi, texel );
-			}
-
-			var x0 = Math.Max( 0, (int)lo.x );
-			var y0 = Math.Max( 0, (int)lo.y );
-			var x1 = Math.Min( width, (int)MathF.Ceiling( hi.x ) );
-			var y1 = Math.Min( height, (int)MathF.Ceiling( hi.y ) );
-			if ( x1 <= x0 || y1 <= y0 ) continue;
-
 			var origin = StampUv( 0, 0 );
 			var basis = TangentBasis( box.Rotation );
+			Vector3 Row( Vector3 axis ) => new( axis.Dot( basis.x ), axis.Dot( basis.y ), axis.Dot( basis.z ) );
 
-			a.Set( "Color", def.ColorTexture );
-			if ( normal is not null ) a.Set( "Normal", def.NormalTexture );
-			if ( rmo is not null ) a.Set( "Rmo", def.RoughMetalOcclusionTexture );
-			if ( heightMap is not null ) a.Set( "Height", def.HeightTexture );
+			foreach ( var channel in used )
+				a.Set( channel.Name, channel.Source( def ) );
+
 			a.Set( "Offset", new Vector2( x0, y0 ) );
 			a.Set( "Size", new Vector2( x1 - x0, y1 - y0 ) );
 			a.Set( "Origin", origin );
 			a.Set( "StepX", StampUv( 1, 0 ) - origin );
 			a.Set( "StepY", StampUv( 0, 1 ) - origin );
-			a.Set( "Tint", def.Tint * stamp.Tint );
-			a.Set( "BasisX", new Vector3( targetBasis.x.Dot( basis.x ), targetBasis.x.Dot( basis.y ), targetBasis.x.Dot( basis.z ) ) );
-			a.Set( "BasisY", new Vector3( targetBasis.y.Dot( basis.x ), targetBasis.y.Dot( basis.y ), targetBasis.y.Dot( basis.z ) ) );
-			a.Set( "BasisZ", new Vector3( targetBasis.z.Dot( basis.x ), targetBasis.z.Dot( basis.y ), targetBasis.z.Dot( basis.z ) ) );
+			a.Set( "Tint", def.Tint * stamps[i].Tint );
+			a.Set( "BasisX", Row( targetBasis.x ) );
+			a.Set( "BasisY", Row( targetBasis.y ) );
+			a.Set( "BasisZ", Row( targetBasis.z ) );
 			a.Set( "CoverageAmount", def.CoverageAmount );
 			a.Set( "DepthScale", parallax > 0 ? def.ParallaxStrength / parallax : 0 );
 
 			commands.DispatchCompute( BakeShader, x1 - x0, y1 - y0, 1 );
+
+			// the next stamp blends over what this one wrote
+			foreach ( var channel in used )
+				commands.UavBarrier( channel.Canvas );
 		}
 
-		Texture[] textures = [color, normal, rmo, heightMap];
-		foreach ( var texture in textures.Where( x => x is not null ) )
-			commands.GenerateMipMaps( texture, Graphics.DownsampleMethod.Box );
+		foreach ( var channel in used )
+			commands.GenerateMipMaps( channel.Canvas, Graphics.DownsampleMethod.Box );
 
 		camera.AddCommandList( commands, Stage.AfterDepthPrepass );
-		_bakes.Add( (commands, camera, 0.5f) );
 
 		// ponytail: ColorMix below 1 mixes by ColorMix * merged alpha, a little weaker than separate decals where they overlap
-		var decal = CreateDecal( "merged decal", transform );
+		var decal = CreateDecal( "merged decal", transform, stamps[^1].Layer );
 		decal.Decals = [new DecalDefinition
 		{
-			ColorTexture = color,
-			NormalTexture = normal,
-			RoughMetalOcclusionTexture = rmo,
-			HeightTexture = heightMap,
+			ColorTexture = channels[0].Canvas,
+			NormalTexture = channels[1].Canvas,
+			RoughMetalOcclusionTexture = channels[2].Canvas,
+			HeightTexture = channels[3].Canvas,
 			ParallaxStrength = parallax,
 			ColorMix = source.ColorMix,
 			FilterMode = source.FilterMode,
@@ -340,10 +354,8 @@ public sealed class DecalMerger : Component
 		}];
 		decal.Rotation = 0;
 		decal.AttenuationAngle = stamps[0].Attenuation;
-		decal.SortLayer = stamps[^1].Layer;
-		decal.GameObject.Enabled = true;
 
-		return new Renderer( decal.GameObject, textures, stamps.Select( x => x.Id ).ToArray() );
+		return new Renderer( decal.GameObject, [.. stamps.Select( x => x.Id )], [.. used.Select( x => x.Canvas )], commands, camera, PerformanceStats.GpuFrameNumber );
 	}
 
 	/// <summary>

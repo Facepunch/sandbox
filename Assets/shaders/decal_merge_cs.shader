@@ -21,7 +21,7 @@ CS
 	RWTexture2D<float4> ColorOut < Attribute( "ColorOut" ); >;
 	RWTexture2D<float4> NormalOut < Attribute( "NormalOut" ); >;
 	RWTexture2D<float4> RmoOut < Attribute( "RmoOut" ); >;
-	RWTexture2D<float4> HeightOut < Attribute( "HeightOut" ); >;
+	RWTexture2D<float> HeightOut < Attribute( "HeightOut" ); >;
 
 	// the merged texels this stamp covers
 	float2 Offset < Attribute( "Offset" ); >;
@@ -80,12 +80,13 @@ CS
 			}
 		}
 
-		if ( alpha <= 0 ) return;
-
 		// over what's baked so far, kept straight alpha like any decal texture
 		float4 below = ColorOut[texel];
+		if ( alpha <= 0 && below.a > 0 ) return;
+
+		// a texel nothing covers yet still takes this stamp's colour, so filtering and mips don't fade the edges to black
 		float total = alpha + below.a * ( 1 - alpha );
-		float weight = alpha / total;
+		float weight = total > 0 ? alpha / total : 1;
 
 		ColorOut[texel] = float4( lerp( below.rgb, color.rgb, weight ), total );
 
@@ -106,7 +107,7 @@ CS
 		{
 			// rescaled so the merged decal's one parallax strength fits every stamp
 			float scaled = 1 - ( 1 - height ) * DepthScale;
-			HeightOut[texel] = float4( lerp( HeightOut[texel].rrr, scaled.xxx, weight ), 1 );
+			HeightOut[texel] = lerp( HeightOut[texel].r, scaled, weight );
 		}
 	}
 }
