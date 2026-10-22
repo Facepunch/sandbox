@@ -29,7 +29,7 @@ public sealed class DecalMerger : Component
 	/// <summary>
 	/// A decal drawing some stamps. A merged one stays disabled while <see cref="Bake"/> runs on the GPU.
 	/// </summary>
-	record Renderer( GameObject GameObject, Guid[] Stamps, Texture[] Textures = null, CommandList Bake = null, CameraComponent Camera = null, uint Frame = 0 );
+	record Renderer( GameObject GameObject, Guid[] Stamps, IDisposable[] Owned = null, CommandList Bake = null, CameraComponent Camera = null, uint Frame = 0 );
 
 	readonly List<Renderer> _renderers = [];
 	bool _dirty;
@@ -119,8 +119,8 @@ public sealed class DecalMerger : Component
 		renderer.Camera?.RemoveCommandList( renderer.Bake );
 		if ( renderer.GameObject.IsValid() ) renderer.GameObject.Destroy();
 
-		foreach ( var texture in renderer.Textures ?? [] )
-			texture.Dispose();
+		foreach ( var owned in renderer.Owned ?? [] )
+			owned.Dispose();
 	}
 
 	/// <summary>
@@ -261,44 +261,27 @@ public sealed class DecalMerger : Component
 
 		// colour in float for the dark end, the rest is data that 8 bits (or one channel) holds fine.
 		// A channel only exists if the stamps have it, they all match
-		(string Name, Texture Canvas, Color Clear, Func<DecalDefinition, Texture> Source)[] channels =
-		[
-			("Color", Canvas( source.ColorTexture, ImageFormat.RGBA16161616F ), Color.Transparent, x => x.ColorTexture),
-			("Normal", Canvas( source.NormalTexture, ImageFormat.RGBA8888_LINEAR ), new Color( 0.5f, 0.5f, 1f ), x => x.NormalTexture),
-			("Rmo", Canvas( source.RoughMetalOcclusionTexture, ImageFormat.RGBA8888_LINEAR ), Color.White, x => x.RoughMetalOcclusionTexture),
-			("Height", Canvas( source.HeightTexture, ImageFormat.R16F ), Color.White, x => x.HeightTexture),
-		];
 		Texture Canvas( Texture used, ImageFormat format ) => used.IsValid() ? Texture.Create( width, height, format ).WithUAVBinding().WithMips().Finish() : null;
 
-		var used = channels.Where( x => x.Canvas is not null ).ToArray();
+		(string Name, Texture Canvas)[] channels =
+		[
+			("Color", Canvas( source.ColorTexture, ImageFormat.RGBA16161616F )),
+			("Normal", Canvas( source.NormalTexture, ImageFormat.RGBA8888_LINEAR )),
+			("Rmo", Canvas( source.RoughMetalOcclusionTexture, ImageFormat.RGBA8888_LINEAR )),
+			("Height", Canvas( source.HeightTexture, ImageFormat.R16F )),
+		];
+
 		var parallax = source.HeightTexture.IsValid() ? stamps.Max( x => x.Definition.ParallaxStrength ) : 0;
-
-		// clears first, so running more than once (several frames, reflection views) still comes out the same
-		var commands = new CommandList( "DecalMerge" );
-		var a = commands.Attributes;
-		foreach ( var channel in channels )
-			a.Set( $"Has{channel.Name}", channel.Canvas is null ? 0 : 1 );
-
-		foreach ( var channel in used )
-		{
-			commands.Clear( channel.Canvas, channel.Clear );
-			a.Set( $"{channel.Name}Out", channel.Canvas );
-		}
-
 		var targetBasis = TangentBasis( target.Rotation );
 
-		for ( var i = 0; i < stamps.Count; i++ )
+		var data = stamps.Select( ( stamp, i ) =>
 		{
-			var def = stamps[i].Definition;
-			var box = stamps[i].Box;
+			var def = stamp.Definition;
+			var box = stamp.Box;
 
-			// only the texels under this stamp, the merged decal's uv runs opposite to its local y and z
+			// the texels under this stamp, the merged decal's uv runs opposite to its local y and z
 			var (lo, hi) = extents[i];
-			var x0 = Math.Max( 0, (int)((max.x - hi.x) / size.x * width) );
-			var y0 = Math.Max( 0, (int)((max.y - hi.y) / size.y * height) );
-			var x1 = Math.Min( width, (int)MathF.Ceiling( (max.x - lo.x) / size.x * width ) );
-			var y1 = Math.Min( height, (int)MathF.Ceiling( (max.y - lo.y) / size.y * height ) );
-			if ( x1 <= x0 || y1 <= y0 ) continue;
+			var rect = new Vector4( (max.x - hi.x) / size.x * width, (max.y - hi.y) / size.y * height, (max.x - lo.x) / size.x * width, (max.y - lo.y) / size.y * height );
 
 			// the decal shader samples at uv = 0.5 - local.yz, in both decals
 			Vector2 StampUv( float x, float y )
@@ -308,33 +291,47 @@ public sealed class DecalMerger : Component
 			}
 
 			var origin = StampUv( 0, 0 );
+			var stepX = StampUv( 1, 0 ) - origin;
+			var stepY = StampUv( 0, 1 ) - origin;
 			var basis = TangentBasis( box.Rotation );
-			Vector3 Row( Vector3 axis ) => new( axis.Dot( basis.x ), axis.Dot( basis.y ), axis.Dot( basis.z ) );
+			Vector4 Row( Vector3 axis ) => new( axis.Dot( basis.x ), axis.Dot( basis.y ), axis.Dot( basis.z ), 0 );
+			var tint = def.Tint * stamp.Tint;
 
-			foreach ( var channel in used )
-				a.Set( channel.Name, channel.Source( def ) );
+			return new GpuStamp
+			{
+				Rect = rect,
+				Uv = new Vector4( origin.x, origin.y, stepX.x, stepX.y ),
+				UvY = new Vector4( stepY.x, stepY.y, def.CoverageAmount, parallax > 0 ? def.ParallaxStrength / parallax : 0 ),
+				Tint = new Vector4( tint.r, tint.g, tint.b, tint.a ),
+				BasisX = Row( targetBasis.x ),
+				BasisY = Row( targetBasis.y ),
+				BasisZ = Row( targetBasis.z ),
+				Color = Index( def.ColorTexture ),
+				Normal = Index( def.NormalTexture ),
+				Rmo = Index( def.RoughMetalOcclusionTexture ),
+				Height = Index( def.HeightTexture ),
+			};
+		} ).ToArray();
 
-			a.Set( "Offset", new Vector2( x0, y0 ) );
-			a.Set( "Size", new Vector2( x1 - x0, y1 - y0 ) );
-			a.Set( "Origin", origin );
-			a.Set( "StepX", StampUv( 1, 0 ) - origin );
-			a.Set( "StepY", StampUv( 0, 1 ) - origin );
-			a.Set( "Tint", def.Tint * stamps[i].Tint );
-			a.Set( "BasisX", Row( targetBasis.x ) );
-			a.Set( "BasisY", Row( targetBasis.y ) );
-			a.Set( "BasisZ", Row( targetBasis.z ) );
-			a.Set( "CoverageAmount", def.CoverageAmount );
-			a.Set( "DepthScale", parallax > 0 ? def.ParallaxStrength / parallax : 0 );
+		var buffer = new GpuBuffer<GpuStamp>( data.Length );
+		buffer.SetData( data );
 
-			commands.DispatchCompute( BakeShader, x1 - x0, y1 - y0, 1 );
+		// one dispatch writing every texel once, so running it again (more frames, reflection views) comes out the same
+		var commands = new CommandList( "DecalMerge" );
+		commands.Attributes.Set( "Stamps", buffer );
+		commands.Attributes.Set( "StampCount", data.Length );
 
-			// the next stamp blends over what this one wrote
-			foreach ( var channel in used )
-				commands.UavBarrier( channel.Canvas );
+		var used = channels.Where( x => x.Canvas is not null ).ToArray();
+		foreach ( var (name, canvas) in used )
+			commands.Attributes.Set( $"{name}Out", canvas );
+
+		commands.DispatchCompute( BakeShader, width, height, 1 );
+
+		foreach ( var (_, canvas) in used )
+		{
+			commands.UavBarrier( canvas );
+			commands.GenerateMipMaps( canvas, Graphics.DownsampleMethod.Box );
 		}
-
-		foreach ( var channel in used )
-			commands.GenerateMipMaps( channel.Canvas, Graphics.DownsampleMethod.Box );
 
 		camera.AddCommandList( commands, Stage.AfterDepthPrepass );
 
@@ -355,7 +352,22 @@ public sealed class DecalMerger : Component
 		decal.Rotation = 0;
 		decal.AttenuationAngle = stamps[0].Attenuation;
 
-		return new Renderer( decal.GameObject, [.. stamps.Select( x => x.Id )], [.. used.Select( x => x.Canvas )], commands, camera, PerformanceStats.GpuFrameNumber );
+		IDisposable[] owned = [buffer, .. used.Select( x => x.Canvas )];
+		return new Renderer( decal.GameObject, [.. stamps.Select( x => x.Id )], owned, commands, camera, PerformanceStats.GpuFrameNumber );
+	}
+
+	/// <summary>
+	/// The bindless index the bake shader reads a texture through, 0 for none. Some slots hold an invalid placeholder rather than null
+	/// </summary>
+	static int Index( Texture texture ) => texture.IsValid() ? texture.Index : 0;
+
+	/// <summary>
+	/// One stamp as the bake shader reads it, all float4 so it packs the same on every GPU
+	/// </summary>
+	struct GpuStamp
+	{
+		public Vector4 Rect, Uv, UvY, Tint, BasisX, BasisY, BasisZ;
+		public int Color, Normal, Rmo, Height;
 	}
 
 	/// <summary>
