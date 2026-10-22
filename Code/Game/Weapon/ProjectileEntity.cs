@@ -57,6 +57,8 @@ public class ProjectileEntity : Component, Component.ICollisionListener
 	/// </summary>
 	protected void Explode( float radius, float damage, float forceScale )
 	{
+		CreateScorchDecal();
+
 		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
 		if ( explosionPrefab == null )
 		{
@@ -83,6 +85,29 @@ public class ProjectileEntity : Component, Component.ICollisionListener
 		}
 
 		GameObject.Destroy();
+	}
+
+	[Rpc.Broadcast( NetFlags.HostOnly )]
+	private void CreateScorchDecal()
+	{
+		var tr = Scene.Trace.Ray( new Ray( WorldPosition + ( WorldRotation.Backward * 8 ), WorldRotation.Forward ), 40 )
+			.IgnoreDynamic()
+			.IgnoreGameObjectHierarchy( GameObject )
+			.UseHitPosition( true )
+			.Run();
+
+		if ( !tr.Hit ) return;
+
+		var scorchPrefab = GameObject.GetPrefab( "/prefabs/engine/scorch.prefab" );
+		if ( scorchPrefab == null )
+		{
+			Log.Warning( "Can't find /prefabs/engine/scorch.prefab" );
+			return;
+		}
+
+		var go = scorchPrefab.Clone( tr.HitPosition + tr.Normal, Rotation.LookAt( -tr.Normal ) );
+		go.SetParent( tr.GameObject, true );
+		go.Enabled = true;
 	}
 
 	/// <summary>

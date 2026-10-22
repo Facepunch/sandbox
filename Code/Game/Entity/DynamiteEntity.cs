@@ -38,6 +38,8 @@ public sealed class DynamiteEntity : Component, Component.IDamageable, IPlayerCo
 	{
 		_isDead = true;
 
+		CreateScorchDecal();
+
 		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
 		if ( explosionPrefab == null )
 		{
@@ -62,6 +64,29 @@ public sealed class DynamiteEntity : Component, Component.IDamageable, IPlayerCo
 		go.NetworkSpawn( true, null );
 
 		GameObject.Destroy();
+	}
+
+	[Rpc.Broadcast( NetFlags.HostOnly )]
+	private void CreateScorchDecal()
+	{
+		var tr = Scene.Trace.Ray( new Ray( WorldPosition + new Vector3( 0, 0, 8 ), Vector3.Down ), 40 )
+			.IgnoreDynamic()
+			.IgnoreGameObjectHierarchy( GameObject )
+			.UseHitPosition( true )
+			.Run();
+
+		if ( !tr.Hit ) return;
+
+		var scorchPrefab = GameObject.GetPrefab( "/prefabs/engine/scorch.prefab" );
+		if ( scorchPrefab == null )
+		{
+			Log.Warning( "Can't find /prefabs/engine/scorch.prefab" );
+			return;
+		}
+
+		var go = scorchPrefab.Clone( tr.HitPosition + tr.Normal, Rotation.LookAt( -tr.Normal, Vector3.Up ) );
+		go.SetParent( tr.GameObject, true );
+		go.Enabled = true;
 	}
 
 	void IDamageable.OnDamage( in DamageInfo damage )
