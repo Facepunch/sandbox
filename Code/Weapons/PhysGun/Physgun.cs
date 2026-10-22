@@ -214,7 +214,7 @@ public partial class Physgun : Local.IPlayerEvents
 	[Sync] public GrabState _stateHovered { get; set; } = default;
 
 	// Where the holder wants the body, from their own aim, so the host doesn't steer by the interpolated one
-	[Sync] public Transform _holdTarget { get; set; }
+	[Sync( SyncFlags.Interpolate )] public Transform _holdTarget { get; set; }
 
 	Transform _lastAimTransform;
 	Transform CurrentAimTransform => HasOwner ? OwnerAimTransform : _lastAimTransform;
@@ -758,12 +758,21 @@ public partial class Physgun : Local.IPlayerEvents
 		_cursorAim = false;
 	}
 
+	// Set every frame, a value from fixed update would be sent stamped with a later frame's time.
+	// Also while hovering, so the host's interpolated target never starts a grab from where the last one let go.
+	protected override void OnUpdate()
+	{
+		base.OnUpdate();
+
+		if ( IsProxy ) return;
+
+		var state = _state.Body.IsValid() ? _state : _stateHovered;
+		_holdTarget = state.Body.IsValid() ? GetHoldTarget( state ) : CurrentAimTransform;
+	}
+
 	protected override void OnFixedUpdate()
 	{
 		base.OnFixedUpdate();
-
-		if ( !IsProxy && _state.Body.IsValid() )
-			_holdTarget = GetHoldTarget();
 
 		// switched straight to another object, the joint still holds the old one
 		if ( _held.IsValid() && _held != _state.GameObject )
@@ -790,7 +799,7 @@ public partial class Physgun : Local.IPlayerEvents
 
 		_held = _state.GameObject;
 		_hold.Hold( _state.Body, _state.EndPoint );
-		_hold.Move( IsProxy ? ClampToRange( _holdTarget ) : _holdTarget );
+		_hold.Move( IsProxy ? ClampToRange( _holdTarget ) : GetHoldTarget() );
 	}
 
 	/// <summary>
@@ -799,13 +808,15 @@ public partial class Physgun : Local.IPlayerEvents
 	/// </summary>
 	Rotation HoldFrame => _state.Pulling ? CurrentAimTransform.Rotation : PhysicsHold.Stabilize( FrameRotation );
 
-	Transform GetHoldTarget()
+	Transform GetHoldTarget() => GetHoldTarget( _state );
+
+	Transform GetHoldTarget( in GrabState state )
 	{
 		var eyeTransform = CurrentAimTransform;
-		var grabDistance = PhysicsHold.ClampGrabDistance( _state.Body, _state.EndPoint, eyeTransform, _state.GrabDistance );
+		var grabDistance = PhysicsHold.ClampGrabDistance( state.Body, state.EndPoint, eyeTransform, state.GrabDistance );
 		var targetPosition = eyeTransform.Position + eyeTransform.Rotation.Forward * grabDistance;
-		var targetRotation = HoldFrame * _state.GrabOffset;
-		return new Transform( targetPosition, targetRotation );
+		var frame = state.Pulling ? eyeTransform.Rotation : PhysicsHold.Stabilize( FrameRotation );
+		return new Transform( targetPosition, frame * state.GrabOffset );
 	}
 
 	// The holder sends the target, keep it within reach of where we see them
