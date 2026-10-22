@@ -32,27 +32,6 @@ public class MeleeWeapon : BaseSandboxWeapon
 
 	[Property] public SoundEvent HitSound { get; set; }
 
-	/// <summary>Random pitch of the first-person view punch per swing (min, max degrees).</summary>
-	[Property, Group( "Camera" )] public Vector2 PunchPitch { get; set; } = new( -15f, -10f );
-
-	/// <summary>Random yaw of the first-person view punch per swing (min, max degrees).</summary>
-	[Property, Group( "Camera" )] public Vector2 PunchYaw { get; set; } = new( -10f, 0f );
-
-	/// <summary>How many times the view punch oscillates before it lapses.</summary>
-	[Property, Group( "Camera" )] public float PunchFrequency { get; set; } = 0.25f;
-
-	/// <summary>How long the view punch lasts, in seconds.</summary>
-	[Property, Group( "Camera" )] public float PunchDuration { get; set; } = 1f;
-
-	/// <summary>First-person camera shake strength per swing, in world units.</summary>
-	[Property, Group( "Camera" )] public float ShakeAmplitude { get; set; } = 1f;
-
-	/// <summary>New shake offsets per second.</summary>
-	[Property, Group( "Camera" )] public float ShakeFrequency { get; set; } = 40f;
-
-	/// <summary>How long the shake takes to settle, in seconds.</summary>
-	[Property, Group( "Camera" )] public float ShakeDuration { get; set; } = 1.2f;
-
 	public MeleeWeapon()
 	{
 		// Melee doesn't use ammo (the engine default is on, which would leave us dry-firing an empty clip).
@@ -92,17 +71,7 @@ public class MeleeWeapon : BaseSandboxWeapon
 		// Melee doesn't count hitgroups - no headshot tags on the damage.
 		ShootBullet( tr, Damage, SwingForce, hitboxTags: false );
 
-		if ( !HasOwner )
-			return;
-
-		Owner.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
-
-		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
-		{
-			// The swing kicks the view down-left and bounces back, with a little rumble on top.
-			Scene.Camera?.AddPunch( new Angles( Random.Shared.Float( PunchPitch.x, PunchPitch.y ), Random.Shared.Float( PunchYaw.x, PunchYaw.y ), 0 ), PunchFrequency, PunchDuration );
-			Scene.Camera?.AddShake( ShakeAmplitude, ShakeFrequency, ShakeDuration );
-		}
+		KickView();
 	}
 
 	protected override void OnShootEffects( ShotEffect shot )
