@@ -294,13 +294,13 @@ public sealed class DecalTool : ToolMode
 		go.WorldRotation = Rotation.LookAt( -pos.Rotation.Forward );
 		go.SetParent( point.GameObject, true );
 
-		var decal = go.AddComponent<Decal>();
-		decal.Decals = [def];
-		decal.SortLayer = _layer++;
-		decal.ColorTint = tint;
-		decal.Scale = scale.Clamp( MinScale, MaxScale );
-		decal.AttenuationAngle *= attenuation.Clamp( 0f, 1f );
-		decal.Rotation = rotation;
+		var stamp = go.AddComponent<DecalStamp>();
+		stamp.Definition = def;
+		stamp.Layer = _layer++;
+		stamp.Tint = tint;
+		stamp.Scale = scale.Clamp( MinScale, MaxScale );
+		stamp.Attenuation = attenuation.Clamp( 0f, 1f );
+		stamp.Rotation = rotation;
 
 		go.NetworkSpawn();
 
