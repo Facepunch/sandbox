@@ -163,7 +163,7 @@ public sealed class SniperWeapon : BaseBulletWeapon
 			return;
 		}
 
-		DrawCrosshair( painter, crosshair );
+		base.DrawHud( painter, crosshair );
 	}
 
 	/// <summary>

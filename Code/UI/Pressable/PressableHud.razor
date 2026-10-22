@@ -4,51 +4,32 @@
 @namespace Sandbox
 
 <root>
-
-    <div class="crosshair">
-    </div>   
-
 </root>
 
 @code
 {
-    int _hashCode;
-    PressableTooltip _tooltip;
+    PressableSection section;
+
+    protected override void OnDisabled()
+    {
+        if ( section is not null ) section.Hint = null;
+    }
 
     protected override void OnUpdate()
     {
-        base.OnUpdate();
+        section = HudLayer.FindSection( this, section );
+        if ( section is null ) return;
 
-        var tt = GetHovered();
-        var hc = HashCode.Combine(tt.Title, tt.Icon, tt.Description);
-
-        if (hc != _hashCode)
+        var player = Player.FindLocalPlayer();
+        if ( !player.IsValid() || !Hud.IsVisible( HudElement.Crosshair ) )
         {
-            _hashCode = hc;
-            _tooltip?.Delete();
-            _tooltip = null;
-
-            if (!string.IsNullOrWhiteSpace(tt.Title) || !string.IsNullOrWhiteSpace(tt.Icon) || !string.IsNullOrWhiteSpace(tt.Description))
-            {
-                _tooltip = Panel.AddChild<PressableTooltip>();
-                _tooltip.Title = tt.Title;
-                _tooltip.Icon = tt.Icon;
-                _tooltip.Description = tt.Description;
-            }
-
+            section.Hint = null;
+            return;
         }
 
-        SetClass("active", tt.Pressable != null && tt.Enabled);
-        Panel.Style.Display = Hud.IsVisible( HudElement.Crosshair ) ? DisplayMode.Flex : DisplayMode.None;
+        section.Hint = player.InteractionHint;
+        section.Action = player.Controller.UseButton;
     }
 
-    IPressable.Tooltip GetHovered()
-    {
-        var lp = Player.FindLocalPlayer();
-        if (lp is null) return default;
-        if (!Hud.IsVisible( HudElement.Crosshair )) return default;
-        if (lp.Controller.Tooltips.Count == 0) return default;
-
-        return lp.Controller.Tooltips.FirstOrDefault();
-    }
+    protected override int BuildHash() => 0;
 }

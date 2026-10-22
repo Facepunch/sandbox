@@ -233,6 +233,8 @@
 	/// </summary>
 	public virtual void DrawHud( Painter painter, Vector2 crosshair )
 	{
+		if ( BaseSandboxWeapon.CrosshairHidden ) return;
+
 		using var state = painter.Scope();
 		painter.BlendMode = BlendMode.Normal;
 

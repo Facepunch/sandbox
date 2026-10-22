@@ -5,7 +5,7 @@
 	/// </summary>
 	public override void DrawHud( Painter painter, Vector2 crosshair )
 	{
-		if ( _state.IsValid() )
+		if ( _state.IsValid() || CrosshairHidden )
 			return;
 
 		using var scope = painter.Scope();

@@ -70,6 +70,23 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	public bool WantsHideHud => HiddenHud != HudElement.None;
 
 	/// <summary>
+	/// What pressing use would do to the thing the player is looking at, or null if there's nothing to show.
+	/// While there is one the HUD shows it in place of the crosshair
+	/// </summary>
+	public IPressable.Tooltip? InteractionHint
+	{
+		get
+		{
+			if ( !Controller.IsValid() || Controller.Tooltips.Count == 0 ) return null;
+
+			var hint = Controller.Tooltips[0];
+			if ( string.IsNullOrWhiteSpace( hint.Title ) && string.IsNullOrWhiteSpace( hint.Icon ) ) return null;
+
+			return hint;
+		}
+	}
+
+	/// <summary>
 	/// Feeds <see cref="HiddenHud"/> into the HUD visibility event, so the camera weapon and freecam
 	/// hide the HUD through the same path addons use. Panels ask through <see cref="Hud.IsVisible"/>.
 	/// </summary>
