@@ -423,48 +423,48 @@
           {
             "State": "StartIdle",
             "Sound": {
-              "Id": "ef89216a-c870-4c59-9e41-2a20c2f80500",
-              "Path": "sounds/vehicles/hl2_v8/engine_start.sound"
+              "Id": "d9340982-a610-42ae-bce5-1076a85ac699",
+              "Path": "sounds/vehicles/buggy/engine_start.sound"
             },
             "MinTime": 4
           },
           {
             "State": "Idle",
             "Sound": {
-              "Id": "f306d38d-3024-4edc-9a6d-e13df29fb2ab",
-              "Path": "sounds/vehicles/hl2_v8/engine_idle.sound"
+              "Id": "09346dc3-6760-4cfb-a53f-f2b4968debeb",
+              "Path": "sounds/vehicles/buggy/engine_idle.sound"
             },
             "MinTime": 0
           },
           {
             "State": "Reverse",
             "Sound": {
-              "Id": "e891a03a-6613-44e5-a5f1-159f85b65aa8",
-              "Path": "sounds/vehicles/hl2_v8/reverse.sound"
+              "Id": "ff7dbb58-f0d8-4f3e-98da-cf6bf3116015",
+              "Path": "sounds/vehicles/buggy/reverse.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "Gear0",
             "Sound": {
-              "Id": "14493411-443b-40d6-8b7e-cd96b66ddbf6",
-              "Path": "sounds/vehicles/hl2_v8/rev.sound"
+              "Id": "777df3b6-1b28-4929-87e8-258437090cac",
+              "Path": "sounds/vehicles/buggy/rev.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "Gear0Resume",
             "Sound": {
-              "Id": "f306d38d-3024-4edc-9a6d-e13df29fb2ab",
-              "Path": "sounds/vehicles/hl2_v8/engine_idle.sound"
+              "Id": "09346dc3-6760-4cfb-a53f-f2b4968debeb",
+              "Path": "sounds/vehicles/buggy/engine_idle.sound"
             },
             "MinTime": 0.75
           },
           {
             "State": "Gear1",
             "Sound": {
-              "Id": "e3cbbc58-eddb-4584-85e0-609469380040",
-              "Path": "sounds/vehicles/hl2_v8/firstgear.sound"
+              "Id": "8ef29b78-d983-42bf-9063-648672af44e9",
+              "Path": "sounds/vehicles/buggy/firstgear.sound"
             },
             "MinTime": 0.5
           },
