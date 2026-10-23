@@ -75,6 +75,13 @@
 
         UpdateCursor();
         DrawHandles();
+        InspectCursor.Update( HasActive );
+    }
+
+    protected override void OnVisibilityChanged()
+    {
+        base.OnVisibilityChanged();
+        InspectCursor.Release();
     }
 
     void UpdateCursor()
@@ -88,11 +95,23 @@
 
         if ( e.MouseButton == MouseButtons.Right )
         {
+            // right click while dragging with the physgun freezes instead
+            if ( InspectCursor.RequestFreeze() ) return;
+
             Inspector?.WorldMouseRightDown( e );
             return;
         }
 
         Inspector?.WorldMouseDown( e );
+
+        if ( e.MouseButton == MouseButtons.Left && Inspector?.Hovered.IsValid() == true )
+            InspectCursor.Press();
+    }
+
+    protected override void OnMouseUp(MousePanelEvent e)
+    {
+        if ( e.MouseButton == MouseButtons.Left )
+            InspectCursor.Release();
     }
 
     Dictionary<Component, Panel> _handles = [];

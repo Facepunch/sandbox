@@ -217,7 +217,23 @@ public partial class Physgun : Local.IPlayerEvents
 	[Sync] public Transform _holdTarget { get; set; }
 
 	Transform _lastAimTransform;
-	Transform CurrentAimTransform => HasOwner ? Owner.EyeTransform : _lastAimTransform;
+	Transform CurrentAimTransform => HasOwner ? OwnerAimTransform : _lastAimTransform;
+
+	bool IsCursorDragging => !IsProxy && InspectCursor.IsDragging;
+	bool _cursorAim;
+
+	Transform OwnerAimTransform
+	{
+		get
+		{
+			if ( IsProxy || !_cursorAim ) return Owner.EyeTransform;
+
+			var ray = InspectCursor.DragRay;
+			return new Transform( ray.Position, Rotation.LookAt( ray.Forward ) );
+		}
+	}
+
+	Rotation FrameRotation => HasOwner ? Owner.EyeTransform.Rotation : _lastAimTransform.Rotation;
 
 	bool _preventReselect = false;
 
@@ -301,7 +317,7 @@ public partial class Physgun : Local.IPlayerEvents
 
 			if ( !_state.IsValid() && HasOwner && !IsProxy )
 			{
-				var aim = Owner.EyeTransform;
+				var aim = CurrentAimTransform;
 				var tr = Scene.Trace.Ray( aim.Position, aim.Position + aim.Forward * Range )
 					.IgnoreGameObjectHierarchy( GameObject.Root )
 					.Run();
@@ -351,6 +367,10 @@ public partial class Physgun : Local.IPlayerEvents
 		_rotation.UpdateSnapping();
 
 		var isPulling = Input.Down( "attack2" ) && !_preventReselect;
+		var primaryDown = Input.Down( "attack1" ) || IsCursorDragging;
+		var cursorFreeze = InspectCursor.ConsumeFreeze();
+		if ( !_state.IsValid() ) _cursorAim = IsCursorDragging;
+		var aim = CurrentAimTransform;
 
 		ViewModel?.RunEvent<ViewModel>( UpdateViewModel );
 
@@ -387,7 +407,7 @@ public partial class Physgun : Local.IPlayerEvents
 			}
 			else
 			{
-				if ( !Input.Down( "attack1" ) )
+				if ( !primaryDown )
 				{
 					_state = default;
 					_preventReselect = true;
@@ -395,7 +415,7 @@ public partial class Physgun : Local.IPlayerEvents
 					return;
 				}
 
-				if ( Input.Down( "attack2" ) )
+				if ( Input.Down( "attack2" ) || cursorFreeze )
 				{
 					Freeze( _state.Body );
 					_state = default;
@@ -447,14 +467,14 @@ public partial class Physgun : Local.IPlayerEvents
 
 		if ( _preventReselect )
 		{
-			if ( !Input.Down( "attack1" ) && !Input.Down( "attack2" ) )
+			if ( !primaryDown && !Input.Down( "attack2" ) )
 				_preventReselect = false;
 
 			return;
 		}
 
-		FindGrabbedBody( out var sh, player.EyeTransform, isPulling );
-		if ( isPulling ) sh = UpdatePullLock( pullLock, sh, player.EyeTransform );
+		FindGrabbedBody( out var sh, aim, isPulling );
+		if ( isPulling ) sh = UpdatePullLock( pullLock, sh, aim );
 		_stateHovered = sh;
 
 		if ( isPulling && Input.Pressed( "attack2" ) )
@@ -462,7 +482,7 @@ public partial class Physgun : Local.IPlayerEvents
 
 		if ( sh.IsValid() && sh.Pulling && sh.Body.MotionEnabled )
 		{
-			var eyePosition = player.EyeTransform.Position;
+			var eyePosition = aim.Position;
 			var closest = FindClosestPoint( sh.Body, eyePosition );
 			var distance = closest.Distance( eyePosition );
 
@@ -475,7 +495,7 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( _state.Pulling || _stateHovered.Pulling )
 			return;
 
-		if ( Input.Down( "attack1" ) )
+		if ( primaryDown )
 		{
 			ViewModel?.RunEvent<ViewModel>( x => x.OnAttack() );
 
@@ -735,6 +755,7 @@ public partial class Physgun : Local.IPlayerEvents
 		_primaryControlDown = false;
 		_secondaryControlDown = false;
 		_isSpinning = false;
+		_cursorAim = false;
 	}
 
 	protected override void OnFixedUpdate()
@@ -776,7 +797,7 @@ public partial class Physgun : Local.IPlayerEvents
 	/// The frame <see cref="GrabState.GrabOffset"/> is relative to: the full aim rotation for gravity
 	/// holds, only the stabilized yaw for beam grabs.
 	/// </summary>
-	Rotation HoldFrame => _state.Pulling ? CurrentAimTransform.Rotation : PhysicsHold.Stabilize( CurrentAimTransform.Rotation );
+	Rotation HoldFrame => _state.Pulling ? CurrentAimTransform.Rotation : PhysicsHold.Stabilize( FrameRotation );
 
 	Transform GetHoldTarget()
 	{
@@ -879,7 +900,7 @@ public partial class Physgun : Local.IPlayerEvents
 			state.LocalOffset = bodyTransform.PointToLocal( tr.HitPosition );
 			state.GrabDistance = Vector3.DistanceBetween( aim.Position, tr.HitPosition );
 			state.GrabDistance = PhysicsHold.ClampGrabDistance( state.Body, tr.HitPosition, aim, state.GrabDistance );
-			state.GrabOffset = PhysicsHold.Stabilize( aim.Rotation ).Inverse * bodyTransform.Rotation;
+			state.GrabOffset = PhysicsHold.Stabilize( FrameRotation ).Inverse * bodyTransform.Rotation;
 		}
 
 		_rotation.Reset( state.GrabOffset );

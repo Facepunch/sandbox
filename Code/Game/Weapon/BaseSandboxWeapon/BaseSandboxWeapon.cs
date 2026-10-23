@@ -272,8 +272,23 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 		var model = ViewModel?.GetComponentInChildren<ViewModel>();
 		if ( !model.IsValid() ) return;
 
-		model.Place( _viewModelView );
+		var placed = _viewModelView;
+		placed.Rotation = LookAtCursor( placed.Rotation );
+
+		model.Place( placed );
 		model.FollowCameraEffects( camera, view );
+	}
+
+	Rotation _cursorLook = Rotation.Identity;
+
+	/// <summary>
+	/// Turns the view model toward the mouse cursor while the inspect menu is open, and back when it closes.
+	/// </summary>
+	Rotation LookAtCursor( Rotation view )
+	{
+		var target = InspectCursor.IsOpen ? view.Inverse * Rotation.LookAt( InspectCursor.Ray.Forward, view.Up ) : Rotation.Identity;
+		_cursorLook = Rotation.Slerp( _cursorLook, target, Time.Delta * 10f );
+		return view * _cursorLook;
 	}
 
 	/// <summary>
