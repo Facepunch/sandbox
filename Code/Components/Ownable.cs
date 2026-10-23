@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 /// <summary>
 /// Tracks which connection spawned this object
 /// </summary>
-public sealed class Ownable : Component, IPhysgunEvent, IToolgunEvent
+public sealed class Ownable : Component, IPhysgunEvent, IToolgunEvent, ICarryEvent
 {
 	[Sync( SyncFlags.FromHost )]
 	private Guid _ownerId { get; set; }
@@ -33,7 +33,7 @@ public sealed class Ownable : Component, IPhysgunEvent, IToolgunEvent
 	}
 
 	/// <summary>
-	/// When enabled, players can only physgun/toolgun objects they own.
+	/// When enabled, players can only physgun/toolgun/pick up objects they own.
 	/// Host is always exempt. Off by default.
 	/// </summary>
 	[Title( "Prop Protection" )]
@@ -60,6 +60,12 @@ public sealed class Ownable : Component, IPhysgunEvent, IToolgunEvent
 	void IToolgunEvent.OnToolgunSelect( IToolgunEvent.SelectEvent e )
 	{
 		if ( !CallerHasAccess( e.User ) )
+			e.Cancelled = true;
+	}
+
+	void ICarryEvent.OnCarryGrab( PlayerCarryEvent e )
+	{
+		if ( !CallerHasAccess( e.Player.Network.Owner ) )
 			e.Cancelled = true;
 	}
 }

@@ -8,6 +8,9 @@ public sealed partial class Player : ICameraModifier
 	[Property, Group( "Camera" )] public float SeatedCameraVelocityScale { get; set; } = 0.1f;
 
 	private ISitTarget _cachedSeat;
+
+	public bool IsSeated => _cachedSeat is not null;
+
 	private bool _seatCameraInitialized;
 	private float _minCameraDistance;
 	private float _smoothedDistance;

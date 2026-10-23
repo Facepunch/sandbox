@@ -423,6 +423,9 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			ConsoleSystem.Run( "undo" );
 		}
 
+		// Before the weapon, so carrying something can keep attack from it
+		GetComponent<PlayerCarry>()?.OnControl();
+
 		var inventory = GetComponent<PlayerInventory>();
 		inventory?.OnControl();
 

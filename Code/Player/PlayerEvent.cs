@@ -35,6 +35,19 @@ public class PlayerDropEvent
 }
 
 /// <summary>
+/// Fired from player's client when they try to pick up an object, and again on the instance that simulates it before it's moved for them. Set <see cref="Cancelled"/> to true to refuse, or change <see cref="MaxMass"/> to let them lift more or less. See <see cref="PlayerCarry"/>.
+/// </summary>
+public class PlayerCarryEvent
+{
+	public Player Player { get; init; }
+	public GameObject Target { get; init; }
+	public Rigidbody Body { get; init; }
+	public float Mass { get; init; }
+	public float MaxMass { get; set; }
+	public bool Cancelled { get; set; }
+}
+
+/// <summary>
 /// Data passed to switch weapon events. Set <see cref="Cancelled"/> to true to prevent the switch.
 /// </summary>
 public class PlayerSwitchWeaponEvent
@@ -146,6 +159,7 @@ public static partial class Local
 		void OnMoveSlot( PlayerMoveSlotEvent e ) { }
 		void OnSeatHolster( PlayerSeatHolsterEvent e ) { }
 		void OnFlashlight( PlayerFlashlightEvent e ) { }
+		void OnCarry( PlayerCarryEvent e ) { }
 		void OnDamaging( PlayerDamageEvent e ) { }
 		void OnKill( PlayerKillEvent e ) { }
 		void OnCameraMove( ref Angles angles ) { }
@@ -181,6 +195,7 @@ public static partial class Global
 		void OnPlayerMoveSlot( PlayerMoveSlotEvent e ) { }
 		void OnPlayerSeatHolster( PlayerSeatHolsterEvent e ) { }
 		void OnPlayerFlashlight( PlayerFlashlightEvent e ) { }
+		void OnPlayerCarry( PlayerCarryEvent e ) { }
 		void OnPlayerDamaging( PlayerDamageEvent e ) { }
 		void OnPlayerRespawning( PlayerRespawnEvent e ) { }
 		void OnPlayerKill( PlayerKillEvent e ) { }

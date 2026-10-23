@@ -226,10 +226,13 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( _isSpinning ) allowMovement = false;
 	}
 
+	void Local.IPlayerEvents.OnCarry( PlayerCarryEvent e )
+	{
+		if ( _state.IsValid() || _stateHovered.Pulling ) e.Cancelled = true;
+	}
+
 	bool _isSpinning;
-	bool _isSnapping;
-	Rotation _spinRotation;
-	Rotation _snapRotation;
+	readonly HoldRotation _rotation = new();
 
 	bool _launched;
 
@@ -252,11 +255,6 @@ public partial class Physgun : Local.IPlayerEvents
 	/// How quickly W/S moves a held object while rotate mode is active.
 	/// </summary>
 	static float KeyboardMoveSpeed => 240.0f;
-
-	/// <summary>
-	/// How quickly keyboard controls rotate a held object while rotate mode is active.
-	/// </summary>
-	static float KeyboardRotateSpeed => 240.0f;
 
 	public override void OnCameraMove( Player player, ref Angles angles )
 	{
@@ -350,10 +348,7 @@ public partial class Physgun : Local.IPlayerEvents
 			Input.Clear( "use" );
 		}
 
-		var isSnapping = Input.Down( "run" ) || Input.Down( "walk" );
-		var snapAngle = Input.Down( "walk" ) ? 15.0f : 45.0f;
-		if ( !isSnapping && _isSnapping ) _spinRotation = _snapRotation;
-		_isSnapping = isSnapping;
+		_rotation.UpdateSnapping();
 
 		var isPulling = Input.Down( "attack2" ) && !_preventReselect;
 
@@ -426,7 +421,6 @@ public partial class Physgun : Local.IPlayerEvents
 			if ( _isSpinning )
 			{
 				var move = spinMove;
-				var look = Input.AnalogLook * -1;
 				var state = _state;
 
 				// Only beam grabs allow W/S to adjust the holding distance.
@@ -436,47 +430,8 @@ public partial class Physgun : Local.IPlayerEvents
 					state.GrabDistance = MathF.Max( 0.0f, state.GrabDistance );
 				}
 
-				if ( _isSnapping )
-				{
-					if ( MathF.Abs( look.yaw ) > MathF.Abs( look.pitch ) ) look.pitch = 0;
-					else look.yaw = 0;
-				}
-
-				_spinRotation = Rotation.From( look ) * _spinRotation;
-				var spinRotation = _spinRotation;
-
 				// Gravity holds use W/S to pitch around the viewer's right axis.
-				if ( state.Pulling && MathF.Abs( move.x ) > 0.001f )
-					spinRotation = Rotation.From( new Angles( move.x * KeyboardRotateSpeed * Time.Delta, 0f, 0f ) ) * spinRotation;
-
-				var eyeRotation = HoldFrame;
-
-				// A/D rotates around world up through the hold's frame of reference.
-				if ( MathF.Abs( move.y ) > 0.001f )
-				{
-					var worldRotation = eyeRotation * spinRotation;
-					worldRotation = Rotation.FromYaw( move.y * KeyboardRotateSpeed * Time.Delta ) * worldRotation;
-					spinRotation = eyeRotation.Inverse * worldRotation;
-				}
-
-				_spinRotation = spinRotation;
-
-				if ( _isSnapping )
-				{
-					// convert rotation to worldspace
-					spinRotation = eyeRotation * spinRotation;
-
-					// snap angles in worldspace
-					var angles = spinRotation.Angles();
-					spinRotation = angles.SnapToGrid( snapAngle );
-
-					// convert rotation back to localspace
-					spinRotation = eyeRotation.Inverse * spinRotation;
-				}
-
-				// save snap rotation so it can be applied after snap has finished
-				_snapRotation = spinRotation;
-				state.GrabOffset = spinRotation;
+				state.GrabOffset = _rotation.Rotate( HoldFrame, move, state.Pulling );
 
 				// State needs to reset for sync to detect a change, bug or how it's meant to work?
 				_state = default;
@@ -737,12 +692,7 @@ public partial class Physgun : Local.IPlayerEvents
 		model.Renderer?.Set( "brake", _state.Active || _state.Pulling || _stateHovered.Pulling ? 1 : 0 );
 	}
 
-	Sandbox.Physics.ControlJoint _joint;
-	PhysicsBody _body;
-
-	Vector3 _massCenterOffset;
-
-	const float MaxLinearAcceleration = 700000.0f;
+	readonly PhysicsHold _hold = new();
 
 	/// <summary>
 	/// The object our joint is moving
@@ -762,20 +712,11 @@ public partial class Physgun : Local.IPlayerEvents
 		held.Root.RunEvent<IPhysgunEvent>( x => x.OnPhysgunDrop() );
 	}
 
-	void RemoveJoint()
-	{
-		_joint?.Remove();
-		_joint = null;
-
-		_body?.Remove();
-		_body = null;
-	}
-
 	protected override void OnDisabled()
 	{
 		base.OnDisabled();
 
-		RemoveJoint();
+		_hold.Release();
 		DropHeld();
 		CloseBeam();
 		_gravityHoldSound?.Stop( 0.2f );
@@ -806,13 +747,13 @@ public partial class Physgun : Local.IPlayerEvents
 		// switched straight to another object, the joint still holds the old one
 		if ( _held.IsValid() && _held != _state.GameObject )
 		{
-			RemoveJoint();
+			_hold.Release();
 			DropHeld();
 		}
 
 		if ( !CanMove( _state ) )
 		{
-			RemoveJoint();
+			_hold.Release();
 			DropHeld();
 
 			if ( CanMove( _stateHovered ) && _stateHovered.Pulling )
@@ -827,56 +768,20 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( _launched ) return;
 
 		_held = _state.GameObject;
-		_body ??= new PhysicsBody( Scene.PhysicsWorld ) { BodyType = PhysicsBodyType.Keyframed, AutoSleep = false };
-
-		if ( _joint is null )
-		{
-			// Scale is built into physics, remove it.
-			var bodyTransform = _state.Body.WorldTransform.WithScale( 1.0f );
-
-			var body = _state.Body.PhysicsBody;
-			_massCenterOffset = body.LocalMassCenter - bodyTransform.PointToLocal( _state.EndPoint );
-
-			var point1 = new PhysicsPoint( _body );
-			var point2 = new PhysicsPoint( body, body.LocalMassCenter );
-			var maxForce = body.Mass * MaxLinearAcceleration;
-
-			var inertia = body.Inertia;
-			var maxTorque = MaxLinearAcceleration * MathF.Sqrt( body.Mass * MathF.Max( inertia.x, MathF.Max( inertia.y, inertia.z ) ) );
-
-			_joint = PhysicsJoint.CreateControl( point1, point2 );
-			_joint.LinearSpring = new PhysicsSpring( 32, 4, maxForce );
-			_joint.AngularSpring = new PhysicsSpring( 64, 4, maxTorque );
-		}
-
-		var target = IsProxy ? ClampToRange( _holdTarget ) : _holdTarget;
-		_body.Transform = target.WithPosition( target.PointToWorld( _massCenterOffset ) );
-	}
-
-	/// <summary>
-	/// Using raw aim rotation on physgun results in jittering that feels very jarring when holding props with physgun and looking up/down.
-	/// Lets make sure that we get reliable rotation yaw when looking up/down to avoid this.
-	/// </summary>
-	static Rotation Stabilize( Rotation rotation )
-	{
-		var forward = rotation.Forward.WithZ( 0 );
-		var up = rotation.Up.WithZ( 0 );
-
-		// Looking up the top of the view points backwards, looking down it points forwards
-		var heading = forward.LengthSquared >= up.LengthSquared ? forward : (rotation.Forward.z > 0 ? -up : up);
-		return Rotation.FromYaw( MathX.RadianToDegree( MathF.Atan2( heading.y, heading.x ) ) );
+		_hold.Hold( _state.Body, _state.EndPoint );
+		_hold.Move( IsProxy ? ClampToRange( _holdTarget ) : _holdTarget );
 	}
 
 	/// <summary>
 	/// The frame <see cref="GrabState.GrabOffset"/> is relative to: the full aim rotation for gravity
 	/// holds, only the stabilized yaw for beam grabs.
 	/// </summary>
-	Rotation HoldFrame => _state.Pulling ? CurrentAimTransform.Rotation : Stabilize( CurrentAimTransform.Rotation );
+	Rotation HoldFrame => _state.Pulling ? CurrentAimTransform.Rotation : PhysicsHold.Stabilize( CurrentAimTransform.Rotation );
 
 	Transform GetHoldTarget()
 	{
 		var eyeTransform = CurrentAimTransform;
-		var grabDistance = ClampGrabDistance( _state.Body, _state.EndPoint, eyeTransform, _state.GrabDistance );
+		var grabDistance = PhysicsHold.ClampGrabDistance( _state.Body, _state.EndPoint, eyeTransform, _state.GrabDistance );
 		var targetPosition = eyeTransform.Position + eyeTransform.Rotation.Forward * grabDistance;
 		var targetRotation = HoldFrame * _state.GrabOffset;
 		return new Transform( targetPosition, targetRotation );
@@ -973,22 +878,13 @@ public partial class Physgun : Local.IPlayerEvents
 		{
 			state.LocalOffset = bodyTransform.PointToLocal( tr.HitPosition );
 			state.GrabDistance = Vector3.DistanceBetween( aim.Position, tr.HitPosition );
-			state.GrabDistance = ClampGrabDistance( state.Body, tr.HitPosition, aim, state.GrabDistance );
-			state.GrabOffset = Stabilize( aim.Rotation ).Inverse * bodyTransform.Rotation;
+			state.GrabDistance = PhysicsHold.ClampGrabDistance( state.Body, tr.HitPosition, aim, state.GrabDistance );
+			state.GrabOffset = PhysicsHold.Stabilize( aim.Rotation ).Inverse * bodyTransform.Rotation;
 		}
 
-		_spinRotation = state.GrabOffset;
-		_snapRotation = _spinRotation;
+		_rotation.Reset( state.GrabOffset );
 
 		return true;
-	}
-
-	static float ClampGrabDistance( Rigidbody body, Vector3 point, Transform eye, float distance, float min = 50.0f )
-	{
-		distance = MathF.Max( 0.0f, distance );
-		var closest = body.FindClosestPoint( eye.Position );
-		var along = distance + Vector3.Dot( closest - point, eye.Rotation.Forward );
-		return along < min ? distance + (min - along) : distance;
 	}
 
 	[Rpc.Broadcast]
@@ -1043,7 +939,7 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( IsProxy && body.IsProxy ) return;
 
 		var bodies = new HashSet<Rigidbody>();
-		GetConnectedBodies( body.GameObject, bodies );
+		PhysicsHold.GetConnectedBodies( body.GameObject, bodies );
 
 		if ( !IsProxy )
 		{
@@ -1094,26 +990,12 @@ public partial class Physgun : Local.IPlayerEvents
 		// We already launched.
 		if ( _launched ) return;
 
-		RemoveJoint();
+		_hold.Release();
 
 		var mass = body.Mass;
 		body.ApplyImpulse( force.Normal * (mass * force.Length) );
 		body.PhysicsBody?.ApplyAngularImpulse( Vector3.Random * (mass * force.Length) );
 
 		_launched = true;
-	}
-
-	static void GetConnectedBodies( GameObject source, HashSet<Rigidbody> result )
-	{
-		foreach ( var rb in source.Root.Components.GetAll<Rigidbody>() )
-		{
-			if ( !result.Add( rb ) ) continue;
-
-			foreach ( var joint in rb.Joints )
-			{
-				if ( joint.Object1 != null ) GetConnectedBodies( joint.Object1, result );
-				if ( joint.Object2 != null ) GetConnectedBodies( joint.Object2, result );
-			}
-		}
 	}
 }

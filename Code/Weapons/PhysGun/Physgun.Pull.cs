@@ -32,8 +32,7 @@ public partial class Physgun
 					PullStrength = strength
 				};
 
-				_spinRotation = state.GrabOffset;
-				_snapRotation = _spinRotation;
+				_rotation.Reset( state.GrabOffset );
 
 				return state;
 			}
