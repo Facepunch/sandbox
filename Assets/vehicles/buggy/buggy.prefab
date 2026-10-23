@@ -551,8 +551,8 @@
           {
             "State": "Shutdown",
             "Sound": {
-              "Id": "7e4486ad-f0ad-47b2-a70c-43159eac425c",
-              "Path": "sounds/vehicles/hl2_v8/engine_stop.sound"
+              "Id": "fd9b8462-8400-46c6-9a67-781d29795da5",
+              "Path": "sounds/vehicles/buggy/engine_stop.sound"
             },
             "MinTime": 0
           }
