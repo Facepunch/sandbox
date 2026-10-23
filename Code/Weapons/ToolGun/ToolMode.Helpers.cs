@@ -86,6 +86,10 @@
 	/// </summary>
 	public SelectionPoint TraceSelect()
 	{
+		// Use the exact selected surface point; tracing at an edge can hit a different face or miss.
+		if ( UseSnapGrid && !AbsorbMouseInput && Input.Down( "snap" ) && _hasSnapTarget && _snapSelection.IsValid() )
+			return _snapSelection;
+
 		var player = Toolgun?.Owner;
 		if ( !player.IsValid() ) return default;
 

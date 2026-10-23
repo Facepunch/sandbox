@@ -46,10 +46,10 @@ VS
 		o.vPositionWs = i.vPositionWs;
 		o.vPositionPs = Position3WsToPs( i.vPositionWs );
 
-		// bit of depth bias didn't hurt nobody
+		// Reverse-Z: increasing depth brings the overlay in front of its mesh.
 		float flProjDepth = saturate( o.vPositionPs.z / o.vPositionPs.w );
 		float flBias = flProjDepth * 0.0001f;
-		o.vPositionPs.z -= flBias * o.vPositionPs.w;
+		o.vPositionPs.z += flBias * o.vPositionPs.w;
 
 		return o;
 	}
@@ -59,7 +59,8 @@ PS
 {
 	RenderState( DepthWriteEnable, false );
 	RenderState( DepthEnable, false );
-	RenderState( CullMode, NONE );
+	// Do not draw the reverse side of collision surfaces through thin props.
+	RenderState( CullMode, BACK );
 	RenderState( BlendEnable, true );
 	RenderState( SrcBlend, SRC_ALPHA );
 	RenderState( DstBlend, INV_SRC_ALPHA );
@@ -69,10 +70,19 @@ PS
 	float3 GridRight < Attribute( "GridRight" ); Default3( 1, 0, 0 ); >;
 	float3 GridUp < Attribute( "GridUp" ); Default3( 0, 0, 1 ); >;
 
+	float3 SnapPoint < Attribute( "SnapPoint" ); Default3( 0, 0, 0 ); >;
+	float3 SnapNormal < Attribute( "SnapNormal" ); Default3( 0, 0, 1 ); >;
 	float3 AimPoint < Attribute( "AimPoint" ); Default3( 0, 0, 0 ); >;
 	float MaskRadius < Attribute( "MaskRadius" ); Default( 48.0 ); >;
 
+	float2 CellSpacing < Attribute( "CellSpacing" ); Default2( 16, 16 ); >;
 	float CellSize < Attribute( "CellSize" ); Default( 16.0 ); >;
+
+	float RoundSurface < Attribute( "RoundSurface" ); Default( 0 ); >;
+	float RoundRadius < Attribute( "RoundRadius" ); Default( 1 ); >;
+	float AngleStep < Attribute( "AngleStep" ); Default( 0.392699 ); >;
+	float PlanarSurface < Attribute( "PlanarSurface" ); Default( 0 ); >;
+	float MeshSurface < Attribute( "MeshSurface" ); Default( 0 ); >;
 
 	float SnapCornerX < Attribute( "SnapCornerX" ); Default( 0 ); >;
 	float SnapCornerY < Attribute( "SnapCornerY" ); Default( 0 ); >;
@@ -86,17 +96,34 @@ PS
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		float3 p = i.vPositionWs;
+		// Limit planar overlays to the selected level, not every parallel shelf.
+		if ( PlanarSurface > 0.5 )
+		{
+			float3 planeNormal = normalize( cross( GridRight, GridUp ) );
+			clip( CellSize * 0.5 - abs( dot( p - BoundsOrigin, planeNormal ) ) );
+		}
 
 		float3 offset = p - GridOrigin;
 		float2 facePos = float2( dot( offset, GridRight ), dot( offset, GridUp ) );
 
-		float2 cellUv = facePos / CellSize;
+		float radius = length( facePos );
+		float angle = atan2( facePos.y, facePos.x );
+		float2 cellUv = facePos / CellSpacing;
+		if ( RoundSurface > 0.5 ) cellUv = float2( radius / CellSize, angle / AngleStep );
 
 		float2 deriv = max( abs( ddx( cellUv ) ), abs( ddy( cellUv ) ) );
 		float2 wrapped = abs( frac( cellUv ) - 0.5 );
 		float2 lw = 1.0 * deriv;
 		float2 cov = saturate( ( wrapped - ( 0.5 - lw ) ) / max( lw, 0.0001 ) );
 		float grid = max( cov.x, cov.y );
+		if ( RoundSurface > 0.5 )
+		{
+			float pixel = max( fwidth( radius ), 0.0001 );
+			float spokeDistance = abs( sin( angle - round( angle / AngleStep ) * AngleStep ) ) * radius;
+			float spokes = 1.0 - saturate( spokeDistance / pixel );
+			float outerRing = 1.0 - saturate( abs( radius - RoundRadius ) / pixel );
+			grid = max( max( cov.x, spokes ), outerRing ) * (1.0 - smoothstep( RoundRadius, RoundRadius + pixel, radius ));
+		}
 
 		// Rectangular fade: grid eases in from the bounds edge over half a cell.
 		float3 boundsOffset = p - BoundsOrigin;
@@ -105,13 +132,21 @@ PS
 		float edgeFade = saturate( min( edgeDist.x, edgeDist.y ) / max( CellSize * 0.5, 0.001 ) );
 
 		float dist = length( p - AimPoint );
-		float gridFade = 1.0 - saturate( dist / ( MaskRadius * 0.3 ) );
+		float aimFade = 1.0 - saturate( dist / ( MaskRadius * 0.3 ) );
+		float gridFade = aimFade;
+		gridFade = lerp( gridFade, 1.0, max( PlanarSurface, RoundSurface ) );
 		grid *= gridFade;
 
-		float mask = edgeFade;
+		float mask = lerp( edgeFade, 1.0, MeshSurface );
 
-		float2 cornerFace = float2( SnapCornerX, SnapCornerY ) * CellSize;
+		float2 cornerFace = float2( SnapCornerX, SnapCornerY ) * CellSpacing;
 		float2 localUv = facePos - cornerFace;
+		if ( RoundSurface > 0.5 )
+		{
+			float snapAngle = atan2( cornerFace.y, cornerFace.x );
+			float deltaAngle = atan2( sin( angle - snapAngle ), cos( angle - snapAngle ) );
+			localUv = float2( deltaAngle * max( radius, CellSize ), radius - length( cornerFace ) );
+		}
 
 		float2 facePosDdx = ddx( facePos );
 		float2 facePosDdy = ddy( facePos );
@@ -133,6 +168,7 @@ PS
 		float fadeHoriz = 1.0 - saturate( abs( facePos.x - aimOffset2.x ) / fadeRadius );
 
 		float cross = saturate( barY * fadeVert + barX * fadeHoriz );
+		if ( RoundSurface > 0.5 ) cross = saturate( barY + barX ) * (1.0 - saturate( length( facePos - cornerFace ) / fadeRadius ));
 
 		float4 col = GridColor * grid;
 
@@ -149,15 +185,16 @@ PS
 		float2 boundsEdgeDist = abs( HalfExtents - abs( boundsPos ) );
 		float boundsX = saturate( ( thickLw.x - boundsEdgeDist.x ) / max( thickLw.x, 0.0001 ) );
 		float boundsY = saturate( ( thickLw.y - boundsEdgeDist.y ) / max( thickLw.y, 0.0001 ) );
-		float boundsLines = max( boundsX, boundsY ) * gridFade;
+		float boundsLines = max( boundsX, boundsY ) * (1.0 - RoundSurface) * aimFade;
 
-		float specialLines = saturate( centerLines + boundsLines );
+		float specialLines = saturate( centerLines + boundsLines ) * (1.0 - MeshSurface) + boundsLines * MeshSurface;
 		col = lerp( col, CenterLineColor, specialLines * CenterLineColor.a );
 
 		// Blue corner cross draws on top.
 		col = lerp( col, CornerColor, saturate( cross * 2.0 ) );
 
-		col.a *= mask;
+		// Keep boundary snap markers visible instead of fading them out at the edge.
+		col.a *= max( mask, max( boundsLines, cross ) );
 
 		if ( col.a < 0.002 ) discard;
 

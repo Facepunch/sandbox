@@ -1,7 +1,7 @@
 /// <summary>
 /// Manages a world-space snap grid overlay projected onto a surface plane.
 /// </summary>
-public sealed class SnapGrid
+public sealed partial class SnapGrid
 {
 	public float CellSize { get; set; }
 	public float MaskRadius { get; set; }
@@ -32,7 +32,14 @@ public sealed class SnapGrid
 			RenderLayer = SceneRenderLayer.OverlayWithDepth;
 		}
 
-		public void Write( Vector3 faceOrigin, Vector3 faceRight, Vector3 faceUp, Vector2 faceHalfExtents, Vector3 aimPos, float maskRadius, float cellSize )
+		public void WriteSurface( Vertex[] vertices )
+		{
+			Bounds = BBox.FromPoints( vertices.Select( v => v.Position ) );
+			Init( Graphics.PrimitiveType.Triangles );
+			AddVertex( vertices.AsSpan() );
+		}
+
+		public void Write( Vector3 faceOrigin, Vector3 faceRight, Vector3 faceUp, Vector2 faceHalfExtents )
 		{
 			var halfW = faceHalfExtents.x;
 			var halfH = faceHalfExtents.y;
@@ -50,11 +57,11 @@ public sealed class SnapGrid
 			Span<Vertex> verts = stackalloc Vertex[6]
 			{
 				new Vertex( v00 ),
+				new Vertex( v11 ),
 				new Vertex( v10 ),
-				new Vertex( v11 ),
 				new Vertex( v00 ),
-				new Vertex( v11 ),
 				new Vertex( v01 ),
+				new Vertex( v11 ),
 			};
 
 			Init( Graphics.PrimitiveType.Triangles );
@@ -73,11 +80,15 @@ public sealed class SnapGrid
 	private Vector2 _cachedHalfExtents;
 	private GameObject _cachedObject;
 	private bool _hasPlane;
+	private Vertex[] _snapVertices;
+	private uint[] _snapIndices;
 
 	/// <summary>
 	/// The snapped world-space position of the highlighted corner
 	/// </summary>
 	public Vector3 LastSnapWorldPos { get; private set; }
+	public Vector3 LastSnapWorldNormal { get; private set; }
+	public bool HasValidSnap { get; private set; }
 
 	/// <summary>
 	/// Returns the nearest grid corner index (cx, cy) and its world-space position,
@@ -99,7 +110,7 @@ public sealed class SnapGrid
 	}
 
 	/// <summary>
-	/// Called every frame when the weld tool hovers a valid object.
+	/// Updates the collision-based snap target and render-mesh overlay.
 	/// After calling, read <see cref="LastSnapWorldPos"/> for a snapped position
 	/// </summary>
 	public void Update( SceneWorld world, GameObject hoveredObject, Vector3 aimWorldPos, Vector3 hitNormalWorld )
@@ -112,16 +123,26 @@ public sealed class SnapGrid
 
 		_sceneObj.RenderingEnabled = true;
 
-		// Only recalculate the plane when the surface normal or hovered object changes
+		// Refresh the surface frame to follow moving props and stepped faces.
 		var faceNormal = hitNormalWorld.Normal;
 		var isWorld = hoveredObject.Tags.Has( "world" );
-		var planeChanged = !_hasPlane || hoveredObject != _cachedObject || Vector3.Dot( faceNormal, _cachedNormal ) < 0.999f;
+		if ( !isWorld )
+		{
+			var renderer = hoveredObject.GetComponentInChildren<ModelRenderer>( false );
+			var rotation = renderer.IsValid() ? renderer.WorldRotation : hoveredObject.WorldRotation;
+			var n = rotation.Inverse * faceNormal;
+			var x = MathF.Abs( n.x ); var y = MathF.Abs( n.y ); var z = MathF.Abs( n.z );
+			var axis = z >= x && z >= y ? new Vector3( 0, 0, MathF.Sign( n.z ) )
+				: x >= y ? new Vector3( MathF.Sign( n.x ), 0, 0 ) : new Vector3( 0, MathF.Sign( n.y ), 0 );
+			faceNormal = rotation * axis;
+		}
+		// Object planes are refreshed so translated, scaled and stepped surfaces stay aligned.
 
 		if ( isWorld )
 		{
 			UpdateWorldPlane( hoveredObject, aimWorldPos, faceNormal );
 		}
-		else if ( planeChanged )
+		else
 		{
 			_cachedNormal = faceNormal;
 			_cachedObject = hoveredObject;
@@ -158,7 +179,7 @@ public sealed class SnapGrid
 					_cachedUp    = Vector3.Cross( _cachedRight, faceNormal ).Normal;
 				}
 
-				_cachedOrigin = ProjectOntoPlane( obbCenter, aimWorldPos, faceNormal );
+				_cachedOrigin = obbCenter;
 				_cachedHalfExtents = ProjectedHalfExtents( obbHalfExtents, obbRotation, _cachedRight, _cachedUp );
 			}
 			else
@@ -176,6 +197,12 @@ public sealed class SnapGrid
 			_hasPlane = true;
 		}
 
+		var meshSurface = !isWorld && BuildCollisionSurface( hoveredObject, faceNormal );
+		var planarSurface = meshSurface && TryPlanarSurface( aimWorldPos );
+		var roundSurface = meshSurface && !planarSurface && TryRoundSurface( hoveredObject );
+		if ( roundSurface ) faceNormal = _cachedNormal;
+		if ( meshSurface && !planarSurface && !roundSurface ) SelectConnectedSurface( aimWorldPos );
+
 		var halfExtents = _cachedHalfExtents;
 
 		// Scale down cell size so at least one cell fits within the object's face.
@@ -184,14 +211,55 @@ public sealed class SnapGrid
 		while ( minHalf < cellSize && cellSize > 0.1f )
 			cellSize *= 0.5f;
 
+		// Anchor prop grids to the fitted face edge rather than an arbitrary model centre.
+		var gridOrigin = isWorld || roundSurface ? _cachedOrigin : _cachedOrigin - _cachedRight * halfExtents.x - _cachedUp * halfExtents.y;
+
+		// Fit complete cells between the selected rectangular face boundaries.
+		var spacing = new Vector2( cellSize, cellSize );
+		if ( !isWorld && !roundSurface )
+		{
+			spacing.x = halfExtents.x * 2f / Math.Max( 1, (int)MathF.Round( halfExtents.x * 2f / cellSize ) );
+			spacing.y = halfExtents.y * 2f / Math.Max( 1, (int)MathF.Round( halfExtents.y * 2f / cellSize ) );
+		}
 		// Compute the nearest snap line
-		var (cx, cy, snapPos) = ComputeSnap( _cachedOrigin, _cachedRight, _cachedUp, cellSize, aimWorldPos );
+		var (_, _, snapPos) = ComputeSnap( gridOrigin, _cachedRight, _cachedUp, cellSize, aimWorldPos );
+		if ( !isWorld && !roundSurface )
+		{
+			var offset = aimWorldPos - gridOrigin;
+			snapPos = gridOrigin
+				+ _cachedRight * (MathF.Round( Vector3.Dot( offset, _cachedRight ) / spacing.x ) * spacing.x)
+				+ _cachedUp * (MathF.Round( Vector3.Dot( offset, _cachedUp ) / spacing.y ) * spacing.y);
+		}
+		if ( roundSurface ) snapPos = ComputeRoundSnap( aimWorldPos, cellSize );
+		HasValidSnap = true;
+		LastSnapWorldNormal = faceNormal;
+		if ( meshSurface )
+		{
+			snapPos = SnapToSurface( snapPos, aimWorldPos, faceNormal, gridOrigin, cellSize, spacing, roundSurface );
+		}
 		LastSnapWorldPos = snapPos;
+		_sceneObj.RenderingEnabled = HasValidSnap;
 
+		// Unfitted surfaces still need a face plane, not the object's centre plane.
+		// Translate only in the normal direction so the lattice remains stable.
+		if ( !isWorld && !planarSurface && !roundSurface )
+		{
+			var planeOffset = faceNormal * Vector3.Dot( snapPos - _cachedOrigin, faceNormal );
+			_cachedOrigin += planeOffset;
+			gridOrigin += planeOffset;
+		}
 		var boundsOrigin = isWorld ? _worldPatchCenter : _cachedOrigin;
-		_sceneObj.Write( boundsOrigin, _cachedRight, _cachedUp, halfExtents, aimWorldPos, MaskRadius, cellSize );
+		if ( meshSurface ) _sceneObj.WriteSurface( _surfaceVertices.ToArray() );
+		else _sceneObj.Write( boundsOrigin, _cachedRight, _cachedUp, halfExtents );
+		_sceneObj.Attributes.Set( "MeshSurface", meshSurface ? 1f : 0f );
+		_sceneObj.Attributes.Set( "PlanarSurface", planarSurface ? 1f : 0f );
+		_sceneObj.Attributes.Set( "RoundSurface", roundSurface ? 1f : 0f );
+		_sceneObj.Attributes.Set( "RoundRadius", _roundRadius );
+		_sceneObj.Attributes.Set( "AngleStep", _roundAngleStep );
 
-		_sceneObj.Attributes.Set( "GridOrigin", _cachedOrigin );
+		_sceneObj.Attributes.Set( "SnapPoint", snapPos );
+		_sceneObj.Attributes.Set( "SnapNormal", LastSnapWorldNormal );
+		_sceneObj.Attributes.Set( "GridOrigin", gridOrigin );
 		_sceneObj.Attributes.Set( "BoundsOrigin", boundsOrigin );
 		_sceneObj.Attributes.Set( "GridRight", _cachedRight );
 		_sceneObj.Attributes.Set( "GridUp", _cachedUp );
@@ -199,10 +267,18 @@ public sealed class SnapGrid
 		_sceneObj.Attributes.Set( "MaskRadius", NoFade ? float.MaxValue : MaskRadius );
 		_sceneObj.Attributes.Set( "HalfExtents", halfExtents );
 		_sceneObj.Attributes.Set( "CellSize", cellSize );
-		_sceneObj.Attributes.Set( "SnapCornerX", (float)cx );
-		_sceneObj.Attributes.Set( "SnapCornerY", (float)cy );
+		_sceneObj.Attributes.Set( "CellSpacing", spacing );
+		_sceneObj.Attributes.Set( "SnapCornerX", Vector3.Dot( snapPos - gridOrigin, _cachedRight ) / spacing.x );
+		_sceneObj.Attributes.Set( "SnapCornerY", Vector3.Dot( snapPos - gridOrigin, _cachedUp ) / spacing.y );
 	}
 
+	private static bool InsideTriangle( Vector3 point, Vector3 a, Vector3 b, Vector3 c, Vector3 normal )
+	{
+		const float tolerance = 0.001f;
+		return Vector3.Dot( Vector3.Cross( b - a, point - a ), normal ) >= -tolerance
+			&& Vector3.Dot( Vector3.Cross( c - b, point - b ), normal ) >= -tolerance
+			&& Vector3.Dot( Vector3.Cross( a - c, point - c ), normal ) >= -tolerance;
+	}
 	private void UpdateWorldPlane( GameObject hoveredObject, Vector3 aimPos, Vector3 normal )
 	{
 		var planeChanged = !_hasPlane || hoveredObject != _cachedObject ||
@@ -265,13 +341,18 @@ public sealed class SnapGrid
 		BBox? localBox = null;
 		var mr = go.GetComponentInChildren<ModelRenderer>( false );
 		if ( mr != null && mr.Model != null )
-			localBox = mr.Model.Bounds;
+			{
+			localBox = mr.Model.PhysicsBounds;
+			worldTx = mr.WorldTransform;
+			rot = worldTx.Rotation;
+			scale = worldTx.Scale;
+		}
 
 		if ( localBox == null )
 		{
 			var smr = go.GetComponentInChildren<SkinnedModelRenderer>( false );
 			if ( smr != null && smr.Model != null )
-				localBox = smr.Model.Bounds;
+				localBox = smr.Model.PhysicsBounds;
 		}
 
 		if ( localBox != null )
@@ -280,7 +361,7 @@ public sealed class SnapGrid
 			if ( lb.Size.Length > 0.1f )
 			{
 				var center = worldTx.PointToWorld( lb.Center );
-				var halfExtents = lb.Size * 0.5f * scale;
+				var halfExtents = lb.Size * 0.5f * new Vector3( MathF.Abs( scale.x ), MathF.Abs( scale.y ), MathF.Abs( scale.z ) );
 				return (center, halfExtents, rot, true);
 			}
 		}
