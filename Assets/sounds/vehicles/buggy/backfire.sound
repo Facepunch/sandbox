@@ -5,10 +5,7 @@
   "Decibels": 80,
   "SelectionMode": "Random",
   "Sounds": [
-    {
-      "Id": "5ae33c6e-20ab-4438-bd9c-6740f3d02f7d",
-      "Path": "sounds/vehicles/buggy/backfire.vsnd"
-    }
+    "sounds/vehicles/buggy/backfire.vsnd"
   ],
   "OcclusionEnabled": true,
   "Occlusion": true,
@@ -18,7 +15,7 @@
   "Transmission": true,
   "OcclusionRadius": 64,
   "DistanceAttenuation": true,
-  "Distance": 15000,
+  "Distance": 21000,
   "Falloff": [
     {
       "x": 0,
