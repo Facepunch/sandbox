@@ -22,16 +22,6 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 	/// </summary>
 	public virtual HudElement HiddenHudElements => HudElement.All;
 
-	/// <summary>
-	/// True while the HUD shows an interaction hint in the middle of the screen, which takes the crosshair's place
-	/// </summary>
-	public static bool CrosshairHidden => Player.FindLocalPlayer()?.InteractionHint is not null;
-
-	public override void DrawHud( Painter painter, Vector2 crosshair )
-	{
-		if ( !CrosshairHidden ) base.DrawHud( painter, crosshair );
-	}
-
 	// WeaponModel resolution (view model when drawn, else world model, else own hierarchy) comes from
 	// the engine BaseCombatWeapon.
 

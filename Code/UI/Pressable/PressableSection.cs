@@ -1,7 +1,7 @@
 namespace Sandbox;
 
 /// <summary>
-/// Paints the interaction hint (icon, use key and action name) in the middle of the screen, in place of the crosshair
+/// Paints the interaction hint (use key and action name) below the crosshair
 /// </summary>
 public sealed class PressableSection : HudSection
 {
@@ -17,12 +17,10 @@ public sealed class PressableSection : HudSection
 	/// </summary>
 	public string Action { get; set; }
 
-	const string IconFont = "Material Icons";
 	const string TextFont = "Inter";
 	const int TextWeight = 800;
 
-	const float IconSize = 56;
-	const float IconGap = 8;
+	const float CrosshairGap = 48;
 	const float KeySize = 26;
 	const float KeyFontSize = 15;
 	const float KeyPadding = 7;
@@ -48,7 +46,7 @@ public sealed class PressableSection : HudSection
 	string _nameSource, _name;
 	string _descriptionSource, _description;
 
-	Rect _icon, _key, _nameRect, _descriptionRect, _bounds;
+	Rect _key, _nameRect, _descriptionRect, _bounds;
 
 	public override void Tick()
 	{
@@ -103,18 +101,14 @@ public sealed class PressableSection : HudSection
 	static string Localize( string text ) => !string.IsNullOrEmpty( text ) && text.StartsWith( '#' ) ? Game.Language.GetPhrase( text[1..] ) : text ?? "";
 
 	/// <summary>
-	/// The icon is centred on the screen, the key and the name sit on one row under it, centred together
+	/// The key and name sit on one centred row below the crosshair
 	/// </summary>
 	void UpdateLayout()
 	{
 		var scale = ScaleToScreen;
 		var center = Canvas.PixelSize * 0.5f;
 
-		var iconSize = MathF.Round( IconSize * scale );
-		_icon = new Rect( MathF.Round( center.x - iconSize * 0.5f ), MathF.Round( center.y - iconSize * 0.5f ), iconSize, iconSize );
-		_bounds = _icon;
-
-		var rowTop = _icon.Bottom + MathF.Round( IconGap * scale );
+		var rowTop = MathF.Round( center.y + CrosshairGap * scale );
 		var keyHeight = MathF.Round( KeySize * scale );
 
 		var keyWidth = 0f;
@@ -130,7 +124,7 @@ public sealed class PressableSection : HudSection
 
 		_key = new Rect( left, rowTop, keyWidth, keyHeight );
 		_nameRect = new Rect( _key.Right + keyGap, rowTop, nameWidth, keyHeight );
-		_bounds.Add( _key );
+		_bounds = _key;
 		_bounds.Add( _nameRect );
 
 		_descriptionRect = default;
@@ -168,12 +162,6 @@ public sealed class PressableSection : HudSection
 
 		var enabled = _shown.Enabled;
 		var color = enabled ? HudStyle.Brightened( Tinted( Color.White ), DigitGain * GlowAmount ) : Tinted( DimContent );
-
-		if ( !string.IsNullOrWhiteSpace( _shown.Icon ) )
-		{
-			painter.TextStyle = new TextStyle( IconFont, IconSize * scale, color ) { Alignment = TextFlag.Center };
-			painter.Text( _shown.Icon, Roomy( _icon ) );
-		}
 
 		if ( _keyGlyph is { } glyph )
 		{

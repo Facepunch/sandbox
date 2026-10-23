@@ -71,7 +71,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	/// <summary>
 	/// What pressing use would do to the thing the player is looking at, or null if there's nothing to show.
-	/// While there is one the HUD shows it in place of the crosshair
+	/// The HUD shows it below the crosshair
 	/// </summary>
 	public IPressable.Tooltip? InteractionHint
 	{
