@@ -106,8 +106,8 @@ public sealed partial class FourWheelVehicle
 			return;
 		}
 
-		// a new rig has nothing to compare against yet
-		var hadTravel = _travelRig == rig;
+		// a new rig, or the first synced suspension state snapping in, has nothing to compare against yet
+		var hadTravel = _travelRig == rig && _visualTravelReady;
 		_travelRig = rig;
 
 		if ( !_renderer.CreateBoneObjects )

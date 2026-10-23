@@ -62,6 +62,6 @@ public sealed partial class FourWheelVehicle
 		_body.PhysicsBody.ApplyImpulseAt( point, impulse );
 		TrackImpulse( point, impulse );
 		if ( dynamicOther ) other.ApplyImpulseAt( point, -impulse );
-		DamageDriverFromImpact( MathF.Max( 0, -relative.Dot( normal ) ), point );
+		ReportImpact( MathF.Max( 0, -relative.Dot( normal ) ), point );
 	}
 }

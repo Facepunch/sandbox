@@ -75,7 +75,7 @@ public sealed class VehicleCrashSound
 /// Runs on everyone from the engine state the host syncs on the vehicle.
 /// </summary>
 [Title( "Vehicle Sounds" ), Category( "Vehicles" ), Icon( "volume_up" )]
-public sealed class VehicleSounds : Component, Component.ICollisionListener, IPlayerControllable
+public sealed class VehicleSounds : Component, IPlayerControllable
 {
 	[Property] public FourWheelVehicle Vehicle { get; set; }
 
@@ -172,10 +172,12 @@ public sealed class VehicleSounds : Component, Component.ICollisionListener, IPl
 	[Property, Group( "Suspension" )] public SoundEvent SuspensionSound { get; set; }
 
 	/// <summary>
-	/// How fast a wheel has to be pushed up (in/s) to make a sound, and how fast for full volume.
+	/// How fast a wheel has to be pushed up (in/s, in the model's own scale) to make a sound, and how fast for full
+	/// volume. Read from the posed wheels, which ease towards the host's suspension, so it peaks lower than the real
+	/// spring - about 30x the jump in travel.
 	/// </summary>
-	[Property, Group( "Suspension" )] public float SuspensionMinSpeed { get; set; } = 80f;
-	[Property, Group( "Suspension" )] public float SuspensionMaxSpeed { get; set; } = 300f;
+	[Property, Group( "Suspension" )] public float SuspensionMinSpeed { get; set; } = 50f;
+	[Property, Group( "Suspension" )] public float SuspensionMaxSpeed { get; set; } = 200f;
 
 	/// <summary>
 	/// Seconds before the same wheel can clunk again.
@@ -497,21 +499,48 @@ public sealed class VehicleSounds : Component, Component.ICollisionListener, IPl
 		_stateStartTime = Time.Now;
 	}
 
-	void ICollisionListener.OnCollisionStart( Collision collision )
-	{
-		if ( !Networking.IsHost ) return;
-		if ( collision.Self.IsTrigger || collision.Other.IsTrigger ) return;
+	private FourWheelVehicle _impactSource;
 
-		var speed = MathF.Abs( collision.Contact.NormalSpeed );
+	protected override void OnEnabled() => HookImpacts();
+	protected override void OnDisabled() => UnhookImpacts();
+
+	/// <summary>
+	/// Listen for the vehicle's impacts (<see cref="FourWheelVehicle.Impacted"/>) - the body's collisions and the tyres
+	/// blocking against walls - following <see cref="Vehicle"/> if it's swapped.
+	/// </summary>
+	private void HookImpacts()
+	{
+		if ( _impactSource == Vehicle ) return;
+
+		UnhookImpacts();
+		_impactSource = Vehicle;
+		if ( _impactSource.IsValid() )
+			_impactSource.Impacted += OnVehicleImpact;
+	}
+
+	private void UnhookImpacts()
+	{
+		if ( _impactSource is not null )
+			_impactSource.Impacted -= OnVehicleImpact;
+		_impactSource = null;
+	}
+
+	/// <summary>
+	/// On the host: keep the hardest hit this tick, played from <see cref="OnFixedUpdate"/>.
+	/// </summary>
+	private void OnVehicleImpact( float speed, Vector3 position )
+	{
 		if ( speed <= _pendingImpactSpeed ) return;
 
 		_pendingImpactSpeed = speed;
-		_pendingImpactPosition = collision.Contact.Point;
+		_pendingImpactPosition = position;
 	}
 
 	protected override void OnFixedUpdate()
 	{
 		if ( !Networking.IsHost ) return;
+
+		HookImpacts();
 
 		// let go of the horn if the driver got out holding it
 		if ( !(Vehicle?.Seat?.IsOccupied ?? false) )
