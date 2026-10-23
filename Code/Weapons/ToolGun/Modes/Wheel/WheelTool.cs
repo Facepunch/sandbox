@@ -76,12 +76,6 @@ public sealed class WheelTool : ToolMode
 
 		DebugOverlay.GameObject( scene, transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
 
-		var steerAngle = MathF.Sin( Time.Now * 2f ) * 25f;
-		var steer = Rotation.FromAxis( placementTrans.Forward, steerAngle );
-		var cylRadius = MathF.Max( modelBounds.Size.x, modelBounds.Size.z ) * 0.5f * placementTrans.Scale.x + 0.5f;
-		var cylAxis = steer * placementTrans.Right;
-		DebugOverlay.Cylinder( new Capsule( placementTrans.Position - cylAxis * 2f, placementTrans.Position + cylAxis * 2f, cylRadius ), Color.Yellow, segments: 32 );
-
 		var overlayRadius = MathF.Max( modelBounds.Size.x, modelBounds.Size.z ) * 0.01f * placementTrans.Scale.x;
 		WheelOverlay.DrawDirection( placementTrans.Position, placementTrans.Right, select.WorldTransform().Rotation.Up, overlayRadius, _reversed );
 	}

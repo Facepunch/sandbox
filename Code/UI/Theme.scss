@@ -21,8 +21,8 @@ $ui-settings-font: 12px;
 // space above every section header except the first one in a sheet or page
 $ui-section-gap: 20px;
 
-// the color palette, swap for "/UI/Theme/Dark.scss" to get the dark look
-@import "/UI/Theme/Light.scss";
+// the color palette, swap for "/UI/Theme/Light.scss" to get the light look
+@import "/UI/Theme/Dark.scss";
 
 // base gray block, all UI stuff is built on top of them
 @mixin ui-block
@@ -45,8 +45,23 @@ $ui-section-gap: 20px;
 // scrollbar
 @mixin ui-scroll
 {
-	scrollbar-width: 9px;
-	scrollbar-color: $ui-blue $ui-scroll-track;
+	scrollbar-width: 10px;
+	scrollbar-color: $ui-slider-thumb $ui-scroll-track;
+
+	> scrollbar
+	{
+		border-radius: 0;
+
+		> .thumb
+		{
+			border-radius: 0 !important;
+
+			&:hover
+			{
+				filter: brightness( 1.25 );
+			}
+		}
+	}
 }
 
 // for search boxes
