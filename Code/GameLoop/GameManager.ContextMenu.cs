@@ -24,6 +24,7 @@ public sealed partial class GameManager : IContextMenuEvent
 		if ( prop.IsValid() )
 		{
 			e.AddSubmenu( "lock", Game.Language.GetPhrase( "spawnmenu.inspect.axis_lock" ), menu => BuildAxisLockMenu( menu, target ), 150 );
+			e.AddSubmenu( "layers", Game.Language.GetPhrase( "spawnmenu.inspect.collisions" ), menu => BuildCollisionsMenu( menu, target ), 160 );
 		}
 
 		if ( !isPlayer )
@@ -155,6 +156,51 @@ public sealed partial class GameManager : IContextMenuEvent
 			"Roll" => locking.Roll,
 			_ => false
 		};
+	}
+
+	/// <summary>
+	/// Tags that turn off a prop's collisions with everything but the world, or with the world.
+	/// Their rules live in ProjectSettings/Collision.config.
+	/// </summary>
+	internal const string NoPropCollisionsTag = "nocollide_props";
+	internal const string NoWorldCollisionsTag = "nocollide_world";
+
+	/// <summary>
+	/// Collisions menu
+	/// </summary>
+	private static void BuildCollisionsMenu( Sandbox.UI.Menu menu, GameObject target )
+	{
+		Sandbox.UI.Menu props = null, world = null;
+
+		props = AddCollisionOption( menu, target, "spawnmenu.inspect.prop_collisions", NoPropCollisionsTag, Apply );
+		world = AddCollisionOption( menu, target, "spawnmenu.inspect.world_collisions", NoWorldCollisionsTag, Apply );
+
+		void Apply() => SetCollisions( target, props.Checked, world.Checked );
+	}
+
+	private static Sandbox.UI.Menu AddCollisionOption( Sandbox.UI.Menu menu, GameObject target, string phrase, string tag, Action changed )
+	{
+		var option = menu.AddOption( Game.Language.GetPhrase( phrase ), _ => changed() );
+		option.Checked = !target.Tags.Has( tag );
+		return option;
+	}
+
+	/// <summary>
+	/// Turn the object's prop and world collisions on or off from the Inspector context menu
+	/// </summary>
+	[Rpc.Host]
+	internal static void SetCollisions( GameObject go, bool props, bool world )
+	{
+		if ( !go.IsValid() || go.IsProxy ) return;
+		if ( !go.HasAccess( Rpc.Caller ) ) return;
+
+		go.Tags.Set( NoPropCollisionsTag, !props );
+		go.Tags.Set( NoWorldCollisionsTag, !world );
+
+		if ( go.Network.Active )
+		{
+			go.Network.Refresh();
+		}
 	}
 
 	/// <summary>

@@ -28,6 +28,9 @@
     "spawnmenu.inspect.axis_lock_full": "Full Lock",
     "spawnmenu.inspect.axis_lock_upright": "Keep Upright",
     "spawnmenu.inspect.axis_lock_unlock_all": "Unlock All",
+    "spawnmenu.inspect.collisions": "Collisions",
+    "spawnmenu.inspect.prop_collisions": "Prop Collisions",
+    "spawnmenu.inspect.world_collisions": "World Collisions",
     "spawnmenu.inspect.ignite": "Ignite",
     "spawnmenu.inspect.extinguish": "Extinguish",
 
