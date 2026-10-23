@@ -75,7 +75,7 @@ public sealed class VehicleCrashSound
 /// Runs on everyone from the engine state the host syncs on the vehicle.
 /// </summary>
 [Title( "Vehicle Sounds" ), Category( "Vehicles" ), Icon( "volume_up" )]
-public sealed class VehicleSounds : Component, Component.ICollisionListener
+public sealed class VehicleSounds : Component, Component.ICollisionListener, IPlayerControllable
 {
 	[Property] public FourWheelVehicle Vehicle { get; set; }
 
@@ -182,6 +182,22 @@ public sealed class VehicleSounds : Component, Component.ICollisionListener
 	/// </summary>
 	[Property, Group( "Suspension" )] public float SuspensionCooldown { get; set; } = 0.3f;
 
+	/// <summary>
+	/// Sounds while the driver holds <see cref="Horn"/>, until they let go or it runs out.
+	/// </summary>
+	[Property, Group( "Horn" )] public SoundEvent HornSound { get; set; }
+	[Property, Group( "Horn" )] public ClientInput Horn { get; set; } = new() { Action = "Attack1" };
+
+	/// <summary>
+	/// How long the horn takes to fade out when let go early, seconds.
+	/// </summary>
+	[Property, Group( "Horn" )] public float HornFadeTime { get; set; } = 0.1f;
+
+	/// <summary>
+	/// The driver's holding the horn.
+	/// </summary>
+	[Sync( SyncFlags.FromHost )] public bool HornDown { get; private set; }
+
 	public VehicleSoundState State => _state;
 
 	private const float SkidThreshold = 10.0f;
@@ -198,6 +214,9 @@ public sealed class VehicleSounds : Component, Component.ICollisionListener
 	private TimeSince _sinceImpact;
 	private float _lastImpactSpeed;
 
+	private SoundHandle _hornSound;
+	private bool _wasHornDown;
+
 	private SoundHandle _stateSound;
 	private SoundEvent _stateSoundEvent;
 	private SoundHandle _skidSound;
@@ -213,6 +232,15 @@ public sealed class VehicleSounds : Component, Component.ICollisionListener
 	{
 		StopStateSound();
 		_skidSound?.Stop();
+		_hornSound?.Stop();
+	}
+
+	/// <summary>
+	/// The horn key. Runs on the host, from the driver's seat.
+	/// </summary>
+	void IPlayerControllable.OnControl()
+	{
+		HornDown = Horn.Down();
 	}
 
 	protected override void OnUpdate()
@@ -232,6 +260,7 @@ public sealed class VehicleSounds : Component, Component.ICollisionListener
 
 		UpdateBackfires();
 		UpdateSuspension();
+		UpdateHorn();
 
 		// a crash only knocks the engine sound down the frame it lands
 		_crashed = false;
@@ -482,7 +511,13 @@ public sealed class VehicleSounds : Component, Component.ICollisionListener
 
 	protected override void OnFixedUpdate()
 	{
-		if ( !Networking.IsHost || _pendingImpactSpeed <= 0 ) return;
+		if ( !Networking.IsHost ) return;
+
+		// let go of the horn if the driver got out holding it
+		if ( !(Vehicle?.Seat?.IsOccupied ?? false) )
+			HornDown = false;
+
+		if ( _pendingImpactSpeed <= 0 ) return;
 
 		var speed = _pendingImpactSpeed;
 		_pendingImpactSpeed = 0;
@@ -590,6 +625,29 @@ public sealed class VehicleSounds : Component, Component.ICollisionListener
 		var handle = Sound.Play( SuspensionSound, Vehicle.WheelPosition( strongest ) );
 		if ( handle.IsValid() )
 			handle.Volume = VehicleMath.RemapValClamped( strongestSpeed, SuspensionMinSpeed, SuspensionMaxSpeed, 0.3f, 1.0f );
+	}
+
+	private void UpdateHorn()
+	{
+		var down = HornDown;
+
+		if ( down && !_wasHornDown && HornSound is not null )
+		{
+			_hornSound?.Stop( HornFadeTime );
+			_hornSound = Sound.Play( HornSound, WorldPosition );
+			if ( _hornSound.IsValid() )
+			{
+				_hornSound.Parent = GameObject;
+				_hornSound.FollowParent = true;
+			}
+		}
+		else if ( !down && _wasHornDown )
+		{
+			_hornSound?.Stop( HornFadeTime );
+			_hornSound = null;
+		}
+
+		_wasHornDown = down;
 	}
 
 	/// <summary>

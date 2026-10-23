@@ -413,6 +413,14 @@
             "SpeedApproachFactor": 0.03
           }
         ],
+        "Horn": {
+          "Action": "Attack1"
+        },
+        "HornFadeTime": 0.1,
+        "HornSound": {
+          "Id": "39fb423f-8c33-4338-ab73-fe1475c025b6",
+          "Path": "sounds/vehicles/buggy/horn.sound"
+        },
         "ImpactCooldown": 0.15,
         "LimiterRate": 3,
         "OnComponentDestroy": null,
