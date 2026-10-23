@@ -487,8 +487,8 @@
           {
             "State": "Gear2Resume",
             "Sound": {
-              "Id": "fb49cc38-c8d1-4f40-b0fa-1f9d25230fe9",
-              "Path": "sounds/vehicles/hl2_v8/firstgear_noshift.sound"
+              "Id": "8ef29b78-d983-42bf-9063-648672af44e9",
+              "Path": "sounds/vehicles/buggy/firstgear.sound"
             },
             "MinTime": 0.5
           },
@@ -503,8 +503,8 @@
           {
             "State": "Gear3Resume",
             "Sound": {
-              "Id": "fb49cc38-c8d1-4f40-b0fa-1f9d25230fe9",
-              "Path": "sounds/vehicles/hl2_v8/firstgear_noshift.sound"
+              "Id": "8ef29b78-d983-42bf-9063-648672af44e9",
+              "Path": "sounds/vehicles/buggy/firstgear.sound"
             },
             "MinTime": 0.5
           },
@@ -527,16 +527,16 @@
           {
             "State": "SlowdownHighSpeed",
             "Sound": {
-              "Id": "e4554012-ea07-4640-a496-987216e726a6",
-              "Path": "sounds/vehicles/hl2_v8/throttleoff_fastspeed.sound"
+              "Id": "eec3741a-9c86-4431-918a-ae66b66c693f",
+              "Path": "sounds/vehicles/buggy/throttleoff_fastspeed.sound"
             },
             "MinTime": 2
           },
           {
             "State": "Slowdown",
             "Sound": {
-              "Id": "80186b5d-1856-4f44-9c92-34f0e768b152",
-              "Path": "sounds/vehicles/hl2_v8/throttleoff_slowspeed.sound"
+              "Id": "10affe72-51db-416f-9c68-4abf8fb7cfed",
+              "Path": "sounds/vehicles/buggy/throttleoff_slowspeed.sound"
             },
             "MinTime": 2
           },
