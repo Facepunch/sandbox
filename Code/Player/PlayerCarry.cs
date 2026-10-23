@@ -46,12 +46,13 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 
 	public bool IsRotating { get; private set; }
 
-	[Sync] Transform _holdTarget { get; set; }
+	// Worked out from the holder's eye on every machine, a synced target would step at the network rate
+	Transform _holdTarget;
 
 	readonly PhysicsHold _hold = new();
 	readonly HoldRotation _rotation = new();
 
-	Rotation _grabOffset;
+	[Sync] Rotation _grabOffset { get; set; }
 	TimeSince _timeSincePickup;
 
 	bool _rotateBlocked;
@@ -325,7 +326,7 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 	{
 		var body = HeldBody;
 
-		if ( !IsProxy && body.IsValid() && body.PhysicsBody.IsValid() )
+		if ( body.IsValid() && body.PhysicsBody.IsValid() )
 			_holdTarget = GetHoldTarget();
 
 		// switched straight to another object, the joint still holds the old one
