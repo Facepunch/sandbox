@@ -164,6 +164,7 @@
         "Boost": {
           "Action": "Run"
         },
+        "ClutchShiftTime": 0.3,
         "DrawDebug": false,
         "Engine": {
           "Horsepower": 350,
@@ -188,6 +189,7 @@
           "BoostMaxSpeed": 90,
           "BoostLowSpeedFactor": 1
         },
+        "FatalImpactSpeed": 1400,
         "Forward": {
           "Action": "Forward"
         },
@@ -200,6 +202,7 @@
           "SkidFriction": 0.2,
           "RollingResistance": 0.02,
           "SpringAdditionalLength": 3.5,
+          "MaximumCompression": 4,
           "SpringConstant": 40,
           "SpringDamping": 0.7,
           "StabilizerConstant": 10,
@@ -211,15 +214,18 @@
         "Handbrake": {
           "Action": "Jump"
         },
+        "ImpactDamageScale": 1,
         "Left": {
           "Action": "Left"
         },
+        "MaxSafeImpactSpeed": 750,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "PedalTravel": 25,
         "RearAxle": {
           "WheelRadius": 21.6,
           "TyreWidth": 14.8,
@@ -229,6 +235,7 @@
           "SkidFriction": 0.2,
           "RollingResistance": 0.02,
           "SpringAdditionalLength": 8,
+          "MaximumCompression": 4,
           "SpringConstant": 40,
           "SpringDamping": 0.7,
           "StabilizerConstant": 10,
@@ -265,7 +272,8 @@
           "PowerSlideAccel": 125
         },
         "SteeringWheelAngle": 90,
-        "SteeringWheelAxis": "-0.939999998,0,0.342000008"
+        "SteeringWheelAxis": "-0.939999998,0,0.342000008",
+        "WheelObstacleCollisions": true
       },
       {
         "__type": "VehicleCamera",
@@ -1172,6 +1180,60 @@
                 "Children": []
               }
             ]
+          },
+          {
+            "__guid": "b07dfd4b-991b-4f8b-8dd9-aec5b274a3a6",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "pedal_brake",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
+          },
+          {
+            "__guid": "aabb8e13-c5cd-448e-ba29-627f50beea76",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "pedal_gas",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
+          },
+          {
+            "__guid": "8021ec05-8ad1-490c-a60e-595ecfef6423",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "pedal_clutch",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
           }
         ]
       }

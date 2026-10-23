@@ -48,9 +48,11 @@ public sealed partial class FourWheelVehicle
 	private static float MphToIns( float mph ) => mph * MphToMetersPerSecond * InchesPerMeter;
 	private static float InsToMph( float ins ) => ins * MetersPerInch / MphToMetersPerSecond;
 
-	private float MaxSpeedIns => MphToIns( Engine.MaxSpeed );
-	private float MaxRevSpeedIns => MphToIns( Engine.MaxReverseSpeed );
-	private float BoostMaxSpeedIns => MphToIns( Engine.BoostMaxSpeed );
+	// Driving speeds follow vehicle size; gravity remains independent of scale.
+	private float HandlingSpeedScale => FunctionalScale;
+	private float MaxSpeedIns => MphToIns( Engine.MaxSpeed ) * HandlingSpeedScale;
+	private float MaxRevSpeedIns => MphToIns( Engine.MaxReverseSpeed ) * HandlingSpeedScale;
+	private float BoostMaxSpeedIns => MphToIns( Engine.BoostMaxSpeed ) * HandlingSpeedScale;
 
 	/// <summary>
 	/// Gravity in meters per second squared - what the tuning's multiples of gravity are of.
@@ -74,8 +76,8 @@ public sealed partial class FourWheelVehicle
 		var totalTorqueDistribution = FrontAxle.TorqueFactor + RearAxle.TorqueFactor;
 		_torqueScale = totalTorqueDistribution > 0 ? 1f / totalTorqueDistribution : 1f;
 
-		_totalWheelMass = 2 * (FrontAxle.WheelMass + RearAxle.WheelMass);
-		_wheelRadius = MathF.Max( FrontAxle.WheelRadius, RearAxle.WheelRadius ) * MetersPerInch;
+		_totalWheelMass = 2 * (FrontAxle.WheelMass + RearAxle.WheelMass) * VehicleMassScale;
+		_wheelRadius = MathF.Max( FrontAxle.WheelRadius, RearAxle.WheelRadius ) * FunctionalScale * MetersPerInch;
 	}
 
 	/// <summary>
@@ -84,7 +86,7 @@ public sealed partial class FourWheelVehicle
 	private void UpdateDrivetrain( float dt, VehicleControlParams controls )
 	{
 		_state.Speed = BodySpeed();
-		var speed = InsToMph( _state.Speed );
+		var speed = InsToMph( _state.Speed ) / HandlingSpeedScale;
 		var absSpeed = MathF.Abs( speed );
 
 		var throttle = controls.Throttle;
@@ -140,13 +142,13 @@ public sealed partial class FourWheelVehicle
 	private float SteeringCone( float speed )
 	{
 		var degrees = RemapValClamped( speed, Steering.SpeedSlow, Steering.SpeedFast, Steering.DegreesSlow, Steering.DegreesFast );
-		var speedGame = MphToIns( speed );
+		var speedGame = MphToIns( speed ) * HandlingSpeedScale;
 		if ( speedGame > MaxSpeedIns )
 		{
 			degrees = RemapValClamped( speedGame, MaxSpeedIns, BoostMaxSpeedIns, Steering.DegreesFast, Steering.DegreesBoost );
 		}
 
-		return degrees;
+		return MathF.Atan( MathF.Tan( degrees.DegreeToRadian() ) * (VehicleScale / FunctionalScale) ).RadianToDegree();
 	}
 
 	/// <summary>
@@ -187,7 +189,7 @@ public sealed partial class FourWheelVehicle
 		if ( speed > 0 && (powerslideLeft != powerslideRight) )
 		{
 			var amount = RemapValClamped( speed, Steering.SpeedSlow, Steering.SpeedFast, 0, 1 );
-			frontAccel = Steering.PowerSlideAccel * MetersPerInch * amount * (powerslideLeft ? 1 : -1);
+			frontAccel = Steering.PowerSlideAccel * FunctionalScale * MetersPerInch * amount * (powerslideLeft ? 1 : -1);
 		}
 
 		_powerslideFrontAccel = frontAccel;
@@ -237,8 +239,8 @@ public sealed partial class FourWheelVehicle
 	{
 		// rolling the wrong way against the throttle: lock the wheels, so a hill start doesn't roll back
 		if ( !powerslide &&
-			((throttle < 0.0f && _state.Speed > ThrottleOpposingForceEpsilon) ||
-			 (throttle > 0.0f && _state.Speed < -ThrottleOpposingForceEpsilon)) )
+			((throttle < 0.0f && _state.Speed > ThrottleOpposingForceEpsilon * FunctionalScale) ||
+			 (throttle > 0.0f && _state.Speed < -ThrottleOpposingForceEpsilon * FunctionalScale)) )
 		{
 			handbrake = true;
 		}
@@ -291,7 +293,7 @@ public sealed partial class FourWheelVehicle
 	{
 		// average wheel revolutions a second
 		var revsPerSecond = _wheels.Sum( w => MathF.Abs( w.AngularVelocity ) ) * 0.5f / MathF.PI / WheelCount;
-		float RpmInGear( int gear ) => revsPerSecond * Engine.AxleRatio * GearRatio( gear ) * 60;
+		float RpmInGear( int gear ) => revsPerSecond * (VehicleScale / FunctionalScale) * Engine.AxleRatio * GearRatio( gear ) * 60;
 
 		if ( throttle > 0.0f )
 		{
@@ -342,7 +344,7 @@ public sealed partial class FourWheelVehicle
 			const float secondsPerMinute = 60.0f;
 
 			var wheelForceByThrottle = throttle *
-				Engine.Horsepower * (wattPerHp * secondsPerMinute) *
+				Engine.Horsepower * VehicleMassScale * FunctionalScale * FunctionalScale * (wattPerHp * secondsPerMinute) *
 				GearRatio( _state.Gear ) * Engine.AxleRatio /
 				(Engine.MaxRpm * _wheelRadius * (2 * MathF.PI));
 
@@ -364,7 +366,7 @@ public sealed partial class FourWheelVehicle
 					boostFactor = MathF.Max( boostFactor, Engine.BoostForce * speedFactor * turnFactor );
 				}
 
-				_wheels[i].Torque = boostFactor * wheelForceByThrottle * axle.TorqueFactor * _torqueScale * axle.WheelRadius * MetersPerInch;
+				_wheels[i].Torque = boostFactor * wheelForceByThrottle * axle.TorqueFactor * _torqueScale * _wheels[i].Radius * MetersPerInch;
 			}
 		}
 		else if ( brake != 0 )
@@ -376,7 +378,7 @@ public sealed partial class FourWheelVehicle
 			for ( int i = 0; i < WheelCount; i++ )
 			{
 				var axle = AxleOf( i );
-				_wheels[i].Torque = 0.5f * sign * wheelForceByBrake * axle.BrakeFactor * axle.WheelRadius * MetersPerInch;
+				_wheels[i].Torque = 0.5f * sign * wheelForceByBrake * axle.BrakeFactor * _wheels[i].Radius * MetersPerInch;
 			}
 		}
 		else
@@ -424,7 +426,7 @@ public sealed partial class FourWheelVehicle
 
 		if ( _powerslideFrontAccel != 0 || _powerslideRearAccel != 0 )
 		{
-			var forward = WorldRotation.Forward * (2.0f * InchesPerMeter);
+			var forward = WorldRotation.Forward * (2.0f * InchesPerMeter * VehicleScale);
 			var left = WorldRotation.Left;
 			body.ApplyImpulseAt( center + forward, left * (_bodyMass * _powerslideFrontAccel * dt * InchesPerMeter) );
 			body.ApplyImpulseAt( center - forward, left * (_bodyMass * _powerslideRearAccel * dt * InchesPerMeter) );

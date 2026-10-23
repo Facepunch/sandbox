@@ -80,7 +80,7 @@ public sealed partial class FourWheelVehicle
 		var steeringRestRate = RemapValClamped( carSpeed, Steering.SpeedSlow, Steering.SpeedFast,
 			Steering.SteeringRestRateSlow, Steering.SteeringRestRateFast );
 
-		var carSpeedIns = MphToIns( carSpeed );
+		var carSpeedIns = MphToIns( carSpeed ) * HandlingSpeedScale;
 		if ( carSpeedIns > MaxSpeedIns )
 		{
 			steeringRestRate = RemapValClamped( carSpeedIns, MaxSpeedIns, BoostMaxSpeedIns,
@@ -123,8 +123,8 @@ public sealed partial class FourWheelVehicle
 	private void UpdateDriverControls( DriverInput input, float frameTime )
 	{
 		// which way we're going, if we're really going anywhere
-		var carSign = _state.Speed >= SpeedThrottleAsBrake ? 1.0f : _state.Speed <= -SpeedThrottleAsBrake ? -1.0f : 0.0f;
-		var carSpeed = MathF.Abs( InsToMph( _state.Speed ) );
+		var carSign = _state.Speed >= SpeedThrottleAsBrake * HandlingSpeedScale ? 1.0f : _state.Speed <= -SpeedThrottleAsBrake * HandlingSpeedScale ? -1.0f : 0.0f;
+		var carSpeed = MathF.Abs( InsToMph( _state.Speed ) ) / HandlingSpeedScale;
 
 		var forward = input.Forward > 0.0f;
 		var back = input.Back > 0.0f;

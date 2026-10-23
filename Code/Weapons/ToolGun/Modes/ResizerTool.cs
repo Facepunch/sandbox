@@ -1,4 +1,4 @@
-﻿﻿
+
 [Icon( "🍄" )]
 [Title( "#tool.name.resizer" )]
 [ClassName( "resizer" )]
@@ -68,10 +68,15 @@ public sealed class ResizerTool : ToolMode
 		if ( go.IsProxy ) return;
 
 		var newScale = go.WorldScale + size;
-		if ( newScale.Length < 0.1f ) return;
+		
 		if ( newScale.Length > 1000f ) return;
 
-		var scale = Vector3.Max( newScale, 0.01f );
+		var minimumScale = 0.01f;
+		foreach ( var constraint in go.GetComponentsInChildren<IResizeConstraint>( true ) )
+			minimumScale = MathF.Max( minimumScale, constraint.MinimumResizeScale );
+
+		if ( minimumScale <= 0.01f && newScale.Length < 0.1f ) return;
+		var scale = Vector3.Max( newScale, minimumScale );
 		go.WorldScale = scale;
 	}
 }

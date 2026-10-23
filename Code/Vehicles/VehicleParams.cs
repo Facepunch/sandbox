@@ -169,6 +169,9 @@ public sealed class VehicleAxleParams
 	/// </summary>
 	[Property, Group( "Wheel" )] public float SpringAdditionalLength { get; set; } = 8f;
 
+	/// <summary>Maximum wheel travel above rest, in inches.</summary>
+	[Property, Group( "Suspension" )] public float MaximumCompression { get; set; } = 4f;
+
 	/// <summary>
 	/// Multiple of body mass, Newtons per meter.
 	/// </summary>

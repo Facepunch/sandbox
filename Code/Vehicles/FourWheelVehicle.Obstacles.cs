@@ -4,7 +4,7 @@ public sealed partial class FourWheelVehicle
 	// beside or above a tyre, and apply their impulses to the chassis.
 	private void SimulateWheelObstacles( float dt )
 	{
-		if ( dt <= 0 ) return;
+		if ( !WheelObstacleCollisions || dt <= 0 ) return;
 		foreach ( var wheel in _wheels )
 		{
 			var center = wheel.Top + wheel.Down * (wheel.GroundDistance - wheel.Radius);
@@ -12,11 +12,11 @@ public sealed partial class FourWheelVehicle
 			var forward = axle.Cross( -wheel.Down ).Normal;
 			var rotation = Rotation.LookAt( forward, axle );
 			var motion = PredictedVelocity( center ) * dt;
-			if ( motion.LengthSquared > 0.0001f )
+			if ( motion.LengthSquared > 0.0001f * wheel.Scale * wheel.Scale )
 			{
 				var hit = Ground( Scene.Trace.Cylinder( wheel.Width, wheel.Radius, center, center + motion ).Rotated( rotation ) );
 				if ( hit.Hit && !hit.StartedSolid )
-					ResolveWheelObstacle( wheel, hit, -MathF.Max( 0, hit.Distance - 0.1f ), dt );
+					ResolveWheelObstacle( wheel, hit, -MathF.Max( 0, hit.Distance - 0.1f * wheel.Scale ) * MathF.Max( 0, -motion.Normal.Dot( hit.Normal ) ), dt );
 			}
 
 			// Sweeps starting overlapped cannot supply a useful entry contact. Probe
@@ -29,7 +29,7 @@ public sealed partial class FourWheelVehicle
 				var along = MathF.Abs( direction.Dot( axle ) );
 				var radial = MathF.Sqrt( MathF.Max( 0, 1 - along * along ) );
 				var reach = MathF.Min( wheel.Width * 0.5f / MathF.Max( along, 0.0001f ), wheel.Radius / MathF.Max( radial, 0.0001f ) );
-				var hit = Ground( Scene.Trace.Ray( center, center + direction * (reach + 0.1f) ) );
+				var hit = Ground( Scene.Trace.Ray( center, center + direction * (reach + 0.1f * wheel.Scale) ) );
 				if ( !hit.Hit || hit.StartedSolid ) continue;
 				var penetration = (reach - hit.Distance) * MathF.Max( 0, -direction.Dot( hit.Normal ) );
 				ResolveWheelObstacle( wheel, hit, penetration, dt );
@@ -40,13 +40,13 @@ public sealed partial class FourWheelVehicle
 	private void ResolveWheelObstacle( Wheel wheel, SceneTraceResult hit, float penetration, float dt )
 	{
 		var normal = hit.Normal;
-		if ( normal.Dot( -wheel.Down ) >= 0.1f ) return;
+		if ( normal.Dot( -wheel.Down ) >= MinimumGroundDot ) return;
 		var point = hit.HitPosition;
 		var other = hit.Body;
 		var dynamicOther = other.IsValid() && other.BodyType == PhysicsBodyType.Dynamic;
 		var relative = PredictedVelocity( point ) - (other.IsValid() ? other.GetVelocityAtPoint( point ) : Vector3.Zero);
 		// Small, bounded separation velocity avoids explosive corrections at corners.
-		var targetSpeed = penetration > 0 ? MathF.Min( MathF.Max( penetration - 0.05f, 0 ) * 0.2f / dt, 40f ) : penetration / dt;
+		var targetSpeed = penetration > 0 ? MathF.Min( MathF.Max( penetration - 0.05f * wheel.Scale, 0 ) * 0.2f / dt, 40f * wheel.Scale ) : penetration / dt;
 		var speedChange = targetSpeed - relative.Dot( normal );
 		if ( speedChange <= 0 ) return;
 		var inverseMass = InverseMass( point, normal, point, normal );
@@ -62,5 +62,6 @@ public sealed partial class FourWheelVehicle
 		_body.PhysicsBody.ApplyImpulseAt( point, impulse );
 		TrackImpulse( point, impulse );
 		if ( dynamicOther ) other.ApplyImpulseAt( point, -impulse );
+		DamageDriverFromImpact( MathF.Max( 0, -relative.Dot( normal ) ), point );
 	}
 }

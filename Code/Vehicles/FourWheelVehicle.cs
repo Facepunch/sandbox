@@ -12,9 +12,10 @@
 /// what they look like comes from the model's bones.
 /// </summary>
 [Title( "Four Wheel Vehicle" ), Category( "Vehicles" ), Icon( "directions_car" )]
-public sealed partial class FourWheelVehicle : Component, IPlayerControllable
+public sealed partial class FourWheelVehicle : Component, IPlayerControllable, IResizeConstraint
 {
 	public const int WheelCount = 4;
+	public float MinimumResizeScale => 0.25f;
 
 	/// <summary>
 	/// The driver's seat. Whoever sits here drives.
@@ -46,6 +47,11 @@ public sealed partial class FourWheelVehicle : Component, IPlayerControllable
 	/// gravity. Zero uses the scene's gravity.
 	/// </summary>
 	[Property, Group( "Tuning" )] public float Gravity { get; set; } = 600f;
+
+	/// <summary>
+	/// Let tyres block against walls and other obstacles in addition to supporting the suspension.
+	/// </summary>
+	[Property, Group( "Tuning" )] public bool WheelObstacleCollisions { get; set; }
 
 	[Property, Group( "Input" )] public ClientInput Forward { get; set; } = new() { Action = "Forward" };
 	[Property, Group( "Input" )] public ClientInput Back { get; set; } = new() { Action = "Backward" };
@@ -98,8 +104,19 @@ public sealed partial class FourWheelVehicle : Component, IPlayerControllable
 	/// </summary>
 	public int SpeedMph => (int)MathF.Abs( InsToMph( Speed ) );
 
+	[Sync( SyncFlags.FromHost )] public Vector4 SuspensionTravel { get; private set; }
+	[Sync( SyncFlags.FromHost )] public bool HasSuspensionState { get; private set; }
+
 	private Rigidbody _body;
 	private bool _carSystemReady;
+	private Vector3 _simulationScale;
+
+	// Vehicle tuning is authored at unit scale; traces use world-space dimensions.
+	// Keep tiny visuals without reducing the handling and mass tuning indefinitely.
+	public float FunctionalScale => MathF.Max( VehicleScale, 0.25f );
+	private float VehicleMassScale => MathF.Max( MathF.Abs( WorldScale.x ), 0.25f )
+		* MathF.Max( MathF.Abs( WorldScale.y ), 0.25f ) * MathF.Max( MathF.Abs( WorldScale.z ), 0.25f );
+	private float VehicleScale => MathF.Max( MathF.Abs( WorldScale.z ), 0.001f );
 	private bool _hasDriver;
 	private bool _warnedInvalid;
 
@@ -138,13 +155,13 @@ public sealed partial class FourWheelVehicle : Component, IPlayerControllable
 		}
 
 		// the tuning's mass and centre of mass (zero mass is the model's own)
-		_body.MassOverride = Math.Max( 0, Body.MassOverride );
+		_body.MassOverride = Math.Max( 0, Body.MassOverride ) * VehicleMassScale;
 		_body.ResetInertiaTensor();
 
 		if ( Body.MassCenterOverride != Vector3.Zero )
 		{
 			_body.OverrideMassCenter = true;
-			_body.MassCenterOverride = Body.MassCenterOverride;
+			_body.MassCenterOverride = Body.MassCenterOverride * WorldScale;
 		}
 
 		_bodyMass = _body.PhysicsBody.Mass;
@@ -152,12 +169,15 @@ public sealed partial class FourWheelVehicle : Component, IPlayerControllable
 
 		for ( int i = 0; i < WheelCount; i++ )
 		{
-			_wheels[i] = CreateWheel( AxleOf( i ), rig.HardPoint( i ) );
+			_wheels[i] = CreateWheel( AxleOf( i ), rig.HardPoint( i ), VehicleScale, VehicleMassScale );
 		}
 
 		InitDrivetrain();
 		AddWheelMass();
 		_wheelsRig = rig;
+		_simulationScale = WorldScale;
+		_visualTravelReady = false;
+		_body.PhysicsBody.Sleeping = false;
 		_carSystemReady = true;
 
 		// make sure the first steering update gets through
@@ -192,7 +212,7 @@ public sealed partial class FourWheelVehicle : Component, IPlayerControllable
 		if ( !Networking.IsHost ) return;
 
 		// set up late (hotload), or rebuild if the model changed
-		if ( !_carSystemReady || !_body.IsValid() || _wheelsRig != GetRig() )
+		if ( !_carSystemReady || !_body.IsValid() || _wheelsRig != GetRig() || _simulationScale != WorldScale )
 		{
 			InitCarSystem();
 			if ( !_carSystemReady ) return;
@@ -248,6 +268,12 @@ public sealed partial class FourWheelVehicle : Component, IPlayerControllable
 	/// </summary>
 	private void PublishState()
 	{
+		SuspensionTravel = new Vector4(
+			_wheels[0].GroundDistance - _wheels[0].Radius,
+			_wheels[1].GroundDistance - _wheels[1].Radius,
+			_wheels[2].GroundDistance - _wheels[2].Radius,
+			_wheels[3].GroundDistance - _wheels[3].Radius );
+		HasSuspensionState = true;
 		SteerAngle = _state.SteeringAngle;
 		WheelsLocked = _handbrakeOn;
 

@@ -142,7 +142,9 @@ public sealed class VehicleLights : Component, IPlayerControllable, Global.IPlay
 
 			light.Enabled = level > 0;
 			light.Cookie = cookie;
-			light.Radius = range;
+			// Light ranges are world units; the parent transform only scales their positions.
+			var scale = MathF.Max( MathF.Abs( Vehicle.IsValid() ? Vehicle.WorldScale.z : WorldScale.z ), 0.001f );
+			light.Radius = range * scale;
 			light.ConeOuter = cone;
 			light.ConeInner = cone * 0.8f;
 			light.LightColor = (LightColor * (brightness * level)).WithAlpha( 1 );

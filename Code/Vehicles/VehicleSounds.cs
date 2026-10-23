@@ -605,7 +605,20 @@ public sealed class VehicleSounds : Component
 		if ( !BackfireEffect.IsValid() || !Exhaust.IsValid() ) return;
 
 		// with a parent the clone's transform is local to it - right on the end of the pipe
-		var fx = BackfireEffect.Clone( new CloneConfig { Transform = global::Transform.Zero, Parent = Exhaust, StartEnabled = true } );
+		var fx = BackfireEffect.Clone( new CloneConfig { Transform = global::Transform.Zero, Parent = Exhaust, StartEnabled = false } );
+		// Particle dimensions and launch velocity are world units, independent of the emitter transform.
+		foreach ( var effect in fx.GetComponentsInChildren<ParticleEffect>( true ) )
+		{
+			effect.OnParticleCreated += particle =>
+			{
+				var scale = MathF.Max( MathF.Abs( Exhaust.WorldScale.z ), 0.001f );
+				particle.StartScale *= scale;
+				particle.Size *= scale;
+				particle.Radius *= scale;
+				particle.Velocity *= scale;
+			};
+		}
 		fx.Flags |= GameObjectFlags.NotNetworked | GameObjectFlags.NotSaved;
+		fx.Enabled = true;
 	}
 }

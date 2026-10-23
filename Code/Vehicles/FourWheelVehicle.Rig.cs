@@ -1,7 +1,6 @@
 /// <summary>
 /// Posing the model, a <see cref="SkinnedModelRenderer"/>. Every machine poses its own from wherever it has the body:
-/// it traces for the wheels itself and rolls them at the body's speed, so the host's wheel state never goes over the
-/// network.
+/// Wheel travel follows the host suspension state, interpolated between updates.
 ///
 /// The bones, where {c} is fl, fr, rl or rr:
 /// <list type="bullet">
@@ -49,6 +48,8 @@ public sealed partial class FourWheelVehicle
 	private Rig _wheelsRig;
 
 	private readonly float[] _spin = new float[WheelCount];
+	private readonly float[] _visualTravel = new float[WheelCount];
+	private bool _visualTravelReady;
 
 	private float _gasPedal, _brakePedal, _clutchPedal;
 	private int _lastGear;
@@ -92,9 +93,11 @@ public sealed partial class FourWheelVehicle
 			var hardPoint = rig.HardPoint( i );
 			var steer = i < 2 ? Rotation.FromAxis( Vector3.Up, -SteerAngle ) : Rotation.Identity;
 
-			// how far down the ground is
-			var contact = WheelSweep( tx.PointToWorld( hardPoint ), tx.Rotation.Down, tx.Rotation * (steer * Vector3.Left), axle.WheelRadius, axle.TyreWidth, axle.SpringAdditionalLength );
-			var travel = (contact.Hit ? contact.Distance : axle.SpringAdditionalLength + axle.WheelRadius) - axle.WheelRadius;
+			// Pose from the same suspension state that produced the chassis forces.
+			var targetTravel = HasSuspensionState ? SuspensionTravel[i] / VehicleScale : axle.SpringAdditionalLength;
+			if ( !_visualTravelReady ) _visualTravel[i] = targetTravel;
+			else _visualTravel[i] += (targetTravel - _visualTravel[i]) * (1f - MathF.Exp( -30f * Time.Delta ));
+			var travel = _visualTravel[i];
 			if ( rig.Steer[i] >= 0 )
 			{
 				rig.Move( rig.Wheel[i], Vector3.Down * travel, Rotation.Identity );
@@ -107,10 +110,12 @@ public sealed partial class FourWheelVehicle
 
 			// roll, unless the wheels are locked
 			if ( !WheelsLocked )
-				_spin[i] = (_spin[i] + (Speed / axle.WheelRadius).RadianToDegree() * Time.Delta) % 360f;
+				_spin[i] = (_spin[i] + (Speed / (axle.WheelRadius * VehicleScale)).RadianToDegree() * Time.Delta) % 360f;
 
 			rig.Move( rig.Spin[i], Vector3.Zero, Rotation.FromAxis( rig.Axle( i ), _spin[i] ) );
 		}
+
+		_visualTravelReady = HasSuspensionState;
 
 		if ( rig.SteeringWheel >= 0 )
 			rig.Move( rig.SteeringWheel, Vector3.Zero, Rotation.FromAxis( SteeringWheelAxis, -_steerPose * SteeringWheelAngle ) );

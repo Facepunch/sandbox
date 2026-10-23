@@ -80,6 +80,7 @@ public sealed class VehicleCamera : Component, ICameraModifier
 
 	private FourWheelVehicle _vehicle;
 	private bool _active;
+	private float _cameraScale = 1f;
 
 	private float _yaw;
 	private float _pitch;
@@ -112,10 +113,22 @@ public sealed class VehicleCamera : Component, ICameraModifier
 		var dt = MathF.Max( Time.Delta, 1e-4f );
 		var tx = WorldTransform;
 		var rotation = tx.Rotation;
+		var scale = MathF.Max( MathF.Abs( _vehicle.WorldScale.z ), 0.001f );
+		var speedScale = _vehicle.FunctionalScale;
 
 		// the car's velocity from how it moved, so it's the same for everyone (the body's only simulated on the host)
 		if ( !_active )
-			Snap( tx );
+			Snap( tx, scale );
+
+		// Keep the existing orbit while resizing an occupied vehicle.
+		if ( scale != _cameraScale )
+		{
+			var ratio = scale / _cameraScale;
+			_height = tx.Position.z + (_height - tx.Position.z) * ratio;
+			_heightSpeed *= ratio;
+			_blocked *= ratio;
+			_cameraScale = scale;
+		}
 
 		var velocity = (tx.Position - _lastPosition) / dt;
 		_lastPosition = tx.Position;
@@ -125,14 +138,14 @@ public sealed class VehicleCamera : Component, ICameraModifier
 		_acceleration = _acceleration.LerpTo( (speed - _lastSpeed) / dt, Ease( 6f, dt ) );
 		_lastSpeed = speed;
 
-		var topSpeed = MathF.Max( 1f, _vehicle.Engine.MaxSpeed * 17.6f );
+		var topSpeed = MathF.Max( 1f, _vehicle.Engine.MaxSpeed * 17.6f * speedScale );
 		var speedFraction = (MathF.Abs( speed ) / topSpeed).Clamp( 0f, 1.5f );
 
 		// Swing round after the car. Going forwards in a slide, look part way to where it's actually going.
 		var carYaw = rotation.Angles().yaw;
 		var targetYaw = carYaw;
 		var flat = _velocity.WithZ( 0 );
-		if ( speed > 100f && flat.Length > 100f )
+		if ( speed > 100f * speedScale && flat.Length > 100f * speedScale )
 		{
 			var slip = AngleDelta( carYaw, Rotation.LookAt( flat ).Angles().yaw ).Clamp( -60f, 60f );
 			targetYaw += slip * SlideFollow;
@@ -153,7 +166,7 @@ public sealed class VehicleCamera : Component, ICameraModifier
 			_timeSinceLook = 0;
 		}
 
-		if ( _timeSinceLook > LookResetDelay && MathF.Abs( speed ) > LookResetSpeed * 17.6f )
+		if ( _timeSinceLook > LookResetDelay && MathF.Abs( speed ) > LookResetSpeed * 17.6f * speedScale )
 		{
 			var back = Ease( 1.5f, dt );
 			_look.yaw -= AngleDelta( 0, _look.yaw ) * back;
@@ -165,24 +178,24 @@ public sealed class VehicleCamera : Component, ICameraModifier
 		Spring( ref _height, ref _heightSpeed, tx.Position.z, 10f, dt, _velocity.z );
 
 		// hangs back while accelerating, closes in under braking
-		var lag = (_acceleration * AccelerationLag).Clamp( -50f, 70f ) + SpeedDistance * MathF.Min( speedFraction, 1f );
+		var lag = (_acceleration / speedScale * AccelerationLag).Clamp( -50f, 70f ) + SpeedDistance * MathF.Min( speedFraction, 1f );
 		Spring( ref _lag, ref _lagSpeed, lag, 4f, dt );
 
 		var orbit = Rotation.From( _pitch + _look.pitch, _yaw + _look.yaw, 0 );
-		var pivot = tx.Position.WithZ( _height ) + Vector3.Up * LookHeight;
-		var target = pivot + Rotation.FromYaw( _yaw ) * Vector3.Forward * LookAhead;
-		var distance = Distance + _lag;
-		var desired = pivot + orbit.Backward * distance + Vector3.Up * (Height - LookHeight);
+		var pivot = tx.Position.WithZ( _height ) + Vector3.Up * (LookHeight * scale);
+		var target = pivot + Rotation.FromYaw( _yaw ) * Vector3.Forward * (LookAhead * scale);
+		var distance = (Distance + _lag) * scale;
+		var desired = pivot + orbit.Backward * distance + Vector3.Up * ((Height - LookHeight) * scale);
 
 		// don't go through walls - snap in, ease back out
-		var tr = Scene.Trace.Sphere( 8f, pivot, desired ).WithTag( "world" ).IgnoreGameObjectHierarchy( GameObject.Root ).Run();
+		var tr = Scene.Trace.Sphere( 8f * scale, pivot, desired ).WithTag( "world" ).IgnoreGameObjectHierarchy( GameObject.Root ).Run();
 		var clear = tr.Hit ? tr.Distance : (desired - pivot).Length;
 		_blocked = clear < _blocked ? clear : _blocked.LerpTo( clear, Ease( 3f, dt ) );
 		var position = pivot + (desired - pivot).Normal * _blocked;
 
 		// a little shake when it's flying
-		var shake = SpeedShake * speedFraction * speedFraction * GamePreferences.Screenshake / 0.3f;
-		if ( shake > 0.01f )
+		var shake = SpeedShake * scale * speedFraction * speedFraction * GamePreferences.Screenshake / 0.3f;
+		if ( shake > 0.01f * scale )
 		{
 			var t = Time.Now * 9f;
 			position += new Vector3( Noise( t, 0 ), Noise( t, 10 ), Noise( t, 20 ) ) * shake;
@@ -195,6 +208,7 @@ public sealed class VehicleCamera : Component, ICameraModifier
 		view.Position = position;
 		view.Rotation = Rotation.LookAt( target - position, Vector3.Up );
 		view.FieldOfView += _fov;
+		view.ZNear *= scale;
 	}
 
 	/// <summary>
@@ -210,9 +224,10 @@ public sealed class VehicleCamera : Component, ICameraModifier
 	/// <summary>
 	/// Straight behind the car, no lag - getting in, or switching to third person.
 	/// </summary>
-	private void Snap( Transform tx )
+	private void Snap( Transform tx, float scale )
 	{
 		_active = true;
+		_cameraScale = scale;
 		_yaw = tx.Rotation.Angles().yaw;
 		_pitch = 0;
 		_look = Angles.Zero;
@@ -224,7 +239,7 @@ public sealed class VehicleCamera : Component, ICameraModifier
 		_height = tx.Position.z;
 		_heightSpeed = 0;
 		_lag = _lagSpeed = 0;
-		_blocked = Distance;
+		_blocked = Distance * scale;
 	}
 
 	/// <summary>

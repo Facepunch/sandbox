@@ -7,6 +7,9 @@
 /// </summary>
 public sealed partial class FourWheelVehicle
 {
+	// Contacts steeper than 60 degrees are obstacles, not suspension support.
+	private const float MinimumGroundDot = 0.5f;
+
 	private sealed class Wheel
 	{
 		public VehicleAxleParams Axle;
@@ -16,9 +19,12 @@ public sealed partial class FourWheelVehicle
 		/// </summary>
 		public Vector3 HardPoint;
 
-		public float Radius => Axle.WheelRadius;
-		public float Width => Axle.TyreWidth;
-		public float SpringLength => Axle.SpringAdditionalLength;
+		public float Scale = 1f;
+		public float MassScale = 1f;
+		public float Mass => Axle.WheelMass * MassScale;
+		public float Radius => Axle.WheelRadius * Scale;
+		public float Width => Axle.TyreWidth * Scale;
+		public float SpringLength => Axle.SpringAdditionalLength * Scale;
 
 		/// <summary>
 		/// Steering angle, radians, positive to the right.
@@ -98,14 +104,16 @@ public sealed partial class FourWheelVehicle
 	}
 
 	private readonly Wheel[] _wheels = new Wheel[WheelCount];
-	private static Wheel CreateWheel( VehicleAxleParams axle, Vector3 hardPoint )
+	private static Wheel CreateWheel( VehicleAxleParams axle, Vector3 hardPoint, float scale, float massScale )
 	{
 		return new Wheel
 		{
 			Axle = axle,
 			HardPoint = hardPoint,
+			Scale = scale,
+			MassScale = massScale,
 			TyreFriction = axle.Friction,
-			GroundDistance = axle.SpringAdditionalLength + axle.WheelRadius,
+			GroundDistance = (axle.SpringAdditionalLength + axle.WheelRadius) * scale,
 		};
 	}
 
@@ -134,8 +142,8 @@ public sealed partial class FourWheelVehicle
 
 		foreach ( var wheel in _wheels )
 		{
-			var r = wheel.HardPoint - center;
-			tensor += new Vector3( r.y * r.y + r.z * r.z, r.x * r.x + r.z * r.z, r.x * r.x + r.y * r.y ) * wheel.Axle.WheelMass;
+			var r = wheel.HardPoint * WorldScale - center;
+			tensor += new Vector3( r.y * r.y + r.z * r.z, r.x * r.x + r.z * r.z, r.x * r.x + r.y * r.y ) * wheel.Mass;
 		}
 
 		_body.MassOverride = _bodyMass + _totalWheelMass;
@@ -184,7 +192,7 @@ public sealed partial class FourWheelVehicle
 		wheel.Down = tx.Rotation.Down;
 
 		var axle = tx.Rotation * wheel.AxleBody;
-		var contact = WheelSweep( wheel.Top, wheel.Down, axle, wheel.Radius, wheel.Width, wheel.SpringLength );
+		var contact = WheelSweep( wheel.Top, wheel.Down, axle, wheel.Radius, wheel.Width, wheel.SpringLength, wheel.Axle.MaximumCompression * wheel.Scale, wheel.GroundDistance );
 
 		wheel.InContact = contact.Hit;
 		wheel.GroundBody = contact.Body;
@@ -232,26 +240,36 @@ public sealed partial class FourWheelVehicle
 	/// axle, from a radius above the hard point down to the spring's full length. It meets a step's edge on the front
 	/// of the tyre, and the slant of that contact is what lifts the wheel up onto it.
 	/// </summary>
-	private WheelContact WheelSweep( Vector3 hardPoint, Vector3 down, Vector3 axle, float radius, float width, float springLength )
+	private WheelContact WheelSweep( Vector3 hardPoint, Vector3 down, Vector3 axle, float radius, float width, float springLength, float maximumCompression, float previousDistance )
 	{
 		var length = springLength + radius;
 		var top = hardPoint - down * radius;
 		var end = top + down * length;
 		var rotation = Rotation.LookAt( axle.Cross( -down ).Normal, axle );
-
+		var compression = Math.Clamp( maximumCompression, 0, radius );
+		var previousCenter = hardPoint + down * (previousDistance - radius);
 		// Starting a radius up finds ground the wheel's been pushed up onto, but up there it can start inside something
 		// - a step's riser, the underside of stairs. Then start lower: from anywhere clear it finds the same ground, where
 		// the ray down the middle finds whatever's under the centre, and the wheel would flick between the two.
 		for ( var lift = 1.0f; lift >= 0.0f; lift -= 0.5f )
 		{
-			var tr = Ground( Scene.Trace.Cylinder( width, radius, hardPoint - down * (radius * lift), end ).Rotated( rotation ) );
+			var tr = Ground( Scene.Trace.Cylinder( width, radius, hardPoint - down * (compression * lift), end ).Rotated( rotation ) );
 			if ( tr.StartedSolid ) continue;
 			if ( !tr.Hit ) return default;
-			if ( tr.Normal.Dot( -down ) < 0.1f ) break;
+			if ( tr.Normal.Dot( -down ) < MinimumGroundDot ) break;
+			// Do not acquire support above the current axle by rolling into its side.
+			if ( (tr.HitPosition - previousCenter).Dot( down ) < 0 ) break;
 
 			// On flat ground the whole width of the tyre touches, and the sweep reports anywhere along it - a different
 			// side each tick, rocking the car as the wheel's load jumps across. Take the point on the tyre's centre line.
-			var distance = (tr.EndPosition - top).Dot( down );
+			// Shape sweeps include a fixed world-space collision margin. Solve the cylinder
+			// against the reported contact plane so tiny wheels use the same relative travel.
+			var normalAxle = Math.Clamp( tr.Normal.Dot( axle ), -1f, 1f );
+			var support = radius * MathF.Sqrt( MathF.Max( 0f, 1f - normalAxle * normalAxle ) )
+				+ width * 0.5f * MathF.Abs( normalAxle );
+			var travel = (support - (hardPoint - tr.HitPosition).Dot( tr.Normal )) / down.Dot( tr.Normal );
+			var distance = radius + travel;
+			distance = Math.Clamp( distance, radius - compression, length );
 			var center = hardPoint + down * (distance - radius);
 			var across = (axle - tr.Normal * axle.Dot( tr.Normal )).Normal;
 
@@ -268,16 +286,24 @@ public sealed partial class FourWheelVehicle
 
 		// Inside something all the way down, or touched it above the axle (a wall, an overhang) - nothing a wheel could
 		// roll up onto. Fall back to a ray from the hard point.
+		var ground = WheelGroundRay( hardPoint, down, length );
+		// A bottomed-out spring must still support the chassis. Clamp travel, not contact.
+		if ( ground.Hit ) ground.Distance = MathF.Max( ground.Distance, radius - compression );
+		return ground;
+	}
+
+	private WheelContact WheelGroundRay( Vector3 hardPoint, Vector3 down, float length )
+	{
 		var ray = Ground( Scene.Trace.Ray( hardPoint, hardPoint + down * length ) );
 
-		if ( !ray.Hit ) return default;
+		if ( !ray.Hit || ray.StartedSolid || ray.Normal.Dot( -down ) < MinimumGroundDot ) return default;
 
 		return new WheelContact
 		{
 			Hit = true,
-			Distance = ray.StartedSolid ? 0.0f : ray.Distance,
-			Point = ray.StartedSolid ? hardPoint : ray.HitPosition,
-			Normal = ray.StartedSolid ? -down : ray.Normal,
+			Distance = ray.Distance,
+			Point = ray.HitPosition,
+			Normal = ray.Normal,
 			Surface = ray.Surface,
 			Body = ray.Body,
 		};
@@ -296,7 +322,7 @@ public sealed partial class FourWheelVehicle
 		var leftTravel = (left.GroundDistance - left.SpringLength - left.Radius) * MetersPerInch;
 		var rightTravel = (right.GroundDistance - right.SpringLength - right.Radius) * MetersPerInch;
 
-		left.StabilizerForce = (rightTravel - leftTravel) * (axle.StabilizerConstant * _bodyMass * 0.5f);
+		left.StabilizerForce = (rightTravel - leftTravel) * (axle.StabilizerConstant * _bodyMass * 0.5f / left.Scale);
 		right.StabilizerForce = -left.StabilizerForce;
 	}
 
@@ -310,18 +336,20 @@ public sealed partial class FourWheelVehicle
 			return;
 
 		// the wheel stands on the ground under its own weight (see AddWheelMass)
-		var force = wheel.Axle.WheelMass * GravityLength;
+		var force = wheel.Mass * GravityLength;
 
+		// Shorter travel must support the same gravitational acceleration. Scale stiffness
+		// inversely with length and damping with its square root to retain damping ratio.
 		var compression = -(wheel.GroundDistance - wheel.SpringLength - wheel.Radius) * MetersPerInch;
 		if ( compression > 0 )
 		{
-			var springForce = compression * wheel.Axle.SpringConstant * _bodyMass + wheel.StabilizerForce;
+			var springForce = compression * wheel.Axle.SpringConstant * _bodyMass / wheel.Scale + wheel.StabilizerForce;
 			springForce *= wheel.SlopeFactor.Clamp( 0.0f, 3.0f );
 
 			// the body's speed into the ground along the spring, positive while it's lifting off
 			var surfaceVelocity = MeasuredVelocity( wheel.Contact ) * MetersPerInch;
 			var speed = -surfaceVelocity.Dot( wheel.GroundNormal ) * wheel.GroundNormal.Dot( wheel.Down );
-			var damping = (speed > 0 ? wheel.Axle.SpringDamping : wheel.Axle.SpringDampingCompression) * _bodyMass;
+			var damping = (speed > 0 ? wheel.Axle.SpringDamping : wheel.Axle.SpringDampingCompression) * _bodyMass / MathF.Sqrt( FunctionalScale );
 
 			// Damped implicitly: it never pushes harder than it takes to stop the corner moving this tick, or the
 			// strong compression damping overshoots every tick and the car buzzes on its springs.
@@ -384,7 +412,7 @@ public sealed partial class FourWheelVehicle
 		var carMass = _body.PhysicsBody.Mass;
 
 		// parked: hold still
-		var parked = bodyVelocity.Length < 0.5f && !hasTorque;
+		var parked = bodyVelocity.Length < 0.5f * FunctionalScale && !hasTorque;
 
 		// stopping pushes are shared between the wheels on the ground, so together they stop the car without overshooting
 		var wheelsOnGround = Math.Max( 1, _wheels.Count( w => w.InContact ) );
@@ -408,8 +436,9 @@ public sealed partial class FourWheelVehicle
 
 			wheel.AngularVelocity = bodySpeed / radius;
 
-			// rolling resistance (faded in over the first 0.1 m/s, so it doesn't chatter at a standstill)
-			var forwardForce = -wheel.Axle.RollingResistance * wheel.Load * (bodySpeed / 0.1f).Clamp( -1.0f, 1.0f );
+			// Match rolling resistance to the size-scaled drive force, independently of gravity.
+			// Fade in near rest to avoid chatter.
+			var forwardForce = -wheel.Axle.RollingResistance * FunctionalScale * wheel.Load * (bodySpeed / (0.1f * FunctionalScale)).Clamp( -1.0f, 1.0f );
 
 			// A brake holds like friction: whatever it takes to stop the car, up to its strength. It never pushes the car
 			// along, and it holds against the hill as well as the speed.
