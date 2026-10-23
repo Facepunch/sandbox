@@ -359,22 +359,28 @@
         "CrackleRevs": 0.55,
         "CrashSounds": [
           {
-            "MinSpeed": 350,
-            "MinSpeedChange": 250,
+            "MinSpeed": 80,
+            "Sound": {
+              "Id": "62a83d83-29c5-47dc-b216-a1379125990f",
+              "Path": "sounds/vehicles/buggy/impact_small.sound"
+            },
+            "DropsToIdle": false
+          },
+          {
+            "MinSpeed": 250,
             "Sound": {
               "Id": "430e7fde-1262-4d49-aec6-af3fd9400a0d",
               "Path": "sounds/vehicles/buggy/impact_medium.sound"
             },
-            "GearLimit": 1
+            "DropsToIdle": true
           },
           {
-            "MinSpeed": 450,
-            "MinSpeedChange": 350,
+            "MinSpeed": 500,
             "Sound": {
               "Id": "df4d6854-2205-485e-967e-cd0d9c830ee5",
               "Path": "sounds/vehicles/buggy/impact_heavy.sound"
             },
-            "GearLimit": 0
+            "DropsToIdle": true
           }
         ],
         "Exhaust": {
@@ -407,6 +413,7 @@
             "SpeedApproachFactor": 0.03
           }
         ],
+        "ImpactCooldown": 0.15,
         "LimiterRate": 3,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,

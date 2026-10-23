@@ -1,5 +1,3 @@
-using static VehicleMath;
-
 /// <summary>
 /// What the engine's doing, as far as its sound goes. Each state plays its own recording.
 /// </summary>
@@ -53,18 +51,20 @@ public sealed class VehicleStateSound
 }
 
 /// <summary>
-/// A sound for losing a lot of speed at once. Speeds are inches per second.
+/// An impact sound for the body hitting something. The hardest one a hit reaches plays.
 /// </summary>
 public sealed class VehicleCrashSound
 {
+	/// <summary>
+	/// How hard the body has to hit, in/s along the contact normal.
+	/// </summary>
 	[Property] public float MinSpeed { get; set; }
-	[Property] public float MinSpeedChange { get; set; }
 	[Property] public SoundEvent Sound { get; set; }
 
 	/// <summary>
-	/// Only used up to this sound gear (0 for any).
+	/// Knock the engine sound back to idle, as if the driver lifted off.
 	/// </summary>
-	[Property] public int GearLimit { get; set; }
+	[Property] public bool DropsToIdle { get; set; } = true;
 }
 
 /// <summary>
@@ -75,7 +75,7 @@ public sealed class VehicleCrashSound
 /// Runs on everyone from the engine state the host syncs on the vehicle.
 /// </summary>
 [Title( "Vehicle Sounds" ), Category( "Vehicles" ), Icon( "volume_up" )]
-public sealed class VehicleSounds : Component
+public sealed class VehicleSounds : Component, Component.ICollisionListener
 {
 	[Property] public FourWheelVehicle Vehicle { get; set; }
 
@@ -150,9 +150,16 @@ public sealed class VehicleSounds : Component
 	[Property, Group( "Impacts" )]
 	public List<VehicleCrashSound> CrashSounds { get; set; } =
 	[
-		new() { MinSpeed = 350, MinSpeedChange = 250, GearLimit = 1 },
-		new() { MinSpeed = 450, MinSpeedChange = 350 },
+		new() { MinSpeed = 80, DropsToIdle = false },
+		new() { MinSpeed = 250 },
+		new() { MinSpeed = 500 },
 	];
+
+	/// <summary>
+	/// Seconds after an impact sound before another one that isn't harder can play - several shapes and substeps
+	/// report the same hit.
+	/// </summary>
+	[Property, Group( "Impacts" )] public float ImpactCooldown { get; set; } = 0.15f;
 
 	/// <summary>
 	/// Looped while skidding.
@@ -183,8 +190,13 @@ public sealed class VehicleSounds : Component
 	private float _stateStartTime;
 	private int _soundGear;
 	private float _speedPercentage;
-	private float _lastSpeed;
 	private bool _wasOn;
+
+	private bool _crashed;
+	private float _pendingImpactSpeed;
+	private Vector3 _pendingImpactPosition;
+	private TimeSince _sinceImpact;
+	private float _lastImpactSpeed;
 
 	private SoundHandle _stateSound;
 	private SoundEvent _stateSoundEvent;
@@ -220,6 +232,9 @@ public sealed class VehicleSounds : Component
 
 		UpdateBackfires();
 		UpdateSuspension();
+
+		// a crash only knocks the engine sound down the frame it lands
+		_crashed = false;
 	}
 
 	private void SoundStart()
@@ -313,7 +328,7 @@ public sealed class VehicleSounds : Component
 		switch ( _state )
 		{
 			case VehicleSoundState.Turbo:
-				if ( CheckCrash() )
+				if ( _crashed )
 					return VehicleSoundState.Idle;
 				break;
 
@@ -332,7 +347,7 @@ public sealed class VehicleSounds : Component
 			case VehicleSoundState.Gear4Resume:
 				if ( turbo )
 					return VehicleSoundState.Turbo;
-				if ( CheckCrash() )
+				if ( _crashed )
 					return VehicleSoundState.Idle;
 				break;
 		}
@@ -434,7 +449,6 @@ public sealed class VehicleSounds : Component
 				break;
 
 			case VehicleSoundState.Idle:
-				_lastSpeed = -1;
 				PlayLoopingSound( StateSound( _state ) );
 				break;
 
@@ -454,51 +468,61 @@ public sealed class VehicleSounds : Component
 		_stateStartTime = Time.Now;
 	}
 
-	/// <summary>
-	/// Play the crash sound for a big enough drop in speed since last time. Returns whether there was one.
-	/// </summary>
-	private bool CheckCrash()
+	void ICollisionListener.OnCollisionStart( Collision collision )
 	{
-		var speed = Vehicle.Speed;
-		var absSpeed = MathF.Abs( speed );
-		var absLastSpeed = MathF.Abs( _lastSpeed );
-		var delta = absLastSpeed > absSpeed ? MathF.Abs( _lastSpeed - speed ) : 0;
-		_lastSpeed = speed;
+		if ( !Networking.IsHost ) return;
+		if ( collision.Self.IsTrigger || collision.Other.IsTrigger ) return;
 
-		VehicleCrashSound hit = null;
+		var speed = MathF.Abs( collision.Contact.NormalSpeed );
+		if ( speed <= _pendingImpactSpeed ) return;
 
-		foreach ( var crash in CrashSounds )
+		_pendingImpactSpeed = speed;
+		_pendingImpactPosition = collision.Contact.Point;
+	}
+
+	protected override void OnFixedUpdate()
+	{
+		if ( !Networking.IsHost || _pendingImpactSpeed <= 0 ) return;
+
+		var speed = _pendingImpactSpeed;
+		_pendingImpactSpeed = 0;
+
+		var tier = ImpactTier( speed );
+		if ( tier < 0 ) return;
+		if ( _sinceImpact < ImpactCooldown && speed <= _lastImpactSpeed ) return;
+
+		_sinceImpact = 0;
+		_lastImpactSpeed = speed;
+		BroadcastImpact( tier, _pendingImpactPosition );
+	}
+
+	/// <summary>
+	/// The hardest of <see cref="CrashSounds"/> this speed reaches, whatever order they're listed in. -1 for none.
+	/// </summary>
+	private int ImpactTier( float speed )
+	{
+		var tier = -1;
+		for ( int i = 0; i < CrashSounds.Count; i++ )
 		{
-			if ( crash.GearLimit == 0 || _soundGear > crash.GearLimit )
-				continue;
-
-			if ( delta > crash.MinSpeedChange && absLastSpeed > crash.MinSpeed )
-			{
-				hit = crash;
-				break;
-			}
+			var crash = CrashSounds[i];
+			if ( speed >= crash.MinSpeed && (tier < 0 || crash.MinSpeed > CrashSounds[tier].MinSpeed) )
+				tier = i;
 		}
 
-		if ( hit is null )
-		{
-			for ( int i = CrashSounds.Count - 1; i >= 0; i-- )
-			{
-				var crash = CrashSounds[i];
-				if ( delta > crash.MinSpeedChange && absLastSpeed > crash.MinSpeed )
-				{
-					hit = crash;
-					break;
-				}
-			}
-		}
+		return tier;
+	}
 
-		if ( hit is null )
-			return false;
+	[Rpc.Broadcast( NetFlags.HostOnly | NetFlags.Unreliable )]
+	private void BroadcastImpact( int tier, Vector3 position )
+	{
+		if ( tier < 0 || tier >= CrashSounds.Count ) return;
 
-		if ( hit.Sound is not null )
-			Sound.Play( hit.Sound, WorldPosition );
+		var crash = CrashSounds[tier];
+		if ( crash.Sound is not null )
+			Sound.Play( crash.Sound, position );
 
-		return true;
+		if ( crash.DropsToIdle )
+			_crashed = true;
 	}
 
 	/// <summary>

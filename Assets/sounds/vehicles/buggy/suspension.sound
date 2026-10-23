@@ -1,6 +1,6 @@
 {
   "UI": false,
-  "Volume": "1",
+  "Volume": "0.699999988",
   "Pitch": "0.899999976 1.20000005",
   "Decibels": 70,
   "SelectionMode": "Random",
@@ -26,34 +26,34 @@
   "Transmission": true,
   "OcclusionRadius": 64,
   "DistanceAttenuation": true,
-  "Distance": 15000,
+  "Distance": 5000,
   "Falloff": [
     {
       "x": 0,
       "y": 1,
-      "in": 0,
-      "out": -1.8,
+      "in": 3.1415927,
+      "out": -3.1415927,
       "mode": "Mirrored"
     },
     {
-      "x": 0.1953125,
-      "y": 0.23666668,
-      "in": 3.5,
-      "out": -3.5,
+      "x": 0.1109375,
+      "y": 0.42532486,
+      "in": 3.4901452,
+      "out": -3.4901452,
       "mode": "Mirrored"
     },
     {
-      "x": 0.3109375,
-      "y": 0.026111066,
-      "in": 0.16,
-      "out": -0.16,
+      "x": 0.3046875,
+      "y": 0.10261375,
+      "in": 0.04153157,
+      "out": -0.04153157,
       "mode": "Mirrored"
     },
     {
       "x": 1,
       "y": 0,
-      "in": 0,
-      "out": 0,
+      "in": -0,
+      "out": -0,
       "mode": "Mirrored"
     }
   ],
