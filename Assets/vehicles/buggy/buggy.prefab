@@ -495,8 +495,8 @@
           {
             "State": "Gear3",
             "Sound": {
-              "Id": "457ccc03-a829-4f2e-87b5-42c910606bc3",
-              "Path": "sounds/vehicles/hl2_v8/thirdgear.sound"
+              "Id": "6a293297-e32b-4803-a709-80d0ece3bd69",
+              "Path": "sounds/vehicles/buggy/thirdgear.sound"
             },
             "MinTime": 0.5
           },
