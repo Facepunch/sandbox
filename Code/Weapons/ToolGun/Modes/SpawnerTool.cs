@@ -306,32 +306,4 @@ public sealed class SpawnerTool : ToolMode
 
 	[Rpc.Broadcast( NetFlags.HostOnly )]
 	private void SpawnEffects( Transform target ) => Toolgun?.PlayToolEffects( target );
-
-	/// <summary>
-	/// Draws the payload's icon on the viewmodel screen, falling back to the scrolling tool name.
-	/// </summary>
-	public override void DrawScreen( Rect rect, Painter paint )
-	{
-		var icon = Spawner?.Icon switch
-		{
-			null => null,
-			var i when i.StartsWith( "http", StringComparison.OrdinalIgnoreCase ) => Texture.Load( i ),
-			var i => Texture.Load( $"thumb:{i}" )
-		};
-
-		if ( icon is null )
-		{
-			base.DrawScreen( rect, paint );
-			return;
-		}
-
-		var size = rect.Height;
-		var iconRect = new Rect(
-			rect.Center.x - size * 0.5f,
-			rect.Center.y - size * 0.5f,
-			size,
-			size
-		);
-		paint.Texture( icon, iconRect );
-	}
 }
