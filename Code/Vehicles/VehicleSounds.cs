@@ -159,6 +159,22 @@ public sealed class VehicleSounds : Component
 	/// </summary>
 	[Property, Group( "Tyres" )] public SoundEvent SkidSound { get; set; }
 
+	/// <summary>
+	/// Played at a wheel when it's shoved up into the body - landing, bumps, kerbs.
+	/// </summary>
+	[Property, Group( "Suspension" )] public SoundEvent SuspensionSound { get; set; }
+
+	/// <summary>
+	/// How fast a wheel has to be pushed up (in/s) to make a sound, and how fast for full volume.
+	/// </summary>
+	[Property, Group( "Suspension" )] public float SuspensionMinSpeed { get; set; } = 80f;
+	[Property, Group( "Suspension" )] public float SuspensionMaxSpeed { get; set; } = 300f;
+
+	/// <summary>
+	/// Seconds before the same wheel can clunk again.
+	/// </summary>
+	[Property, Group( "Suspension" )] public float SuspensionCooldown { get; set; } = 0.3f;
+
 	public VehicleSoundState State => _state;
 
 	private const float SkidThreshold = 10.0f;
@@ -178,6 +194,8 @@ public sealed class VehicleSounds : Component
 
 	private float _overrunCharge;
 	private readonly List<float> _pendingBackfires = new();
+
+	private readonly TimeSince[] _sinceSuspension = new TimeSince[FourWheelVehicle.WheelCount];
 
 	protected override void OnDestroy()
 	{
@@ -201,6 +219,7 @@ public sealed class VehicleSounds : Component
 		}
 
 		UpdateBackfires();
+		UpdateSuspension();
 	}
 
 	private void SoundStart()
@@ -513,6 +532,40 @@ public sealed class VehicleSounds : Component
 
 		if ( _skidSound is not null )
 			_skidSound.Position = WorldPosition;
+	}
+
+	/// <summary>
+	/// A clunk when a wheel is shoved up into the body hard enough, louder the harder. Engine or not - a car dropped
+	/// off the physgun lands just the same. Only the hardest hit each frame plays, so four wheels landing together
+	/// don't stack up into one loud one.
+	/// </summary>
+	private void UpdateSuspension()
+	{
+		if ( SuspensionSound is null ) return;
+
+		var strongest = -1;
+		var strongestSpeed = SuspensionMinSpeed;
+
+		for ( int i = 0; i < FourWheelVehicle.WheelCount; i++ )
+		{
+			var speed = Vehicle.SuspensionSpeed( i );
+			if ( speed <= SuspensionMinSpeed || _sinceSuspension[i] < SuspensionCooldown ) continue;
+
+			// it hit either way - don't let it clunk again straight after for the same bump
+			_sinceSuspension[i] = 0;
+
+			if ( speed > strongestSpeed )
+			{
+				strongest = i;
+				strongestSpeed = speed;
+			}
+		}
+
+		if ( strongest < 0 ) return;
+
+		var handle = Sound.Play( SuspensionSound, Vehicle.WheelPosition( strongest ) );
+		if ( handle.IsValid() )
+			handle.Volume = VehicleMath.RemapValClamped( strongestSpeed, SuspensionMinSpeed, SuspensionMaxSpeed, 0.3f, 1.0f );
 	}
 
 	/// <summary>

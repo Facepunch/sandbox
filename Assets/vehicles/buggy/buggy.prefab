@@ -557,6 +557,13 @@
             "MinTime": 0
           }
         ],
+        "SuspensionCooldown": 0.3,
+        "SuspensionMaxSpeed": 300,
+        "SuspensionMinSpeed": 80,
+        "SuspensionSound": {
+          "Id": "a893935a-3e7e-40f7-beeb-97d41c671d4c",
+          "Path": "sounds/vehicles/buggy/suspension.sound"
+        },
         "Vehicle": {
           "_type": "component",
           "component_id": "1f06362f-c675-4c1c-a7bb-d00948a606e5",

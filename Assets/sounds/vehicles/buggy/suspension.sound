@@ -1,6 +1,6 @@
 {
   "UI": false,
-  "Volume": "1",
+  "Volume": "2",
   "Pitch": "0.949999988 1.04999995",
   "Decibels": 70,
   "SelectionMode": "Random",
@@ -36,15 +36,15 @@
       "mode": "Mirrored"
     },
     {
-      "x": 0.05,
-      "y": 0.22,
+      "x": 0.1953125,
+      "y": 0.23666668,
       "in": 3.5,
       "out": -3.5,
       "mode": "Mirrored"
     },
     {
-      "x": 0.2,
-      "y": 0.04,
+      "x": 0.3109375,
+      "y": 0.026111066,
       "in": 0.16,
       "out": -0.16,
       "mode": "Mirrored"
