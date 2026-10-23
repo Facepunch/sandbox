@@ -5,7 +5,10 @@
   "Decibels": 70,
   "SelectionMode": "Random",
   "Sounds": [
-    "sounds/vehicles/buggy/firstgear.vsnd"
+    {
+      "Id": "009131ce-f8c0-46a1-a9fa-953b099bb887",
+      "Path": "sounds/vehicles/buggy/firstgear.vsnd"
+    }
   ],
   "OcclusionEnabled": true,
   "Occlusion": true,

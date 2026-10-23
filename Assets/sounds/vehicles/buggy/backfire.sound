@@ -1,18 +1,19 @@
 {
   "UI": false,
-  "Volume": "0.6 0.9",
-  "Pitch": "0.9 1.1",
+  "Volume": "0.800000012 1",
+  "Pitch": "0.800000012 1.39999998",
   "Decibels": 80,
   "SelectionMode": "Random",
   "Sounds": [
-    "sounds/vehicles/buggy/backfire_1.vsnd",
-    "sounds/vehicles/buggy/backfire_2.vsnd",
-    "sounds/vehicles/buggy/backfire_3.vsnd",
-    "sounds/vehicles/buggy/backfire_4.vsnd",
-    "sounds/vehicles/buggy/backfire_5.vsnd",
-    "sounds/vehicles/buggy/backfire_6.vsnd"
+    {
+      "Id": "5ae33c6e-20ab-4438-bd9c-6740f3d02f7d",
+      "Path": "sounds/vehicles/buggy/backfire.vsnd"
+    }
   ],
+  "OcclusionEnabled": true,
   "Occlusion": true,
+  "ReverbEnabled": true,
+  "Reflections": true,
   "AirAbsorption": true,
   "Transmission": true,
   "OcclusionRadius": 64,

@@ -471,8 +471,8 @@
           {
             "State": "Gear1Resume",
             "Sound": {
-              "Id": "fb49cc38-c8d1-4f40-b0fa-1f9d25230fe9",
-              "Path": "sounds/vehicles/hl2_v8/firstgear_noshift.sound"
+              "Id": "8ef29b78-d983-42bf-9063-648672af44e9",
+              "Path": "sounds/vehicles/buggy/firstgear.sound"
             },
             "MinTime": 0.5
           },
@@ -511,16 +511,16 @@
           {
             "State": "Gear4",
             "Sound": {
-              "Id": "a12a8d82-f53b-4a23-af83-f2e8db5bb111",
-              "Path": "sounds/vehicles/hl2_v8/fourthgear.sound"
+              "Id": "97cfb859-bfa0-4c31-9b05-e0950a7f8736",
+              "Path": "sounds/vehicles/buggy/fourthgear.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "Gear4Resume",
             "Sound": {
-              "Id": "f1256db0-f9b0-439c-8438-6a9d82e4744a",
-              "Path": "sounds/vehicles/hl2_v8/fourthgear_noshift.sound"
+              "Id": "97cfb859-bfa0-4c31-9b05-e0950a7f8736",
+              "Path": "sounds/vehicles/buggy/fourthgear.sound"
             },
             "MinTime": 0.5
           },
