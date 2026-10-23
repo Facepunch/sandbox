@@ -543,8 +543,8 @@
           {
             "State": "Turbo",
             "Sound": {
-              "Id": "3a21489e-d84d-400e-894f-6828fb6d674f",
-              "Path": "sounds/vehicles/hl2_v8/turbo_on.sound"
+              "Id": "2cc6212c-6623-45d8-8e3a-e85b02d2a954",
+              "Path": "sounds/vehicles/buggy/turbo_on.sound"
             },
             "MinTime": 2.5
           },
