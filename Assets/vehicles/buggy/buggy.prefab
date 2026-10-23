@@ -362,8 +362,8 @@
             "MinSpeed": 350,
             "MinSpeedChange": 250,
             "Sound": {
-              "Id": "03cad3dc-b4e0-44a5-98f1-0ab784e621c3",
-              "Path": "sounds/vehicles/hl2_v8/impact_medium.sound"
+              "Id": "430e7fde-1262-4d49-aec6-af3fd9400a0d",
+              "Path": "sounds/vehicles/buggy/impact_medium.sound"
             },
             "GearLimit": 1
           },
@@ -371,8 +371,8 @@
             "MinSpeed": 450,
             "MinSpeedChange": 350,
             "Sound": {
-              "Id": "95f4505a-9718-47d7-b473-87dbe3423193",
-              "Path": "sounds/vehicles/hl2_v8/impact_heavy.sound"
+              "Id": "df4d6854-2205-485e-967e-cd0d9c830ee5",
+              "Path": "sounds/vehicles/buggy/impact_heavy.sound"
             },
             "GearLimit": 0
           }
