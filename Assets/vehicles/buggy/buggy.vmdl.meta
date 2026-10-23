@@ -1,5 +1,5 @@
 {
-  "guid": "31dc39aa-8ae2-4f24-bf8f-cef481470048",
+  "guid": "b3d634f7-af05-4766-88eb-f496e635da5a",
   "publish": {
     "Enabled": false,
     "ProjectConfig": {
@@ -12,7 +12,7 @@
       "Resources": null,
       "PackageReferences": null,
       "EditorReferences": [
-        "facepunch.beer_keg_a1#282207",
+        "facepunch.beer_keg_a2#282208",
         "facepunch.carseat#143559",
         "facepunch.cartyre#275783",
         "facepunch.tractorwheel#140646"
@@ -23,7 +23,7 @@
         "EnableMcpCommunication": true
       },
       "Metadata": {
-        "SingleAssetSource": "vehicles/buggy/buggy.vmdl",
+        "SingleAssetSource": "vehicles/buggy/buggy.vmdl_c",
         "ParentPackage": "facepunch.sandbox"
       }
     }
