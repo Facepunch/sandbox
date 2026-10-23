@@ -479,8 +479,8 @@
           {
             "State": "Gear2",
             "Sound": {
-              "Id": "d5621d99-9f10-4219-b3c1-e0f6277d1efb",
-              "Path": "sounds/vehicles/hl2_v8/secondgear.sound"
+              "Id": "bb6ed7c6-a484-4264-b10e-42f414f57c48",
+              "Path": "sounds/vehicles/buggy/secondgear.sound"
             },
             "MinTime": 0.5
           },
