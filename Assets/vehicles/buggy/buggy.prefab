@@ -416,8 +416,8 @@
         "OnComponentUpdate": null,
         "ShiftPops": true,
         "SkidSound": {
-          "Id": "5027700e-a712-4c7a-a1e2-95931a844a07",
-          "Path": "sounds/vehicles/hl2_v8/skid_normalfriction.sound"
+          "Id": "d03c333e-eb04-470c-b0ee-487775e63855",
+          "Path": "sounds/vehicles/buggy/skid_normalfriction.sound"
         },
         "States": [
           {
