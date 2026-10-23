@@ -13,9 +13,21 @@ public sealed partial class FourWheelVehicle : Component.ICollisionListener
 
 	private TimeSince _timeSinceDriverImpact = 1f;
 
+	/// <summary>
+	/// The vehicle hit something, on the host: closing speed in in/s and where. From the body's physics collisions and
+	/// from the tyres blocking against obstacles (<see cref="ResolveWheelObstacle"/>), which aren't physics collisions.
+	/// </summary>
+	public event Action<float, Vector3> Impacted;
+
 	void ICollisionListener.OnCollisionStart( Collision collision )
 	{
-		DamageDriverFromImpact( MathF.Abs( collision.Contact.NormalSpeed ), collision.Contact.Point );
+		ReportImpact( MathF.Abs( collision.Contact.NormalSpeed ), collision.Contact.Point );
+	}
+
+	private void ReportImpact( float speed, Vector3 position )
+	{
+		DamageDriverFromImpact( speed, position );
+		Impacted?.Invoke( speed, position );
 	}
 
 	private void DamageDriverFromImpact( float speed, Vector3 position )

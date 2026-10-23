@@ -359,22 +359,28 @@
         "CrackleRevs": 0.55,
         "CrashSounds": [
           {
-            "MinSpeed": 350,
-            "MinSpeedChange": 250,
+            "MinSpeed": 80,
             "Sound": {
-              "Id": "03cad3dc-b4e0-44a5-98f1-0ab784e621c3",
-              "Path": "sounds/vehicles/hl2_v8/impact_medium.sound"
+              "Id": "62a83d83-29c5-47dc-b216-a1379125990f",
+              "Path": "sounds/vehicles/buggy/impact_small.sound"
             },
-            "GearLimit": 1
+            "DropsToIdle": false
           },
           {
-            "MinSpeed": 450,
-            "MinSpeedChange": 350,
+            "MinSpeed": 250,
             "Sound": {
-              "Id": "95f4505a-9718-47d7-b473-87dbe3423193",
-              "Path": "sounds/vehicles/hl2_v8/impact_heavy.sound"
+              "Id": "430e7fde-1262-4d49-aec6-af3fd9400a0d",
+              "Path": "sounds/vehicles/buggy/impact_medium.sound"
             },
-            "GearLimit": 0
+            "DropsToIdle": true
+          },
+          {
+            "MinSpeed": 500,
+            "Sound": {
+              "Id": "df4d6854-2205-485e-967e-cd0d9c830ee5",
+              "Path": "sounds/vehicles/buggy/impact_heavy.sound"
+            },
+            "DropsToIdle": true
           }
         ],
         "Exhaust": {
@@ -407,6 +413,15 @@
             "SpeedApproachFactor": 0.03
           }
         ],
+        "Horn": {
+          "Action": "Attack1"
+        },
+        "HornFadeTime": 0.1,
+        "HornSound": {
+          "Id": "39fb423f-8c33-4338-ab73-fe1475c025b6",
+          "Path": "sounds/vehicles/buggy/horn.sound"
+        },
+        "ImpactCooldown": 0.15,
         "LimiterRate": 3,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -416,147 +431,154 @@
         "OnComponentUpdate": null,
         "ShiftPops": true,
         "SkidSound": {
-          "Id": "5027700e-a712-4c7a-a1e2-95931a844a07",
-          "Path": "sounds/vehicles/hl2_v8/skid_normalfriction.sound"
+          "Id": "d03c333e-eb04-470c-b0ee-487775e63855",
+          "Path": "sounds/vehicles/buggy/skid_normalfriction.sound"
         },
         "States": [
           {
             "State": "StartIdle",
             "Sound": {
-              "Id": "ef89216a-c870-4c59-9e41-2a20c2f80500",
-              "Path": "sounds/vehicles/hl2_v8/engine_start.sound"
+              "Id": "d9340982-a610-42ae-bce5-1076a85ac699",
+              "Path": "sounds/vehicles/buggy/engine_start.sound"
             },
             "MinTime": 4
           },
           {
             "State": "Idle",
             "Sound": {
-              "Id": "f306d38d-3024-4edc-9a6d-e13df29fb2ab",
-              "Path": "sounds/vehicles/hl2_v8/engine_idle.sound"
+              "Id": "09346dc3-6760-4cfb-a53f-f2b4968debeb",
+              "Path": "sounds/vehicles/buggy/engine_idle.sound"
             },
             "MinTime": 0
           },
           {
             "State": "Reverse",
             "Sound": {
-              "Id": "e891a03a-6613-44e5-a5f1-159f85b65aa8",
-              "Path": "sounds/vehicles/hl2_v8/reverse.sound"
+              "Id": "ff7dbb58-f0d8-4f3e-98da-cf6bf3116015",
+              "Path": "sounds/vehicles/buggy/reverse.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "Gear0",
             "Sound": {
-              "Id": "14493411-443b-40d6-8b7e-cd96b66ddbf6",
-              "Path": "sounds/vehicles/hl2_v8/rev.sound"
+              "Id": "777df3b6-1b28-4929-87e8-258437090cac",
+              "Path": "sounds/vehicles/buggy/rev.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "Gear0Resume",
             "Sound": {
-              "Id": "f306d38d-3024-4edc-9a6d-e13df29fb2ab",
-              "Path": "sounds/vehicles/hl2_v8/engine_idle.sound"
+              "Id": "09346dc3-6760-4cfb-a53f-f2b4968debeb",
+              "Path": "sounds/vehicles/buggy/engine_idle.sound"
             },
             "MinTime": 0.75
           },
           {
             "State": "Gear1",
             "Sound": {
-              "Id": "e3cbbc58-eddb-4584-85e0-609469380040",
-              "Path": "sounds/vehicles/hl2_v8/firstgear.sound"
+              "Id": "8ef29b78-d983-42bf-9063-648672af44e9",
+              "Path": "sounds/vehicles/buggy/firstgear.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "Gear1Resume",
             "Sound": {
-              "Id": "fb49cc38-c8d1-4f40-b0fa-1f9d25230fe9",
-              "Path": "sounds/vehicles/hl2_v8/firstgear_noshift.sound"
+              "Id": "8ef29b78-d983-42bf-9063-648672af44e9",
+              "Path": "sounds/vehicles/buggy/firstgear.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "Gear2",
             "Sound": {
-              "Id": "d5621d99-9f10-4219-b3c1-e0f6277d1efb",
-              "Path": "sounds/vehicles/hl2_v8/secondgear.sound"
+              "Id": "bb6ed7c6-a484-4264-b10e-42f414f57c48",
+              "Path": "sounds/vehicles/buggy/secondgear.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "Gear2Resume",
             "Sound": {
-              "Id": "fb49cc38-c8d1-4f40-b0fa-1f9d25230fe9",
-              "Path": "sounds/vehicles/hl2_v8/firstgear_noshift.sound"
+              "Id": "8ef29b78-d983-42bf-9063-648672af44e9",
+              "Path": "sounds/vehicles/buggy/firstgear.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "Gear3",
             "Sound": {
-              "Id": "457ccc03-a829-4f2e-87b5-42c910606bc3",
-              "Path": "sounds/vehicles/hl2_v8/thirdgear.sound"
+              "Id": "6a293297-e32b-4803-a709-80d0ece3bd69",
+              "Path": "sounds/vehicles/buggy/thirdgear.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "Gear3Resume",
             "Sound": {
-              "Id": "fb49cc38-c8d1-4f40-b0fa-1f9d25230fe9",
-              "Path": "sounds/vehicles/hl2_v8/firstgear_noshift.sound"
+              "Id": "8ef29b78-d983-42bf-9063-648672af44e9",
+              "Path": "sounds/vehicles/buggy/firstgear.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "Gear4",
             "Sound": {
-              "Id": "a12a8d82-f53b-4a23-af83-f2e8db5bb111",
-              "Path": "sounds/vehicles/hl2_v8/fourthgear.sound"
+              "Id": "97cfb859-bfa0-4c31-9b05-e0950a7f8736",
+              "Path": "sounds/vehicles/buggy/fourthgear.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "Gear4Resume",
             "Sound": {
-              "Id": "f1256db0-f9b0-439c-8438-6a9d82e4744a",
-              "Path": "sounds/vehicles/hl2_v8/fourthgear_noshift.sound"
+              "Id": "97cfb859-bfa0-4c31-9b05-e0950a7f8736",
+              "Path": "sounds/vehicles/buggy/fourthgear.sound"
             },
             "MinTime": 0.5
           },
           {
             "State": "SlowdownHighSpeed",
             "Sound": {
-              "Id": "e4554012-ea07-4640-a496-987216e726a6",
-              "Path": "sounds/vehicles/hl2_v8/throttleoff_fastspeed.sound"
+              "Id": "eec3741a-9c86-4431-918a-ae66b66c693f",
+              "Path": "sounds/vehicles/buggy/throttleoff_fastspeed.sound"
             },
             "MinTime": 2
           },
           {
             "State": "Slowdown",
             "Sound": {
-              "Id": "80186b5d-1856-4f44-9c92-34f0e768b152",
-              "Path": "sounds/vehicles/hl2_v8/throttleoff_slowspeed.sound"
+              "Id": "10affe72-51db-416f-9c68-4abf8fb7cfed",
+              "Path": "sounds/vehicles/buggy/throttleoff_slowspeed.sound"
             },
             "MinTime": 2
           },
           {
             "State": "Turbo",
             "Sound": {
-              "Id": "3a21489e-d84d-400e-894f-6828fb6d674f",
-              "Path": "sounds/vehicles/hl2_v8/turbo_on.sound"
+              "Id": "2cc6212c-6623-45d8-8e3a-e85b02d2a954",
+              "Path": "sounds/vehicles/buggy/turbo_on.sound"
             },
             "MinTime": 2.5
           },
           {
             "State": "Shutdown",
             "Sound": {
-              "Id": "7e4486ad-f0ad-47b2-a70c-43159eac425c",
-              "Path": "sounds/vehicles/hl2_v8/engine_stop.sound"
+              "Id": "fd9b8462-8400-46c6-9a67-781d29795da5",
+              "Path": "sounds/vehicles/buggy/engine_stop.sound"
             },
             "MinTime": 0
           }
         ],
+        "SuspensionCooldown": 0.3,
+        "SuspensionMaxSpeed": 300,
+        "SuspensionMinSpeed": 80,
+        "SuspensionSound": {
+          "Id": "a893935a-3e7e-40f7-beeb-97d41c671d4c",
+          "Path": "sounds/vehicles/buggy/suspension.sound"
+        },
         "Vehicle": {
           "_type": "component",
           "component_id": "1f06362f-c675-4c1c-a7bb-d00948a606e5",

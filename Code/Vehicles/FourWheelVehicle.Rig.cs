@@ -51,6 +51,26 @@ public sealed partial class FourWheelVehicle
 	private readonly float[] _visualTravel = new float[WheelCount];
 	private bool _visualTravelReady;
 
+	/// <summary>
+	/// How far each wheel centre sits below its hard point as posed last frame, inches, and how fast that's shrinking -
+	/// the wheel being pushed up into the body - in/s. Where it is in the world, for sounds.
+	/// </summary>
+	private readonly float[] _travel = new float[WheelCount];
+	private readonly float[] _compressionSpeed = new float[WheelCount];
+	private readonly Vector3[] _wheelCenter = new Vector3[WheelCount];
+	private Rig _travelRig;
+
+	/// <summary>
+	/// How fast a wheel is being pushed up into the body, in/s (negative while it drops away). From the posed wheels,
+	/// so it's the same on every machine - a landing or a bump hits hard.
+	/// </summary>
+	public float SuspensionSpeed( int wheel ) => _compressionSpeed[wheel];
+
+	/// <summary>
+	/// Where a wheel's centre is in the world, as posed.
+	/// </summary>
+	public Vector3 WheelPosition( int wheel ) => _wheelCenter[wheel];
+
 	private float _gasPedal, _brakePedal, _clutchPedal;
 	private int _lastGear;
 	private TimeSince _timeSinceShift = 10f;
@@ -79,7 +99,16 @@ public sealed partial class FourWheelVehicle
 	private void PoseRig()
 	{
 		var rig = GetRig();
-		if ( rig is null ) return;
+		if ( rig is null )
+		{
+			_travelRig = null;
+			Array.Clear( _compressionSpeed );
+			return;
+		}
+
+		// a new rig, or the first synced suspension state snapping in, has nothing to compare against yet
+		var hadTravel = _travelRig == rig && _visualTravelReady;
+		_travelRig = rig;
 
 		if ( !_renderer.CreateBoneObjects )
 			_renderer.CreateBoneObjects = true;
@@ -98,6 +127,10 @@ public sealed partial class FourWheelVehicle
 			if ( !_visualTravelReady ) _visualTravel[i] = targetTravel;
 			else _visualTravel[i] += (targetTravel - _visualTravel[i]) * (1f - MathF.Exp( -30f * Time.Delta ));
 			var travel = _visualTravel[i];
+			
+			_compressionSpeed[i] = hadTravel && Time.Delta > 0 ? (_travel[i] - travel) / Time.Delta : 0;
+			_travel[i] = travel;
+			_wheelCenter[i] = tx.PointToWorld( hardPoint + Vector3.Down * travel );
 			if ( rig.Steer[i] >= 0 )
 			{
 				rig.Move( rig.Wheel[i], Vector3.Down * travel, Rotation.Identity );
