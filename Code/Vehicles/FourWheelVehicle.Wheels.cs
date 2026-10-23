@@ -172,6 +172,7 @@ public sealed partial class FourWheelVehicle
 		}
 
 		SimulateGrip( dt );
+		SimulateWheelObstacles( dt );
 	}
 
 	/// <summary>
