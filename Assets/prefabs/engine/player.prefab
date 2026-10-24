@@ -131,6 +131,21 @@
         "OnComponentUpdate": null
       },
       {
+        "__type": "PlayerCarry",
+        "__guid": "6b1f3c52-8d4e-4a7b-9c2e-5f0a1d7e3b94",
+        "__enabled": true,
+        "Flags": 0,
+        "BreakDistance": 96,
+        "HoldDistance": 40,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "ThrowSpeed": 700
+      },
+      {
         "__type": "PlayerDamageIndicators",
         "__guid": "2382a8ba-4fb4-4180-853a-0d4a45e13d37",
         "__enabled": true,
