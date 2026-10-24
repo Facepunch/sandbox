@@ -9,9 +9,9 @@
 
 <root class="tab">
 
-    <UIGroupedList Groups=@GetGroups() Selected=@SelectedPageType?.TargetType OnSelect=@OnSelectPage />
+    <UIGroupedList Groups=@GetGroups() Selected=@SelectedPage?.Key OnSelect=@OnSelectPage />
 
-    <UISettingsPane Title=@( SelectedPageType is null ? "" : LocalizedText.Resolve( SelectedPageType.Title ) )>
+    <UISettingsPane Title=@( SelectedPage is null ? "" : LocalizedText.Resolve( SelectedPage.Title ) )>
         <Body><div class="utility-page" @ref="PageContainer"></div></Body>
     </UISettingsPane>
 
@@ -19,11 +19,14 @@
 
 @code
 {
-    TypeDescription SelectedPageType { get; set; }
+    // either a page type, or a server settings page for one group
+    record PageEntry( string Group, string Title, int Order, string SortName, object Key, Func<UtilityPage> Create );
+
+    PageEntry SelectedPage { get; set; }
     Panel PageContainer { get; set; }
     UtilityPage ActivePage;
 
-    protected override int BuildHash() => HashCode.Combine( SelectedPageType, Game.Language.SelectedCode );
+    protected override int BuildHash() => HashCode.Combine( SelectedPage?.Key, Game.Language.SelectedCode );
 
     List<UIGroupedList.ListGroup> GetGroups()
     {
@@ -31,24 +34,24 @@
             .Select( group => new UIGroupedList.ListGroup( group.Key, group
                 .OrderBy( x => x.Order )
                 .ThenBy( x => LocalizedText.Resolve( x.Title ), StringComparer.CurrentCultureIgnoreCase )
-                .ThenBy( x => x.FullName, StringComparer.Ordinal )
-                .Select( x => new UIGroupedList.ListItem( x.Title, x.TargetType ) )
+                .ThenBy( x => x.SortName, StringComparer.Ordinal )
+                .Select( x => new UIGroupedList.ListItem( x.Title, x.Key ) )
                 .ToList() ) )
             .ToList();
     }
 
-    IEnumerable<IGrouping<string, TypeDescription>> GetPageGroups()
+    IEnumerable<IGrouping<string, PageEntry>> GetPageGroups()
     {
         return GetVisiblePages()
             .GroupBy( x => x.Group )
-            .OrderBy( group => group.Min( type => type.Order ) )
+            .OrderBy( group => group.Min( page => page.Order ) )
             .ThenBy( group => LocalizedText.Resolve( group.Key ), StringComparer.CurrentCultureIgnoreCase )
             .ThenBy( group => group.Key, StringComparer.Ordinal );
     }
 
-    List<TypeDescription> GetVisiblePages()
+    List<PageEntry> GetVisiblePages()
     {
-        var pages = new List<TypeDescription>();
+        var pages = new List<PageEntry>();
 
         foreach ( var type in Game.TypeLibrary.GetTypes<UtilityPage>() )
         {
@@ -59,7 +62,18 @@
             var visible = instance.IsPageVisible();
             instance.Delete();
 
-            if ( visible ) pages.Add( type );
+            if ( visible ) pages.Add( new PageEntry( type.Group, type.Title, type.Order, type.FullName, type.TargetType, () => type.Create<UtilityPage>() ) );
+        }
+
+        // one page per server settings group
+        if ( ServerSettings.CanEdit )
+        {
+            var order = 10;
+            foreach ( var group in ServerSettings.Groups )
+            {
+                var settingsGroup = group;
+                pages.Add( new PageEntry( "#spawnmenu.utility.group.server", ServerSettings.GroupTitle( group ), order++, group, $"server-settings:{group}", () => new ServerSettingsPage { Group = settingsGroup } ) );
+            }
         }
 
         return pages;
@@ -67,13 +81,13 @@
 
     void OnSelectPage( object value )
     {
-        var type = Game.TypeLibrary.GetTypes<UtilityPage>().FirstOrDefault( x => x.TargetType == (value as Type) );
-        if ( type is null ) return;
+        var page = GetVisiblePages().FirstOrDefault( x => Equals( x.Key, value ) );
+        if ( page is null ) return;
 
-        SelectedPageType = type;
+        SelectedPage = page;
 
         ActivePage?.Delete();
-        ActivePage = type.Create<UtilityPage>();
+        ActivePage = page.Create();
         PageContainer.AddChild( ActivePage );
 
         StateHasChanged();

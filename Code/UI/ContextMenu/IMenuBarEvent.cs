@@ -46,24 +46,26 @@ public interface IMenuBarEvent : ISceneEvent<IMenuBarEvent>
 		}
 
 		/// <summary>
-		/// Add a checkable row for a server setting. Only the host can change it, everyone else sees it greyed out
-		/// with the current value, the way Garry's Mod shows host-only settings.
+		/// A toggle only admins can change, greyed out for everyone else.
 		/// </summary>
-		public static Sandbox.UI.Menu AddHostToggle( Sandbox.UI.Menu menu, string text, Func<bool> get, Action<bool> set )
+		public static Sandbox.UI.Menu AddServerToggle( Sandbox.UI.Menu menu, string text, Func<bool> get, Action<bool> set )
 		{
 			var option = AddToggle( menu, text, get, set );
 
-			UpdateHostOnly();
-			menu.AboutToShow += _ => UpdateHostOnly();
+			UpdateAdminOnly();
+			menu.AboutToShow += _ => UpdateAdminOnly();
 
-			void UpdateHostOnly()
+			void UpdateAdminOnly()
 			{
-				option.Enabled = Networking.IsHost;
-				option.Tooltip = Networking.IsHost ? null : Game.Language.GetPhrase( "spawnmenu.common.host_only" );
+				option.Enabled = ServerSettings.CanEdit;
+				option.Tooltip = ServerSettings.CanEdit ? null : Game.Language.GetPhrase( "spawnmenu.common.admin_only" );
 			}
 
 			return option;
 		}
+
+		[Obsolete( "Use AddServerToggle, admins can change server settings too" )]
+		public static Sandbox.UI.Menu AddHostToggle( Sandbox.UI.Menu menu, string text, Func<bool> get, Action<bool> set ) => AddServerToggle( menu, text, get, set );
 	}
 
 	void PopulateMenuBar( Event e ) { }

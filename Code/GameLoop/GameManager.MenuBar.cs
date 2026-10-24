@@ -19,14 +19,14 @@ public sealed partial class GameManager : IMenuBarEvent
 		// Write through the host so the replicated convars change for everyone.
 		var npcs = e.GetOrAddMenu( Game.Language.GetPhrase( "spawnmenu.menubar.npcs" ), 200 );
 
-		IMenuBarEvent.Event.AddHostToggle( npcs, Game.Language.GetPhrase( "spawnmenu.utility.ai_enabled" ), () => NpcConVars.Enabled, v => SetConVar( "sandbox.ai.enabled", v ) );
-		IMenuBarEvent.Event.AddHostToggle( npcs, Game.Language.GetPhrase( "spawnmenu.utility.no_target" ), () => NpcConVars.NoTarget, v => SetConVar( "sandbox.ai.notarget", v ) );
+		IMenuBarEvent.Event.AddServerToggle( npcs, Game.Language.GetPhrase( "spawnmenu.utility.ai_enabled" ), () => NpcConVars.Enabled, v => SetConVar( "sandbox.ai.enabled", v ) );
+		IMenuBarEvent.Event.AddServerToggle( npcs, Game.Language.GetPhrase( "spawnmenu.utility.no_target" ), () => NpcConVars.NoTarget, v => SetConVar( "sandbox.ai.notarget", v ) );
 
 		var server = e.GetOrAddMenu( Game.Language.GetPhrase( "spawnmenu.menubar.server" ), 300 );
 
-		IMenuBarEvent.Event.AddHostToggle( server, Game.Language.GetPhrase( "entity.setting.prop_protection" ), () => Ownable.OwnershipChecks, v => SetConVar( "sandbox.ownership.checks", v ) );
-		IMenuBarEvent.Event.AddHostToggle( server, Game.Language.GetPhrase( "spawnmenu.menubar.reequip_last" ), () => ServerSettings.ReEquipLast, v => SetConVar( "sandbox.reequiplast", v ) );
+		IMenuBarEvent.Event.AddServerToggle( server, Game.Language.GetPhrase( "entity.setting.prop_protection" ), () => Ownable.OwnershipChecks, v => SetConVar( "sandbox.ownership.checks", v ) );
+		IMenuBarEvent.Event.AddServerToggle( server, Game.Language.GetPhrase( "spawnmenu.menubar.reequip_last" ), () => ServerSettings.ReEquipLast, v => SetConVar( "sandbox.reequiplast", v ) );
 		server.AddSeparator();
-		IMenuBarEvent.Event.AddHostToggle( server, Game.Language.GetPhrase( "server.developer_entities" ), () => ServerSettings.DeveloperEntities, v => SetConVar( "sandbox.developer.entities", v ) );
+		IMenuBarEvent.Event.AddServerToggle( server, Game.Language.GetPhrase( "server.developer.entities" ), () => ServerSettings.DeveloperEntities, v => SetConVar( "sandbox.developer.entities", v ) );
 	}
 }
