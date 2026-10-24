@@ -8,6 +8,17 @@ public sealed partial class PlayerData : Component
 	[Sync( SyncFlags.FromHost )] public bool IsGodMode { get; internal set; }
 
 	/// <summary>
+	/// Sent by the host. Check with Permissions.Has instead, it also counts admins.
+	/// </summary>
+	[Sync( SyncFlags.FromHost )] public NetList<string> Permissions { get; set; } = new();
+
+	protected override void OnStart()
+	{
+		// runs on join, after a host change and after loading a save
+		global::Permissions.Refresh( this );
+	}
+
+	/// <summary>
 	/// Is this player data me?
 	/// </summary>
 	public bool IsMe => Network.Owner == Connection.Local;

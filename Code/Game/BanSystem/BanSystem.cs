@@ -81,7 +81,7 @@ internal sealed class BanSystem : GameObjectSystem<BanSystem>, Component.INetwor
 	[Rpc.Host]
 	internal static void RpcBanPlayer( Connection target, string reason = "Banned" )
 	{
-		if ( !Rpc.Caller.HasPermission( "admin" ) ) return;
+		if ( !Permissions.Has( Rpc.Caller, Permissions.Admin ) ) return;
 
 		Current.Ban( target, reason );
 	}

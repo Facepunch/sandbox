@@ -8,7 +8,7 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 	/// <summary>
 	/// When disabled, nobody can pick things up with use.
 	/// </summary>
-	[Title( "Carry Props" )]
+	[Title( "Carry Props" ), Group( "Gameplay" ), ServerSettings.Section( "Props" ), Order( 21 )]
 	[ConVar( "sandbox.carry", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Players can pick up light props with use." )]
 	public static bool AllowCarry { get; set; } = true;
 
@@ -16,7 +16,7 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 	/// The heaviest object players can pick up
 	/// </summary>
 	[Range( 0, 1000 )]
-	[Title( "Carry Max Mass" )]
+	[Title( "Carry Max Mass" ), Group( "Gameplay" ), ServerSettings.Section( "Props" ), Order( 22 )]
 	[ConVar( "sandbox.carry.maxmass", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "The heaviest object, in kg, players can pick up with use." )]
 	public static float MaxMass { get; set; } = 80.0f;
 

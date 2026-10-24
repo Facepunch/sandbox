@@ -20,15 +20,28 @@ public sealed partial class Player
 		this.OnDamage( new DamageInfo( float.MaxValue, GameObject, null ) );
 	}
 
-	[ConCmd( "god", ConVarFlags.Server | ConVarFlags.Cheat, Help = "Toggle invulnerability" )]
+	[ConCmd( "god", ConVarFlags.Server, Help = "Toggle invulnerability" )]
 	public static void God( Connection source )
 	{
 		var player = PlayerData.For( source );
 		if ( !player.IsValid() )
 			return;
 
+		// turning it off is always allowed
+		if ( !player.IsGodMode && !ServerSettings.CanUseGodMode( source ) )
+		{
+			source.SendLog( LogLevel.Info, "Godmode is disabled on this server" );
+			return;
+		}
+
 		player.IsGodMode = !player.IsGodMode;
 		source.SendLog( LogLevel.Info, player.IsGodMode ? "Godmode enabled" : "Godmode disabled" );
+	}
+
+	[ConCmd( "noclip", Help = "Toggle noclip" )]
+	public static void Noclip()
+	{
+		FindLocalPlayer()?.ToggleNoclip();
 	}
 
 	/// <summary>

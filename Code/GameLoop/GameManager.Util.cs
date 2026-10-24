@@ -35,7 +35,7 @@ public sealed partial class GameManager
 	[Rpc.Host]
 	public static void RpcKickPlayer( Connection target, string reason = "Kicked" )
 	{
-		if ( !Rpc.Caller.HasPermission( "admin" ) ) return;
+		if ( !Permissions.Has( Rpc.Caller, Permissions.Admin ) ) return;
 
 		Current.Kick( target, reason );
 	}
@@ -77,19 +77,7 @@ public sealed partial class GameManager
 	}
 
 	/// <summary>
-	/// Sets a boolean convar and broadcasts the change to all players via chat.
-	/// Only callable by the host.
+	/// Sets a replicated convar through the host. Only works for admins.
 	/// </summary>
-	public static void SetConVar( string name, bool value )
-	{
-		if ( !Networking.IsHost ) return;
-
-		ConsoleSystem.Run( name, value ? "true" : "false" );
-
-		GameManager.Current.NotifyLocalized( "#server.setting_changed", new()
-		{
-			{ "name", name },
-			{ "value", value ? "#spawnmenu.common.on" : "#spawnmenu.common.off" }
-		} );
-	}
+	public static void SetConVar( string name, bool value ) => ServerSettings.Set( name, value );
 }

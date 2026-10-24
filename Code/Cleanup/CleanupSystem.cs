@@ -295,7 +295,7 @@ internal sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoa
 	[Rpc.Host]
 	public static void RpcCleanUpAll()
 	{
-		if ( !Rpc.Caller.HasPermission( "admin" ) ) return;
+		if ( !Permissions.Has( Rpc.Caller, Permissions.Admin ) ) return;
 
 		Current?.Cleanup();
 	}
@@ -303,7 +303,7 @@ internal sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoa
 	[Rpc.Host]
 	public static void RpcCleanUpTarget( Connection target )
 	{
-		if ( !Rpc.Caller.HasPermission( "admin" ) ) return;
+		if ( !Permissions.Has( Rpc.Caller, Permissions.Admin ) ) return;
 
 		CleanupPlayer( target );
 	}

@@ -34,9 +34,9 @@ public sealed class Ownable : Component, IPhysgunEvent, IToolgunEvent, ICarryEve
 
 	/// <summary>
 	/// When enabled, players can only physgun/toolgun/pick up objects they own.
-	/// Host is always exempt. Off by default.
+	/// Admins are always exempt. Off by default.
 	/// </summary>
-	[Title( "Prop Protection" )]
+	[Title( "Prop Protection" ), Group( "Gameplay" ), ServerSettings.Section( "Props" ), Order( 20 )]
 	[ConVar( "sandbox.ownership.checks", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Enforce ownership, players can only interact with their own props." )]
 	public static bool OwnershipChecks { get; private set; } = false;
 
@@ -46,7 +46,7 @@ public sealed class Ownable : Component, IPhysgunEvent, IToolgunEvent, ICarryEve
 	{
 		if ( !OwnershipChecks ) return true;
 		if ( caller is null ) return false;
-		if ( caller.HasPermission( "admin" ) ) return true;
+		if ( Permissions.Has( caller, Permissions.Admin ) ) return true;
 		if ( owner is null ) return true;
 		return owner == caller;
 	}

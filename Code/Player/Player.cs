@@ -133,7 +133,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	[Sync] public NetDictionary<string, float> ActionAmounts { get; set; } = new();
 
 	/// <summary>Seconds of invulnerability after spawning, to stop spawn-killing. 0 disables it.</summary>
-	[ConVar( "sandbox.spawnprotection", ConVarFlags.Replicated | ConVarFlags.Saved, Help = "Seconds of invulnerability after spawning. 0 disables spawn protection." )]
+	[Title( "Spawn Protection" ), Group( "Gameplay" ), ServerSettings.Section( "Players" ), Order( 4 ), Range( 0, 30 ), Step( 1 )]
+	[ConVar( "sandbox.spawnprotection", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting | ConVarFlags.Saved, Help = "Seconds of invulnerability after spawning. 0 disables spawn protection." )]
 	public static float SpawnProtection { get; set; } = 5.0f;
 
 	/// <summary>
@@ -388,7 +389,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			return;
 		}
 
-		// no noclip from a seat
 		var seated = _cachedSeat is not null;
 
 		if ( seated )
@@ -396,9 +396,15 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		else if ( ActionAmounts.Count > 0 )
 			ActionAmounts.Clear();
 
-		if ( !seated && Input.Pressed( "noclip" ) )
+		if ( Input.Pressed( "noclip" ) )
 		{
 			ToggleNoclip();
+		}
+
+		// noclip was turned off while we were flying
+		if ( IsNoclipping && !ServerSettings.CanNoclip( Network.Owner ) )
+		{
+			SetNoclip( false );
 		}
 
 		if ( Input.Pressed( "undo" ) )
@@ -449,11 +455,30 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			ActionAmounts[action] = amount;
 	}
 
-	void ToggleNoclip()
+	/// <summary>
+	/// Runs on the owning client, since it simulates movement.
+	/// </summary>
+	internal void ToggleNoclip()
+	{
+		if ( IsProxy ) return;
+
+		// no noclip from a seat
+		if ( _cachedSeat is not null ) return;
+
+		if ( !IsNoclipping && !ServerSettings.CanNoclip( Network.Owner ) )
+		{
+			Sandbox.UI.Notices.AddNotice( "block", Color.Red, Game.Language.GetPhrase( "server.noclip_disabled" ), 3 );
+			return;
+		}
+
+		SetNoclip( !IsNoclipping );
+	}
+
+	void SetNoclip( bool enabled )
 	{
 		if ( GetComponent<NoclipMoveMode>( true ) is { } noclip )
 		{
-			noclip.Enabled = !noclip.Enabled;
+			noclip.Enabled = enabled;
 			IsNoclipping = noclip.Enabled;
 		}
 	}
@@ -525,7 +550,13 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		if ( dmg.Tags.Contains( DamageTags.Explosion ) && dmg.Origin != Vector3.Zero )
 			ApplyKnockback( GetExplosionKnockback( dmg ) );
 
-		if ( PlayerData.IsGodMode ) return;
+		if ( PlayerData.IsGodMode )
+		{
+			if ( ServerSettings.CanUseGodMode( Network.Owner ) ) return;
+
+			// no longer allowed, so turn it off
+			PlayerData.IsGodMode = false;
+		}
 
 		//
 		// Ignore impact damage from the world, for now

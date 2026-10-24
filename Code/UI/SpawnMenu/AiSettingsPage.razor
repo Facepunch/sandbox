@@ -9,19 +9,19 @@
 @attribute [Order( 1 )]
 
 <root class="page">
-    @if ( Connection.Local.HasPermission( "admin" ) )
+    @if ( Permissions.Has( Connection.Local, Permissions.Admin ) )
     {
         <UISheet Target="@Settings" PropertyFilter="@UISheet.PropertiesAndButtons" />
     }
     else
     {
-        <Label class="note" Tokenize=@false Text=@( $"⚠️ {Game.Language.GetPhrase( "spawnmenu.common.host_only" )}" ) />
+        <Label class="note" Tokenize=@false Text=@( $"⚠️ {Game.Language.GetPhrase( "spawnmenu.common.admin_only" )}" ) />
     }
 </root>
 
 @code
 {
-    public override bool IsPageVisible() => Connection.Local.HasPermission( "admin" );
+    public override bool IsPageVisible() => Permissions.Has( Connection.Local, Permissions.Admin );
 
     readonly NpcSettings Settings = new();
 

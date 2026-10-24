@@ -10,7 +10,7 @@
 <root class="page">
     <UIButton Icon="cleaning_services" Text="#spawnmenu.utility.cleanup_mine" @onclick=@CleanUpMine></UIButton>
 
-    @if ( Connection.Local.HasPermission( "admin" ) )
+    @if ( Permissions.Has( Connection.Local, Permissions.Admin ) )
     {
         <UIButton Icon="delete_sweep" Text="#spawnmenu.utility.cleanup_all" @onclick=@CleanUpAll></UIButton>
 

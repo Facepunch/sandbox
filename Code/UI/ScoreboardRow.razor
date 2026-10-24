@@ -66,7 +66,7 @@
 			bool isMuted = SandboxVoice.IsMuted( steamId );
 			menu.AddOption( isMuted ? "#ui.scoreboard.unmute" : "#ui.scoreboard.mute", isMuted ? "volume_up" : "volume_off", () => SandboxVoice.Mute( steamId ) );
 
-			if ( Connection.Local?.HasPermission( "admin" ) == true )
+			if ( Permissions.Has( Connection.Local, Permissions.Admin ) )
 			{
 				menu.AddSeparator();
 				menu.AddOption( "#ui.scoreboard.kick", "person_remove", () => OpenKickConfirm( Connection ) );
