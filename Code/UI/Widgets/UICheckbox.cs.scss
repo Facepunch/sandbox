@@ -24,7 +24,7 @@ UICheckbox
 
 	&:hover
 	{
-		background-color: white;
+		filter: brightness( 1.25 );
 		sound-in: ui.hover;
 	}
 

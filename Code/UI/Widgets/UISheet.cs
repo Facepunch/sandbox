@@ -190,12 +190,17 @@ public class UISheetRow : Panel
 
 		var control = CreateControl( property, out var wide );
 		var isButton = control is UIButton;
+		var isToggle = control is UICheckbox;
 		var hasName = !isButton && !property.HasAttribute<HideLabelAttribute>();
 
 		SetClass( "wide", wide );
-		SetClass( "toggle", control is UICheckbox );
+		SetClass( "toggle", isToggle );
 		SetClass( "buttons", isButton );
 		SetClass( "bare", !hasName );
+
+		// a checkbox goes in front of its name, every other control after it
+		if ( isToggle )
+			_holder = Add.Panel( "control" );
 
 		if ( hasName )
 		{
@@ -205,7 +210,7 @@ public class UISheetRow : Panel
 			label.Text = property.DisplayName;
 		}
 
-		_holder = Add.Panel( "control" );
+		_holder ??= Add.Panel( "control" );
 		if ( control is not null )
 			_holder.AddChild( control );
 	}

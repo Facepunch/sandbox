@@ -158,20 +158,21 @@ UISheet
 			}
 		}
 
-		// a checkbox sits at the right edge, the name gets all the room before it (could've been better)
+		// a checkbox sits in front of its name, the name gets the rest of the row
 		&.toggle
 		{
-			> .label
-			{
-				width: auto;
-				flex-grow: 1;
-			}
-
 			> .control
 			{
 				flex-grow: 0;
 				flex-shrink: 0;
-				justify-content: flex-end;
+			}
+
+			> .label
+			{
+				width: auto;
+				flex-grow: 1;
+				flex-shrink: 1;
+				padding-left: 6px;
 			}
 		}
 
