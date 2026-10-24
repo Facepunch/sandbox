@@ -16,17 +16,22 @@
             {
                 var totalMass = Target.SelectMany( go => go.GetComponentsInChildren<Rigidbody>() ).Sum( ResolveMass );
                 var health = Target.Select( go => go.GetComponent<Prop>() ).FirstOrDefault( p => p.IsValid() );
+                var hasHealth = health.IsValid() && health.Health != 0;
 
-                <div class="object-info">
-                    @if ( totalMass > 0 )
-                    {
-                        <span>⚖️ @Game.Language.GetPhrase( "ui.inspect.mass", new() { { "mass", totalMass.ToString( "0.#" ) } } )</span>
-                    }
-                    @if ( health.IsValid() && health.Health != 0 )
-                    {
-                        <span>❤️ @Game.Language.GetPhrase( "ui.inspect.health", new() { { "health", health.Health.ToString( "0.#" ) } } )</span>
-                    }
-                </div>
+                // things like placed text have neither, and the empty row would leave its separator behind
+                if ( totalMass > 0 || hasHealth )
+                {
+                    <div class="object-info">
+                        @if ( totalMass > 0 )
+                        {
+                            <span>⚖️ @Game.Language.GetPhrase( "ui.inspect.mass", new() { { "mass", totalMass.ToString( "0.#" ) } } )</span>
+                        }
+                        @if ( hasHealth )
+                        {
+                            <span>❤️ @Game.Language.GetPhrase( "ui.inspect.health", new() { { "health", health.Health.ToString( "0.#" ) } } )</span>
+                        }
+                    </div>
+                }
                 <UISheet Target="@Properties"></UISheet>
 
                 @if (Renderers.Count > 0)
