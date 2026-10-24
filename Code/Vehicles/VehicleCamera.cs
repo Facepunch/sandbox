@@ -173,6 +173,11 @@ public sealed class VehicleCamera : Component, ICameraModifier
 			_look.pitch -= _look.pitch * back;
 		}
 
+		// keep it a half turn either way, however many times you've spun round
+		_look.yaw = AngleDelta( 0, _look.yaw );
+
+		DriveDriverLook();
+
 		// the camera rides a spring on the car's height, so it dips and settles after a landing
 		// - moving with it, so it keeps up on a hill and only lags when the car's climb changes suddenly
 		Spring( ref _height, ref _heightSpeed, tx.Position.z, 10f, dt, _velocity.z );
@@ -219,6 +224,18 @@ public sealed class VehicleCamera : Component, ICameraModifier
 		_vehicle ??= GetComponent<FourWheelVehicle>();
 		var driver = _vehicle?.Seat?.GetOccupant();
 		return driver.IsValid() && !driver.IsProxy && driver.ThirdPerson;
+	}
+
+	private void DriveDriverLook()
+	{
+		var seat = _vehicle?.Seat;
+		var driver = seat?.GetOccupant();
+		if ( !driver.IsValid() ) return;
+
+		driver.EyeAngles = new Angles(
+			_look.pitch.Clamp( seat.PitchRange.x, seat.PitchRange.y ),
+			_look.yaw.Clamp( seat.YawRange.x, seat.YawRange.y ),
+			0 );
 	}
 
 	/// <summary>
