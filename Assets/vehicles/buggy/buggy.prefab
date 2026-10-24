@@ -166,6 +166,7 @@
         },
         "ClutchShiftTime": 0.3,
         "DrawDebug": false,
+        "DriverTilt": 15,
         "Engine": {
           "Horsepower": 350,
           "MaxRpm": 4200,
@@ -214,9 +215,21 @@
         "Handbrake": {
           "Action": "Jump"
         },
+        "HornHand": {
+          "_type": "gameobject",
+          "go": "755735d1-3804-45b7-ace4-18c7a15425ca"
+        },
+        "HornHandPose": 1,
+        "HornHandTime": 0.1,
+        "HornHoldType": "holditem",
         "ImpactDamageScale": 1,
         "Left": {
           "Action": "Left"
+        },
+        "LeftFoot": null,
+        "LeftHand": {
+          "_type": "gameobject",
+          "go": "2af41e37-908c-4618-97eb-8bcdfb9acdcf"
         },
         "MaxSafeImpactSpeed": 750,
         "OnComponentDestroy": null,
@@ -246,6 +259,11 @@
         "Right": {
           "Action": "Right"
         },
+        "RightFoot": null,
+        "RightHand": {
+          "_type": "gameobject",
+          "go": "b3d777f5-0467-48a2-a56e-7ad579a82192"
+        },
         "Seat": {
           "_type": "component",
           "component_id": "ed9bb092-2170-409f-aa65-9a2d1e84591d",
@@ -273,6 +291,7 @@
         },
         "SteeringWheelAngle": 90,
         "SteeringWheelAxis": "-0.939999998,0,0.342000008",
+        "TiltPivot": null,
         "WheelObstacleCollisions": true
       },
       {
@@ -1015,7 +1034,44 @@
             "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
-            "Children": []
+            "Children": [
+              {
+                "__guid": "2af41e37-908c-4618-97eb-8bcdfb9acdcf",
+                "__version": 2,
+                "Flags": 0,
+                "Name": "Hand L Position",
+                "Position": "-1.44646168,8.24333096,2.73498631",
+                "Rotation": "0.500041544,0.353521466,-0.500000417,0.612356782",
+                "Scale": "1,1,1",
+                "Tags": "",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "NetworkFlags": 0,
+                "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
+                "OwnerTransfer": 1,
+                "Components": [],
+                "Children": []
+              },
+              {
+                "__guid": "b3d777f5-0467-48a2-a56e-7ad579a82192",
+                "__version": 2,
+                "Flags": 0,
+                "Name": "Hand R Position",
+                "Position": "-2.32194424,-6.42892218,3.36539912",
+                "Rotation": "0.499975681,0.353577495,-0.500009,0.612370968",
+                "Scale": "1,1,1",
+                "Tags": "",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "NetworkFlags": 0,
+                "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
+                "OwnerTransfer": 1,
+                "Components": [],
+                "Children": []
+              }
+            ]
           },
           {
             "__guid": "8c0b01a4-1e66-4846-8b1d-b9e83b3fac07",
@@ -1246,6 +1302,24 @@
             "Name": "pedal_clutch",
             "Position": "0,0,0",
             "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
+          },
+          {
+            "__guid": "755735d1-3804-45b7-ace4-18c7a15425ca",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "Hand Horn Position",
+            "Position": "8.62451267,13.1204433,41.3775406",
+            "Rotation": "0,-0.382683456,0,0.923879504",
             "Scale": "1,1,1",
             "Tags": "",
             "Enabled": true,
