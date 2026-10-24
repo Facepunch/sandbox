@@ -17,7 +17,8 @@ SpawnMenu .container
 {
     flex-direction: row;
     width: 100%;
-    max-width: 1920px;
+    max-width: 80%;
+    min-width: 1280px;
     height: 100%;
     padding-top: 54px;
     padding-bottom: 83px;
