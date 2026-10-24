@@ -20,13 +20,20 @@ public sealed class DamageInstigators : GameObjectSystem<DamageInstigators>
 	/// </summary>
 	public const float ThrowMemory = 5f;
 
+	sealed class Handle
+	{
+		public Player Player;
+		public RealTimeSince Since;
+		public Vector3 Velocity;
+	}
+
 	// kept where the body is simulated, since that's where its impact damage happens
-	readonly Dictionary<GameObject, (Player Player, RealTimeSince Since)> _handled = new();
+	readonly Dictionary<GameObject, Handle> _handled = new();
 	readonly List<GameObject> _expired = new();
 
 	public DamageInstigators( Scene scene ) : base( scene )
 	{
-		Listen( Stage.StartFixedUpdate, 0, PruneHandled, "PruneDamageInstigators" );
+		Listen( Stage.StartFixedUpdate, 0, UpdateHandled, "UpdateDamageInstigators" );
 	}
 
 	/// <summary>
@@ -37,7 +44,17 @@ public sealed class DamageInstigators : GameObjectSystem<DamageInstigators>
 		if ( !go.IsValid() || !player.IsValid() ) return;
 		if ( Current is not { } system ) return;
 
-		system._handled[go.Root] = (player, 0);
+		if ( !system._handled.TryGetValue( go.Root, out var handle ) )
+			system._handled[go.Root] = handle = new Handle();
+
+		handle.Player = player;
+		handle.Since = 0;
+	}
+
+	public static Vector3? GetThrownVelocity( GameObject go )
+	{
+		if ( !go.IsValid() || Current is not { } system ) return null;
+		return system._handled.TryGetValue( go.Root, out var handle ) && handle.Since < ThrowMemory ? handle.Velocity : null;
 	}
 
 	public static Player Find( in DamageInfo damage )
@@ -94,12 +111,17 @@ public sealed class DamageInstigators : GameObjectSystem<DamageInstigators>
 		return handled.Since < ThrowMemory && handled.Player.IsValid() ? handled.Player : null;
 	}
 
-	void PruneHandled()
+	void UpdateHandled()
 	{
 		foreach ( var (go, handled) in _handled )
 		{
 			if ( !go.IsValid() || !handled.Player.IsValid() || handled.Since > ThrowMemory )
+			{
 				_expired.Add( go );
+				continue;
+			}
+
+			handled.Velocity = go.GetComponent<Rigidbody>()?.Velocity ?? default;
 		}
 
 		foreach ( var go in _expired )

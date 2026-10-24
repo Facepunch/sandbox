@@ -68,7 +68,7 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 	/// Spawns a networked ragdoll prop at the NPC's current position, copying the renderer and clothing,
 	/// and optionally applies a launch velocity from the attacker. Host only.
 	/// </summary>
-	protected void CreateRagdoll( Vector3 velocity, Vector3 origin, float duration = 30 )
+	protected void CreateRagdoll( Vector3 velocity, Vector3 origin, float duration = 30, float propMass = 0 )
 	{
 		if ( IsProxy )
 			return;
@@ -121,7 +121,7 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 		if ( physics.IsValid() )
 		{
 			physics.CopyBonesFrom( Renderer, true );
-			ApplyRagdollForce( physics, velocity, origin );
+			RagdollPush.Apply( physics, velocity, origin, propMass );
 		}
 
 		go.NetworkSpawn( true, null );
@@ -132,76 +132,9 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 		prop.Invoke( duration, prop.DestroyGameObject );
 	}
 
-	void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
-	{
-		if ( !physics.IsValid() ) return;
-		if ( force.Length < 1 ) return;
+	protected Vector3 GetAttackerVelocity( GameObject attacker ) => RagdollPush.GetAttackerVelocity( attacker );
 
-		foreach ( var body in physics.Bodies )
-		{
-			var rb = body.Component;
-			if ( !rb.IsValid() ) continue;
-			rb.ApplyImpulse( Vector3.Direction( origin, rb.WorldPosition ) * force.Length * rb.Mass );
-		}
-	}
-
-	/// <summary>
-	/// Resolves the attacker's current velocity from whatever movement source it has.
-	/// </summary>
-	protected Vector3 GetAttackerVelocity( GameObject attacker )
-	{
-		if ( !attacker.IsValid() )
-			return Vector3.Zero;
-
-		if ( attacker.GetComponent<Rigidbody>() is { } rb )
-			return rb.Velocity;
-
-		return Vector3.Zero;
-	}
-
-	/// <summary>
-	/// How hard a melee kill knocks the body - a solid whack, not a launch.
-	/// </summary>
-	private const float MeleeKnockback = 200f;
-
-	/// <summary>
-	/// Calculates the launch velocity for a ragdoll based on the damage source.
-	/// For explosions, uses the direction from the blast origin to this NPC. Bullets push along the
-	/// shot by the weapon's ballistic force, melee gives a shove along the swing.
-	/// Otherwise, falls back to the attacker's physical velocity.
-	/// </summary>
-	protected Vector3 GetDeathLaunchVelocity( in DamageInfo damage )
-	{
-		if ( damage.Tags.Contains( DamageTags.Explosion ) && damage.Origin != Vector3.Zero )
-		{
-
-			var dist = (WorldPosition - damage.Origin).Length;
-			var strength = MathX.Remap( dist, 0, 512, 500, 1500 ).Clamp( 500, 1500 );
-
-			var dir = (WorldPosition - damage.Origin).Normal;
-			dir += Vector3.Up * 1.0f;
-			dir = dir.Normal;
-
-			return dir * strength;
-		}
-
-		// Only guns use their ballistics - melee weapons carry an unused ballistic config (the crowbar's
-		// says 3000) that would throw the body across the map
-		var weapon = damage.Weapon?.GetComponent<BaseCombatWeapon>();
-		var force = weapon switch
-		{
-			MeleeWeapon => MeleeKnockback,
-			BaseBulletWeapon bullets => bullets.Ballistics.Force,
-			_ => 0f,
-		};
-
-		if ( force > 0 && damage.Position != damage.Origin )
-		{
-			return Vector3.Direction( damage.Origin, damage.Position ) * force;
-		}
-
-		return GetAttackerVelocity( damage.Attacker );
-	}
+	protected Vector3 GetDeathLaunchVelocity( in DamageInfo damage ) => RagdollPush.GetVelocity( damage, GameObject, 500, 1500, out _ );
 
 	/// <summary>
 	/// Base damage handling: subtract health, let the subclass react via <see cref="OnHurt"/>,
@@ -241,7 +174,8 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 		EmitStimulus( StimulusKind.Death, radius: 1024f, lifetime: 2f );
 
 		GameManager.Current?.OnNpcDeath( this, damage );
-		CreateRagdoll( GetDeathLaunchVelocity( damage ), damage.Origin );
+		var velocity = RagdollPush.GetVelocity( damage, GameObject, 500, 1500, out var propMass );
+		CreateRagdoll( velocity, damage.Origin, propMass: propMass );
 		GameObject.Destroy();
 	}
 }
