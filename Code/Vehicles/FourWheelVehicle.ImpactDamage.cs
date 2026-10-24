@@ -21,6 +21,9 @@ public sealed partial class FourWheelVehicle : Component.ICollisionListener
 
 	void ICollisionListener.OnCollisionStart( Collision collision )
 	{
+		var other = collision.Other.GameObject;
+		if ( other.IsValid() && (other.Tags.Has( "player" ) || other.Tags.Has( "playercontroller" )) ) return;
+
 		ReportImpact( MathF.Abs( collision.Contact.NormalSpeed ), collision.Contact.Point );
 	}
 
