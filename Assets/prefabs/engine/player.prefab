@@ -64,6 +64,7 @@
         "BrakePower": 1.25,
         "CameraCollisionIgnore": "",
         "CameraOffset": "96,0,-4",
+        "CastShadowsInFirstPerson": true,
         "ColliderObject": {
           "_type": "gameobject",
           "go": "3dc9b5dd-44a4-4ac8-a4cb-2a632afbc3f3"
@@ -80,7 +81,7 @@
           "Id": "2d9828d0-7984-4843-b6b2-22d4336497d5"
         },
         "FootstepVolume": 2,
-        "HideBodyInFirstPerson": true,
+        "HideBodyInFirstPerson": false,
         "JumpSpeed": 300,
         "LookSensitivity": 1,
         "OnComponentDestroy": null,
@@ -102,6 +103,7 @@
         "RotationSpeed": 1,
         "RunByDefault": false,
         "RunSpeed": 475,
+        "ShowArmsInFirstPerson": false,
         "ShowColliderComponents": true,
         "ShowRigidbodyComponent": true,
         "ThirdPerson": false,
@@ -109,6 +111,7 @@
         "UseAnimatorControls": true,
         "UseButton": "use",
         "UseCameraControls": true,
+        "UseFirstPersonAnimation": true,
         "UseFovFromPreferences": true,
         "UseInputControls": true,
         "UseLookControls": true,
@@ -3122,7 +3125,7 @@
             "Children": []
           },
           {
-            "__guid": "b70e599e-7a69-486b-b8fc-4d99024e1e7f",
+            "__guid": "850ad1d9-ad33-4d7c-965f-263ef876984c",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - y_front_pants_white",
@@ -3139,7 +3142,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "7e3889d5-51b8-431f-a1bf-0a635fdcb863",
+                "__guid": "05680a8a-e567-4c5e-b913-b637135c623f",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
