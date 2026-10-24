@@ -798,7 +798,7 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( _launched ) return;
 
 		_held = _state.GameObject;
-		DamageInstigators.Handled( _held, Owner );
+		DamageBlame.Blame( _held, Owner );
 		_hold.Hold( _state.Body, _state.EndPoint );
 		_hold.Move( IsProxy ? ClampToRange( _holdTarget ) : GetHoldTarget() );
 	}
@@ -1024,7 +1024,7 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( _launched ) return;
 
 		_hold.Release();
-		DamageInstigators.Handled( body.GameObject, Owner );
+		DamageBlame.Blame( body.GameObject, Owner );
 
 		var mass = body.Mass;
 		body.ApplyImpulse( force.Normal * (mass * force.Length) );

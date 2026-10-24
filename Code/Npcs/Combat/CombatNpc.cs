@@ -488,14 +488,15 @@ public class CombatNpc : Npc, Component.IPressable
 
 	protected override void OnHurt( in DamageInfo damage )
 	{
-		if ( damage.Attacker.IsValid() )
+		var attacker = GetAttacker( damage );
+		if ( attacker.IsValid() )
 		{
 			// Turn on whoever hurt us, even a former ally, and prioritise them as a target.
 			// This is the runtime "turn nasty" path the crime/aggro systems reuse.
-			SetDisposition( damage.Attacker, Disposition.Hostile, priority: 10 );
+			SetDisposition( attacker, Disposition.Hostile, priority: 10 );
 
 			// You can tell which way the shot came from -- go after whoever fired it.
-			RememberHostile( damage.Attacker.WorldPosition, SensesLayer.GetVelocity( damage.Attacker ) );
+			RememberHostile( attacker.WorldPosition, SensesLayer.GetVelocity( attacker ) );
 		}
 
 		if ( Health >= 1f && Speech.CanSpeak && Game.Random.Float() < 0.5f )

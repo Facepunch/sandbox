@@ -29,7 +29,7 @@ public static partial class ServerSettings
 	public static bool AllowGodMode { get; set; } = false;
 
 	/// <summary>
-	/// See DamageInstigators for how damage is traced back to a player.
+	/// See DamageBlame for how damage is traced back to a player.
 	/// </summary>
 	[Title( "Allow PvP" )]
 	[Group( "Gameplay" ), Section( "Players" ), Order( 1 )]

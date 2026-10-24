@@ -1,19 +1,19 @@
 /// <summary>
 /// Put this on something that acts for a player, like a vehicle for its driver, so its damage counts as theirs.
 /// </summary>
-public interface IDamageInstigator
+public interface IDamageBlame
 {
 	/// <summary>
 	/// Return null if nobody is responsible right now.
 	/// </summary>
-	Player Instigator { get; }
+	Player Player { get; }
 }
 
 /// <summary>
 /// Finds the player behind a piece of damage, like the shooter, the driver or whoever threw the prop.
 /// Null for the world, NPCs and unowned props.
 /// </summary>
-public sealed class DamageInstigators : GameObjectSystem<DamageInstigators>
+public sealed class DamageBlame : GameObjectSystem<DamageBlame>
 {
 	/// <summary>
 	/// How long a prop still counts as thrown after it's let go.
@@ -31,15 +31,15 @@ public sealed class DamageInstigators : GameObjectSystem<DamageInstigators>
 	readonly Dictionary<GameObject, Handle> _handled = new();
 	readonly List<GameObject> _expired = new();
 
-	public DamageInstigators( Scene scene ) : base( scene )
+	public DamageBlame( Scene scene ) : base( scene )
 	{
-		Listen( Stage.StartFixedUpdate, 0, UpdateHandled, "UpdateDamageInstigators" );
+		Listen( Stage.StartFixedUpdate, 0, UpdateHandled, "UpdateDamageBlame" );
 	}
 
 	/// <summary>
 	/// Call every tick while a player holds or throws something, on the machine that simulates it.
 	/// </summary>
-	public static void Handled( GameObject go, Player player )
+	public static void Blame( GameObject go, Player player )
 	{
 		if ( !go.IsValid() || !player.IsValid() ) return;
 		if ( Current is not { } system ) return;
@@ -76,10 +76,10 @@ public sealed class DamageInstigators : GameObjectSystem<DamageInstigators>
 	{
 		if ( !go.IsValid() ) return null;
 
-		foreach ( var source in go.GetComponentsInParent<IDamageInstigator>() )
+		foreach ( var source in go.GetComponentsInParent<IDamageBlame>() )
 		{
-			if ( source.Instigator is { } instigator && instigator.IsValid() )
-				return instigator;
+			if ( source.Player is { } player && player.IsValid() )
+				return player;
 		}
 
 		return Current?.FindHandled( go );

@@ -81,7 +81,7 @@ public static class RagdollPush
 
 	static Vector3? GetImpactVelocity( in DamageInfo damage, Vector3 position, Rigidbody prop )
 	{
-		if ( DamageInstigators.GetThrownVelocity( prop.GameObject ) is { } thrown )
+		if ( DamageBlame.GetThrownVelocity( prop.GameObject ) is { } thrown )
 			return thrown;
 
 		// nobody threw it, so push away from where it hit, with the speed from the engine's impact damage formula

@@ -1,6 +1,6 @@
-public sealed partial class FourWheelVehicle : Component.ICollisionListener, IDamageInstigator
+public sealed partial class FourWheelVehicle : Component.ICollisionListener, IDamageBlame
 {
-	Player IDamageInstigator.Instigator => Seat?.GetOccupant()?.GetComponent<Player>();
+	Player IDamageBlame.Player => Seat?.GetOccupant()?.GetComponent<Player>();
 
 	/// <summary>
 	/// Multiplies crash damage to the driver. Zero disables impact damage.
