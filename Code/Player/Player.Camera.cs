@@ -20,6 +20,11 @@ public sealed partial class Player : ICameraModifier
 
 	private float roll;
 
+	// The controller's first person body settings from before we sat down, restored when we get up.
+	private bool? _hideBodyBeforeSeat;
+	private bool _showArmsBeforeSeat;
+	private bool _firstPersonAnimBeforeSeat;
+
 	void PlayerController.IEvents.OnEyeAngles( ref Angles ang )
 	{
 		var angles = ang;
@@ -53,6 +58,7 @@ public sealed partial class Player : ICameraModifier
 
 		ApplyMovementCameraEffects( ref view );
 		ApplySeatedCameraSetup( ref view );
+		ApplySeatedFirstPersonLean( ref view );
 
 		BridgeCameraEvent( camera, ref view, c => Local.IPlayerEvents.Post( x => x.OnCameraPostSetup( c ) ) );
 	}
@@ -101,6 +107,49 @@ public sealed partial class Player : ICameraModifier
 			_seatCameraInitialized = false;
 			RebuildSeatedWeapons( (seat as Component).GameObject );
 		}
+	}
+
+	/// <summary>
+	/// Show the player's arms in first person while seated, so hands IK'd to a steering wheel
+	/// or controls are visible. The head stays hidden.
+	/// </summary>
+	private void UpdateSeatedBodyVisibility()
+	{
+		if ( !Controller.IsValid() ) return;
+
+		if ( IsSeated )
+		{
+			if ( _hideBodyBeforeSeat is null )
+			{
+				_hideBodyBeforeSeat = Controller.HideBodyInFirstPerson;
+				_showArmsBeforeSeat = Controller.ShowArmsInFirstPerson;
+				_firstPersonAnimBeforeSeat = Controller.UseFirstPersonAnimation;
+			}
+
+			Controller.HideBodyInFirstPerson = false;
+			Controller.ShowArmsInFirstPerson = true;
+			// The first person pose leans the back into the seat - use the normal seated pose.
+			Controller.UseFirstPersonAnimation = false;
+		}
+		else if ( _hideBodyBeforeSeat is { } hideBody )
+		{
+			Controller.HideBodyInFirstPerson = hideBody;
+			Controller.ShowArmsInFirstPerson = _showArmsBeforeSeat;
+			Controller.UseFirstPersonAnimation = _firstPersonAnimBeforeSeat;
+			_hideBodyBeforeSeat = null;
+		}
+	}
+
+	/// <summary>
+	/// Vehicles lean the driver's body over the wheel. Lean the first person camera with it so it stays in the head.
+	/// </summary>
+	private void ApplySeatedFirstPersonLean( ref CameraView view )
+	{
+		if ( Controller.ThirdPerson || _cachedSeat is not Component seat ) return;
+
+		var vehicle = seat.GetComponentInParent<FourWheelVehicle>();
+		if ( vehicle.IsValid() )
+			view.Position = vehicle.LeanEyePosition( this, view.Position );
 	}
 
 	private void ApplySeatedCameraSetup( ref CameraView view )

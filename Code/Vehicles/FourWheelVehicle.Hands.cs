@@ -80,6 +80,21 @@ public sealed partial class FourWheelVehicle
 	private float _lastYaw;
 	private bool _hasLastYaw;
 
+	// The lean last applied to the driver's body, so the first person camera can lean with it.
+	private Vector3 _leanPivot;
+	private Rotation _lean = Rotation.Identity;
+	private bool _hasLean;
+
+	/// <summary>
+	/// Carry a first person eye position along with the driver's lean. The seat's eye is placed for an upright body,
+	/// so without this the body tilts forward out from under the camera and it ends up inside the chest.
+	/// </summary>
+	public Vector3 LeanEyePosition( Player player, Vector3 eye )
+	{
+		if ( !_hasLean || player != _driver ) return eye;
+		return _leanPivot + _lean * (eye - _leanPivot);
+	}
+
 	protected override void OnDisabled() => ReleaseHands();
 	protected override void OnDestroy() => ReleaseHands();
 
@@ -183,6 +198,14 @@ public sealed partial class FourWheelVehicle
 			var tilt = Rotation.FromAxis( WorldRotation.Forward, _sway ) * Rotation.FromAxis( WorldRotation.Left, DriverTilt );
 
 			body.WorldTransform = new global::Transform( pivot + tilt * (root.Position - pivot), tilt * root.Rotation, body.WorldScale );
+
+			_leanPivot = pivot;
+			_lean = tilt;
+			_hasLean = true;
+		}
+		else
+		{
+			_hasLean = false;
 		}
 
 		SetDriverIk( _handsRenderer );
@@ -250,6 +273,7 @@ public sealed partial class FourWheelVehicle
 		_sway = 0;
 		_swayVelocity = 0;
 		_hasLastYaw = false;
+		_hasLean = false;
 	}
 }
 
