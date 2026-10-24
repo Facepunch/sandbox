@@ -164,6 +164,10 @@
         "Boost": {
           "Action": "Run"
         },
+        "BrakeFoot": {
+          "_type": "gameobject",
+          "go": "5a17e021-7fff-406b-a69e-aa9abc1b421f"
+        },
         "ClutchShiftTime": 0.3,
         "DrawDebug": false,
         "DriverTilt": 15,
@@ -191,6 +195,8 @@
           "BoostLowSpeedFactor": 1
         },
         "FatalImpactSpeed": 1400,
+        "FootLift": 2.5,
+        "FootSwitchTime": 0.15,
         "Forward": {
           "Action": "Forward"
         },
@@ -226,12 +232,16 @@
         "Left": {
           "Action": "Left"
         },
-        "LeftFoot": null,
+        "LeftFoot": {
+          "_type": "gameobject",
+          "go": "49bac6cb-ed8b-4cf8-972a-dbc5a60c925a"
+        },
         "LeftHand": {
           "_type": "gameobject",
           "go": "2af41e37-908c-4618-97eb-8bcdfb9acdcf"
         },
         "MaxSafeImpactSpeed": 750,
+        "MaxSway": 10,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -259,7 +269,10 @@
         "Right": {
           "Action": "Right"
         },
-        "RightFoot": null,
+        "RightFoot": {
+          "_type": "gameobject",
+          "go": "9d774757-e3eb-4b67-b277-3bced0970ba1"
+        },
         "RightHand": {
           "_type": "gameobject",
           "go": "b3d777f5-0467-48a2-a56e-7ad579a82192"
@@ -291,6 +304,9 @@
         },
         "SteeringWheelAngle": 90,
         "SteeringWheelAxis": "-0.939999998,0,0.342000008",
+        "SwayDamping": 7,
+        "SwayFullAcceleration": 600,
+        "SwayStiffness": 60,
         "TiltPivot": null,
         "WheelObstacleCollisions": true
       },
@@ -1275,7 +1291,26 @@
             "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
-            "Children": []
+            "Children": [
+              {
+                "__guid": "5a17e021-7fff-406b-a69e-aa9abc1b421f",
+                "__version": 2,
+                "Flags": 0,
+                "Name": "Foot Brake",
+                "Position": "8.06564903,-1.31410825,10.54533",
+                "Rotation": "0.612453103,0.353426069,-0.353541285,0.612372756",
+                "Scale": "1,1,1",
+                "Tags": "",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "NetworkFlags": 0,
+                "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
+                "OwnerTransfer": 1,
+                "Components": [],
+                "Children": []
+              }
+            ]
           },
           {
             "__guid": "aabb8e13-c5cd-448e-ba29-627f50beea76",
@@ -1293,7 +1328,26 @@
             "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
-            "Children": []
+            "Children": [
+              {
+                "__guid": "9d774757-e3eb-4b67-b277-3bced0970ba1",
+                "__version": 2,
+                "Flags": 0,
+                "Name": "Foot Gas",
+                "Position": "6.63449383,-2.03094268,9.69692707",
+                "Rotation": "0.61236459,0.353574306,-0.353528798,0.612383306",
+                "Scale": "1,1,1",
+                "Tags": "",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "NetworkFlags": 0,
+                "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
+                "OwnerTransfer": 1,
+                "Components": [],
+                "Children": []
+              }
+            ]
           },
           {
             "__guid": "8021ec05-8ad1-490c-a60e-595ecfef6423",
@@ -1311,7 +1365,26 @@
             "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
-            "Children": []
+            "Children": [
+              {
+                "__guid": "49bac6cb-ed8b-4cf8-972a-dbc5a60c925a",
+                "__version": 2,
+                "Flags": 0,
+                "Name": "Foot Clutch",
+                "Position": "6.1118269,0.00200998783,9.38729668",
+                "Rotation": "0.612353623,0.353578568,-0.353537619,0.61238569",
+                "Scale": "1,1,1",
+                "Tags": "",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "NetworkFlags": 0,
+                "NetworkOrphaned": 0,
+                "NetworkTransmit": true,
+                "OwnerTransfer": 1,
+                "Components": [],
+                "Children": []
+              }
+            ]
           },
           {
             "__guid": "755735d1-3804-45b7-ace4-18c7a15425ca",

@@ -33,10 +33,37 @@ public sealed partial class FourWheelVehicle
 	[Property, Group( "Driver Hands" )] public float HornHandPose { get; set; } = 1f;
 
 	/// <summary>
-	/// Optional foot targets. With the body tilted, the legs swing down too - these hold the feet where they belong.
+	/// Foot targets, where each foot rests on its pedal (at the ankle, the way IK places it). Under the pedal's bone or
+	/// anywhere else - riding on the pedal is undone, the foot works it itself (<see cref="PedalFoot"/>). The left foot
+	/// only goes to the clutch while it's in, and is left to the animation otherwise. The right foot rests on the gas
+	/// and moves across to <see cref="BrakeFoot"/> while braking, staying on whichever it last pressed.
 	/// </summary>
-	[Property, Group( "Driver Hands" )] public GameObject LeftFoot { get; set; }
-	[Property, Group( "Driver Hands" )] public GameObject RightFoot { get; set; }
+	[Property, Group( "Driver Feet" ), Title( "Clutch Foot" )] public GameObject LeftFoot { get; set; }
+	[Property, Group( "Driver Feet" ), Title( "Gas Foot" )] public GameObject RightFoot { get; set; }
+	[Property, Group( "Driver Feet" )] public GameObject BrakeFoot { get; set; }
+
+	/// <summary>
+	/// Pressing a pedal, the foot pivots about its heel - the heel stays on the floor and the toes tip down this many
+	/// degrees with the pedal all the way in.
+	/// </summary>
+	[Property, Group( "Driver Feet" ), Range( 0, 60 )] public float FootPressAngle { get; set; } = 20f;
+
+	/// <summary>
+	/// Where the heel is from a foot target, inches, along the car (forward, left, up) - what the foot pivots about.
+	/// </summary>
+	[Property, Group( "Driver Feet" )] public Vector3 FootHeelOffset { get; set; } = new( -2f, 0f, -3f );
+
+	/// <summary>
+	/// How far in the clutch has to be before the left foot goes to it, 0 to 1.
+	/// </summary>
+	[Property, Group( "Driver Feet" ), Range( 0, 1 )] public float ClutchFootThreshold { get; set; } = 0.1f;
+
+	/// <summary>
+	/// How long the right foot takes to move between the gas and the brake, seconds, and how far it lifts on the way
+	/// over, inches.
+	/// </summary>
+	[Property, Group( "Driver Feet" )] public float FootSwitchTime { get; set; } = 0.15f;
+	[Property, Group( "Driver Feet" )] public float FootLift { get; set; } = 2.5f;
 
 	/// <summary>
 	/// How far the driver's whole body tilts forward towards the wheel, degrees, about <see cref="TiltPivot"/>.
@@ -74,6 +101,8 @@ public sealed partial class FourWheelVehicle
 	private VehicleSounds _sounds;
 	private float _hornHand;
 	private bool _palmOpen;
+
+	private float _footOnBrake;
 
 	private float _sway;
 	private float _swayVelocity;
@@ -129,6 +158,11 @@ public sealed partial class FourWheelVehicle
 		_palmOpen = _hornHand > 0.5f;
 
 		UpdateSway();
+
+		// the right foot goes to whichever pedal's being pressed, and stays on the last one when neither is
+		var footTarget = _brakePedal > 0.05f ? 1f : _gasPedal > 0.05f ? 0f : (_footOnBrake > 0.5f ? 1f : 0f);
+		if ( !BrakeFoot.IsValid() ) footTarget = 0;
+		_footOnBrake = _footOnBrake.Approach( footTarget, Time.Delta / MathF.Max( FootSwitchTime, 0.001f ) );
 	}
 
 	/// <summary>
@@ -138,8 +172,8 @@ public sealed partial class FourWheelVehicle
 	private void SetDriverIk( SkinnedModelRenderer renderer )
 	{
 		SetIk( renderer, LeftHandIk, LeftHand );
-		SetIk( renderer, LeftFootIk, LeftFoot );
-		SetIk( renderer, RightFootIk, RightFoot );
+		SetLeftFootIk( renderer );
+		SetRightFootIk( renderer );
 
 		var right = RightHand.IsValid() ? RightHand.WorldTransform : (global::Transform?)null;
 		if ( HornHand.IsValid() && _hornHand > 0 )
@@ -173,6 +207,80 @@ public sealed partial class FourWheelVehicle
 
 		_swayVelocity += ((target - _sway) * SwayStiffness - _swayVelocity * SwayDamping) * dt;
 		_sway = (_sway + _swayVelocity * dt).Clamp( -MaxSway * 1.5f, MaxSway * 1.5f );
+	}
+
+	/// <summary>
+	/// The right foot, on the gas or the brake, or part way between them lifted off the floor in an arc.
+	/// </summary>
+	private void SetRightFootIk( SkinnedModelRenderer renderer )
+	{
+		var rig = GetRig();
+		var gas = RightFoot.IsValid() ? PedalFoot( RightFoot, rig?.GasPedal ?? -1, _gasPedal ) : (global::Transform?)null;
+		var brake = BrakeFoot.IsValid() ? PedalFoot( BrakeFoot, rig?.BrakePedal ?? -1, _brakePedal ) : (global::Transform?)null;
+
+		if ( gas is null && brake is null )
+		{
+			renderer.ClearIk( RightFootIk );
+			return;
+		}
+
+		var from = gas ?? brake.Value;
+		var to = brake ?? from;
+		var t = _footOnBrake * _footOnBrake * (3 - 2 * _footOnBrake); // ease in and out
+		var lift = WorldRotation.Up * (MathF.Sin( t * MathF.PI ) * FootLift * VehicleScale);
+
+		renderer.SetIk( RightFootIk, new global::Transform(
+			Vector3.Lerp( from.Position, to.Position, t ) + lift,
+			Rotation.Slerp( from.Rotation, to.Rotation, t ) ) );
+	}
+
+	/// <summary>
+	/// The left foot works the clutch while it's in, and otherwise sits however the animation has it.
+	/// </summary>
+	private void SetLeftFootIk( SkinnedModelRenderer renderer )
+	{
+		if ( !LeftFoot.IsValid() || _clutchPedal < ClutchFootThreshold )
+		{
+			renderer.ClearIk( LeftFootIk );
+			return;
+		}
+
+		renderer.SetIk( LeftFootIk, PedalFoot( LeftFoot, GetRig()?.ClutchPedal ?? -1, _clutchPedal ) );
+	}
+
+	/// <summary>
+	/// A foot working a pedal pushed in by <paramref name="amount"/> (0 to 1). From where the target has it resting -
+	/// first undoing the pedal's swing if the target rides on the pedal (<see cref="PushPedal"/> swings it about its
+	/// bone, across the car) - the foot pivots about its heel, so the heel stays put and the toes tip down onto the
+	/// pedal.
+	/// </summary>
+	private global::Transform PedalFoot( GameObject target, int pedalBone, float amount )
+	{
+		var foot = target.WorldTransform;
+		var hinge = WorldRotation.Left;
+
+		var pedal = pedalBone >= 0 && _renderer.IsValid() ? _renderer.GetBoneObject( pedalBone ) : null;
+		if ( pedal.IsValid() && IsUnder( target, pedal ) )
+			foot = RotateAbout( foot, pedal.WorldPosition, Rotation.FromAxis( hinge, -amount * PedalTravel ) );
+
+		// positive about the car's left tips the toes down
+		var heel = foot.Position + WorldRotation * (FootHeelOffset * VehicleScale);
+		return RotateAbout( foot, heel, Rotation.FromAxis( hinge, amount * FootPressAngle ) );
+	}
+
+	private static global::Transform RotateAbout( global::Transform tx, Vector3 pivot, Rotation rotation )
+	{
+		return new global::Transform( pivot + rotation * (tx.Position - pivot), rotation * tx.Rotation, tx.Scale );
+	}
+
+	private static bool IsUnder( GameObject child, GameObject parent )
+	{
+		for ( var go = child.Parent; go.IsValid(); go = go.Parent )
+		{
+			if ( go == parent ) return true;
+		}
+
+		return false;
 	}
 
 	private static void SetIk( SkinnedModelRenderer renderer, string ik, GameObject target )
@@ -270,6 +378,7 @@ public sealed partial class FourWheelVehicle
 		_handsRenderer = null;
 		_hornHand = 0;
 		_palmOpen = false;
+		_footOnBrake = 0;
 		_sway = 0;
 		_swayVelocity = 0;
 		_hasLastYaw = false;
