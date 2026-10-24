@@ -1,17 +1,22 @@
 @import "/UI/Theme.scss";
 
-// the window of saves and effects in the top left of the inspect menu.
+// a window of tabbed pages in a corner of the inspect menu
 InspectWindow
 {
 	@include ui-block;
 	position: absolute;
-	top: calc( $deadzone-y + 26px ); // under the settings bar of the inspect menu
-	left: $deadzone-x;
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 8px;
 	pointer-events: all;
 	z-index: 200;
+
+	// saves and effects
+	&.top-left
+	{
+		top: calc( $deadzone-y + 26px ); // under the settings bar of the inspect menu
+		left: $deadzone-x;
+	}
 
 	> .tabs
 	{
@@ -25,16 +30,11 @@ InspectWindow
 
 	> .tabs > .tab
 	{
-		@include ui-tab;
-		border: 1px solid $ui-tab-border;
-		border-radius: 2px;
+		@include ui-tab-button;
 
 		// the open one, clicking it again collapses the window
 		&.active
 		{
-			height: 24px;
-			padding-top: 0px;
-			border: 1px solid $ui-block-border;
 			pointer-events: all;
 
 			&:hover
@@ -60,5 +60,37 @@ InspectWindow
 	&.collapsed > .body
 	{
 		display: none;
+	}
+
+	// the inspected object and the tool options, tabs go under the page and the page fills the window
+	&.bottom-right
+	{
+		right: $deadzone-x;
+		bottom: $deadzone-y;
+		flex-direction: column-reverse;
+		align-items: flex-end;
+		max-height: 50%;
+
+		> .tabs
+		{
+			justify-content: flex-end;
+		}
+
+		> .body
+		{
+			flex-grow: 1;
+			width: 500px;
+
+			> *
+			{
+				flex-grow: 1;
+				min-height: 0px;
+			}
+		}
+
+		&:not(.collapsed)
+		{
+			min-height: 450px;
+		}
 	}
 }

@@ -318,6 +318,21 @@ $ui-section-gap: 20px;
 	pointer-events: none;
 }
 
+// a tab drawn as a button of its own instead of joining the block under it, like the tabs of the inspect menu windows
+@mixin ui-tab-button
+{
+	@include ui-tab;
+	border: 1px solid $ui-tab-border;
+	border-radius: 2px;
+
+	&.active
+	{
+		height: 24px;
+		padding-top: 0px;
+		border: 1px solid $ui-block-border;
+	}
+}
+
 // the description strip that slides down from the top of a card on hover for UICardDescription
 @mixin ui-card-description
 {

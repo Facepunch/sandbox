@@ -19,15 +19,41 @@
 @code
 {
     /// <summary>
-    /// Puts a panel in the window at the top left of the inspect menu, under a tab of its own, can be implemented this way:
+    /// Which window of the inspect menu a tab goes in.
+    /// </summary>
+    public enum Corner
+    {
+        /// <summary>
+        /// Saves and effects, under the settings bar.
+        /// </summary>
+        TopLeft,
+
+        /// <summary>
+        /// The inspected object and the tool options, with the tabs under the page.
+        /// </summary>
+        BottomRight
+    }
+
+    /// <summary>
+    /// Puts a panel in one of the inspect menu windows, under a tab of its own, can be implemented this way:
     /// <code>
     /// [InspectWindow.Tab, Title( "My Tab" ), Order( 300 )]
     /// public class MyTab : Panel { }
+    ///
+    /// [InspectWindow.Tab( InspectWindow.Corner.BottomRight ), Title( "My Options" ), Order( 300 )]
+    /// public class MyOptions : Panel { }
     /// </code>
-    /// Tabs are sorted by [Order], then by title.
+    /// Tabs are sorted by [Order], then by title. Without a corner they go in the window at the top left.
     /// </summary>
     public class Tab : System.Attribute
     {
+        public Corner Corner { get; }
+
+        public Tab( Corner corner = Corner.TopLeft )
+        {
+            Corner = corner;
+        }
+
         public virtual bool CheckCondition() => true;
     }
 
@@ -36,11 +62,22 @@
     /// </summary>
     public class Tab<T> : Tab where T : SpawnMenuHost.ISpawnMenuCondition
     {
+        public Tab( Corner corner = Corner.TopLeft ) : base( corner ) { }
+
         public override bool CheckCondition() => T.IsVisible();
     }
 
+    /// <summary>
+    /// The tabs of this corner are the ones that go in this window.
+    /// </summary>
+    [Parameter] public Corner Placement { get; set; } = Corner.TopLeft;
+
     // the type of the open tab, or empty when the window was collapsed
-    const string CookieKey = "inspectmenu.tab";
+    string CookieKey => Placement switch
+    {
+        Corner.BottomRight => "inspectmenu.inspector.tab",
+        _ => "inspectmenu.tab"
+    };
 
     Panel Body = default;
 
@@ -59,6 +96,8 @@
         if ( _active is not null && !IsAvailable( _active ) )
             Show( _tabs.FirstOrDefault( IsAvailable ), false );
 
+        SetClass( "top-left", Placement == Corner.TopLeft );
+        SetClass( "bottom-right", Placement == Corner.BottomRight );
         SetClass( "collapsed", _active is null );
     }
 
@@ -69,7 +108,7 @@
     {
         if ( !Body.IsValid() ) return;
 
-        var types = Game.TypeLibrary.GetTypesWithAttribute<Tab>().Select( x => x.Type ).Where( x => !x.IsAbstract ).ToList();
+        var types = Game.TypeLibrary.GetTypesWithAttribute<Tab>().Where( x => x.Attribute.Corner == Placement ).Select( x => x.Type ).Where( x => !x.IsAbstract ).ToList();
         var changed = false;
 
         foreach ( var panel in _tabs.ToList() )

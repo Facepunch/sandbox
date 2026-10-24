@@ -7,21 +7,6 @@
 
 	<div class="canvas" @ref=_canvas></div>
 
-	<div class="inspector-panel @(_editors?.Any( e => e.WasVisible ) == true ? "" : "hidden")" @onmousedown="@WindowPress">
-		<div class="tab-bar">
-			@foreach ( var entry in _editors?.Where( e => e.WasVisible ) ?? [] )
-			{
-				var e = entry;
-				<div class="tab @( _active == e ? "active" : "" )" @onclick="@(() => SetActive( e ))">
-					@e.Editor.Title
-				</div>
-			}
-		</div>
-		<div class="window-frame">
-			<div class="window-stack" @ref=_windowStack></div>
-		</div>
-	</div>
-
 </root>
 
 @code
@@ -29,114 +14,14 @@
     public GameObject Hovered => hovered;
 
     Panel _canvas = default;
-    Panel _windowStack = default;
 
-    record EditorEntry( IInspectorEditor Editor )
-    {
-        public bool WasVisible { get; set; }
-    }
-    List<EditorEntry> _editors;
-    EditorEntry _active;
-
-    void InitEditors()
-    {
-        if ( _editors != null || _windowStack == null ) return;
-        _editors = new();
-
-        var types = TypeLibrary.GetTypesWithAttribute<InspectorEditorAttribute>()
-            .OrderByDescending( x => x.Type.GetAttribute<OrderAttribute>()?.Value ?? 0 )
-            .ThenBy( t => t.Attribute.Type is null ? 1 : 0 )
-            .ToList();
-
-        foreach ( var (typeDesc, attr) in types )
-        {
-            var editor = typeDesc.Create<IInspectorEditor>();
-            if ( editor is not Panel editorPanel ) continue;
-
-            editorPanel.AddClass( "window" );
-            editorPanel.SetClass( "hidden", true );
-            _windowStack.AddChild( editorPanel );
-
-            _editors.Add( new EditorEntry( editor ) );
-        }
-        StateHasChanged();
-    }
-
-    void AttachEditors()
-    {
-        if ( _windowStack == null ) return;
-
-        foreach ( var entry in _editors ?? [] )
-        {
-            if ( entry.Editor is Panel editorPanel )
-                _windowStack.AddChild( editorPanel );
-        }
-    }
-
-    void SetActive( EditorEntry entry )
-    {
-        _active = entry;
-        ApplyVisibility();
-        StateHasChanged();
-    }
-
-    void ApplyVisibility()
-    {
-        foreach ( var e in _editors )
-            (e.Editor as Panel)?.SetClass( "hidden", !( e.WasVisible && e == _active ) );
-    }
-
-    HashSet<GameObject> _lastSelected = new();
-
-    void UpdateEditors()
-    {
-        if ( _editors == null ) return;
-
-        bool changed = false;
-
-        foreach ( var entry in _editors )
-        {
-            bool visible = entry.Editor.TrySetTarget( _selected.ToList() );
-            if ( visible != entry.WasVisible ) changed = true;
-            entry.WasVisible = visible;
-        }
-
-        if ( !_lastSelected.SetEquals( _selected ) )
-        {
-            changed = true;
-            _lastSelected = _selected.ToHashSet();
-        }
-
-        if ( changed )
-        {
-            var visible = _editors.Where( e => e.WasVisible ).ToList();
-            if ( _active == null || !_active.WasVisible )
-                _active = visible.LastOrDefault();
-
-            ApplyVisibility();
-            StateHasChanged();
-        }
-    }
-
-    protected override int BuildHash() => HashCode.Combine( hovered, _selected.Count, _active );
+    protected override int BuildHash() => HashCode.Combine( hovered, _selected.Count );
 
     public override void Tick()
     {
         _selected.RemoveWhere( x => !x.IsValid() );
-        InitEditors();
-        UpdateEditors();
         UpdateHighlights();
         UpdateCursor();
-    }
-
-    protected override void OnAfterTreeRender( bool firstTime )
-    {
-        base.OnAfterTreeRender( firstTime );
-
-        if ( _editors == null ) return;
-
-        AttachEditors();
-        ApplyVisibility();
     }
 
     protected override void OnVisibilityChanged()
@@ -165,6 +50,8 @@
     GameObject hovered;
 
     HashSet<GameObject> _selected = new();
+
+    public IReadOnlyCollection<GameObject> Selected => _selected;
 
     void UpdateCursor()
     {
@@ -242,11 +129,6 @@
             _selected.Add( o );
         }
     }
-
-	void WindowPress( PanelEvent panelEvent )
-	{
-		panelEvent.StopPropagation();
-	}
 }
 
 

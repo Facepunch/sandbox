@@ -16,6 +16,7 @@
     </div>
 
     <InspectWindow />
+    <InspectWindow Placement=@(InspectWindow.Corner.BottomRight) />
 
     <div class="settings-bar" @ref="SettingsBar" @onmousedown=@SettingsBarPress></div>
 
@@ -23,7 +24,7 @@
 
 @code
 {
-    Inspector Inspector = default;
+    public Inspector Inspector { get; private set; }
     Panel SettingsBar = default;
 
     public GameObject Hovered => Inspector?.Hovered;
