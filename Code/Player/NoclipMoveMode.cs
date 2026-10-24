@@ -15,8 +15,6 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 	[Property]
 	public float WalkSpeed { get; set; } = 200;
 
-	internal bool ClearUpwardVelocityOnExit { get; set; }
-
 	protected override void OnUpdateAnimatorState( SkinnedModelRenderer renderer )
 	{
 		renderer.Set( "b_noclip", true );
@@ -62,12 +60,6 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 	public override void OnModeEnd( MoveMode next )
 	{
 		Controller.IsClimbing = false;
-		if ( ClearUpwardVelocityOnExit )
-		{
-			// The first tap can ascend, but the exit gesture must not launch the player.
-			Controller.Body.Velocity = Controller.Body.Velocity.WithZ( MathF.Min( Controller.Body.Velocity.z, 0f ) );
-			ClearUpwardVelocityOnExit = false;
-		}
 		Controller.Body.Velocity = Controller.Body.Velocity.ClampLength( Controller.RunSpeed );
 		Controller.Body.Tags.Set( "noclip", false );
 	}

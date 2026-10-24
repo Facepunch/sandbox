@@ -375,9 +375,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		OnControl();
 	}
 
-	private RealTimeSince _timeSinceJumpPressed = 1f;
-	private const float NoclipDoubleTapWindow = 0.3f;
-
 	void OnControl()
 	{
 		var allowMovement = true;
@@ -391,7 +388,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			return;
 		}
 
-		// no noclip from a seat - and jump there is often a vehicle's handbrake, so leave double taps alone
+		// no noclip from a seat
 		var seated = _cachedSeat is not null;
 
 		if ( seated )
@@ -402,20 +399,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		if ( !seated && Input.Pressed( "noclip" ) )
 		{
 			ToggleNoclip();
-		}
-
-		if ( !seated && Input.Pressed( "jump" ) )
-		{
-			if ( _timeSinceJumpPressed < NoclipDoubleTapWindow )
-			{
-				ToggleNoclip( fromJump: true );
-				Input.ReleaseAction( "jump" );
-				_timeSinceJumpPressed = 1f;
-			}
-			else
-			{
-				_timeSinceJumpPressed = 0;
-			}
 		}
 
 		if ( Input.Pressed( "undo" ) )
@@ -466,11 +449,10 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			ActionAmounts[action] = amount;
 	}
 
-	void ToggleNoclip( bool fromJump = false )
+	void ToggleNoclip()
 	{
 		if ( GetComponent<NoclipMoveMode>( true ) is { } noclip )
 		{
-			noclip.ClearUpwardVelocityOnExit = fromJump && noclip.Enabled;
 			noclip.Enabled = !noclip.Enabled;
 			IsNoclipping = noclip.Enabled;
 		}
