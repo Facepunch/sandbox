@@ -44,6 +44,22 @@ public sealed partial class FourWheelVehicle
 	[Property, Group( "Driver Hands" ), Range( 0, 45 )] public float DriverTilt { get; set; } = 15f;
 
 	/// <summary>
+	/// Most the driver sways to the side in a turn, degrees, thrown to the outside of it.
+	/// </summary>
+	[Property, Group( "Driver Sway" ), Range( 0, 30 )] public float MaxSway { get; set; } = 10f;
+
+	/// <summary>
+	/// Cornering (sideways acceleration, in/s²) that sways the driver all the way. The tuning's gravity is 600.
+	/// </summary>
+	[Property, Group( "Driver Sway" )] public float SwayFullAcceleration { get; set; } = 600f;
+
+	/// <summary>
+	/// The sway's a spring: how stiffly it follows the cornering, and how quickly it stops wobbling.
+	/// </summary>
+	[Property, Group( "Driver Sway" )] public float SwayStiffness { get; set; } = 60f;
+	[Property, Group( "Driver Sway" )] public float SwayDamping { get; set; } = 7f;
+
+	/// <summary>
 	/// What the body tilts about. Empty, it's the driver's pelvis, so they stay sat on the seat.
 	/// </summary>
 	[Property, Group( "Driver Hands" )] public GameObject TiltPivot { get; set; }
@@ -58,6 +74,11 @@ public sealed partial class FourWheelVehicle
 	private VehicleSounds _sounds;
 	private float _hornHand;
 	private bool _palmOpen;
+
+	private float _sway;
+	private float _swayVelocity;
+	private float _lastYaw;
+	private bool _hasLastYaw;
 
 	protected override void OnDisabled() => ReleaseHands();
 	protected override void OnDestroy() => ReleaseHands();
@@ -92,7 +113,7 @@ public sealed partial class FourWheelVehicle
 		// the palm opens as the hand gets most of the way to the horn, and closes again as it leaves
 		_palmOpen = _hornHand > 0.5f;
 
-		// the IK itself is set in ApplyDriverPose, once the body's tilted
+		UpdateSway();
 	}
 
 	/// <summary>
@@ -120,6 +141,25 @@ public sealed partial class FourWheelVehicle
 			renderer.ClearIk( RightHandIk );
 	}
 
+	private void UpdateSway()
+	{
+		var dt = MathF.Min( Time.Delta, 0.05f );
+		var yaw = WorldRotation.Angles().yaw;
+
+		var yawRate = 0f;
+		if ( _hasLastYaw && dt > 0 )
+			yawRate = MathX.DeltaDegrees( _lastYaw, yaw ).DegreeToRadian() / dt;
+
+		_lastYaw = yaw;
+		_hasLastYaw = true;
+
+		var lateral = Speed * yawRate;
+		var target = MaxSway * (lateral / MathF.Max( SwayFullAcceleration, 1f )).Clamp( -1f, 1f );
+
+		_swayVelocity += ((target - _sway) * SwayStiffness - _swayVelocity * SwayDamping) * dt;
+		_sway = (_sway + _swayVelocity * dt).Clamp( -MaxSway * 1.5f, MaxSway * 1.5f );
+	}
+
 	private static void SetIk( SkinnedModelRenderer renderer, string ik, GameObject target )
 	{
 		if ( target.IsValid() )
@@ -128,14 +168,6 @@ public sealed partial class FourWheelVehicle
 			renderer.ClearIk( ik );
 	}
 
-	/// <summary>
-	/// Tilt the driver's body model forward about the hips, before it's animated (<see cref="VehicleDriverPoseSystem"/>)
-	/// so the hand IK solves from the tilted shoulders.
-	///
-	/// It's set outright from the player's own transform each frame rather than added to the body's, so nothing builds
-	/// up - not the player controller's own body rotation, and not the body's transform arriving over the network
-	/// already tilted from the driver's machine.
-	/// </summary>
 	internal void ApplyDriverPose()
 	{
 		if ( !_handsRenderer.IsValid() || !_driver.IsValid() ) return;
@@ -147,7 +179,8 @@ public sealed partial class FourWheelVehicle
 		{
 			var root = _driver.WorldTransform;
 			var pivot = TiltPivot.IsValid() ? TiltPivot.WorldPosition : PelvisPivot( body, root );
-			var tilt = Rotation.FromAxis( WorldRotation.Left, DriverTilt );
+			// lean forward over the wheel, and sway to the side (rolling about the car's length: positive leans right)
+			var tilt = Rotation.FromAxis( WorldRotation.Forward, _sway ) * Rotation.FromAxis( WorldRotation.Left, DriverTilt );
 
 			body.WorldTransform = new global::Transform( pivot + tilt * (root.Position - pivot), tilt * root.Rotation, body.WorldScale );
 		}
@@ -158,8 +191,6 @@ public sealed partial class FourWheelVehicle
 
 	/// <summary>
 	/// Where the driver's pelvis is with the body upright - so it stays on the seat while the body tilts over it.
-	/// From the pelvis bone's place in the body (last frame's, tilted or not, it's the same relative to the body), put
-	/// back on the player's untilted transform. The player's origin if there's no pelvis bone.
 	/// </summary>
 	private Vector3 PelvisPivot( GameObject body, global::Transform root )
 	{
@@ -216,6 +247,9 @@ public sealed partial class FourWheelVehicle
 		_handsRenderer = null;
 		_hornHand = 0;
 		_palmOpen = false;
+		_sway = 0;
+		_swayVelocity = 0;
+		_hasLastYaw = false;
 	}
 }
 
