@@ -273,7 +273,7 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 	{
 		// Escalate fear — each hit stacks, clamped to 1.
 		_peakFear = MathF.Min( _peakFear + damage.Damage / 50f, 1f );
-		_attacker = damage.Attacker;
+		_attacker = GetAttacker( damage );
 		_timeSinceHurt = 0;
 
 		// React immediately so flee picks up.
@@ -282,7 +282,7 @@ public sealed class ScientistNpc : Npc, Component.IPressable
 
 	protected override void Die( in DamageInfo damage )
 	{
-		damage.Attacker?.GetComponent<Player>()?.PlayerData?.AddStat( "npc.scientist.kill" );
+		GetAttacker( damage )?.GetComponent<Player>()?.PlayerData?.AddStat( "npc.scientist.kill" );
 		base.Die( damage );
 	}
 }

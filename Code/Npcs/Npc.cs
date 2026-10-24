@@ -137,6 +137,11 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 	protected Vector3 GetDeathLaunchVelocity( in DamageInfo damage ) => RagdollPush.GetVelocity( damage, GameObject, 500, 1500, out _ );
 
 	/// <summary>
+	/// Who to blame for the damage. The player behind it, like whoever threw the prop, otherwise the attacker.
+	/// </summary>
+	protected GameObject GetAttacker( in DamageInfo damage ) => DamageBlame.Find( damage )?.GameObject ?? damage.Attacker;
+
+	/// <summary>
 	/// Base damage handling: subtract health, let the subclass react via <see cref="OnHurt"/>,
 	/// and die at zero. Subclasses react by overriding OnHurt and Die -- they don't touch this.
 	/// </summary>
