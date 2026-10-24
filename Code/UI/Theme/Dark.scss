@@ -1,7 +1,7 @@
 // dark palette
 // every palette defines the same set of tokens, Theme.scss picks one
 
-$ui-blue: #3e83eb;
+$ui-blue: rgba(32, 113, 206, 0.9);
 $ui-blue-soft: rgba( 62, 131, 235, 0.18 );
 $ui-danger: #e05555;
 
@@ -26,12 +26,12 @@ $ui-line-on-gray: rgba( 255, 255, 255, 0.14 );
 $ui-subtext-on-gray: rgba( 255, 255, 255, 0.7 );
 
 // the dark block and the section on it
-$ui-block-top: rgba( 30, 32, 36, 0.86 );
-$ui-block-bottom: rgba( 22, 24, 28, 0.86 );
-$ui-block-border: rgba( 255, 255, 255, 0.1 );
-$ui-section-top: rgba( 40, 43, 48, 0.96 );
-$ui-section-bottom: rgba( 34, 36, 41, 0.94 );
-$ui-section-border: rgba( 0, 0, 0, 0.7 );
+$ui-block-top: rgba( 30, 32, 36, 0.8 );
+$ui-block-bottom: rgba(32, 48, 68, 0.85);
+$ui-block-border: rgba(81, 144, 211, 0.247);
+$ui-section-top: rgba(28, 37, 51, 0.7);
+$ui-section-bottom: rgba( 34, 36, 41, 0.6 );
+$ui-section-border: rgba(111, 158, 209, 0.247);
 
 // solid surfaces that float over everything, dropdown lists and pickers
 $ui-popup-bg: #2a2d32;
@@ -56,9 +56,9 @@ $ui-tree-line: #3d4148;
 $ui-scroll-track: #1e2024;
 
 // menu tabs
-$ui-tab-bg: #1c1e22;
-$ui-tab-bg-hover: #26292e;
-$ui-tab-bg-active: rgb( 30, 32, 36 );
+$ui-tab-bg: rgba(9, 15, 20, 0.8);
+$ui-tab-bg-hover: rgba(32, 40, 53, 0.85);
+$ui-tab-bg-active: rgba(35, 58, 104, 0.95);
 $ui-tab-border: #0e0f11;
 
 // the dark fill behind the picture of a card or a spawn icon

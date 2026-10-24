@@ -27,8 +27,9 @@ $ui-subtext-on-gray: rgba( 255, 255, 255, 0.75 );
 
 // the gray block and the white section on it
 $ui-block-top: rgba( 140, 140, 140, 0.66 );
-$ui-block-bottom: rgba( 130, 130, 130, 0.66 );
-$ui-block-border: rgba( 255, 255, 255, 0.28 );
+// the bottom of the block fades into the accent blue ($color-accent blended over the gray)
+$ui-block-bottom: rgba( 78, 137, 180, 0.66 );
+$ui-block-border: rgba( 255, 255, 255, 0.38 );
 $ui-section-top: rgba( 255, 255, 255, 0.90 );
 $ui-section-bottom: rgba( 245, 245, 245, 0.80 );
 $ui-section-border: rgba( 0, 0, 0, 0.51 );
