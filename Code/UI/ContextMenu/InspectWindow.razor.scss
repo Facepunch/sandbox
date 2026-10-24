@@ -7,7 +7,6 @@ InspectWindow
 	position: absolute;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 8px;
 	pointer-events: all;
 	z-index: 200;
 
@@ -45,11 +44,18 @@ InspectWindow
 		}
 	}
 
-	// sized by the page in it
+	// sized by the page in it, the page keeps its own size while the body rolls open or shut around it
 	> .body
 	{
 		flex-direction: column;
+		flex-shrink: 0;
 		min-height: 0px;
+
+		> *
+		{
+			flex-shrink: 0;
+			margin-top: 8px; // the space under the tabs, part of the page so it rolls with it
+		}
 
 		> .hidden
 		{
@@ -57,19 +63,23 @@ InspectWindow
 		}
 	}
 
+	&.rolling > .body
+	{
+		overflow: hidden;
+	}
+
 	&.collapsed > .body
 	{
 		display: none;
 	}
 
-	// the inspected object and the tool options, tabs go under the page and the page fills the window
+	// the inspected object and the tool options, tabs go under the page and it rolls up out of them
 	&.bottom-right
 	{
 		right: $deadzone-x;
 		bottom: $deadzone-y;
 		flex-direction: column-reverse;
 		align-items: flex-end;
-		max-height: 50%;
 
 		> .tabs
 		{
@@ -78,19 +88,19 @@ InspectWindow
 
 		> .body
 		{
-			flex-grow: 1;
-			width: 500px;
+			justify-content: flex-end;
+			align-items: flex-end;
 
+			// the whole window is 450px tall at least and half the screen at most,
+			// the page gets that less the tabs (24px), the space above them (8px), padding and border (18px)
 			> *
 			{
-				flex-grow: 1;
-				min-height: 0px;
+				width: 500px;
+				min-height: 400px;
+				max-height: calc( 50vh - 50px );
+				margin-top: 0px;
+				margin-bottom: 8px;
 			}
-		}
-
-		&:not(.collapsed)
-		{
-			min-height: 450px;
 		}
 	}
 }
