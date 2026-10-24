@@ -109,6 +109,12 @@ public class PlayerDamageEvent
 {
 	public Player Player { get; init; }
 	public DamageInfo DamageInfo { get; init; }
+
+	/// <summary>
+	/// The player behind the damage, can be the victim. Null for the world and NPCs.
+	/// </summary>
+	public Player Instigator { get; init; }
+
 	public float Damage { get; set; }
 	public bool Cancelled { get; set; }
 }

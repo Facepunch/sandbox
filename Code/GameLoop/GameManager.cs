@@ -242,7 +242,8 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		Assert.True( player.IsValid(), "Player invalid" );
 		Assert.True( player.PlayerData.IsValid(), $"{player.GameObject.Name}'s PlayerData invalid" );
 
-		var source = dmg.Attacker?.GetComponentInParent<IKillSource>( true );
+		// credit the player who threw the prop or drove the car
+		var source = DamageInstigators.Find( dmg ) as IKillSource ?? dmg.Attacker?.GetComponentInParent<IKillSource>( true );
 		if ( source == null ) return;
 
 		var isSuicide = source is Player p && p == player;
@@ -291,7 +292,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		Assert.True( Networking.IsHost );
 		Assert.True( victim.IsValid(), "NPC invalid" );
 
-		var source = dmg.Attacker?.GetComponent<IKillSource>();
+		var source = DamageInstigators.Find( dmg ) as IKillSource ?? dmg.Attacker?.GetComponent<IKillSource>();
 		source?.OnKill( victim.GameObject );
 
 		var w = dmg.Weapon.IsValid() ? dmg.Weapon.GetComponentInChildren<IKillIcon>() : null;

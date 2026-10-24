@@ -1,0 +1,110 @@
+/// <summary>
+/// Put this on something that acts for a player, like a vehicle for its driver, so its damage counts as theirs.
+/// </summary>
+public interface IDamageInstigator
+{
+	/// <summary>
+	/// Return null if nobody is responsible right now.
+	/// </summary>
+	Player Instigator { get; }
+}
+
+/// <summary>
+/// Finds the player behind a piece of damage, like the shooter, the driver or whoever threw the prop.
+/// Null for the world, NPCs and unowned props.
+/// </summary>
+public sealed class DamageInstigators : GameObjectSystem<DamageInstigators>
+{
+	/// <summary>
+	/// How long a prop still counts as thrown after it's let go.
+	/// </summary>
+	public const float ThrowMemory = 5f;
+
+	// kept where the body is simulated, since that's where its impact damage happens
+	readonly Dictionary<GameObject, (Player Player, RealTimeSince Since)> _handled = new();
+	readonly List<GameObject> _expired = new();
+
+	public DamageInstigators( Scene scene ) : base( scene )
+	{
+		Listen( Stage.StartFixedUpdate, 0, PruneHandled, "PruneDamageInstigators" );
+	}
+
+	/// <summary>
+	/// Call every tick while a player holds or throws something, on the machine that simulates it.
+	/// </summary>
+	public static void Handled( GameObject go, Player player )
+	{
+		if ( !go.IsValid() || !player.IsValid() ) return;
+		if ( Current is not { } system ) return;
+
+		system._handled[go.Root] = (player, 0);
+	}
+
+	public static Player Find( in DamageInfo damage )
+	{
+		var attacker = damage.Attacker;
+
+		// exploding props pass themselves as the weapon, so a thrown barrel still counts as the thrower's
+		if ( FindForObject( attacker ) is { } player ) return player;
+		if ( FindForObject( damage.Weapon ) is { } thrower ) return thrower;
+
+		// only for impacts, NPCs have owners too but they act on their own
+		if ( attacker.IsValid() && damage.Tags.Contains( DamageTags.Impact ) && attacker.Root.GetComponent<Ownable>()?.Owner is { } owner )
+			return Player.FindForConnection( owner );
+
+		return null;
+	}
+
+	static Player FindForObject( GameObject go )
+	{
+		if ( !go.IsValid() ) return null;
+
+		foreach ( var source in go.GetComponentsInParent<IDamageInstigator>() )
+		{
+			if ( source.Instigator is { } instigator && instigator.IsValid() )
+				return instigator;
+		}
+
+		return Current?.FindHandled( go );
+	}
+
+	Player FindHandled( GameObject go )
+	{
+		if ( _handled.Count == 0 ) return null;
+		if ( FindHandledRoot( go.Root ) is { } player ) return player;
+
+		// the player may be holding another part of the same welded contraption
+		if ( !go.Root.Components.GetAll<Rigidbody>().Any() ) return null;
+
+		var bodies = new HashSet<Rigidbody>();
+		PhysicsHold.GetConnectedBodies( go, bodies );
+
+		foreach ( var body in bodies )
+		{
+			if ( FindHandledRoot( body.GameObject.Root ) is { } welder )
+				return welder;
+		}
+
+		return null;
+	}
+
+	Player FindHandledRoot( GameObject root )
+	{
+		if ( !_handled.TryGetValue( root, out var handled ) ) return null;
+		return handled.Since < ThrowMemory && handled.Player.IsValid() ? handled.Player : null;
+	}
+
+	void PruneHandled()
+	{
+		foreach ( var (go, handled) in _handled )
+		{
+			if ( !go.IsValid() || !handled.Player.IsValid() || handled.Since > ThrowMemory )
+				_expired.Add( go );
+		}
+
+		foreach ( var go in _expired )
+			_handled.Remove( go );
+
+		_expired.Clear();
+	}
+}

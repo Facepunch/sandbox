@@ -2,8 +2,10 @@
 /// <summary>
 /// Holds player information like health
 /// </summary>
-public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, Global.ISaveEvents, IKillSource, IHudEvents
+public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, Global.ISaveEvents, IKillSource, IHudEvents, IDamageInstigator
 {
+	Player IDamageInstigator.Instigator => this;
+
 	[RequireComponent]
 	public PlayerController Controller { get; set; }
 
@@ -542,9 +544,17 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	public void OnDamage( in DamageInfo dmg )
 	{
+		// only the host changes health, impacts can also report damage on clients
+		if ( !Networking.IsHost ) return;
+
 		if ( Health < 1 ) return;
 		if ( !PlayerData.IsValid() ) return;
 		if ( IsSpawnProtected ) return;
+
+		var instigator = DamageInstigators.Find( dmg );
+
+		// with PvP off, other players can't hurt us or push us with explosions
+		if ( !ServerSettings.AllowPvp && instigator.IsValid() && instigator != this ) return;
 
 		// Explosions throw the player even when god mode stops the damage.
 		if ( dmg.Tags.Contains( DamageTags.Explosion ) && dmg.Origin != Vector3.Zero )
@@ -575,7 +585,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		}
 
 		// Fire pre-damage event — listeners can modify damage or cancel
-		var damageEvent = new PlayerDamageEvent { Player = this, DamageInfo = dmg, Damage = dmg.Damage };
+		var damageEvent = new PlayerDamageEvent { Player = this, DamageInfo = dmg, Damage = dmg.Damage, Instigator = instigator };
 		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnDamaging( damageEvent ) );
 		Global.IPlayerEvents.Post( x => x.OnPlayerDamaging( damageEvent ) );
 

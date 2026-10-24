@@ -308,6 +308,7 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 
 		_thrown = true;
 		ReleaseHold();
+		DamageInstigators.Handled( body.GameObject, Player );
 
 		body.ApplyImpulse( velocity * body.Mass );
 	}
@@ -360,6 +361,7 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 		}
 
 		_hold.Move( IsProxy ? ClampToReach( _holdTarget ) : _holdTarget );
+		DamageInstigators.Handled( _simulated, Player );
 	}
 
 	/// <summary>
