@@ -65,6 +65,11 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 	BaseSandboxWeapon _weaponBeforeCarry;
 
 	/// <summary>
+	/// How long a client waits for the host to put away <see cref="_weaponBeforeCarry"/> before taking it as refused.
+	/// </summary>
+	const float HolsterTimeout = 1.0f;
+
+	/// <summary>
 	/// The object our joint is moving, so we can tell it when we let go.
 	/// </summary>
 	GameObject _simulated;
@@ -109,8 +114,8 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 			return;
 		}
 
-		// Took a weapon out, our hands are full with that now
-		if ( Player.GetComponent<PlayerInventory>()?.ActiveWeapon.IsValid() == true )
+		var active = Player.GetComponent<PlayerInventory>()?.ActiveWeapon;
+		if ( active.IsValid() && (active != _weaponBeforeCarry || _timeSincePickup > HolsterTimeout) )
 		{
 			_weaponBeforeCarry = null;
 			Drop();
@@ -267,8 +272,7 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 		var weapon = inventory.ActiveWeapon;
 		inventory.SwitchWeapon( null, true );
 
-		// The weapon or a switch event listener refused
-		if ( inventory.ActiveWeapon.IsValid() ) return false;
+		if ( Networking.IsHost && inventory.ActiveWeapon.IsValid() ) return false;
 
 		_weaponBeforeCarry = weapon;
 		return true;
