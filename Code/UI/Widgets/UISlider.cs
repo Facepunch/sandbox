@@ -76,6 +76,9 @@ public class UISlider : BaseControl
 
 	float _value;
 
+	bool _applyOnRelease;
+	bool _pending;
+
 	/// <summary>
 	/// The number the slider shows. With a property it reads and writes that, without one it
 	/// keeps the number itself - so the slider can be used anywhere
@@ -83,26 +86,42 @@ public class UISlider : BaseControl
 	[Parameter]
 	public float Value
 	{
-		get => Property is null ? _value : Convert.ToSingle( Property.GetValue<object>( 0f ) );
+		get => Property is null || _pending ? _value : Convert.ToSingle( Property.GetValue<object>( 0f ) );
 		set
 		{
 			value = value.Clamp( _min, _max );
 			if ( _step > 0f ) value = value.SnapToGrid( _step ).Clamp( _min, _max );
 
-			if ( Property is null )
+			if ( Property is null || IsHolding )
 			{
 				_value = value;
+				_pending = Property is not null;
 			}
 			else
 			{
-				var type = Property.PropertyType;
-				if ( type == typeof( int ) ) Property.SetValue( (int)MathF.Round( value ) );
-				else if ( type == typeof( double ) ) Property.SetValue( (double)value );
-				else Property.SetValue( value );
+				WriteProperty( value );
 			}
 
 			UpdateVisuals();
 		}
+	}
+
+	bool IsHolding => _applyOnRelease && (_dragging && HasActive || _entry.HasFocus);
+
+	void WriteProperty( float value )
+	{
+		var type = Property.PropertyType;
+		if ( type == typeof( int ) ) Property.SetValue( (int)MathF.Round( value ) );
+		else if ( type == typeof( double ) ) Property.SetValue( (double)value );
+		else Property.SetValue( value );
+	}
+
+	void ApplyPending()
+	{
+		if ( !_pending ) return;
+
+		_pending = false;
+		WriteProperty( _value );
 	}
 
 	void Refresh()
@@ -134,6 +153,7 @@ public class UISlider : BaseControl
 		}
 
 		_step = Property.TryGetAttribute<StepAttribute>( out var step ) ? step.Step : 0f;
+		_applyOnRelease = Property.HasAttribute<ApplyOnReleaseAttribute>();
 
 		_entry.WholeNumbers = Property.PropertyType == typeof( int ) || Property.PropertyType == typeof( long );
 
@@ -217,6 +237,8 @@ public class UISlider : BaseControl
 
 		SetClass( "dragging", _dragging && HasActive );
 
+		if ( !IsHolding ) ApplyPending();
+
 		if ( Value != _rendered )
 			UpdateVisuals();
 	}
@@ -257,6 +279,12 @@ public class UISlider : BaseControl
 	}
 
 	bool _dragging;
+
+	public override void OnDeleted()
+	{
+		base.OnDeleted();
+		ApplyPending();
+	}
 
 	bool IsOverTrack( MousePanelEvent e ) => e.Target == _track || e.Target?.Parent == _track;
 }

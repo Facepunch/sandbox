@@ -61,10 +61,11 @@ public static partial class ServerSettings
 	/// <summary>
 	/// Changes a replicated convar through the host. Only works for admins.
 	/// </summary>
-	public static void Set( string name, object value ) => RpcSet( name, value?.ToString() );
+	public static void Set( string name, object value ) => RpcSet( name, value );
 
+	// The host turns the value into text itself, so "0,5" and "0.5" can't get mixed up
 	[Rpc.Host]
-	static void RpcSet( string name, string value )
+	static void RpcSet( string name, object value )
 	{
 		if ( !Permissions.Has( Rpc.Caller, Permissions.Admin ) ) return;
 
@@ -72,9 +73,12 @@ public static partial class ServerSettings
 		var setting = FindConVars( ConVarFlags.Replicated ).FirstOrDefault( x => x.Name == name );
 		if ( setting is null ) return;
 
+		var previous = ConsoleSystem.GetValue( name );
 		ConsoleSystem.SetValue( name, value );
 
 		var current = ConsoleSystem.GetValue( name );
+		if ( current == previous ) return;
+
 		var shown = bool.TryParse( current, out var on ) ? (on ? "#spawnmenu.common.on" : "#spawnmenu.common.off") : LocalizedText.Literal( current );
 
 		GameManager.Current?.NotifyLocalized( "#server.setting_changed", new()
@@ -95,7 +99,7 @@ public static partial class ServerSettings
 
 	static SerializedProperty CreateRow( Setting setting )
 	{
-		var attributes = new List<Attribute> { new PropertyAttribute(), new DescriptionAttribute( setting.Description ), new OrderAttribute( setting.Property.Order ) };
+		var attributes = new List<Attribute> { new PropertyAttribute(), new DescriptionAttribute( setting.Description ), new OrderAttribute( setting.Property.Order ), new ApplyOnReleaseAttribute() };
 		if ( setting.Property.GetCustomAttribute<RangeAttribute>() is { } range ) attributes.Add( range );
 		if ( setting.Property.GetCustomAttribute<StepAttribute>() is { } step ) attributes.Add( step );
 
