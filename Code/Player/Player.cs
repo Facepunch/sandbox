@@ -508,6 +508,12 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		Controller.Body.Velocity += velocity;
 	}
 
+	void ApplyExplosionKnockback( in DamageInfo dmg )
+	{
+		if ( dmg.Tags.Contains( DamageTags.Explosion ) && dmg.Origin != Vector3.Zero )
+			ApplyKnockback( GetExplosionKnockback( dmg ) );
+	}
+
 	public void OnDamage( in DamageInfo dmg )
 	{
 		// only the host changes health, impacts can also report damage on clients
@@ -519,16 +525,17 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 		var blamed = DamageBlame.Find( dmg );
 
-		// with PvP off, other players can't hurt us or push us with explosions
-		if ( !ServerSettings.AllowPvp && blamed.IsValid() && blamed != this ) return;
-
-		// Explosions throw the player even when god mode stops the damage.
-		if ( dmg.Tags.Contains( DamageTags.Explosion ) && dmg.Origin != Vector3.Zero )
-			ApplyKnockback( GetExplosionKnockback( dmg ) );
+		// with PvP off, other players can't hurt us or push us with explosions, unless a damage listener allows it
+		var pvpBlocked = !ServerSettings.AllowPvp && blamed.IsValid() && blamed != this;
 
 		if ( PlayerData.IsGodMode )
 		{
-			if ( ServerSettings.CanUseGodMode( Network.Owner ) ) return;
+			// Explosions throw the player even when god mode stops the damage.
+			if ( ServerSettings.CanUseGodMode( Network.Owner ) )
+			{
+				if ( !pvpBlocked ) ApplyExplosionKnockback( dmg );
+				return;
+			}
 
 			// no longer allowed, so turn it off
 			PlayerData.IsGodMode = false;
@@ -551,12 +558,14 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		}
 
 		// Fire pre-damage event — listeners can modify damage or cancel
-		var damageEvent = new PlayerDamageEvent { Player = this, DamageInfo = dmg, Damage = dmg.Damage, BlamedPlayer = blamed };
+		var damageEvent = new PlayerDamageEvent { Player = this, DamageInfo = dmg, Damage = dmg.Damage, BlamedPlayer = blamed, Cancelled = pvpBlocked };
 		Local.IPlayerEvents.PostToGameObject( GameObject, x => x.OnDamaging( damageEvent ) );
 		Global.IPlayerEvents.Post( x => x.OnPlayerDamaging( damageEvent ) );
 
 		if ( damageEvent.Cancelled )
 			return;
+
+		ApplyExplosionKnockback( dmg );
 
 		var damage = damageEvent.Damage;
 		if ( dmg.Tags.Contains( DamageTags.Headshot ) )

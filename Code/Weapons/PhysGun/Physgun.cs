@@ -822,12 +822,12 @@ public partial class Physgun : Local.IPlayerEvents
 			DropHeld();
 		}
 
-		if ( !CanMove( _state ) )
+		if ( !CanMoveFor( _state ) )
 		{
 			_hold.Release();
 			DropHeld();
 
-			if ( CanMove( _stateHovered ) && _stateHovered.Pulling )
+			if ( _stateHovered.Pulling && CanMoveFor( _stateHovered ) )
 				ApplyPullForce( _stateHovered );
 
 			_launched = false;
@@ -904,6 +904,21 @@ public partial class Physgun : Local.IPlayerEvents
 		return true;
 	}
 
+	/// <summary>
+	/// Ask the object if it allows being grabbed (Ownable and others can reject via IPhysgunEvent)
+	/// </summary>
+	bool AllowsGrab( GameObject go )
+	{
+		var grabEvent = new IPhysgunEvent.GrabEvent { Grabber = Network.Owner };
+		go.Root.RunEvent<IPhysgunEvent>( x => x.OnPhysgunGrab( grabEvent ) );
+		return !grabEvent.Cancelled;
+	}
+
+	/// <summary>
+	/// The holder picks what to grab on their machine, so check it again here before moving it for them.
+	/// </summary>
+	bool CanMoveFor( in GrabState state ) => CanMove( state ) && (!IsProxy || AllowsGrab( state.GameObject ));
+
 	bool FindGrabbedBody( out GrabState state, Transform aim, bool isPulling )
 	{
 		state = default;
@@ -933,10 +948,7 @@ public partial class Physgun : Local.IPlayerEvents
 		var go = physicsBody.GameObject;
 		if ( !go.IsValid() || go.IsDestroyed ) return false;
 
-		// Ask the object if it allows being grabbed (Ownable and others can reject via IPhysgunEvent)
-		var grabEvent = new IPhysgunEvent.GrabEvent { Grabber = Network.Owner };
-		go.Root.RunEvent<IPhysgunEvent>( x => x.OnPhysgunGrab( grabEvent ) );
-		if ( grabEvent.Cancelled ) return false;
+		if ( !AllowsGrab( go ) ) return false;
 
 		// Trace hits physics, convert to local using scaled physics transform.
 		var bodyTransform = physicsBody.Transform.WithScale( go.WorldScale );
