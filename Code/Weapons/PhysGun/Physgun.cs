@@ -180,6 +180,20 @@ public partial class Physgun : Local.IPlayerEvents
 			}
 		}
 
+		/// <summary>
+		/// <see cref="EndPoint"/> on the physics body. On a proxy the body chases the latest network transform
+		/// while the object is drawn interpolated, so measure the body against this, not the drawn point.
+		/// </summary>
+		public readonly Vector3 BodyPoint
+		{
+			get
+			{
+				var physicsBody = Body?.PhysicsBody;
+				if ( !physicsBody.IsValid() ) return EndPoint;
+				return physicsBody.Transform.WithScale( GameObject.WorldScale ).PointToWorld( LocalOffset );
+			}
+		}
+
 		public readonly Vector3 EndNormal
 		{
 			get
@@ -215,6 +229,12 @@ public partial class Physgun : Local.IPlayerEvents
 
 	// Where the holder wants the body, from their own aim, so the host doesn't steer by the interpolated one
 	[Sync( SyncFlags.Interpolate )] public Transform _holdTarget { get; set; }
+	[Sync] public int _holdTargetId { get; set; }
+	[Sync( SyncFlags.Interpolate )] public float _holdTargetIdLerped { get; set; }
+
+	GameObject _holdTargetObject;
+	bool _holdTargetCursorAim;
+	Transform _holdStart;
 
 	Transform _lastAimTransform;
 	Transform CurrentAimTransform => HasOwner ? OwnerAimTransform : _lastAimTransform;
@@ -335,6 +355,14 @@ public partial class Physgun : Local.IPlayerEvents
 	}
 
 	protected override void OnControl()
+	{
+		ControlGrab();
+
+		// After the grab changes, so they go out together
+		UpdateHoldTarget();
+	}
+
+	void ControlGrab()
 	{
 		var player = Owner;
 
@@ -760,14 +788,27 @@ public partial class Physgun : Local.IPlayerEvents
 
 	// Set every frame, a value from fixed update would be sent stamped with a later frame's time.
 	// Also while hovering, so the host's interpolated target never starts a grab from where the last one let go.
-	protected override void OnUpdate()
+	void UpdateHoldTarget()
 	{
-		base.OnUpdate();
-
-		if ( IsProxy ) return;
-
 		var state = _state.Body.IsValid() ? _state : _stateHovered;
-		_holdTarget = state.Body.IsValid() ? GetHoldTarget( state ) : CurrentAimTransform;
+		var target = state.Body.IsValid() ? state.GameObject : null;
+		_holdTarget = target.IsValid() ? GetHoldTarget( state ) : CurrentAimTransform;
+
+		if ( target == _holdTargetObject && _cursorAim == _holdTargetCursorAim ) return;
+
+		_holdTargetObject = target;
+		_holdTargetCursorAim = _cursorAim;
+		_holdTargetId++;
+		_holdTargetIdLerped = _holdTargetId;
+	}
+
+	/// <summary>
+	/// The holder's target once the interpolated one is all for what they hold, until then where we grabbed it.
+	/// </summary>
+	Transform GetProxyHoldTarget()
+	{
+		var caughtUp = _holdTargetIdLerped.AlmostEqual( _holdTargetId );
+		return ClampToRange( caughtUp ? _holdTarget : _holdStart );
 	}
 
 	protected override void OnFixedUpdate()
@@ -797,10 +838,13 @@ public partial class Physgun : Local.IPlayerEvents
 		// If we just launched, don't add a joint until state has let go.
 		if ( _launched ) return;
 
+		if ( !_hold.IsHolding )
+			_holdStart = new Transform( _state.EndPoint, _state.Body.WorldRotation );
+
 		_held = _state.GameObject;
 		DamageBlame.Blame( _held, Owner );
 		_hold.Hold( _state.Body, _state.EndPoint );
-		_hold.Move( IsProxy ? ClampToRange( _holdTarget ) : GetHoldTarget() );
+		_hold.Move( IsProxy ? GetProxyHoldTarget() : GetHoldTarget() );
 	}
 
 	/// <summary>
@@ -814,7 +858,8 @@ public partial class Physgun : Local.IPlayerEvents
 	Transform GetHoldTarget( in GrabState state )
 	{
 		var eyeTransform = CurrentAimTransform;
-		var grabDistance = PhysicsHold.ClampGrabDistance( state.Body, state.EndPoint, eyeTransform, state.GrabDistance );
+		var point = state.Body.IsProxy ? state.BodyPoint : state.EndPoint;
+		var grabDistance = PhysicsHold.ClampGrabDistance( state.Body, point, eyeTransform, state.GrabDistance );
 		var targetPosition = eyeTransform.Position + eyeTransform.Rotation.Forward * grabDistance;
 		var frame = state.Pulling ? eyeTransform.Rotation : PhysicsHold.Stabilize( FrameRotation );
 		return new Transform( targetPosition, frame * state.GrabOffset );
