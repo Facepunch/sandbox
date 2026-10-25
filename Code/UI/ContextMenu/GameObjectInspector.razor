@@ -82,6 +82,21 @@
                             }
                         </div>
                     }
+
+                    @if ( BodyParts.Count > 0 )
+                    {
+                        <div class="group-header">#ui.inspect.bodygroups</div>
+
+                        @foreach ( var part in BodyParts )
+                        {
+                            var partName = part.Name;
+                            <div class="material-row">
+                                <label>@partName</label>
+                                <UIDropdown Items=@(part.Choices.Select( ( choice, i ) => new UIDropdown.Item( ChoiceTitle( choice ), i ) ).ToList())
+                                            Value=@(Renderers[0].GetBodyGroup( part.Index )) ValueChanged=@((object value) => SetBodyGroup( partName, (int)value )) Tokenize=@false></UIDropdown>
+                            </div>
+                        }
+                    }
                 }
             }
     </div>
@@ -142,6 +157,7 @@
     List<SerializedProperty> Properties = new();
     List<ModelRenderer> Renderers = new();
     List<string> MaterialGroups = new();
+    List<Model.BodyPart> BodyParts = new();
 
     protected override int BuildHash()
     {
@@ -156,6 +172,7 @@
 
             if ( renderer.IsValid() )
             {
+                hc.Add( renderer.BodyGroups );
                 hc.Add( renderer.MaterialOverride?.ResourcePath );
                 for ( int i = 0; i < renderer.Materials.Count; i++ )
                     hc.Add( renderer.Materials.HasOverride( i ) ? renderer.Materials.GetOverride( i )?.ResourcePath : null );
@@ -175,6 +192,7 @@
         Properties = new();
         Renderers = new();
         MaterialGroups = new();
+        BodyParts = new();
 
         if (Target == null) return;
 
@@ -182,6 +200,11 @@
         {
             CollectProperties(c.ToArray());
         }
+
+        // the dropdowns show the first renderer's choices, a part with a single choice has nothing to switch between
+        var bodyModel = Renderers.FirstOrDefault()?.Model;
+        if ( bodyModel is not null )
+            BodyParts.AddRange( bodyModel.Parts.All.Where( part => part.Choices.Count > 1 ) );
     }
 
     bool HasEditableProperties(Type type, PropertyDescription[] properties)
@@ -265,7 +288,18 @@
     void SetMaterialGroup( string group )
     {
         foreach ( var renderer in Renderers )
-            GameManager.ChangeProperty( renderer, nameof( ModelRenderer.MaterialGroup ), group );
+            GameManager.ChangeMaterialGroup( renderer, group );
+    }
+
+    // a blank choice is the one that hides the part
+    static string ChoiceTitle( Model.BodyPart.Choice choice ) => string.IsNullOrWhiteSpace( choice.Name )
+        ? Game.Language.GetPhrase( "ui.inspect.bodygroup_none" )
+        : choice.Name;
+
+    void SetBodyGroup( string part, int choice )
+    {
+        foreach ( var renderer in Renderers )
+            GameManager.ChangeBodyGroup( renderer, part, choice );
     }
 
     bool HasAnyOverride => Renderers.Any( r => r.MaterialOverride is not null );

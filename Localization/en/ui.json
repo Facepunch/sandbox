@@ -70,6 +70,8 @@
     "ui.inspect.no_material_override": "None",
     "ui.inspect.mixed_material_override": "Mixed",
     "ui.inspect.material_override_hint": "Applies an override material, which will replace every other material on this object",
+    "ui.inspect.bodygroups": "Bodygroups",
+    "ui.inspect.bodygroup_none": "None",
     "ui.inspect.additional_objects": "Object (+{count})",
     "ui.mounts.item_count": "{mount}, {count} items",
     "ui.spawnlist.one_item": "{count} item",

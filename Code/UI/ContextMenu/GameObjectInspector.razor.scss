@@ -84,3 +84,9 @@ GameObjectInspector UISheet UIColor
 {
     justify-content: flex-end;
 }
+
+GameObjectInspector .group-header
+{
+    @include ui-section-header;
+    margin-top: $ui-section-gap;
+}
