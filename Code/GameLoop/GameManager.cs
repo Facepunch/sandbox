@@ -398,6 +398,40 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		renderer.GameObject.Network?.Refresh();
 	}
 
+	[Rpc.Host]
+	internal static void ChangeMaterialGroup( ModelRenderer renderer, string group )
+	{
+		if ( !renderer.IsValid() ) return;
+		if ( !renderer.GameObject.HasAccess( Rpc.Caller ) ) return;
+
+		renderer.MaterialGroup = group;
+
+		var prop = renderer.GetComponent<Prop>();
+		if ( prop.IsValid() )
+			prop.MaterialGroup = group;
+
+		renderer.GameObject.Network?.Refresh();
+	}
+
+	[Rpc.Host]
+	internal static void ChangeBodyGroup( ModelRenderer renderer, string partName, int choice )
+	{
+		if ( !renderer.IsValid() ) return;
+		if ( !renderer.GameObject.HasAccess( Rpc.Caller ) ) return;
+
+		// several objects can be selected at once, skip the ones whose model doesn't have this choice
+		var part = renderer.Model?.Parts.Get( partName );
+		if ( part is null || choice < 0 || choice >= part.Choices.Count ) return;
+
+		renderer.SetBodyGroup( part.Index, choice );
+
+		var prop = renderer.GetComponent<Prop>();
+		if ( prop.IsValid() )
+			prop.BodyGroups = renderer.BodyGroups;
+
+		renderer.GameObject.Network?.Refresh();
+	}
+
 	void IScenePhysicsEvents.OnOutOfBounds( Rigidbody body )
 	{
 		body.DestroyGameObject();
