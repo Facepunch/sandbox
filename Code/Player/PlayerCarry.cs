@@ -55,6 +55,23 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 	[Sync] Rotation _grabOffset { get; set; }
 	TimeSince _timeSincePickup;
 
+	/// <summary>
+	/// The <see cref="_grabOffset"/> we're turning towards, at most <see cref="MaxAngular"/> degrees a second.
+	/// </summary>
+	Rotation _targetOffset;
+
+	/// <summary>
+	/// Scales how fast we can turn what we're holding. Starts at nothing on pickup and builds up over half a second.
+	/// </summary>
+	float _turnScale;
+
+	const float MaxAngular = 360.0f * 10.0f;
+
+	/// <summary>
+	/// An axis of what we pick up within 30 degrees of one of ours lines up with it.
+	/// </summary>
+	static readonly float AlignCosine = MathF.Cos( MathX.DegreeToRadian( 30.0f ) );
+
 	bool _rotateBlocked;
 	TimeSince _timeSinceUsePressed;
 
@@ -151,12 +168,20 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 		BlockAttack();
 
 		IsRotating = IsCarrying && useDown && !_rotateBlocked;
-		if ( !IsRotating ) return;
+		if ( IsRotating )
+		{
+			var move = Input.AnalogMove;
+			Player.Controller.WishVelocity = Vector3.Zero;
+			_targetOffset = _rotation.Rotate( HoldFrame, move, true );
+		}
 
-		var move = Input.AnalogMove;
-		Player.Controller.WishVelocity = Vector3.Zero;
-		_grabOffset = _rotation.Rotate( Player.EyeTransform.Rotation, move, true );
+		TurnToTarget();
 	}
+
+	/// <summary>
+	/// What we carry turns with our yaw but not our pitch.
+	/// </summary>
+	Rotation HoldFrame => PhysicsHold.Stabilize( Player.EyeTransform.Rotation );
 
 	void BlockAttack()
 	{
@@ -254,13 +279,69 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 
 		Held = body.GameObject;
 
-		_grabOffset = Player.EyeTransform.Rotation.Inverse * body.WorldRotation;
-		_rotation.Reset( _grabOffset );
+		_grabOffset = HoldFrame.Inverse * body.WorldRotation;
+		_targetOffset = AlignRotation( _grabOffset, AlignCosine );
+		_turnScale = 0;
+		_rotation.Reset( _targetOffset );
 		_holdTarget = GetHoldTarget();
 		_timeSincePickup = 0;
 		_rotateBlocked = true;
 
 		return true;
+	}
+
+	/// <summary>
+	/// Lines up any axis of <paramref name="rotation"/> within acos( <paramref name="cosine"/> ) of a frame axis with it,
+	/// up first, so things are picked up straight.
+	/// </summary>
+	static Rotation AlignRotation( Rotation rotation, float cosine )
+	{
+		Vector3[] axes = [rotation.Forward, rotation.Left, rotation.Up];
+
+		// Up goes first, so a lined up top wins over the sides
+		for ( var axis = 2; axis >= 0; axis-- )
+		{
+			var direction = axes[axis];
+			for ( var component = 0; component < 3; component++ )
+			{
+				if ( MathF.Abs( direction[component] ) <= cosine ) continue;
+
+				var snapped = Vector3.Zero;
+				snapped[component] = direction[component] < 0 ? -1 : 1;
+				axes[axis] = snapped;
+				SquareUp( axes, axis );
+				break;
+			}
+		}
+
+		return Rotation.LookAt( axes[0], axes[2] );
+	}
+
+	/// <summary>
+	/// Rebuilds the other two axes square to <paramref name="fixedAxis"/>, keeping them as close to where they were as we can.
+	/// </summary>
+	static void SquareUp( Vector3[] axes, int fixedAxis )
+	{
+		var next = (fixedAxis + 1) % 3;
+		var last = (fixedAxis + 2) % 3;
+
+		axes[last] = Vector3.Cross( axes[fixedAxis], axes[next] ).Normal;
+		axes[next] = Vector3.Cross( axes[last], axes[fixedAxis] ).Normal;
+	}
+
+	/// <summary>
+	/// Turns what we're holding towards <see cref="_targetOffset"/>, slowly at first after pickup.
+	/// </summary>
+	void TurnToTarget()
+	{
+		_turnScale = _turnScale.Approach( 1.0f, Time.Delta * 2.0f );
+
+		var maxAngular = MaxAngular * _turnScale * _turnScale * _turnScale;
+		var distance = _grabOffset.Distance( _targetOffset );
+		if ( distance <= 0.0f ) return;
+
+		var step = maxAngular * Time.Delta;
+		_grabOffset = step >= distance ? _targetOffset : Rotation.Slerp( _grabOffset, _targetOffset, step / distance );
 	}
 
 	/// <summary>
@@ -339,8 +420,26 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 		var body = HeldBody;
 		var center = body.PhysicsBody.MassCenter;
 
+		// Hold it no further up or down than 75 degrees, so looking straight down doesn't put it under our feet
+		// Built from the stable yaw, reading the angles back off the eye flips the yaw around when looking straight down
+		var pitch = MathX.RadianToDegree( -MathF.Asin( eye.Forward.z.Clamp( -1.0f, 1.0f ) ) );
+		eye = eye.WithRotation( HoldFrame * Rotation.FromPitch( pitch.Clamp( -75.0f, 75.0f ) ) );
+
 		var distance = PhysicsHold.ClampGrabDistance( body, center, eye, 0.0f, HoldDistance );
-		return new Transform( eye.Position + eye.Forward * distance, eye.Rotation * _grabOffset );
+		var position = eye.Position + eye.Forward * distance;
+
+		// And keep it our radius plus its own from the line through the middle of us, so at no angle can it push us away
+		var forward = eye.Forward;
+		var extent = MathF.Abs( Vector3.Dot( center - body.FindClosestPoint( center - forward * 4096.0f ), forward ) );
+		var radius = Player.Controller.BodyRadius + extent;
+
+		var bottom = Player.WorldPosition;
+		var nearest = new Line( bottom, bottom + Vector3.Up * Player.Controller.CurrentHeight ).ClosestPoint( position );
+		var delta = position - nearest;
+		if ( delta.Length < radius && !delta.IsNearZeroLength )
+			position = nearest + delta.Normal * radius;
+
+		return new Transform( position, HoldFrame * _grabOffset );
 	}
 
 	protected override void OnFixedUpdate()
