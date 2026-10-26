@@ -111,10 +111,6 @@
           "Action": null
         },
         "FirstShellReloadTime": 0,
-        "FreezeEffectPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/physgun/effects/freeze.prefab"
-        },
         "GrabEffectPrefab": {
           "_type": "gameobject",
           "prefab": "weapons/physgun/effects/grab.prefab"
@@ -201,10 +197,6 @@
         "StartingAmmo": 0,
         "SuccessBeamEffect": null,
         "SuccessImpactEffect": null,
-        "UnFreezeEffectPrefab": {
-          "_type": "gameobject",
-          "prefab": "weapons/physgun/effects/unfreeze.prefab"
-        },
         "UsableByNpcs": true,
         "UsesAmmo": false,
         "UsesClips": true,

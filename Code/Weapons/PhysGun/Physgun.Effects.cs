@@ -4,8 +4,6 @@ public partial class Physgun : ScreenWeapon
 {
 	[Property] public LineRenderer BeamRenderer { get; set; }
 	[Property] public GameObject EndPointEffectPrefab { get; set; }
-	[Property] public GameObject FreezeEffectPrefab { get; set; }
-	[Property] public GameObject UnFreezeEffectPrefab { get; set; }
 	[Property] public GameObject GrabEffectPrefab { get; set; }
 
 	// ShootInput and SecondaryInput come from BaseSandboxWeapon's seat control.
@@ -171,15 +169,7 @@ public partial class Physgun : ScreenWeapon
 			return;
 		}
 
-		BeamHighlight.Show( GetHighlightTarget( target ), HighlightStyle.Selected );
-	}
-
-	static GameObject GetHighlightTarget( GameObject go )
-	{
-		var modelPhysics = go.Components.GetInAncestorsOrSelf<ModelPhysics>();
-		if ( !modelPhysics.IsValid() ) return go;
-
-		return modelPhysics.Renderer.IsValid() ? modelPhysics.Renderer.GameObject : modelPhysics.GameObject;
+		BeamHighlight.Show( ObjectHighlight.GetTarget( target ), HighlightStyle.Selected );
 	}
 
 	void CloseBeam()

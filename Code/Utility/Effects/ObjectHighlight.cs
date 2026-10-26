@@ -99,6 +99,17 @@ public static class ObjectHighlight
 		flash.Play( outline );
 	}
 
+	/// <summary>
+	/// What to outline for <paramref name="go"/>: the whole ragdoll for one of its bones, otherwise itself.
+	/// </summary>
+	public static GameObject GetTarget( GameObject go )
+	{
+		var modelPhysics = go.Components.GetInAncestorsOrSelf<ModelPhysics>();
+		if ( !modelPhysics.IsValid() ) return go;
+
+		return modelPhysics.Renderer.IsValid() ? modelPhysics.Renderer.GameObject : modelPhysics.GameObject;
+	}
+
 	static void AddRenderers( GameObject o, List<Renderer> renderers )
 	{
 		if ( !o.IsValid() ) return;

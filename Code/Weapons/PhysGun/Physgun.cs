@@ -915,6 +915,16 @@ public partial class Physgun : Local.IPlayerEvents
 	}
 
 	/// <summary>
+	/// Is this physgun holding <paramref name="root"/> or pulling it in? The grab is synced, so this works everywhere.
+	/// </summary>
+	public bool IsGrabbing( GameObject root )
+	{
+		return Grabs( _state ) || (_stateHovered.Pulling && Grabs( _stateHovered ));
+
+		bool Grabs( GrabState state ) => (state.Active || state.Pulling) && state.GameObject?.Root == root;
+	}
+
+	/// <summary>
 	/// The holder picks what to grab on their machine, so check it again here before moving it for them.
 	/// </summary>
 	bool CanMoveFor( in GrabState state ) => CanMove( state ) && (!IsProxy || AllowsGrab( state.GameObject ));
@@ -986,16 +996,11 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( go.Tags.Has( "npc" ) )
 			return;
 
-		var effect = FreezeEffectPrefab.Clone( body.WorldTransform );
-
-		foreach ( var emitter in effect.GetComponentsInChildren<ParticleModelEmitter>() )
-		{
-			emitter.Target = body.GameObject;
-		}
+		FreezeEffect.Play( body.GameObject, true );
 
 		if ( !IsProxy )
 		{
-			ObjectHighlight.Flash( GetHighlightTarget( body.GameObject ), HighlightStyle.Selected );
+			ObjectHighlight.Flash( ObjectHighlight.GetTarget( body.GameObject ), HighlightStyle.Selected );
 		}
 
 		if ( body.IsProxy ) return;
@@ -1020,11 +1025,7 @@ public partial class Physgun : Local.IPlayerEvents
 	{
 		if ( !body.IsValid() ) return;
 
-		var effect = UnFreezeEffectPrefab.Clone( body.WorldTransform );
-		foreach ( var emitter in effect.GetComponentsInChildren<ParticleModelEmitter>() )
-		{
-			emitter.Target = body.GameObject;
-		}
+		FreezeEffect.Play( body.GameObject, false );
 
 		if ( IsProxy && body.IsProxy ) return;
 
@@ -1038,7 +1039,7 @@ public partial class Physgun : Local.IPlayerEvents
 			Sandbox.UI.Notices.AddNotice( "ac_unit", Color.Cyan, phrase );
 
 			// Flash everything that got unfrozen, same as freezing does
-			foreach ( var target in bodies.Select( x => GetHighlightTarget( x.GameObject ) ).Distinct() )
+			foreach ( var target in bodies.Select( x => ObjectHighlight.GetTarget( x.GameObject ) ).Distinct() )
 			{
 				ObjectHighlight.Flash( target, HighlightStyle.Selected );
 			}
