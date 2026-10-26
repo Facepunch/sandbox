@@ -37,6 +37,10 @@
     {
         var resource = Property.GetValue<GameResource>();
 
+        // a model collider with no surface override uses the model's own, show that rather than nothing
+        if ( resource == null && Property.Name == nameof( Collider.Surface ) && Property.Parent?.Targets.FirstOrDefault() is ModelCollider collider )
+            resource = collider.Model?.Physics?.Parts.SelectMany( x => x.Parts ).Select( x => x.Surface ).FirstOrDefault( x => x.IsValid() );
+
         if ( resource == null || !resource.IsValid() )
         {
             Title = null;
