@@ -56,6 +56,12 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 	TimeSince _timeSincePickup;
 
 	bool _rotateBlocked;
+	TimeSince _timeSinceUsePressed;
+
+	/// <summary>
+	/// Releasing use within this long of pressing it drops what we're holding, holding it longer rotates.
+	/// </summary>
+	const float UseTapTime = 0.2f;
 
 	bool _attackBlocked;
 
@@ -125,8 +131,18 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 		_rotation.UpdateSnapping();
 
 		var useDown = Input.Down( "use" );
+		if ( Input.Pressed( "use" ) ) _timeSinceUsePressed = 0;
+
+		// The press that picked it up is still blocked, so letting go of it doesn't drop
+		var useTapped = Input.Released( "use" ) && !_rotateBlocked && _timeSinceUsePressed < UseTapTime;
 		if ( !useDown ) _rotateBlocked = false;
 		Input.Clear( "use" );
+
+		if ( useTapped )
+		{
+			Drop();
+			return;
+		}
 
 		if ( Input.Pressed( "attack1" ) ) Throw();
 		else if ( Input.Pressed( "attack2" ) ) Drop();
