@@ -58,7 +58,7 @@
         var showAmmo = weapon.IsValid() && weapon.UsesAmmo && Hud.IsVisible( HudElement.Ammo );
 
         section.Settings = this;
-        section.Hidden = SpawnMenuHost.IsOpen;
+        section.Hidden = SpawnMenuHost.IsOpen && SpawnMenuHost.GetActiveMode() is not ContextMenuHost;
         section.Data = new VitalsSection.Readout
         {
             ShowVitals = Hud.IsVisible( HudElement.Vitals ),
