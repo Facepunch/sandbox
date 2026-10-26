@@ -41,4 +41,22 @@ internal static partial class GamePreferences
 	[ConVar( "sandbox.physgun_outline_obscured", ConVarFlags.Saved )]
 	[Range( 0f, 1f ), Step( 0.05f ), Group( "Physgun Outline" )]
 	public static float OutlineObscuredOpacity { get; set; } = 0.1f;
+
+	/// <summary>
+	/// Colour of your physgun's beam, its effects and its glow, as text. Empty for the weapon's own.
+	/// Your player syncs it so everyone else sees your physgun in it, see <see cref="Player.PhysgunColor"/>.
+	/// </summary>
+	[ConVar( "sandbox.physgun_color", ConVarFlags.Saved )]
+	[Group( "Physgun Colors" )]
+	public static string PhysgunColor { get; set; } = "";
+
+	/// <summary>
+	/// Colour your physgun glows while it gravity pulls, as text. Empty for the weapon's own.
+	/// </summary>
+	[ConVar( "sandbox.physgun_pull_color", ConVarFlags.Saved )]
+	[Group( "Physgun Colors" )]
+	public static string PhysgunPullColor { get; set; } = "";
+
+	public static Color? PhysgunColorOverride => ParseColor( PhysgunColor );
+	public static Color? PhysgunPullColorOverride => ParseColor( PhysgunPullColor );
 }

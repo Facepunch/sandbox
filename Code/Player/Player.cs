@@ -175,6 +175,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		{
 			UpdateSeatedWeapons();
 			DrawSeatedWeaponHud();
+			UpdatePhysgunColors();
 		}
 	}
 

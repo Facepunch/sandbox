@@ -20,7 +20,7 @@ public sealed class PhygunWorldmodel : Component
 			? 8f * _tintFrac * _tintFrac * _tintFrac * _tintFrac
 			: 1f - 8f * (1f - _tintFrac) * (1f - _tintFrac) * (1f - _tintFrac) * (1f - _tintFrac);
 
-		var tint = Color.Lerp( PhysTint, GravTint, t );
+		var tint = Color.Lerp( Physgun.Recolor( PhysTint, physgun?.BeamColor ), Physgun.Recolor( GravTint, physgun?.PullColor, Physgun.DefaultPullColor ), t );
 
 		if ( GlowEffect is not null )
 			GlowEffect.Tint = tint;

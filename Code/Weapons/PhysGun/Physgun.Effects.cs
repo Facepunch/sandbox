@@ -55,6 +55,95 @@ public partial class Physgun : ScreenWeapon
 	public bool BeamActive => _beamOpen || _state.Pulling || _stateHovered.Pulling;
 	public bool PullActive => _state.Pulling || _stateHovered.Pulling;
 
+	/// <summary>
+	/// The weapon's own beam and pull colours, shown in place of an empty <see cref="GamePreferences.PhysgunColor"/>.
+	/// Picking one of these leaves the physgun as bright as it is by default, see <see cref="Recolor(Color, Color?, Color)"/>.
+	/// </summary>
+	public static readonly Color DefaultBeamColor = new( 0.48f, 0.88f, 1f );
+	public static readonly Color DefaultPullColor = new( 1f, 0.8f, 0f );
+
+	/// <summary>
+	/// The colour the holder picked for the beam, its effects and the glow, null for the weapon's own
+	/// </summary>
+	public Color? BeamColor => HasOwner ? GamePreferences.ParseColor( Owner.PhysgunColor ) : null;
+
+	/// <summary>
+	/// The colour the holder picked for the glow while gravity pulling, null for the weapon's own
+	/// </summary>
+	public Color? PullColor => HasOwner ? GamePreferences.ParseColor( Owner.PhysgunPullColor ) : null;
+
+	/// <summary>
+	/// <paramref name="original"/>, a part of the physgun in its default colour, moved by however far <paramref name="color"/> is
+	/// from <paramref name="reference"/>, the default it was picked against. Picking the default changes nothing, and parts keep
+	/// their own shades - the glow stays deeper than the beam - in whatever colour is picked.
+	/// </summary>
+	public static Color Recolor( Color original, Color? color, Color reference )
+	{
+		if ( color is not { } picked ) return original;
+
+		// White tints, like the effects' particles, take their colour from elsewhere, so tint them by the change instead
+		var (hsv, brightness) = Split( original );
+		if ( hsv.Saturation < 0.05f )
+		{
+			return new Color(
+				original.r * picked.r / MathF.Max( reference.r, 0.01f ),
+				original.g * picked.g / MathF.Max( reference.g, 0.01f ),
+				original.b * picked.b / MathF.Max( reference.b, 0.01f ),
+				original.a );
+		}
+
+		var (from, fromBrightness) = Split( reference );
+		var (to, toBrightness) = Split( picked );
+
+		hsv.Hue = ((hsv.Hue + to.Hue - from.Hue) % 360f + 360f) % 360f;
+		hsv.Saturation = Math.Clamp( hsv.Saturation * to.Saturation / MathF.Max( from.Saturation, 0.01f ), 0f, 1f );
+
+		return (hsv.ToColor() * (brightness * toBrightness / fromBrightness)).WithAlpha( original.a );
+	}
+
+	/// <summary>
+	/// <see cref="Recolor(Color, Color?, Color)"/> for a part that takes the beam colour
+	/// </summary>
+	public static Color Recolor( Color original, Color? color ) => Recolor( original, color, DefaultBeamColor );
+
+	/// <summary>
+	/// <paramref name="original"/> in exactly the beam colour picked, rather than shifted along with the rest of the physgun.
+	/// It stays as bright to the eye as it was against the default, so picking the default only changes its shade.
+	/// </summary>
+	public static Color RecolorExact( Color original, Color? color )
+	{
+		if ( color is not { } picked ) return original;
+
+		return (picked * (Luminance( original ) / Luminance( DefaultBeamColor ))).WithAlpha( original.a );
+	}
+
+	static float Luminance( Color color ) => 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
+
+	// HDR colours go over 1, so hue and saturation come from the colour scaled down to fit, the rest is its brightness
+	static (ColorHsv Hsv, float Brightness) Split( Color color )
+	{
+		var brightness = MathF.Max( color.r, MathF.Max( color.g, color.b ) );
+		if ( brightness <= 0f ) return (new ColorHsv( 0, 0, 0 ), 0f);
+
+		var hsv = (color * (1f / brightness)).WithAlpha( 1 ).ToHsv();
+		return (hsv, brightness);
+	}
+
+	// the beam's gradient as the prefab set it up, to recolour from
+	Gradient? _beamGradient;
+
+	void UpdateBeamColor()
+	{
+		_beamGradient ??= BeamRenderer.Color;
+
+		var color = BeamColor;
+		var frames = _beamGradient.Value.Colors.Select( x => new Gradient.ColorFrame( x.Time, Recolor( x.Value, color ) ) );
+		BeamRenderer.Color = _beamGradient.Value.WithFrames( [.. frames] );
+
+		if ( _grabEffect.IsValid() ) PhysgunEffectColor.Apply( _grabEffect, color );
+		if ( _endPointEffect.IsValid() ) PhysgunEffectColor.Apply( _endPointEffect, color );
+	}
+
 	void UpdateBeam( Transform source, Vector3 aimForward, Vector3 end, Vector3 endNormal, bool grabbed )
 	{
 		if ( !BeamRenderer.IsValid() ) return;
@@ -110,6 +199,7 @@ public partial class Physgun : ScreenWeapon
 		}
 
 		UpdateHighlight( grabbed ? _state.GameObject : null );
+		UpdateBeamColor();
 
 		bool justEnabled = !BeamRenderer.GameObject.Enabled;
 

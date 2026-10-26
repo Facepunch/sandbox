@@ -4,9 +4,9 @@
 public readonly record struct HighlightStyle( Color Color, Color ObscuredColor, float Width = 0.2f )
 {
 	/// <summary>
-	/// Something we're acting on - held by the physgun, frozen, or selected in the inspector.
+	/// Something we're acting on - held by the physgun, frozen, or selected in the inspector. Blue, or exactly the local player's physgun colour.
 	/// </summary>
-	public static HighlightStyle Selected => WithPreferences( new( new Color( 4.7f, 10.1f, 30.6f, 1 ), new Color( 2.2f, 2.3f, 2.9f ) ) );
+	public static HighlightStyle Selected => WithPreferences( new( Physgun.RecolorExact( new Color( 4.7f, 10.1f, 30.6f, 1 ), GamePreferences.PhysgunColorOverride ), new Color( 2.2f, 2.3f, 2.9f ) ) );
 
 	/// <summary>
 	/// Something under the inspector's cursor
