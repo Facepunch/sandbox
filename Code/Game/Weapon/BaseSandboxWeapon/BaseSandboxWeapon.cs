@@ -109,6 +109,20 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 		}
 	}
 
+	/// <summary>
+	/// Prop protection - hits still damage props the attacker can't touch, but don't push them.
+	/// </summary>
+	protected override float GetHitForce( GameObject target, float force )
+	{
+		var ownable = target.GetComponentInParent<Ownable>();
+		if ( !ownable.IsValid() ) return force;
+
+		var attacker = Attacker;
+		var caller = attacker.GetComponent<Player>()?.Network.Owner ?? attacker.GetComponentInParent<Ownable>()?.Owner;
+
+		return ownable.CallerHasAccess( caller ) ? force : 0f;
+	}
+
 	private Vector3 GetPrefabWorldScale()
 	{
 		if ( !string.IsNullOrEmpty( GameObject.PrefabInstanceSource ) )
