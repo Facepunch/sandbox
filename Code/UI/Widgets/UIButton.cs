@@ -27,6 +27,17 @@ public class UIButton : Button
 		}
 	}
 
+	/// <summary>
+	/// Moves the text into the tooltip and leaves only the icon, square like any icon-only button.
+	/// Clearing the text alone keeps the empty text column, which pushes the icon off centre.
+	/// </summary>
+	public void MakeIconOnly()
+	{
+		Tooltip = Text;
+		Text = null;
+		RightColumn.Style.Display = DisplayMode.None;
+	}
+
 	public override void Tick()
 	{
 		base.Tick();

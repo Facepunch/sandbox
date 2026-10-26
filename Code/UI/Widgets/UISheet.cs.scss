@@ -37,6 +37,11 @@ UISheet
 			{
 				@include ui-heading-text;
 			}
+
+			.header-button
+			{
+				margin-left: auto;
+			}
 		}
 
 		// the first group stays against the top of the sheet

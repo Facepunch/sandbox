@@ -113,7 +113,12 @@ public class UISheetGroup : Panel
 			_visibility = toggle.GetAttributes<InspectorVisibilityAttribute>()?.ToArray();
 		}
 
-		if ( !string.IsNullOrWhiteSpace( title ) || _toggle is not null )
+		// buttons for the whole group go in its title instead of a row
+		var headerButtons = group.Properties.Where( x => x.IsMethod && x.HasAttribute<HeaderButtonAttribute>() ).ToList();
+		foreach ( var button in headerButtons )
+			group.Properties.Remove( button );
+
+		if ( !string.IsNullOrWhiteSpace( title ) || _toggle is not null || headerButtons.Count > 0 )
 		{
 			_header = Add.Panel( "header" );
 
@@ -122,6 +127,13 @@ public class UISheetGroup : Panel
 
 			var label = _header.Add.Label( "", "title" );
 			label.Text = title ?? "";
+
+			foreach ( var method in headerButtons )
+			{
+				var button = _header.AddChild<UIButton>( "header-button" );
+				button.Method = method;
+				button.MakeIconOnly();
+			}
 		}
 
 		_rows = Add.Panel( "rows" );

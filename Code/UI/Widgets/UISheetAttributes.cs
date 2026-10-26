@@ -17,6 +17,15 @@ public sealed class SameLineAttribute : Attribute
 }
 
 /// <summary>
+/// Puts this [Button] in the title of its group in a <see cref="UISheet"/>, as a square icon with its title as the tooltip.
+/// For things that act on the whole group, like resetting it.
+/// </summary>
+[AttributeUsage( AttributeTargets.Method )]
+public sealed class HeaderButtonAttribute : Attribute
+{
+}
+
+/// <summary>
 /// Leaves out the name on the left of a property in a <see cref="UISheet"/>, its control takes the whole row.
 /// </summary>
 [AttributeUsage( AttributeTargets.Property | AttributeTargets.Field )]
