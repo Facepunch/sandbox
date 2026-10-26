@@ -67,7 +67,6 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 	public override void OnModeEnd( MoveMode next )
 	{
 		Controller.IsClimbing = false;
-		Controller.Body.Velocity = Controller.Body.Velocity.ClampLength( Controller.RunSpeed );
 		Controller.Body.Tags.Set( "noclip", false );
 	}
 
