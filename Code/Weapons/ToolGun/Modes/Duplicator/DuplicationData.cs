@@ -51,6 +51,7 @@ public class DuplicationData
 		foreach ( var obj in objects )
 		{
 			var entry = obj.Serialize();
+			DrivenProp.RemoveDriveTags( obj, entry );
 			worldBounds.Add( GetWorldBounds( obj ) );
 
 			var localized = center.ToLocal( obj.WorldTransform );

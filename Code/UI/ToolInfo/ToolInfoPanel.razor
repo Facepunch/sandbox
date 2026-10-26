@@ -11,11 +11,14 @@
 
 <root>
  <div class="header">
-  <div class="accent" />
+  @if ( !Driving )
+  {
+   <div class="accent" />
 
-  <div class="grid-mask">
-   <div class="grid" />
-  </div>
+   <div class="grid-mask">
+    <div class="grid" />
+   </div>
+  }
 
   <Label class="title" Tokenize=@false Text=@LocalizedText.Resolve( Info.Name ) />
 
@@ -67,16 +70,21 @@
 
 	Player Player => Player.FindLocalPlayer();
 
-	IToolInfo Info => CurrentToolInfo;
+	// Driving shows how to drive instead, in a plainer panel
+	bool Driving => Player?.IsDriving ?? false;
+
+	IToolInfo Info => Driving ? Player.DriveInfo : CurrentToolInfo;
 
 	protected override void OnUpdate()
 	{
-		SetClass( "visible", CurrentToolInfo is not null );
+		SetClass( "visible", Info is not null );
+		SetClass( "driving", Driving );
 	}
 
 	protected override int BuildHash()
 	{
 		var hash = new System.HashCode();
+		hash.Add( Driving );
 		hash.Add( Info?.Name );
 		hash.Add( Info?.Description );
 		hash.Add( Hud.IsVisible( HudElement.ToolInfo ) );

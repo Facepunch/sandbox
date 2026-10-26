@@ -578,6 +578,7 @@ internal sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEv
 			var jso = child.Serialize();
 			if ( jso is null ) continue;
 
+			DrivenProp.RemoveDriveTags( child, jso );
 			children.Add( jso );
 		}
 

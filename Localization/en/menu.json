@@ -23,6 +23,7 @@
     "spawnmenu.inspect.no_tool_hint": "Pick a tool in the spawn menu to see its settings here.",
     "spawnmenu.inspect.skin": "Skin",
     "spawnmenu.inspect.material": "Material",
+    "spawnmenu.inspect.drive": "Drive",
     "spawnmenu.inspect.delete": "Delete",
     "spawnmenu.inspect.break": "Break",
     "spawnmenu.inspect.axis_lock": "Axis Lock",

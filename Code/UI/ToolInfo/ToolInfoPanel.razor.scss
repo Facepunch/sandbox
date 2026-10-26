@@ -22,6 +22,14 @@ ToolInfoPanel
 		opacity: 1;
 	}
 
+	&.driving
+	{
+		.header, .hints
+		{
+			background-image: linear-gradient( to right, rgba( 0, 0, 0, 0.4 ), rgba( 0, 0, 0, 0 ) );
+		}
+	}
+
 	.header
 	{
 		position: relative;

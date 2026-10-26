@@ -62,7 +62,12 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 				return HudElement.All;
 
 			var weapon = GetComponent<PlayerInventory>()?.ActiveWeapon;
-			return weapon.IsValid() && weapon.WantsHideHud ? weapon.HiddenHudElements : HudElement.None;
+			var hidden = weapon.IsValid() && weapon.WantsHideHud ? weapon.HiddenHudElements : HudElement.None;
+
+			if ( IsDriving )
+				hidden |= HudElement.Crosshair;
+
+			return hidden;
 		}
 	}
 
@@ -356,6 +361,9 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			KillSelf();
 			return;
 		}
+
+		if ( ControlDriving() )
+			return;
 
 		var seated = _cachedSeat is not null;
 

@@ -12,6 +12,12 @@ public sealed partial class GameManager : IContextMenuEvent
 		var isPlayer = target.Tags.Has( "player" );
 		var prop = target.GetComponent<Prop>();
 
+		var localPlayer = Player.FindLocalPlayer();
+		if ( localPlayer.IsValid() && !localPlayer.IsSeated && Player.CanDrive( target, Connection.Local ) )
+		{
+			e.AddOption( "gamepad", Game.Language.GetPhrase( "spawnmenu.inspect.drive" ), () => localPlayer.Drive( target ), 50, !Player.IsHeld( target ) );
+		}
+
 		if ( IsOnFire( target ) )
 		{
 			e.AddOption( "fire_extinguisher", Game.Language.GetPhrase( "spawnmenu.inspect.extinguish" ), () => ExtinguishInspectedObject( target ), 100 );

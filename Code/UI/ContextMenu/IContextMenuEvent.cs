@@ -1,11 +1,10 @@
 /// <summary>
 /// Lets scene components and systems add actions to an object's right-click menu.
 /// Options are collected with a sort order (lower is higher in the menu), then the Inspector builds the menu.
-/// The built-ins use 100 (Ignite/Extinguish), 200 (Delete) and 300 (Break); the default of 0 lands above them.
 /// </summary>
 public interface IContextMenuEvent : ISceneEvent<IContextMenuEvent>
 {
-	public sealed record Option( string Icon, string Text, Action Action, Action<Sandbox.UI.Menu> SubmenuBuilder, int Order );
+	public sealed record Option( string Icon, string Text, Action Action, Action<Sandbox.UI.Menu> SubmenuBuilder, int Order, bool Enabled = true );
 
 	public sealed class Event( GameObject target )
 	{
@@ -21,9 +20,12 @@ public interface IContextMenuEvent : ISceneEvent<IContextMenuEvent>
 		/// </summary>
 		public IEnumerable<Option> Options => _options.OrderBy( o => o.Order );
 
-		public void AddOption( string icon, string text, Action action, int order = 0 )
+		/// <summary>
+		/// Add an option. A disabled one is shown greyed out and can't be picked.
+		/// </summary>
+		public void AddOption( string icon, string text, Action action, int order = 0, bool enabled = true )
 		{
-			_options.Add( new Option( icon, text, action, null, order ) );
+			_options.Add( new Option( icon, text, action, null, order, enabled ) );
 		}
 
 		public void AddSubmenu( string icon, string text, Action<Sandbox.UI.Menu> builder, int order = 0 )
@@ -41,7 +43,7 @@ public interface IContextMenuEvent : ISceneEvent<IContextMenuEvent>
 				if ( option.SubmenuBuilder is not null )
 					option.SubmenuBuilder( menu.AddMenu( option.Text, option.Icon ) );
 				else
-					menu.AddOption( option.Text, option.Icon, option.Action );
+					menu.AddOption( option.Text, option.Icon, option.Action ).Enabled = option.Enabled;
 			}
 		}
 	}

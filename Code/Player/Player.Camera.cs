@@ -22,6 +22,12 @@ public sealed partial class Player : ICameraModifier
 
 	void PlayerController.IEvents.OnEyeAngles( ref Angles ang )
 	{
+		if ( IsDriving )
+		{
+			ang = default;
+			return;
+		}
+
 		var angles = ang;
 		Local.IPlayerEvents.Post( x => x.OnCameraMove( ref angles ) );
 		ang = angles;
@@ -53,6 +59,7 @@ public sealed partial class Player : ICameraModifier
 
 		ApplyMovementCameraEffects( ref view );
 		ApplySeatedCameraSetup( ref view );
+		ApplyDriveCamera( camera, ref view );
 
 		BridgeCameraEvent( camera, ref view, c => Local.IPlayerEvents.Post( x => x.OnCameraPostSetup( c ) ) );
 	}

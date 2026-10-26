@@ -126,7 +126,30 @@ public static partial class ServerSettings
 		if ( type == typeof( string ) )
 			return Game.TypeLibrary.CreateProperty<string>( title, () => (string)property.GetValue( null ), v => Set( name, v ), attributes.ToArray() );
 
+		// the sheet shows a dropdown, the convar takes the value's name
+		if ( type.IsEnum )
+		{
+			var row = Game.TypeLibrary.GetType( typeof( EnumRow<> ) ).CreateGeneric<IEnumRow>( [type] );
+			return row.Create( title, () => property.GetValue( null ), v => Set( name, v.ToString() ), attributes.ToArray() );
+		}
+
 		return null;
+	}
+
+	interface IEnumRow
+	{
+		SerializedProperty Create( string title, Func<object> get, Action<object> set, Attribute[] attributes );
+	}
+
+	/// <summary>
+	/// Rows are made with a generic call, so enums get one of these for their type.
+	/// </summary>
+	sealed class EnumRow<T> : IEnumRow where T : struct, Enum
+	{
+		public SerializedProperty Create( string title, Func<object> get, Action<object> set, Attribute[] attributes )
+		{
+			return Game.TypeLibrary.CreateProperty<T>( title, () => (T)get(), v => set( v ), attributes );
+		}
 	}
 
 	static List<Setting> FindConVars( ConVarFlags flags )
