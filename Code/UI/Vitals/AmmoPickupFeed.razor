@@ -15,6 +15,14 @@
 
 @code
 {
+    public override void Tick()
+    {
+        base.Tick();
+
+        Style.Right = Hud.MarginLength;
+        Style.Bottom = Length.Pixels( Hud.StackBottom * ScaleFromScreen );
+    }
+
     IEnumerable<PlayerInventory.AmmoPickupNotice> VisibleNotices()
     {
         var inventory = Player.FindLocalPlayer()?.GetComponent<PlayerInventory>();

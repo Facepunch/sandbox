@@ -31,6 +31,7 @@
 
         if ( _text is not null ) _shownText = _text;
         Panel.SetClass( "visible", _text is not null );
+        Panel.Style.Bottom = Hud.MarginLength;
 	}
 
     string FindOwnerName()

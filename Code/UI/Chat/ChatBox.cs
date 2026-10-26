@@ -104,6 +104,11 @@ public sealed class ChatBox : PanelComponent, IChatEvent
 		// both sit above the vitals
 		_box.Style.Bottom = Length.Pixels( Hud.StackBottom * _box.ScaleFromScreen );
 		_recent.Style.Bottom = Length.Pixels( Hud.StackBottom * _recent.ScaleFromScreen );
+		_recent.Style.Display = GamePreferences.DrawChatMessages ? null : DisplayMode.None;
+
+		_box.Style.Left = Hud.MarginLength;
+		foreach ( var line in _recentList.Children )
+			line.Style.PaddingLeft = Hud.MarginLength;
 
 		if ( !visible )
 		{

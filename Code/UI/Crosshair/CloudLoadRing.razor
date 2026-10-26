@@ -28,7 +28,7 @@
 
         if ( Track is null || Spinner is null ) return;
 
-        var tint = HudLayer.Find( this, false )?.Tint ?? HudLayer.DefaultTint;
+        var tint = HudLayer.Find( this, false )?.CurrentTint ?? HudLayer.DefaultTint;
         Track.Style.BorderColor = tint.WithAlpha( 0.25f );
         Spinner.Style.BorderTopColor = tint;
     }

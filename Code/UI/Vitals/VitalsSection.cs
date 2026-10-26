@@ -140,7 +140,7 @@ public sealed class VitalsSection : HudSection
 
 		var scale = ScaleToScreen;
 		var bounds = painter.Bounds;
-		var deadzone = Screen.Width * 0.02f;
+		var deadzone = Hud.Margin;
 		var bottom = MathF.Floor( bounds.Height - deadzone );
 
 		var pad = MathF.Round( BoxPadding * scale );

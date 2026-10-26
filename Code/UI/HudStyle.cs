@@ -58,6 +58,6 @@ public static class HudStyle
 	public static Look For( Scene scene )
 	{
 		var layer = scene?.Get<HudLayer>();
-		return layer.IsValid() ? new Look( layer.Tint, layer.TextGain, layer.DigitGain ) : new Look( HudLayer.DefaultTint, 1, 1 );
+		return layer.IsValid() ? new Look( layer.CurrentTint, layer.TextGain, layer.DigitGain ) : new Look( HudLayer.DefaultTint, 1, 1 );
 	}
 }

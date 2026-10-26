@@ -1,7 +1,7 @@
 /// <summary>
 /// The local user's preferences in Deathmatch
 /// </summary>
-internal static class GamePreferences
+internal static partial class GamePreferences
 {
 	/// <summary>
 	/// Enables automatic switching to better weapons on item pickup
@@ -29,4 +29,25 @@ internal static class GamePreferences
 	[ConVar( "sandbox.screenshake", ConVarFlags.Saved )]
 	[Range( 0.1f, 2f ), Step( 0.1f ), Group( "Camera" )]
 	public static float Screenshake { get; set; } = 0.3f;
+
+	public static void Reset( string group )
+	{
+		foreach ( var property in Game.TypeLibrary.GetType( typeof( GamePreferences ) )?.Properties ?? [] )
+		{
+			if ( property.Group != group || property.GetCustomAttribute<ConVarAttribute>() is not { } convar ) continue;
+
+			if ( property.GetCustomAttribute<DefaultValueAttribute>() is { } defaultValue )
+				ConsoleSystem.SetValue( convar.Name, defaultValue.Value );
+		}
+	}
+
+	/// <summary>
+	/// A colour preference as text. Plain invariant numbers rather than hex, so HDR brightness above 1 survives.
+	/// </summary>
+	public static string ColorText( Color color ) => string.Create( System.Globalization.CultureInfo.InvariantCulture, $"{color.r},{color.g},{color.b},{color.a}" );
+
+	/// <summary>
+	/// A colour preference, null when it's empty for the default or can't be read. Hex from older saves reads too.
+	/// </summary>
+	public static Color? ParseColor( string text ) => string.IsNullOrWhiteSpace( text ) ? null : Color.Parse( text );
 }

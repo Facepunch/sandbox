@@ -24,11 +24,14 @@ public abstract class HudSection
 	/// </summary>
 	public abstract void GetCompositeRegions( List<Rect> regions );
 
-	protected float ScaleToScreen => Canvas.ScaleToScreen;
+	/// <summary>
+	/// The canvas's scale to the screen times the player's HUD scale. Size everything painted by this.
+	/// </summary>
+	protected float ScaleToScreen => Canvas.ScaleToScreen * GamePreferences.HudScale;
 
 	protected Rect CanvasRect => Canvas.Box.Rect;
 
-	protected Color Tint => Canvas.Layer.Tint;
+	protected Color Tint => Canvas.Layer.CurrentTint;
 	protected float DigitGain => Canvas.Layer.DigitGain;
 	protected float TextGain => Canvas.Layer.TextGain;
 	protected float GlowRadius => Canvas.Layer.GlowRadius;

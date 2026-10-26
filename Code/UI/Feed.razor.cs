@@ -14,6 +14,8 @@ partial class Feed : PanelComponent
 	protected override void OnUpdate()
 	{
 		SetClass( "hide", !Hud.IsVisible( HudElement.KillFeed ) );
+		Panel.Style.Top = Hud.MarginLength;
+		Panel.Style.Right = Hud.MarginLength;
 	}
 
 	[Rpc.Broadcast]

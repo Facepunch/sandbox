@@ -74,6 +74,7 @@ public partial class Notices : PanelComponent
 
 		// notices stack themselves, the layout lives in Notices.cs.scss
 		Panel.Style.Display = Hud.IsVisible( HudElement.Notices ) ? DisplayMode.Flex : DisplayMode.None;
+		Panel.Style.Right = Hud.MarginLength;
 
 		var voices = Facepunch.UI.Voices.ListHeight;
 		var bottom = Hud.StackBottom + (voices > 0 ? voices : 0);

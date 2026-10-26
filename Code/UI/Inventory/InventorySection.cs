@@ -20,7 +20,6 @@ public sealed class InventorySection : HudSection
 
 	const string IndexFont = "SandboxID"; // custom, supports only digits at the moment, don't use for anything else
 
-	const float Top = 38;
 	const float TileWidth = 230;
 	const float TileHeight = 120;
 	const float IconAreaHeight = 108; // the icon is centred in the top part, the rest holds the name
@@ -152,7 +151,7 @@ public sealed class InventorySection : HudSection
 		var tallest = 0f;
 		for ( int c = 0; c < columns; c++ ) tallest = MathF.Max( tallest, ColumnHeight( c, scale ) );
 
-		var top = MathF.Round( Top * scale );
+		var top = MathF.Round( Hud.Margin );
 		var hidden = -(top + tallest + GlowRadius * scale * 2);
 		var y0 = MathF.Round( MathX.Lerp( hidden, top, Easing.QuadraticInOut( _slide ) ) );
 

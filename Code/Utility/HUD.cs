@@ -1,8 +1,20 @@
+using Sandbox.UI;
+
 namespace Sandbox;
 
 public static class Hud
 {
 	public static float Scale => Screen.Height / 1080.0f;
+
+	/// <summary>
+	/// Gap between the screen edges and the HUD in screen pixels, from the player's HUD margin
+	/// </summary>
+	public static float Margin => Screen.Width * GamePreferences.HudMargin / 100f;
+
+	/// <summary>
+	/// <see cref="Margin"/> for panel styles, which scale it to the panel themselves
+	/// </summary>
+	public static Length? MarginLength => Length.ViewWidth( GamePreferences.HudMargin );
 
 	/// <summary>
 	/// Space kept between the vitals and the HUD stacked above them (chat, notices, the voice list)
@@ -16,8 +28,8 @@ public static class Hud
 			var vitals = Game.ActiveScene?.Get<HudLayer>()?.Canvas?.Section<VitalsSection>( false );
 
 			// until the vitals have been painted, go by the size they usually are
-			var scale = vitals?.Canvas.ScaleToScreen ?? Scale;
-			var fromBottom = vitals is { BoxTop: > 0 } ? vitals.Canvas.PixelSize.y - vitals.BoxTop : Screen.Width * 0.02f + 92 * scale;
+			var scale = (vitals?.Canvas.ScaleToScreen ?? Scale) * GamePreferences.HudScale;
+			var fromBottom = vitals is { BoxTop: > 0 } ? vitals.Canvas.PixelSize.y - vitals.BoxTop : Margin + 92 * scale;
 
 			return fromBottom + StackGap * scale;
 		}
@@ -40,13 +52,15 @@ public static class Hud
 				return _hidden;
 
 			_cachedAt = RealTime.Now;
-			_hidden = HudElement.None;
+
+			// the player's own HUD preferences, then whatever the scene hides on top
+			_hidden = GamePreferences.HiddenHud;
 
 			var scene = Game.ActiveScene;
 			if ( !scene.IsValid() )
 				return _hidden;
 
-			var hidden = HudElement.None;
+			var hidden = _hidden;
 			scene.RunEvent<IHudEvents>( x => x.OnHudVisibility( ref hidden ) );
 			_hidden = hidden;
 
