@@ -68,11 +68,25 @@
         return false;
     }
 
+    // when toggle key is enabled from settings
+    string toggledKey;
+
     void UpdateSpawnMenuState()
     {
-        var openSpawnMenu = Input.Down("spawnmenu");
-        var openInspectMenu = Input.Down("inspectmenu");
-        var openAnyMenu = openSpawnMenu || openInspectMenu;
+        bool openAnyMenu;
+
+        if ( GamePreferences.ToggleMenus )
+        {
+            var pressed = Input.Pressed( "spawnmenu" ) ? "spawnmenu" : Input.Pressed( "inspectmenu" ) ? "inspectmenu" : null;
+            if ( pressed is not null ) toggledKey = toggledKey == pressed ? null : pressed;
+
+            openAnyMenu = toggledKey is not null;
+        }
+        else
+        {
+            toggledKey = null;
+            openAnyMenu = Input.Down("spawnmenu") || Input.Down("inspectmenu");
+        }
 
         // Stay open while typing in one of our text entries, so letting go of the key doesn't eat the input.
         // Other focusable controls, like the trees, shouldn't pin the menu just because they were clicked.
