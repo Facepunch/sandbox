@@ -19,8 +19,9 @@ public sealed class PhysicsHold
 
 	/// <summary>
 	/// Starts holding <paramref name="body"/> by <paramref name="grabPoint"/>, in world space. Does nothing if we're already holding.
+	/// Lower <paramref name="damping"/> follows the target more tightly, 1 is critically damped.
 	/// </summary>
-	public void Hold( Rigidbody body, Vector3 grabPoint )
+	public void Hold( Rigidbody body, Vector3 grabPoint, float damping = 4.0f )
 	{
 		if ( IsHolding ) return;
 
@@ -38,8 +39,8 @@ public sealed class PhysicsHold
 		var maxTorque = MaxLinearAcceleration * MathF.Sqrt( physicsBody.Mass * MathF.Max( inertia.x, MathF.Max( inertia.y, inertia.z ) ) );
 
 		_joint = PhysicsJoint.CreateControl( point1, point2 );
-		_joint.LinearSpring = new PhysicsSpring( 32, 4, maxForce );
-		_joint.AngularSpring = new PhysicsSpring( 64, 4, maxTorque );
+		_joint.LinearSpring = new PhysicsSpring( 32, damping, maxForce );
+		_joint.AngularSpring = new PhysicsSpring( 64, damping, maxTorque );
 	}
 
 	public void Move( Transform target )

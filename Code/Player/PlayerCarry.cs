@@ -375,7 +375,8 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 				return;
 			}
 
-			_hold.Hold( body, body.PhysicsBody.MassCenter );
+			// Critically damped so it stays at the hold point when we turn, rather than trailing behind
+			_hold.Hold( body, body.PhysicsBody.MassCenter, 1.0f );
 			_simulated = Held;
 			_simulated.Root.RunEvent<ICarryEvent>( x => x.OnCarryPickup( Player ) );
 		}
