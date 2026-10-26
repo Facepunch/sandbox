@@ -49,12 +49,24 @@ public partial class Physgun : ScreenWeapon
 	GameObject _endPointEffect;
 	GameObject _grabEffect;
 
-	public bool BeamActive => BeamRenderer?.Active == true || _state.Pulling || _stateHovered.Pulling;
+	// whether the beam is in use, drawn or not, so the view model still reacts with beams turned off
+	bool _beamOpen;
+
+	public bool BeamActive => _beamOpen || _state.Pulling || _stateHovered.Pulling;
 	public bool PullActive => _state.Pulling || _stateHovered.Pulling;
 
 	void UpdateBeam( Transform source, Vector3 aimForward, Vector3 end, Vector3 endNormal, bool grabbed )
 	{
 		if ( !BeamRenderer.IsValid() ) return;
+
+		_beamOpen = true;
+
+		if ( !GamePreferences.PhysgunBeams )
+		{
+			UpdateHighlight( grabbed ? _state.GameObject : null );
+			HideBeam();
+			return;
+		}
 
 		var endTx = new Transform( end, Rotation.LookAt( endNormal ) );
 
@@ -163,7 +175,7 @@ public partial class Physgun : ScreenWeapon
 	/// </summary>
 	void UpdateHighlight( GameObject target )
 	{
-		if ( IsProxy || !target.IsValid() )
+		if ( IsProxy || !target.IsValid() || !GamePreferences.PhysgunOutline )
 		{
 			BeamHighlight.Hide();
 			return;
@@ -174,8 +186,16 @@ public partial class Physgun : ScreenWeapon
 
 	void CloseBeam()
 	{
+		_beamOpen = false;
 		UpdateHighlight( null );
+		HideBeam();
+	}
 
+	/// <summary>
+	/// Takes the beam and its end effects off screen, leaving the outline alone
+	/// </summary>
+	void HideBeam()
+	{
 		if ( !BeamRenderer.IsValid() ) return;
 
 		BeamRenderer.GameObject.Enabled = false;

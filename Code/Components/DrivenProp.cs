@@ -141,12 +141,7 @@ public sealed class DrivenProp : Component, IPhysgunEvent, ICarryEvent
 	[Rpc.Broadcast( NetFlags.HostOnly )]
 	void PlayFreezeEffect( bool frozen )
 	{
-		FreezeEffect.Play( GameObject, frozen );
-
-		if ( Driver.IsValid() && !Driver.IsProxy )
-		{
-			ObjectHighlight.Flash( ObjectHighlight.GetTarget( GameObject ), HighlightStyle.Selected );
-		}
+		FreezeEffect.Play( GameObject, frozen, Driver.IsValid() && !Driver.IsProxy ? [GameObject] : null );
 	}
 
 	bool IsGrounded( Rigidbody body )

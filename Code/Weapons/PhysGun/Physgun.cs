@@ -996,12 +996,7 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( go.Tags.Has( "npc" ) )
 			return;
 
-		FreezeEffect.Play( body.GameObject, true );
-
-		if ( !IsProxy )
-		{
-			ObjectHighlight.Flash( ObjectHighlight.GetTarget( body.GameObject ), HighlightStyle.Selected );
-		}
+		FreezeEffect.Play( go, true, IsProxy ? null : [go] );
 
 		if ( body.IsProxy ) return;
 
@@ -1025,24 +1020,19 @@ public partial class Physgun : Local.IPlayerEvents
 	{
 		if ( !body.IsValid() ) return;
 
-		FreezeEffect.Play( body.GameObject, false );
+		var bodies = new HashSet<Rigidbody>();
+		if ( !IsProxy || !body.IsProxy )
+			PhysicsHold.GetConnectedBodies( body.GameObject, bodies );
+
+		FreezeEffect.Play( body.GameObject, false, IsProxy ? null : bodies.Select( x => x.GameObject ) );
 
 		if ( IsProxy && body.IsProxy ) return;
-
-		var bodies = new HashSet<Rigidbody>();
-		PhysicsHold.GetConnectedBodies( body.GameObject, bodies );
 
 		if ( !IsProxy )
 		{
 			var count = bodies.Select( x => x.GameObject.Root ).Distinct().Count();
 			var phrase = Game.Language.GetPhrase( "physgun.unfrozen", new() { { "count", count.ToString() } } );
 			Sandbox.UI.Notices.AddNotice( "ac_unit", Color.Cyan, phrase );
-
-			// Flash everything that got unfrozen, same as freezing does
-			foreach ( var target in bodies.Select( x => ObjectHighlight.GetTarget( x.GameObject ) ).Distinct() )
-			{
-				ObjectHighlight.Flash( target, HighlightStyle.Selected );
-			}
 		}
 
 		if ( body.IsProxy ) return;
