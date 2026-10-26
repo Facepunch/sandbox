@@ -3,6 +3,13 @@ using Sandbox.Movement;
 public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 {
 	/// <summary>
+	/// Scales <see cref="RunSpeed"/> and <see cref="WalkSpeed"/>. Read on the owner, who moves their own player.
+	/// </summary>
+	[Title( "Noclip Speed" ), Group( "Gameplay" ), ServerSettings.Section( "Players" ), Order( 7 ), Range( 0.1f, 10f ), Step( 0.1f )]
+	[ConVar( "sandbox.noclip_speed", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Multiplier on noclip flying speed." )]
+	public static float SpeedScale { get; set; } = 1.0f;
+
+	/// <summary>
 	/// If true, the player will still collide with the world and other players. This probably
 	/// means that the noclip mode is named wrong. But it's cool. It just becomes a fly around mode.
 	/// </summary>
@@ -93,6 +100,8 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 
 		// Duck and the walk modifier both slow movement in any direction.
 		if ( Input.Down( "walk" ) || Input.Down( "duck" ) ) velocity = WalkSpeed;
+
+		velocity *= SpeedScale;
 
 		if ( direction.IsNearlyZero( 0.1f ) )
 		{
