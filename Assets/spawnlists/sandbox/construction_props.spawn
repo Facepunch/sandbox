@@ -128,12 +128,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/concreteroaddivider01.vmdl",
-      "Title": "Concrete Road Divider",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.concretebarrier_damaged",
       "Title": "Concrete Barrier Damaged",
       "Icon": null
@@ -476,12 +470,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/bathroomsink01.vmdl",
-      "Title": "Bathroom Sink",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.washingmachine",
       "Title": "Washing Machine",
       "Icon": null
@@ -502,12 +490,6 @@
       "Kind": "Item",
       "Ident": "prop:facepunch.old_cooker",
       "Title": "Old Cooker",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/oldoven.vmdl",
-      "Title": "Old Oven",
       "Icon": null
     },
     {
@@ -806,38 +788,14 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/chair01.vmdl",
-      "Title": "Chair 1",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/chair02.vmdl",
-      "Title": "Chair 2",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.plastic_chair",
       "Title": "Garden Chair",
       "Icon": null
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/chair03.vmdl",
-      "Title": "Chair 3",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.dentist_chair",
       "Title": "Dentist Chair",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:facepunch.tp_bench",
-      "Title": "Bench",
       "Icon": null
     },
     {
@@ -868,12 +826,6 @@
       "Kind": "Item",
       "Ident": "prop:facepunch.wooden_crate",
       "Title": "wooden crate",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/crate01.vmdl",
-      "Title": "Crate",
       "Icon": null
     },
     {
@@ -952,12 +904,6 @@
       "Kind": "Item",
       "Ident": "prop:facepunch.card_box_open",
       "Title": "Cardboard Box Open",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/cardboardbox01.vmdl",
-      "Title": "Cardboard Box",
       "Icon": null
     },
     {
@@ -1148,12 +1094,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/sodacan01.vmdl",
-      "Title": "Soda Can",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.trolley",
       "Title": "Shopping Trolley",
       "Icon": null
@@ -1186,12 +1126,6 @@
       "Kind": "Item",
       "Ident": "prop:facepunch.street_bin",
       "Title": "Street Bin",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/trashcan01.vmdl",
-      "Title": "Trash Can 1",
       "Icon": null
     },
     {
@@ -1252,12 +1186,6 @@
       "Kind": "Item",
       "Ident": "prop:facepunch.traffic_cone",
       "Title": "Traffic Cone",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/roadcone01.vmdl",
-      "Title": "Road Cone",
       "Icon": null
     },
     {
@@ -1334,12 +1262,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/gritbin01_combined.vmdl",
-      "Title": "Grit Bin",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.atm",
       "Title": "ATM",
       "Icon": null
@@ -1384,12 +1306,6 @@
       "Kind": "Item",
       "Ident": "prop:facepunch.rubbish_can",
       "Title": "Rubbish Can",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/trashcan02.vmdl",
-      "Title": "Trash Can 2",
       "Icon": null
     },
     {

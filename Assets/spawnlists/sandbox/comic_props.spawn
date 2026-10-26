@@ -44,12 +44,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/bathroomsink01.vmdl",
-      "Title": "Bathroom Sink",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.largesaucepan",
       "Title": "Large Saucepan",
       "Icon": null
@@ -212,12 +206,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:facepunch.duffelbag",
-      "Title": "Duffelbag Dev",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.pliers01",
       "Title": "Pliers",
       "Icon": null
@@ -236,7 +224,7 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/crowbar01.vmdl",
+      "Ident": "prop:facepunch.w_crowbar",
       "Title": "Crowbar",
       "Icon": null
     },
@@ -272,12 +260,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/broom01.vmdl",
-      "Title": "Broom",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.hoovera",
       "Title": "Hoover a",
       "Icon": null
@@ -296,12 +278,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:facepunch.planter_01",
-      "Title": "Planter 1",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.wooden_desk_01",
       "Title": "Wooden Desk 1",
       "Icon": null
@@ -316,30 +292,6 @@
       "Kind": "Item",
       "Ident": "prop:facepunch.wooden_chair_a",
       "Title": "Wooden Chair 1",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/chair01.vmdl",
-      "Title": "Chair 1",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/chair03.vmdl",
-      "Title": "Chair 3",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/chair04blackleather.vmdl",
-      "Title": "Leather Chair",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/chair05bluefabric.vmdl",
-      "Title": "Fabric Chair",
       "Icon": null
     },
     {
@@ -458,12 +410,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/trashbag02.vmdl",
-      "Title": "Trash Bag",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.mug_01",
       "Title": "Ceramic Mug 1",
       "Icon": null
@@ -482,12 +428,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/coffeemug01.vmdl",
-      "Title": "Coffee Mug",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.coffee_cup",
       "Title": "Coffee Cup",
       "Icon": null
@@ -500,32 +440,8 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/sodacan01.vmdl",
-      "Title": "Soda Can",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.beer_bottle",
       "Title": "Beer Bottle",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/wineglass01.vmdl",
-      "Title": "Wine Glass 1",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/wineglass02.vmdl",
-      "Title": "Wine Glass 2",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/beertankard01.vmdl",
-      "Title": "Beer Tankard",
       "Icon": null
     },
     {
@@ -550,12 +466,6 @@
       "Kind": "Item",
       "Ident": "prop:facepunch.can_square",
       "Title": "Can Square",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/newspaper01.vmdl",
-      "Title": "Newspaper",
       "Icon": null
     },
     {
@@ -592,12 +502,6 @@
       "Kind": "Item",
       "Ident": "prop:facepunch.rubbish_cup",
       "Title": "Rubbish Cup",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/chippacket01.vmdl",
-      "Title": "Chip Packet",
       "Icon": null
     },
     {
@@ -668,12 +572,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/recyclingbin01.vmdl",
-      "Title": "Recycling Bin",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.traffic_cone",
       "Title": "Traffic Cone",
       "Icon": null
@@ -718,18 +616,6 @@
       "Kind": "Item",
       "Ident": "prop:facepunch.pizza",
       "Title": "pizza",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/hotdog01.vmdl",
-      "Title": "Hotdog",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/icecreamcone01.vmdl",
-      "Title": "Ice Cream Cone",
       "Icon": null
     },
     {
@@ -848,30 +734,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/balloonregular01.vmdl",
-      "Title": "Balloon",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/balloontall01.vmdl",
-      "Title": "Balloon Tall",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/balloonheart01.vmdl",
-      "Title": "Balloon Heart",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/balloonears01.vmdl",
-      "Title": "Balloon Ears",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.balloon",
       "Title": "Balloon",
       "Icon": null
@@ -902,12 +764,6 @@
     },
     {
       "Kind": "Item",
-      "Ident": "prop:models/citizen_props/beachball.vmdl",
-      "Title": "Beach Ball",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
       "Ident": "prop:facepunch.frisbee",
       "Title": "Frisbee",
       "Icon": null
@@ -928,18 +784,6 @@
       "Kind": "Item",
       "Ident": "prop:facepunch.frisbee3",
       "Title": "Frisbee Game Over",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/foamhand.vmdl",
-      "Title": "Foam Hand",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:models/citizen_props/coin01.vmdl",
-      "Title": "Coin",
       "Icon": null
     },
     {
@@ -1018,48 +862,6 @@
       "Kind": "Item",
       "Ident": "prop:facepunch.papertarget3",
       "Title": "Paper Target 3",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:facepunch.tp_bumpercar_01",
-      "Title": "Bumper Car",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:facepunch.tp_burgerstand",
-      "Title": "Burger Stand",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:facepunch.tp_hotdogstand",
-      "Title": "Hotdog Stand",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:facepunch.tp_merchstore",
-      "Title": "Merch Store",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:facepunch.tp_toilet",
-      "Title": "Portable Toilet",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:facepunch.tp_tiger",
-      "Title": "Tiger",
-      "Icon": null
-    },
-    {
-      "Kind": "Item",
-      "Ident": "prop:facepunch.tp_balloonstand",
-      "Title": "Balloon Stand",
       "Icon": null
     }
   ]
