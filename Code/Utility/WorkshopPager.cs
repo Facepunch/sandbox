@@ -21,7 +21,7 @@ public sealed class WorkshopPager<T>
 	public bool Started => _generation > 0;
 
 	/// <param name="createQuery">Builds the query for the first page.</param>
-	/// <param name="select">Turns a result into what <see cref="Items"/> holds.</param>
+	/// <param name="select">Turns a result into what <see cref="Items"/> holds. Return null to skip it.</param>
 	/// <param name="changed">Called when <see cref="Items"/> or <see cref="Loading"/> change.</param>
 	public WorkshopPager( Func<Storage.Query> createQuery, Func<Storage.QueryItem, T> select, Action changed )
 	{
@@ -70,7 +70,7 @@ public sealed class WorkshopPager<T>
 		{
 			_last = result;
 			if ( result.Items is not null )
-				Items.AddRange( result.Items.Select( _select ) );
+				Items.AddRange( result.Items.Select( _select ).Where( x => x is not null ) );
 		}
 
 		Loading = false;

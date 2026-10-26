@@ -7,7 +7,9 @@ public class PropsPage : SpawnlistsPage
 {
 	protected override void Rebuild()
 	{
-		AddHeader( "#spawnmenu.section.props" );
+		AddSpawnlistOptions();
+
+		AddHeader( "#spawnmenu.section.workshop" );
 		AddOption( "apps", "#spawnmenu.props.all", () => new SpawnPageCloud { IncludeLocalProps = true } );
 		AddOption( "person", "#spawnmenu.props.humans", () => new SpawnPageCloud() { Category = "human" } );
 		AddOption( "park", "#spawnmenu.props.nature", () => new SpawnPageCloud() { Category = "nature" } );
@@ -18,9 +20,7 @@ public class PropsPage : SpawnlistsPage
 		AddOption( "restaurant", "#spawnmenu.props.food", () => new SpawnPageCloud() { Category = "food" } );
 		AddOption( "gps_fixed", "#spawnmenu.props.guns", () => new SpawnPageCloud() { Category = "weapon" } );
 
-		AddSpawnlistOptions();
-
-		AddHeader( "#spawnmenu.section.workshop" );
+		AddHeader( "#spawnmenu.section.spawnlists_workshop" );
 		AddOption( "trending_up", "#spawnmenu.spawnlist.popular", () => new SpawnlistWorkshop { SortOrder = WorkshopSortMode.Popular } );
 		AddOption( "fiber_new", "#spawnmenu.spawnlist.newest", () => new SpawnlistWorkshop { SortOrder = WorkshopSortMode.Newest } );
 	}

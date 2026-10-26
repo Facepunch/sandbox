@@ -166,8 +166,12 @@
 
     static WorkshopSpawnlist CreateViewModel( Storage.QueryItem item )
     {
-        var previewItems = ReadMetaJson<List<SpawnlistItem>>( item, "preview_items" ) ?? [];
         var itemCount = ReadMetaInt( item, "item_count" );
+
+        // nobody wants to install an empty list
+        if ( itemCount <= 0 ) return null;
+
+        var previewItems = ReadMetaJson<List<SpawnlistItem>>( item, "preview_items" ) ?? [];
 
         return new WorkshopSpawnlist( item, itemCount, previewItems.Take( 6 ).ToList() );
     }

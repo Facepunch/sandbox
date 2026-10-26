@@ -62,7 +62,8 @@ public class SpawnlistResource : GameResource
 		public string GetIdent()
 		{
 			var ident = Ident.Trim();
-			if ( !ident.EndsWith( ".vmdl" ) ) ident += ".vmdl";
+			// only paths get the extension, package idents like prop:facepunch.wooden_crate stay as they are
+			if ( ident.Contains( '/' ) && !ident.EndsWith( ".vmdl" ) ) ident += ".vmdl";
 			return ident;
 		}
 
