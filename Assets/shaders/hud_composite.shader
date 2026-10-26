@@ -39,6 +39,7 @@ PS
 	float ScanlinePeriod < Attribute( "ScanlinePeriod" ); >;		// screen pixels from one line to the next, set by HudCanvas
 	float ScanlineThickness < Default( 0.55 ); Attribute( "ScanlineThickness" ); >;	// share of the period that is dark
 	float ScanlineSoftness < Default( 0.04 ); Attribute( "ScanlineSoftness" ); >;	// edge blur, as a share of the period
+	float HudOpacity < Default( 1.0 ); Attribute( "HudOpacity" ); >;	// the player's HUD opacity, fades the HUD and its glow together
 
 	RenderState( ColorWriteEnable0, RGBA );
 	RenderState( FillMode, SOLID );
@@ -77,11 +78,12 @@ PS
 			vBackdrop = SrgbGammaToLinear( vBackdrop );
 
 		// additive glow onto the frame, in linear space
-		float3 vGlow = Glow( vHudUv );
+		float3 vGlow = Glow( vHudUv ) * HudOpacity;
 		float3 vLinear = saturate( vBackdrop + vGlow );
 
 		// HUD
 		float4 vHud = SampleHud( vHudUv );
+		vHud.a *= HudOpacity;
 		float3 vHudLinear = 0;
 		if ( vHud.a > 0 )
 		{
