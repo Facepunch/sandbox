@@ -42,6 +42,8 @@
     "server.ownership.checks.description": "Players can only physgun, toolgun and pick up their own props. Admins can touch anything.",
     "server.reequiplast": "Re-equip Last Weapons",
     "server.reequiplast.description": "Give players back the weapons they were carrying when they respawn.",
+    "server.falldamage.realistic": "Realistic Fall Damage",
+    "server.falldamage.realistic.description": "When enabled, fall damage scales with how fast you hit the ground.",
     "server.spawnprotection": "Spawn Protection",
     "server.spawnprotection.description": "Seconds of invulnerability after spawning. 0 turns it off.",
     "server.carry": "Carry Props",

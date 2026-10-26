@@ -3,6 +3,13 @@
 /// </summary>
 public class PlayerFallDamage : Component, Local.IPlayerEvents
 {
+	/// <summary>
+	/// Off is the Garry's Mod style, a flat <see cref="FixedDamage"/> for any fall past the safe speed.
+	/// </summary>
+	[Title( "Realistic Fall Damage" ), Group( "Gameplay" ), ServerSettings.Section( "Players" ), Order( 6 )]
+	[ConVar( "sandbox.falldamage_realistic", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Fall damage scales with fall speed instead of a flat 10." )]
+	public static bool RealisticFallDamage { get; set; } = false;
+
 	[RequireComponent] public Player Player { get; set; }
 
 	/// <summary>
@@ -19,6 +26,11 @@ public class PlayerFallDamage : Component, Local.IPlayerEvents
 	/// Multiply damage amount by this much
 	/// </summary>
 	[Property] public float DamageMultiplier { get; set; } = 1.0f;
+
+	/// <summary>
+	/// Damage taken from any unsafe fall when realistic fall damage is off
+	/// </summary>
+	[Property] public float FixedDamage { get; set; } = 10.0f;
 
 	/// <summary>
 	/// Fall damage sound
@@ -38,7 +50,9 @@ public class PlayerFallDamage : Component, Local.IPlayerEvents
 		if ( fallSpeed <= MaxSafeFallSpeed )
 			return;
 
-		var damageAmount = MathX.Remap( fallSpeed, MaxSafeFallSpeed, FatalFallSpeed, 0f, 100f ) * DamageMultiplier;
+		var damageAmount = RealisticFallDamage
+			? MathX.Remap( fallSpeed, MaxSafeFallSpeed, FatalFallSpeed, 0f, 100f ) * DamageMultiplier
+			: FixedDamage;
 		if ( damageAmount < 1 ) return;
 
 		if ( Networking.IsHost && damageAmount >= Player.Health )
