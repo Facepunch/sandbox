@@ -21,7 +21,7 @@
         if ( section is null ) return;
 
         var player = Player.FindLocalPlayer();
-        if ( !player.IsValid() || !Hud.IsVisible( HudElement.Crosshair ) )
+        if ( !player.IsValid() || !Hud.IsVisible( HudElement.InteractionHints ) )
         {
             section.Hint = null;
             return;

@@ -396,4 +396,10 @@ public partial class BaseSandboxWeapon : Sandbox.BaseCombatWeapon, IKillIcon, IP
 	{
 		ViewModel?.RunEvent<ViewModel>( x => x.Renderer.Set( "b_jump", true ) );
 	}
+
+	public override void DrawHud( Painter painter, Vector2 crosshair )
+	{
+		if ( Hud.IsVisible( HudElement.Crosshair ) )
+			DrawCrosshair( painter, crosshair );
+	}
 }

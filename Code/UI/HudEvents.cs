@@ -38,7 +38,7 @@ public enum HudElement
 	ToolInfo = 1 << 5,
 
 	/// <summary>
-	/// The crosshair, pressable tooltips and the cloud-loading ring around it.
+	/// The weapon's crosshair and the cloud-loading ring around it. Use prompts are <see cref="InteractionHints"/>.
 	/// </summary>
 	Crosshair = 1 << 6,
 
@@ -71,6 +71,11 @@ public enum HudElement
 	/// The chat box and the recent messages.
 	/// </summary>
 	Chat = 1 << 12,
+
+	/// <summary>
+	/// The use key prompt for what you're looking at.
+	/// </summary>
+	InteractionHints = 1 << 13,
 
 	All = ~0,
 }
