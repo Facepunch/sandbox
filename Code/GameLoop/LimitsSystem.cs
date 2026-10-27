@@ -211,10 +211,10 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 		// TODO: this could be better, register something with the tool instead?
 		if ( CheckToolLimit<BalloonTool, BalloonEntity>( e, MaxBalloons ) ) return;
 		if ( CheckToolLimit<ThrusterTool, ThrusterEntity>( e, MaxThrusters ) ) return;
-		if ( CheckToolLimit<EmitterTool, EmitterEntity>( e, MaxEmitters, ToolInput.Primary ) ) return;
-		if ( CheckToolLimit<HoverballTool, HoverballEntity>( e, MaxHoverballs, ToolInput.Primary ) ) return;
-		if ( CheckToolLimit<WheelTool, WheelEntity>( e, MaxWheels, ToolInput.Primary ) ) return;
-		if ( CheckToolLimit<TextTool, TextEntity>( e, MaxTexts, ToolInput.Primary ) ) return;
+		if ( CheckToolLimit<EmitterTool, EmitterEntity>( e, MaxEmitters ) ) return;
+		if ( CheckToolLimit<HoverballTool, HoverballEntity>( e, MaxHoverballs ) ) return;
+		if ( CheckToolLimit<WheelTool, WheelEntity>( e, MaxWheels ) ) return;
+		if ( CheckToolLimit<TextTool, TextEntity>( e, MaxTexts ) ) return;
 
 		// TODO: same here :S
 		if ( MaxConstraints >= 0 && ( e.Tool is BaseConstraintToolMode || e.Tool is KeepUprightTool ) )
@@ -236,15 +236,14 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 	}
 
 	/// <summary>
-	/// Check a per-player tool limit. Returns true if the tool type matched.
+	/// Check a per-player tool limit. Returns true if the tool type matched. Every action these tools send to the host places one.
 	/// </summary>
-	private bool CheckToolLimit<TTool, TEntity>( IToolActionEvents.ActionData e, int limit, ToolInput? creationInput = null )
+	private bool CheckToolLimit<TTool, TEntity>( IToolActionEvents.ActionData e, int limit )
 		where TTool : ToolMode
 		where TEntity : Component
 	{
 		if ( e.Tool is not TTool ) return false;
 		if ( limit < 0 ) return true;
-		if ( creationInput.HasValue && e.Input != creationInput.Value ) return true;
 
 		var count = Count( (long)e.Player.SteamId, go => go.GetComponent<TEntity>().IsValid() );
 		if ( IsExceeded( limit, count ) )

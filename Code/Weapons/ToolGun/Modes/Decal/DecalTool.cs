@@ -281,9 +281,11 @@ public sealed class DecalTool : ToolMode
 	/// every other decal sent with the same id into a single undo entry.
 	/// The settings come with the call, since only the owner has their current values.
 	/// </summary>
-	[Rpc.Host]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	public void SpawnDecal( SelectionPoint point, DecalDefinition def, Color tint, float scale, float attenuation, float rotation, int sprayId )
 	{
+		if ( !FireToolAction( sprayId == 0 ? ToolInput.Primary : ToolInput.Secondary ) ) return;
+
 		if ( def == null ) return;
 
 		var pos = point.WorldTransform();
@@ -305,6 +307,8 @@ public sealed class DecalTool : ToolMode
 		go.NetworkSpawn();
 
 		GetUndoEntry( sprayId ).Add( go );
+
+		FirePostToolAction( sprayId == 0 ? ToolInput.Primary : ToolInput.Secondary );
 	}
 
 	/// <summary>

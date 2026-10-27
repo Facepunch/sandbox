@@ -35,7 +35,7 @@ public sealed class MaterialTool : ToolMode
 		var select = SelectTarget();
 		if ( !IsValidState || string.IsNullOrEmpty( MaterialPath ) ) return;
 
-		SetMaterial( select.GameObject, MaterialPath );
+		SetMaterial( select.GameObject, MaterialPath, ToolInput.Primary );
 		ShootEffects( select );
 	}
 
@@ -59,7 +59,7 @@ public sealed class MaterialTool : ToolMode
 		var select = SelectTarget();
 		if ( !IsValidState ) return;
 
-		SetMaterial( select.GameObject, null );
+		SetMaterial( select.GameObject, null, ToolInput.Reload );
 		ShootEffects( select );
 	}
 
@@ -73,8 +73,10 @@ public sealed class MaterialTool : ToolMode
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	public async void SetMaterial( GameObject target, string materialPath )
+	public async void SetMaterial( GameObject target, string materialPath, ToolInput input )
 	{
+		if ( !FireToolAction( input ) ) return;
+
 		if ( !target.IsValid() ) return;
 
 		var root = target.Network?.RootGameObject ?? target;
@@ -99,5 +101,7 @@ public sealed class MaterialTool : ToolMode
 			renderer.MaterialOverride = material;
 			renderer.GameObject.Network?.Refresh();
 		}
+
+		FirePostToolAction( input );
 	}
 }

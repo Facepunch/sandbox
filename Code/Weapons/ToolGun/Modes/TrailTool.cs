@@ -57,11 +57,13 @@ public sealed class TrailTool : ToolMode
 		ShootEffects( select );
 	}
 
-	[Rpc.Broadcast]
+	[Rpc.Broadcast( NetFlags.OwnerOnly )]
 	private void AddTrail( GameObject go, Color color, float startWidth, float endWidth, float lifetime, bool castShadows, LineDefinition lineDef )
 	{
 		if ( !go.IsValid() ) return;
 		if ( go.IsProxy ) return;
+		if ( !FireToolAction( ToolInput.Primary ) ) return;
+
 
 		var root = go.Network?.RootGameObject ?? go;
 
@@ -89,13 +91,17 @@ public sealed class TrailTool : ToolMode
 				UnitsPerTexture = lineDef.UnitsPerTexture
 			};
 		}
+
+		FirePostToolAction( ToolInput.Primary );
 	}
 
-	[Rpc.Broadcast]
+	[Rpc.Broadcast( NetFlags.OwnerOnly )]
 	private void RemoveTrail( GameObject go )
 	{
 		if ( !go.IsValid() ) return;
 		if ( go.IsProxy ) return;
+		if ( !FireToolAction( ToolInput.Secondary ) ) return;
+
 
 		var root = go.Network?.RootGameObject ?? go;
 
@@ -104,5 +110,7 @@ public sealed class TrailTool : ToolMode
 		{
 			trail.Destroy();
 		}
+
+		FirePostToolAction( ToolInput.Secondary );
 	}
 }

@@ -353,9 +353,11 @@ public sealed class StackerTool : ToolMode
 	/// Server-side spawn: recomputes transforms from synced properties to prevent
 	/// clients from sending arbitrary placement data.
 	/// </summary>
-	[Rpc.Host]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void SpawnStack( GameObject target )
 	{
+		if ( !FireToolAction( ToolInput.Primary ) ) return;
+
 		if ( !target.IsValid() ) return;
 
 		var root = ResolveRoot( target );
@@ -399,5 +401,7 @@ public sealed class StackerTool : ToolMode
 		}
 
 		undo.Add( clones );
+
+		FirePostToolAction( ToolInput.Primary );
 	}
 }

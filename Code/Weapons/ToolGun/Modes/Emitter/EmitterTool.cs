@@ -83,9 +83,11 @@ public sealed class EmitterTool : ToolMode
 		DebugOverlay.GameObject( baseDef.Prefab.GetScene(), transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
 	}
 
-	[Rpc.Host]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	public void Spawn( SelectionPoint point, PrefabFile emitterPrefab, ScriptedEmitter effect, Transform tx, bool noWeld )
 	{
+		if ( !FireToolAction( noWeld ? ToolInput.Secondary : ToolInput.Primary ) ) return;
+
 		if ( emitterPrefab == null )
 			return;
 
@@ -124,5 +126,7 @@ public sealed class EmitterTool : ToolMode
 		undo.Add( go );
 
 		CheckContraptionStats( point.GameObject );
+
+		FirePostToolAction( noWeld ? ToolInput.Secondary : ToolInput.Primary );
 	}
 }

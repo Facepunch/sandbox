@@ -27,7 +27,7 @@ public sealed class GravityTool : ToolMode
 		var target = ResolveTarget( select.GameObject );
 		if ( !target.IsValid() ) return;
 
-		SetGravity( target, Value );
+		SetGravity( target, Value, ToolInput.Primary );
 		ShootEffects( select );
 	}
 
@@ -51,7 +51,7 @@ public sealed class GravityTool : ToolMode
 		var target = ResolveTarget( select.GameObject );
 		if ( !target.IsValid() ) return;
 
-		SetGravity( target, 1.0f );
+		SetGravity( target, 1.0f, ToolInput.Reload );
 		ShootEffects( select );
 	}
 
@@ -67,9 +67,11 @@ public sealed class GravityTool : ToolMode
 		return rb.IsValid() ? rb.GameObject : null;
 	}
 
-	[Rpc.Host]
-	private void SetGravity( GameObject target, float scale )
+	[Rpc.Host( NetFlags.OwnerOnly )]
+	private void SetGravity( GameObject target, float scale, ToolInput input )
 	{
+		if ( !FireToolAction( input ) ) return;
+
 		if ( !target.IsValid() || target.IsProxy ) return;
 		if ( !CallerCanEdit( target ) ) return;
 
@@ -84,14 +86,20 @@ public sealed class GravityTool : ToolMode
 		{
 			props.Destroy();
 		}
+
+		FirePostToolAction( input );
 	}
 
-	[Rpc.Host]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void CopyGravity( GameObject target )
 	{
+		if ( !FireToolAction( ToolInput.Secondary ) ) return;
+
 		if ( !target.IsValid() || target.IsProxy ) return;
 
 		var rb = target.GetComponentInChildren<Rigidbody>( true );
 		if ( rb.IsValid() ) Value = rb.GravityScale;
+
+		FirePostToolAction( ToolInput.Secondary );
 	}
 }

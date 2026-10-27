@@ -91,9 +91,11 @@ public sealed class BalloonTool : ToolMode
 		DebugOverlay.GameObject( thrusterDef.Prefab.GetScene(), transform: placementTx, castShadows: true, color: previewTint.WithAlpha( 0.9f ) );
 	}
 
-	[Rpc.Host]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx, bool withRope, Color spawnTint )
 	{
+		if ( !FireToolAction( withRope ? ToolInput.Primary : ToolInput.Secondary ) ) return;
+
 		var go = thrusterPrefab.GetScene().Clone( global::Transform.Zero, startEnabled: false );
 		go.Tags.Add( "removable" );
 		go.WorldTransform = Rigid && withRope ? tx.WithPosition( tx.Position + Vector3.Up * Length ) : tx;
@@ -171,5 +173,7 @@ public sealed class BalloonTool : ToolMode
 		undo.Add( go );
 
 		Player.PlayerData?.AddStat( "tool.balloon.place" );
+
+		FirePostToolAction( withRope ? ToolInput.Primary : ToolInput.Secondary );
 	}
 }

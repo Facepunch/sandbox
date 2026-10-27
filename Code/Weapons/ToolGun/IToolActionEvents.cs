@@ -2,6 +2,8 @@
 /// Allows listening to tool actions across the scene.
 /// Implement this on a <see cref="Component"/> to receive callbacks before and after any tool action fires.
 /// Use this to enforce limits (e.g. max balloons, max constraints) or react to tool usage.
+/// Runs on the host, from the RPC that carries the action out, so a cancel can't be skipped by the client.
+/// Actions that never reach the host, like cycling a tool's local settings, don't fire it.
 /// </summary>
 public interface IToolActionEvents : ISceneEvent<IToolActionEvents>
 {

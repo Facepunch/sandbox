@@ -29,16 +29,12 @@
 				if ( !UpdateValidity( select, point2 ) )
 					return;
 
-				if ( !FireToolAction( ToolInput.Secondary ) )
-					return;
-
 				Point1 = select;
 				Point2 = point2;
 
-				Create( Point1, Point2 );
+				Create( Point1, Point2, ToolInput.Secondary );
 				ShootEffects( select );
 
-				FirePostToolAction( ToolInput.Secondary );
 				OnConstraintSubmitted( Point1, Point2 );
 
 				return;
@@ -54,14 +50,9 @@
 
 		if ( Input.Pressed( "reload" ) )
 		{
-			if ( !FireToolAction( ToolInput.Reload ) )
-				return;
-
 			var go = select.GameObject.Network.RootGameObject ?? select.GameObject;
 			RemoveConstraints( go );
 			ShootEffects( select );
-
-			FirePostToolAction( ToolInput.Reload );
 		}
 
 		IsValidState = true;
@@ -90,18 +81,10 @@
 
 			if ( Stage == 1 )
 			{
-				if ( !FireToolAction( ToolInput.Primary ) )
-				{
-					Stage = 0;
-					return;
-				}
-
 				Point2 = select;
 
-				Create( Point1, Point2 );
+				Create( Point1, Point2, ToolInput.Primary );
 				ShootEffects( select );
-
-				FirePostToolAction( ToolInput.Primary );
 				OnConstraintSubmitted( Point1, Point2 );
 			}
 
@@ -135,8 +118,10 @@
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	private void Create( SelectionPoint point1, SelectionPoint point2 )
+	private void Create( SelectionPoint point1, SelectionPoint point2, ToolInput input )
 	{
+		if ( !FireToolAction( input ) ) return;
+
 		if ( !UpdateValidity( point1, point2 ) )
 		{
 			Log.Warning( "Tried to create invalid constraint" );
@@ -147,11 +132,15 @@
 
 		CreateConstraint( point1, point2 );
 		CheckContraptionStats( point1.GameObject );
+
+		FirePostToolAction( input );
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void RemoveConstraints( GameObject go )
 	{
+		if ( !FireToolAction( ToolInput.Reload ) ) return;
+
 		if ( !CallerCanEdit( go ) ) return;
 
 		var builder = new LinkedGameObjectBuilder();
@@ -163,6 +152,8 @@
 
 		foreach ( var host in toRemove )
 			host.Destroy();
+
+		FirePostToolAction( ToolInput.Reload );
 	}
 
 	/// <summary>

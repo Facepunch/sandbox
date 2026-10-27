@@ -266,9 +266,11 @@ public sealed class TextTool : ToolMode
 	/// <summary>
 	/// Spawn the text on the host. The settings come with the call, the look as a <see cref="WorldTextStyle"/>, since only the owner has their current values.
 	/// </summary>
-	[Rpc.Host]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	public void SpawnText( Transform tx, string text, string styleJson, bool collisions, bool gravity )
 	{
+		if ( !FireToolAction( ToolInput.Primary ) ) return;
+
 		if ( string.IsNullOrWhiteSpace( text ) ) return;
 
 		var style = Json.Deserialize<WorldTextStyle>( styleJson );
@@ -297,5 +299,7 @@ public sealed class TextTool : ToolMode
 		undo.Name = "#tool.name.text";
 		undo.Icon = "🔤";
 		undo.Add( go );
+
+		FirePostToolAction( ToolInput.Primary );
 	}
 }

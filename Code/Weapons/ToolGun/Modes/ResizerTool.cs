@@ -52,21 +52,27 @@ public sealed class ResizerTool : ToolMode
 		ShootEffects( select );
 	}
 
-	[Rpc.Broadcast]
+	[Rpc.Broadcast( NetFlags.OwnerOnly )]
 	private void ResetScale( GameObject go )
 	{
 		if ( !go.IsValid() ) return;
 		if ( go.IsProxy ) return;
+		if ( !FireToolAction( ToolInput.Reload ) ) return;
+
 		if ( !CallerCanEdit( go ) ) return;
 
 		go.WorldScale = Vector3.One;
+
+		FirePostToolAction( ToolInput.Reload );
 	}
 
-	[Rpc.Broadcast]
+	[Rpc.Broadcast( NetFlags.OwnerOnly )]
 	private void Resize( GameObject go, float size )
 	{
 		if ( !go.IsValid() ) return;
 		if ( go.IsProxy ) return;
+		if ( !FireToolAction( size > 0 ? ToolInput.Primary : ToolInput.Secondary ) ) return;
+
 		if ( !CallerCanEdit( go ) ) return;
 
 		var newScale = go.WorldScale + size;
@@ -80,5 +86,7 @@ public sealed class ResizerTool : ToolMode
 		if ( minimumScale <= 0.01f && newScale.Length < 0.1f ) return;
 		var scale = Vector3.Max( newScale, minimumScale );
 		go.WorldScale = scale;
+
+		FirePostToolAction( size > 0 ? ToolInput.Primary : ToolInput.Secondary );
 	}
 }

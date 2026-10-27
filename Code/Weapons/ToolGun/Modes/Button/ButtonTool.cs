@@ -57,9 +57,11 @@ public sealed class ButtonTool : ToolMode
 		DebugOverlay.GameObject( scene, transform: GetPlacementTransform( select ), castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
 	}
 
-	[Rpc.Host]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	public void Spawn( SelectionPoint point, PrefabFile buttonPrefab, Transform transform, bool noWeld )
 	{
+		if ( !FireToolAction( noWeld ? ToolInput.Secondary : ToolInput.Primary ) ) return;
+
 		if ( buttonPrefab?.GetScene() is not Scene scene ) return;
 
 		var button = scene.Clone( new CloneConfig { StartEnabled = false } );
@@ -89,5 +91,7 @@ public sealed class ButtonTool : ToolMode
 		undo.Add( button );
 
 		CheckContraptionStats( point.GameObject );
+
+		FirePostToolAction( noWeld ? ToolInput.Secondary : ToolInput.Primary );
 	}
 }

@@ -80,9 +80,11 @@ public sealed class WheelTool : ToolMode
 		WheelOverlay.DrawDirection( placementTrans.Position, placementTrans.Right, select.WorldTransform().Rotation.Up, overlayRadius, _reversed );
 	}
 
-	[Rpc.Host]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	public void SpawnWheel( SelectionPoint point, WheelDefinition def, Transform tx, bool reversed )
 	{
+		if ( !FireToolAction( ToolInput.Primary ) ) return;
+
 		if ( def == null || def.Prefab?.GetScene() is not Scene scene ) return;
 
 		var wheelGo = scene.Clone( new CloneConfig { StartEnabled = false } );
@@ -123,5 +125,7 @@ public sealed class WheelTool : ToolMode
 		undo.Add( wheelGo );
 
 		CheckContraptionStats( point.GameObject );
+
+		FirePostToolAction( ToolInput.Primary );
 	}
 }

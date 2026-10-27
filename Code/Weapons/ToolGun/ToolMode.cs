@@ -91,7 +91,7 @@
 	}
 
 	/// <summary>
-	/// Track a GameObject created by this tool action. These are passed through
+	/// Track a GameObject created by this tool action on the host. These are passed through
 	/// to <see cref="IToolActionEvents.PostActionData.CreatedObjects"/> when the post-event fires.
 	/// </summary>
 	protected void Track( params GameObject[] objects )
@@ -118,11 +118,13 @@
 	}
 
 	/// <summary>
-	/// Fire <see cref="IToolActionEvents.OnToolAction"/> before executing an action.
-	/// Returns true if the action should proceed, false if cancelled.
+	/// Fire <see cref="IToolActionEvents.OnToolAction"/> at the top of the host RPC that carries out an action,
+	/// so listeners can refuse it where it counts. Returns true if the action should proceed, false if cancelled.
 	/// </summary>
 	protected bool FireToolAction( ToolInput input )
 	{
+		_createdObjects.Clear();
+
 		var data = new IToolActionEvents.ActionData
 		{
 			Tool = this,
@@ -135,7 +137,7 @@
 	}
 
 	/// <summary>
-	/// Fire <see cref="IToolActionEvents.OnPostToolAction"/> after a successful action.
+	/// Fire <see cref="IToolActionEvents.OnPostToolAction"/> at the end of the host RPC once the action has succeeded.
 	/// Passes a snapshot of tracked objects, then clears the list.
 	/// </summary>
 	protected void FirePostToolAction( ToolInput input )
@@ -154,7 +156,7 @@
 
 	/// <summary>
 	/// Check registered actions and invoke any whose input condition is met this frame.
-	/// Wraps each callback with <see cref="IToolActionEvents"/> pre/post events.
+	/// The host RPCs the callbacks call fire the <see cref="IToolActionEvents"/> pre/post events.
 	/// </summary>
 	private void DispatchActions()
 	{
@@ -169,12 +171,7 @@
 
 			if ( active )
 			{
-				if ( !FireToolAction( action.Input ) )
-					continue;
-
-				_createdObjects.Clear();
 				action.Callback?.Invoke();
-				FirePostToolAction( action.Input );
 			}
 		}
 	}

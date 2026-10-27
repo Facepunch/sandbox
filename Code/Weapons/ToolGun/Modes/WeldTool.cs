@@ -113,10 +113,8 @@ public sealed class WeldTool : BaseConstraintToolMode
 
 		if ( Input.Pressed( "attack1" ) )
 		{
-			if ( !FireToolAction( ToolInput.Primary ) ) return;
 			CreateRotatedWeld( Point1, Point2, _easyModeAngle );
 			ShootEffects( Point2 );
-			FirePostToolAction( ToolInput.Primary );
 			OnConstraintSubmitted( Point1, Point2 );
 			ResetRotation();
 			Stage = 0;
@@ -210,6 +208,8 @@ public sealed class WeldTool : BaseConstraintToolMode
 	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void CreateRotatedWeld( SelectionPoint point1, SelectionPoint point2, float angle )
 	{
+		if ( !FireToolAction( ToolInput.Primary ) ) return;
+
 		if ( !point1.GameObject.IsValid() || !point2.GameObject.IsValid() )
 		{
 			Log.Warning( "Tried to create invalid constraint" );
@@ -229,6 +229,8 @@ public sealed class WeldTool : BaseConstraintToolMode
 		moving.WorldTransform = GetRotatedPlacement( point1, point2, angle );
 		CreateConstraint( point1, point2 );
 		CheckContraptionStats( point1.GameObject );
+
+		FirePostToolAction( ToolInput.Primary );
 	}
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )

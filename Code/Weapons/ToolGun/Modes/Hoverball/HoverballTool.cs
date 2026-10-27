@@ -54,9 +54,11 @@ public sealed class HoverballTool : ToolMode
 		DebugOverlay.GameObject( hoverballDef.Prefab.GetScene(), transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
 	}
 
-	[Rpc.Host]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	public void Spawn( SelectionPoint point, PrefabFile hoverballPrefab, Transform tx )
 	{
+		if ( !FireToolAction( ToolInput.Primary ) ) return;
+
 		if ( hoverballPrefab == null )
 			return;
 
@@ -91,5 +93,7 @@ public sealed class HoverballTool : ToolMode
 		undo.Add( go );
 
 		CheckContraptionStats( point.GameObject );
+
+		FirePostToolAction( ToolInput.Primary );
 	}
 }

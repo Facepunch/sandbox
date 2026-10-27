@@ -60,29 +60,19 @@ public sealed class KeepUprightTool : ToolMode
 			}
 			else
 			{
-				if ( !FireToolAction( ToolInput.Reload ) )
-					return;
-
 				var go = select.GameObject.Network.RootGameObject ?? select.GameObject;
 				RemoveConstraints( go );
 				ShootEffects( select );
-
-				FirePostToolAction( ToolInput.Reload );
 			}
 			return;
 		}
 
 		if ( Input.Pressed( "attack1" ) )
 		{
-			if ( !FireToolAction( ToolInput.Primary ) )
-				return;
-
 			CreateWorldAnchor( select );
 			ShootEffects( select );
 			_stage = 0;
 			_point1 = default;
-
-			FirePostToolAction( ToolInput.Primary );
 			return;
 		}
 
@@ -98,17 +88,8 @@ public sealed class KeepUprightTool : ToolMode
 			{
 				if ( _point1.IsValid() && _point1.GameObject != select.GameObject )
 				{
-					if ( !FireToolAction( ToolInput.Secondary ) )
-					{
-						_stage = 0;
-						_point1 = default;
-						return;
-					}
-
 					CreateLinked( _point1, select );
 					ShootEffects( select );
-
-					FirePostToolAction( ToolInput.Secondary );
 				}
 
 				_stage = 0;
@@ -120,6 +101,8 @@ public sealed class KeepUprightTool : ToolMode
 	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void CreateWorldAnchor( SelectionPoint point )
 	{
+		if ( !FireToolAction( ToolInput.Primary ) ) return;
+
 		if ( !point.IsValid() ) return;
 		if ( !CallerCanEdit( point.GameObject ) ) return;
 
@@ -146,11 +129,15 @@ public sealed class KeepUprightTool : ToolMode
 		undo.Add( go );
 
 		CheckContraptionStats( point.GameObject );
+
+		FirePostToolAction( ToolInput.Primary );
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void CreateLinked( SelectionPoint point1, SelectionPoint point2 )
 	{
+		if ( !FireToolAction( ToolInput.Secondary ) ) return;
+
 		if ( !point1.IsValid() || !point2.IsValid() ) return;
 		if ( point1.GameObject == point2.GameObject ) return;
 		if ( !CanConstrain( point1, point2 ) ) return;
@@ -185,11 +172,15 @@ public sealed class KeepUprightTool : ToolMode
 		undo.Add( go1, go2 );
 
 		CheckContraptionStats( point1.GameObject );
+
+		FirePostToolAction( ToolInput.Secondary );
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void RemoveConstraints( GameObject go )
 	{
+		if ( !FireToolAction( ToolInput.Reload ) ) return;
+
 		if ( !CallerCanEdit( go ) ) return;
 
 		// Remove world-anchor upright joints (Body == null means no second object)
@@ -216,5 +207,7 @@ public sealed class KeepUprightTool : ToolMode
 
 		foreach ( var host in toRemove )
 			host.Destroy();
+
+		FirePostToolAction( ToolInput.Reload );
 	}
 }

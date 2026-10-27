@@ -27,7 +27,7 @@ public sealed class MassTool : ToolMode
 		var rb = select.GameObject.GetComponent<Rigidbody>();
 		if ( !rb.IsValid() ) return;
 
-		SetMass( rb, Value );
+		SetMass( rb, Value, ToolInput.Primary );
 		ShootEffects( select );
 	}
 
@@ -51,13 +51,15 @@ public sealed class MassTool : ToolMode
 		var rb = select.GameObject.GetComponent<Rigidbody>();
 		if ( !rb.IsValid() ) return;
 
-		SetMass( rb, 0.0f );
+		SetMass( rb, 0.0f, ToolInput.Reload );
 		ShootEffects( select );
 	}
 
-	[Rpc.Host]
-	private void SetMass( Rigidbody rb, float mass )
+	[Rpc.Host( NetFlags.OwnerOnly )]
+	private void SetMass( Rigidbody rb, float mass, ToolInput input )
 	{
+		if ( !FireToolAction( input ) ) return;
+
 		if ( !rb.IsValid() || rb.IsProxy ) return;
 		if ( !CallerCanEdit( rb.GameObject ) ) return;
 
@@ -79,14 +81,20 @@ public sealed class MassTool : ToolMode
 		var mo = rb.GetOrAddComponent<PhysicalProperties>();
 		mo.Mass = mass;
 		mo.Apply();
+
+		FirePostToolAction( input );
 	}
 
-	[Rpc.Host]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void CopyMass( Rigidbody rb )
 	{
+		if ( !FireToolAction( ToolInput.Secondary ) ) return;
+
 		if ( !rb.IsValid() || rb.IsProxy ) return;
 
 		var mo = rb.GetComponent<PhysicalProperties>();
 		Value = mo.IsValid() ? mo.Mass : rb.Mass;
+
+		FirePostToolAction( ToolInput.Secondary );
 	}
 }
