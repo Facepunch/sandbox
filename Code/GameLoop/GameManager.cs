@@ -280,7 +280,8 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		var attackerName = isSuicide ? null : source.DisplayName;
 		var attackerSteamId = isSuicide ? 0L : source.SteamId;
 		var playerName = player.Network.Owner?.DisplayName ?? "Unknown";
-		Scene.RunEvent<Feed>( x => x.NotifyKill( playerName, attackerName, attackerSteamId, damageTags, attackerTags, "", w?.DisplayIcon ) );
+		var playerSteamId = (long)(player.Network.Owner?.SteamId ?? default);
+		Scene.RunEvent<Feed>( x => x.NotifyKill( playerName, playerSteamId, attackerName, attackerSteamId, damageTags, attackerTags, "", w?.DisplayIcon ) );
 
 		if ( string.IsNullOrEmpty( attackerName ) )
 		{
@@ -319,7 +320,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		var attackerSteamId = source?.SteamId ?? 0L;
 		var attackerTags = source?.Tags ?? "";
 
-		Scene.RunEvent<Feed>( x => x.NotifyKill( victim.DisplayName, attackerName, attackerSteamId, dmg.Tags.ToString(), attackerTags, "npc", w?.DisplayIcon ) );
+		Scene.RunEvent<Feed>( x => x.NotifyKill( victim.DisplayName, 0, attackerName, attackerSteamId, dmg.Tags.ToString(), attackerTags, "npc", w?.DisplayIcon ) );
 	}
 
 	/// <summary>

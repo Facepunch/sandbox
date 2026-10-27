@@ -19,9 +19,14 @@ partial class Feed : PanelComponent
 	}
 
 	[Rpc.Broadcast]
-	public void NotifyKill( string victimName, string attackerName, long attackerSteamId, string damageTags, string attackerTags, string victimTags, Texture weaponIcon )
+	public void NotifyKill( string victimName, long victimSteamId, string attackerName, long attackerSteamId, string damageTags, string attackerTags, string victimTags, Texture weaponIcon )
 	{
 		if ( Application.IsDedicatedServer ) return;
+
+		// DisplayName applies the viewer's own Steam nicknames, so resolve it here rather than trusting the host's
+		victimName = ResolveName( victimName, victimSteamId );
+		attackerName = ResolveName( attackerName, attackerSteamId );
+
 		if ( string.IsNullOrEmpty( victimName ) ) return;
 
 		bool isSuicide = damageTags.Contains( "suicide" );
@@ -70,6 +75,13 @@ partial class Feed : PanelComponent
 
 		Panel?.AddChild( panel );
 		Invoke( 7, () => panel.Delete() );
+	}
+
+	private static string ResolveName( string fallback, long steamId )
+	{
+		if ( steamId == 0 || string.IsNullOrEmpty( fallback ) ) return fallback;
+
+		return Connection.All.FirstOrDefault( x => (long)x.SteamId == steamId )?.DisplayName ?? fallback;
 	}
 
 	private Panel AddIcon( in Panel panel, Texture icon )
