@@ -147,6 +147,8 @@ internal class UndoSystem : GameObjectSystem<UndoSystem>
 			while ( entries.Count > 0 )
 			{
 				var entry = entries[^1];
+				if ( !entry.AllowUndo() ) break;
+
 				entries.RemoveAt( entries.Count - 1 );
 
 				if ( entry.Run() )
@@ -167,6 +169,8 @@ internal class UndoSystem : GameObjectSystem<UndoSystem>
 			if ( index < 0 ) return;
 
 			var entry = entries[index];
+			if ( !entry.AllowUndo() ) return;
+
 			entries.RemoveAt( index );
 			entry.Run();
 		}
@@ -262,11 +266,32 @@ internal class UndoSystem : GameObjectSystem<UndoSystem>
 			gameObjects.Remove( go );
 		}
 
+		UndoEvent CreateEvent() => new()
+		{
+			Client = Connection.All.FirstOrDefault( x => x.SteamId == SteamId ),
+			Name = Name,
+			Objects = gameObjects.Where( x => x.IsValid() ).ToList()
+		};
+
+		/// <summary>
+		/// Ask <see cref="Global.IUndoEvents.OnUndo"/> listeners whether this can be undone. Entries with nothing
+		/// left to remove are always allowed, they're just skipped.
+		/// </summary>
+		internal bool AllowUndo()
+		{
+			if ( !HasObjects ) return true;
+
+			var e = CreateEvent();
+			Game.ActiveScene?.RunEvent<Global.IUndoEvents>( x => x.OnUndo( e ) );
+			return !e.Cancelled;
+		}
+
 		/// <summary>
 		/// Run this undo
 		/// </summary>
 		public bool Run( bool sendNotice = true )
 		{
+			var e = CreateEvent();
 			var actioned = false;
 
 			foreach ( var go in gameObjects )
@@ -280,6 +305,8 @@ internal class UndoSystem : GameObjectSystem<UndoSystem>
 
 			if ( !actioned )
 				return false;
+
+			Game.ActiveScene?.RunEvent<Global.IUndoEvents>( x => x.OnUndone( e ) );
 
 			if ( sendNotice )
 			{
