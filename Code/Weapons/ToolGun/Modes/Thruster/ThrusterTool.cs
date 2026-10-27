@@ -53,7 +53,7 @@ public sealed class ThrusterTool : ToolMode
 		if ( thrusterDef == null ) return;
 
 		var placementTrans = GetPlacementTransform( select );
-		Spawn( select, thrusterDef.Prefab, placementTrans, false, WriteEntitySettings<ThrusterEntity>() );
+		Spawn( select, thrusterDef.Prefab, placementTrans, false, WriteConfiguration<ThrusterEntity>() );
 		ShootEffects( select );
 	}
 
@@ -66,7 +66,7 @@ public sealed class ThrusterTool : ToolMode
 		if ( thrusterDef == null ) return;
 
 		var placementTrans = GetPlacementTransform( select );
-		Spawn( select, thrusterDef.Prefab, placementTrans, true, WriteEntitySettings<ThrusterEntity>() );
+		Spawn( select, thrusterDef.Prefab, placementTrans, true, WriteConfiguration<ThrusterEntity>() );
 		ShootEffects( select );
 	}
 
@@ -96,7 +96,7 @@ public sealed class ThrusterTool : ToolMode
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx, bool noWeld, string settings )
+	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx, bool noWeld, string configuration )
 	{
 		if ( !FireToolAction( noWeld ? ToolInput.Secondary : ToolInput.Primary ) ) return;
 
@@ -109,7 +109,7 @@ public sealed class ThrusterTool : ToolMode
 		go.WorldTransform = tx;
 
 		var thruster = go.GetComponent<ThrusterEntity>();
-		ApplyEntitySettings( thruster, settings );
+		ApplyConfiguration( thruster, configuration );
 
 		if ( !noWeld && !point.GameObject.Tags.Contains( "world" ) )
 		{

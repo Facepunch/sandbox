@@ -54,7 +54,7 @@ public abstract class BaseLengthConstraintTool : BaseConstraintToolMode
 	[Property, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.ease_out" ), Order( 2 )]
 	public LengthConstraintEntity.EaseType EaseOut { get; set; } = LengthConstraintEntity.EaseType.Linear;
 
-	protected override string WriteSettings() => WriteEntitySettings<LengthConstraintEntity>();
+	protected override string WriteConstraintConfiguration() => WriteConfiguration<LengthConstraintEntity>();
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
 	{
@@ -128,7 +128,7 @@ public abstract class BaseLengthConstraintTool : BaseConstraintToolMode
 
 		var entity = jointGo.AddComponent<LengthConstraintEntity>();
 		entity.Kind = Kind;
-		ApplyEntitySettings( entity, Settings );
+		ApplyConfiguration( entity, Configuration );
 		entity.MinLength = MinLength;
 		entity.MaxLength = len * MaxLengthMultiplier;
 		entity.Joint = joint;

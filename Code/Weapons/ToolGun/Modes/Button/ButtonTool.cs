@@ -38,7 +38,7 @@ public sealed class ButtonTool : ToolMode
 		if ( definition?.Prefab is null ) return;
 
 		var transform = GetPlacementTransform( select );
-		Spawn( select, definition.Prefab, transform, noWeld, WriteEntitySettings<ButtonEntity>() );
+		Spawn( select, definition.Prefab, transform, noWeld, WriteConfiguration<ButtonEntity>() );
 		ShootEffects( select );
 	}
 
@@ -62,7 +62,7 @@ public sealed class ButtonTool : ToolMode
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	public void Spawn( SelectionPoint point, PrefabFile buttonPrefab, Transform transform, bool noWeld, string settings )
+	public void Spawn( SelectionPoint point, PrefabFile buttonPrefab, Transform transform, bool noWeld, string configuration )
 	{
 		if ( !FireToolAction( noWeld ? ToolInput.Secondary : ToolInput.Primary ) ) return;
 
@@ -73,7 +73,7 @@ public sealed class ButtonTool : ToolMode
 		button.Tags.Add( "constraint" );
 		button.WorldTransform = transform;
 
-		ApplyEntitySettings( button.GetComponentInChildren<ButtonEntity>( true ), settings );
+		ApplyConfiguration( button.GetComponentInChildren<ButtonEntity>( true ), configuration );
 
 		if ( !noWeld )
 		{

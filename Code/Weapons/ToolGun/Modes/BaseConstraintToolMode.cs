@@ -7,9 +7,9 @@
 	public virtual bool CanConstraintToSelf => false;
 
 	/// <summary>
-	/// What <see cref="WriteSettings"/> sent with the constraint, on the host while <see cref="CreateConstraint"/> runs.
+	/// What <see cref="WriteConstraintConfiguration"/> sent with the constraint, on the host while <see cref="CreateConstraint"/> runs.
 	/// </summary>
-	protected string Settings { get; private set; }
+	protected string Configuration { get; private set; }
 
 	public override bool UseSnapGrid => true;
 
@@ -38,7 +38,7 @@
 				Point1 = select;
 				Point2 = point2;
 
-				Create( Point1, Point2, ToolInput.Secondary, WriteSettings() );
+				Create( Point1, Point2, ToolInput.Secondary, WriteConstraintConfiguration() );
 				ShootEffects( select );
 
 				OnConstraintSubmitted( Point1, Point2 );
@@ -89,7 +89,7 @@
 			{
 				Point2 = select;
 
-				Create( Point1, Point2, ToolInput.Primary, WriteSettings() );
+				Create( Point1, Point2, ToolInput.Primary, WriteConstraintConfiguration() );
 				ShootEffects( select );
 				OnConstraintSubmitted( Point1, Point2 );
 			}
@@ -124,7 +124,7 @@
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	private void Create( SelectionPoint point1, SelectionPoint point2, ToolInput input, string settings )
+	private void Create( SelectionPoint point1, SelectionPoint point2, ToolInput input, string configuration )
 	{
 		if ( !FireToolAction( input ) ) return;
 
@@ -134,9 +134,9 @@
 			return;
 		}
 
-		Settings = settings;
+		Configuration = configuration;
 		CreateConstraint( point1, point2 );
-		Settings = null;
+		Configuration = null;
 		CheckContraptionStats( point1.GameObject );
 
 		FirePostToolAction( input );
@@ -173,9 +173,9 @@
 	protected abstract void CreateConstraint( SelectionPoint point1, SelectionPoint point2 );
 
 	/// <summary>
-	/// Settings for the entity the constraint carries, sent to the host with it, see <see cref="ToolMode.WriteEntitySettings{T}"/>.
+	/// Settings for the entity the constraint carries, sent to the host with it, see <see cref="ToolMode.WriteConfiguration{T}"/>.
 	/// </summary>
-	protected virtual string WriteSettings() => null;
+	protected virtual string WriteConstraintConfiguration() => null;
 
 	/// <summary>
 	/// Called on the owning client after a valid constraint creation was submitted to the host.

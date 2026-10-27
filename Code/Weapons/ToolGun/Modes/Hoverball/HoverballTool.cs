@@ -59,7 +59,7 @@ public sealed class HoverballTool : ToolMode
 		var pos = select.WorldTransform();
 		var placementTrans = new Transform( pos.Position );
 
-		Spawn( select, hoverballDef.Prefab, placementTrans, WriteEntitySettings<HoverballEntity>() );
+		Spawn( select, hoverballDef.Prefab, placementTrans, WriteConfiguration<HoverballEntity>() );
 		ShootEffects( select );
 	}
 
@@ -80,7 +80,7 @@ public sealed class HoverballTool : ToolMode
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	public void Spawn( SelectionPoint point, PrefabFile hoverballPrefab, Transform tx, string settings )
+	public void Spawn( SelectionPoint point, PrefabFile hoverballPrefab, Transform tx, string configuration )
 	{
 		if ( !FireToolAction( ToolInput.Primary ) ) return;
 
@@ -93,7 +93,7 @@ public sealed class HoverballTool : ToolMode
 		go.WorldTransform = tx;
 
 		var hoverball = go.GetComponent<HoverballEntity>( true );
-		ApplyEntitySettings( hoverball, settings );
+		ApplyConfiguration( hoverball, configuration );
 
 		if ( !point.IsWorld )
 		{

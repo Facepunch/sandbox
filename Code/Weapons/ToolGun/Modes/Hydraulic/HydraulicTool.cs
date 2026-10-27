@@ -135,7 +135,7 @@ public sealed class HydraulicTool : BaseLengthConstraintTool
 
 		var entity = sliderA.AddComponent<LengthConstraintEntity>();
 		entity.Kind = LengthConstraintEntity.ConstraintKind.Hydraulic;
-		ApplyEntitySettings( entity, Settings );
+		ApplyConfiguration( entity, Configuration );
 		entity.MinLength = 5.0f;
 		entity.MaxLength = len * 2.0f;
 		entity.Joint = slider;

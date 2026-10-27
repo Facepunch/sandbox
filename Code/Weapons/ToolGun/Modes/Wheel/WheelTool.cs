@@ -69,7 +69,7 @@ public sealed class WheelTool : ToolMode
 		if ( def == null || def.Prefab?.GetScene() is not Scene scene ) return;
 
 		var placementTrans = GetPlacementTransform( select, scene );
-		SpawnWheel( select, def, placementTrans, WriteEntitySettings<WheelEntity>() );
+		SpawnWheel( select, def, placementTrans, WriteConfiguration<WheelEntity>() );
 		ShootEffects( select );
 	}
 
@@ -105,7 +105,7 @@ public sealed class WheelTool : ToolMode
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	public void SpawnWheel( SelectionPoint point, WheelDefinition def, Transform tx, string settings )
+	public void SpawnWheel( SelectionPoint point, WheelDefinition def, Transform tx, string configuration )
 	{
 		if ( !FireToolAction( ToolInput.Primary ) ) return;
 
@@ -118,7 +118,7 @@ public sealed class WheelTool : ToolMode
 		wheelGo.WorldTransform = tx;
 
 		var we = wheelGo.GetOrAddComponent<WheelEntity>();
-		ApplyEntitySettings( we, settings );
+		ApplyConfiguration( we, configuration );
 		var joint = wheelGo.GetComponentInChildren<WheelJoint>( true );
 
 		if ( joint is null )

@@ -48,7 +48,7 @@ public sealed class MotorTool : BaseConstraintToolMode
 	[Property, Title( "#tool.setting.toggle" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Toggle { get; set; }
 
-	protected override string WriteSettings() => WriteEntitySettings<MotorEntity>();
+	protected override string WriteConstraintConfiguration() => WriteConfiguration<MotorEntity>();
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
 	{
@@ -89,7 +89,7 @@ public sealed class MotorTool : BaseConstraintToolMode
 		joint.EnableCollision = false;
 
 		var entity = go1.AddComponent<MotorEntity>();
-		ApplyEntitySettings( entity, Settings );
+		ApplyConfiguration( entity, Configuration );
 		entity.Joint = joint;
 
 		go2.NetworkSpawn( true, null );
