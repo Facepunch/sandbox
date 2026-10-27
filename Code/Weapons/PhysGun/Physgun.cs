@@ -1000,7 +1000,7 @@ public partial class Physgun : Local.IPlayerEvents
 
 		if ( body.IsProxy ) return;
 
-		if ( Networking.IsHost )
+		if ( Networking.IsHost && AllowsGrab( go ) )
 		{
 			body.MotionEnabled = false;
 		}
@@ -1011,6 +1011,7 @@ public partial class Physgun : Local.IPlayerEvents
 	{
 		if ( !body.IsValid() ) return;
 		if ( body.IsProxy ) return;
+		if ( !AllowsGrab( body.GameObject ) ) return;
 
 		body.MotionEnabled = true;
 	}
@@ -1058,6 +1059,7 @@ public partial class Physgun : Local.IPlayerEvents
 	{
 		if ( !modelPhysics.IsValid() ) return;
 		if ( modelPhysics.IsProxy ) return;
+		if ( !AllowsGrab( modelPhysics.GameObject ) ) return;
 
 		modelPhysics.MotionEnabled = true;
 	}
@@ -1067,6 +1069,7 @@ public partial class Physgun : Local.IPlayerEvents
 	{
 		if ( !body.IsValid() ) return;
 		if ( body.IsProxy ) return;
+		if ( !AllowsGrab( body.GameObject ) ) return;
 
 		// We already launched.
 		if ( _launched ) return;
