@@ -146,7 +146,8 @@ public class PlayerKillEvent
 }
 
 /// <summary>
-/// Events fired only to the Player's own GameObject hierarchy.
+/// Events fired only to the Player's own GameObject hierarchy, except <see cref="IPlayerEvents.OnMove"/> and the
+/// camera events, which go to the whole scene on the machine controlling the local player so UI can listen too.
 /// </summary>
 public static partial class Local
 {
@@ -168,14 +169,25 @@ public static partial class Local
 		void OnCarry( PlayerCarryEvent e ) { }
 		void OnDamaging( PlayerDamageEvent e ) { }
 		void OnKill( PlayerKillEvent e ) { }
+		/// <summary>
+		/// Called on the local player's machine as they look around, sent to the whole scene.
+		/// </summary>
 		void OnCameraMove( ref Angles angles ) { }
+
+		/// <summary>
+		/// Called on the local player's machine while their camera is set up, sent to the whole scene.
+		/// </summary>
 		void OnCameraSetup( CameraComponent camera ) { }
+
+		/// <summary>
+		/// Called on the local player's machine after their camera is set up, sent to the whole scene.
+		/// </summary>
 		void OnCameraPostSetup( CameraComponent camera ) { }
 
 		/// <summary>
-		/// Called every tick before movement input is applied. Set <paramref name="allowMovement"/>
-		/// to false to prevent the player from moving with WASD this tick (e.g. while spinning a
-		/// physgun-held object).
+		/// Called every tick on the local player's machine before movement input is applied, sent to the whole scene.
+		/// Set <paramref name="allowMovement"/> to false to prevent the player from moving with WASD this tick
+		/// (e.g. while spinning a physgun-held object).
 		/// </summary>
 		void OnMove( ref bool allowMovement ) { }
 	}
