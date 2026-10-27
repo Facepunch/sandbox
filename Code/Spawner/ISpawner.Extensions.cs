@@ -11,6 +11,7 @@ public static class ISpawnerExtensions
 			return type switch
 			{
 				"prop" => new PropSpawner( path ),
+				"builder" => new BuilderSpawner( path ),
 				"mount" => new MountSpawner( path, metadata ),
 				"entity" or "sent" => new EntitySpawner( path ),
 				"dupe" => new DuplicatorSpawner( path, source ),

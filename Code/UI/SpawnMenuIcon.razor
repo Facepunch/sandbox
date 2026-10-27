@@ -4,7 +4,14 @@
 
 <root>
 
-    <div class="thumb" style="background-image: url( @Icon )"></div>
+    @if ( Type == "builder" )
+    {
+        <BuilderThumbnail Data=@Path PreviewMaterial=@PreviewMaterial />
+    }
+    else
+    {
+        <div class="thumb" style="background-image: url( @Icon )"></div>
+    }
 
     @if ( Developer )
     {
@@ -22,6 +29,7 @@
     [Parameter] public string Ident { get; set; }
     [Parameter] public string Icon { get; set; }
     [Parameter] public string Title { get; set; }
+    [Parameter] public Material PreviewMaterial { get; set; }
     [Parameter] public bool HideText { get; set; }
     [Parameter] public bool Developer { get; set; }
     [Parameter] public Guid SpawnlistItemId { get; set; }
@@ -41,7 +49,11 @@
 
         (Type, Path, Source) = SpawnlistItem.ParseIdent( Ident );
 
-        if ( string.IsNullOrWhiteSpace( Icon ) )
+        if ( Type == "builder" )
+        {
+            Icon = "";
+        }
+        else if ( string.IsNullOrWhiteSpace( Icon ) )
         {
             Icon = $"thumb:{Path}";
         }
@@ -49,7 +61,7 @@
 
     protected override int BuildHash()
     {
-        return HashCode.Combine( Ident, Icon, Title, HideText, Developer );
+        return HashCode.Combine( Ident, Icon, Title, HideText, Developer, PreviewMaterial );
     }
 
     protected override async void OnDragStart( DragEvent e )

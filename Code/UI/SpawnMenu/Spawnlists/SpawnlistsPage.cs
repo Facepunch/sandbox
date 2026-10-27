@@ -28,6 +28,7 @@ public abstract class SpawnlistsPage : BaseSpawnMenu
 		// Constructors do not run again for existing panels during hotload.
 		BindCollection();
 		base.OnHotloaded();
+		OnParametersSet();
 	}
 
 	void OnCollectionChanged()
@@ -64,6 +65,7 @@ public abstract class SpawnlistsPage : BaseSpawnMenu
 		SpawnMenuOption header = AddHeader( "#spawnmenu.section.workshop_spawnlists" );
 
 		AddResourceSpawnlists();
+		AddProceduralSpawnlists();
 		AddUserSpawnlists();
 
 		// hide the header if there are no spawnlists to show
@@ -72,6 +74,9 @@ public abstract class SpawnlistsPage : BaseSpawnMenu
 			RemoveOption( header );
 		}
 	}
+
+	/// <summary>Built-in generated lists, alongside the authored default lists.</summary>
+	protected virtual void AddProceduralSpawnlists() { }
 
 	void AddResourceSpawnlists()
 	{

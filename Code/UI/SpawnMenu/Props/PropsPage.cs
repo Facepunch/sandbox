@@ -5,6 +5,22 @@
 [Title( "#spawnmenu.tab.spawnlists" ), Order( 0 ), Icon( "📦" )]
 public class PropsPage : SpawnlistsPage
 {
+	protected override void AddProceduralSpawnlists()
+	{
+		var builder = AddOption( "carpenter", "Building Props", () => new BuilderPage() );
+		builder.Key = "builder";
+		foreach ( var category in BuilderCatalog.Categories )
+		{
+			AddOption( builder, new SpawnMenuOption
+			{
+				Name = category,
+				Key = $"builder/{category}",
+				Icon = "category",
+				PanelCreator = () => new BuilderPage { Category = category }
+			} );
+		}
+	}
+
 	protected override void Rebuild()
 	{
 		AddSpawnlistOptions();
