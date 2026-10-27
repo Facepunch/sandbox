@@ -295,6 +295,13 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		var source = DamageBlame.Find( dmg ) as IKillSource ?? dmg.Attacker?.GetComponent<IKillSource>();
 		source?.OnKill( victim.GameObject );
 
+		if ( source is Player killer )
+		{
+			var killEvent = new PlayerKillEvent { Player = killer, Victim = victim.GameObject, DamageInfo = dmg };
+			Local.IPlayerEvents.PostToGameObject( killer.GameObject, x => x.OnKill( killEvent ) );
+			Global.IPlayerEvents.Post( x => x.OnPlayerKill( killEvent ) );
+		}
+
 		var w = dmg.Weapon.IsValid() ? dmg.Weapon.GetComponentInChildren<IKillIcon>() : null;
 		var attackerName = source?.DisplayName;
 		var attackerSteamId = source?.SteamId ?? 0L;
