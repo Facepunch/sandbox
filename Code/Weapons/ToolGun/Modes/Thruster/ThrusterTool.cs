@@ -13,6 +13,12 @@ public sealed class ThrusterTool : ToolMode
 	[Property, ResourceSelect( Extension = "tdef", AllowPackages = true ), Title( "#tool.name.thruster" )]
 	public string Definition { get; set; } = "entities/thruster/basic.tdef";
 
+	[Property, Title( "#tool.setting.activate" ), Description( "#tool.setting.thrusterentity.activate.description" )]
+	public ClientInput Activate { get; set; }
+
+	[Property, Title( "#tool.setting.reverse" ), Description( "#tool.setting.thrusterentity.reverse.description" )]
+	public ClientInput Reverse { get; set; }
+
 	public override string Description => "#tool.hint.thrustertool.description";
 
 	Vector3 _axis = Vector3.Up;
@@ -40,7 +46,7 @@ public sealed class ThrusterTool : ToolMode
 		if ( thrusterDef == null ) return;
 
 		var placementTrans = GetPlacementTransform( select );
-		Spawn( select, thrusterDef.Prefab, placementTrans, false );
+		Spawn( select, thrusterDef.Prefab, placementTrans, false, Activate, Reverse );
 		ShootEffects( select );
 	}
 
@@ -53,7 +59,7 @@ public sealed class ThrusterTool : ToolMode
 		if ( thrusterDef == null ) return;
 
 		var placementTrans = GetPlacementTransform( select );
-		Spawn( select, thrusterDef.Prefab, placementTrans, true );
+		Spawn( select, thrusterDef.Prefab, placementTrans, true, Activate, Reverse );
 		ShootEffects( select );
 	}
 
@@ -83,7 +89,7 @@ public sealed class ThrusterTool : ToolMode
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx, bool noWeld )
+	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx, bool noWeld, ClientInput activate, ClientInput reverse )
 	{
 		if ( !FireToolAction( noWeld ? ToolInput.Secondary : ToolInput.Primary ) ) return;
 
@@ -95,10 +101,12 @@ public sealed class ThrusterTool : ToolMode
 		go.Tags.Add( "constraint" );
 		go.WorldTransform = tx;
 
+		var thruster = go.GetComponent<ThrusterEntity>();
+		thruster.Activate = activate;
+		thruster.Reverse = reverse;
+
 		if ( !noWeld && !point.GameObject.Tags.Contains( "world" ) )
 		{
-			var thruster = go.GetComponent<ThrusterEntity>();
-
 			// attach it
 			var joint = thruster.AddComponent<FixedJoint>();
 			joint.Attachment = Joint.AttachmentMode.LocalFrames;
