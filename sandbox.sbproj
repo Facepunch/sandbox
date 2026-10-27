@@ -6,6 +6,7 @@
   "Schema": 1,
   "IncludeSourceFiles": false,
   "Resources": "/fonts/*\n/UI/*.png\n/ui/*.png\n/ui/*\n/ui/weapons/melee/*",
+  "PublishUsedAssetsOnly": false,
   "PackageReferences": [],
   "EditorReferences": null,
   "Mounts": [],

@@ -10,9 +10,10 @@
       "Schema": 0,
       "IncludeSourceFiles": false,
       "Resources": null,
+      "PublishUsedAssetsOnly": false,
       "PackageReferences": null,
       "EditorReferences": [
-        "facepunch.beer_keg_a2#282208",
+        "facepunch.beer_keg_a2#429475",
         "facepunch.carseat#143559",
         "facepunch.cartyre#275783",
         "facepunch.tractorwheel#140646"
