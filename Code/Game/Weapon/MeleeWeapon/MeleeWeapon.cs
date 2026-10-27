@@ -68,8 +68,8 @@ public class MeleeWeapon : BaseSandboxWeapon
 		ShootEffects( new ShotEffect( tr.HitPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface ) );
 
 		// Our trace decides the hit - the engine claims it to the host, which applies the damage.
-		// Melee doesn't count hitgroups - no headshot tags on the damage.
-		ShootBullet( tr, Damage, SwingForce, hitboxTags: false );
+		// Count hitgroups - headshots get the head tag and its multiplier.
+		ShootBullet( tr, Damage, SwingForce, hitboxTags: true );
 
 		KickView();
 	}
