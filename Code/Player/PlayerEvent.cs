@@ -136,6 +136,22 @@ public class PlayerRespawnEvent
 }
 
 /// <summary>
+/// Fired on the host before a player is given their starter weapons, on spawning without a saved hotbar to restore.
+/// Edit <see cref="Items"/> to change what they get, or set <see cref="Cancelled"/> to true to give nothing.
+/// </summary>
+public class PlayerLoadoutEvent
+{
+	public Player Player { get; init; }
+
+	/// <summary>
+	/// The weapon prefabs to give, in order. Starts as the player prefab's starting items.
+	/// </summary>
+	public List<GameObject> Items { get; set; }
+
+	public bool Cancelled { get; set; }
+}
+
+/// <summary>
 /// Fired when a player kills another player or NPC.
 /// </summary>
 public class PlayerKillEvent
@@ -217,6 +233,7 @@ public static partial class Global
 		[Obsolete( "Use Global.IDamageEvents, it covers players and NPCs" )]
 		void OnPlayerDamaging( PlayerDamageEvent e ) { }
 		void OnPlayerRespawning( PlayerRespawnEvent e ) { }
+		void OnPlayerLoadout( PlayerLoadoutEvent e ) { }
 		void OnPlayerKill( PlayerKillEvent e ) { }
 	}
 }

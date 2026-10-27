@@ -115,7 +115,22 @@ public sealed class PlayerLoadout : Component, Local.IPlayerEvents, Global.IPlay
 	{
 		if ( !Networking.IsHost || Inventory.Weapons.Any() ) return;
 
-		Inventory.GiveLoadout();
+		var e = new PlayerLoadoutEvent { Player = Player, Items = Inventory.StartingItems?.ToList() ?? new() };
+		Global.IPlayerEvents.Post( x => x.OnPlayerLoadout( e ) );
+		if ( e.Cancelled ) return;
+
+		// the engine gives the starting items, so hand it the edited list for this one call
+		var startingItems = Inventory.StartingItems;
+		Inventory.StartingItems = e.Items ?? new();
+
+		try
+		{
+			Inventory.GiveLoadout();
+		}
+		finally
+		{
+			Inventory.StartingItems = startingItems;
+		}
 	}
 
 	[Rpc.Host]
