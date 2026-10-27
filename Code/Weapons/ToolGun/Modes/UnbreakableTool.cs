@@ -43,6 +43,7 @@ public sealed class UnbreakableTool : ToolMode
 	private void SetUnbreakable( Prop prop, bool unbreakable )
 	{
 		if ( !prop.IsValid() || prop.IsProxy ) return;
+		if ( !CallerCanEdit( prop.GameObject ) ) return;
 
 		prop.Health = unbreakable ? 0 : ( prop?.Model?.Data?.Health ?? 100 );
 	}

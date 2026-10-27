@@ -59,6 +59,7 @@ public sealed class MassTool : ToolMode
 	private void SetMass( Rigidbody rb, float mass )
 	{
 		if ( !rb.IsValid() || rb.IsProxy ) return;
+		if ( !CallerCanEdit( rb.GameObject ) ) return;
 
 		if ( mass <= 0f )
 		{

@@ -71,6 +71,7 @@ public sealed class GravityTool : ToolMode
 	private void SetGravity( GameObject target, float scale )
 	{
 		if ( !target.IsValid() || target.IsProxy ) return;
+		if ( !CallerCanEdit( target ) ) return;
 
 		scale = scale.Clamp( -4f, 4f );
 

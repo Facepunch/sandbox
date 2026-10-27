@@ -57,6 +57,7 @@ public sealed class ResizerTool : ToolMode
 	{
 		if ( !go.IsValid() ) return;
 		if ( go.IsProxy ) return;
+		if ( !CallerCanEdit( go ) ) return;
 
 		go.WorldScale = Vector3.One;
 	}
@@ -66,6 +67,7 @@ public sealed class ResizerTool : ToolMode
 	{
 		if ( !go.IsValid() ) return;
 		if ( go.IsProxy ) return;
+		if ( !CallerCanEdit( go ) ) return;
 
 		var newScale = go.WorldScale + size;
 		

@@ -121,6 +121,7 @@ public sealed class KeepUprightTool : ToolMode
 	private void CreateWorldAnchor( SelectionPoint point )
 	{
 		if ( !point.IsValid() ) return;
+		if ( !CallerCanEdit( point.GameObject ) ) return;
 
 		var go = new GameObject( point.GameObject, false, "keep_upright" );
 		go.LocalTransform = point.LocalTransform;
@@ -152,6 +153,7 @@ public sealed class KeepUprightTool : ToolMode
 	{
 		if ( !point1.IsValid() || !point2.IsValid() ) return;
 		if ( point1.GameObject == point2.GameObject ) return;
+		if ( !CanConstrain( point1, point2 ) ) return;
 
 		var go2 = new GameObject( point2.GameObject, false, "keep_upright" );
 		go2.LocalTransform = point2.LocalTransform;
@@ -188,6 +190,8 @@ public sealed class KeepUprightTool : ToolMode
 	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void RemoveConstraints( GameObject go )
 	{
+		if ( !CallerCanEdit( go ) ) return;
+
 		// Remove world-anchor upright joints (Body == null means no second object)
 		foreach ( var joint in go.GetComponentsInChildren<UprightJoint>( true ) )
 		{

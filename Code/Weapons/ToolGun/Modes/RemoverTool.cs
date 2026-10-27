@@ -46,6 +46,7 @@ public sealed class RemoverTool : ToolMode
 
 		if ( !CanDestroy( go ) ) return;
 		if ( go.IsProxy ) return;
+		if ( !go.HasAccess( Rpc.Caller ) ) return;
 
 		go.Destroy();
 	}

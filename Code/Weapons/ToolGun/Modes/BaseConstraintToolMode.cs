@@ -143,6 +143,8 @@
 			return;
 		}
 
+		if ( !CanConstrain( point1, point2 ) ) return;
+
 		CreateConstraint( point1, point2 );
 		CheckContraptionStats( point1.GameObject );
 	}
@@ -150,6 +152,8 @@
 	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void RemoveConstraints( GameObject go )
 	{
+		if ( !CallerCanEdit( go ) ) return;
+
 		var builder = new LinkedGameObjectBuilder();
 		builder.AddConnected( go );
 

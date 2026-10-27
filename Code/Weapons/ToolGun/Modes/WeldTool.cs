@@ -222,6 +222,8 @@ public sealed class WeldTool : BaseConstraintToolMode
 			return;
 		}
 
+		if ( !CanConstrain( point1, point2 ) ) return;
+
 		// Placement is part of this RPC, independent of the client's current input state.
 		var moving = point1.GameObject.Network.RootGameObject ?? point1.GameObject;
 		moving.WorldTransform = GetRotatedPlacement( point1, point2, angle );
