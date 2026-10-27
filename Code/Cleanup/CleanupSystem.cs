@@ -2,9 +2,12 @@ using Sandbox.UI;
 
 namespace Sandbox;
 
-public interface ICleanupEvents
+/// <summary>
+/// Implement this on a <see cref="Component"/> to hear about map cleanups. Runs on every machine after the host has cleaned up.
+/// </summary>
+public interface ICleanupEvents : ISceneEvent<ICleanupEvents>
 {
-	public void OnCleanup( int removedObjects, int restoredObjects );
+	public void OnCleanup( int removedObjects, int restoredObjects ) { }
 }
 
 /// <summary>
