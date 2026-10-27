@@ -150,7 +150,11 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 		if ( IsProxy || Health < 1f )
 			return;
 
-		var amount = damage.Damage;
+		var e = new DamageEvent { Victim = GameObject, DamageInfo = damage, Attacker = GetAttacker( damage ), Damage = damage.Damage };
+		Scene.RunEvent<Global.IDamageEvents>( x => x.OnDamaging( e ) );
+		if ( e.Cancelled ) return;
+
+		var amount = e.Damage;
 
 		// Same hitgroup rule as players - headshots hurt double.
 		if ( damage.Tags.Contains( DamageTags.Headshot ) )
@@ -159,12 +163,33 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 		Health -= amount;
 		OnHurt( damage );
 
+		e.HealthLost = amount;
+		Scene.RunEvent<Global.IDamageEvents>( x => x.OnDamaged( e ) );
+
 		if ( Health < 1f )
 		{
+			var death = new DeathEvent { Victim = GameObject, DamageInfo = damage, Attacker = e.Attacker };
+			Scene.RunEvent<Global.IDeathEvents>( x => x.OnDying( death ) );
+
+			if ( death.Cancelled )
+			{
+				Health = MathF.Max( Health, 1f );
+				return;
+			}
+
+			_createRagdoll = death.CreateRagdoll;
+
 			Speech.Stop();
 			Die( damage );
+
+			Scene.RunEvent<Global.IDeathEvents>( x => x.OnDied( death ) );
 		}
 	}
+
+	/// <summary>
+	/// Whether <see cref="Die"/> should leave a ragdoll, a death listener can turn it off.
+	/// </summary>
+	private bool _createRagdoll = true;
 
 	/// <summary>Called when the NPC takes damage (before the death check). Override to react.</summary>
 	protected virtual void OnHurt( in DamageInfo damage ) { }
@@ -179,8 +204,12 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 		EmitStimulus( StimulusKind.Death, radius: 1024f, lifetime: 2f );
 
 		GameManager.Current?.OnNpcDeath( this, damage );
-		var velocity = RagdollPush.GetVelocity( damage, GameObject, 500, 1500, out var propMass );
-		CreateRagdoll( velocity, damage.Origin, propMass: propMass );
+		if ( _createRagdoll )
+		{
+			var velocity = RagdollPush.GetVelocity( damage, GameObject, 500, 1500, out var propMass );
+			CreateRagdoll( velocity, damage.Origin, propMass: propMass );
+		}
+
 		GameObject.Destroy();
 	}
 }

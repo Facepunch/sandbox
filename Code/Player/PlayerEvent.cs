@@ -214,6 +214,7 @@ public static partial class Global
 		void OnPlayerSeatHolster( PlayerSeatHolsterEvent e ) { }
 		void OnPlayerFlashlight( PlayerFlashlightEvent e ) { }
 		void OnPlayerCarry( PlayerCarryEvent e ) { }
+		[Obsolete( "Use Global.IDamageEvents, it covers players and NPCs" )]
 		void OnPlayerDamaging( PlayerDamageEvent e ) { }
 		void OnPlayerRespawning( PlayerRespawnEvent e ) { }
 		void OnPlayerKill( PlayerKillEvent e ) { }
