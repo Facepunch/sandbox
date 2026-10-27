@@ -11,6 +11,7 @@ public sealed class BuilderProp : Component
 	[Property] public ModelRenderer Renderer { get; set; }
 	[Property] public ModelCollider Collider { get; set; }
 	string builtId;
+	int builtGeometryVersion;
 
 	public void Rebuild()
 	{
@@ -20,11 +21,13 @@ public sealed class BuilderProp : Component
 		Renderer.Model = model;
 		Collider.Model = model;
 		builtId = PieceId;
+		builtGeometryVersion = BuilderGeometry.GeometryVersion;
 	}
 
 	protected override void OnStart() => Rebuild();
 	protected override void OnUpdate()
 	{
-		if ( builtId != PieceId || Renderer.IsValid() && Renderer.Model is null ) Rebuild();
+		if ( builtId != PieceId || builtGeometryVersion != BuilderGeometry.GeometryVersion
+			|| Renderer.IsValid() && Renderer.Model is null ) Rebuild();
 	}
 }

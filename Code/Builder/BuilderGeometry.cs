@@ -5,7 +5,7 @@ public sealed class BuilderGeometry
 {
 	static readonly Dictionary<string, Model> Cache = new();
 	// Bump when recipes change so hotload cannot reuse old meshes/collision.
-	const int GeometryVersion = 2;
+	public const int GeometryVersion = 3;
 	readonly List<Vertex> vertices = new();
 	readonly List<int> indices = new();
 	readonly ModelBuilder builder = Model.Builder;
@@ -96,7 +96,8 @@ public sealed class BuilderGeometry
 			for ( int v = 0; v < rows; v++ )
 			{
 				var a = Point(u,v); var b = Point(u+1,v); var c = Point(u+1,v+1); var d = Point(u,v+1);
-				Quad( a,b,c,d ); points.AddRange( [a,b,c,d] );
+				Quad( a,b,c,d );
+				if ( !sphere ) points.AddRange( [a,b,c,d] );
 			}
 			if ( !sphere && cap )
 			{
@@ -106,7 +107,12 @@ public sealed class BuilderGeometry
 				else Triangle( center, Point(u+1,end), Point(u,end) );
 			}
 		}
-		builder.AddCollisionHull( points.Distinct().ToList() );
+		// Dense render spheres can fail convex-hull cooking while still producing
+		// a physics part. Catalog spheres are round, so use an exact native sphere.
+		if ( sphere )
+			builder.AddCollisionSphere( radius, new Vector3( 0, 0, offset ) );
+		else
+			builder.AddCollisionHull( points.Distinct().ToList() );
 	}
 
 	void Build( BuilderCatalog.Piece piece )
