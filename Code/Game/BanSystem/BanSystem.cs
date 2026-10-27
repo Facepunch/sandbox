@@ -28,6 +28,10 @@ internal sealed class BanSystem : GameObjectSystem<BanSystem>, Component.INetwor
 	{
 		Assert.True( Networking.IsHost, "Only the host may ban players." );
 
+		var e = new AdminActionEvent { Action = AdminAction.Ban, SteamId = connection.SteamId, Value = reason };
+		if ( !e.Run() ) return;
+		reason = e.Value;
+
 		_bans[connection.SteamId] = new BanEntry( connection.DisplayName, reason );
 		Save();
 
@@ -38,6 +42,7 @@ internal sealed class BanSystem : GameObjectSystem<BanSystem>, Component.INetwor
 		} );
 
 		connection.Kick( $"Banned: {reason}" );
+		e.Done();
 	}
 
 	/// <summary>
@@ -48,8 +53,12 @@ internal sealed class BanSystem : GameObjectSystem<BanSystem>, Component.INetwor
 	{
 		Assert.True( Networking.IsHost, "Only the host may ban players." );
 
-		_bans[steamId] = new BanEntry( steamId.ToString(), reason );
+		var e = new AdminActionEvent { Action = AdminAction.Ban, SteamId = steamId, Value = reason };
+		if ( !e.Run() ) return;
+
+		_bans[steamId] = new BanEntry( steamId.ToString(), e.Value );
 		Save();
+		e.Done();
 	}
 
 	/// <summary>
@@ -59,8 +68,13 @@ internal sealed class BanSystem : GameObjectSystem<BanSystem>, Component.INetwor
 	{
 		Assert.True( Networking.IsHost, "Only the host may unban players." );
 
+		var e = new AdminActionEvent { Action = AdminAction.Unban, SteamId = steamId };
+		if ( !e.Run() ) return;
+
 		if ( _bans.Remove( steamId ) )
 			Save();
+
+		e.Done();
 	}
 
 	/// <summary>

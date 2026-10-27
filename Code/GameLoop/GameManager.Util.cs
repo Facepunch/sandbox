@@ -18,6 +18,10 @@ public sealed partial class GameManager
 	{
 		Assert.True( Networking.IsHost, "Only the host may kick players." );
 
+		var e = new AdminActionEvent { Action = AdminAction.Kick, SteamId = connection.SteamId, Value = reason };
+		if ( !e.Run() ) return;
+		reason = e.Value;
+
 		_kickedPlayers.Add( connection.Id );
 
 		GameManager.Current.NotifyLocalized( "#server.player_kicked", new()
@@ -27,6 +31,7 @@ public sealed partial class GameManager
 		} );
 
 		connection.Kick( reason );
+		e.Done();
 	}
 
 	/// <summary>

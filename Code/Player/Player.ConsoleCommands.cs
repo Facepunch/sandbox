@@ -50,7 +50,11 @@ public sealed partial class Player
 	[ConCmd( "map", ConVarFlags.Admin )]
 	public static void ChangeMap( string mapName )
 	{
-		LaunchArguments.Map = mapName;
+		var e = new AdminActionEvent { Action = AdminAction.ChangeMap, Value = mapName };
+		if ( !e.Run() ) return;
+
+		LaunchArguments.Map = e.Value;
+		e.Done();
 		Game.Load( Game.Ident, true );
 	}
 

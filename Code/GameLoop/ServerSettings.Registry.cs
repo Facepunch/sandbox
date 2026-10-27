@@ -73,11 +73,16 @@ public static partial class ServerSettings
 		var setting = FindConVars( ConVarFlags.Replicated ).FirstOrDefault( x => x.Name == name );
 		if ( setting is null ) return;
 
+		var e = new AdminActionEvent { Action = AdminAction.ChangeSetting, Setting = name, Value = value?.ToString() };
+		if ( !e.Run() ) return;
+
 		var previous = ConsoleSystem.GetValue( name );
 		ConsoleSystem.SetValue( name, value );
 
 		var current = ConsoleSystem.GetValue( name );
 		if ( current == previous ) return;
+
+		e.Done();
 
 		var shown = bool.TryParse( current, out var on ) ? (on ? "#spawnmenu.common.on" : "#spawnmenu.common.off") : LocalizedText.Literal( current );
 
