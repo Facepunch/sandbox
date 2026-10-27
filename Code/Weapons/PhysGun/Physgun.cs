@@ -987,7 +987,7 @@ public partial class Physgun : Local.IPlayerEvents
 		return true;
 	}
 
-	[Rpc.Broadcast]
+	[Rpc.Broadcast( NetFlags.OwnerOnly )]
 	void Freeze( Rigidbody body )
 	{
 		if ( !body.IsValid() ) return;
@@ -1006,8 +1006,10 @@ public partial class Physgun : Local.IPlayerEvents
 		}
 	}
 
-	[Rpc.Host]
-	void Unfreeze( Rigidbody body )
+	[Rpc.Host( NetFlags.OwnerOnly )]
+	void Unfreeze( Rigidbody body ) => UnfreezeBody( body );
+
+	void UnfreezeBody( Rigidbody body )
 	{
 		if ( !body.IsValid() ) return;
 		if ( body.IsProxy ) return;
@@ -1016,7 +1018,7 @@ public partial class Physgun : Local.IPlayerEvents
 		body.MotionEnabled = true;
 	}
 
-	[Rpc.Broadcast]
+	[Rpc.Broadcast( NetFlags.OwnerOnly )]
 	void UnfreezeAll( Rigidbody body )
 	{
 		if ( !body.IsValid() ) return;
@@ -1036,11 +1038,11 @@ public partial class Physgun : Local.IPlayerEvents
 			Sandbox.UI.Notices.AddNotice( "ac_unit", Color.Cyan, phrase );
 		}
 
-		if ( body.IsProxy ) return;
+		if ( body.IsProxy || !Networking.IsHost ) return;
 
 		foreach ( var rb in bodies )
 		{
-			Unfreeze( rb );
+			UnfreezeBody( rb );
 		}
 
 		var models = bodies
@@ -1054,7 +1056,6 @@ public partial class Physgun : Local.IPlayerEvents
 		}
 	}
 
-	[Rpc.Host]
 	void UnfreezeModelPhysics( ModelPhysics modelPhysics )
 	{
 		if ( !modelPhysics.IsValid() ) return;
@@ -1064,7 +1065,7 @@ public partial class Physgun : Local.IPlayerEvents
 		modelPhysics.MotionEnabled = true;
 	}
 
-	[Rpc.Host]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	void Launch( Rigidbody body, Vector3 force )
 	{
 		if ( !body.IsValid() ) return;
