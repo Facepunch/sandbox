@@ -63,7 +63,6 @@ public sealed class TrailTool : ToolMode
 		if ( !go.IsValid() ) return;
 		if ( go.IsProxy ) return;
 		if ( !FireToolAction( ToolInput.Primary ) ) return;
-		if ( !CallerCanEdit( go ) ) return;
 
 		var root = go.Network?.RootGameObject ?? go;
 
@@ -101,7 +100,6 @@ public sealed class TrailTool : ToolMode
 		if ( !go.IsValid() ) return;
 		if ( go.IsProxy ) return;
 		if ( !FireToolAction( ToolInput.Secondary ) ) return;
-		if ( !CallerCanEdit( go ) ) return;
 
 		var root = go.Network?.RootGameObject ?? go;
 

@@ -77,9 +77,6 @@
 
         o = o?.FindNetworkRoot();
 
-        // with prop protection on, players can't inspect props they don't own
-        if ( !o.HasAccess( Connection.Local ) ) return false;
-
         return true;
     }
 

@@ -45,7 +45,6 @@ public sealed class UnbreakableTool : ToolMode
 		if ( !FireToolAction( unbreakable ? ToolInput.Primary : ToolInput.Secondary ) ) return;
 
 		if ( !prop.IsValid() || prop.IsProxy ) return;
-		if ( !CallerCanEdit( prop.GameObject ) ) return;
 
 		prop.Health = unbreakable ? 0 : ( prop?.Model?.Data?.Health ?? 100 );
 

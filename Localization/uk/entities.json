@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Секунди між автоматичними створеннями.",
     "entity.property.maxentities": "Максимум сутностей",
     "entity.description.maxentities": "Максимальна кількість створених сутностей, що існують одночасно.",
-    "entity.setting.prop_protection": "Захист пропів",
-    "entity.setting.prop_protection_description": "Дотримуватися прав власності: гравці можуть взаємодіяти лише зі своїми пропами.",
     "entity.mount.install": "🧩 Установіть {name}",
     "npc.speech.combat.pain.1": "А-а-а!",
     "npc.speech.combat.pain.2": "Мене підстрелили!",

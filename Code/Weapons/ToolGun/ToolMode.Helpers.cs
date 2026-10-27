@@ -1,22 +1,6 @@
 ﻿public abstract partial class ToolMode
 {
 	/// <summary>
-	/// Host check that the caller of the current RPC may change <paramref name="go"/>, going by the owner of its network root.
-	/// </summary>
-	protected static bool CallerCanEdit( GameObject go )
-	{
-		return go.IsValid() && (go.Network?.RootGameObject ?? go).HasAccess( Rpc.Caller );
-	}
-
-	/// <summary>
-	/// Host check that the caller of the current RPC may join both objects.
-	/// </summary>
-	protected static bool CanConstrain( SelectionPoint point1, SelectionPoint point2 )
-	{
-		return CallerCanEdit( point1.GameObject ) && CallerCanEdit( point2.GameObject );
-	}
-
-	/// <summary>
 	/// A point in the world selected by the current player's toolgun. We try to keep this as minimal as possible
 	/// while catering for as much as possible.
 	/// </summary>
@@ -88,7 +72,7 @@
 
 		if ( sp.IsValid() )
 		{
-			// Ask the object if it allows toolgun interaction (Ownable and others can reject via IToolgunEvent)
+			// Ask the object if it allows toolgun interaction (anything can reject via IToolgunEvent)
 			var selectEvent = new IToolgunEvent.SelectEvent { User = Player.Network.Owner };
 			sp.GameObject.Root.RunEvent<IToolgunEvent>( x => x.OnToolgunSelect( selectEvent ) );
 			if ( selectEvent.Cancelled ) return default;

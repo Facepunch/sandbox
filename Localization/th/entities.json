@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "จำนวนวินาทีระหว่างการสร้างอัตโนมัติ",
     "entity.property.maxentities": "เอนทิตีสูงสุด",
     "entity.description.maxentities": "จำนวนเอนทิตีที่สร้างและอยู่พร้อมกันได้สูงสุด",
-    "entity.setting.prop_protection": "การปกป้องพร็อพ",
-    "entity.setting.prop_protection_description": "บังคับใช้ความเป็นเจ้าของ ผู้เล่นโต้ตอบได้เฉพาะพร็อพของตนเอง",
     "entity.mount.install": "🧩 ติดตั้ง {name}",
     "npc.speech.combat.pain.1": "อ๊าก!",
     "npc.speech.combat.pain.2": "พวกมันยิงโดนฉัน!",

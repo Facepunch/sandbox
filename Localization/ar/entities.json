@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "الثواني بين الإنشاءات التلقائية.",
     "entity.property.maxentities": "الحد الأقصى للكيانات",
     "entity.description.maxentities": "الحد الأقصى للكيانات المنشأة المسموح بوجودها في آن واحد.",
-    "entity.setting.prop_protection": "حماية المجسمات",
-    "entity.setting.prop_protection_description": "فرض الملكية؛ يمكن للاعبين التفاعل مع مجسماتهم فقط.",
     "entity.mount.install": "🧩 تثبيت {name}",
     "npc.speech.combat.pain.1": "آخ!",
     "npc.speech.combat.pain.2": "أصابوني!",

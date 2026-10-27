@@ -173,7 +173,7 @@ public sealed partial class Player
 		return CanKeepDriving( go, caller );
 	}
 
-	public static bool CanKeepDriving( GameObject go, Connection caller ) => CanDriveProps( caller ) && go.HasAccess( caller );
+	public static bool CanKeepDriving( GameObject go, Connection caller ) => CanDriveProps( caller );
 
 	public static bool IsHeld( GameObject go )
 	{

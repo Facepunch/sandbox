@@ -24,7 +24,6 @@ public sealed partial class GameManager : IMenuBarEvent
 
 		var server = e.GetOrAddMenu( Game.Language.GetPhrase( "spawnmenu.menubar.server" ), 300 );
 
-		IMenuBarEvent.Event.AddServerToggle( server, Game.Language.GetPhrase( "entity.setting.prop_protection" ), () => Ownable.OwnershipChecks, v => SetConVar( "sandbox.ownership.checks", v ) );
 		IMenuBarEvent.Event.AddServerToggle( server, Game.Language.GetPhrase( "spawnmenu.menubar.reequip_last" ), () => ServerSettings.ReEquipLast, v => SetConVar( "sandbox.reequiplast", v ) );
 		server.AddSeparator();
 		IMenuBarEvent.Event.AddServerToggle( server, Game.Language.GetPhrase( "server.developer.entities" ), () => ServerSettings.DeveloperEntities, v => SetConVar( "sandbox.developer.entities", v ) );

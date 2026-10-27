@@ -905,7 +905,7 @@ public partial class Physgun : Local.IPlayerEvents
 	}
 
 	/// <summary>
-	/// Ask the object if it allows being grabbed (Ownable and others can reject via IPhysgunEvent)
+	/// Ask the object if it allows being grabbed (anything can reject via IPhysgunEvent)
 	/// </summary>
 	bool AllowsGrab( GameObject go )
 	{

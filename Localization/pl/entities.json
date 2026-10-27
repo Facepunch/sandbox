@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Sekundy między automatycznymi utworzeniami.",
     "entity.property.maxentities": "Maksimum encji",
     "entity.description.maxentities": "Maksymalna liczba utworzonych encji istniejących jednocześnie.",
-    "entity.setting.prop_protection": "Ochrona rekwizytów",
-    "entity.setting.prop_protection_description": "Egzekwuj własność: gracze mogą oddziaływać tylko na własne rekwizyty.",
     "entity.mount.install": "🧩 Zainstaluj {name}",
     "npc.speech.combat.pain.1": "Aaargh!",
     "npc.speech.combat.pain.2": "Dostali mnie!",

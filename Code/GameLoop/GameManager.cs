@@ -329,7 +329,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	internal static void ChangeProperty( Component c, string propertyName, object value )
 	{
 		if ( !c.IsValid() ) return;
-		if ( !c.GameObject.HasAccess( Rpc.Caller ) ) return;
 
 		var tl = TypeLibrary.GetType( c.GetType() );
 		if ( tl is null ) return;
@@ -355,7 +354,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	internal static void ApplyMorphBatch( SkinnedModelRenderer smr, string morphsJson )
 	{
 		if ( !smr.IsValid() ) return;
-		if ( !smr.GameObject.HasAccess( Rpc.Caller ) ) return;
 
 		smr.GameObject.GetOrAddComponent<MorphState>().ApplyBatch( morphsJson );
 	}
@@ -367,7 +365,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	internal static void ApplyFacePosePreset( SkinnedModelRenderer smr, string morphsJson )
 	{
 		if ( !smr.IsValid() ) return;
-		if ( !smr.GameObject.HasAccess( Rpc.Caller ) ) return;
 
 		smr.GameObject.GetOrAddComponent<MorphState>().ApplyPreset( morphsJson );
 	}
@@ -376,7 +373,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	internal static async void ChangeMaterialOverride( ModelRenderer renderer, int materialIndex, string materialPath )
 	{
 		if ( !renderer.IsValid() ) return;
-		if ( !renderer.GameObject.HasAccess( Rpc.Caller ) ) return;
 
 		Material material = null;
 
@@ -400,7 +396,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	internal static async void ChangeWholeMaterialOverride( ModelRenderer renderer, string materialPath )
 	{
 		if ( !renderer.IsValid() ) return;
-		if ( !renderer.GameObject.HasAccess( Rpc.Caller ) ) return;
 
 		Material material = null;
 
@@ -421,7 +416,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	internal static void ChangeMaterialGroup( ModelRenderer renderer, string group )
 	{
 		if ( !renderer.IsValid() ) return;
-		if ( !renderer.GameObject.HasAccess( Rpc.Caller ) ) return;
 
 		renderer.MaterialGroup = group;
 
@@ -436,7 +430,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	internal static void ChangeBodyGroup( ModelRenderer renderer, string partName, int choice )
 	{
 		if ( !renderer.IsValid() ) return;
-		if ( !renderer.GameObject.HasAccess( Rpc.Caller ) ) return;
 
 		// several objects can be selected at once, skip the ones whose model doesn't have this choice
 		var part = renderer.Model?.Parts.Get( partName );

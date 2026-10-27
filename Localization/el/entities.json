@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Δευτερόλεπτα μεταξύ αυτόματων δημιουργιών.",
     "entity.property.maxentities": "Μέγιστες οντότητες",
     "entity.description.maxentities": "Ο μέγιστος αριθμός δημιουργημένων οντοτήτων που επιτρέπεται να υπάρχουν ταυτόχρονα.",
-    "entity.setting.prop_protection": "Προστασία αντικειμένων",
-    "entity.setting.prop_protection_description": "Επιβολή ιδιοκτησίας: οι παίκτες αλληλεπιδρούν μόνο με τα δικά τους αντικείμενα.",
     "entity.mount.install": "🧩 Εγκατάσταση {name}",
     "npc.speech.combat.pain.1": "Ααχ!",
     "npc.speech.combat.pain.2": "Με πέτυχαν!",

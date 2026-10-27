@@ -2,7 +2,7 @@
 /// Answers "which player caused this?" while entity code is running.
 ///
 /// When a signal input fires or a seat pushes key states, the system notes who did it here.
-/// If your code needs to blame someone — kill credit, undo, prop protection — just read
+/// If your code needs to blame someone — kill credit, undo — just read
 /// <see cref="Player"/>. It's null when nobody is responsible (e.g. map logic).
 /// </summary>
 public static class ControlContext

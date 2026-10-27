@@ -65,8 +65,6 @@
   "entity.description.spawninterval": "Seconds 'twixt automatic spawns.",
   "entity.property.maxentities": "Max Entities",
   "entity.description.maxentities": "Th' maximum number o' spawned entities allowed t' exist at once.",
-  "entity.setting.prop_protection": "Prop Protection",
-  "entity.setting.prop_protection_description": "Enforce ownership — players can only interact with their own props, matey.",
   "entity.mount.install": "🧩 Install {name}",
   "npc.speech.combat.pain.1": "Arrgh!",
   "npc.speech.combat.pain.2": "They got me!",

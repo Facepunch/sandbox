@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Seconden tussen automatische aanmaakacties.",
     "entity.property.maxentities": "Maximumaantal entiteiten",
     "entity.description.maxentities": "Het maximale aantal aangemaakte entiteiten dat tegelijk mag bestaan.",
-    "entity.setting.prop_protection": "Objectbescherming",
-    "entity.setting.prop_protection_description": "Dwingt eigendom af: spelers kunnen alleen met hun eigen objecten omgaan.",
     "entity.mount.install": "🧩 {name} installeren",
     "npc.speech.combat.pain.1": "Argh!",
     "npc.speech.combat.pain.2": "Ze hebben me geraakt!",

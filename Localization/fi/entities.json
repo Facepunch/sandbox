@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Automaattisten luontien väli sekunteina.",
     "entity.property.maxentities": "Entiteettien enimmäismäärä",
     "entity.description.maxentities": "Luotujen entiteettien sallittu enimmäismäärä kerralla.",
-    "entity.setting.prop_protection": "Esineiden suojaus",
-    "entity.setting.prop_protection_description": "Valvo omistajuutta: pelaajat voivat käsitellä vain omia esineitään.",
     "entity.mount.install": "🧩 Asenna {name}",
     "npc.speech.combat.pain.1": "Aargh!",
     "npc.speech.combat.pain.2": "Ne osuivat!",

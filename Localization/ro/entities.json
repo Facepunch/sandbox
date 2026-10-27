@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Secunde între generările automate.",
     "entity.property.maxentities": "Număr maxim de entități",
     "entity.description.maxentities": "Numărul maxim de entități generate care pot exista simultan.",
-    "entity.setting.prop_protection": "Protecția obiectelor",
-    "entity.setting.prop_protection_description": "Impune dreptul de proprietate: jucătorii pot interacționa doar cu propriile obiecte.",
     "entity.mount.install": "🧩 Instalează {name}",
     "npc.speech.combat.pain.1": "Argh!",
     "npc.speech.combat.pain.2": "M-au nimerit!",

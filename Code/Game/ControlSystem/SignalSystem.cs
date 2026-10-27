@@ -510,7 +510,6 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 	private static void CreateLinkRpc( Component source, string outputId, Component target, string inputId )
 	{
 		if ( !source.IsValid() || !target.IsValid() ) return;
-		if ( !source.GameObject.HasAccess( Rpc.Caller ) || !target.GameObject.HasAccess( Rpc.Caller ) ) return;
 		if ( !TryFindOutput( source, outputId, out var output ) || !TryFindInput( target, inputId, out var input ) ) return;
 		if ( IsConnectedInternal( source, output, target, input ) ) return;
 
@@ -548,9 +547,7 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 	{
 		if ( !source.IsValid() || !target.IsValid() ) return;
 
-		// Prop protection, and wires can't leave the contraption.
-		if ( !source.GameObject.HasAccess( Rpc.Caller ) ) return;
-
+		// Wires can't leave the contraption.
 		var linked = new LinkedGameObjectBuilder();
 		linked.AddConnected( source.GameObject );
 		if ( !linked.Objects.Contains( target.GameObject.Root ) ) return;

@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "自動生成之間的間隔秒數。",
     "entity.property.maxentities": "實體上限",
     "entity.description.maxentities": "允許同時存在的已生成實體的最大數量。",
-    "entity.setting.prop_protection": "道具保護",
-    "entity.setting.prop_protection_description": "實施所有權限制，玩家只能操作自己的道具。",
     "entity.mount.install": "🧩 安裝 {name}",
     "npc.speech.combat.pain.1": "啊！",
     "npc.speech.combat.pain.2": "我中彈了！",

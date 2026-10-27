@@ -128,8 +128,6 @@
 			return;
 		}
 
-		if ( !CanConstrain( point1, point2 ) ) return;
-
 		CreateConstraint( point1, point2 );
 		CheckContraptionStats( point1.GameObject );
 
@@ -141,7 +139,7 @@
 	{
 		if ( !FireToolAction( ToolInput.Reload ) ) return;
 
-		if ( !CallerCanEdit( go ) ) return;
+		if ( !go.IsValid() ) return;
 
 		var builder = new LinkedGameObjectBuilder();
 		builder.AddConnected( go );

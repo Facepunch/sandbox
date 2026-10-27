@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Секунди между автоматичните създавания.",
     "entity.property.maxentities": "Максимум обекти",
     "entity.description.maxentities": "Максималният брой създадени обекти, които могат да съществуват едновременно.",
-    "entity.setting.prop_protection": "Защита на предметите",
-    "entity.setting.prop_protection_description": "Спазване на собствеността: играчите взаимодействат само със собствените си предмети.",
     "entity.mount.install": "🧩 Инсталирайте {name}",
     "npc.speech.combat.pain.1": "Аргх!",
     "npc.speech.combat.pain.2": "Улучиха ме!",

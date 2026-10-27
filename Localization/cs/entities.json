@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Počet sekund mezi automatickými vytvořeními.",
     "entity.property.maxentities": "Maximum entit",
     "entity.description.maxentities": "Nejvyšší počet vytvořených entit, které mohou existovat současně.",
-    "entity.setting.prop_protection": "Ochrana rekvizit",
-    "entity.setting.prop_protection_description": "Vynutit vlastnictví: hráči mohou ovládat jen své rekvizity.",
     "entity.mount.install": "🧩 Nainstalujte {name}",
     "npc.speech.combat.pain.1": "Ááá!",
     "npc.speech.combat.pain.2": "Dostali mě!",

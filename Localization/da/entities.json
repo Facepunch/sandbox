@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Sekunder mellem automatiske spawns.",
     "entity.property.maxentities": "Maks. entiteter",
     "entity.description.maxentities": "Det maksimale antal spawnede entiteter, der må eksistere samtidigt.",
-    "entity.setting.prop_protection": "Rekvisitbeskyttelse",
-    "entity.setting.prop_protection_description": "Håndhæv ejerskab: spillere kan kun påvirke deres egne rekvisitter.",
     "entity.mount.install": "🧩 Installer {name}",
     "npc.speech.combat.pain.1": "Argh!",
     "npc.speech.combat.pain.2": "De ramte mig!",

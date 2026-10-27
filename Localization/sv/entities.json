@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Sekunder mellan automatiska skapanden.",
     "entity.property.maxentities": "Max entiteter",
     "entity.description.maxentities": "Det högsta antalet skapade entiteter som får finnas samtidigt.",
-    "entity.setting.prop_protection": "Föremålsskydd",
-    "entity.setting.prop_protection_description": "Upprätthåll ägarskap: spelare kan bara påverka sina egna föremål.",
     "entity.mount.install": "🧩 Installera {name}",
     "npc.speech.combat.pain.1": "Argh!",
     "npc.speech.combat.pain.2": "De träffade mig!",

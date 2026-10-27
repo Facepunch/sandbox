@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "자동 생성 사이의 시간(초)입니다.",
     "entity.property.maxentities": "최대 엔티티 수",
     "entity.description.maxentities": "동시에 존재할 수 있는 생성된 엔티티의 최대 수입니다.",
-    "entity.setting.prop_protection": "소품 보호",
-    "entity.setting.prop_protection_description": "소유권을 적용하여 플레이어가 자신의 소품만 조작할 수 있게 합니다.",
     "entity.mount.install": "🧩 {name} 설치",
     "npc.speech.combat.pain.1": "으악!",
     "npc.speech.combat.pain.2": "맞았어!",

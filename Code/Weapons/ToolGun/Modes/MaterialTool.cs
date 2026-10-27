@@ -81,7 +81,6 @@ public sealed class MaterialTool : ToolMode
 
 		var root = target.Network?.RootGameObject ?? target;
 		if ( root.IsProxy || root.Tags.Has( "world" ) || root.Tags.Has( "player" ) ) return;
-		if ( !root.HasAccess( Rpc.Caller ) || !target.HasAccess( Rpc.Caller ) ) return;
 
 		Material material = null;
 
@@ -96,8 +95,6 @@ public sealed class MaterialTool : ToolMode
 
 		foreach ( var renderer in root.GetComponentsInChildren<ModelRenderer>() )
 		{
-			if ( !renderer.GameObject.HasAccess( Rpc.Caller ) ) continue;
-
 			renderer.MaterialOverride = material;
 			renderer.GameObject.Network?.Refresh();
 		}

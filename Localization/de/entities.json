@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Sekunden zwischen automatischen Erzeugungen.",
     "entity.property.maxentities": "Maximale Entitäten",
     "entity.description.maxentities": "Die maximale Anzahl gleichzeitig vorhandener erzeugter Entitäten.",
-    "entity.setting.prop_protection": "Objektschutz",
-    "entity.setting.prop_protection_description": "Erzwingt Eigentumsrechte: Spieler können nur mit ihren eigenen Objekten interagieren.",
     "entity.mount.install": "🧩 {name} installieren",
     "npc.speech.combat.pain.1": "Argh!",
     "npc.speech.combat.pain.2": "Sie haben mich erwischt!",

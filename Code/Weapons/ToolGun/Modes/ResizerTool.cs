@@ -59,8 +59,6 @@ public sealed class ResizerTool : ToolMode
 		if ( go.IsProxy ) return;
 		if ( !FireToolAction( ToolInput.Reload ) ) return;
 
-		if ( !CallerCanEdit( go ) ) return;
-
 		go.WorldScale = Vector3.One;
 
 		FirePostToolAction( ToolInput.Reload );
@@ -72,8 +70,6 @@ public sealed class ResizerTool : ToolMode
 		if ( !go.IsValid() ) return;
 		if ( go.IsProxy ) return;
 		if ( !FireToolAction( size > 0 ? ToolInput.Primary : ToolInput.Secondary ) ) return;
-
-		if ( !CallerCanEdit( go ) ) return;
 
 		var newScale = go.WorldScale + size;
 		

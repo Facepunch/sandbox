@@ -61,7 +61,6 @@ public sealed class MassTool : ToolMode
 		if ( !FireToolAction( input ) ) return;
 
 		if ( !rb.IsValid() || rb.IsProxy ) return;
-		if ( !CallerCanEdit( rb.GameObject ) ) return;
 
 		if ( mass <= 0f )
 		{

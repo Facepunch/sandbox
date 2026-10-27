@@ -73,7 +73,6 @@ public sealed class GravityTool : ToolMode
 		if ( !FireToolAction( input ) ) return;
 
 		if ( !target.IsValid() || target.IsProxy ) return;
-		if ( !CallerCanEdit( target ) ) return;
 
 		scale = scale.Clamp( -4f, 4f );
 

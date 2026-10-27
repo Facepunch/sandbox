@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Số giây giữa các lần tự động tạo.",
     "entity.property.maxentities": "Số thực thể tối đa",
     "entity.description.maxentities": "Số thực thể đã tạo tối đa được phép tồn tại cùng lúc.",
-    "entity.setting.prop_protection": "Bảo vệ đạo cụ",
-    "entity.setting.prop_protection_description": "Áp dụng quyền sở hữu, người chơi chỉ có thể tương tác với đạo cụ của mình.",
     "entity.mount.install": "🧩 Cài đặt {name}",
     "npc.speech.combat.pain.1": "Á!",
     "npc.speech.combat.pain.2": "Chúng bắn trúng tôi rồi!",

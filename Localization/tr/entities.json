@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Otomatik oluşturmalar arasındaki saniye sayısı.",
     "entity.property.maxentities": "Azami Varlık",
     "entity.description.maxentities": "Aynı anda bulunmasına izin verilen azami oluşturulmuş varlık sayısı.",
-    "entity.setting.prop_protection": "Nesne Koruması",
-    "entity.setting.prop_protection_description": "Sahipliği zorunlu kıl; oyuncular yalnızca kendi nesneleriyle etkileşebilir.",
     "entity.mount.install": "🧩 {name} Yükle",
     "npc.speech.combat.pain.1": "Ah!",
     "npc.speech.combat.pain.2": "Beni vurdular!",

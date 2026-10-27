@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Segundos entre criações automáticas.",
     "entity.property.maxentities": "Máximo de entidades",
     "entity.description.maxentities": "O número máximo de entidades criadas que podem existir ao mesmo tempo.",
-    "entity.setting.prop_protection": "Proteção de objetos",
-    "entity.setting.prop_protection_description": "Impõe a propriedade: os jogadores só podem interagir com seus próprios objetos.",
     "entity.mount.install": "🧩 Instalar {name}",
     "npc.speech.combat.pain.1": "Argh!",
     "npc.speech.combat.pain.2": "Me acertaram!",

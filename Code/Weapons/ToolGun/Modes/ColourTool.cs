@@ -36,12 +36,9 @@ public sealed class ColourTool : ToolMode
 
 		var root = target.Network?.RootGameObject ?? target;
 		if ( root.IsProxy || root.Tags.Has( "world" ) || root.Tags.Has( "player" ) ) return;
-		if ( !root.HasAccess( Rpc.Caller ) || !target.HasAccess( Rpc.Caller ) ) return;
 
 		foreach ( var renderer in root.GetComponentsInChildren<ModelRenderer>() )
 		{
-			if ( !renderer.GameObject.HasAccess( Rpc.Caller ) ) continue;
-
 			var prop = renderer.GetComponent<Prop>();
 			if ( prop.IsValid() )
 				prop.Tint = colour;

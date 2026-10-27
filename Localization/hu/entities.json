@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "Az automatikus létrehozások közötti másodpercek.",
     "entity.property.maxentities": "Entitáskorlát",
     "entity.description.maxentities": "Az egyszerre létező létrehozott entitások maximális száma.",
-    "entity.setting.prop_protection": "Tárgyvédelem",
-    "entity.setting.prop_protection_description": "Tulajdonjog érvényesítése: a játékosok csak saját tárgyaikkal léphetnek kapcsolatba.",
     "entity.mount.install": "🧩 {name} telepítése",
     "npc.speech.combat.pain.1": "Ááá!",
     "npc.speech.combat.pain.2": "Eltaláltak!",

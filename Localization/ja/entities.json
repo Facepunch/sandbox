@@ -65,8 +65,6 @@
     "entity.description.spawninterval": "自動スポーンの間隔（秒）。",
     "entity.property.maxentities": "エンティティ上限",
     "entity.description.maxentities": "同時に存在できる生成エンティティの最大数。",
-    "entity.setting.prop_protection": "プロップ保護",
-    "entity.setting.prop_protection_description": "所有権を強制し、プレイヤーは自分のプロップのみ操作できます。",
     "entity.mount.install": "🧩 {name}をインストール",
     "npc.speech.combat.pain.1": "ぐあっ！",
     "npc.speech.combat.pain.2": "やられた！",
