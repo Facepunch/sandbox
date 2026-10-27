@@ -38,30 +38,18 @@ public sealed class DynamiteEntity : Component, Component.IDamageable, IPlayerCo
 	{
 		_isDead = true;
 
-		CreateScorchDecal();
-
-		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
-		if ( explosionPrefab == null )
+		var explosion = Explosion.Spawn( new ExplosionEvent
 		{
-			Log.Warning( "Can't find /prefabs/engine/explosion_med.prefab" );
-			return;
-		}
+			Source = GameObject,
+			Position = WorldPosition,
+			Rotation = WorldRotation,
+			Radius = Radius,
+			Damage = Damage,
+			ForceScale = Force
+		} );
 
-		var go = GameObject.Clone( explosionPrefab, new CloneConfig { Transform = WorldTransform.WithScale( 1 ), StartEnabled = false } );
-		if ( !go.IsValid() ) return;
-
-		go.RunEvent<RadiusDamage>( x =>
-		{
-			x.Radius = Radius;
-			x.PhysicsForceScale = Force;
-			x.DamageAmount = Damage;
-			x.Attacker = go;
-			x.DamageTags ??= new();
-			x.DamageTags.Add( DamageTags.Explosion );
-		}, FindMode.EverythingInSelfAndDescendants );
-
-		go.Enabled = true;
-		go.NetworkSpawn( true, null );
+		if ( explosion.IsValid() )
+			CreateScorchDecal();
 
 		GameObject.Destroy();
 	}

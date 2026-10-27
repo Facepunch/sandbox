@@ -269,27 +269,16 @@ public sealed class HandGrenadeWeapon : BaseSandboxWeapon
 	void ExplodeInHand()
 	{
 		// Spawn the explosion directly
-		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
-		if ( !explosionPrefab.IsValid() )
-			return;
-
-		var explosionPos = Owner.IsValid() ? Owner.EyeTransform.Position : WorldPosition;
-		var explosion = GameObject.Clone( explosionPrefab, new CloneConfig { Transform = new Transform( explosionPos ), StartEnabled = false } );
-		if ( !explosion.IsValid() )
-			return;
-
-		explosion.RunEvent<RadiusDamage>( x =>
+		Explosion.Spawn( new ExplosionEvent
 		{
-			x.Radius = Radius;
-			x.PhysicsForceScale = Force;
-			x.DamageAmount = MaxDamage;
-			x.Attacker = Attacker;
-			x.DamageTags ??= new();
-			x.DamageTags.Add( DamageTags.Explosion );
-		}, FindMode.EverythingInSelfAndDescendants );
-
-		explosion.Enabled = true;
-		explosion.NetworkSpawn( true, null );
+			Source = GameObject,
+			Attacker = Attacker,
+			Position = Owner.IsValid() ? Owner.EyeTransform.Position : WorldPosition,
+			Rotation = Rotation.Identity,
+			Radius = Radius,
+			Damage = MaxDamage,
+			ForceScale = Force
+		} );
 
 		// Spend one grenade host-side; only give up the weapon when the last one is gone (don't discard a
 		// remaining stack just because one cooked off in your hand).

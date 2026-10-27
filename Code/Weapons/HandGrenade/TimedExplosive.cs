@@ -37,34 +37,18 @@ public sealed class TimedExplosive : Component, Component.IDamageable
 	{
 		if ( HasExploded ) return;
 
-		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
-		if ( explosionPrefab == null )
-		{
-			Log.Warning( "Can't find /prefabs/engine/explosion_med.prefab" );
-			return;
-		}
-
 		HasExploded = true;
 
-		var go = GameObject.Clone( explosionPrefab, new CloneConfig { Transform = WorldTransform.WithScale( 1 ), StartEnabled = false } );
-		if ( !go.IsValid() )
+		Explosion.Spawn( new ExplosionEvent
 		{
-			HasExploded = false;
-			return;
-		}
-
-		go.RunEvent<RadiusDamage>( x =>
-		{
-			x.Radius = Radius;
-			x.PhysicsForceScale = Force;
-			x.DamageAmount = Damage;
-			x.Attacker = Attacker.IsValid() ? Attacker : go;
-			x.DamageTags ??= new();
-			x.DamageTags.Add( DamageTags.Explosion );
-		}, FindMode.EverythingInSelfAndDescendants );
-
-		go.Enabled = true;
-		go.NetworkSpawn( true, null );
+			Source = GameObject,
+			Attacker = Attacker,
+			Position = WorldPosition,
+			Rotation = WorldRotation,
+			Radius = Radius,
+			Damage = Damage,
+			ForceScale = Force
+		} );
 
 		GameObject.Destroy();
 	}
