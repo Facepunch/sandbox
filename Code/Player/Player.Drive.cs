@@ -202,6 +202,8 @@ public sealed partial class Player
 
 		DrivenProp.Begin( go, this );
 		Driving = go;
+
+		Scene.RunEvent<Global.IControlEvents>( x => x.OnControlStarted( new ControlEvent { Player = this, Target = go } ) );
 	}
 
 	[Rpc.Host]
@@ -214,8 +216,12 @@ public sealed partial class Player
 
 	internal void ReleaseDriven()
 	{
-		Driving?.GetComponent<DrivenProp>()?.End();
+		var driven = Driving;
+		driven?.GetComponent<DrivenProp>()?.End();
 		Driving = null;
+
+		if ( driven.IsValid() )
+			Scene.RunEvent<Global.IControlEvents>( x => x.OnControlStopped( new ControlEvent { Player = this, Target = driven } ) );
 	}
 
 	[Rpc.Host]

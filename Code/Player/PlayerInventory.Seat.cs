@@ -20,7 +20,15 @@ public sealed partial class PlayerInventory
 
 		var seat = GetComponentInParent<ISitTarget>( false );
 		if ( seat == _seat ) return;
+
+		var previous = _seat;
 		_seat = seat;
+
+		if ( previous is Component left && left.IsValid() )
+			Scene.RunEvent<Global.IControlEvents>( x => x.OnControlStopped( new ControlEvent { Player = Player, Target = left.GameObject } ) );
+
+		if ( seat is Component sat )
+			Scene.RunEvent<Global.IControlEvents>( x => x.OnControlStarted( new ControlEvent { Player = Player, Target = sat.GameObject } ) );
 
 		if ( IsSeatHolstered )
 		{
