@@ -4,6 +4,18 @@
 /// </summary>
 public static partial class Global
 {
+	/// <summary>
+	/// Store a string in the save, keyed by name - JSON serialize anything bigger. Write it in
+	/// <see cref="ISaveEvents.BeforeSave"/> and read it back in <see cref="ISaveEvents.AfterLoad"/>. Host only.
+	/// Prefix keys with your addon's name so they don't clash.
+	/// </summary>
+	public static void SetSaveData( string key, string value ) => SaveSystem.Current?.SetMetadata( key, value );
+
+	/// <summary>
+	/// Read a string stored with <see cref="SetSaveData"/>, or <paramref name="defaultValue"/> if there isn't one.
+	/// </summary>
+	public static string GetSaveData( string key, string defaultValue = null ) => SaveSystem.Current?.GetMetadata( key, defaultValue ) ?? defaultValue;
+
 	public interface ISaveEvents : ISceneEvent<ISaveEvents>
 	{
 		/// <summary>
