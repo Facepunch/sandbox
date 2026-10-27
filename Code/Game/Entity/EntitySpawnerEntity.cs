@@ -78,6 +78,19 @@ public sealed class EntitySpawnerEntity : Component, IPlayerControllable
 
 		_timeSinceLastSpawn = 0;
 
+		var caller = Rpc.Caller ?? GameObject.Network.Owner;
+		var player = Player.FindForConnection( caller );
+
+		var spawnData = new Global.ISpawnEvents.SpawnData
+		{
+			Spawner = new EntitySpawner( Entity ),
+			Transform = WorldTransform,
+			Player = caller
+		};
+
+		Scene.RunEvent<Global.ISpawnEvents>( x => x.OnSpawn( spawnData ) );
+		if ( spawnData.Cancelled ) return;
+
 		var spawned = GameObject.Clone( Entity.Prefab, new CloneConfig
 		{
 			Transform = WorldTransform,
@@ -85,9 +98,6 @@ public sealed class EntitySpawnerEntity : Component, IPlayerControllable
 		} );
 
 		spawned.Tags.Add( "removable" );
-
-		var caller = Rpc.Caller ?? GameObject.Network.Owner;
-		var player = Player.FindForConnection( caller );
 
 		Ownable.Set( spawned, caller );
 		spawned.NetworkSpawn( true, null );
@@ -102,5 +112,13 @@ public sealed class EntitySpawnerEntity : Component, IPlayerControllable
 			undo.NameTokens = new() { { "name", Entity.Title ?? Entity.ResourceName } };
 			undo.Add( spawned );
 		}
+
+		Scene.RunEvent<Global.ISpawnEvents>( x => x.OnPostSpawn( new Global.ISpawnEvents.PostSpawnData
+		{
+			Spawner = spawnData.Spawner,
+			Transform = spawnData.Transform,
+			Player = caller,
+			Objects = [spawned]
+		} ) );
 	}
 }

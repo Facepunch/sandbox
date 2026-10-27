@@ -22,6 +22,18 @@ public sealed class EntitySpawner : ISpawner
 		Loading = LoadAsync();
 	}
 
+	/// <summary>
+	/// Wrap an entity that's already loaded.
+	/// </summary>
+	public EntitySpawner( ScriptedEntity entity )
+	{
+		Path = entity.ResourcePath;
+		Entity = entity;
+		DisplayName = entity.Title ?? System.IO.Path.GetFileNameWithoutExtension( Path );
+		Bounds = SceneUtility.GetPrefabScene( entity.Prefab ).GetLocalBounds();
+		Loading = Task.FromResult( true );
+	}
+
 	private async Task<bool> LoadAsync()
 	{
 		// Try local/installed first, then fall back to cloud
