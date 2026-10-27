@@ -13,14 +13,14 @@ public sealed class HoverballTool : ToolMode
 	public string Definition { get; set; } = "entities/hoverball/hoverball.hdef";
 
 	// the same settings as HoverballEntity, put on the placed hoverball
-	[Property, Title( "#tool.setting.is_enabled" ), Description( "#tool.setting.hoverballentity.isenabled.description" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
-	public bool IsEnabled { get; set; } = true;
-
 	[Property, Range( 0, 20 ), Title( "#tool.setting.speed" ), Description( "#tool.setting.hoverballentity.speed.description" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Speed { get; set; } = 1f;
 
 	[Property, Range( 0, 10 ), Title( "#tool.setting.air_resistance" ), Description( "#tool.setting.hoverballentity.airresistance.description" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float AirResistance { get; set; } = 0f;
+
+	[Property, Title( "#tool.setting.is_enabled" ), Description( "#tool.setting.hoverballentity.isenabled.description" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public bool IsEnabled { get; set; } = true;
 
 	[Property, Title( "#tool.setting.up" ), Description( "#tool.setting.hoverballentity.up.description" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Up { get; set; }

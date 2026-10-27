@@ -54,18 +54,6 @@ public sealed class StackerTool : ToolMode
 	public float StackCount { get; set; } = 2;
 
 	/// <summary>
-	/// Which direction to stack in.
-	/// </summary>
-	[Property, Sync, Title( "#tool.setting.direction" ), Description( "#tool.setting.stackertool.direction.description" )]
-	public StackDirection Direction { get; set; } = StackDirection.Up;
-
-	/// <summary>
-	/// Whether to align the stack axis to the world or the target object.
-	/// </summary>
-	[Property, Sync, Title( "#tool.setting.alignment" ), Description( "#tool.setting.stackertool.alignmode.description" )]
-	public StackAlignMode AlignMode { get; set; } = StackAlignMode.Object;
-
-	/// <summary>
 	/// Rotation offset (degrees) around the first perpendicular axis of the stack direction.
 	/// For Up/Down stacking this rotates around the right axis.
 	/// </summary>
@@ -84,6 +72,18 @@ public sealed class StackerTool : ToolMode
 	/// </summary>
 	[Property, Sync, Range( 0, 128 ), Title( "#tool.setting.gap" ), Description( "#tool.setting.stackertool.positionoffset.description" )]
 	public float PositionOffset { get; set; } = 0f;
+
+	/// <summary>
+	/// Which direction to stack in.
+	/// </summary>
+	[Property, Sync, Title( "#tool.setting.direction" ), Description( "#tool.setting.stackertool.direction.description" )]
+	public StackDirection Direction { get; set; } = StackDirection.Up;
+
+	/// <summary>
+	/// Whether to align the stack axis to the world or the target object.
+	/// </summary>
+	[Property, Sync, Title( "#tool.setting.alignment" ), Description( "#tool.setting.stackertool.alignmode.description" )]
+	public StackAlignMode AlignMode { get; set; } = StackAlignMode.Object;
 
 	/// <summary>
 	/// When true, stacked copies will be frozen (motion disabled).

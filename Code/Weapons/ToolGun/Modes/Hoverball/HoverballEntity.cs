@@ -3,12 +3,6 @@
 public sealed class HoverballEntity : Component, IPlayerControllable
 {
 	/// <summary>
-	/// Is the hoverball on?
-	/// </summary>
-	[Property, Sync, ClientEditable, Title( "#tool.setting.is_enabled" ), Description( "#tool.setting.hoverballentity.isenabled.description" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
-	public bool IsEnabled { get; private set; } = true;
-
-	/// <summary>
 	/// The world Z position the hoverball is trying to maintain.
 	/// </summary>
 	[Property, Sync]
@@ -25,6 +19,12 @@ public sealed class HoverballEntity : Component, IPlayerControllable
 	/// </summary>
 	[Property, Sync, ClientEditable, Range( 0, 10 ), Title( "#tool.setting.air_resistance" ), Description( "#tool.setting.hoverballentity.airresistance.description" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float AirResistance { get; set; } = 0f;
+
+	/// <summary>
+	/// Is the hoverball on?
+	/// </summary>
+	[Property, Sync, ClientEditable, Title( "#tool.setting.is_enabled" ), Description( "#tool.setting.hoverballentity.isenabled.description" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public bool IsEnabled { get; private set; } = true;
 
 	/// <summary>
 	/// While held, raises the hover target.

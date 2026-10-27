@@ -9,7 +9,8 @@ public sealed class HydraulicTool : BaseLengthConstraintTool
 	public override string PrimaryAction => Stage == 1 ? "#tool.hint.hydraulictool.finish" : "#tool.hint.hydraulictool.source";
 	public override string ReloadAction => "#tool.hint.hydraulictool.remove";
 
-	[Property, Sync, Title( "#tool.setting.ball_joints" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	// ordered after the base class's length sliders, which are listed after this, to keep the checkboxes together
+	[Property, Sync, Title( "#tool.setting.ball_joints" ), Group( "#tool.setting.group.behavior" ), Order( 1 )]
 	public bool BallJoints { get; set; } = false;
 
 	protected override string CapModelA => "hydraulics/tool_hydraulic.vmdl";

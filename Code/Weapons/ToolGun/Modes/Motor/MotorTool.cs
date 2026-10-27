@@ -10,19 +10,19 @@ public sealed class MotorTool : BaseConstraintToolMode
 	public override string PrimaryAction => Stage == 1 ? "#tool.hint.motortool.finish" : "#tool.hint.motortool.source";
 	public override string ReloadAction => "#tool.hint.motortool.remove";
 
-	/// <summary>
-	/// The spin axis is the surface normal where you make the first selection - this flips it
-	/// 180 degrees, which is only useful in combination with <see cref="Reversed"/> and a limit range.
-	/// </summary>
-	[Property, Sync, Title( "#tool.setting.flip_axis" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
-	public bool FlipAxis { get; set; } = false;
-
 	// the same settings as MotorEntity, put on the placed motor
 	[Property, Range( 0, 1 ), Title( "#tool.setting.speed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Speed { get; set; } = 0.5f;
 
 	[Property, Range( 0, 1 ), Title( "#tool.setting.torque" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Torque { get; set; } = 0.5f;
+
+	/// <summary>
+	/// The spin axis is the surface normal where you make the first selection - this flips it
+	/// 180 degrees, which is only useful in combination with <see cref="Reversed"/> and a limit range.
+	/// </summary>
+	[Property, Sync, Title( "#tool.setting.flip_axis" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public bool FlipAxis { get; set; } = false;
 
 	[Property, Sync, Title( "#tool.setting.reversed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public bool Reversed { get; set; } = false;

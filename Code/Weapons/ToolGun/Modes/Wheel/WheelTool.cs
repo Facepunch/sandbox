@@ -13,14 +13,14 @@ public sealed class WheelTool : ToolMode
 	public string Definition { get; set; } = "entities/wheel/basic.wdef";
 
 	// the same settings as WheelEntity, put on the placed wheel
-	[Property, Title( "#tool.setting.reversed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
-	public bool Reversed { get; set; }
-
 	[Property, Range( 0, 1 ), Title( "#tool.setting.speed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Speed { get; set; } = 0.5f;
 
 	[Property, Range( 0, 1 ), Title( "#tool.setting.power" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Power { get; set; } = 0.5f;
+
+	[Property, Title( "#tool.setting.reversed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public bool Reversed { get; set; }
 
 	[Property, Title( "#tool.setting.forward" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Forward { get; set; }

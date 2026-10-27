@@ -1,14 +1,14 @@
 [Title( "#tool.entity.wheelentity" )]
 public sealed class WheelEntity : Component, IPlayerControllable
 {
-	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.reversed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
-	public bool Reversed { get; set; }
-
 	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.speed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Speed { get; set; } = 0.5f;
 
 	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.power" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Power { get; set; } = 0.5f;
+
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.reversed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public bool Reversed { get; set; }
 
 	[Property, ClientEditable, Title( "#tool.setting.forward" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Forward { get; set; }

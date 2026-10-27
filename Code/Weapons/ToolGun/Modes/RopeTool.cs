@@ -9,12 +9,12 @@ public sealed class RopeTool : BaseConstraintToolMode
 	[Property, Sync, Title( "#tool.setting.slack" )]
 	public float Slack { get; set; } = 0.0f;
 
-	[Property, Sync, Title( "#tool.setting.rigid" )]
-	public bool Rigid { get; set; } = false;
-
 	[Range( 0.5f, 5f ), Step( 0.5f )]
 	[Property, Title( "#tool.setting.radius" )]
 	public float Radius { get; set; } = 1f;
+
+	[Property, Sync, Title( "#tool.setting.rigid" )]
+	public bool Rigid { get; set; } = false;
 
 	public override string Description => Stage == 1 ? "#tool.hint.rope.stage1" : "#tool.hint.rope.stage0";
 	public override string PrimaryAction => Stage == 1 ? "#tool.hint.rope.finish" : "#tool.hint.rope.source";
