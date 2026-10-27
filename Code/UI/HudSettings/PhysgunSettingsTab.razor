@@ -94,7 +94,7 @@
         [Description( "#spawnmenu.physgun.beam_color_description" ), ColorUsage( false, true )]
         public Color BeamColor
         {
-            get => GamePreferences.PhysgunColorOverride ?? Physgun.DefaultBeamColor;
+            get => GamePreferences.PhysgunColorValue;
             set => ConsoleSystem.SetValue( "sandbox.physgun_color", GamePreferences.ColorText( value.WithAlpha( 1 ) ) );
         }
 
@@ -102,7 +102,7 @@
         [Description( "#spawnmenu.physgun.pull_color_description" ), ColorUsage( false, true )]
         public Color PullColor
         {
-            get => GamePreferences.PhysgunPullColorOverride ?? Physgun.DefaultPullColor;
+            get => GamePreferences.PhysgunPullColorValue;
             set => ConsoleSystem.SetValue( "sandbox.physgun_pull_color", GamePreferences.ColorText( value.WithAlpha( 1 ) ) );
         }
     }

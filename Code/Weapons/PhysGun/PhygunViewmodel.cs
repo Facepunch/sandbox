@@ -7,6 +7,9 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 	[Property] public Material BottleMaterial { get; set; }
 
 	[Property] public bool BeamActive { get; set; }
+	/// <summary>
+	/// How bright the glow is, while pulling and not. The colour itself comes from the holder's physgun colours, see <see cref="Physgun.Tint(Color, Color, Color)"/>.
+	/// </summary>
 	[Property] public Color GravTint { get; set; }
 	[Property] public Color PhysTint { get; set; }
 
@@ -26,8 +29,8 @@ public sealed class PhygunViewmodel : Component, Component.ExecuteInEditor
 		{
 			BeamActive = physgun.BeamActive;
 
-			var physTint = Physgun.Recolor( PhysTint, physgun.BeamColor );
-			var gravTint = Physgun.Recolor( GravTint, physgun.PullColor, Physgun.DefaultPullColor );
+			var physTint = Physgun.Tint( PhysTint, physgun.BeamColor );
+			var gravTint = Physgun.Tint( GravTint, physgun.PullColor, Physgun.DefaultPullColor );
 
 			if ( BeamActive && SparksEffect.IsValid() )
 				SparksEffect.Tint = physgun.PullActive ? gravTint : physTint;
