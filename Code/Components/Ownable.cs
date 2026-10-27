@@ -40,8 +40,11 @@ public sealed class Ownable : Component, IPhysgunEvent, IToolgunEvent, ICarryEve
 	[ConVar( "sandbox.ownership.checks", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Enforce ownership, players can only interact with their own props." )]
 	public static bool OwnershipChecks { get; private set; } = false;
 
-	internal bool CallerHasAccess( Connection caller ) => HasAccess( caller, Owner );
+	internal bool CallerHasAccess( Connection caller ) => CheckAccess( GameObject, caller, Owner );
 
+	/// <summary>
+	/// The default prop protection rule, before <see cref="Global.IOwnershipEvents"/> listeners get a say.
+	/// </summary>
 	public static bool HasAccess( Connection caller, Connection owner )
 	{
 		if ( !OwnershipChecks ) return true;
@@ -49,6 +52,25 @@ public sealed class Ownable : Component, IPhysgunEvent, IToolgunEvent, ICarryEve
 		if ( Permissions.Has( caller, Permissions.Admin ) ) return true;
 		if ( owner is null ) return true;
 		return owner == caller;
+	}
+
+	/// <summary>
+	/// Apply the default rule, then let <see cref="Global.IOwnershipEvents"/> listeners change the answer.
+	/// </summary>
+	internal static bool CheckAccess( GameObject target, Connection caller, Connection owner )
+	{
+		var e = new OwnershipAccessEvent
+		{
+			Target = target,
+			Caller = caller,
+			Owner = owner,
+			HasAccess = HasAccess( caller, owner )
+		};
+
+		var scene = target.IsValid() ? target.Scene : Game.ActiveScene;
+		scene?.RunEvent<Global.IOwnershipEvents>( x => x.OnCheckAccess( e ) );
+
+		return e.HasAccess;
 	}
 
 	void IPhysgunEvent.OnPhysgunGrab( IPhysgunEvent.GrabEvent e )
@@ -76,6 +98,6 @@ public static class OwnableExtensions
 	{
 		if ( go.Components.TryGet<Ownable>( out var ownable ) )
 			return ownable.CallerHasAccess( caller );
-		return true;
+		return Ownable.CheckAccess( go, caller, null );
 	}
 }
