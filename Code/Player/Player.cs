@@ -64,7 +64,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			var weapon = GetComponent<PlayerInventory>()?.ActiveWeapon;
 			var hidden = weapon.IsValid() && weapon.WantsHideHud ? weapon.HiddenHudElements : HudElement.None;
 
-			if ( IsDriving )
+			if ( IsDriving || IsDriveHolding )
 				hidden |= HudElement.Crosshair;
 
 			return hidden;

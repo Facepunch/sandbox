@@ -114,6 +114,23 @@ public sealed partial class Player
 
 	public bool IsDriving => _driven.IsValid();
 
+	const float DriveDestroyedHoldTime = 1.5f;
+
+	/// <summary>
+	/// Owner only, where the drive camera orbited last frame, so we can keep orbiting there if what we drive is destroyed.
+	/// </summary>
+	private Vector3? _driveCameraPivot;
+
+	/// <summary>
+	/// Owner only, when we give the player back after what they drove was destroyed, or null if it wasn't.
+	/// </summary>
+	private TimeUntil? _driveHold;
+
+	/// <summary>
+	/// Whether what we drove was just destroyed and the drive camera still orbits where it was before giving the player back.
+	/// </summary>
+	public bool IsDriveHolding => _driveHold is { } hold && !hold && _driveCameraPivot.HasValue;
+
 	/// <summary>
 	/// Owner only, whether the driving panel is hidden. Kept between drives.
 	/// </summary>
@@ -276,13 +293,17 @@ public sealed partial class Player
 		var target = Driving.IsValid() && Driving != _driveReleased ? Driving : null;
 		if ( target != _driven )
 		{
+			// It was destroyed under us, rather than let go of
+			if ( _driven is not null && !_driven.IsValid() && !target.IsValid() )
+				_driveHold = DriveDestroyedHoldTime;
+
 			if ( target.IsValid() )
 				BeginDriving( target );
 			else
 				_driven = null;
 		}
 
-		if ( !_driven.IsValid() ) return false;
+		if ( !_driven.IsValid() ) return ControlDriveHold();
 
 		Controller.UseInputControls = false;
 		Controller.WishVelocity = Vector3.Zero;
@@ -316,15 +337,7 @@ public sealed partial class Player
 				SetDriveMode( DrivesWithPhysics );
 		}
 
-		_driveAngles += Input.AnalogLook;
-		_driveAngles.pitch = _driveAngles.pitch.Clamp( -89f, 89f );
-		_driveAngles.roll = 0;
-
-		if ( !Input.MouseWheel.IsNearZeroLength )
-		{
-			_driveDistance = (_driveDistance * (1f - Input.MouseWheel.y * 0.1f)).Clamp( 16f, 2048f );
-			Input.MouseWheel = default;
-		}
+		ControlDriveCamera();
 
 		var speed = Input.Down( "run" ) ? DriveSpeed * DriveSprintMultiplier : DriveSpeed;
 
@@ -353,6 +366,42 @@ public sealed partial class Player
 		// Keep use from pressing whatever our character is looking at
 		Input.Clear( "use" );
 		return true;
+	}
+
+	/// <summary>
+	/// What we drove was destroyed, keep the player still while the camera keeps orbiting where it was.
+	/// </summary>
+	private bool ControlDriveHold()
+	{
+		if ( !IsDriveHolding || IsSeated )
+		{
+			_driveHold = null;
+			return false;
+		}
+
+		Controller.UseInputControls = false;
+		Controller.WishVelocity = Vector3.Zero;
+
+		ControlDriveCamera();
+
+		Input.Clear( "use" );
+		return true;
+	}
+
+	/// <summary>
+	/// Look around and zoom the drive camera
+	/// </summary>
+	private void ControlDriveCamera()
+	{
+		_driveAngles += Input.AnalogLook;
+		_driveAngles.pitch = _driveAngles.pitch.Clamp( -89f, 89f );
+		_driveAngles.roll = 0;
+
+		if ( !Input.MouseWheel.IsNearZeroLength )
+		{
+			_driveDistance = (_driveDistance * (1f - Input.MouseWheel.y * 0.1f)).Clamp( 16f, 2048f );
+			Input.MouseWheel = default;
+		}
 	}
 
 	/// <summary>
@@ -430,6 +479,8 @@ public sealed partial class Player
 	private void BeginDriving( GameObject go )
 	{
 		_driven = go;
+		_driveHold = null;
+		_driveCameraPivot = null;
 		_driveAngles = Controller.EyeAngles.WithRoll( 0 );
 
 		var bounds = GetDriveBounds( go );
@@ -441,14 +492,21 @@ public sealed partial class Player
 
 	private void ApplyDriveCamera( CameraComponent camera, ref CameraView view )
 	{
-		if ( !_driven.IsValid() ) return;
+		if ( _driven.IsValid() )
+			_driveCameraPivot = _driven.WorldTransform.PointToWorld( _driveLocalCenter );
+		else if ( !IsDriveHolding || IsSeated )
+			return;
 
-		var pivot = _driven.WorldTransform.PointToWorld( _driveLocalCenter );
+		var pivot = _driveCameraPivot.Value;
 		var rotation = _driveAngles.ToRotation();
 		var desired = pivot + rotation.Backward * _driveDistance;
 
 		// Don't look through walls, unless we're driving through one
-		var tr = Scene.Trace.Sphere( 8f, pivot, desired ).WithTag( "world" ).IgnoreGameObjectHierarchy( _driven ).Run();
+		var trace = Scene.Trace.Sphere( 8f, pivot, desired ).WithTag( "world" );
+		if ( _driven.IsValid() )
+			trace = trace.IgnoreGameObjectHierarchy( _driven );
+
+		var tr = trace.Run();
 
 		view.Position = tr.Hit && !tr.StartedSolid ? tr.EndPosition : desired;
 		view.Rotation = rotation;

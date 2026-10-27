@@ -22,7 +22,7 @@ public sealed partial class Player : ICameraModifier
 
 	void PlayerController.IEvents.OnEyeAngles( ref Angles ang )
 	{
-		if ( IsDriving )
+		if ( IsDriving || IsDriveHolding )
 		{
 			ang = default;
 			return;
