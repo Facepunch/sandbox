@@ -44,6 +44,22 @@ public static partial class ServerSettings
 	[ConVar( "sandbox.allow.noclip", ConVarFlags.Replicated | ConVarFlags.GameSetting | ConVarFlags.Server, Help = "Players can toggle noclip." )]
 	public static bool AllowNoclip { get; set; } = true;
 
+	/// <summary>
+	/// Player ragdolls stay until a cleanup instead of despawning.
+	/// </summary>
+	[Title( "Keep Player Corpses" )]
+	[Group( "Gameplay" ), Section( "World" ), Order( 11 )]
+	[ConVar( "sandbox.keepcorpses.players", ConVarFlags.Replicated | ConVarFlags.GameSetting | ConVarFlags.Server, Help = "Player corpses stay until a cleanup instead of despawning." )]
+	public static bool KeepPlayerCorpses { get; set; } = false;
+
+	/// <summary>
+	/// NPC ragdolls stay until a cleanup instead of despawning.
+	/// </summary>
+	[Title( "Keep NPC Corpses" )]
+	[Group( "Gameplay" ), Section( "World" ), Order( 12 )]
+	[ConVar( "sandbox.keepcorpses.npcs", ConVarFlags.Replicated | ConVarFlags.GameSetting | ConVarFlags.Server, Help = "NPC corpses stay until a cleanup instead of despawning." )]
+	public static bool KeepNpcCorpses { get; set; } = false;
+
 	[Permission, Title( "God Mode" ), Description( "Use god mode when it's off for everyone." )]
 	public const string GodMode = "sandbox.godmode";
 

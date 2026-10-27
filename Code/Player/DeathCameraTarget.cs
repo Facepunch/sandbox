@@ -6,6 +6,7 @@ public partial class DeathCameraTarget : Component
 
 	protected override void OnEnabled()
 	{
-		Invoke( 60.0f, GameObject.Destroy );
+		if ( !ServerSettings.KeepPlayerCorpses )
+			Invoke( 60.0f, GameObject.Destroy );
 	}
 }

@@ -129,7 +129,8 @@ public partial class Npc : Component, IKillSource, Component.IDamageable
 		//
 		// Destroy after a while
 		//
-		prop.Invoke( duration, prop.DestroyGameObject );
+		if ( !ServerSettings.KeepNpcCorpses )
+			prop.Invoke( duration, prop.DestroyGameObject );
 	}
 
 	protected Vector3 GetAttackerVelocity( GameObject attacker ) => RagdollPush.GetAttackerVelocity( attacker );

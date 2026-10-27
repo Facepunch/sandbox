@@ -451,6 +451,10 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 	void ICleanupEvents.OnCleanup( int removedObjects, int restoredObjects )
 	{
+		// player corpses aren't networked, so the host's cleanup misses everyone else's
+		foreach ( var corpse in Scene.GetAllComponents<DeathCameraTarget>().ToArray() )
+			corpse.GameObject.Destroy();
+
 		var phrase = restoredObjects > 0 ? "cleanup.restored" : "cleanup.removed";
 		var message = Game.Language.GetPhrase( phrase, new()
 		{
