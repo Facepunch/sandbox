@@ -125,8 +125,10 @@ public sealed partial class AnimationLayer : BaseNpcLayer
 
 	private void PlayFootstepSound( Vector3 position, float volume, int foot )
 	{
-
+		// null when the ground trace missed, e.g. mid-air
 		var surface = Npc.GroundSurface;
+		if ( surface is null )
+			return;
 
 		var soundEvent = foot == 0
 			? surface.SoundCollection.FootLeft
