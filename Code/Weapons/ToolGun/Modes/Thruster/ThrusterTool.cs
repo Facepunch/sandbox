@@ -13,11 +13,18 @@ public sealed class ThrusterTool : ToolMode
 	[Property, ResourceSelect( Extension = "tdef", AllowPackages = true ), Title( "#tool.name.thruster" )]
 	public string Definition { get; set; } = "entities/thruster/basic.tdef";
 
-	[Property, Title( "#tool.setting.activate" ), Description( "#tool.setting.thrusterentity.activate.description" )]
+	// the same settings as ThrusterEntity, put on the placed thruster. Power and Invert are left to each thruster's prefab
+	[Property, Title( "#tool.setting.hide_effects" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public bool HideEffects { get; set; } = false;
+
+	[Property, Title( "#tool.setting.activate" ), Description( "#tool.setting.thrusterentity.activate.description" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Activate { get; set; }
 
-	[Property, Title( "#tool.setting.reverse" ), Description( "#tool.setting.thrusterentity.reverse.description" )]
+	[Property, Title( "#tool.setting.reverse" ), Description( "#tool.setting.thrusterentity.reverse.description" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Reverse { get; set; }
+
+	[Property, Metadata( SoundDefinition.Thruster ), Group( "#tool.setting.group.sound" ), Title( "#tool.setting.thruster_sound" ), Description( "#tool.setting.thrusterentity.thrustersound.description" ), Order( 2 )]
+	public SoundDefinition ThrusterSound { get; set; }
 
 	public override string Description => "#tool.hint.thrustertool.description";
 
@@ -46,7 +53,7 @@ public sealed class ThrusterTool : ToolMode
 		if ( thrusterDef == null ) return;
 
 		var placementTrans = GetPlacementTransform( select );
-		Spawn( select, thrusterDef.Prefab, placementTrans, false, Activate, Reverse );
+		Spawn( select, thrusterDef.Prefab, placementTrans, false, WriteEntitySettings<ThrusterEntity>() );
 		ShootEffects( select );
 	}
 
@@ -59,7 +66,7 @@ public sealed class ThrusterTool : ToolMode
 		if ( thrusterDef == null ) return;
 
 		var placementTrans = GetPlacementTransform( select );
-		Spawn( select, thrusterDef.Prefab, placementTrans, true, Activate, Reverse );
+		Spawn( select, thrusterDef.Prefab, placementTrans, true, WriteEntitySettings<ThrusterEntity>() );
 		ShootEffects( select );
 	}
 
@@ -89,7 +96,7 @@ public sealed class ThrusterTool : ToolMode
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx, bool noWeld, ClientInput activate, ClientInput reverse )
+	public void Spawn( SelectionPoint point, PrefabFile thrusterPrefab, Transform tx, bool noWeld, string settings )
 	{
 		if ( !FireToolAction( noWeld ? ToolInput.Secondary : ToolInput.Primary ) ) return;
 
@@ -102,8 +109,7 @@ public sealed class ThrusterTool : ToolMode
 		go.WorldTransform = tx;
 
 		var thruster = go.GetComponent<ThrusterEntity>();
-		thruster.Activate = activate;
-		thruster.Reverse = reverse;
+		ApplyEntitySettings( thruster, settings );
 
 		if ( !noWeld && !point.GameObject.Tags.Contains( "world" ) )
 		{

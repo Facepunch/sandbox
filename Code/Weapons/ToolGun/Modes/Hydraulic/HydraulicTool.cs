@@ -9,7 +9,7 @@ public sealed class HydraulicTool : BaseLengthConstraintTool
 	public override string PrimaryAction => Stage == 1 ? "#tool.hint.hydraulictool.finish" : "#tool.hint.hydraulictool.source";
 	public override string ReloadAction => "#tool.hint.hydraulictool.remove";
 
-	[Property, Sync, Title( "#tool.setting.ball_joints" )]
+	[Property, Sync, Title( "#tool.setting.ball_joints" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public bool BallJoints { get; set; } = false;
 
 	protected override string CapModelA => "hydraulics/tool_hydraulic.vmdl";
@@ -135,7 +135,7 @@ public sealed class HydraulicTool : BaseLengthConstraintTool
 
 		var entity = sliderA.AddComponent<LengthConstraintEntity>();
 		entity.Kind = LengthConstraintEntity.ConstraintKind.Hydraulic;
-		entity.Length = 0.5f;
+		ApplyEntitySettings( entity, Settings );
 		entity.MinLength = 5.0f;
 		entity.MaxLength = len * 2.0f;
 		entity.Joint = slider;

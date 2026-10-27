@@ -5,25 +5,25 @@ public sealed class ThrusterEntity : Component, IPlayerControllable
 	[Property, Range( 0, 1 )]
 	public GameObject OnEffect { get; set; }
 
-	[Property, ClientEditable, Range( 0, 1 ), Title( "#tool.setting.power" )]
+	[Property, ClientEditable, Range( 0, 1 ), Title( "#tool.setting.power" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Power { get; set; } = 0.5f;
 
-	[Property, ClientEditable, Title( "#tool.setting.invert" )]
+	[Property, ClientEditable, Title( "#tool.setting.invert" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public bool Invert { get; set; } = false;
 
-	[Property, ClientEditable, Title( "#tool.setting.hide_effects" )]
+	[Property, ClientEditable, Title( "#tool.setting.hide_effects" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public bool HideEffects { get; set; } = false;
 
 	/// <summary>
 	/// While this input is active we'll apply thrust
 	/// </summary>
-	[Property, ClientEditable, Title( "#tool.setting.activate" ), Description( "#tool.setting.thrusterentity.activate.description" )]
+	[Property, ClientEditable, Title( "#tool.setting.activate" ), Description( "#tool.setting.thrusterentity.activate.description" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Activate { get; set; }
 
 	/// <summary>
 	/// While this input is active we'll apply thrust in the opposite direction
 	/// </summary>
-	[Property, ClientEditable, Title( "#tool.setting.reverse" ), Description( "#tool.setting.thrusterentity.reverse.description" )]
+	[Property, ClientEditable, Title( "#tool.setting.reverse" ), Description( "#tool.setting.thrusterentity.reverse.description" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Reverse { get; set; }
 
 	/// <summary>
@@ -34,7 +34,7 @@ public sealed class ThrusterEntity : Component, IPlayerControllable
 	/// <summary>
 	/// Looping sound played while the thruster is active.
 	/// </summary>
-	[Property, ClientEditable, Metadata( SoundDefinition.Thruster ), Group( "#tool.setting.group.sound" ), Title( "#tool.setting.thruster_sound" ), Description( "#tool.setting.thrusterentity.thrustersound.description" )]
+	[Property, ClientEditable, Metadata( SoundDefinition.Thruster ), Group( "#tool.setting.group.sound" ), Title( "#tool.setting.thruster_sound" ), Description( "#tool.setting.thrusterentity.thrustersound.description" ), Order( 2 )]
 	public SoundDefinition ThrusterSound { get; set; }
 
 	/// <summary>

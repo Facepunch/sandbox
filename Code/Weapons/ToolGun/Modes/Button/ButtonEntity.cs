@@ -16,7 +16,7 @@ public sealed class ButtonEntity : Component, Component.IPressable
 	[Property, Sync, Hide, SignalOutput( Default = true ), Title( "#tool.signal.pressed" )]
 	public SignalOutput Pressed { get; set; } = new();
 
-	[Property, Sync, ClientEditable, Group( "#tool.setting.group.behavior" ), Title( "#tool.setting.mode" )]
+	[Property, Sync, ClientEditable, Group( "#tool.setting.group.behavior" ), Title( "#tool.setting.mode" ), Order( 0 )]
 	public ButtonMode Mode { get; set; } = ButtonMode.Hold;
 
 	[Property, Group( "Visual" )]

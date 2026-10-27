@@ -1,28 +1,28 @@
 [Title( "#tool.entity.wheelentity" )]
 public sealed class WheelEntity : Component, IPlayerControllable
 {
-	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.reversed" )]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.reversed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public bool Reversed { get; set; }
 
-	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.speed" )]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.speed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Speed { get; set; } = 0.5f;
 
-	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.power" )]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.power" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Power { get; set; } = 0.5f;
 
-	[Property, ClientEditable, Title( "#tool.setting.forward" )]
+	[Property, ClientEditable, Title( "#tool.setting.forward" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Forward { get; set; }
 
-	[Property, ClientEditable, Title( "#tool.setting.reverse" )]
+	[Property, ClientEditable, Title( "#tool.setting.reverse" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Reverse { get; set; }
 
-	[Property, ClientEditable, Title( "#tool.setting.brake" )]
+	[Property, ClientEditable, Title( "#tool.setting.brake" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Brake { get; set; }
 
-	[Property, ClientEditable, Title( "#tool.setting.turn_left" )]
+	[Property, ClientEditable, Title( "#tool.setting.turn_left" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput TurnLeft { get; set; }
 
-	[Property, ClientEditable, Title( "#tool.setting.turn_right" )]
+	[Property, ClientEditable, Title( "#tool.setting.turn_right" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput TurnRight { get; set; }
 
 	private Vector3 _localAxle;

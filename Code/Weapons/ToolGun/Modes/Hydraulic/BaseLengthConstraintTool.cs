@@ -13,12 +13,48 @@ public abstract class BaseLengthConstraintTool : BaseConstraintToolMode
 	protected abstract LengthConstraintEntity.ConstraintKind Kind { get; }
 
 	protected virtual float ShaftWidth => 2f;
-	protected virtual float StartLength => 0.5f;
 	protected virtual float MinLength => 5.0f;
 	protected virtual float MaxLengthMultiplier => 2.0f;
-	protected virtual float PushSpeed => 0.25f;
-	protected virtual float PullSpeed => 0.25f;
-	protected virtual bool AnimatedByDefault => false;
+
+	// the same settings as LengthConstraintEntity, put on the placed constraint. Its min and max length come from where it's placed,
+	// tools set their own defaults in their constructors
+	[Property, Range( 0, 1 ), Title( "#tool.setting.length" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public float Length { get; set; } = 0.5f;
+
+	[Property, Range( 0, 1 ), Title( "#tool.setting.speed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public float Speed { get; set; } = 0.25f;
+
+	[Property, Title( "#tool.setting.push" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
+	public ClientInput Push { get; set; }
+
+	[Property, Range( 0, 1 ), Title( "#tool.setting.push_speed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public float PushSpeed { get; set; } = 0.25f;
+
+	[Property, Title( "#tool.setting.pull" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
+	public ClientInput Pull { get; set; }
+
+	[Property, Range( 0, 1 ), Title( "#tool.setting.pull_speed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public float PullSpeed { get; set; } = 0.25f;
+
+	[Property, Title( "#tool.setting.toggle" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
+	public ClientInput Toggle { get; set; }
+
+	[Property, Title( "#tool.setting.activate" ), Description( "#tool.setting.lengthconstraintentity.activate.description" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
+	public ClientInput Activate { get; set; }
+
+	[Property, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.animated" ), Order( 2 )]
+	public bool Animated { get; set; }
+
+	[Property, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Range( 0, 10 ), Title( "#tool.setting.animation_speed" ), Order( 2 )]
+	public float AnimationSpeed { get; set; } = 1.0f;
+
+	[Property, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.ease_in" ), Order( 2 )]
+	public LengthConstraintEntity.EaseType EaseIn { get; set; } = LengthConstraintEntity.EaseType.Linear;
+
+	[Property, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.ease_out" ), Order( 2 )]
+	public LengthConstraintEntity.EaseType EaseOut { get; set; } = LengthConstraintEntity.EaseType.Linear;
+
+	protected override string WriteSettings() => WriteEntitySettings<LengthConstraintEntity>();
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
 	{
@@ -92,12 +128,9 @@ public abstract class BaseLengthConstraintTool : BaseConstraintToolMode
 
 		var entity = jointGo.AddComponent<LengthConstraintEntity>();
 		entity.Kind = Kind;
-		entity.Length = StartLength;
+		ApplyEntitySettings( entity, Settings );
 		entity.MinLength = MinLength;
 		entity.MaxLength = len * MaxLengthMultiplier;
-		entity.PushSpeed = PushSpeed;
-		entity.PullSpeed = PullSpeed;
-		entity.Animated = AnimatedByDefault;
 		entity.Joint = joint;
 
 		jointGo.AddComponent<CapsuleCollider>();

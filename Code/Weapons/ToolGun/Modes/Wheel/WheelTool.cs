@@ -12,10 +12,34 @@ public sealed class WheelTool : ToolMode
 	[Property, ResourceSelect( Extension = "wdef", AllowPackages = true ), Title( "#tool.name.wheel" )]
 	public string Definition { get; set; } = "entities/wheel/basic.wdef";
 
+	// the same settings as WheelEntity, put on the placed wheel
+	[Property, Title( "#tool.setting.reversed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public bool Reversed { get; set; }
+
+	[Property, Range( 0, 1 ), Title( "#tool.setting.speed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public float Speed { get; set; } = 0.5f;
+
+	[Property, Range( 0, 1 ), Title( "#tool.setting.power" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public float Power { get; set; } = 0.5f;
+
+	[Property, Title( "#tool.setting.forward" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
+	public ClientInput Forward { get; set; }
+
+	[Property, Title( "#tool.setting.reverse" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
+	public ClientInput Reverse { get; set; }
+
+	[Property, Title( "#tool.setting.brake" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
+	public ClientInput Brake { get; set; }
+
+	[Property, Title( "#tool.setting.turn_left" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
+	public ClientInput TurnLeft { get; set; }
+
+	[Property, Title( "#tool.setting.turn_right" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
+	public ClientInput TurnRight { get; set; }
+
 	public override string Description => "#tool.hint.wheeltool.description";
 
 	Vector3 _axis = Vector3.Right;
-	bool _reversed = false;
 
 	protected override void OnStart()
 	{
@@ -33,7 +57,7 @@ public sealed class WheelTool : ToolMode
 
 	void OnToggleDirection()
 	{
-		_reversed = !_reversed;
+		Reversed = !Reversed;
 	}
 
 	void OnPlace()
@@ -45,7 +69,7 @@ public sealed class WheelTool : ToolMode
 		if ( def == null || def.Prefab?.GetScene() is not Scene scene ) return;
 
 		var placementTrans = GetPlacementTransform( select, scene );
-		SpawnWheel( select, def, placementTrans, _reversed );
+		SpawnWheel( select, def, placementTrans, WriteEntitySettings<WheelEntity>() );
 		ShootEffects( select );
 	}
 
@@ -77,11 +101,11 @@ public sealed class WheelTool : ToolMode
 		DebugOverlay.GameObject( scene, transform: placementTrans, castShadows: true, color: Color.White.WithAlpha( 0.9f ) );
 
 		var overlayRadius = MathF.Max( modelBounds.Size.x, modelBounds.Size.z ) * 0.01f * placementTrans.Scale.x;
-		WheelOverlay.DrawDirection( placementTrans.Position, placementTrans.Right, select.WorldTransform().Rotation.Up, overlayRadius, _reversed );
+		WheelOverlay.DrawDirection( placementTrans.Position, placementTrans.Right, select.WorldTransform().Rotation.Up, overlayRadius, Reversed );
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	public void SpawnWheel( SelectionPoint point, WheelDefinition def, Transform tx, bool reversed )
+	public void SpawnWheel( SelectionPoint point, WheelDefinition def, Transform tx, string settings )
 	{
 		if ( !FireToolAction( ToolInput.Primary ) ) return;
 
@@ -94,7 +118,7 @@ public sealed class WheelTool : ToolMode
 		wheelGo.WorldTransform = tx;
 
 		var we = wheelGo.GetOrAddComponent<WheelEntity>();
-		we.Reversed = reversed;
+		ApplyEntitySettings( we, settings );
 		var joint = wheelGo.GetComponentInChildren<WheelJoint>( true );
 
 		if ( joint is null )

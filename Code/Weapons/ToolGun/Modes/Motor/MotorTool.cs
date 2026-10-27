@@ -14,11 +14,41 @@ public sealed class MotorTool : BaseConstraintToolMode
 	/// The spin axis is the surface normal where you make the first selection - this flips it
 	/// 180 degrees, which is only useful in combination with <see cref="Reversed"/> and a limit range.
 	/// </summary>
-	[Property, Sync, Title( "#tool.setting.flip_axis" )]
+	[Property, Sync, Title( "#tool.setting.flip_axis" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public bool FlipAxis { get; set; } = false;
 
-	[Property, Sync, Title( "#tool.setting.reversed" )]
+	// the same settings as MotorEntity, put on the placed motor
+	[Property, Range( 0, 1 ), Title( "#tool.setting.speed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public float Speed { get; set; } = 0.5f;
+
+	[Property, Range( 0, 1 ), Title( "#tool.setting.torque" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public float Torque { get; set; } = 0.5f;
+
+	[Property, Sync, Title( "#tool.setting.reversed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public bool Reversed { get; set; } = false;
+
+	[Property, Title( "#tool.setting.start_active" ), Description( "#tool.setting.motorentity.startactive.description" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public bool StartActive { get; set; } = true;
+
+	[Property, ToggleGroup( "Limited", Label = "#tool.setting.limited" ), Title( "#tool.setting.limited" ), Order( 2 )]
+	public bool Limited { get; set; }
+
+	[Property, ToggleGroup( "Limited", Label = "#tool.setting.limited" ), Range( -180, 180 ), Title( "#tool.setting.min_angle" ), Order( 2 )]
+	public float MinAngle { get; set; } = -90f;
+
+	[Property, ToggleGroup( "Limited", Label = "#tool.setting.limited" ), Range( -180, 180 ), Title( "#tool.setting.max_angle" ), Order( 2 )]
+	public float MaxAngle { get; set; } = 90f;
+
+	[Property, Title( "#tool.setting.forward" ), Description( "#tool.setting.motorentity.forward.description" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
+	public ClientInput Forward { get; set; }
+
+	[Property, Title( "#tool.setting.reverse" ), Description( "#tool.setting.motorentity.reverse.description" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
+	public ClientInput Reverse { get; set; }
+
+	[Property, Title( "#tool.setting.toggle" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
+	public ClientInput Toggle { get; set; }
+
+	protected override string WriteSettings() => WriteEntitySettings<MotorEntity>();
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
 	{
@@ -59,7 +89,7 @@ public sealed class MotorTool : BaseConstraintToolMode
 		joint.EnableCollision = false;
 
 		var entity = go1.AddComponent<MotorEntity>();
-		entity.Reversed = Reversed;
+		ApplyEntitySettings( entity, Settings );
 		entity.Joint = joint;
 
 		go2.NetworkSpawn( true, null );

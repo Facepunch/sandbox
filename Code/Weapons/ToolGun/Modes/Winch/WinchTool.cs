@@ -18,8 +18,12 @@ public sealed class WinchTool : BaseLengthConstraintTool
 
 	// A winch pays out to the distance it was placed at and reels back in from there -
 	// it doesn't extend further like a hydraulic strut can.
-	protected override float StartLength => 1.0f;
 	protected override float MaxLengthMultiplier => 1.0f;
-	protected override float PushSpeed => 0.2f;
-	protected override float PullSpeed => 0.2f;
+
+	public WinchTool()
+	{
+		Length = 1.0f;
+		PushSpeed = 0.2f;
+		PullSpeed = 0.2f;
+	}
 }

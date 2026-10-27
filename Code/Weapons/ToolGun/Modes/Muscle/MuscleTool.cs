@@ -17,7 +17,11 @@ public sealed class MuscleTool : BaseLengthConstraintTool
 	protected override LengthConstraintEntity.ConstraintKind Kind => LengthConstraintEntity.ConstraintKind.Muscle;
 
 	protected override float ShaftWidth => 1.5f;
-	protected override float PushSpeed => 0.6f;
-	protected override float PullSpeed => 0.6f;
-	protected override bool AnimatedByDefault => true;
+
+	public MuscleTool()
+	{
+		PushSpeed = 0.6f;
+		PullSpeed = 0.6f;
+		Animated = true;
+	}
 }

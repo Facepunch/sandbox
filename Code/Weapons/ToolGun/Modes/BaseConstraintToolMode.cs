@@ -5,6 +5,12 @@
 	protected int Stage = 0;
 
 	public virtual bool CanConstraintToSelf => false;
+
+	/// <summary>
+	/// What <see cref="WriteSettings"/> sent with the constraint, on the host while <see cref="CreateConstraint"/> runs.
+	/// </summary>
+	protected string Settings { get; private set; }
+
 	public override bool UseSnapGrid => true;
 
 	protected override void OnDisabled()
@@ -32,7 +38,7 @@
 				Point1 = select;
 				Point2 = point2;
 
-				Create( Point1, Point2, ToolInput.Secondary );
+				Create( Point1, Point2, ToolInput.Secondary, WriteSettings() );
 				ShootEffects( select );
 
 				OnConstraintSubmitted( Point1, Point2 );
@@ -83,7 +89,7 @@
 			{
 				Point2 = select;
 
-				Create( Point1, Point2, ToolInput.Primary );
+				Create( Point1, Point2, ToolInput.Primary, WriteSettings() );
 				ShootEffects( select );
 				OnConstraintSubmitted( Point1, Point2 );
 			}
@@ -118,7 +124,7 @@
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	private void Create( SelectionPoint point1, SelectionPoint point2, ToolInput input )
+	private void Create( SelectionPoint point1, SelectionPoint point2, ToolInput input, string settings )
 	{
 		if ( !FireToolAction( input ) ) return;
 
@@ -128,7 +134,9 @@
 			return;
 		}
 
+		Settings = settings;
 		CreateConstraint( point1, point2 );
+		Settings = null;
 		CheckContraptionStats( point1.GameObject );
 
 		FirePostToolAction( input );
@@ -163,6 +171,11 @@
 	protected virtual IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target ) => [];
 
 	protected abstract void CreateConstraint( SelectionPoint point1, SelectionPoint point2 );
+
+	/// <summary>
+	/// Settings for the entity the constraint carries, sent to the host with it, see <see cref="ToolMode.WriteEntitySettings{T}"/>.
+	/// </summary>
+	protected virtual string WriteSettings() => null;
 
 	/// <summary>
 	/// Called on the owning client after a valid constraint creation was submitted to the host.

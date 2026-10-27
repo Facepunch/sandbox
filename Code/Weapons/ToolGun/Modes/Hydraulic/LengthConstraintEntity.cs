@@ -23,52 +23,52 @@ public sealed class LengthConstraintEntity : Component, IPlayerControllable
 	[Property, Range( 0, 1 )]
 	public GameObject OnEffect { get; set; }
 
-	[Property, Range( 0, 100 ), ClientEditable, Title( "#tool.setting.min_length" )]
+	[Property, Range( 0, 100 ), ClientEditable, Title( "#tool.setting.min_length" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float MinLength { get; set; } = 10f;
 
-	[Property, Range( 0, 100 ), ClientEditable, Title( "#tool.setting.max_length" )]
+	[Property, Range( 0, 100 ), ClientEditable, Title( "#tool.setting.max_length" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float MaxLength { get; set; } = 100f;
 
-	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.length" )]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.length" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Length { get; set; } = 0.5f;
 
-	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.speed" )]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.speed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Speed { get; set; } = 0.25f;
 
-	[Property, ClientEditable, Title( "#tool.setting.push" )]
+	[Property, ClientEditable, Title( "#tool.setting.push" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Push { get; set; }
 
-	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.push_speed" )]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.push_speed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float PushSpeed { get; set; } = 0.25f;
 
-	[Property, ClientEditable, Title( "#tool.setting.pull" )]
+	[Property, ClientEditable, Title( "#tool.setting.pull" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Pull { get; set; }
 
-	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.pull_speed" )]
+	[Property, Range( 0, 1 ), ClientEditable, Title( "#tool.setting.pull_speed" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float PullSpeed { get; set; } = 0.25f;
 
-	[Property, ClientEditable, Title( "#tool.setting.toggle" )]
+	[Property, ClientEditable, Title( "#tool.setting.toggle" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Toggle { get; set; }
 
 	/// <summary>
 	/// While the input is active we'll extend towards full length
 	/// </summary>
-	[Property, ClientEditable, Title( "#tool.setting.activate" ), Description( "#tool.setting.lengthconstraintentity.activate.description" )]
+	[Property, ClientEditable, Title( "#tool.setting.activate" ), Description( "#tool.setting.lengthconstraintentity.activate.description" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Activate { get; set; }
 
 	[Property]
 	public SliderJoint Joint { get; set; }
 
-	[Property, ClientEditable, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.animated" )]
+	[Property, ClientEditable, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.animated" ), Order( 2 )]
 	public bool Animated { get; set; }
 
-	[Property, ClientEditable, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Range( 0, 10 ), Title( "#tool.setting.animation_speed" )]
+	[Property, ClientEditable, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Range( 0, 10 ), Title( "#tool.setting.animation_speed" ), Order( 2 )]
 	public float AnimationSpeed { get; set; } = 1.0f;
 
-	[Property, ClientEditable, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.ease_in" )]
+	[Property, ClientEditable, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.ease_in" ), Order( 2 )]
 	public EaseType EaseIn { get; set; } = EaseType.Linear;
 
-	[Property, ClientEditable, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.ease_out" )]
+	[Property, ClientEditable, ToggleGroup( "Animated", Label = "#tool.setting.animated" ), Title( "#tool.setting.ease_out" ), Order( 2 )]
 	public EaseType EaseOut { get; set; } = EaseType.Linear;
 
 	/// <summary>

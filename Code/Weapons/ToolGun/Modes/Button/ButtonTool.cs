@@ -13,6 +13,10 @@ public sealed class ButtonTool : ToolMode
 	[Property, ResourceSelect( Extension = "btndef", AllowPackages = true ), Title( "#tool.name.button" )]
 	public string Definition { get; set; } = "entities/button/basic.btndef";
 
+	// the same settings as ButtonEntity, put on the placed button
+	[Property, Group( "#tool.setting.group.behavior" ), Title( "#tool.setting.mode" ), Order( 0 )]
+	public ButtonMode Mode { get; set; } = ButtonMode.Hold;
+
 	public override string Description => "#tool.hint.buttontool.description";
 
 	protected override void OnStart()
@@ -34,7 +38,7 @@ public sealed class ButtonTool : ToolMode
 		if ( definition?.Prefab is null ) return;
 
 		var transform = GetPlacementTransform( select );
-		Spawn( select, definition.Prefab, transform, noWeld );
+		Spawn( select, definition.Prefab, transform, noWeld, WriteEntitySettings<ButtonEntity>() );
 		ShootEffects( select );
 	}
 
@@ -58,7 +62,7 @@ public sealed class ButtonTool : ToolMode
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	public void Spawn( SelectionPoint point, PrefabFile buttonPrefab, Transform transform, bool noWeld )
+	public void Spawn( SelectionPoint point, PrefabFile buttonPrefab, Transform transform, bool noWeld, string settings )
 	{
 		if ( !FireToolAction( noWeld ? ToolInput.Secondary : ToolInput.Primary ) ) return;
 
@@ -68,6 +72,8 @@ public sealed class ButtonTool : ToolMode
 		button.Tags.Add( "removable" );
 		button.Tags.Add( "constraint" );
 		button.WorldTransform = transform;
+
+		ApplyEntitySettings( button.GetComponentInChildren<ButtonEntity>( true ), settings );
 
 		if ( !noWeld )
 		{

@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 /// <summary>
 /// We want to save the properties of this instance as cookies.
@@ -62,7 +61,7 @@ public static class CookieSourceExtensions
 				{
 					var cookieValue = property.GetValue( source );
 
-					Game.Cookies.SetString( cookieName, JsonSerializer.Serialize( cookieValue, property.PropertyType ) );
+					Game.Cookies.SetString( cookieName, Json.ToNode( cookieValue, property.PropertyType )?.ToJsonString() ?? "null" );
 				}
 				catch ( Exception ex )
 				{
@@ -83,7 +82,7 @@ public static class CookieSourceExtensions
 
 				try
 				{
-					var cookieValue = JsonSerializer.Deserialize( jsonString, property.PropertyType );
+					var cookieValue = Json.Deserialize( jsonString, property.PropertyType );
 
 					property.SetValue( source, cookieValue );
 				}

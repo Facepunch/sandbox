@@ -5,7 +5,7 @@ public sealed class HoverballEntity : Component, IPlayerControllable
 	/// <summary>
 	/// Is the hoverball on?
 	/// </summary>
-	[Property, Sync, ClientEditable, Title( "#tool.setting.is_enabled" ), Description( "#tool.setting.hoverballentity.isenabled.description" )]
+	[Property, Sync, ClientEditable, Title( "#tool.setting.is_enabled" ), Description( "#tool.setting.hoverballentity.isenabled.description" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public bool IsEnabled { get; private set; } = true;
 
 	/// <summary>
@@ -17,40 +17,40 @@ public sealed class HoverballEntity : Component, IPlayerControllable
 	/// <summary>
 	/// How fast the target height changes when inputs are held.
 	/// </summary>
-	[Property, Sync, ClientEditable, Range( 0, 20 ), Title( "#tool.setting.speed" ), Description( "#tool.setting.hoverballentity.speed.description" )]
+	[Property, Sync, ClientEditable, Range( 0, 20 ), Title( "#tool.setting.speed" ), Description( "#tool.setting.hoverballentity.speed.description" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Speed { get; set; } = 1f;
 
 	/// <summary>
 	/// Horizontal air resistance applied while hovering. Also increases vertical damping.
 	/// </summary>
-	[Property, Sync, ClientEditable, Range( 0, 10 ), Title( "#tool.setting.air_resistance" ), Description( "#tool.setting.hoverballentity.airresistance.description" )]
+	[Property, Sync, ClientEditable, Range( 0, 10 ), Title( "#tool.setting.air_resistance" ), Description( "#tool.setting.hoverballentity.airresistance.description" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float AirResistance { get; set; } = 0f;
 
 	/// <summary>
 	/// While held, raises the hover target.
 	/// </summary>
-	[Property, ClientEditable, Title( "#tool.setting.up" ), Description( "#tool.setting.hoverballentity.up.description" )]
+	[Property, ClientEditable, Title( "#tool.setting.up" ), Description( "#tool.setting.hoverballentity.up.description" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Up { get; set; }
 
 	/// <summary>
 	/// While held, lowers the hover target.
 	/// </summary>
-	[Property, ClientEditable, Title( "#tool.setting.down" ), Description( "#tool.setting.hoverballentity.down.description" )]
+	[Property, ClientEditable, Title( "#tool.setting.down" ), Description( "#tool.setting.hoverballentity.down.description" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Down { get; set; }
 
 	/// <summary>
 	/// Toggles the hoverball on/off
 	/// </summary>
-	[Property, ClientEditable, Title( "#tool.setting.toggle" ), Description( "#tool.setting.hoverballentity.toggle.description" )]
+	[Property, ClientEditable, Title( "#tool.setting.toggle" ), Description( "#tool.setting.hoverballentity.toggle.description" ), Group( "#tool.setting.group.inputs" ), Order( 1 )]
 	public ClientInput Toggle { get; set; }
 
 	[Property]
 	public GameObject OnEffect { get; set; }
 
-	[Property, ClientEditable, Metadata( SoundDefinition.Hoverball ), Title( "#tool.setting.enable_sound" )]
+	[Property, ClientEditable, Metadata( SoundDefinition.Hoverball ), Title( "#tool.setting.enable_sound" ), Group( "#tool.setting.group.sound" ), Order( 2 )]
 	public SoundDefinition EnableSound { get; set; }
 
-	[Property, ClientEditable, Metadata( SoundDefinition.Hoverball ), Title( "#tool.setting.disable_sound" )]
+	[Property, ClientEditable, Metadata( SoundDefinition.Hoverball ), Title( "#tool.setting.disable_sound" ), Group( "#tool.setting.group.sound" ), Order( 2 )]
 	public SoundDefinition DisableSound { get; set; }
 
 	protected override void OnStart()

@@ -95,6 +95,7 @@
     "tool.setting.turn_right": "Turn Right",
     "tool.setting.group.behavior": "Behavior",
     "tool.setting.group.sound": "Sound",
+    "tool.setting.group.inputs": "Inputs",
     "tool.setting.group.contents": "Contents",
     "tool.setting.group.text": "Text Settings",
     "tool.setting.font": "Font",
