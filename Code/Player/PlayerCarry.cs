@@ -188,13 +188,12 @@ public sealed class PlayerCarry : Component, Local.IPlayerEvents
 		if ( !_attackBlocked ) return;
 
 		if ( !Input.Down( "attack1" ) && !Input.Down( "attack2" ) && !IsCarrying )
-		{
 			_attackBlocked = false;
-			return;
-		}
 
 		Input.Clear( "attack1" );
 		Input.Clear( "attack2" );
+		Input.SetLastAction( "attack1", false );
+		Input.SetLastAction( "attack2", false );
 	}
 
 	bool CanKeepCarrying()
