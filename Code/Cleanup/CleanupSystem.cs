@@ -3,10 +3,37 @@ using Sandbox.UI;
 namespace Sandbox;
 
 /// <summary>
-/// Implement this on a <see cref="Component"/> to hear about map cleanups. Runs on every machine after the host has cleaned up.
+/// Data passed to <see cref="ICleanupEvents.OnCleaningUp"/>. Take objects out of <see cref="Objects"/> to keep them,
+/// or set <see cref="Cancelled"/> to true to stop the cleanup.
+/// </summary>
+public class CleanupEvent
+{
+	/// <summary>
+	/// The client whose objects are being cleaned up, or null for the whole map.
+	/// </summary>
+	public Connection Client { get; init; }
+
+	/// <summary>
+	/// The objects about to be removed.
+	/// </summary>
+	public List<GameObject> Objects { get; init; }
+
+	public bool Cancelled { get; set; }
+}
+
+/// <summary>
+/// Implement this on a <see cref="Component"/> to hear about cleanups.
 /// </summary>
 public interface ICleanupEvents : ISceneEvent<ICleanupEvents>
 {
+	/// <summary>
+	/// Called on the host before the map, or one player's objects, are cleaned up.
+	/// </summary>
+	public void OnCleaningUp( CleanupEvent e ) { }
+
+	/// <summary>
+	/// Called on every machine after the host has cleaned up the map.
+	/// </summary>
 	public void OnCleanup( int removedObjects, int restoredObjects ) { }
 }
 
@@ -203,6 +230,10 @@ internal sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoa
 			}
 		}
 
+		var e = new CleanupEvent { Objects = objectsToRemove };
+		Scene.RunEvent<ICleanupEvents>( x => x.OnCleaningUp( e ) );
+		if ( e.Cancelled ) return;
+
 		// Remove spawned objects
 		foreach ( var go in objectsToRemove )
 		{
@@ -316,12 +347,20 @@ internal sealed class CleanupSystem : GameObjectSystem<CleanupSystem>, ISceneLoa
 		Assert.True( Networking.IsHost, "Only the host may call this method!" );
 
 		var removable = Game.ActiveScene.GetAllComponents<Ownable>()
-			.Where( o => o.Owner == caller );
+			.Where( o => o.Owner == caller )
+			.Select( o => o.GameObject )
+			.ToList();
+
+		var e = new CleanupEvent { Client = caller, Objects = removable };
+		Game.ActiveScene.RunEvent<ICleanupEvents>( x => x.OnCleaningUp( e ) );
+		if ( e.Cancelled ) return;
 
 		var count = 0;
-		foreach ( var ownable in removable.ToArray() )
+		foreach ( var go in removable )
 		{
-			ownable.GameObject.Destroy();
+			if ( !go.IsValid() ) continue;
+
+			go.Destroy();
 			count++;
 		}
 
