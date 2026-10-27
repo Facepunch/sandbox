@@ -43,11 +43,22 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		Sandbox.Platform.Chat.AddText( LocalizedText.Resolve( phrase, tokens ) );
 	}
 
+	bool Component.INetworkListener.AcceptConnection( Connection channel, ref string reason )
+	{
+		var e = new ConnectingEvent { Client = channel, Reason = reason };
+		Scene.RunEvent<Global.IConnectionEvents>( x => x.OnConnecting( e ) );
+
+		reason = e.Reason;
+		return !e.Cancelled;
+	}
+
 	void Component.INetworkListener.OnActive( Connection channel )
 	{
 		channel.CanSpawnObjects = false;
 
 		var playerData = CreatePlayerInfo( channel );
+		Scene.RunEvent<Global.IConnectionEvents>( x => x.OnPlayerJoined( playerData ) );
+
 		SpawnPlayer( playerData );
 		CheckConnectionAchievement( channel );
 		CheckFriendsOnlineStat();
@@ -61,6 +72,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		var pd = PlayerData.For( channel );
 		if ( pd is not null )
 		{
+			Scene.RunEvent<Global.IConnectionEvents>( x => x.OnPlayerLeft( pd ) );
 			pd.GameObject.Destroy();
 		}
 
