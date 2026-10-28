@@ -20,7 +20,7 @@ public sealed class ChatBox : PanelComponent, IChatEvent
 	Panel _history;
 	Panel _recent;
 	Panel _recentList;
-	TextEntry _entry;
+	ChatTextEntry _entry;
 
 	/// <summary>
 	/// Slideout speed, make sure to keep this inline with ChatBox scss
@@ -51,7 +51,8 @@ public sealed class ChatBox : PanelComponent, IChatEvent
 
 		var row = _box.Add.Panel( "input-row" );
 
-		_entry = row.AddChild<TextEntry>( "entry" );
+		_entry = row.AddChild<ChatTextEntry>( "entry" );
+		_entry.MaxLength = Sandbox.Platform.Chat.MaxMessageLength;
 		_entry.Placeholder = "type your message here...";
 		_entry.AddEventListener( "onsubmit", Submit );
 		_entry.AddEventListener( "oncancel", Close );
@@ -175,5 +176,31 @@ public sealed class ChatBox : PanelComponent, IChatEvent
 			Sandbox.Platform.Chat.Say( text );
 
 		Close();
+	}
+
+	class ChatTextEntry : TextEntry
+	{
+		public ChatTextEntry()
+		{
+			Multiline = true;
+		}
+
+		public override bool CanEnterCharacter( char c )
+		{
+			return c != '\n' && c != '\r' && base.CanEnterCharacter( c );
+		}
+
+		public override void OnButtonTyped( ButtonEvent e )
+		{
+			if ( e.Button is "enter" or "pad_enter" )
+			{
+				e.StopPropagation = true;
+				Blur();
+				CreateEvent( "onsubmit", Text );
+				return;
+			}
+
+			base.OnButtonTyped( e );
+		}
 	}
 }
