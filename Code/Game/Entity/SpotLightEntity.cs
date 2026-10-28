@@ -29,9 +29,9 @@ public sealed class SpotLightEntity : Component, IPlayerControllable
 	public float Brightness { get; set { field = value; UpdateLight(); } } = 2;
 
 	/// <summary>
-	/// The radius affected by the light.
+	/// How far the light reaches.
 	/// </summary>
-	[Property, Title( "#entity.property.radius" ), Description( "#entity.description.radius" ), Range( 0, 1000 ), ClientEditable, Group( "#entity.group.light" )]
+	[Property, Title( "#entity.property.range" ), Description( "#entity.description.range" ), Range( 0, 1000 ), ClientEditable, Group( "#entity.group.light" )]
 	public float Radius { get; set { field = value; UpdateLight(); } } = 500;
 
 	/// <summary>
