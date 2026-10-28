@@ -99,6 +99,10 @@ public sealed class EntitySpawner : ISpawner
 		var go = GameObject.Clone( Entity.Prefab, new CloneConfig { Transform = transform, StartEnabled = false } );
 		go.Tags.Add( "removable" );
 
+		// armed NPCs carry the weapon the player picked in the NPC tab
+		foreach ( var npc in go.GetComponentsInChildren<Sandbox.Npcs.CombatNpc.CombatNpc>( true ) )
+			npc.ArmWithPicked( player );
+
 		Ownable.Set( go, player.Network.Owner );
 		go.NetworkSpawn( true, null );
 

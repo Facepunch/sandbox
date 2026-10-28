@@ -10,6 +10,12 @@ internal static partial class GamePreferences
 	public static bool AutoSwitch { get; set; } = true;
 
 	/// <summary>
+	/// The weapon prefab the NPCs we spawn are armed with, empty keeps their own. See <see cref="Player.NpcWeapon"/>.
+	/// </summary>
+	[ConVar( "sandbox.npc.weapon", ConVarFlags.Saved )]
+	public static string NpcWeapon { get; set; } = "";
+
+	/// <summary>
 	/// Enables movement bob, weapon inertia and animation-driven camera motion.
 	/// </summary>
 	[ConVar( "sandbox.viewbob", ConVarFlags.Saved )]

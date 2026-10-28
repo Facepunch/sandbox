@@ -225,7 +225,48 @@ public class CombatNpc : Npc, Component.IPressable
 		if ( WeaponChoices is not { Count: > 0 } )
 			return;
 
-		var prefab = WeaponChoices[Game.Random.Int( 0, WeaponChoices.Count - 1 )];
+		ArmWith( WeaponChoices[Game.Random.Int( 0, WeaponChoices.Count - 1 )] );
+	}
+
+	/// <summary>
+	/// The weapons players can pick for the NPCs they spawn
+	/// </summary>
+	public static IEnumerable<ScriptedEntity> PickableWeapons => ResourceLibrary.GetAll<ScriptedEntity>().Where( IsPickableWeapon );
+
+	/// <summary>
+	/// Installed weapons NPCs can fight with: melee and utility weapons have no NPC use set up
+	/// </summary>
+	static bool IsPickableWeapon( ScriptedEntity entity )
+	{
+		if ( entity.IsRemote || entity.Prefab is null || (entity.Developer && !ServerSettings.ShowDeveloperEntities) )
+			return false;
+
+		if ( !SpawnMenuCategory.Matches( entity.Category, "Weapon" ) || SpawnMenuCategory.Matches( entity.Category, "Weapon/Melee" ) || SpawnMenuCategory.Matches( entity.Category, "Weapon/Utility" ) )
+			return false;
+
+		return SceneUtility.GetPrefabScene( entity.Prefab )?.GetComponent<BaseSandboxWeapon>( true ) is { UsableByNpcs: true };
+	}
+
+	/// <summary>
+	/// Arm with the weapon a player picked instead of a random one from <see cref="WeaponChoices"/>, NPCs with
+	/// a fixed weapon keep it. See <see cref="Player.NpcWeapon"/>. Host only, before the NPC is network spawned.
+	/// </summary>
+	public void ArmWithPicked( Player player )
+	{
+		var path = player?.NpcWeapon;
+		if ( string.IsNullOrEmpty( path ) || WeaponChoices is not { Count: > 0 } )
+			return;
+
+		var weapon = ResourceLibrary.GetAll<ScriptedEntity>().FirstOrDefault( entity => entity.Prefab?.ResourcePath == path && IsPickableWeapon( entity ) );
+		if ( weapon is not null )
+			ArmWith( SceneUtility.GetPrefabScene( weapon.Prefab ) );
+	}
+
+	/// <summary>
+	/// Swap the current weapon for one made from a weapon prefab. Host only, before the NPC is network spawned.
+	/// </summary>
+	private void ArmWith( GameObject prefab )
+	{
 		if ( !prefab.IsValid() )
 			return;
 

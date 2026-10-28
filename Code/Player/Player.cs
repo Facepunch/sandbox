@@ -144,6 +144,11 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	/// </summary>
 	[Sync] public NetDictionary<string, float> ActionAmounts { get; set; } = new();
 
+	/// <summary>
+	/// The weapon prefab this player picked for the NPCs they spawn
+	/// </summary>
+	[Sync] public string NpcWeapon { get; private set; }
+
 	/// <summary>Seconds of invulnerability after spawning, to stop spawn-killing. 0 disables it.</summary>
 	[Title( "Spawn Protection" ), Group( "Gameplay" ), ServerSettings.Section( "Players" ), Order( 4 ), Range( 0, 30 ), Step( 1 )]
 	[ConVar( "sandbox.spawnprotection", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting | ConVarFlags.Saved, Help = "Seconds of invulnerability after spawning. 0 disables spawn protection." )]
@@ -175,13 +180,12 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			}
 		}
 
-		// Seated weapon bookkeeping and HUD paint in the update stage - the camera modifier
-		// (Player.Camera) only composes the view.
 		if ( IsLocalPlayer )
 		{
 			UpdateSeatedWeapons();
 			DrawSeatedWeaponHud();
 			UpdatePhysgunColors();
+			NpcWeapon = GamePreferences.NpcWeapon;
 		}
 	}
 

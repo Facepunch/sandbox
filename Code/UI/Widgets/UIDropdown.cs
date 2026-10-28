@@ -83,8 +83,10 @@ public class UIDropdown : Panel
 	void UpdateLabel()
 	{
 		var current = Items.FirstOrDefault( x => Equals( x.Value, _value ) );
-		_label.Tokenize = Tokenize;
-		_label.Text = current?.Label ?? "";
+
+		// resolved here, a tokenized label ignores going back to the token it showed before some plain text
+		_label.Tokenize = false;
+		_label.Text = (Tokenize ? LocalizedText.Resolve( current?.Label ) : current?.Label) ?? "";
 		_label.Style.FontFamily = current?.Font;
 	}
 

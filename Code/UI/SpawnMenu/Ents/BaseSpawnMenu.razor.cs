@@ -7,7 +7,9 @@ public partial class BaseSpawnMenu : Panel
 	PanelSwitcher Switcher = default;
 	protected Panel ActivePanel => activeOption?.Panel;
 
+	protected Panel MenuHeader;
 	protected Panel MenuFooter;
+	bool _addedHeader;
 	bool _addedFooter;
 
 	Panel TreeContainer;
@@ -55,6 +57,12 @@ public partial class BaseSpawnMenu : Panel
 	{
 		base.OnAfterTreeRender( firstTime );
 
+		if ( !_addedHeader && MenuHeader.IsValid() )
+		{
+			_addedHeader = true;
+			OnMenuHeader( MenuHeader );
+		}
+
 		if ( !_addedFooter && MenuFooter.IsValid() )
 		{
 			_addedFooter = true;
@@ -86,6 +94,11 @@ public partial class BaseSpawnMenu : Panel
 
 
 	protected virtual void Rebuild()
+	{
+
+	}
+
+	protected virtual void OnMenuHeader( Panel header )
 	{
 
 	}
