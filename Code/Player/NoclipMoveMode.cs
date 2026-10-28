@@ -24,6 +24,10 @@ public sealed class NoclipMoveMode : Sandbox.Movement.MoveMode
 
 	protected override void OnUpdateAnimatorState( SkinnedModelRenderer renderer )
 	{
+		// Seated players keep the sitting animation
+		if ( GetComponentInParent<ISitTarget>( false ) is not null )
+			return;
+
 		renderer.Set( "b_noclip", true );
 		renderer.Set( "duck", 0f );
 	}

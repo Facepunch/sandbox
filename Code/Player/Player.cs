@@ -1,4 +1,6 @@
 
+using Sandbox.Movement;
+
 /// <summary>
 /// Holds player information like health
 /// </summary>
@@ -162,7 +164,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	{
 		if ( Controller.IsValid() && Controller.Renderer.IsValid() )
 		{
-			Controller.Renderer.Set( "b_noclip", IsNoclipping );
+			var seated = GetComponentInParent<ISitTarget>( false ) is not null;
+			Controller.Renderer.Set( "b_noclip", IsNoclipping && !seated );
 
 			// Weapons write their pose while active; empty hands need an explicit reset.
 			if ( GetComponent<PlayerInventory>()?.ActiveWeapon.IsValid() != true )
@@ -384,8 +387,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			ToggleNoclip();
 		}
 
-		// noclip was turned off while we were flying
-		if ( IsNoclipping && !ServerSettings.CanNoclip( Network.Owner ) )
+		// noclip was turned off while we were flying, or we sat down in something
+		if ( IsNoclipping && (seated || !ServerSettings.CanNoclip( Network.Owner )) )
 		{
 			SetNoclip( false );
 		}
