@@ -40,6 +40,13 @@
     "RecommendedMinPlayers": 1,
     "RecommendedMaxPlayers": 64,
     "Coop": true,
-    "Versus": true
+    "Versus": true,
+    "WorkshopTags": [
+      "Building",
+      "Casual",
+      "Physics",
+      "Sandbox",
+      "Social"
+    ]
   }
 }
