@@ -10,8 +10,8 @@ SpawnlistView
 		flex-direction: column;
 		gap: 6px;
 
-		// the first bar is taller than the others, it has the name of the list, so its buttons stay at the top
-		> SpawnMenuToolbar:first-child
+		// the bar with the name of a list is taller than the others, so its buttons stay at the top
+		&.has-identity > SpawnMenuToolbar:first-child
 		{
 			height: auto;
 			align-items: flex-start;
