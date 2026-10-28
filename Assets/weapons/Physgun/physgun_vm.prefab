@@ -2887,7 +2887,7 @@
   "DontBreakAsTemplate": false,
   "__references": [
     "facepunch.v_first_person_arms_human#205798",
-    "facepunch.v_physgun#205816"
+    "facepunch.v_physgun#439937"
   ],
   "__version": 2
 }
