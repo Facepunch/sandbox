@@ -37,7 +37,15 @@
 
                         <div @key=@res.ResourcePath class="@itemClass" Tooltip=@SmallTooltip( name ) @onclick=@(() => OnItemClicked(res)) @ondoubleclick=@(() => ConfirmItem(res.ResourcePath, () => OnItemClicked(res)))>
 
-                            <div class="icon" style="background-image: url( @thumbUrl )"></div>
+                            @if ( IsSound( res ) )
+                            {
+                                @* sounds have no thumbnail, show a speaker instead *@
+                                <div class="icon sound-icon"><i>volume_up</i></div>
+                            }
+                            else
+                            {
+                                <div class="icon" style="background-image: url( @thumbUrl )"></div>
+                            }
 
                             @if ( res is IDefinitionResource definitionResource )
                             {
@@ -299,6 +307,8 @@
         RebuildFilteredItems();
         StateHasChanged();
     }
+
+    static bool IsSound( Resource res ) => res.ResourcePath?.EndsWith( ".sound", StringComparison.OrdinalIgnoreCase ) == true;
 
     bool FilterExtension(Resource res)
     {
