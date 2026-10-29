@@ -331,6 +331,10 @@
             _previewingResource = preview;
             preview.OnPreview();
         }
+        else if ( gameRes is SoundEvent sound )
+        {
+            _previewSound = Sound.Play( sound );
+        }
 
         StateHasChanged();
     }
@@ -341,7 +345,36 @@
 
         _pendingValue = pkg.FullIdent;
 
+        if ( string.Equals( Extension, "sound", StringComparison.OrdinalIgnoreCase ) )
+            _ = PreviewCloudSound( pkg.FullIdent );
+
         StateHasChanged();
+    }
+
+    // sound previews: the one playing, and which click it belongs to so a slow download can't play over a newer pick
+    SoundHandle _previewSound;
+    int _previewId;
+
+    /// <summary>
+    /// Download a workshop sound and play it, so it can be heard before it's picked.
+    /// </summary>
+    async Task PreviewCloudSound( string ident )
+    {
+        var id = _previewId;
+
+        SoundEvent sound = null;
+        try
+        {
+            sound = await Cloud.Load<SoundEvent>( ident );
+        }
+        catch ( Exception e )
+        {
+            Log.Warning( $"Couldn't preview workshop sound '{ident}': {e.Message}" );
+        }
+
+        if ( sound is null || id != _previewId || !IsValid ) return;
+
+        _previewSound = Sound.Play( sound );
     }
 
     // the first click of a double click has usually picked it already
@@ -355,6 +388,11 @@
     {
         _previewingResource?.OnPreviewStop();
         _previewingResource = null;
+
+        _previewId++;
+        if ( _previewSound.IsValid() )
+            _previewSound.Stop();
+        _previewSound = null;
     }
 
     public override void OnDeleted()

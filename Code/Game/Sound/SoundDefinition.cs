@@ -8,6 +8,7 @@ public class SoundDefinition : GameResource, IDefinitionResource, IResourcePrevi
 	public const string Thruster = "thruster";
 	public const string Hoverball = "hoverball";
 	public const string Emitter = "emitter";
+	public const string Speaker = "speaker";
 
 	/// <summary>
 	/// Display name for this sound definition.
