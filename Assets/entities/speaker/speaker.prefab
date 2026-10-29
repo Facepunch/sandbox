@@ -23,6 +23,7 @@
         "Key": {
           "Action": null
         },
+        "Looping": false,
         "Mode": "OneShot",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,

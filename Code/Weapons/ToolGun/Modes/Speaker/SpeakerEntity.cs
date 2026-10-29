@@ -12,13 +12,14 @@ public enum SpeakerMode
 	OneShot,
 
 	/// <summary>
-	/// The sound plays while the input is held, repeating if it ends, and stops when it's let go.
+	/// The sound plays while the input is held (repeating if it ends, with <see cref="SpeakerEntity.Looping"/>), and
+	/// stops when it's let go.
 	/// </summary>
 	[Title( "#entity.speakermode.hold" )]
 	Hold,
 
 	/// <summary>
-	/// Press once to start the sound, press again to stop it. Repeats while on.
+	/// Press once to start the sound, press again to stop it. Repeats while on with <see cref="SpeakerEntity.Looping"/>.
 	/// </summary>
 	[Title( "#entity.speakermode.toggle" )]
 	Toggle,
@@ -58,6 +59,13 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 	/// </summary>
 	[Property, ClientEditable, ResourceSelect( Extension = "sound", AllowPackages = true, Popup = true ), Title( "#entity.property.speaker_sound" ), Description( "#entity.description.speaker_sound" ), Group( "#tool.setting.group.sound" ), Order( 0 )]
 	public string Sound { get; set; } = DefaultSound;
+
+	/// <summary>
+	/// Hold and toggle: start the sound again whenever it ends, for as long as it's on. Off plays it once per
+	/// press. Sounds that loop by themselves loop either way.
+	/// </summary>
+	[Property, ClientEditable, Title( "#entity.property.looping" ), Description( "#entity.description.speaker_looping" ), Group( "#tool.setting.group.sound" ), Order( 0 )]
+	public bool Looping { get; set; } = false;
 
 	/// <summary>
 	/// One-shot, hold or toggle.
@@ -101,6 +109,7 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 	// client state
 	private SoundHandle _loop;
 	private SoundEvent _loopSound;
+	private bool _playedThisTime;
 	private SoundHandle _oneShot;
 
 	protected override void OnEnabled()
@@ -308,20 +317,26 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 
 		if ( IsOn && sound is not null )
 		{
-			// picked a different sound while it was playing
+			// picked a different sound while it was playing - start the new one
 			if ( _loopSound != sound )
+			{
 				StopLoop( 0f );
+				_playedThisTime = false;
+			}
 
-			// restarting when it ends makes sounds that don't loop on their own repeat while on
-			if ( !_loop.IsValid() || _loop.IsStopped )
+			// starts once each time it's turned on; when looping, again every time it ends
+			var ended = !_loop.IsValid() || _loop.IsStopped;
+			if ( ended && (!_playedThisTime || Looping) )
 			{
 				_loop = PlayAttached( sound );
 				_loopSound = sound;
+				_playedThisTime = true;
 			}
 		}
 		else
 		{
 			StopLoop( FadeTime );
+			_playedThisTime = false;
 		}
 
 		if ( _loop.IsValid() )
