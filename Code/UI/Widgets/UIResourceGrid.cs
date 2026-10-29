@@ -159,8 +159,34 @@ public class UIResourceGrid : BaseControl
 
 			AddClass( "resource-cell" );
 
-			var thumb = Add.Panel( "thumb" );
-			thumb.Style.Set( "background-image", $"url( thumb:{resource.ResourcePath} )" );
+			_thumb = Add.Panel( "thumb" );
+			_thumbPath = $"thumb:{resource.ResourcePath}";
+			UpdateThumb();
+		}
+
+		readonly Panel _thumb;
+		string _thumbPath;
+
+		public override void Tick()
+		{
+			base.Tick();
+			UpdateThumb();
+		}
+
+		/// <summary>
+		/// Streamed in through <see cref="ThumbnailLoader"/> once on screen, a style url would render every
+		/// resource's thumbnail on the frame the grid first shows.
+		/// </summary>
+		void UpdateThumb()
+		{
+			if ( _thumbPath is null ) return;
+
+			var state = ThumbnailLoader.Get( _thumbPath, IsVisible, out var texture );
+			SetClass( "thumb-loading", state == ThumbnailLoader.State.Loading );
+			if ( state == ThumbnailLoader.State.Loading ) return;
+
+			if ( texture.IsValid() ) _thumb.Style.SetBackgroundImage( texture );
+			_thumbPath = null;
 		}
 
 		public bool Matches( string path ) => !string.IsNullOrEmpty( path ) && path.Equals( _resource.ResourcePath, StringComparison.OrdinalIgnoreCase );

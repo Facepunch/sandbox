@@ -78,13 +78,16 @@ public partial class BaseSpawnMenu : Panel
 	}
 
 	protected bool _firstViewed;
+	readonly RealTimeSince _created = 0;
 
 	public override void Tick()
 	{
 		base.Tick();
 
-		if ( !IsVisible ) return;
 		if ( _firstViewed ) return;
+
+		var prewarm = !HasClass( "hidden" ) && _created > 2f;
+		if ( !IsVisible && !prewarm ) return;
 		if ( roots.Count == 0 ) return;
 		if ( !Switcher.IsValid() ) return;
 

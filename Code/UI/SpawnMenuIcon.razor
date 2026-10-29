@@ -4,13 +4,15 @@
 
 <root>
 
+    <div class="thumb-skeleton"><div class="shimmer"></div></div>
+
     @if ( Type == "builder" )
     {
-        <BuilderThumbnail Data=@Path PreviewMaterial=@PreviewMaterial />
+        <BuilderThumbnail @ref="BuilderPanel" Data=@Path PreviewMaterial=@PreviewMaterial />
     }
     else
     {
-        <div class="thumb" style="background-image: url( @Icon )"></div>
+        <div class="thumb" @ref="ThumbPanel"></div>
     }
 
     @if ( Developer )
@@ -56,6 +58,70 @@
         else if ( string.IsNullOrWhiteSpace( Icon ) )
         {
             Icon = $"thumb:{Path}";
+        }
+
+        // Show the skeleton straight away for anything not loaded yet, rather than a frame of empty tile
+        if ( Type == "builder" )
+        {
+            SetClass( "thumb-loading", BuilderPanel?.IsReady != true );
+        }
+        else if ( Icon != _appliedIcon )
+        {
+            SetClass( "thumb-loading", !string.IsNullOrWhiteSpace( Icon ) && ThumbnailLoader.Get( Icon, false, out _ ) == ThumbnailLoader.State.Loading );
+        }
+    }
+
+    Panel ThumbPanel;
+    BuilderThumbnail BuilderPanel;
+
+    /// <summary>
+    /// The icon whose texture is on <see cref="ThumbPanel"/>, so we only touch the style when it changes.
+    /// </summary>
+    string _appliedIcon;
+
+    protected override void OnAfterTreeRender( bool firstTime )
+    {
+        base.OnAfterTreeRender( firstTime );
+
+        // a fresh thumb panel has no image yet, even if the icon didn't change
+        if ( firstTime ) _appliedIcon = null;
+        UpdateThumbnail();
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+        UpdateThumbnail();
+    }
+
+    void UpdateThumbnail()
+    {
+        if ( Type == "builder" )
+        {
+            // the builder preview renders itself on its own budget, just mirror its state
+            SetClass( "thumb-loading", BuilderPanel.IsValid() && !BuilderPanel.IsReady );
+            return;
+        }
+
+        if ( Icon == _appliedIcon || !ThumbPanel.IsValid() ) return;
+
+        switch ( ThumbnailLoader.Get( Icon, IsVisible, out var texture ) )
+        {
+            case ThumbnailLoader.State.Ready:
+                ThumbPanel.Style.SetBackgroundImage( texture );
+                _appliedIcon = Icon;
+                SetClass( "thumb-loading", false );
+                break;
+
+            case ThumbnailLoader.State.Failed:
+                ThumbPanel.Style.SetBackgroundImage( (Texture)null );
+                _appliedIcon = Icon;
+                SetClass( "thumb-loading", false );
+                break;
+
+            default:
+                SetClass( "thumb-loading", true );
+                break;
         }
     }
 
