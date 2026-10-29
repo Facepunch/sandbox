@@ -98,11 +98,18 @@
 
     public void WorldMouseRightDown(MousePanelEvent e)
     {
-        if ( !hovered.IsValid() ) return;
+        OpenContextMenu( hovered );
+    }
 
-        SelectObject( hovered );
+    /// <summary>
+    /// Select the object and open its right-click menu under the mouse.
+    /// </summary>
+    public void OpenContextMenu( GameObject target )
+    {
+        if ( !target.IsValid() ) return;
 
-        var target = hovered;
+        SelectObject( target );
+
         var ev = new IContextMenuEvent.Event( target );
         Scene.RunEvent<IContextMenuEvent>( listener => listener.PopulateContextMenu( ev ) );
         if ( !ev.Options.Any() ) return;

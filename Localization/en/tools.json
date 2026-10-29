@@ -145,6 +145,14 @@
     "tool.hint.emittertool.place": "Place",
     "tool.hint.emittertool.place_no_weld": "Place (no weld)",
 
+    "tool.hint.speakertool.description": "Places a speaker that plays sounds from a key, a wire, or getting in and out of a seat",
+    "tool.hint.speakertool.place": "Place",
+    "tool.hint.speakertool.place_no_weld": "Place (no weld)",
+    "tool.hint.speakertool.place_hidden": "Place hidden",
+    "tool.hint.speakertool.place_hidden_world": "Place hidden (unattached)",
+    "tool.hint.speakertool.hide_model": "Hide model",
+    "tool.hint.speakertool.show_model": "Show model",
+
     "tool.hint.keepupright.description": "Constrains an object to stay upright",
     "tool.hint.keepupright.stage1": "Select the second object to link",
     "tool.hint.keepupright.apply_world": "Apply (anchor to world)",
@@ -183,6 +191,7 @@
     "tool.name.winch": "Winch",
     "tool.name.motor": "Motor",
     "tool.name.emitter": "Emitter",
+    "tool.name.speaker": "Speaker",
     "tool.name.decal": "Decal",
     "tool.name.text": "Text",
     "tool.name.trail": "Trail",

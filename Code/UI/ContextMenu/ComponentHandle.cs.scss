@@ -35,6 +35,11 @@ ComponentHandle
 		transform: scale( 0.95 ) translateX( -50% ) translateY( -50% );
 	}
 
+	&.behind
+	{
+		display: none;
+	}
+
 	&.active
 	{
 		@include ui-selected;

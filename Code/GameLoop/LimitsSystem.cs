@@ -52,6 +52,11 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 	[ConVar( "sandbox.limit.texts", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum placed texts per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxTexts { get; set; } = -1;
 
+	[Range( -1, 64 )]
+	[Title( "Max Speakers Per Player" ), Group( "Limits" ), Order( 9 )]
+	[ConVar( "sandbox.limit.speakers", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum speakers per player. -1 = unlimited, 0 = none allowed." )]
+	public static int MaxSpeakers { get; set; } = -1;
+
 	/// <summary>
 	/// Per-player tracked objects keyed by SteamId.
 	/// </summary>
@@ -215,6 +220,7 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 		if ( CheckToolLimit<HoverballTool, HoverballEntity>( e, MaxHoverballs ) ) return;
 		if ( CheckToolLimit<WheelTool, WheelEntity>( e, MaxWheels ) ) return;
 		if ( CheckToolLimit<TextTool, TextEntity>( e, MaxTexts ) ) return;
+		if ( CheckToolLimit<SpeakerTool, SpeakerEntity>( e, MaxSpeakers ) ) return;
 
 		// TODO: same here :S
 		if ( MaxConstraints >= 0 && ( e.Tool is BaseConstraintToolMode || e.Tool is KeepUprightTool ) )

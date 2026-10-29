@@ -29,6 +29,8 @@
     "tool.setting.emittertool.basedef.description": "The physical emitter body to spawn.",
     "tool.setting.effect": "Effect",
     "tool.setting.emittertool.effectdef.description": "The particle effect the emitter will produce.",
+    "tool.setting.speaker_hidden": "Hidden",
+    "tool.setting.speakertool.hidden.description": "No model or collision. Sticks to what you place it on, and shows as an icon in the inspect menu (hold C).",
     "tool.setting.ball_joints": "Ball Joints",
     "tool.setting.flip_axis": "Flip Axis",
     "tool.setting.reversed": "Reversed",
