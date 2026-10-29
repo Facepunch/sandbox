@@ -11,6 +11,15 @@ public sealed class ResizerTool : ToolMode
 
 	TimeSince timeSinceAction = 0;
 
+	/// <summary>
+	/// 1 while growing, -1 while shrinking, 0 when idle. Synced so everyone hears the loop.
+	/// </summary>
+	[Sync] int ResizeDirection { get; set; }
+	int _pendingDirection;
+
+	SoundHandle _resizeSound;
+	int _resizeSoundDirection;
+
 	protected override void OnStart()
 	{
 		base.OnStart();
@@ -20,11 +29,77 @@ public sealed class ResizerTool : ToolMode
 		RegisterAction( ToolInput.Reload, () => "#tool.hint.resizer.reset", OnReset );
 	}
 
+	public override void OnControl()
+	{
+		_pendingDirection = 0;
+		base.OnControl();
+		ResizeDirection = _pendingDirection;
+	}
+
+	protected override void OnUpdate()
+	{
+		base.OnUpdate();
+
+		var toolgun = Toolgun;
+		var player = toolgun?.Owner;
+		var active = toolgun.IsValid() && player.IsValid()
+			&& player.GetComponent<PlayerInventory>()?.ActiveWeapon == toolgun;
+
+		if ( !active )
+		{
+			if ( !IsProxy ) ResizeDirection = 0;
+			StopResizeSound();
+			return;
+		}
+
+		if ( ResizeDirection == 0 )
+		{
+			StopResizeSound();
+			return;
+		}
+
+		// Swap loops if direction changed
+		if ( _resizeSound is not null && _resizeSoundDirection != ResizeDirection )
+			StopResizeSound();
+
+		var position = toolgun.GetMuzzleTransform().Position;
+		if ( _resizeSound is null )
+		{
+			_resizeSound = Sound.Play( ResizeDirection > 0
+				? "weapons/toolgun/sounds/shoot.resize.grow.sound"
+				: "weapons/toolgun/sounds/shoot.resize.shrink.sound", position );
+			_resizeSoundDirection = ResizeDirection;
+		}
+
+		_resizeSound?.Position = position;
+	}
+
+	protected override void OnDisabled()
+	{
+		base.OnDisabled();
+		if ( !IsProxy ) ResizeDirection = 0;
+		StopResizeSound();
+	}
+
+	protected override void OnDestroy()
+	{
+		StopResizeSound();
+		base.OnDestroy();
+	}
+
+	void StopResizeSound()
+	{
+		_resizeSound?.Stop( 0.1f );
+		_resizeSound = null;
+		_resizeSoundDirection = 0;
+	}
+
 	void OnGrow()
 	{
 		var select = TraceSelect();
 		IsValidState = select.IsValid() && !select.IsWorld;
 		if ( !IsValidState ) return;
+		_pendingDirection = 1;
 		if ( timeSinceAction < 0.03f ) return;
 
 		Resize( select.GameObject, 0.033f );
@@ -36,6 +111,7 @@ public sealed class ResizerTool : ToolMode
 		var select = TraceSelect();
 		IsValidState = select.IsValid() && !select.IsWorld;
 		if ( !IsValidState ) return;
+		_pendingDirection = -1;
 		if ( timeSinceAction < 0.03f ) return;
 
 		Resize( select.GameObject, -0.033f );
