@@ -16,6 +16,12 @@ public sealed class DecalTool : ToolMode
 	/// </summary>
 	const float ScaleSpeed = 0.032f;
 
+	/// <summary>
+	/// Decals that ship with the game. Set on the toolgun prefab, so they load with it and show in the picker.
+	/// </summary>
+	[Property, Hide]
+	public List<DecalDefinition> BuiltIn { get; set; }
+
 	[Property, ResourceSelect( Extension = "decal", AllowPackages = true ), Title( "#tool.name.decal" )]
 	public string Decal { get; set; }
 

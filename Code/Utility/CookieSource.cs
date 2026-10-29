@@ -24,6 +24,7 @@ public static class CookieSourceExtensions
 		if ( property.IsStatic ) return false;
 		if ( !property.HasAttribute<PropertyAttribute>() ) return false;
 		if ( property.HasAttribute<JsonIgnoreAttribute>() ) return false;
+		if ( property.HasAttribute<HideAttribute>() ) return false;
 		if ( !property.CanWrite || !property.CanRead ) return false;
 
 		return true;
@@ -51,7 +52,7 @@ public static class CookieSourceExtensions
 
 		/// <summary>
 		/// Saves any instance properties with a <see cref="PropertyAttribute"/>, excluding any
-		/// with <see cref="JsonIgnoreAttribute"/>, into <see cref="Game.Cookies"/>.
+		/// with <see cref="JsonIgnoreAttribute"/> or <see cref="HideAttribute"/>, into <see cref="Game.Cookies"/>.
 		/// </summary>
 		public void SaveCookies()
 		{
@@ -72,7 +73,7 @@ public static class CookieSourceExtensions
 
 		/// <summary>
 		/// Loads any instance properties with a <see cref="PropertyAttribute"/>, excluding any
-		/// with <see cref="JsonIgnoreAttribute"/>, from <see cref="Game.Cookies"/>.
+		/// with <see cref="JsonIgnoreAttribute"/> or <see cref="HideAttribute"/>, from <see cref="Game.Cookies"/>.
 		/// </summary>
 		public void LoadCookies()
 		{

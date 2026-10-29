@@ -40,8 +40,9 @@
 		{
 			if ( mode.IsAbstract ) continue;
 
-			Components.Create( mode, enabled );
-			enabled = false;
+			// the prefab has some already, holding their data
+			var component = Components.Get( mode.TargetType, FindMode.EverythingInSelf ) ?? Components.Create( mode, enabled );
+			enabled &= !component.Enabled;
 		}
 
 		Network.Refresh( GameObject );

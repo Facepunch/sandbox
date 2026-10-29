@@ -17,12 +17,13 @@ public class UISheet : Panel, IControlSheet
 	[Parameter] public Func<SerializedProperty, bool> PropertyFilter { get; set; }
 
 	/// <summary>
-	/// A filter for <see cref="PropertyFilter"/>: members marked [Property] and methods marked [Button], without delegates.
+	/// A filter for <see cref="PropertyFilter"/>: members marked [Property] and methods marked [Button], without delegates or [Hide].
 	/// </summary>
 	public static bool PropertiesAndButtons( SerializedProperty property )
 	{
 		if ( property.IsMethod ) return property.HasAttribute<ButtonAttribute>();
 		if ( property.PropertyType is null || property.PropertyType.IsAssignableTo( typeof( Delegate ) ) ) return false;
+		if ( property.HasAttribute<HideAttribute>() ) return false;
 
 		return property.HasAttribute<PropertyAttribute>();
 	}
