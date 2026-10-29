@@ -298,6 +298,7 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 		if ( _contextSource is null )
 		{
 			AddContextPorts( e, e.Target );
+			AddContextUnlinks( e, e.Target );
 			return;
 		}
 
@@ -339,6 +340,145 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 	{
 		CreateLink( _contextSource, target );
 		_contextSource = null;
+	}
+
+	/// <summary>
+	/// One existing wire touching an object, as listed in the Unlink menu.
+	/// </summary>
+	internal readonly record struct WireInfo( Component Source, string OutputId, Component Target, string InputId );
+
+	private static void AddContextUnlinks( IContextMenuEvent.Event e, GameObject target )
+	{
+		var wires = GetWires( target ).ToArray();
+		if ( wires.Length == 0 ) return;
+
+		var root = target.Root;
+
+		e.AddSubmenu( "link_off", "#signal.unlink", submenu =>
+		{
+			foreach ( var wire in wires )
+			{
+				var outgoing = wire.Source.GameObject.Root == root;
+				var captured = wire;
+				submenu.AddOption( DescribeWire( wire ), outgoing ? "arrow_forward" : "arrow_back", () => Unlink( captured ) );
+			}
+
+			if ( wires.Length > 1 )
+			{
+				submenu.AddSeparator();
+				submenu.AddOption( "#signal.unlink_all", "link_off", () =>
+				{
+					foreach ( var wire in wires ) Unlink( wire );
+				} );
+			}
+		} );
+	}
+
+	/// <summary>
+	/// "Button: Pressed → Thruster: Activate"
+	/// </summary>
+	private static string DescribeWire( WireInfo wire )
+	{
+		var output = TryFindOutput( wire.Source, wire.OutputId, out var outPort ) ? LocalizedText.Resolve( outPort.Title ) : wire.OutputId;
+		var input = TryFindInput( wire.Target, wire.InputId, out var inPort ) ? LocalizedText.Resolve( inPort.Title ) : wire.InputId;
+
+		return Game.Language.GetPhrase( "signal.wire_label", new()
+		{
+			{ "source", GetComponentTitle( wire.Source ) },
+			{ "output", output },
+			{ "target", GetComponentTitle( wire.Target ) },
+			{ "input", input }
+		} );
+	}
+
+	/// <summary>
+	/// Every wire going into or out of this object's root: stamped link pairs, signal
+	/// connections (including ones between welded objects that have no pair) and component references.
+	/// </summary>
+	internal static IEnumerable<WireInfo> GetWires( GameObject gameObject )
+	{
+		if ( !gameObject.IsValid() ) return [];
+
+		var root = gameObject.Root;
+		var seen = new HashSet<(Component, string, Component, string)>();
+		var result = new List<WireInfo>();
+
+		void Add( Component source, string outputId, Component target, string inputId )
+		{
+			if ( !source.IsValid() || !target.IsValid() ) return;
+			if ( string.IsNullOrEmpty( outputId ) || string.IsNullOrEmpty( inputId ) ) return;
+			if ( seen.Add( (source, outputId.ToLowerInvariant(), target, inputId.ToLowerInvariant()) ) )
+				result.Add( new WireInfo( source, outputId, target, inputId ) );
+		}
+
+		// Wires carried by link pairs on this object
+		foreach ( var link in root.GetComponentsInChildren<ManualLink>( true ) )
+		{
+			if ( link.HasWire ) Add( link.SignalSource, link.SignalOutputId, link.SignalTarget, link.SignalInputId );
+		}
+
+		// Signal connections out of this object, and into it from the rest of the contraption
+		foreach ( var output in GetContraptionOutputs( root ) )
+		{
+			if ( output.Port?.Connections is not { } connections ) continue;
+			var fromHere = output.Component.GameObject.Root == root;
+
+			foreach ( var connection in connections )
+			{
+				if ( connection?.Target.IsValid() != true ) continue;
+				if ( !fromHere && connection.Target.GameObject.Root != root ) continue;
+
+				Add( output.Component, output.Id, connection.Target, connection.Input );
+			}
+		}
+
+		// Component references held by inputs on this object
+		foreach ( var component in root.GetComponentsInChildren<Component>( true ) )
+		{
+			foreach ( var input in GetInputs( component ) )
+			{
+				if ( input.ComponentType is null ) continue;
+				if ( input.Binding.Property?.GetValue( component ) is Component source && source.IsValid() )
+					Add( source, ComponentOutputId, component, input.Id );
+			}
+		}
+
+		return result;
+	}
+
+	/// <summary>
+	/// Disconnect one wire, removing the link pair that carries it (if any).
+	/// </summary>
+	internal static void Unlink( WireInfo wire )
+	{
+		UnlinkRpc( wire.Source, wire.OutputId, wire.Target, wire.InputId );
+	}
+
+	[Rpc.Host]
+	private static void UnlinkRpc( Component source, string outputId, Component target, string inputId )
+	{
+		if ( !source.IsValid() || !target.IsValid() ) return;
+		if ( !TryFindOutput( source, outputId, out var output ) || !TryFindInput( target, inputId, out var input ) ) return;
+
+		// Destroying the carrying pair disconnects the wire through ManualLink.OnDestroy.
+		// Both ends are stamped, so finding one end is enough — it takes its partner with it.
+		var carrier = source.GameObject.Root.GetComponentsInChildren<ManualLink>( true )
+			.FirstOrDefault( link => link.IsValid() && link.HasWire
+				&& link.SignalSource == source && link.SignalTarget == target
+				&& string.Equals( link.SignalOutputId, outputId, StringComparison.OrdinalIgnoreCase )
+				&& string.Equals( link.SignalInputId, inputId, StringComparison.OrdinalIgnoreCase ) );
+
+		if ( carrier.IsValid() )
+		{
+			carrier.GameObject.Destroy();
+		}
+		else if ( !SetConnectedInternal( source, output, target, input, false ) )
+		{
+			// Unstamped wires (e.g. between welded objects) have no pair to destroy
+			return;
+		}
+
+		SendConnectionNotice( Rpc.Caller, source, output, target, input, false );
 	}
 
 	/// <summary>
@@ -953,7 +1093,8 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 			type.Description,
 			type.Icon,
 			attribute.Default,
-			-1 ) { ComponentType = type.TargetType };
+			-1 )
+		{ ComponentType = type.TargetType };
 	}
 
 	private static bool TryCreateOutput( TypeDescription type, PropertyDescription property, SignalOutputAttribute attribute, out SignalPort port )
@@ -971,7 +1112,8 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 			property.Description,
 			property.Icon,
 			attribute.Default,
-			property.Order ) { Property = property };
+			property.Order )
+		{ Property = property };
 		return true;
 	}
 
@@ -993,7 +1135,8 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 			description,
 			method.Icon ?? declaredPort?.Icon,
 			attribute.Default,
-			method.Order ) { Binding = binding };
+			method.Order )
+		{ Binding = binding };
 		return true;
 	}
 
