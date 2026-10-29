@@ -42,6 +42,10 @@
 											<i>@option.Icon</i>
 										<div class="option-labels">
 											<label class="option-title">@option.Title</label>
+											@if ( !string.IsNullOrWhiteSpace( option.Subtitle ) )
+											{
+												<label class="option-subtitle">@option.Subtitle</label>
+											}
 											@if ( option == SelectedOption( card ) && !string.IsNullOrWhiteSpace( option.Description ) )
 											{
 												<label class="description option-description">@option.Description</label>
@@ -82,6 +86,12 @@
 	{
 		public string Icon { get; init; } = "input";
 		public string Title { get; } = title;
+
+		/// <summary>
+		/// Always shown under the title - which object the option belongs to.
+		/// </summary>
+		public string Subtitle { get; init; }
+
 		public string Description { get; init; }
 	}
 
@@ -266,6 +276,7 @@
 				{
 					hash.Add( option.Icon );
 					hash.Add( option.Title );
+					hash.Add( option.Subtitle );
 					hash.Add( option.Description );
 				}
 			}
