@@ -40,6 +40,9 @@ public sealed class SpeakerTool : ToolMode
 	[Property, ResourceSelect( Extension = "sound", AllowPackages = true, Popup = true ), Title( "#entity.property.speaker_sound" ), Description( "#entity.description.speaker_sound" ), Group( "#tool.setting.group.sound" ), Order( 2 )]
 	public string Sound { get; set; } = SpeakerEntity.DefaultSound;
 
+	[Property, Title( "#entity.property.looping" ), Description( "#entity.description.speaker_looping" ), Group( "#tool.setting.group.sound" ), Order( 2 )]
+	public bool Looping { get; set; } = false;
+
 	public override string Description => "#tool.hint.speakertool.description";
 
 	/// <summary>
