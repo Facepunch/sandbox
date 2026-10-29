@@ -40,6 +40,16 @@ public sealed class SignalOutputAttribute : Attribute
 }
 
 /// <summary>
+/// A component with wireable ports can give itself a more specific name than its type's title, so several of the same
+/// thing on one contraption can be told apart in the wire tool (e.g. "Speaker: horn" and "Speaker: siren").
+/// Return null to use the type's title.
+/// </summary>
+public interface ISignalDisplayName
+{
+	string SignalDisplayName { get; }
+}
+
+/// <summary>
 /// One wire: which component and which input it feeds into.
 /// </summary>
 public sealed class SignalConnection
@@ -430,6 +440,10 @@ internal sealed class SignalSystem : GameObjectSystem<SignalSystem>, IContextMen
 
 	internal static string GetComponentTitle( Component component )
 	{
+		// lets two of the same thing be told apart, e.g. "Speaker: horn"
+		if ( component is ISignalDisplayName named && !string.IsNullOrWhiteSpace( named.SignalDisplayName ) )
+			return named.SignalDisplayName;
+
 		var title = Game.TypeLibrary.GetType( component.GetType() )?.Title ?? component.GetType().Name;
 		return Game.Language.GetPhrase( title.TrimStart( '#' ) );
 	}

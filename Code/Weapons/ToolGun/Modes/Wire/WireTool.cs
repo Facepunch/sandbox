@@ -154,6 +154,8 @@ public sealed class WireTool : BaseConstraintToolMode
 			var options = _hoveredPorts.Select( port => new SignalsOverlay.Option( port.Title )
 			{
 				Icon = port.Icon,
+				// which object it's on - a contraption can have several of the same thing, all with the same port names
+				Subtitle = port.ComponentTitle,
 				Description = string.IsNullOrWhiteSpace( port.Description )
 					? Game.Language.GetPhrase( port is SignalOutputDescription ? "tool.wire.signal_output" : "tool.wire.signal_input", new() { { "component", port.ComponentTitle } } )
 					: port.Description
