@@ -148,7 +148,8 @@ public sealed class SpeakerTool : ToolMode
 		go.Tags.Add( "constraint" );
 		go.WorldTransform = tx;
 
-		if ( weld && !point.IsWorld )
+		// welds to the world too, like buttons, so it can go on a wall
+		if ( weld )
 		{
 			var joint = go.AddComponent<FixedJoint>();
 			joint.Attachment = Joint.AttachmentMode.LocalFrames;
