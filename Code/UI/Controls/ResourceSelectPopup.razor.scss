@@ -98,6 +98,25 @@ ResourceSelectPopup.popup .inner .grid .item
         background-repeat: no-repeat;
     }
 
+    .sound-icon
+    {
+        justify-content: center;
+        align-items: center;
+
+        i
+        {
+            font-family: "Material Icons";
+            font-size: 48px;
+            color: $ui-text-strong;
+            opacity: 0.6;
+        }
+    }
+
+    &.active .sound-icon i
+    {
+        opacity: 1;
+    }
+
     .title
     {
         font-weight: 700;
