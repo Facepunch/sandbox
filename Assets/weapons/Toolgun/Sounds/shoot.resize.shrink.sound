@@ -50,8 +50,8 @@
     }
   ],
   "DefaultMixer": {
-    "Name": "unknown",
-    "Id": "00000000-0000-0000-0000-000000000000"
+    "Name": "weapons",
+    "Id": "df5c2c7c-870d-4db2-8df0-9d5be1f943f2"
   },
   "__references": [],
   "__version": 1
