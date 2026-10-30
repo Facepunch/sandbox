@@ -39,7 +39,17 @@
         // starts above the vitals
         Panel.Style.Bottom = Length.Pixels( Hud.StackBottom * Panel.ScaleFromScreen );
         Panel.Style.Right = Hud.MarginLength;
-        ListHeight = Hud.IsVisible( HudElement.Voices ) && VoiceList.Any( x => CanDisplay( x ) ) ? Panel.Box.Rect.Height : 0;
+        ListHeight = Hud.IsVisible( HudElement.Voices ) && AnyDisplayed() ? Panel.Box.Rect.Height : 0;
+    }
+
+    private bool AnyDisplayed()
+    {
+        foreach ( var voice in VoiceList )
+        {
+            if ( CanDisplay( voice ) ) return true;
+        }
+
+        return false;
     }
 
     protected override void OnDisabled()
