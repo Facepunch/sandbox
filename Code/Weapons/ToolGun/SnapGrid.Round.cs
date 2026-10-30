@@ -47,11 +47,14 @@ public sealed partial class SnapGrid
 		_cachedOrigin = center; _cachedNormal = normal; _cachedRight = right; _cachedUp = up;
 		_cachedHalfExtents = new Vector2( radius, radius );
 		_roundRadius = radius;
-		var angles = _surfaceVertices.Select( vertex => vertex.Position - center )
-			.Where( p => p.Length > radius * 0.99f )
-			.Select( p => (int)MathF.Round( (MathF.Atan2( Vector3.Dot( p, up ), Vector3.Dot( p, right ) ) + MathF.Tau) % MathF.Tau * 1000f ) )
-			.Distinct().OrderBy( a => a ).ToArray();
-		var sides = Math.Max( 3, angles.Length );
+		var angles = new HashSet<int>();
+		foreach ( var vertex in _surfaceVertices )
+		{
+			var p = vertex.Position - center;
+			if ( p.Length > radius * 0.99f )
+				angles.Add( (int)MathF.Round( (MathF.Atan2( Vector3.Dot( p, up ), Vector3.Dot( p, right ) ) + MathF.Tau) % MathF.Tau * 1000f ) );
+		}
+		var sides = Math.Max( 3, angles.Count );
 		// Keep the smooth ring inside every collision facet.
 		_roundRadius = radius * MathF.Cos( MathF.PI / sides );
 		var lastRing = MathF.Floor( _roundRadius / CellSize ) * CellSize;
