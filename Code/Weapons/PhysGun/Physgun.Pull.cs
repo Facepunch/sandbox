@@ -149,7 +149,13 @@ public partial class Physgun
 		var ragdoll = body.GameObject.GetComponentInParent<ModelPhysics>();
 		if ( !ragdoll.IsValid() || ragdoll.Bodies.Count < 2 ) return null;
 
-		return ragdoll.Bodies.Any( x => x.Component == body ) ? ragdoll : null;
+		foreach ( var part in ragdoll.Bodies )
+		{
+			if ( part.Component == body )
+				return ragdoll;
+		}
+
+		return null;
 	}
 
 	/// <summary>
