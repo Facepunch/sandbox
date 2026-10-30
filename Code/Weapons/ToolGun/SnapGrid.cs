@@ -32,11 +32,11 @@ public sealed partial class SnapGrid
 			RenderLayer = SceneRenderLayer.OverlayWithDepth;
 		}
 
-		public void WriteSurface( Vertex[] vertices )
+		public void WriteSurface( List<Vertex> vertices )
 		{
 			Bounds = BBox.FromPoints( vertices.Select( v => v.Position ) );
 			Init( Graphics.PrimitiveType.Triangles );
-			AddVertex( vertices.AsSpan() );
+			AddVertex( System.Runtime.InteropServices.CollectionsMarshal.AsSpan( vertices ) );
 		}
 
 		public void Write( Vector3 faceOrigin, Vector3 faceRight, Vector3 faceUp, Vector2 faceHalfExtents )
@@ -249,7 +249,7 @@ public sealed partial class SnapGrid
 			gridOrigin += planeOffset;
 		}
 		var boundsOrigin = isWorld ? _worldPatchCenter : _cachedOrigin;
-		if ( meshSurface ) _sceneObj.WriteSurface( _surfaceVertices.ToArray() );
+		if ( meshSurface ) _sceneObj.WriteSurface( _surfaceVertices );
 		else _sceneObj.Write( boundsOrigin, _cachedRight, _cachedUp, halfExtents );
 		_sceneObj.Attributes.Set( "MeshSurface", meshSurface ? 1f : 0f );
 		_sceneObj.Attributes.Set( "PlanarSurface", planarSurface ? 1f : 0f );
