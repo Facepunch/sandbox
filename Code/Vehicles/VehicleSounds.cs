@@ -321,8 +321,21 @@ public sealed class VehicleSounds : Component, IPlayerControllable
 			_soundGear = 0;
 	}
 
-	private float MinTime( VehicleSoundState state ) => States.FirstOrDefault( s => s.State == state )?.MinTime ?? 0;
-	private SoundEvent StateSound( VehicleSoundState state ) => States.FirstOrDefault( s => s.State == state )?.Sound;
+	private float MinTime( VehicleSoundState state ) => FindState( state )?.MinTime ?? 0;
+	private SoundEvent StateSound( VehicleSoundState state ) => FindState( state )?.Sound;
+
+	private VehicleStateSound FindState( VehicleSoundState state )
+	{
+		ArgumentNullException.ThrowIfNull( States, "source" );
+
+		foreach ( var s in States )
+		{
+			if ( s.State == state )
+				return s;
+		}
+
+		return null;
+	}
 
 	private VehicleSoundState MapGearToState( int gear ) => gear switch
 	{
