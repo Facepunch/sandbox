@@ -196,10 +196,19 @@ public sealed partial class Player
 	{
 		if ( !go.IsValid() ) return false;
 
-		if ( go.Scene.GetAll<PlayerCarry>().Any( x => x.Held.IsValid() && x.Held.Root == go ) )
-			return true;
+		foreach ( var carry in go.Scene.GetAll<PlayerCarry>() )
+		{
+			if ( carry.Held.IsValid() && carry.Held.Root == go )
+				return true;
+		}
 
-		return go.Scene.GetAll<Physgun>().Any( x => x.IsGrabbing( go ) );
+		foreach ( var physgun in go.Scene.GetAll<Physgun>() )
+		{
+			if ( physgun.IsGrabbing( go ) )
+				return true;
+		}
+
+		return false;
 	}
 
 	internal void Drive( GameObject go )
