@@ -38,7 +38,7 @@ public class Hints : GameObjectSystem<Hints>
 		if ( !ShowHints )
 			return;
 
-		var next = _queue.Where( x => x.Ready ).FirstOrDefault();
+		var next = _queue.Find( x => x.Ready );
 		if ( next is null ) return;
 
 		_queue.Remove( next );
