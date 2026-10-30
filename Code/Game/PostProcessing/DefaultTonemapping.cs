@@ -11,7 +11,16 @@ public sealed class DefaultTonemapping : Component
 		var tonemapping = GetComponent<Tonemapping>( true );
 		if ( !tonemapping.IsValid() ) return;
 
-		var enable = !Scene.GetAllComponents<Tonemapping>().Any( x => x != tonemapping && IsGlobal( x ) );
+		var enable = true;
+		foreach ( var x in Scene.GetAllComponents<Tonemapping>() )
+		{
+			if ( x != tonemapping && IsGlobal( x ) )
+			{
+				enable = false;
+				break;
+			}
+		}
+
 		if ( tonemapping.Enabled != enable )
 			tonemapping.Enabled = enable;
 	}
