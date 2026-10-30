@@ -23,23 +23,27 @@ public sealed partial class SnapGrid
 		if ( Vector3.Dot( aim - planeOrigin, _cachedNormal ) < -CellSize * 0.5f ) return false;
 		// Shallow panels and their bevels share the surrounding face grid. Keep their actual depths.
 		var depthTolerance = MathF.Max( 0.025f, CellSize * 0.125f );
-		var selected = _surfaceTriangles.Where( t =>
-			MathF.Abs( Vector3.Dot( t.A - planeOrigin, _cachedNormal ) ) < depthTolerance &&
-			MathF.Abs( Vector3.Dot( t.B - planeOrigin, _cachedNormal ) ) < depthTolerance &&
-			MathF.Abs( Vector3.Dot( t.C - planeOrigin, _cachedNormal ) ) < depthTolerance ).ToList();
 		float minU = float.MaxValue, minV = float.MaxValue, maxU = float.MinValue, maxV = float.MinValue;
-		foreach ( var t in selected ) { Include( t.A ); Include( t.B ); Include( t.C ); }
+		// Enumerable.Sum accumulated in double, keep that so the area test is unchanged.
+		var areaSum = 0.0;
+		foreach ( var t in _surfaceTriangles )
+		{
+			if ( !(MathF.Abs( Vector3.Dot( t.A - planeOrigin, _cachedNormal ) ) < depthTolerance &&
+				MathF.Abs( Vector3.Dot( t.B - planeOrigin, _cachedNormal ) ) < depthTolerance &&
+				MathF.Abs( Vector3.Dot( t.C - planeOrigin, _cachedNormal ) ) < depthTolerance) ) continue;
+			Include( t.A ); Include( t.B ); Include( t.C );
+			areaSum += MathF.Abs( Vector3.Dot( Vector3.Cross( t.B - t.A, t.C - t.A ), _cachedNormal ) ) * 0.5f;
+		}
 		var width = maxU - minU; var height = maxV - minV;
-		var projectedArea = selected.Sum( t => MathF.Abs( Vector3.Dot( Vector3.Cross( t.B - t.A, t.C - t.A ), _cachedNormal ) ) * 0.5f );
+		var projectedArea = (float)areaSum;
 		if ( width < 0.1f || height < 0.1f || projectedArea < width * height * 0.9f ) return false;
 		_cachedOrigin = planeOrigin + _cachedRight * ((minU + maxU) * 0.5f) + _cachedUp * ((minV + maxV) * 0.5f);
 		_cachedHalfExtents = new Vector2( width, height ) * 0.5f;
 		// Raised controls use the parent face's lattice without changing its bounds.
 		// Keep their real geometry so drawing and snapping use the same intersections.
-		selected = _surfaceTriangles.Where( t => OnFace( t.A ) && OnFace( t.B ) && OnFace( t.C ) ).ToList();
-		_surfaceTriangles.Clear(); _surfaceTriangles.AddRange( selected );
+		_surfaceTriangles.RemoveAll( t => !(OnFace( t.A ) && OnFace( t.B ) && OnFace( t.C )) );
 		_surfaceVertices.Clear();
-		foreach ( var t in selected )
+		foreach ( var t in _surfaceTriangles )
 		{
 			_surfaceVertices.Add( new Vertex( t.A ) );
 			_surfaceVertices.Add( new Vertex( t.B ) );
