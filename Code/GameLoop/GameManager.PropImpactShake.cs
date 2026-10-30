@@ -58,8 +58,12 @@ public sealed partial class GameManager : ISceneCollisionEvents
 
 	private void ProcessImpacts()
 	{
-		foreach ( var prop in _nextImpactTime.Keys.Where( x => !x.IsValid() || Time.Now >= _nextImpactTime[x] ).ToArray() )
-			_nextImpactTime.Remove( prop );
+		// Dictionary allows Remove while enumerating
+		foreach ( var (prop, nextTime) in _nextImpactTime )
+		{
+			if ( !prop.IsValid() || Time.Now >= nextTime )
+				_nextImpactTime.Remove( prop );
+		}
 
 		foreach ( var (prop, impact) in _pending )
 		{
