@@ -72,7 +72,11 @@
 		currentMode?.DrawHud( painter, crosshair );
 	}
 
-	public ToolMode GetCurrentMode() => GetComponents<ToolMode>( true ).FirstOrDefault( x => x.Enabled );
+	public ToolMode GetCurrentMode()
+	{
+		if ( GameObject.IsDestroyed ) return null;
+		return Components.FirstOrDefault( x => x is ToolMode { Enabled: true } ) as ToolMode;
+	}
 
 	public T GetMode<T>() where T : ToolMode
 	{
