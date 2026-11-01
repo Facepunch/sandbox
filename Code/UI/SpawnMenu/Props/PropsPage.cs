@@ -20,19 +20,25 @@ public class PropsPage : SpawnlistsPage
 			} );
 		}
 
-		// ready-made building pieces live in a spawnlist kept out of the sidebar, shown here instead
-		var robotics = ResourceLibrary.Get<SpawnlistResource>( "spawnlists/sandbox/robotics.spawn" );
-		if ( robotics is not null )
+		// ready-made building pieces live in spawnlists kept out of the sidebar, shown here instead
+		AddBuildingSet( builder, "robotics", "spawnlists/sandbox/robotics.spawn" );
+		AddBuildingSet( builder, "steel_structures", "spawnlists/sandbox/steel_structures.spawn" );
+	}
+
+	void AddBuildingSet( SpawnMenuOption builder, string key, string path )
+	{
+		var list = ResourceLibrary.Get<SpawnlistResource>( path );
+		if ( list is null )
+			return;
+
+		AddOption( builder, new SpawnMenuOption
 		{
-			AddOption( builder, new SpawnMenuOption
-			{
-				Name = robotics.DisplayName,
-				Key = "builder/robotics",
-				Icon = robotics.Icon,
-				Tokenize = false,
-				PanelCreator = () => new SpawnlistView { Resource = robotics }
-			} );
-		}
+			Name = list.DisplayName,
+			Key = $"builder/{key}",
+			Icon = list.Icon,
+			Tokenize = false,
+			PanelCreator = () => new SpawnlistView { Resource = list }
+		} );
 	}
 
 	protected override void Rebuild()

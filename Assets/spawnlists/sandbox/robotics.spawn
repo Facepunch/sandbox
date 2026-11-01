@@ -1,0 +1,733 @@
+{
+  "Title": "Robotics",
+  "Description": "",
+  "Icon": "precision_manufacturing",
+  "RequiredMount": null,
+  "Parent": null,
+  "Order": 0,
+  "HideInSidebar": true,
+  "Items": [
+    {
+      "Kind": "Title",
+      "Ident": null,
+      "Title": "Normal",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/a1.vmdl",
+      "Title": "a1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/a2.vmdl",
+      "Title": "a2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/a3.vmdl",
+      "Title": "a3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/a4.vmdl",
+      "Title": "a4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/b1.vmdl",
+      "Title": "b1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/b2.vmdl",
+      "Title": "b2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/b3.vmdl",
+      "Title": "b3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/b4.vmdl",
+      "Title": "b4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/c1.vmdl",
+      "Title": "c1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/c2.vmdl",
+      "Title": "c2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/c3.vmdl",
+      "Title": "c3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/c4.vmdl",
+      "Title": "c4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/claw.vmdl",
+      "Title": "claw",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/claw_guide.vmdl",
+      "Title": "claw_guide",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/claw_guide2.vmdl",
+      "Title": "claw_guide2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/claw_guide2a.vmdl",
+      "Title": "claw_guide2a",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/claw_guide2l.vmdl",
+      "Title": "claw_guide2l",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/claw_guide2la.vmdl",
+      "Title": "claw_guide2la",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/clawl.vmdl",
+      "Title": "clawl",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/d1.vmdl",
+      "Title": "d1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/d2.vmdl",
+      "Title": "d2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/d3.vmdl",
+      "Title": "d3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/d4.vmdl",
+      "Title": "d4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/e1.vmdl",
+      "Title": "e1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/e2.vmdl",
+      "Title": "e2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/e3.vmdl",
+      "Title": "e3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/e4.vmdl",
+      "Title": "e4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/f1.vmdl",
+      "Title": "f1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/f2.vmdl",
+      "Title": "f2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/f3.vmdl",
+      "Title": "f3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/foot.vmdl",
+      "Title": "foot",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/g1.vmdl",
+      "Title": "g1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/g2.vmdl",
+      "Title": "g2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/g3.vmdl",
+      "Title": "g3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/g4.vmdl",
+      "Title": "g4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/h1.vmdl",
+      "Title": "h1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/h2.vmdl",
+      "Title": "h2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/h3.vmdl",
+      "Title": "h3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/h4.vmdl",
+      "Title": "h4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/i1.vmdl",
+      "Title": "i1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/i2.vmdl",
+      "Title": "i2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/i3.vmdl",
+      "Title": "i3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/i4.vmdl",
+      "Title": "i4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/j1.vmdl",
+      "Title": "j1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/j2.vmdl",
+      "Title": "j2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/j3.vmdl",
+      "Title": "j3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/j4.vmdl",
+      "Title": "j4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/k1.vmdl",
+      "Title": "k1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/k2.vmdl",
+      "Title": "k2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/k3.vmdl",
+      "Title": "k3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/k4.vmdl",
+      "Title": "k4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/l1.vmdl",
+      "Title": "l1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/l2.vmdl",
+      "Title": "l2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/l3.vmdl",
+      "Title": "l3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/l4.vmdl",
+      "Title": "l4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/m3.vmdl",
+      "Title": "m3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/m4.vmdl",
+      "Title": "m4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/stand.vmdl",
+      "Title": "stand",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/xfoot.vmdl",
+      "Title": "xfoot",
+      "Icon": null
+    },
+    {
+      "Kind": "Title",
+      "Ident": null,
+      "Title": "Large",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/a1_large.vmdl",
+      "Title": "a1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/a2_large.vmdl",
+      "Title": "a2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/a3_large.vmdl",
+      "Title": "a3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/a4_large.vmdl",
+      "Title": "a4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/b1_large.vmdl",
+      "Title": "b1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/b2_large.vmdl",
+      "Title": "b2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/b3_large.vmdl",
+      "Title": "b3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/b4_large.vmdl",
+      "Title": "b4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/c1_large.vmdl",
+      "Title": "c1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/c2_large.vmdl",
+      "Title": "c2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/c3_large.vmdl",
+      "Title": "c3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/c4_large.vmdl",
+      "Title": "c4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/claw_large.vmdl",
+      "Title": "claw",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/claw_guide_large.vmdl",
+      "Title": "claw_guide",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/claw_guide2_large.vmdl",
+      "Title": "claw_guide2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/claw_guide2a_large.vmdl",
+      "Title": "claw_guide2a",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/claw_guide2l_large.vmdl",
+      "Title": "claw_guide2l",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/claw_guide2la_large.vmdl",
+      "Title": "claw_guide2la",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/clawl_large.vmdl",
+      "Title": "clawl",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/d1_large.vmdl",
+      "Title": "d1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/d2_large.vmdl",
+      "Title": "d2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/d3_large.vmdl",
+      "Title": "d3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/d4_large.vmdl",
+      "Title": "d4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/e1_large.vmdl",
+      "Title": "e1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/e2_large.vmdl",
+      "Title": "e2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/e3_large.vmdl",
+      "Title": "e3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/e4_large.vmdl",
+      "Title": "e4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/f1_large.vmdl",
+      "Title": "f1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/f2_large.vmdl",
+      "Title": "f2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/f3_large.vmdl",
+      "Title": "f3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/foot_large.vmdl",
+      "Title": "foot",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/g1_large.vmdl",
+      "Title": "g1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/g2_large.vmdl",
+      "Title": "g2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/g3_large.vmdl",
+      "Title": "g3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/g4_large.vmdl",
+      "Title": "g4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/h1_large.vmdl",
+      "Title": "h1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/h2_large.vmdl",
+      "Title": "h2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/h3_large.vmdl",
+      "Title": "h3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/h4_large.vmdl",
+      "Title": "h4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/i1_large.vmdl",
+      "Title": "i1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/i2_large.vmdl",
+      "Title": "i2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/i3_large.vmdl",
+      "Title": "i3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/i4_large.vmdl",
+      "Title": "i4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/j1_large.vmdl",
+      "Title": "j1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/j2_large.vmdl",
+      "Title": "j2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/j3_large.vmdl",
+      "Title": "j3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/j4_large.vmdl",
+      "Title": "j4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/k1_large.vmdl",
+      "Title": "k1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/k2_large.vmdl",
+      "Title": "k2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/k3_large.vmdl",
+      "Title": "k3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/k4_large.vmdl",
+      "Title": "k4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/l1_large.vmdl",
+      "Title": "l1",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/l2_large.vmdl",
+      "Title": "l2",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/l3_large.vmdl",
+      "Title": "l3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/l4_large.vmdl",
+      "Title": "l4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/m3_large.vmdl",
+      "Title": "m3",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/m4_large.vmdl",
+      "Title": "m4",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/stand_large.vmdl",
+      "Title": "stand",
+      "Icon": null
+    },
+    {
+      "Kind": "Item",
+      "Ident": "prop:models/construction/robotics/xfoot_large.vmdl",
+      "Title": "xfoot",
+      "Icon": null
+    }
+  ],
+  "__references": [],
+  "__version": 0
+}
