@@ -8,13 +8,13 @@ Layer0
 	g_bFogEnabled "1"
 
 	//---- Material ----
-	DetailIntensity "0.500"
+	DetailIntensity "0.425"
 	DetailScale "0.850"
 	MetalnessScale "1.000"
-	RoughnessScale "0.880"
+	RoughnessScale "1.000"
 	TextureAmbientOcclusion "materials/default/default_ao.tga"
 	TextureColor "materials/construction/steel/metal_rough_basecolor.png"
-	TextureMetalness "[1.000000 1.000000 1.000000 0.000000]"
+	TextureMetalness "[0.898000 0.898000 0.898000 0.000000]"
 	TextureNormal "materials/construction/steel/metal_rough_normal.png"
 	TextureNormalDetail "materials/construction/robotics/robotics_hs_detail.png"
 	TextureRoughness "materials/construction/steel/metal_rough_roughness.png"
