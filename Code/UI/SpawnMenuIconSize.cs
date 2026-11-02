@@ -71,9 +71,12 @@ public static class SpawnMenuIconSizeExtensions
 	/// <summary>
 	/// Open the menu that picks a tile size, under the mouse.
 	/// </summary>
-	public static void OpenMenu( Panel source, Action<SpawnMenuIconSize> onPicked )
+	public static void OpenMenu( Panel source, Action<SpawnMenuIconSize> onPicked, Action onListPicked = null )
 	{
 		var menu = new Sandbox.UI.Menu();
+		if ( onListPicked is not null )
+			menu.AddOption( "#ui.icon_size.list", "view_list", onListPicked );
+
 		foreach ( var (size, info) in DisplayInfo.ForEnumValues<SpawnMenuIconSize>() )
 		{
 			var s = size;

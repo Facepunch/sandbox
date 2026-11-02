@@ -4,7 +4,7 @@
 @inherits BasePopup
 @implements IKeepsMenuOpen
 
-<root class="popup">
+<root class="popup @(IsSoundSelection ? "sound-selection" : "")">
 
     <div class="inner" onclick:preventDefault=@true>
 
@@ -12,7 +12,7 @@
             <div class="popup-header">
                 <h2>@Title</h2>
                 <TextEntry class="search" Placeholder="#spawnmenu.common.search" Value:bind=@Search HasClearButton></TextEntry>
-                <UIButton class="size-button" Icon=@IconSize.Icon() Tooltip="#ui.icon_size.title" @onclick=@(() => SpawnMenuIconSizeExtensions.OpenMenu( this, size => IconSize = size )) />
+                <UIButton class="size-button" Icon=@(ListView ? "view_list" : IconSize.Icon()) Tooltip="#ui.icon_size.title" @onclick=@OpenSizeMenu />
                 @if (AllowPackages)
                 {
                     <UIDropdown class="sort-dropdown" Items=@SortItems Value=@SortMode
@@ -26,9 +26,10 @@
             }
             else
             {
-            <MixedVirtualGrid @ref=Grid Items=@(_filteredItems) ItemSize=@ItemSize class="grid @IconSize.CssClass()">
+            <MixedVirtualGrid @ref=Grid Items=@(_filteredItems) ItemSize=@ItemSize class="grid @(ListView ? "list-view" : IconSize.CssClass())">
                 <Item Context="item">
-                    @if (item is Resource res)
+                    @{ var value = item is ListEntry row ? row.Value : item; }
+                    @if (value is Resource res)
                     {
                         bool selected = res.ResourcePath.Equals(_pendingValue ?? CurrentValue, StringComparison.OrdinalIgnoreCase);
                         string itemClass = selected ? "item active" : "item";
@@ -47,20 +48,22 @@
                                 <div class="icon" style="background-image: url( @thumbUrl )"></div>
                             }
 
-                            @if ( res is IDefinitionResource definitionResource )
-                            {
-                                <div class="title">@definitionResource.Title</div>
-                                <div class="desc">@definitionResource.Description</div>
-                            }
-                            else
-                            {
-                                <div class="title">@res.ResourceName</div>
-                                <div class="desc"></div>
-                            }
+                            <div class="details">
+                                @if ( res is IDefinitionResource definitionResource )
+                                {
+                                    <div class="title">@definitionResource.Title</div>
+                                    <div class="desc">@definitionResource.Description</div>
+                                }
+                                else
+                                {
+                                    <div class="title">@res.ResourceName</div>
+                                    <div class="desc">@(ListView ? res.ResourcePath : "")</div>
+                                }
+                            </div>
 
                         </div>
                     }
-                    else if ( item is Package pkg )
+                    else if ( value is Package pkg )
                     {
                         bool selected = pkg.FullIdent.Equals(_pendingValue ?? CurrentValue, StringComparison.OrdinalIgnoreCase);
                         string itemClass = selected ? "item active" : "item";
@@ -68,8 +71,10 @@
                         <div @key=@pkg.FullIdent class="@itemClass" Tooltip=@SmallTooltip( pkg.Title ) @onclick=@(() => OnPackageClicked(pkg)) @ondoubleclick=@(() => ConfirmItem(pkg.FullIdent, () => OnPackageClicked(pkg)))>
 
                             <div class="icon" style="background-image: url( @pkg.Thumb )"></div>
-                            <div class="title">@pkg.Title</div>
-                            <div class="desc">@pkg.Org.Title</div>
+                            <div class="details">
+                                <div class="title">@pkg.Title</div>
+                                <div class="desc">@pkg.Org.Title</div>
+                            </div>
 
                         </div>
                     }
@@ -103,6 +108,32 @@
     public bool AllowPackages { get; set; }
     public Action<string> OnSelectedFile;
 
+    bool IsSoundSelection => string.Equals( Extension?.TrimStart( '.' ), "sound", StringComparison.OrdinalIgnoreCase );
+    bool? _listView;
+    public bool ListView
+    {
+        get => _listView ?? IsSoundSelection;
+        set
+        {
+            if ( ListView == value ) return;
+            _listView = value;
+            RebuildFilteredItems();
+            if ( Grid.IsValid() )
+            {
+                Grid.ScrollOffset = Vector2.Zero;
+                Grid.RecreateCells();
+            }
+            StateHasChanged();
+        }
+    }
+
+    // Full-width rows retain the same virtualization and click/preview handlers as tiles.
+    sealed record ListEntry( object Value ) : IMixedVirtualGridFullRow
+    {
+        public bool IsFullRow => true;
+        public float Height => 48f;
+    }
+
     /// <summary>
     /// Opens a picker over the menu <paramref name="source"/> is in.
     /// </summary>
@@ -135,6 +166,15 @@
     MixedVirtualGrid Grid;
     SpawnMenuIconSize _iconSize = Game.Cookies.Get( IconSizeCookie, SpawnMenuIconSize.Medium );
 
+    void OpenSizeMenu()
+    {
+        SpawnMenuIconSizeExtensions.OpenMenu( this, size =>
+        {
+            IconSize = size;
+            ListView = false;
+        }, onListPicked: () => ListView = true );
+    }
+
     /// <summary>
     /// Tile size, kept apart from the spawn menu's since these tiles also show a description.
     /// </summary>
@@ -163,7 +203,7 @@
     };
 
     // Small tiles drop the title, so it moves into a tooltip
-    string SmallTooltip( string title ) => IconSize == SpawnMenuIconSize.Small ? title : "";
+    string SmallTooltip( string title ) => ListView || IconSize == SpawnMenuIconSize.Small ? title : "";
 
     string DefaultTitle()
     {
@@ -199,6 +239,14 @@
         {
             _ = LoadCloudPackages();
         }
+    }
+
+    public override void OnHotloaded()
+    {
+        base.OnHotloaded();
+        RebuildFilteredItems();
+        if ( Grid.IsValid() ) Grid.RecreateCells();
+        StateHasChanged();
     }
 
     string _search = "";
@@ -265,7 +313,7 @@
 
         // until the workshop answers the new search, narrow the old results down by name
         items.AddRange( _cloudSearch == _search.Trim() ? _cloudPackages : _cloudPackages.Where( MatchesSearch ) );
-        _filteredItems = items;
+        _filteredItems = ListView ? items.Select( x => (object)new ListEntry( x ) ).ToList() : items;
     }
 
     int _loadId;

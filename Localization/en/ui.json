@@ -18,6 +18,7 @@
     "ui.inventory.new_preset_title": "New Inventory Preset",
     "ui.inventory.preset_name_placeholder": "Enter a name...",
     "ui.icon_size.title": "Icon size",
+    "ui.icon_size.list": "List",
     "ui.icon_size.compact": "Compact",
     "ui.icon_size.small": "Small",
     "ui.icon_size.medium": "Medium",

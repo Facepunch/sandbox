@@ -117,6 +117,13 @@ ResourceSelectPopup.popup .inner .grid .item
         opacity: 1;
     }
 
+    .details
+    {
+        flex-direction: column;
+        flex-shrink: 0;
+        min-width: 0px;
+    }
+
     .title
     {
         font-weight: 700;
@@ -146,15 +153,41 @@ ResourceSelectPopup.popup .inner .grid .item
         sound-in: ui.hover;
     }
 
-    &:active
-    {
-        sound-in: ui.select;
-    }
-
     &.active
     {
         background-color: $ui-hover-fill;
         border-color: $ui-blue;
+    }
+}
+
+// Auditioning a sound should not layer the normal selection click over its preview.
+ResourceSelectPopup.popup:not(.sound-selection) .inner .grid .item:active
+{
+    sound-in: ui.select;
+}
+
+ResourceSelectPopup.popup .inner .grid.list-view
+{
+    gap: 3px;
+
+    .item
+    {
+        flex-direction: row;
+        align-items: center;
+        padding: 6px 10px;
+        gap: 10px;
+
+        .icon
+        {
+            width: 32px;
+            height: 32px;
+            flex-grow: 0;
+            flex-shrink: 0;
+            margin-bottom: 0px;
+        }
+
+        .sound-icon i { font-size: 22px; }
+        .details { flex-grow: 1; flex-shrink: 1; }
     }
 }
 
