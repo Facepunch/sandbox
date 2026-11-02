@@ -164,6 +164,8 @@
 		model_archetype = ""
 		primary_associated_entity = ""
 		anim_graph_name = ""
+		animation_graph_name = ""
+		skeleton_name = ""
 		base_model_name = ""
 	}
 }
