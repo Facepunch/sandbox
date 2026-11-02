@@ -158,6 +158,17 @@ SignalsOverlay
 							overflow: hidden;
 						}
 
+						.option-subtitle
+						{
+							font-size: 11px;
+							font-weight: 500;
+							color: inherit;
+							opacity: 0.7;
+							white-space: nowrap;
+							text-overflow: ellipsis;
+							overflow: hidden;
+						}
+
 						.option-description
 						{
 							margin-top: 2px;

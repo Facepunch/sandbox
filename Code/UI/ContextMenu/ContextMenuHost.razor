@@ -143,6 +143,22 @@
                 _handles[component] = panel;
             }
         }
+
+        // things with nothing to click on in the world, like hidden speakers, get an icon instead
+        foreach ( var component in InspectHandles.GetVisible( Scene ) )
+        {
+            if ( _handles.TryGetValue( component, out var existing ) && existing.IsValid() )
+                continue;
+
+            if ( component.WorldPosition.Distance( Scene.Camera.WorldPosition ) > ComponentHandle.MaxDistance )
+                continue;
+
+            _handles[component] = new ComponentHandle( this, component, Inspector );
+        }
+
+        // forget handles that have gone
+        foreach ( var key in _handles.Where( x => !x.Value.IsValid() ).Select( x => x.Key ).ToList() )
+            _handles.Remove( key );
     }
 
     bool ShouldCreateHandle(Component component)
