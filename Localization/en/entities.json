@@ -88,7 +88,7 @@
     "entity.name.seat": "Seat",
     "entity.signal.speaker_trigger": "Trigger",
     "entity.signal.speaker_start": "Start",
-    "entity.signal.speaker_stop": "Stop",
+    "entity.signal.speaker_stop": "Stop Sounds",
     "entity.name.spawner": "Spawner",
     "entity.property.entity": "Entity",
     "entity.description.entity": "The entity to spawn.",

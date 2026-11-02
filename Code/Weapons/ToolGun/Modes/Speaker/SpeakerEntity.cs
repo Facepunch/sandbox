@@ -105,6 +105,9 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 	private bool _keyOn;
 	private bool _wireOn;
 	private bool _wireDown;
+	private bool _keyDown;
+	private bool _keyStopped;
+	private bool _wireStopped;
 
 	// client state
 	private SoundHandle _loop;
@@ -122,6 +125,7 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 		InspectHandles.Unregister( this );
 
 		_keyOn = _wireOn = _wireDown = false;
+		_keyDown = _keyStopped = _wireStopped = false;
 		if ( !IsProxy ) IsOn = false;
 
 		StopLoop( 0f );
@@ -151,6 +155,8 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 	{
 		var pressed = down && !_wireDown;
 		_wireDown = down;
+		if ( !down ) _wireStopped = false;
+		if ( _wireStopped ) return;
 
 		switch ( Mode )
 		{
@@ -167,21 +173,16 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 	}
 
 	/// <summary>
-	/// Plays the sound once in one-shot mode, otherwise turns it on.
-	/// </summary>
-	[SignalInput( Name = "#entity.signal.speaker_start" )]
-	public void StartSound()
-	{
-		if ( Mode == SpeakerMode.OneShot ) PlayOnce();
-		else SetWireOn( true );
-	}
-
-	/// <summary>
-	/// Stops whatever is playing, however it was started.
+	/// Stops all playback and clears held/toggled state. Inputs already held must
+	/// be released before they can start playback again.
 	/// </summary>
 	[SignalInput( Name = "#entity.signal.speaker_stop" )]
 	public void StopSound()
 	{
+		if ( IsProxy ) return;
+
+		_keyStopped = _keyDown;
+		_wireStopped = _wireDown;
 		_keyOn = false;
 		_wireOn = false;
 		UpdateOn();
@@ -197,6 +198,10 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 	/// </summary>
 	public void OnControl()
 	{
+		_keyDown = Key.Down();
+		if ( !_keyDown ) _keyStopped = false;
+		if ( _keyStopped ) return;
+
 		switch ( Mode )
 		{
 			case SpeakerMode.OneShot:
@@ -206,15 +211,18 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 				if ( Key.Pressed() ) SetKeyOn( !_keyOn );
 				break;
 			case SpeakerMode.Hold:
-				SetKeyOn( Key.Down() );
+				SetKeyOn( _keyDown );
 				break;
 		}
 	}
 
 	void Global.IControlEvents.OnControlStopped( ControlEvent e )
 	{
+		if ( !IsPartOf( e.Target ) ) return;
+		_keyDown = _keyStopped = false;
+
 		// OnControl stops being called once they're out, so nothing would ever let go of a held key
-		if ( Mode != SpeakerMode.Hold || !_keyOn || !IsPartOf( e.Target ) ) return;
+		if ( Mode != SpeakerMode.Hold || !_keyOn ) return;
 
 		SetKeyOn( false );
 	}
@@ -294,8 +302,9 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 	[Rpc.Broadcast( NetFlags.HostOnly )]
 	private void StopAll()
 	{
-		StopOneShot( FadeTime );
-		StopLoop( FadeTime );
+		StopOneShot( 0f );
+		StopLoop( 0f );
+		_playedThisTime = false;
 	}
 
 	private SoundHandle PlayAttached( SoundEvent sound )
