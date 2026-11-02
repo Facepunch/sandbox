@@ -27,6 +27,14 @@ public sealed class SpeakerTool : ToolMode
 	[Property, Title( "#entity.property.mode" ), Description( "#entity.description.speaker_mode" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public SpeakerMode Mode { get; set; } = SpeakerMode.OneShot;
 
+	[Property, ShowIf( nameof( Mode ), SpeakerMode.OneShot ), Title( "#entity.property.speaker_retrigger" ), Description( "#entity.description.speaker_retrigger" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public SpeakerRetrigger Retrigger { get; set; } = SpeakerRetrigger.Restart;
+
+	public bool ShowOverlapLimit => Mode == SpeakerMode.OneShot && Retrigger == SpeakerRetrigger.Overlap;
+
+	[Property, ShowIf( nameof( ShowOverlapLimit ), true ), Range( 1, 16 ), Title( "#entity.property.speaker_max_voices" ), Description( "#entity.description.speaker_max_voices" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public int MaxVoices { get; set; } = 8;
+
 	[Property, Range( 0, 1 ), Title( "#entity.property.volume" ), Description( "#entity.description.speaker_volume" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Volume { get; set; } = 1f;
 

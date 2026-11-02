@@ -29,8 +29,8 @@ public enum SpeakerMode
 /// Plays a sound when told to: by a key from a linked seat, or by a wire - a button, a seat's Entered/Exited/Occupied
 /// (see <see cref="SeatSignals"/>), logic, anything with an output.
 ///
-/// All of the deciding happens on the host. Clients only hear the result: <see cref="IsOn"/> for held and toggled
-/// sounds, a broadcast for one-shots.
+/// The host decides input state: <see cref="IsOn"/> for held and toggled sounds, broadcasts for one-shots.
+/// Each client manages its audible voices and one-shot queue using the policy sent with each trigger.
 /// </summary>
 [Alias( "speaker" ), Title( "#entity.name.speaker" ), Icon( "volume_up" )]
 public sealed class SpeakerEntity : Component, IPlayerControllable, Global.IControlEvents, IInspectHandle, ISignalDisplayName
@@ -72,6 +72,14 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 	/// </summary>
 	[Property, ClientEditable, Title( "#entity.property.mode" ), Description( "#entity.description.speaker_mode" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public SpeakerMode Mode { get; set; } = SpeakerMode.OneShot;
+
+	[Property, ClientEditable, ShowIf( nameof( Mode ), SpeakerMode.OneShot ), Title( "#entity.property.speaker_retrigger" ), Description( "#entity.description.speaker_retrigger" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public SpeakerRetrigger Retrigger { get; set; } = SpeakerRetrigger.Restart;
+
+	public bool ShowOverlapLimit => Mode == SpeakerMode.OneShot && Retrigger == SpeakerRetrigger.Overlap;
+
+	[Property, ClientEditable, ShowIf( nameof( ShowOverlapLimit ), true ), Range( 1, 16 ), Title( "#entity.property.speaker_max_voices" ), Description( "#entity.description.speaker_max_voices" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
+	public int MaxVoices { get; set; } = 8;
 
 	/// <summary>
 	/// 0 to 1. Can be wired, e.g. to a throttle.
@@ -119,7 +127,9 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 	private SoundHandle _loop;
 	private SoundEvent _loopSound;
 	private bool _playedThisTime;
-	private SoundHandle _oneShot;
+	private readonly List<SoundHandle> _oneShots = new();
+	private readonly Queue<SoundEvent> _queuedSounds = new();
+	private const int MaxQueuedSounds = 32;
 	private readonly SpeakerAttenuation _attenuation = new();
 
 	protected override void OnEnabled()
@@ -136,14 +146,14 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 		if ( !IsProxy ) IsOn = false;
 
 		StopLoop( 0f );
-		StopOneShot( 0f );
+		StopOneShots( 0f );
 	}
 
 	protected override void OnDestroy()
 	{
 		InspectHandles.Unregister( this );
 		StopLoop( 0f );
-		StopOneShot( 0f );
+		StopOneShots( 0f );
 	}
 
 	/// <summary>
@@ -168,7 +178,7 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 		switch ( Mode )
 		{
 			case SpeakerMode.OneShot:
-				if ( pressed ) PlayOnce();
+				if ( pressed ) PlayOnce( Sound, Retrigger, MaxVoices );
 				break;
 			case SpeakerMode.Toggle:
 				if ( pressed ) SetWireOn( !_wireOn );
@@ -212,7 +222,7 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 		switch ( Mode )
 		{
 			case SpeakerMode.OneShot:
-				if ( Key.Pressed() ) PlayOnce();
+				if ( Key.Pressed() ) PlayOnce( Sound, Retrigger, MaxVoices );
 				break;
 			case SpeakerMode.Toggle:
 				if ( Key.Pressed() ) SetKeyOn( !_keyOn );
@@ -287,26 +297,48 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 	#region Playback
 
 	/// <summary>
-	/// Play the sound once, for everyone.
+	/// Request a one-shot for everyone. Capture the sound and policy on the host so
+	/// property replication timing cannot change which settings a trigger uses.
 	/// </summary>
 	[Rpc.Broadcast( NetFlags.HostOnly )]
-	private void PlayOnce()
+	private void PlayOnce( string soundPath, SpeakerRetrigger retrigger, int maxVoices )
 	{
+		if ( !Active ) return;
+		RemoveFinishedOneShots();
+
 		// a workshop sound that hasn't finished downloading yet is skipped - OnUpdate preloads it, so this is rare
-		var sound = SoundResolver.Get( Sound );
+		var sound = SoundResolver.Get( soundPath );
 		if ( sound is null ) return;
 
-		var handle = PlayAttached( sound );
-		if ( !handle.IsValid() ) return;
+		switch ( retrigger )
+		{
+			case SpeakerRetrigger.IgnoreWhilePlaying:
+				if ( _oneShots.Count > 0 || _queuedSounds.Count > 0 ) return;
+				break;
+			case SpeakerRetrigger.Overlap:
+				// Switching away from Queue must not leave delayed surprises behind.
+				_queuedSounds.Clear();
+				TrimOneShots( maxVoices.Clamp( 1, 16 ) - 1 );
+				break;
+			case SpeakerRetrigger.Queue:
+				if ( _oneShots.Count > 0 || _queuedSounds.Count > 0 )
+				{
+					if ( _queuedSounds.Count < MaxQueuedSounds ) _queuedSounds.Enqueue( sound );
+					return;
+				}
+				break;
+			default:
+				StopOneShots( 0f );
+				break;
+		}
 
-		StopOneShot( 0f );
-		_oneShot = handle;
+		StartOneShot( sound );
 	}
 
 	[Rpc.Broadcast( NetFlags.HostOnly )]
 	private void StopAll()
 	{
-		StopOneShot( 0f );
+		StopOneShots( 0f );
 		StopLoop( 0f );
 		_playedThisTime = false;
 	}
@@ -372,17 +404,18 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 			ApplyPlaybackSettings( _loop );
 		}
 
-		if ( _oneShot.IsValid() )
+		if ( Mode != SpeakerMode.OneShot )
 		{
-			if ( _oneShot.IsStopped )
-			{
-				_oneShot = null;
-			}
-			else
-			{
-				ApplyPlaybackSettings( _oneShot );
-			}
+			StopOneShots( 0f );
+			return;
 		}
+
+		RemoveFinishedOneShots();
+		if ( Retrigger == SpeakerRetrigger.Overlap ) TrimOneShots( MaxVoices.Clamp( 1, 16 ) );
+		if ( _oneShots.Count == 0 && _queuedSounds.Count > 0 )
+			StartOneShot( _queuedSounds.Dequeue() );
+
+		foreach ( var handle in _oneShots ) ApplyPlaybackSettings( handle );
 	}
 
 	private void StopLoop( float fade )
@@ -394,12 +427,34 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 		_loopSound = null;
 	}
 
-	private void StopOneShot( float fade )
+	private void StartOneShot( SoundEvent sound )
 	{
-		if ( _oneShot.IsValid() )
-			_oneShot.Stop( fade );
+		var handle = PlayAttached( sound );
+		if ( handle.IsValid() && !handle.IsStopped ) _oneShots.Add( handle );
+	}
 
-		_oneShot = null;
+	private void RemoveFinishedOneShots()
+	{
+		_oneShots.RemoveAll( handle => !handle.IsValid() || handle.IsStopped );
+	}
+
+	private void TrimOneShots( int limit )
+	{
+		while ( _oneShots.Count > limit )
+		{
+			_oneShots[0]?.Stop( 0f );
+			_oneShots.RemoveAt( 0 );
+		}
+	}
+
+	private void StopOneShots( float fade )
+	{
+		foreach ( var handle in _oneShots )
+		{
+			if ( handle.IsValid() ) handle.Stop( fade );
+		}
+		_oneShots.Clear();
+		_queuedSounds.Clear();
 	}
 
 	#endregion
