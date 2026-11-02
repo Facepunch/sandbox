@@ -124,6 +124,26 @@ ResourceSelectPopup.popup .inner .grid .item
         min-width: 0px;
     }
 
+    .preview-status
+    {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        border-radius: 3px;
+        background-color: $ui-row-alt;
+        color: $ui-blue;
+
+        IconPanel { font-size: 18px; }
+        &.loading IconPanel { animation: sound-preview-spin 1s linear infinite; }
+        &.playing { color: #76d795; }
+        &.failed { color: #efbb65; }
+    }
+
     .title
     {
         font-weight: 700;
@@ -188,7 +208,14 @@ ResourceSelectPopup.popup .inner .grid.list-view
 
         .sound-icon i { font-size: 22px; }
         .details { flex-grow: 1; flex-shrink: 1; }
+        .preview-status { position: relative; top: 0px; right: 0px; }
     }
+}
+
+@keyframes sound-preview-spin
+{
+    from { transform: rotate( 0deg ); }
+    to { transform: rotate( 360deg ); }
 }
 
 // icon only, the title is in the tooltip

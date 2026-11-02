@@ -35,6 +35,7 @@
                         string itemClass = selected ? "item active" : "item";
                         string thumbUrl = $"thumb:{res.ResourcePath}";
                         string name = res is IDefinitionResource def ? def.Title : res.ResourceName;
+                        var previewState = PreviewStateFor( res.ResourcePath );
 
                         <div @key=@res.ResourcePath class="@itemClass" Tooltip=@SmallTooltip( name ) @onclick=@(() => OnItemClicked(res)) @ondoubleclick=@(() => ConfirmItem(res.ResourcePath, () => OnItemClicked(res)))>
 
@@ -61,12 +62,19 @@
                                 }
                             </div>
 
+                            @if ( previewState != SoundPreviewState.None )
+                            {
+                                <div class="preview-status @previewState.ToString().ToLowerInvariant()" Tooltip=@PreviewTooltip(previewState)>
+                                    <IconPanel Text=@PreviewIcon(previewState) />
+                                </div>
+                            }
                         </div>
                     }
                     else if ( value is Package pkg )
                     {
                         bool selected = pkg.FullIdent.Equals(_pendingValue ?? CurrentValue, StringComparison.OrdinalIgnoreCase);
                         string itemClass = selected ? "item active" : "item";
+                        var previewState = PreviewStateFor( pkg.FullIdent );
 
                         <div @key=@pkg.FullIdent class="@itemClass" Tooltip=@SmallTooltip( pkg.Title ) @onclick=@(() => OnPackageClicked(pkg)) @ondoubleclick=@(() => ConfirmItem(pkg.FullIdent, () => OnPackageClicked(pkg)))>
 
@@ -76,6 +84,12 @@
                                 <div class="desc">@pkg.Org.Title</div>
                             </div>
 
+                            @if ( previewState != SoundPreviewState.None )
+                            {
+                                <div class="preview-status @previewState.ToString().ToLowerInvariant()" Tooltip=@PreviewTooltip(previewState)>
+                                    <IconPanel Text=@PreviewIcon(previewState) />
+                                </div>
+                            }
                         </div>
                     }
                 </Item>
@@ -277,6 +291,12 @@
     {
         base.Tick();
 
+        if ( _previewState == SoundPreviewState.Playing && (!_previewSound.IsValid() || _previewSound.IsStopped) )
+        {
+            _previewSound = null;
+            SetPreviewState( null, SoundPreviewState.None );
+        }
+
         if ( !_searchDirty || _lastSearchEdit < 0.4f ) return;
 
         _searchDirty = false;
@@ -391,7 +411,7 @@
         }
         else if ( gameRes is SoundEvent sound )
         {
-            _previewSound = Sound.Play( sound );
+            StartSoundPreview( res.ResourcePath, sound );
         }
 
         StateHasChanged();
@@ -403,7 +423,7 @@
 
         _pendingValue = pkg.FullIdent;
 
-        if ( string.Equals( Extension, "sound", StringComparison.OrdinalIgnoreCase ) )
+        if ( IsSoundSelection )
             _ = PreviewCloudSound( pkg.FullIdent );
 
         StateHasChanged();
@@ -412,6 +432,49 @@
     // sound previews: the one playing, and which click it belongs to so a slow download can't play over a newer pick
     SoundHandle _previewSound;
     int _previewId;
+    string _previewValue;
+    SoundPreviewState _previewState;
+
+    enum SoundPreviewState { None, Loading, Playing, Failed }
+
+    SoundPreviewState PreviewStateFor( string value ) =>
+        string.Equals( value, _previewValue, StringComparison.OrdinalIgnoreCase ) ? _previewState : SoundPreviewState.None;
+
+    static string PreviewIcon( SoundPreviewState state ) => state switch
+    {
+        SoundPreviewState.Loading => "sync",
+        SoundPreviewState.Playing => "volume_up",
+        _ => "error_outline"
+    };
+
+    static string PreviewTooltip( SoundPreviewState state ) => state switch
+    {
+        SoundPreviewState.Loading => "#ui.sound_preview.loading",
+        SoundPreviewState.Playing => "#ui.sound_preview.playing",
+        _ => "#ui.sound_preview.failed"
+    };
+
+    void SetPreviewState( string value, SoundPreviewState state )
+    {
+        _previewValue = value;
+        _previewState = state;
+        StateHasChanged();
+    }
+
+    void StartSoundPreview( string value, SoundEvent sound )
+    {
+        try
+        {
+            _previewSound = sound is null ? null : Sound.Play( sound );
+            SetPreviewState( value, _previewSound.IsValid() && !_previewSound.IsStopped
+                ? SoundPreviewState.Playing : SoundPreviewState.Failed );
+        }
+        catch ( Exception e )
+        {
+            Log.Warning( $"Couldn't preview sound '{value}': {e.Message}" );
+            SetPreviewState( value, SoundPreviewState.Failed );
+        }
+    }
 
     /// <summary>
     /// Download a workshop sound and play it, so it can be heard before it's picked.
@@ -419,6 +482,7 @@
     async Task PreviewCloudSound( string ident )
     {
         var id = _previewId;
+        SetPreviewState( ident, SoundPreviewState.Loading );
 
         SoundEvent sound = null;
         try
@@ -430,9 +494,9 @@
             Log.Warning( $"Couldn't preview workshop sound '{ident}': {e.Message}" );
         }
 
-        if ( sound is null || id != _previewId || !IsValid ) return;
+        if ( id != _previewId || !IsValid ) return;
 
-        _previewSound = Sound.Play( sound );
+        StartSoundPreview( ident, sound );
     }
 
     // the first click of a double click has usually picked it already
@@ -451,6 +515,8 @@
         if ( _previewSound.IsValid() )
             _previewSound.Stop();
         _previewSound = null;
+        _previewValue = null;
+        _previewState = SoundPreviewState.None;
     }
 
     public override void OnDeleted()
