@@ -85,6 +85,12 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 	[Property, Sync, ClientEditable, SignalInput, Range( 0.25f, 2f ), Title( "#entity.property.pitch" ), Description( "#entity.description.speaker_pitch" ), Group( "#tool.setting.group.behavior" ), Order( 0 )]
 	public float Pitch { get; set; } = 1f;
 
+	[Property, Sync, ClientEditable, Range( SpeakerAttenuation.MinRange, SpeakerAttenuation.MaxRange ), Title( "#entity.property.speaker_range" ), Description( "#entity.description.speaker_range" ), Group( "#tool.setting.group.sound" ), Order( 1 )]
+	public float SoundRange { get; set; } = SpeakerAttenuation.DefaultRange;
+
+	[Property, Sync, ClientEditable, Range( SpeakerAttenuation.MinFalloff, SpeakerAttenuation.MaxFalloff ), Title( "#entity.property.speaker_falloff" ), Description( "#entity.description.speaker_falloff" ), Group( "#tool.setting.group.sound" ), Order( 1 )]
+	public float Falloff { get; set; } = SpeakerAttenuation.DefaultFalloff;
+
 	/// <summary>
 	/// The key that plays the sound for whoever sits in a seat on this contraption.
 	/// </summary>
@@ -114,6 +120,7 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 	private SoundEvent _loopSound;
 	private bool _playedThisTime;
 	private SoundHandle _oneShot;
+	private readonly SpeakerAttenuation _attenuation = new();
 
 	protected override void OnEnabled()
 	{
@@ -292,9 +299,6 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 		var handle = PlayAttached( sound );
 		if ( !handle.IsValid() ) return;
 
-		handle.Volume = Volume;
-		handle.Pitch = Pitch;
-
 		StopOneShot( 0f );
 		_oneShot = handle;
 	}
@@ -314,9 +318,24 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 		{
 			handle.Parent = GameObject;
 			handle.FollowParent = true;
+			// Speakers are world sources, even when the chosen event was authored
+			// for UI/music mixers which bypass distance attenuation.
+			handle.ListenLocal = false;
+			handle.SpacialBlend = 1f;
+			handle.TargetMixer = Sandbox.Audio.Mixer.FindMixerByName( "Game" );
+			ApplyPlaybackSettings( handle );
 		}
 
 		return handle;
+	}
+
+	private void ApplyPlaybackSettings( SoundHandle handle )
+	{
+		handle.Volume = Volume;
+		handle.Pitch = Pitch;
+		handle.DistanceAttenuation = true;
+		handle.Distance = SpeakerAttenuation.ClampRange( SoundRange );
+		handle.Falloff = _attenuation.GetCurve( Falloff );
 	}
 
 	protected override void OnUpdate()
@@ -350,8 +369,7 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 
 		if ( _loop.IsValid() )
 		{
-			_loop.Volume = Volume;
-			_loop.Pitch = Pitch;
+			ApplyPlaybackSettings( _loop );
 		}
 
 		if ( _oneShot.IsValid() )
@@ -362,8 +380,7 @@ public sealed class SpeakerEntity : Component, IPlayerControllable, Global.ICont
 			}
 			else
 			{
-				_oneShot.Volume = Volume;
-				_oneShot.Pitch = Pitch;
+				ApplyPlaybackSettings( _oneShot );
 			}
 		}
 	}

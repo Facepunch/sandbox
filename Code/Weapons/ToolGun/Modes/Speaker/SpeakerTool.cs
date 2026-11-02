@@ -43,6 +43,17 @@ public sealed class SpeakerTool : ToolMode
 	[Property, Title( "#entity.property.looping" ), Description( "#entity.description.speaker_looping" ), Group( "#tool.setting.group.sound" ), Order( 2 )]
 	public bool Looping { get; set; } = false;
 
+	[Property, Range( SpeakerAttenuation.MinRange, SpeakerAttenuation.MaxRange ), Title( "#entity.property.speaker_range" ), Description( "#entity.description.speaker_range" ), Group( "#tool.setting.group.sound" ), Order( 3 )]
+	public float SoundRange { get; set; } = SpeakerAttenuation.DefaultRange;
+
+	[Property, Range( SpeakerAttenuation.MinFalloff, SpeakerAttenuation.MaxFalloff ), Title( "#entity.property.speaker_falloff" ), Description( "#entity.description.speaker_falloff" ), Group( "#tool.setting.group.sound" ), Order( 3 )]
+	public float Falloff { get; set; } = SpeakerAttenuation.DefaultFalloff;
+
+	[Property, Title( "#tool.setting.speaker_range_preview" ), Description( "#tool.setting.speaker_range_preview.description" ), Group( "#tool.setting.group.sound" ), Order( 4 )]
+	public bool ShowRangePreview { get; set; } = true;
+
+	private readonly SpeakerRangePreview _rangePreview = new();
+
 	public override string Description => "#tool.hint.speakertool.description";
 
 	/// <summary>
@@ -90,6 +101,8 @@ public sealed class SpeakerTool : ToolMode
 		if ( !select.IsValid() ) return;
 
 		var tx = GetPlacementTransform( select );
+		if ( ShowRangePreview )
+			_rangePreview.Draw( Scene, tx, SoundRange, Falloff, Volume );
 
 		if ( Hidden )
 		{
