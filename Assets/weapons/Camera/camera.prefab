@@ -130,6 +130,12 @@
         "WorldModelPrefab": {
           "_type": "gameobject",
           "prefab": "weapons/camera/camera_wm.prefab"
+        },
+        "Feed": {
+          "_type": "component",
+          "component_id": "829c84bb-e960-49d8-8535-c6b028c44860",
+          "go": "3c948bf4-5353-443a-bb65-8f28584fed1b",
+          "component_type": "CameraFeed"
         }
       },
       {
@@ -195,6 +201,18 @@
         "RigidbodyFlags": 0,
         "SleepThreshold": 2,
         "StartAsleep": false
+      },
+      {
+        "__type": "CameraFeed",
+        "__guid": "829c84bb-e960-49d8-8535-c6b028c44860",
+        "__enabled": true,
+        "Flags": 0,
+        "Lens": {
+          "_type": "component",
+          "component_id": "939a7d2f-5e9b-4f7e-953a-6b4e87bf8d3b",
+          "go": "667b3807-67cc-49ca-ba4b-3187cccad8a5",
+          "component_type": "CameraComponent"
+        }
       }
     ],
     "Children": [

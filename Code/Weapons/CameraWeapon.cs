@@ -1,8 +1,7 @@
 /// <summary>
-/// A camera weapon that can be held by a player and renders to a render target texture, which can be displayed on a TV.
+/// A handheld camera. CameraFeed provides its video output; this component handles weapon controls.
 /// </summary>
 [Title( "#weapon.name.camera" ), Icon( "videocam" )]
-[SignalOutput( Default = true )] // Linkable as a component reference — a TV's display input takes the camera itself.
 public sealed class CameraWeapon : BaseSandboxWeapon
 {
 	public CameraWeapon()
@@ -18,70 +17,37 @@ public sealed class CameraWeapon : BaseSandboxWeapon
 	bool focusing;
 	Vector3 focusPoint;
 
-	/// <summary>
-	/// The RT camera's resolution 
-	/// </summary>
-	private static int _cameraResolution = 512;
-
-	/// <summary>
-	/// The render target texture produced by this camera. Read by <see cref="TVEntity"/>.
-	/// </summary>
-	public Texture RenderTexture => _renderTexture;
-
-	private Texture _renderTexture;
-	private CameraComponent _rtCamera;
+	[RequireComponent, Hide] public CameraFeed Feed { get; set; }
 
 	public override bool WantsHideHud => true;
 
 	public override HudElement HiddenHudElements => HudElement.All & ~HudElement.Inventory;
-
-	protected override void OnEnabled()
-	{
-		base.OnEnabled();
-
-		EnsureRTCamera();
-		EnsureRenderTexture();
-	}
 
 	protected override void OnDisabled()
 	{
 		base.OnDisabled();
 
 		DestroyDepthOfField();
-		CleanupRenderTexture();
-		_rtCamera = null;
 	}
 
 	protected override void OnDestroy()
 	{
 		DestroyDepthOfField();
-		CleanupRenderTexture();
-		_rtCamera = null;
 	}
 
 	protected override void OnPreRender()
 	{
-		if ( !_rtCamera.IsValid() ) return;
-
-		EnsureRenderTexture();
+		if ( !Feed.IsValid() ) return;
 
 		if ( HasOwner && Scene.Camera.IsValid() )
 		{
 			// When held, mirror the player's camera so the TV shows their POV.
 			// TODO: network some props to the TV so they show up in the RT camera when held by a player other than the host.
-			_rtCamera.WorldPosition = Scene.Camera.View.Position;
-			_rtCamera.WorldRotation = Scene.Camera.View.Rotation;
-			_rtCamera.FieldOfView = Scene.Camera.View.FieldOfView;
-			_rtCamera.FovAxis = Scene.Camera.FovAxis;
-
-			if ( !_rtCamera.RenderExcludeTags.Has( "viewer" ) )
-				_rtCamera.RenderExcludeTags.Add( "viewer" );
+			Feed.SetWorldView( Scene.Camera.View.Transform, Scene.Camera.View.FieldOfView, Scene.Camera.FovAxis, hideViewer: true );
 		}
 		else
 		{
-			_rtCamera.RenderExcludeTags.Remove( "viewer" );
-			_rtCamera.FieldOfView = 40f;
-			_rtCamera.FovAxis = CameraComponent.Axis.Horizontal;
+			Feed.UseLensView( 40f );
 		}
 	}
 
@@ -174,51 +140,6 @@ public sealed class CameraWeapon : BaseSandboxWeapon
 		var target = Scene.Camera.WorldPosition.Distance( focusPoint ) + 64;
 
 		dof.FocalDistance = dof.FocalDistance.LerpTo( target, Time.Delta * 2.0f );
-	}
-
-	private void EnsureRTCamera()
-	{
-		_rtCamera = GetComponentInChildren<CameraComponent>( true );
-
-		if ( _rtCamera is null )
-		{
-			var go = new GameObject( GameObject, true, "rt_camera" );
-			_rtCamera = go.AddComponent<CameraComponent>();
-		}
-
-		_rtCamera.IsMainCamera = false;
-		_rtCamera.BackgroundColor = Color.Black;
-		_rtCamera.ClearFlags = ClearFlags.Color | ClearFlags.Depth | ClearFlags.Stencil;
-		_rtCamera.FieldOfView = fov;
-		_rtCamera.RenderExcludeTags.Add( "viewmodel" );
-	}
-
-	private void EnsureRenderTexture()
-	{
-		if ( _renderTexture.IsValid() && _renderTexture.Width == _cameraResolution && _renderTexture.Height == _cameraResolution )
-			return;
-
-		CleanupRenderTexture();
-
-		_renderTexture = Texture.CreateRenderTarget()
-			.WithSize( _cameraResolution, _cameraResolution )
-			.Create();
-
-		if ( _rtCamera.IsValid() )
-		{
-			_rtCamera.RenderTarget = _renderTexture;
-		}
-	}
-
-	private void CleanupRenderTexture()
-	{
-		if ( _rtCamera.IsValid() )
-		{
-			_rtCamera.RenderTarget = null;
-		}
-
-		_renderTexture?.Dispose();
-		_renderTexture = null;
 	}
 
 	/// <summary>

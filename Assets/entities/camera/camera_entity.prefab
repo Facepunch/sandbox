@@ -85,12 +85,6 @@
         "__enabled": true,
         "Flags": 0,
         "Fov": 75,
-        "Lens": {
-          "_type": "component",
-          "component_id": "23a2deb0-f559-4a57-8a33-70518110764a",
-          "go": "07a788bf-f4dc-4501-b321-484890c201be",
-          "component_type": "CameraComponent"
-        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -101,6 +95,24 @@
         "ToggleMode": true,
         "ViewInput": {
           "Action": null
+        },
+        "Feed": {
+          "_type": "component",
+          "component_id": "01f4f281-f28b-4f44-b645-3c911f309714",
+          "go": "640890e2-8b58-4925-9763-7f5714d4744c",
+          "component_type": "CameraFeed"
+        }
+      },
+      {
+        "__type": "CameraFeed",
+        "__guid": "01f4f281-f28b-4f44-b645-3c911f309714",
+        "__enabled": true,
+        "Flags": 0,
+        "Lens": {
+          "_type": "component",
+          "component_id": "23a2deb0-f559-4a57-8a33-70518110764a",
+          "go": "07a788bf-f4dc-4501-b321-484890c201be",
+          "component_type": "CameraComponent"
         }
       }
     ],

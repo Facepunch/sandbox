@@ -1,5 +1,5 @@
 /// <summary>
-/// A TV screen entity that displays the feed from a linked <see cref="CameraWeapon"/>.
+/// A TV screen entity that displays a linked CameraFeed, regardless of what produces it.
 /// Use the Wire tool to wire a Camera's video feed to this TV's display input.
 /// </summary>
 [Title( "#entity.name.television" )]
@@ -13,7 +13,7 @@ public sealed class TVEntity : Component
 	/// can be linked here, and linking just sets this reference.
 	/// </summary>
 	[Property, Hide, Icon( "connected_tv" ), Title( "#entity.property.display" ), SignalInput( Default = true )]
-	public CameraWeapon Display { get; set; }
+	public CameraFeed Display { get; set; }
 
 	/// <summary>
 	/// The brightness of the television screen.
@@ -32,7 +32,7 @@ public sealed class TVEntity : Component
 	/// <summary>
 	/// True when a linked camera is actively providing a render texture.
 	/// </summary>
-	public bool HasLinkedCamera => Display.IsValid() && Display.Enabled && Display.RenderTexture is not null;
+	public bool HasLinkedCamera => Display.IsValid() && Display.Active && Display.RenderTexture is not null;
 
 	private Texture _lastTexture;
 	private Material _materialCopy;
@@ -51,21 +51,16 @@ public sealed class TVEntity : Component
 
 	protected override void OnUpdate()
 	{
-		var linkedWeapon = Display.IsValid() ? Display : null;
-		var linkedTexture = linkedWeapon?.RenderTexture;
+		var feed = Display.IsValid() ? Display : null;
 
 		// Distance-based fade and RT camera culling
-		float distanceToCamera = Vector3.DistanceBetween( WorldPosition, Scene.Camera.WorldPosition );
+		float distanceToCamera = Vector3.DistanceBetween( WorldPosition, Scene.Camera.View.Position );
 		float fadeStart = MaxRenderDistance * FadeStartFraction;
 		float distanceFade = 1.0f - MathX.Clamp( ( distanceToCamera - fadeStart ) / ( MaxRenderDistance - fadeStart ), 0f, 1f );
 		bool tooFar = distanceFade <= 0f;
 
-		// Enable/disable the linked RT camera based on distance
-		if ( linkedWeapon is not null )
-		{
-			var camera = linkedWeapon.GetComponentInChildren<CameraComponent>( true );
-			camera?.Enabled = !tooFar;
-		}
+		// The feed owns rendering, so a distant TV cannot disable another TV's camera.
+		var linkedTexture = On && !tooFar ? feed?.RequestFrame() : feed?.RenderTexture;
 
 		var newSignal = On && linkedTexture is not null && !tooFar;
 
@@ -76,14 +71,14 @@ public sealed class TVEntity : Component
 		}
 
 		// Keep the last known texture alive during the off-transition,
-		// but only if the linked weapon still has a valid render target.
+		// but only if the linked feed still has a valid render target.
 		if ( linkedTexture is not null )
 		{
 			_lastTexture = linkedTexture;
 		}
 		else
 		{
-			// Weapon gone or disabled — its texture was disposed, don't use the cached copy.
+			// Feed gone or disabled — its texture was disposed, don't use the cached copy.
 			_lastTexture = null;
 		}
 

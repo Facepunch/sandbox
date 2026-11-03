@@ -72,7 +72,7 @@
     "entity.description.manualon": "Force the emitter on regardless of its input or mode.",
     "entity.name.speaker": "Speaker",
     "entity.name.camera": "Camera",
-    "entity.property.display_camera_entity": "Display (Camera Entity)",
+    "entity.name.camera_feed": "Camera Feed",
     "entity.description.camera": "A physical camera with a configurable view binding and TV feed. Cannot be collected as a weapon.",
     "entity.speakermode.oneshot": "One Shot",
     "entity.speakermode.hold": "Hold",
