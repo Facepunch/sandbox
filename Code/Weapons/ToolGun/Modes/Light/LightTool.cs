@@ -51,7 +51,7 @@ public sealed class LightTool : ToolMode
 	{
 		var point = TraceSelect();
 		if ( !point.IsValid() ) return;
-		PlaceOrUpdate( point, withRope, RopeLength, WriteConfiguration<PointLightEntity>() );
+		PlaceOrUpdate( point, withRope, RopeLength, WriteConfiguration<PointLightEntity>(), withRope && Input.Down( "run" ) );
 		ShootEffects( point );
 	}
 
@@ -72,7 +72,7 @@ public sealed class LightTool : ToolMode
 		base.OnControl();
 		var point = TraceSelect();
 		var existing = FindLight( point );
-		_updatingExisting = existing.IsValid();
+		_updatingExisting = existing.IsValid() && !Input.Down( "run" );
 		if ( !point.IsValid() ) return;
 
 		if ( _updatingExisting )
@@ -89,13 +89,13 @@ public sealed class LightTool : ToolMode
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
-	public void PlaceOrUpdate( SelectionPoint point, bool withRope, float length, string configuration )
+	public void PlaceOrUpdate( SelectionPoint point, bool withRope, float length, string configuration, bool forceNew = false )
 	{
 		if ( !point.IsValid() || !Player.IsValid() ) return;
 		var input = withRope ? ToolInput.Primary : ToolInput.Secondary;
 		if ( !FireToolAction( input ) ) return;
 
-		var existing = withRope ? FindLight( point ) : null;
+		var existing = withRope && !forceNew ? FindLight( point ) : null;
 		if ( existing.IsValid() )
 		{
 			if ( existing.IsProxy ) return;
