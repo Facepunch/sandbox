@@ -24,6 +24,7 @@
         {
             @if ( HasSettings( mode ) )
             {
+                <ToolPresetBar Mode=@mode />
                 <UISheet PropertyFilter="@UISheet.PropertiesAndButtons" Target="@mode"></UISheet>
             }
             else
