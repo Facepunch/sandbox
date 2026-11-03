@@ -95,6 +95,7 @@
     "entity.description.speaker_key": "The key that plays the sound from a seat on this contraption.",
     "entity.name.seat": "Seat",
     "entity.signal.speaker_trigger": "Trigger",
+    "entity.signal.light_trigger": "Trigger",
     "entity.signal.speaker_start": "Start",
     "entity.signal.speaker_stop": "Stop Sounds",
     "entity.property.speaker_range": "Range (inches)",

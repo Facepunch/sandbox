@@ -115,8 +115,10 @@
 		var newMode = GetComponents<ToolMode>( true ).Where( x => x.GetType() == targetMode.TargetType ).FirstOrDefault();
 		if ( newMode == null )
 		{
-			Log.Warning( $"Toolgun missing mode component for {name}" );
-			return;
+			// Newly hotloaded tools aren't on existing toolguns yet. Create the requested
+			// mode disabled, then switch normally so only one mode remains active.
+			newMode = Components.Create( targetMode, false ) as ToolMode;
+			if ( newMode is null ) return;
 		}
 
 		var currentMode = GetCurrentMode();
