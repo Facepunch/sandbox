@@ -13,7 +13,7 @@ UIColorPopup.popup-panel
 	transition: none;
 	font-family: "Inter";
 	color: $ui-text;
-	z-index: 3000;
+	z-index: 10001; // above fullscreen editors and resource pickers (Popup.scss)
 
 	&:outro
 	{

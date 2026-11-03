@@ -2,7 +2,7 @@
 
 menulist.menulist
 {
-	z-index: 10000;
+	z-index: 10002; // menus may be opened from property pickers above a fullscreen editor
 	min-width: 222px;
 	max-height: 90vh;
 	flex-shrink: 0;
