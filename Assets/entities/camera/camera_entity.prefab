@@ -7,7 +7,7 @@
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
-    "Tags": "removable",
+    "Tags": "removable,camera_entity",
     "Enabled": true,
     "NetworkMode": 2,
     "NetworkFlags": 0,
@@ -24,10 +24,7 @@
         "Elasticity": null,
         "Friction": null,
         "IsTrigger": false,
-        "Model": {
-          "Id": "ca5614f6-5881-46a6-8dbb-cf4695b4d14c",
-          "Path": "models/props/camera_film/camera_film.vmdl"
-        },
+        "Model": "entities/camera/model/camera_entity.vmdl",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -94,7 +91,7 @@
         "Static": false,
         "ToggleMode": true,
         "ViewInput": {
-          "Action": null
+          "Action": "View"
         },
         "Feed": {
           "_type": "component",
@@ -134,7 +131,7 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "Sandbox.SkinnedModelRenderer",
+            "__type": "Sandbox.ModelRenderer",
             "__guid": "6e68c97f-ebed-445c-b7ee-1e8b47b6f7db",
             "__enabled": true,
             "Flags": 0,
@@ -142,30 +139,20 @@
               "Graph": null,
               "Parameters": {}
             },
-            "AnimationGraph": null,
             "BodyGroups": 18446744073709551615,
-            "BoneMergeTarget": null,
             "CreateAttachments": true,
-            "CreateBoneObjects": false,
-            "DeformationMode": "Normal",
             "LodOverride": null,
             "LowDetailAnimation": false,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": {
-              "Id": "ca5614f6-5881-46a6-8dbb-cf4695b4d14c",
-              "Path": "models/props/camera_film/camera_film.vmdl"
-            },
-            "Morphs": {},
+            "Model": "entities/camera/model/camera_entity.vmdl",
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Parameters": {},
-            "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
               "OverlayLayer": false,
@@ -173,13 +160,7 @@
               "AfterUILayer": false
             },
             "RenderType": "On",
-            "Sequence": {
-              "Name": null,
-              "Looping": true,
-              "Blending": false
-            },
-            "Tint": "1,1,1,1",
-            "UseAnimGraph": true
+            "Tint": "1,1,1,1"
           }
         ],
         "Children": []
@@ -189,7 +170,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "rt_camera",
-        "Position": "0.615291476,-0.442408323,1.11825669",
+        "Position": "9.425,0,5.6875",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -237,8 +218,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Thumbnail Camera",
-        "Position": "40.9807625,-40.9807625,15.5291433",
-        "Rotation": "-0.146762997,-0.0140669998,0.917228997,0.370072991",
+        "Position": "40,-55,30",
+        "Rotation": "-0.132946923,0.0676998422,0.881141841,0.448699117",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -263,8 +244,8 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Padding": 0.08,
-            "Zoom": 1.16
+            "Padding": 0.1,
+            "Zoom": 1.05
           }
         ],
         "Children": []
@@ -276,8 +257,6 @@
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "__references": [
-    "facepunch.camerafilm#153556"
-  ],
+  "__references": [],
   "__version": 2
 }

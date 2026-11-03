@@ -7,6 +7,7 @@ public sealed class CameraViewSystem : Component, Global.ISaveEvents
 	CameraComponent _mainCamera;
 	bool _hadViewmodel, _hadFirstperson, _hadViewer;
 	CameraComponent.Axis _originalAxis;
+	IDisposable _inputHook;
 	public CameraEntity ActiveCamera { get; private set; }
 
 	public static CameraViewSystem Get( Scene scene ) => scene.IsValid() ? scene.GetAllComponents<CameraViewSystem>().FirstOrDefault() : null;
@@ -25,7 +26,21 @@ public sealed class CameraViewSystem : Component, Global.ISaveEvents
 
 	bool CanView( CameraEntity camera ) => camera.IsValid() && camera.Active && camera.Scene == Scene && camera.IsLocallyOwned;
 
+	protected override void OnEnabled() => RegisterInputHook();
+
 	protected override void OnUpdate()
+	{
+		// Install the hook for controllers that already existed when this code hotloaded.
+		if ( _inputHook is null ) RegisterInputHook();
+	}
+
+	void RegisterInputHook()
+	{
+		_inputHook?.Dispose();
+		_inputHook = Scene.AddHook( GameObjectSystem.Stage.StartUpdate, -100, UpdateInput, nameof( CameraViewSystem ), "Camera view bindings" );
+	}
+
+	void UpdateInput()
 	{
 		if ( Scene != Game.ActiveScene ) return;
 		var player = Player.FindLocalPlayer();
@@ -58,11 +73,22 @@ public sealed class CameraViewSystem : Component, Global.ISaveEvents
 			bool pressed = target.ToggleMode ? Input.Pressed( group.Key ) : down && !_down.GetValueOrDefault( group.Key );
 			_down[group.Key] = down;
 			ProcessInput( target, down, pressed );
+			// A bound camera owns Change View; don't also flip first/third person,
+			// especially when releasing a hold-to-view camera.
+			if ( string.Equals( group.Key, player.Controller.ToggleCameraModeButton, StringComparison.OrdinalIgnoreCase ) )
+				Input.Clear( group.Key );
 		}
 	}
 
-	protected override void OnDisabled() => Clear();
-	protected override void OnDestroy() => Clear();
+	void StopInputHook()
+	{
+		_inputHook?.Dispose();
+		_inputHook = null;
+		Clear();
+	}
+
+	protected override void OnDisabled() => StopInputHook();
+	protected override void OnDestroy() => StopInputHook();
 
 	// The next camera pass reapplies the active view. Persist only the normal camera's
 	// filters, otherwise a save made while watching could restore hidden viewmodels.

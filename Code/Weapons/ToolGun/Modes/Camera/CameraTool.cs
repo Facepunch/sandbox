@@ -6,7 +6,7 @@ public sealed class CameraTool : ToolMode
 	public const string CameraPrefab = "entities/camera/camera_entity.prefab";
 
 	[Property, Title( "#tool.setting.camera_key" ), Description( "#tool.setting.camera_key.description" ), Group( "#tool.setting.group.inputs" )]
-	public ClientInput ViewInput { get; set; }
+	public ClientInput ViewInput { get; set; } = new() { Action = "View" };
 
 	[Property, Range( 1, 150 ), Title( "#tool.setting.camera_fov" ), Group( "#tool.setting.group.behavior" )]
 	public float Fov { get; set; } = 75f;

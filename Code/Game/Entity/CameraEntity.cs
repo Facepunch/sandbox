@@ -3,7 +3,7 @@
 public sealed class CameraEntity : Component, ICameraModifier, IPhysgunEvent, ICarryEvent
 {
 	[Property, ClientEditable, Title( "#tool.setting.camera_key" ), Description( "#tool.setting.camera_key.description" ), Group( "#tool.setting.group.inputs" )]
-	public ClientInput ViewInput { get; set; }
+	public ClientInput ViewInput { get; set; } = new() { Action = "View" };
 
 	[Property, ClientEditable, Range( 1, 150 ), Title( "#tool.setting.camera_fov" ), Group( "#tool.setting.group.behavior" )]
 	public float Fov { get; set; } = 75f;
@@ -25,6 +25,7 @@ public sealed class CameraEntity : Component, ICameraModifier, IPhysgunEvent, IC
 
 	protected override void OnEnabled()
 	{
+		GameObject.Tags.Add( "camera_entity" );
 		ViewOrder = ++_nextViewOrder;
 		RefreshPhysics();
 		if ( Scene == Game.ActiveScene ) CameraViewSystem.GetOrCreate( Scene );
