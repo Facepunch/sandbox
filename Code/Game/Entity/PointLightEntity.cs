@@ -2,13 +2,13 @@
 /// A player-controlled point light.
 /// </summary>
 [Title( "#entity.name.pointlightentity" )]
-public sealed class PointLightEntity : Component, IPlayerControllable
+public sealed class PointLightEntity : Component, IPlayerControllable, Global.IControlEvents
 {
 	/// <summary>
 	/// Whether the light is switched on.
 	/// </summary>
-	[Property, Title( "#entity.property.on" ), Description( "#entity.description.on" ), ClientEditable, Group( "#entity.group.light" ), SignalInput( Default = true )]
-	public bool On { get; set { field = value; UpdateLight(); } } = true;
+	[Property, Title( "#entity.property.on" ), Description( "#entity.description.on" ), ClientEditable, Group( "#entity.group.light" ), SignalInput]
+	public bool On { get; set { if ( field == value ) return; field = value; UpdateLight(); } } = true;
 
 	/// <summary>
 	/// Whether the light casts shadows.
@@ -91,8 +91,23 @@ public sealed class PointLightEntity : Component, IPlayerControllable
 	/// <summary>
 	/// The input that toggles the light.
 	/// </summary>
-	[Property, Title( "#entity.property.toggle" ), Description( "#entity.description.toggle" ), ClientEditable, Group( "#entity.group.state" )]
+	[Property, Title( "#tool.setting.light_input" ), Description( "#tool.setting.light_input.description" ), ClientEditable, Group( "#entity.group.state" )]
 	public ClientInput Toggle { get; set; }
+
+	[Property, Title( "#tool.setting.light_toggle" ), Description( "#tool.setting.light_toggle.description" ), ClientEditable, Group( "#entity.group.state" )]
+	public bool ToggleMode
+	{
+		get;
+		set
+		{
+			if ( field == value ) return;
+			field = value;
+			if ( !value && !IsProxy ) UpdateHeldState();
+		}
+	} = true;
+
+	bool _keyDown;
+	bool _wireDown;
 
 	/// <summary>
 	/// The object shown while the light is on.
@@ -107,10 +122,20 @@ public sealed class PointLightEntity : Component, IPlayerControllable
 	public GameObject OffGameObject { get; set; }
 
 	/// <summary>
-	/// Toggles the light when its signal input is triggered.
+	/// Toggles on a rising edge, or stays on while the key or signal is held.
 	/// </summary>
-	[SignalInput( Id = nameof( Toggle ) ), Title( "#entity.property.toggle" )]
-	public void ToggleSignal() => On = !On;
+	[SignalInput( Id = nameof( Toggle ), Name = "#entity.signal.light_trigger", Default = true )]
+	public void ToggleSignal( bool down )
+	{
+		if ( IsProxy ) return;
+		bool pressed = down && !_wireDown;
+		_wireDown = down;
+		if ( ToggleMode )
+		{
+			if ( pressed ) On = !On;
+		}
+		else UpdateHeldState();
+	}
 
 	/// <summary>
 	/// Switches the light on when its signal input is triggered.
@@ -129,9 +154,39 @@ public sealed class PointLightEntity : Component, IPlayerControllable
 	/// </summary>
 	public void OnControl()
 	{
-		if ( Toggle.Pressed() ) On = !On;
+		if ( IsProxy ) return;
+		_keyDown = Toggle.Down();
+		if ( ToggleMode )
+		{
+			if ( Toggle.Pressed() ) On = !On;
+		}
+		else UpdateHeldState();
 		if ( TurnOn.Pressed() ) On = true;
 		if ( TurnOff.Pressed() ) On = false;
+	}
+
+	void UpdateHeldState() => On = _keyDown || _wireDown;
+
+	void Global.IControlEvents.OnControlStopped( ControlEvent e )
+	{
+		if ( !Networking.IsHost || !e.Target.IsValid() ) return;
+		var linked = new LinkedGameObjectBuilder();
+		linked.AddConnected( GameObject );
+		if ( !linked.Objects.Contains( e.Target.Root ) ) return;
+		_keyDown = false;
+		if ( !ToggleMode ) UpdateHeldState();
+	}
+
+	protected override void OnEnabled()
+	{
+		if ( !ToggleMode && !IsProxy ) UpdateHeldState();
+		UpdateLight();
+	}
+
+	protected override void OnDisabled()
+	{
+		_keyDown = _wireDown = false;
+		if ( !ToggleMode && !IsProxy ) UpdateHeldState();
 	}
 
 	void UpdateLight()
@@ -166,6 +221,6 @@ public sealed class PointLightEntity : Component, IPlayerControllable
 		light.AnimationSpeed = AnimationSpeed;
 		light.AnimationTimeOffset = AnimationOffset;
 
-		Network.Refresh();
+		if ( Network.Active && !IsProxy ) Network.Refresh();
 	}
 }
