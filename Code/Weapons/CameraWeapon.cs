@@ -69,9 +69,10 @@ public sealed class CameraWeapon : BaseSandboxWeapon
 		{
 			// When held, mirror the player's camera so the TV shows their POV.
 			// TODO: network some props to the TV so they show up in the RT camera when held by a player other than the host.
-			_rtCamera.WorldPosition = Scene.Camera.WorldPosition;
-			_rtCamera.WorldRotation = Scene.Camera.WorldRotation;
-			_rtCamera.FieldOfView = Scene.Camera.FieldOfView;
+			_rtCamera.WorldPosition = Scene.Camera.View.Position;
+			_rtCamera.WorldRotation = Scene.Camera.View.Rotation;
+			_rtCamera.FieldOfView = Scene.Camera.View.FieldOfView;
+			_rtCamera.FovAxis = Scene.Camera.FovAxis;
 
 			if ( !_rtCamera.RenderExcludeTags.Has( "viewer" ) )
 				_rtCamera.RenderExcludeTags.Add( "viewer" );
@@ -80,6 +81,7 @@ public sealed class CameraWeapon : BaseSandboxWeapon
 		{
 			_rtCamera.RenderExcludeTags.Remove( "viewer" );
 			_rtCamera.FieldOfView = 40f;
+			_rtCamera.FovAxis = CameraComponent.Axis.Horizontal;
 		}
 	}
 
