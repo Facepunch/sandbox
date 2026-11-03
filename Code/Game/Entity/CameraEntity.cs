@@ -1,6 +1,6 @@
 /// <summary>Standalone camera view controls and physics. CameraFeed provides the shared video output.</summary>
 [Title( "#entity.name.camera" ), Icon( "videocam" )]
-public sealed class CameraEntity : Component, ICameraModifier, IPhysgunEvent, ICarryEvent
+public sealed partial class CameraEntity : Component, ICameraModifier, IPhysgunEvent, ICarryEvent
 {
 	[Property, ClientEditable, Title( "#tool.setting.camera_key" ), Description( "#tool.setting.camera_key.description" ), Group( "#tool.setting.group.inputs" )]
 	public ClientInput ViewInput { get; set; } = new() { Action = "View" };
@@ -15,7 +15,7 @@ public sealed class CameraEntity : Component, ICameraModifier, IPhysgunEvent, IC
 	public bool ToggleMode { get; set; } = true;
 
 	[RequireComponent, Hide] public CameraFeed Feed { get; set; }
-	public Transform ViewTransform => Feed.IsValid() ? Feed.ViewTransform : WorldTransform;
+	public Transform ViewTransform => Tracking && _trackingInitialized ? _trackingView : PhysicalView;
 	public float ClampedFov => float.IsFinite( Fov ) ? Fov.Clamp( 1f, 150f ) : 75f;
 	internal long ViewOrder { get; private set; }
 	static long _nextViewOrder;
@@ -27,6 +27,7 @@ public sealed class CameraEntity : Component, ICameraModifier, IPhysgunEvent, IC
 	{
 		GameObject.Tags.Add( "camera_entity" );
 		ViewOrder = ++_nextViewOrder;
+		ResetTracking();
 		RefreshPhysics();
 		if ( Scene == Game.ActiveScene ) CameraViewSystem.GetOrCreate( Scene );
 	}
@@ -38,11 +39,15 @@ public sealed class CameraEntity : Component, ICameraModifier, IPhysgunEvent, IC
 		var collider = GetComponent<ModelCollider>( true );
 		if ( _appliedStatic != Static || Static && (body.IsValid() && (body.Enabled || body.MotionEnabled)
 			|| collider.IsValid() && !collider.Static) ) RefreshPhysics();
+		UpdateTracking();
 	}
 
 	protected override void OnPreRender()
 	{
-		Feed?.UseLensView( ClampedFov );
+		if ( !Feed.IsValid() ) return;
+		if ( Tracking && _trackingInitialized )
+			Feed.SetWorldView( _trackingView, ClampedFov, CameraComponent.Axis.Horizontal, hideViewer: false );
+		else Feed.UseLensView( ClampedFov );
 	}
 
 	public void RefreshPhysics()
@@ -69,6 +74,7 @@ public sealed class CameraEntity : Component, ICameraModifier, IPhysgunEvent, IC
 	/// <summary>Align the lens, rather than the model origin, with the captured player view.</summary>
 	public void AlignView( Transform view )
 	{
+		ResetTracking();
 		var lens = Feed?.Camera;
 		var local = lens.IsValid() ? WorldTransform.ToLocal( lens.WorldTransform ) : global::Transform.Zero;
 		var rotation = view.Rotation * local.Rotation.Inverse;
@@ -94,6 +100,7 @@ public sealed class CameraEntity : Component, ICameraModifier, IPhysgunEvent, IC
 
 	protected override void OnDisabled()
 	{
+		ResetTracking();
 		if ( Scene == Game.ActiveScene ) CameraViewSystem.Get( Scene )?.Release( this );
 	}
 

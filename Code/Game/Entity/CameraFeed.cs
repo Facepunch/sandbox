@@ -21,6 +21,10 @@ public sealed class CameraFeed : Component, Global.ISaveEvents
 	}
 
 	public Transform ViewTransform => Camera.IsValid() ? Camera.WorldTransform : WorldTransform;
+	/// <summary>The authored lens mount, unaffected by temporary held/tracking view overrides.</summary>
+	public Transform PhysicalViewTransform => _overridingView && Camera.IsValid()
+		? (Camera.GameObject.Parent?.WorldTransform ?? global::Transform.Zero).ToWorld( _localView )
+		: ViewTransform;
 	public Texture RenderTexture => Active ? _renderTexture : null;
 
 	/// <summary>A visible TV requests frames. Multiple TVs can share a feed without disabling each other.</summary>

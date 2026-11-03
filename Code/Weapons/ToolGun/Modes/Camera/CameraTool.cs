@@ -17,6 +17,21 @@ public sealed class CameraTool : ToolMode
 	[Property, Title( "#tool.setting.camera_toggle" ), Description( "#tool.setting.camera_toggle.description" ), Group( "#tool.setting.group.inputs" )]
 	public bool ToggleMode { get; set; } = true;
 
+	[Property, ToggleGroup( "Tracking", Label = "#entity.group.camera_tracking" )]
+	public bool Tracking { get; set; }
+
+	[Property, Title( "#entity.property.camera_tracking_target" ), ToggleGroup( "Tracking", Label = "#entity.group.camera_tracking" )]
+	public CameraTrackingTarget TrackingTarget { get; set; } = CameraTrackingTarget.Owner;
+
+	[Property, Range( 0.1f, 20f ), Title( "#entity.property.camera_tracking_speed" ), Description( "#entity.description.camera_tracking_speed" ), ToggleGroup( "Tracking", Label = "#entity.group.camera_tracking" )]
+	public float TrackingLerpSpeed { get; set; } = 5f;
+
+	[Property, Range( 0f, 8192f ), Title( "#entity.property.camera_tracking_range" ), Description( "#entity.description.camera_tracking_range" ), ToggleGroup( "Tracking", Label = "#entity.group.camera_tracking" )]
+	public float TrackingRange { get; set; } = 2048f;
+
+	[Property, Title( "#entity.property.camera_tracking_return" ), Description( "#entity.description.camera_tracking_return" ), ToggleGroup( "Tracking", Label = "#entity.group.camera_tracking" )]
+	public bool ReturnToOriginal { get; set; } = true;
+
 	public override string Description => "#tool.hint.camera.description";
 
 	protected override void OnStart()
