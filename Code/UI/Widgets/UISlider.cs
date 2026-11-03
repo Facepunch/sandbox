@@ -157,11 +157,37 @@ public class UISlider : BaseControl
 
 		_entry.WholeNumbers = Property.PropertyType == typeof( int ) || Property.PropertyType == typeof( long );
 
+		UpdateTrackGradient();
 		RebuildTicks();
 		UpdateVisuals();
 	}
 
 	static string Format( float value ) => value.ToString( "0.##" );
+
+	public override void OnHotloaded()
+	{
+		base.OnHotloaded();
+		Rebuild();
+	}
+
+	/// <summary>Honor the same gradient metadata used by the editor's numeric sliders.</summary>
+	void UpdateTrackGradient()
+	{
+		var line = _track.Children.First( panel => panel.HasClass( "line" ) );
+		var gradient = Property.TryGetAttribute<SliderGradientAttribute>( out var attribute )
+			? attribute.CreateGradient() : new Gradient();
+		bool hasGradient = gradient.Colors.Count > 0;
+		SetClass( "gradient", hasGradient );
+		if ( !hasGradient )
+		{
+			line.Style.Set( "background-image: none;" );
+			return;
+		}
+
+		var stops = gradient.Colors.Select( frame =>
+			$"{frame.Value.Hex} {(frame.Time * 100f).ToString( "0.####", System.Globalization.CultureInfo.InvariantCulture )}%" );
+		line.Style.Set( $"background-image: linear-gradient(to right, {string.Join( ", ", stops )});" );
+	}
 
 	void RebuildTicks()
 	{

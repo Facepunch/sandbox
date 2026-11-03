@@ -58,6 +58,14 @@ UISlider
 		transform: translateY( 1px );
 	}
 
+	&.gradient .track .line
+	{
+		top: 7px;
+		height: 9px;
+		border-radius: 3px;
+		border: 1px solid rgba( 0, 0, 0, 0.4 );
+	}
+
 	.entry
 	{
 		flex-shrink: 0;

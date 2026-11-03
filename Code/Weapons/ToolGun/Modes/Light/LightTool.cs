@@ -16,6 +16,9 @@ public sealed class LightTool : ToolMode
 	[Property, Range( 0, 512 ), Title( "#tool.setting.light_rope_length" ), Group( "#tool.setting.group.behavior" ), Order( 1 )]
 	public float RopeLength { get; set; } = 64f;
 
+	[Property, Title( "#tool.setting.tint" ), Description( "#entity.description.color" ), Group( "#entity.group.light" ), Order( 2 )]
+	public Color Color { get; set; } = Color.White;
+
 	[Property, Range( 0, 50 ), Title( "#entity.property.brightness" ), Description( "#entity.description.brightness" ), Group( "#entity.group.light" ), Order( 2 )]
 	public float Brightness { get; set; } = 1f;
 
@@ -26,6 +29,8 @@ public sealed class LightTool : ToolMode
 	public float Attenuation { get; set; } = 2.4f;
 
 	[Property, Range( 1000, 12000 ), Title( "#entity.property.temperature" ), Description( "#entity.description.temperature" ), Group( "#entity.group.light" ), Order( 2 )]
+	[SliderGradient( "#ff4400", "#ff890e", "#ffb270", "#ffdabf", "#ffffff", "#cadbff", "#bfd4ff",
+		Positions = new float[] { 0, 1000f / 11000, 2000f / 11000, 3500f / 11000, 0.5f, 9000f / 11000, 1 } )]
 	public float Temperature { get; set; } = 6500f;
 
 	[Property, Title( "#entity.property.shadows" ), Description( "#entity.description.shadows" ), Group( "#entity.group.light" ), Order( 2 )]
@@ -108,7 +113,6 @@ public sealed class LightTool : ToolMode
 		go.WorldTransform = PlacementTransform( point, withRope, length );
 		var light = go.GetComponent<PointLightEntity>( true );
 		if ( !light.IsValid() ) { go.Destroy(); return; }
-		light.Color = Color.White;
 		ApplyConfiguration( light, configuration );
 
 		ApplyPhysicsProperties( go );

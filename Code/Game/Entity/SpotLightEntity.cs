@@ -50,6 +50,8 @@ public sealed class SpotLightEntity : Component, IPlayerControllable
 	/// The color temperature of the light in Kelvin, 6500 is neutral white.
 	/// </summary>
 	[Property, Title( "#entity.property.temperature" ), Description( "#entity.description.temperature" ), Range( 1000, 12000 ), ClientEditable, Group( "#entity.group.light" )]
+	[SliderGradient( "#ff4400", "#ff890e", "#ffb270", "#ffdabf", "#ffffff", "#cadbff", "#bfd4ff",
+		Positions = new float[] { 0, 1000f / 11000, 2000f / 11000, 3500f / 11000, 0.5f, 9000f / 11000, 1 } )]
 	public float Temperature { get; set { field = value; UpdateLight(); } } = 6500;
 
 	/// <summary>
