@@ -37,14 +37,6 @@
           "SpreadGrowth": "3,3",
           "SpreadRecovery": 0.25
         },
-        "PunchDuration": 0.3,
-        "PunchFrequency": 2,
-        "PunchPitch": "0,0",
-        "PunchRoll": "0.6,0.6",
-        "PunchYaw": "0,0",
-        "ShakeAmplitude": 0,
-        "ShakeDuration": 0.3,
-        "ShakeFrequency": 40,
         "CanCancelReload": false,
         "ClipMaxSize": 7,
         "DeployTime": 0.2,
@@ -54,6 +46,7 @@
           "data": {
             "FilePath": "ui/weapons/heritage__45_icon.png",
             "MaxSize": 4096,
+            "Lossless": true,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
             "Rotate": 0,
@@ -84,7 +77,7 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": "textures/generated/imagefile/6b37734531b6a4a1.vtex"
+          "compiled": null
         },
         "DisplayName": "1911",
         "DroppedGameObject": {
@@ -96,7 +89,7 @@
           "Path": "sounds/dry_fire.sound"
         },
         "FirstShellReloadTime": 0,
-        "Handedness": "Both",
+        "Handedness": "Right",
         "HoldBone": "hold_r",
         "HoldType": "Pistol",
         "IncrementalReloading": false,
@@ -119,15 +112,21 @@
         "OnComponentUpdate": null,
         "PreferredSlot": 1,
         "PrimaryAmmoType": {
-          "Id": "091bfde9-872e-46c2-b6ce-4a6948df5eea",
+          "Id": "f629290f-60ee-459d-a28a-870cdabd1b96",
           "Path": "ammo/9mm.ammo"
         },
         "PrimaryAutomatic": true,
         "PrimaryDelay": 0.1,
+        "PunchDuration": 0.3,
+        "PunchFrequency": 2,
+        "PunchPitch": "0,0",
+        "PunchRoll": "0.600000024,0.600000024",
+        "PunchYaw": "0,0",
         "RagdollBodyShare": 0.3,
         "RagdollImpactScale": 1,
         "RecoilPitch": "-0.5,-0.200000003",
         "RecoilYaw": "-0.150000006,0.150000006",
+        "ReloadCancelWindow": 0,
         "ReloadStartTime": 0,
         "ReloadTime": 1.5,
         "SecondaryAmmoType": null,
@@ -138,6 +137,9 @@
         "SecondaryInput": {
           "Action": null
         },
+        "ShakeAmplitude": 0,
+        "ShakeDuration": 0.3,
+        "ShakeFrequency": 40,
         "ShootForce": 100000,
         "ShootInput": {
           "Action": null
@@ -167,7 +169,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "b43c3668-195e-47df-86a3-ffc54ce96890",
+          "Id": "9771792a-7471-4884-a093-60cb26bb0c80",
           "Path": "models/weapons/sbox_pistol_1911/w_1911.vmdl"
         },
         "OnComponentDestroy": null,
@@ -280,6 +282,10 @@
             "__guid": "04975f86-3bdc-68c2-c27d-d31a3d3c3c23",
             "__enabled": true,
             "Flags": 0,
+            "Animation": {
+              "Graph": null,
+              "Parameters": {}
+            },
             "AnimationGraph": null,
             "BodyGroups": 9513,
             "BoneMergeTarget": null,
@@ -287,11 +293,12 @@
             "CreateBoneObjects": false,
             "DeformationMode": "Normal",
             "LodOverride": null,
+            "LowDetailAnimation": false,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "b43c3668-195e-47df-86a3-ffc54ce96890",
+              "Id": "9771792a-7471-4884-a093-60cb26bb0c80",
               "Path": "models/weapons/sbox_pistol_1911/w_1911.vmdl"
             },
             "Morphs": {},
@@ -363,8 +370,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Thumbnail Camera",
-        "Position": "27.552749,51.819184,12.474701",
-        "Rotation": "0.036979,-0.258469,0.814125,-0.518677",
+        "Position": "27.5527496,51.8191833,12.4747009",
+        "Rotation": "0.036979001,-0.258468986,0.814125001,-0.518676996",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -381,6 +388,7 @@
             "Flags": 0,
             "FieldOfView": 12,
             "FitToBounds": true,
+            "Focus": "0.129999995,0",
             "GizmoDistance": 60,
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
@@ -388,7 +396,6 @@
             "OnComponentFixedUpdate": null,
             "OnComponentStart": null,
             "OnComponentUpdate": null,
-            "Focus": "0.13,0",
             "Padding": 0.08,
             "Zoom": 1.15
           }

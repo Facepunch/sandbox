@@ -37,14 +37,6 @@
           "SpreadGrowth": "3,3",
           "SpreadRecovery": 0.2
         },
-        "PunchDuration": 0.3,
-        "PunchFrequency": 2,
-        "PunchPitch": "0,0",
-        "PunchRoll": "0.5,0.5",
-        "PunchYaw": "0,0",
-        "ShakeAmplitude": 0,
-        "ShakeDuration": 0.3,
-        "ShakeFrequency": 40,
         "CanCancelReload": false,
         "ClipMaxSize": 17,
         "DeployTime": 0.2,
@@ -54,6 +46,7 @@
           "data": {
             "FilePath": "ui/weapons/up_45_icon.png",
             "MaxSize": 4096,
+            "Lossless": true,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
             "Rotate": 0,
@@ -84,7 +77,7 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": "textures/generated/imagefile/c32ae5e3ab92dd2.vtex"
+          "compiled": null
         },
         "DisplayName": "UP-45",
         "DroppedGameObject": {
@@ -96,7 +89,7 @@
           "Path": "sounds/dry_fire.sound"
         },
         "FirstShellReloadTime": 0,
-        "Handedness": "Both",
+        "Handedness": "Right",
         "HoldBone": "hold_r",
         "HoldType": "Pistol",
         "IncrementalReloading": false,
@@ -119,15 +112,21 @@
         "OnComponentUpdate": null,
         "PreferredSlot": 1,
         "PrimaryAmmoType": {
-          "Id": "091bfde9-872e-46c2-b6ce-4a6948df5eea",
+          "Id": "f629290f-60ee-459d-a28a-870cdabd1b96",
           "Path": "ammo/9mm.ammo"
         },
         "PrimaryAutomatic": true,
         "PrimaryDelay": 0.1,
+        "PunchDuration": 0.3,
+        "PunchFrequency": 2,
+        "PunchPitch": "0,0",
+        "PunchRoll": "0.5,0.5",
+        "PunchYaw": "0,0",
         "RagdollBodyShare": 0.3,
         "RagdollImpactScale": 1,
         "RecoilPitch": "-0.300000012,-0.100000001",
         "RecoilYaw": "-0.100000001,0.100000001",
+        "ReloadCancelWindow": 0,
         "ReloadStartTime": 0,
         "ReloadTime": 1.5,
         "SecondaryAmmoType": null,
@@ -138,6 +137,9 @@
         "SecondaryInput": {
           "Action": null
         },
+        "ShakeAmplitude": 0,
+        "ShakeDuration": 0.3,
+        "ShakeFrequency": 40,
         "ShootForce": 100000,
         "ShootInput": {
           "Action": null
@@ -167,7 +169,7 @@
         "Friction": null,
         "IsTrigger": false,
         "Model": {
-          "Id": "412b6aa2-7b35-43b2-8fe4-f8c81a604bc1",
+          "Id": "441df8b6-c320-4801-a1ed-228743418145",
           "Path": "models/weapons/sbox_pistol_usp/w_usp.vmdl"
         },
         "OnComponentDestroy": null,
@@ -280,6 +282,10 @@
             "__guid": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
             "__enabled": true,
             "Flags": 0,
+            "Animation": {
+              "Graph": null,
+              "Parameters": {}
+            },
             "AnimationGraph": null,
             "BodyGroups": 9513,
             "BoneMergeTarget": null,
@@ -287,11 +293,12 @@
             "CreateBoneObjects": false,
             "DeformationMode": "Normal",
             "LodOverride": null,
+            "LowDetailAnimation": false,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "412b6aa2-7b35-43b2-8fe4-f8c81a604bc1",
+              "Id": "441df8b6-c320-4801-a1ed-228743418145",
               "Path": "models/weapons/sbox_pistol_usp/w_usp.vmdl"
             },
             "Morphs": {},

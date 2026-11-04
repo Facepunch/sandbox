@@ -12,6 +12,9 @@ namespace Sandbox.WeaponAlign;
 /// </summary>
 internal static class WorldModelHolderPreview
 {
+	static RealTimeSince _timeSinceRefresh;
+	static WorldModelHolder _lastHolder;
+
 	[EditorEvent.Frame]
 	static void Frame()
 	{
@@ -24,22 +27,28 @@ internal static class WorldModelHolderPreview
 
 		// The preview lives in the scene it previews, so closing the prefab or hotloading this code
 		// can never leave an orphaned copy behind.
-		if ( scene.Children.Any( x => x.Components.Get<WorldModelHolder>( true ) is not null ) )
+		var holder = scene.Children.Select( x => x.Components.Get<WorldModelHolder>( true ) ).FirstOrDefault( x => x is not null );
+		if ( holder is not null && holder == _lastHolder && _timeSinceRefresh < 0.5f )
 			return;
 
+		_timeSinceRefresh = 0;
 		var hold = FindHoldSettings( prefabPath );
 		if ( hold is null ) return;
 
-		using ( scene.Push() )
+		if ( holder is null )
 		{
-			var go = new GameObject( true, "world model holder preview" );
-			go.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.Hidden | GameObjectFlags.EditorOnly;
-
-			var holder = go.AddComponent<WorldModelHolder>();
-			holder.HoldType = hold.HoldType;
-			holder.Handedness = hold.Handedness;
-			holder.HoldBone = hold.HoldBone;
+			using ( scene.Push() )
+			{
+				var go = new GameObject( true, "world model holder preview" );
+				go.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.Hidden | GameObjectFlags.EditorOnly;
+				holder = go.AddComponent<WorldModelHolder>();
+			}
 		}
+
+		_lastHolder = holder;
+		holder.HoldType = hold.HoldType;
+		holder.Handedness = hold.Handedness;
+		holder.HoldBone = hold.HoldBone;
 	}
 
 	record HoldSettings( string HoldType, int Handedness, string HoldBone );
@@ -90,6 +99,7 @@ internal sealed class WorldModelHolder : Component, Component.ExecuteInEditor
 
 	SceneModel _model;
 	BoneCollection.Bone _bone;
+	string _resolvedHoldBone;
 
 	protected override void OnEnabled()
 	{
@@ -100,6 +110,8 @@ internal sealed class WorldModelHolder : Component, Component.ExecuteInEditor
 	{
 		_model?.Delete();
 		_model = null;
+		_bone = null;
+		_resolvedHoldBone = null;
 	}
 
 	protected override void OnUpdate()
@@ -107,12 +119,30 @@ internal sealed class WorldModelHolder : Component, Component.ExecuteInEditor
 		if ( !_model.IsValid() ) return;
 
 		// Resolved here rather than in OnEnabled, which runs before HoldBone is assigned.
+		if ( _resolvedHoldBone != HoldBone )
+		{
+			_bone = null;
+			_resolvedHoldBone = HoldBone;
+		}
 		_bone ??= _model.Model.Bones.AllBones.FirstOrDefault( b => string.Equals( b.Name, HoldBone, StringComparison.OrdinalIgnoreCase ) );
 		if ( _bone is null ) return;
 
-		_model.SetAnimParameter( "b_grounded", true );
-		_model.SetAnimParameter( "holdtype", HoldType );
-		_model.SetAnimParameter( "holdtype_handedness", Handedness );
+		if ( _model.Animation.Graph is not null )
+		{
+			if ( !_model.Animation.IsValid ) return;
+			var parameters = _model.Animation.Parameters;
+			parameters.TrySet( "b_grounded", true );
+			parameters.TrySet( "holdtype", HoldType );
+			parameters.TrySet( "holdtype_handedness", Handedness );
+		}
+		else
+		{
+#pragma warning disable CS0618
+			_model.SetAnimParameter( "b_grounded", true );
+			_model.SetAnimParameter( "holdtype", HoldType );
+			_model.SetAnimParameter( "holdtype_handedness", Handedness );
+#pragma warning restore CS0618
+		}
 		_model.Update( RealTime.Delta );
 
 		// Hold bone in model space, built from parent-relative bone transforms so it doesn't depend on

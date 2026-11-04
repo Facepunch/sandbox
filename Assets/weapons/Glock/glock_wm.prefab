@@ -55,7 +55,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "w_usp",
-        "Position": "1.5562042,-0.0353811085,-2.69271922",
+        "Position": "2.94489431,-0.0331785306,-3.05261731",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -71,6 +71,10 @@
             "__guid": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
             "__enabled": true,
             "Flags": 0,
+            "Animation": {
+              "Graph": null,
+              "Parameters": {}
+            },
             "AnimationGraph": null,
             "BodyGroups": 9513,
             "BoneMergeTarget": null,
@@ -78,11 +82,12 @@
             "CreateBoneObjects": true,
             "DeformationMode": "Normal",
             "LodOverride": null,
+            "LowDetailAnimation": false,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "e490edd9-8f60-4999-94b2-856fc36e3bff",
+              "Id": "441df8b6-c320-4801-a1ed-228743418145",
               "Path": "models/weapons/sbox_pistol_usp/w_usp.vmdl"
             },
             "Morphs": {},
