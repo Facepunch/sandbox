@@ -1,6 +1,6 @@
 using Sandbox.UI;
 
-[Hide, Title( "#tool.name.camera" ), Icon( "📷" ), ClassName( "cameratool" ), Group( "#tool.group.building" )]
+[Hide, Title( "#tool.name.camera" ), Icon( "📷" ), ClassName( "cameratool" ), Group( "#tool.group.render" )]
 public sealed class CameraTool : ToolMode
 {
 	public const string CameraPrefab = "entities/camera/camera_entity.prefab";
