@@ -46,8 +46,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "camera_film",
-        "Position": "3.03657532,1.19331098,-1.45825958",
-        "Rotation": "0,0,0,1",
+        "Position": "2.4126,9.448,-0.6667",
+        "Rotation": "-0.5057671,-0.50182116,-0.48795354,-0.50425833",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,
@@ -73,7 +73,7 @@
             "MaterialOverride": null,
             "Materials": null,
             "Model": {
-              "Id": "50536266-2326-4110-9788-6566086d84df",
+              "Id": "e520db2d-6185-4e8b-8337-f7f2d074ef22",
               "Path": "models/props/camera_film/camera_film.vmdl"
             },
             "Morphs": {},

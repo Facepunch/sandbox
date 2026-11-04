@@ -84,8 +84,8 @@
         "DryFireSound": null,
         "FirstShellReloadTime": 0,
         "Handedness": "Both",
-        "HoldBone": "hold_R",
-        "HoldType": "pistol",
+        "HoldBone": "head",
+        "HoldType": "holditem",
         "IncrementalReloading": false,
         "Npc": {
           "MinRange": 0,
@@ -136,6 +136,10 @@
           "component_id": "829c84bb-e960-49d8-8535-c6b028c44860",
           "go": "3c948bf4-5353-443a-bb65-8f28584fed1b",
           "component_type": "CameraFeed"
+        },
+        "HoldAnimation": {
+          "Id": "e4e645a9-995a-4a78-bf71-19dfeafd972f",
+          "Path": "animations/camera/camera_hold.anim"
         }
       },
       {
