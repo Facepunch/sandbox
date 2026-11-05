@@ -128,7 +128,7 @@ public sealed class WireTool : BaseConstraintToolMode
 		_selectedPortIndex = (_selectedPortIndex + direction + _hoveredPorts.Length) % _hoveredPorts.Length;
 
 		// Inventory reads this later in the frame. Wire tool owns the wheel while choosing a port.
-		Input.MouseWheel = default;
+		Sandbox.Inventory.ConsumeMouseWheel();
 	}
 
 	private void UpdateOverlay()

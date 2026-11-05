@@ -82,9 +82,6 @@
             inventory.SwitchWeapon( weapon );
         }
 
-        if ( Input.Pressed( "SlotNext" ) ) Step( 1 );
-        if ( Input.Pressed( "SlotPrev" ) ) Step( -1 );
-
         for ( int i = 0; i < inventory.MaxSlots; i++ )
         {
             if ( Input.Pressed( $"Slot{i + 1}" ) )
@@ -112,15 +109,28 @@
     }
 
     /// <summary>
-    /// The scroll wheel steps the selection. Runs after the weapon's update, so a weapon that uses the wheel
-    /// (physgun distance, wire tool ports) clears Input.MouseWheel first and nothing reaches the menu
+    /// SlotNext / SlotPrev step the selection (the scroll wheel by default). Runs after the weapon's update, so a
+    /// weapon that uses the wheel (physgun distance, wire tool ports) calls <see cref="ConsumeMouseWheel"/> first
+    /// and nothing reaches the menu
     /// </summary>
     public void HandleScrollInput()
     {
         if ( inventory is null || SpawnMenuHost.IsOpen )
             return;
 
-        Step( -(int)Input.MouseWheel.y );
+        if ( Input.Pressed( "SlotNext" ) ) Step( 1 );
+        if ( Input.Pressed( "SlotPrev" ) ) Step( -1 );
+    }
+
+    /// <summary>
+    /// Call when something used the scroll wheel this frame, so it doesn't also change weapon. Clears
+    /// <see cref="Input.MouseWheel"/> and releases the slot actions, which are bound to the wheel by default
+    /// </summary>
+    public static void ConsumeMouseWheel()
+    {
+        Input.MouseWheel = default;
+        Input.ReleaseAction( "SlotNext" );
+        Input.ReleaseAction( "SlotPrev" );
     }
 
     List<BaseSandboxWeapon> Selectable() => inventory.Weapons.Where( x => x == inventory.ActiveWeapon || inventory.CanSwitchTo( x ) ).ToList();

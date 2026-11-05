@@ -462,7 +462,7 @@ public partial class Physgun : Local.IPlayerEvents
 					_state = state;
 
 					// stop processing this so inventory doesn't change
-					Input.MouseWheel = default;
+					Sandbox.Inventory.ConsumeMouseWheel();
 				}
 			}
 

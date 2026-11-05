@@ -409,7 +409,7 @@ public sealed partial class Player
 		if ( !Input.MouseWheel.IsNearZeroLength )
 		{
 			_driveDistance = (_driveDistance * (1f - Input.MouseWheel.y * 0.1f)).Clamp( 16f, 2048f );
-			Input.MouseWheel = default;
+			Inventory.ConsumeMouseWheel();
 		}
 	}
 
