@@ -12,7 +12,8 @@
 /// wheel. It rolls about whichever of its axes runs closest to the axle.</item>
 /// <item><c>steering_wheel</c> - turns about <see cref="SteeringWheelAxis"/>.</item>
 /// <item><c>pedal_gas</c>, <c>pedal_brake</c>, <c>pedal_clutch</c> - on their hinges, pushed forward
-/// <see cref="PedalTravel"/> - only for the driver, from their own feet (see <see cref="UpdatePedals"/>).</item>
+/// <see cref="PedalTravel"/> - from the driver's input on their machine, the synced throttle and brake on everyone
+/// else's (see <see cref="UpdatePedals"/>).</item>
 /// </list>
 /// Any other bone rides on its parent.
 /// </summary>
@@ -171,8 +172,9 @@ public sealed partial class FourWheelVehicle
 	}
 
 	/// <summary>
-	/// The driver's feet, on their own machine - it's their input, and nobody else can see the pedals. Gas and brake are
-	/// what they're pressing, split the way the car splits it (the throttle brakes when it's against the way we're going).
+	/// The driver's feet on the pedals. On the driver's own machine it's straight from their input - gas and brake
+	/// split the way the car splits it (the throttle brakes when it's against the way we're going), a gamepad's trigger
+	/// part way. Everyone else goes from what the host syncs: the throttle and <see cref="BrakeInput"/>.
 	/// The clutch goes in for a gear change, lifting off the gas, and is held in at a standstill until we pull away.
 	/// </summary>
 	private void UpdatePedals()
@@ -180,20 +182,28 @@ public sealed partial class FourWheelVehicle
 		float gas = 0, brake = 0, clutch = 0;
 
 		var driver = Seat?.GetOccupant()?.GetComponent<Player>();
-		if ( driver.IsValid() && driver.IsLocalPlayer )
+		if ( driver.IsValid() )
 		{
-			var forward = LocalAmount( Forward, driver );
-			var back = LocalAmount( Back, driver );
+			if ( driver.IsLocalPlayer )
+			{
+				var forward = LocalAmount( Forward, driver );
+				var back = LocalAmount( Back, driver );
 
-			if ( forward > 0 )
-			{
-				if ( Speed <= -SpeedThrottleAsBrake ) brake = forward;
-				else gas = forward;
+				if ( forward > 0 )
+				{
+					if ( Speed <= -SpeedThrottleAsBrake ) brake = forward;
+					else gas = forward;
+				}
+				else if ( back > 0 )
+				{
+					if ( Speed >= SpeedThrottleAsBrake ) brake = back;
+					else gas = back;
+				}
 			}
-			else if ( back > 0 )
+			else
 			{
-				if ( Speed >= SpeedThrottleAsBrake ) brake = back;
-				else gas = back;
+				gas = ThrottleDown ? 1f : 0f;
+				brake = BrakeInput;
 			}
 
 			if ( Gear != _lastGear )

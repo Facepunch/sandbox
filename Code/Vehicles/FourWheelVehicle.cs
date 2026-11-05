@@ -90,6 +90,11 @@ public sealed partial class FourWheelVehicle : Component, IPlayerControllable, I
 	[Sync( SyncFlags.FromHost )] public bool Boosting { get; private set; }
 
 	/// <summary>
+	/// How hard the driver's braking, 0 to 1 - for everyone else's view of the pedals and the driver's feet.
+	/// </summary>
+	[Sync( SyncFlags.FromHost )] public float BrakeInput { get; private set; }
+
+	/// <summary>
 	/// Fastest a wheel is sliding over the ground, in/s.
 	/// </summary>
 	[Sync( SyncFlags.FromHost )] public float SkidSpeed { get; private set; }
@@ -286,6 +291,7 @@ public sealed partial class FourWheelVehicle : Component, IPlayerControllable, I
 		ThrottleDown = IsEngineOn && (_throttleDown || revving);
 		Reversing = _controls.Throttle < 0;
 		Boosting = IsBoosting();
+		BrakeInput = IsEngineOn ? _controls.Brake : 0;
 		SkidSpeed = _state.SkidSpeed;
 		Speed = _state.Speed;
 	}
