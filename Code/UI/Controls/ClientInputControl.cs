@@ -22,9 +22,30 @@ public partial class ClientInputControl : BaseControl
 	public override void Rebuild()
 	{
 		if ( Property == null ) return;
+		if ( _capturing ) return;
 
-		var action = Property.GetValue<ClientInput>().Action;
+		var input = Property.GetValue<ClientInput>();
+		var action = input.Action;
+		var keys = input.Keys;
 		var outputCount = GetLinkedOutputs().Count( IsConnected );
+
+		// A raw key, glyph for the last key of a combo (ctrl + k shows k)
+		if ( keys.Length > 0 )
+		{
+			_inputHint.Action = null;
+			_inputHint.Key = keys[^1];
+			_inputHint.SetClass( "hidden", false );
+			_fallbackIcon.SetClass( "hidden", true );
+			SetClass( "no-binding", false );
+
+			var keyLabel = KeyLabel( keys );
+			_bindLabel.Text = outputCount > 0
+				? Game.Language.GetPhrase( "ui.input.binding_with_outputs", new() { { "binding", keyLabel }, { "count", outputCount } } )
+				: keyLabel;
+			return;
+		}
+
+		_inputHint.Key = null;
 
 		if ( string.IsNullOrWhiteSpace( action ) )
 		{
@@ -59,10 +80,64 @@ public partial class ClientInputControl : BaseControl
 		Rebuild();
 	}
 
+	bool _capturing;
+
+	/// <summary>
+	/// Left click listens for a key, or combo, and binds it. Mouse buttons are captured too, so clicking
+	/// again binds mouse1 - escape backs out.
+	/// </summary>
 	protected override void OnClick( MousePanelEvent e )
 	{
 		base.OnClick( e );
 
+		_capturing = true;
+		SetClass( "capturing", true );
+		_inputHint.SetClass( "hidden", true );
+		_fallbackIcon.SetClass( "hidden", false );
+		_bindLabel.Text = "#ui.input.press_key";
+
+		Input.Keyboard.Capture( OnCaptured );
+	}
+
+	/// <summary>
+	/// Right click opens the menu: clearing the key, and linked outputs.
+	/// </summary>
+	protected override void OnRightClick( MousePanelEvent e )
+	{
+		base.OnRightClick( e );
+		OpenMenu();
+	}
+
+	public override void OnDeleted()
+	{
+		base.OnDeleted();
+
+		if ( _capturing ) Input.Keyboard.CancelCapture();
+	}
+
+	void OnCaptured( IReadOnlyList<string> buttons )
+	{
+		if ( !_capturing ) return;
+
+		_capturing = false;
+		SetClass( "capturing", false );
+
+		if ( !IsValid || Property == null ) return;
+
+		// Cancelled
+		if ( buttons.Count == 0 )
+		{
+			Rebuild();
+			return;
+		}
+
+		OnBindChanged( string.Join( "+", buttons ) );
+	}
+
+	static string KeyLabel( string[] keys ) => string.Join( " + ", keys ).ToUpperInvariant();
+
+	void OpenMenu()
+	{
 		var menu = new Sandbox.UI.Menu();
 		menu.AddOption( "#ui.input.no_key_binding", "", () => OnBindChanged( "" ) );
 
@@ -83,34 +158,6 @@ public partial class ClientInputControl : BaseControl
 					connected ? "check_box" : "check_box_outline_blank",
 					() => SetConnected( source, !connected )
 				);
-			}
-		}
-
-		menu.AddSeparator();
-
-		var grouped = Input.GetActions()
-			.GroupBy( a => a.GroupName ?? "" )
-			.OrderBy( g => LocalizedText.InputGroup( g.Key ), StringComparer.CurrentCultureIgnoreCase );
-
-		foreach ( var group in grouped )
-		{
-			if ( string.IsNullOrWhiteSpace( group.Key ) )
-			{
-				foreach ( var action in group )
-				{
-					var a = action;
-					menu.AddOption( ActionLabel( a ), "", () => OnBindChanged( a.Name ) );
-				}
-			}
-			else
-			{
-				var groupActions = group.ToList();
-				var sub = menu.AddMenu( LocalizedText.InputGroup( group.Key ), "" );
-				foreach ( var action in groupActions )
-				{
-					var a = action;
-					sub.AddOption( ActionLabel( a ), "", () => OnBindChanged( a.Name ) );
-				}
 			}
 		}
 
@@ -171,19 +218,14 @@ public partial class ClientInputControl : BaseControl
 		Rebuild();
 	}
 
-	string ActionLabel( InputAction a )
-	{
-		var title = LocalizedText.InputTitle( a );
-		var origin = Input.GetButtonOrigin( a.Name );
-		return origin != null
-			? Game.Language.GetPhrase( "ui.input.binding_with_key", new() { { "binding", title }, { "key", origin } } )
-			: title;
-	}
-
-	void OnBindChanged( string value )
+	/// <summary>
+	/// Bind a raw key combo, or nothing. Clears any action from before raw keys.
+	/// </summary>
+	void OnBindChanged( string keys )
 	{
 		var current = Property.GetValue<ClientInput>();
-		current.Action = value;
+		current.Key = keys;
+		current.Action = "";
 		Property.SetValue( current );
 
 		foreach ( var target in Property.Parent?.Targets ?? Enumerable.Empty<object>() )

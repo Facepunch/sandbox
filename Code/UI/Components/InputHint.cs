@@ -10,8 +10,25 @@ public class InputHint : Panel
 	[Parameter] public string Action { get; set; }
 	[Parameter] public InputGlyphSize GlyphSize { get; set; } = InputGlyphSize.Medium;
 
+	/// <summary>
+	/// A raw key to show instead of <see cref="Action"/>'s.
+	/// </summary>
+	[Parameter] public string Key { get; set; }
+
 	public override void Tick()
 	{
+		if ( !string.IsNullOrEmpty( Key ) )
+		{
+			var keyGlyph = Input.Keyboard.GetGlyph( Key, GlyphSize, false );
+			if ( !keyGlyph.IsValid() || keyGlyph == _lastGlyph ) return;
+			_lastGlyph = keyGlyph;
+			_lastOrigin = null;
+
+			Style.SetBackgroundImage( keyGlyph );
+			Style.AspectRatio = (float)keyGlyph.Width / keyGlyph.Height;
+			return;
+		}
+
 		if ( string.IsNullOrEmpty( Action ) ) return;
 
 		var glyph = Input.GetGlyph( Action, GlyphSize, false );

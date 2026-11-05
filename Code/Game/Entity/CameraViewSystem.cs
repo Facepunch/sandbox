@@ -56,12 +56,14 @@ public sealed class CameraViewSystem : Component, Global.ISaveEvents
 
 		var actions = Input.GetActions().Select( a => a.Name ).ToHashSet( StringComparer.OrdinalIgnoreCase );
 		var groups = Scene.GetAllComponents<CameraEntity>().Where( c => CanView( c ) && c.ViewInput.IsEnabled )
-			.GroupBy( c => c.ViewInput.Action, StringComparer.OrdinalIgnoreCase ).ToArray();
-		var bound = groups.Where( g => actions.Contains( g.Key ) ).Select( g => g.Key ).ToHashSet( StringComparer.OrdinalIgnoreCase );
+			.GroupBy( c => c.ViewInput.HasKey ? c.ViewInput.Key : c.ViewInput.Action, StringComparer.OrdinalIgnoreCase ).ToArray();
+		// A raw key always works; an action has to still exist in this game.
+		bool IsBound( IGrouping<string, CameraEntity> g ) => g.First().ViewInput.HasKey || actions.Contains( g.Key );
+		var bound = groups.Where( IsBound ).Select( g => g.Key ).ToHashSet( StringComparer.OrdinalIgnoreCase );
 		foreach ( var stale in _down.Keys.Where( key => !bound.Contains( key ) ).ToArray() ) _down.Remove( stale );
 		foreach ( var group in groups )
 		{
-			if ( !actions.Contains( group.Key ) )
+			if ( !bound.Contains( group.Key ) )
 			{
 				if ( ActiveCamera.IsValid() && group.Contains( ActiveCamera ) ) Clear();
 				continue;
@@ -69,13 +71,14 @@ public sealed class CameraViewSystem : Component, Global.ISaveEvents
 			// Process a binding only once, even if several cameras use it. An active
 			// camera gets first refusal so the next toggle can always leave its view.
 			var target = ActiveCamera.IsValid() && group.Contains( ActiveCamera ) ? ActiveCamera : group.OrderBy( c => c.ViewOrder ).Last();
-			bool down = Input.Down( group.Key );
-			bool pressed = target.ToggleMode ? Input.Pressed( group.Key ) : down && !_down.GetValueOrDefault( group.Key );
+			var input = target.ViewInput;
+			bool down = input.LocalDown();
+			bool pressed = target.ToggleMode ? input.LocalPressed() : down && !_down.GetValueOrDefault( group.Key );
 			_down[group.Key] = down;
 			ProcessInput( target, down, pressed );
 			// A bound camera owns Change View; don't also flip first/third person,
 			// especially when releasing a hold-to-view camera.
-			if ( string.Equals( group.Key, player.Controller.ToggleCameraModeButton, StringComparison.OrdinalIgnoreCase ) )
+			if ( !input.HasKey && string.Equals( group.Key, player.Controller.ToggleCameraModeButton, StringComparison.OrdinalIgnoreCase ) )
 				Input.Clear( group.Key );
 		}
 	}

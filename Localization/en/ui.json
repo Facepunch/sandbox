@@ -91,6 +91,7 @@
     "ui.input.binding_with_outputs": "{binding} + {count}",
     "ui.input.linked_output": "{object}: {output}",
     "ui.input.binding_with_key": "{binding} ({key})",
+    "ui.input.press_key": "Press a key...",
     "ui.inspect.mass": "{mass} kg",
     "ui.inspect.health": "{health} HP",
     "ui.inspect.default_material": "Default",

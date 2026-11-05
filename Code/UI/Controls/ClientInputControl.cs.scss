@@ -16,6 +16,14 @@ ClientInputControl
 		}
 	}
 
+	&.capturing
+	{
+		background-color: $ui-blue-soft;
+		border-color: $ui-control-border-hover;
+
+		.bind-label { color: $ui-text-muted; }
+	}
+
 	.preview
 	{
 		width: 24px;

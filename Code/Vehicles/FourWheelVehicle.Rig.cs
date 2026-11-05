@@ -230,7 +230,8 @@ public sealed partial class FourWheelVehicle
 	/// </summary>
 	private static float LocalAmount( ClientInput input, Player driver )
 	{
-		if ( !input.IsEnabled || !Input.Down( input.Action ) ) return 0f;
+		if ( !input.IsEnabled || !input.LocalDown() ) return 0f;
+		if ( input.HasKey ) return 1f;
 		return driver.ActionAmounts.TryGetValue( input.Action, out var amount ) ? amount : 1f;
 	}
 

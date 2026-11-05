@@ -27,6 +27,12 @@ public class LinkedGameObjectBuilder
 	}
 
 	/// <summary>
+	/// Component lists for <see cref="AddConnected"/>, one per recursion depth, so walking doesn't allocate.
+	/// </summary>
+	private readonly List<List<Component>> _componentLists = new();
+	private int _depth;
+
+	/// <summary>
 	/// Add a GameObject with all connected GameObjects
 	/// </summary>
 	public void AddConnected( GameObject source )
@@ -42,35 +48,89 @@ public class LinkedGameObjectBuilder
 		// because we must have already added it, or it's the world.
 		if ( !Add( source ) ) return;
 
-		foreach ( var rb in source.GetComponentsInChildren<Rigidbody>() )
+		if ( _componentLists.Count <= _depth ) _componentLists.Add( new List<Component>() );
+		var components = _componentLists[_depth];
+		components.Clear();
+		CollectComponents( source, components );
+
+		_depth++;
+
+		try
 		{
-			foreach ( var joint in rb.Joints )
+			// One pass per kind, in the same order as before: bodies, colliders, links, filters
+			foreach ( var component in components )
+			{
+				if ( component is Rigidbody rb ) AddJoints( rb.Joints );
+			}
+
+			foreach ( var component in components )
+			{
+				if ( component is Collider collider ) AddJoints( collider.Joints );
+			}
+
+			foreach ( var component in components )
+			{
+				if ( component is ManualLink link && link.Body.IsValid() )
+					AddConnected( link.Body );
+			}
+
+			// If any children have a physics filter, also connect them.
+			foreach ( var component in components )
+			{
+				if ( component is PhysicsFilter filter && filter.GameObject != source )
+					AddConnected( filter.GameObject );
+			}
+		}
+		finally
+		{
+			_depth--;
+			components.Clear();
+		}
+	}
+
+	private void AddJoints( IReadOnlySet<Joint> joints )
+	{
+		if ( joints.Count == 0 ) return;
+
+		// It's a HashSet underneath - enumerate it as one so it doesn't box
+		if ( joints is HashSet<Joint> set )
+		{
+			foreach ( var joint in set )
 			{
 				AddConnected( joint.Object1 );
 				AddConnected( joint.Object2 );
 			}
+
+			return;
 		}
 
-		foreach ( var collider in source.GetComponentsInChildren<Collider>() )
+		foreach ( var joint in joints )
 		{
-			foreach ( var joint in collider.Joints )
+			AddConnected( joint.Object1 );
+			AddConnected( joint.Object2 );
+		}
+	}
+
+	/// <summary>
+	/// Every active component on this GameObject and its enabled descendants, in hierarchy order - what
+	/// <c>GetComponentsInChildren&lt;Component&gt;()</c> finds, without allocating.
+	/// </summary>
+	public static void CollectComponents( GameObject gameObject, List<Component> results )
+	{
+		if ( !gameObject.IsValid() || !gameObject.Enabled ) return;
+
+		// It's a List underneath - empty GameObjects hand back something else, with nothing in it
+		if ( gameObject.Components.GetAll() is List<Component> components )
+		{
+			foreach ( var component in components )
 			{
-				AddConnected( joint.Object1 );
-				AddConnected( joint.Object2 );
+				if ( component is not null && component.Active )
+					results.Add( component );
 			}
 		}
 
-		foreach ( var link in source.GetComponentsInChildren<ManualLink>() )
-		{
-			if ( link.Body.IsValid() )
-				AddConnected( link.Body );
-		}
-
-		// If any children have a physics filter, also connect them.
-		foreach ( var filter in source.GetComponentsInChildren<PhysicsFilter>( includeSelf: false ) )
-		{
-			AddConnected( filter.GameObject );
-		}
+		foreach ( var child in gameObject.Children )
+			CollectComponents( child, results );
 	}
 
 	public void RemoveDeletedObjects()
