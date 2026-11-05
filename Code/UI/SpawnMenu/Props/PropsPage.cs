@@ -24,6 +24,7 @@ public class PropsPage : SpawnlistsPage
 		AddBuildingSet( builder, "robotics", "spawnlists/sandbox/robotics.spawn" );
 		AddBuildingSet( builder, "steel_structures", "spawnlists/sandbox/steel_structures.spawn" );
 		AddBuildingSet( builder, "gears", "spawnlists/sandbox/gears.spawn" );
+		AddBuildingSet( builder, "wheels", "spawnlists/sandbox/wheels.spawn" );
 	}
 
 	void AddBuildingSet( SpawnMenuOption builder, string key, string path )
