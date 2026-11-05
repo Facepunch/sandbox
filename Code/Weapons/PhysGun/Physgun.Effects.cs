@@ -338,7 +338,7 @@ public partial class Physgun : ScreenWeapon
 			FontWeight = 100,
 			Alignment = TextFlag.LeftCenter | TextFlag.SingleLine
 		};
-		paint.Text( $"{percent}", new Rect( barX + barW + padX, barY, w - barW - padX * 3f, barH ) );
+		paint.Text( percent.ToString(), new Rect( barX + barW + padX, barY, w - barW - padX * 3f, barH ) );
 
 		// Channel / voltage row
 		var rowY = barY + barH + padY;

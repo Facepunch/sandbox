@@ -82,7 +82,14 @@ public class UIDropdown : Panel
 
 	void UpdateLabel()
 	{
-		var current = Items.FirstOrDefault( x => Equals( x.Value, _value ) );
+		Item current = null;
+		foreach ( var item in Items )
+		{
+			if ( !Equals( item.Value, _value ) ) continue;
+
+			current = item;
+			break;
+		}
 
 		// resolved here, a tokenized label ignores going back to the token it showed before some plain text
 		_label.Tokenize = false;

@@ -363,12 +363,15 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		OnControl();
 	}
 
+	// Static so the event lambda doesn't capture
+	static bool _allowMovement;
+
 	void OnControl()
 	{
-		var allowMovement = true;
-		Local.IPlayerEvents.Post( x => x.OnMove( ref allowMovement ) );
+		_allowMovement = true;
+		Local.IPlayerEvents.Post( static x => x.OnMove( ref _allowMovement ) );
 
-		Controller.UseInputControls = allowMovement;
+		Controller.UseInputControls = _allowMovement;
 
 		if ( Input.Pressed( "die" ) )
 		{

@@ -25,10 +25,10 @@ public sealed partial class PlayerInventory
 		_seat = seat;
 
 		if ( previous is Component left && left.IsValid() )
-			Scene.RunEvent<Global.IControlEvents>( x => x.OnControlStopped( new ControlEvent { Player = Player, Target = left.GameObject } ) );
+			PostControlStopped( left );
 
 		if ( seat is Component sat )
-			Scene.RunEvent<Global.IControlEvents>( x => x.OnControlStarted( new ControlEvent { Player = Player, Target = sat.GameObject } ) );
+			PostControlStarted( sat );
 
 		if ( IsSeatHolstered )
 		{
@@ -43,6 +43,11 @@ public sealed partial class PlayerInventory
 		if ( seat is not null )
 			HolsterForSeat( seat );
 	}
+
+	// Separate methods so the closures are only allocated when the seat changes
+	private void PostControlStopped( Component left ) => Scene.RunEvent<Global.IControlEvents>( x => x.OnControlStopped( new ControlEvent { Player = Player, Target = left.GameObject } ) );
+
+	private void PostControlStarted( Component sat ) => Scene.RunEvent<Global.IControlEvents>( x => x.OnControlStarted( new ControlEvent { Player = Player, Target = sat.GameObject } ) );
 
 	private void HolsterForSeat( ISitTarget seat )
 	{

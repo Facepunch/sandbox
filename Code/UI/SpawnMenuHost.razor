@@ -59,8 +59,9 @@
         var layer = Panel.FindPopupPanel();
         if ( !layer.IsValid() ) return false;
 
-        foreach ( var child in layer.Children )
+        for ( int i = 0; layer.ChildrenCount > i; i++ )
         {
+            var child = layer.GetChild( i );
             if ( child is IKeepsMenuOpen { KeepsMenuOpen: true } && child.IsValid() && !child.IsDeleting )
                 return true;
         }
@@ -178,13 +179,30 @@
         if ( PanelSwitcher == null )
             return;
 
-        var modes = Game.TypeLibrary.GetTypesWithAttribute<SpawnMenuMode>().OrderBy( x => x.Type.Name != "SpawnMenu" ).ToList();
+        var modes = Game.TypeLibrary.GetTypesWithAttribute<SpawnMenuMode>();
+
+        _modeChildren.Clear();
+        for ( int i = 0; PanelSwitcher.ChildrenCount > i; i++ )
+        {
+            var child = PanelSwitcher.GetChild( i );
+            if ( child is not null ) _modeChildren.Add( child );
+        }
 
         // Remove panels whose condition is no longer met
-        foreach ( var child in PanelSwitcher.Children.ToList() )
+        foreach ( var child in _modeChildren )
         {
-            var mode = modes.FirstOrDefault( m => m.Type.TargetType == child.GetType() );
-            if ( mode.Type != null && !mode.Attribute.CheckCondition() )
+            var childType = child.GetType();
+            SpawnMenuMode attribute = null;
+            for ( int i = 0; modes.Count > i; i++ )
+            {
+                if ( modes[i].Type.TargetType == childType )
+                {
+                    attribute = modes[i].Attribute;
+                    break;
+                }
+            }
+
+            if ( attribute != null && !attribute.CheckCondition() )
             {
                 if ( PanelSwitcher.ActivePanel == child )
                     SwitchMode( "SpawnMenu" );
@@ -192,17 +210,38 @@
             }
         }
 
-        // Create panels for modes whose condition is met
-        foreach ( var type in modes )
+        _modeChildren.Clear();
+
+        // Create panels for modes whose condition is met, SpawnMenu first
+        for ( int pass = 0; 2 > pass; pass++ )
         {
-            if ( !type.Attribute.CheckCondition() ) continue;
-            if ( PanelSwitcher.Children.Any( x => x.GetType() == type.Type.TargetType ) ) continue;
+            for ( int i = 0; modes.Count > i; i++ )
+            {
+                var type = modes[i];
+                if ( (type.Type.Name == "SpawnMenu") != (pass == 0) ) continue;
+                if ( !type.Attribute.CheckCondition() ) continue;
+                if ( HasModeChild( type.Type.TargetType ) ) continue;
 
-            var panel = type.Type.Create<Panel>();
-            if ( panel == null ) continue;
+                var panel = type.Type.Create<Panel>();
+                if ( panel == null ) continue;
 
-            PanelSwitcher.AddChild( panel );
+                PanelSwitcher.AddChild( panel );
+            }
         }
+    }
+
+    readonly List<Panel> _modeChildren = new();
+
+    bool HasModeChild( System.Type type )
+    {
+        for ( int i = 0; PanelSwitcher.ChildrenCount > i; i++ )
+        {
+            var child = PanelSwitcher.GetChild( i );
+            if ( child is not null && child.GetType() == type )
+                return true;
+        }
+
+        return false;
     }
 
     public static void SwitchMode( string modeName, bool remember = true )

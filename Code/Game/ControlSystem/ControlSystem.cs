@@ -5,6 +5,9 @@
 public sealed class ControlSystem : GameObjectSystem<ControlSystem>
 {
 	private readonly Dictionary<BaseChair, RealTimeSince> _occupiedSince = new();
+	private readonly List<BaseChair> _chairs = new();
+	private readonly List<BaseChair> _seats = new();
+	private readonly HashSet<GameObject> _driven = new();
 
 	public ControlSystem( Scene scene ) : base( scene )
 	{
@@ -18,7 +21,8 @@ public sealed class ControlSystem : GameObjectSystem<ControlSystem>
 		if ( !Networking.IsHost ) return;
 
 		// Whoever sat down first claims the contraption — a second seat on the same vehicle does nothing.
-		var driven = new HashSet<GameObject>();
+		var driven = _driven;
+		driven.Clear();
 
 		foreach ( var chair in GetSortedSeats() )
 		{
@@ -34,21 +38,30 @@ public sealed class ControlSystem : GameObjectSystem<ControlSystem>
 		}
 	}
 
-	private IEnumerable<BaseChair> GetSortedSeats()
+	private List<BaseChair> GetSortedSeats()
 	{
-		var chairs = Scene.GetAll<BaseChair>();
+		_chairs.Clear();
+		_seats.Clear();
 
-		foreach ( var chair in chairs )
+		Scene.GetAll( _chairs );
+
+		foreach ( var chair in _chairs )
 		{
 			if ( !chair.IsValid() || !chair.IsOccupied )
+			{
 				_occupiedSince.Remove( chair );
-			else
-				_occupiedSince.TryAdd( chair, 0 );
+				continue;
+			}
+
+			_occupiedSince.TryAdd( chair, 0 );
+
+			// Insertion keeps it stable, like the OrderBy it replaced
+			var index = _seats.Count;
+			while ( index > 0 && _occupiedSince[_seats[index - 1]] > _occupiedSince[chair] ) index--;
+			_seats.Insert( index, chair );
 		}
 
-		return chairs
-			.Where( chair => chair.IsValid() && chair.IsOccupied )
-			.OrderBy( chair => (float)_occupiedSince.GetValueOrDefault( chair, default ) );
+		return _seats;
 	}
 
 	private static void RunControl( BaseChair chair, LinkedGameObjectBuilder linked )

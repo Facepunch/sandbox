@@ -43,6 +43,11 @@ public sealed class NpcStimulusSystem : GameObjectSystem<NpcStimulusSystem>
 	void Prune()
 	{
 		var now = Time.Now;
-		_active.RemoveAll( s => now >= s.Expiry );
+
+		for ( int i = _active.Count - 1; i >= 0; i-- )
+		{
+			if ( now >= _active[i].Expiry )
+				_active.RemoveAt( i );
+		}
 	}
 }

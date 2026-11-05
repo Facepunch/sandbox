@@ -393,6 +393,8 @@ public sealed partial class FourWheelVehicle
 /// </summary>
 public sealed class VehicleDriverPoseSystem : GameObjectSystem<VehicleDriverPoseSystem>
 {
+	private readonly List<FourWheelVehicle> _vehicles = new();
+
 	public VehicleDriverPoseSystem( Scene scene ) : base( scene )
 	{
 		Listen( Stage.UpdateBones, -1000, PoseDrivers, "PoseVehicleDrivers" );
@@ -400,7 +402,10 @@ public sealed class VehicleDriverPoseSystem : GameObjectSystem<VehicleDriverPose
 
 	private void PoseDrivers()
 	{
-		foreach ( var vehicle in Scene.GetAll<FourWheelVehicle>() )
+		_vehicles.Clear();
+		Scene.GetAll( _vehicles );
+
+		foreach ( var vehicle in _vehicles )
 			vehicle.ApplyDriverPose();
 	}
 }

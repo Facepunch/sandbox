@@ -151,7 +151,7 @@ public partial class Physgun : Local.IPlayerEvents
 
 	[Property] public float Range { get; set; } = 8196f;
 
-	public struct GrabState
+	public record struct GrabState
 	{
 		public bool Active { get; set; }
 		public bool Pulling { get; set; }
@@ -400,7 +400,7 @@ public partial class Physgun : Local.IPlayerEvents
 		if ( !_state.IsValid() ) _cursorAim = IsCursorDragging;
 		var aim = CurrentAimTransform;
 
-		ViewModel?.RunEvent<ViewModel>( UpdateViewModel );
+		ViewModel?.RunEvent<ViewModel>( _updateViewModel ??= UpdateViewModel );
 
 		var pullLock = _stateHovered;
 		_stateHovered = default;
@@ -731,6 +731,8 @@ public partial class Physgun : Local.IPlayerEvents
 			_state = default;
 		}
 	}
+
+	Action<ViewModel> _updateViewModel;
 
 	private void UpdateViewModel( ViewModel model )
 	{

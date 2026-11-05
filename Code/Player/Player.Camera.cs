@@ -20,6 +20,10 @@ public sealed partial class Player : ICameraModifier
 
 	private float roll;
 
+	// Static so the event lambdas don't capture
+	private static Angles _cameraMoveAngles;
+	private static CameraComponent _bridgeCamera;
+
 	void PlayerController.IEvents.OnEyeAngles( ref Angles ang )
 	{
 		if ( IsDriving || IsDriveHolding )
@@ -28,9 +32,9 @@ public sealed partial class Player : ICameraModifier
 			return;
 		}
 
-		var angles = ang;
-		Local.IPlayerEvents.Post( x => x.OnCameraMove( ref angles ) );
-		ang = angles;
+		_cameraMoveAngles = ang;
+		Local.IPlayerEvents.Post( static x => x.OnCameraMove( ref _cameraMoveAngles ) );
+		ang = _cameraMoveAngles;
 	}
 
 	int ICameraModifier.CameraOrder => 50;
@@ -55,22 +59,24 @@ public sealed partial class Player : ICameraModifier
 			camera.RenderExcludeTags.Remove( "firstperson" );
 
 		// Legacy game events still receive the camera - write the view out, let them run, fold back.
-		BridgeCameraEvent( camera, ref view, c => Local.IPlayerEvents.Post( x => x.OnCameraSetup( c ) ) );
+		BridgeCameraEvent( camera, ref view, static x => x.OnCameraSetup( _bridgeCamera ) );
 
 		ApplyMovementCameraEffects( ref view );
 		ApplySeatedCameraSetup( ref view );
 		ApplyDriveCamera( camera, ref view );
 
-		BridgeCameraEvent( camera, ref view, c => Local.IPlayerEvents.Post( x => x.OnCameraPostSetup( c ) ) );
+		BridgeCameraEvent( camera, ref view, static x => x.OnCameraPostSetup( _bridgeCamera ) );
 	}
 
-	private static void BridgeCameraEvent( CameraComponent camera, ref CameraView view, Action<CameraComponent> post )
+	private static void BridgeCameraEvent( CameraComponent camera, ref CameraView view, Action<Local.IPlayerEvents> post )
 	{
 		camera.WorldPosition = view.Position;
 		camera.WorldRotation = view.Rotation;
 		camera.FieldOfView = view.FieldOfView;
 
-		post( camera );
+		_bridgeCamera = camera;
+		Local.IPlayerEvents.Post( post );
+		_bridgeCamera = null;
 
 		view.Position = camera.WorldPosition;
 		view.Rotation = camera.WorldRotation;

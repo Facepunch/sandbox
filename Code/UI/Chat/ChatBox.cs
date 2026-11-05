@@ -108,8 +108,11 @@ public sealed class ChatBox : PanelComponent, IChatEvent
 		_recent.Style.Display = GamePreferences.DrawChatMessages ? null : DisplayMode.None;
 
 		_box.Style.Left = Hud.MarginLength;
-		foreach ( var line in _recentList.Children )
-			line.Style.PaddingLeft = Hud.MarginLength;
+		for ( int i = 0; i < _recentList.ChildrenCount; i++ )
+		{
+			var line = _recentList.GetChild( i );
+			if ( line is not null ) line.Style.PaddingLeft = Hud.MarginLength;
+		}
 
 		if ( !visible )
 		{

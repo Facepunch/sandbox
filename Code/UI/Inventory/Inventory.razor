@@ -63,6 +63,10 @@
         if ( section is not null ) section.Open = false;
     }
 
+    static readonly string[] SlotActions = { "Slot1", "Slot2", "Slot3", "Slot4", "Slot5", "Slot6", "Slot7", "Slot8", "Slot9" };
+
+    static string SlotAction( int index ) => SlotActions.Length > index ? SlotActions[index] : $"Slot{index + 1}";
+
     public void HandleInput()
     {
         if ( inventory is null )
@@ -84,7 +88,7 @@
 
         for ( int i = 0; i < inventory.MaxSlots; i++ )
         {
-            if ( Input.Pressed( $"Slot{i + 1}" ) )
+            if ( Input.Pressed( SlotAction( i ) ) )
                 SelectBucket( i );
         }
 

@@ -4,6 +4,8 @@ public partial class ScreenWeapon : BaseSandboxWeapon
 {
 	private Material _screenMaterialCopy;
 	private Texture _screenTexture;
+	private RenderTarget _screenRenderTarget;
+	private CommandList _screenCommandList;
 	private float _coilSpin;
 	private float _joystickX;
 	private float _joystickY;
@@ -114,9 +116,21 @@ public partial class ScreenWeapon : BaseSandboxWeapon
 
 		_lastScreenUpdate = 0;
 
-		var oldMaterial = modelRenderer.Model.Materials.FirstOrDefault( x => x.Name.Contains( ScreenMaterialName ) );
-		var index = modelRenderer.Model.Materials.IndexOf( oldMaterial );
+		var materials = modelRenderer.Model.Materials;
+		var screenMaterialName = ScreenMaterialName;
+		var index = -1;
+		for ( var i = 0; i < materials.Length; i++ )
+		{
+			if ( materials[i].Name.Contains( screenMaterialName ) )
+			{
+				index = i;
+				break;
+			}
+		}
+
 		if ( index < 0 ) return;
+
+		var oldMaterial = materials[index];
 
 		_screenTexture ??= Texture.CreateRenderTarget().WithSize( ScreenTextureSize.x, ScreenTextureSize.y ).WithFormat( ImageFormat.RGBA16161616F ).WithInitialColor( Color.Black )
 			.Create();
@@ -142,9 +156,10 @@ public partial class ScreenWeapon : BaseSandboxWeapon
 
 	private void UpdateViewScreenCommandList( SkinnedModelRenderer renderer )
 	{
-		var rt = RenderTarget.From( _screenTexture );
+		var rt = _screenRenderTarget ??= RenderTarget.From( _screenTexture );
 
-		var cl = new CommandList( "ScreenWeaponViewScreen" );
+		var cl = _screenCommandList ??= new CommandList( "ScreenWeaponViewScreen" );
+		cl.Reset();
 		renderer.ExecuteBefore = cl;
 
 		cl.SetRenderTarget( rt );

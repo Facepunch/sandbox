@@ -34,11 +34,22 @@
     {
         var hash = new HashCode();
         hash.Add( Hud.IsVisible( HudElement.AmmoPickups ) );
-        foreach ( var notice in VisibleNotices() )
+
+        var inventory = Player.FindLocalPlayer()?.GetComponent<PlayerInventory>();
+        if ( inventory.IsValid() )
         {
-            hash.Add( notice );
-            hash.Add( notice.Amount );
+            var notices = inventory.AmmoPickupNotices;
+            for ( int i = 0; notices.Count > i; i++ )
+            {
+                var notice = notices[i];
+                if ( notice.ExpiresAt > RealTime.Now )
+                {
+                    hash.Add( notice );
+                    hash.Add( notice.Amount );
+                }
+            }
         }
+
         return hash.ToHashCode();
     }
 }

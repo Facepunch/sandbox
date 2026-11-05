@@ -6,13 +6,18 @@
 [Title( "Default Tonemapping" ), Category( "Post Processing" ), Icon( "exposure" )]
 public sealed class DefaultTonemapping : Component
 {
+	readonly List<Tonemapping> _tonemappings = new();
+
 	protected override void OnUpdate()
 	{
 		var tonemapping = GetComponent<Tonemapping>( true );
 		if ( !tonemapping.IsValid() ) return;
 
+		_tonemappings.Clear();
+		Scene.GetAll( _tonemappings );
+
 		var enable = true;
-		foreach ( var x in Scene.GetAllComponents<Tonemapping>() )
+		foreach ( var x in _tonemappings )
 		{
 			if ( x != tonemapping && IsGlobal( x ) )
 			{

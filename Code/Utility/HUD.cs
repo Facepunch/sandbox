@@ -35,8 +35,9 @@ public static class Hud
 		}
 	}
 
-	private static float _cachedAt = -1;
+	private static ulong _cachedFrame;
 	private static HudElement _hidden;
+	private static HudElement _collecting;
 
 	/// <summary>
 	/// True if none of the given elements are hidden. HUD panels call this before drawing. The answer
@@ -48,10 +49,10 @@ public static class Hud
 	{
 		get
 		{
-			if ( _cachedAt == RealTime.Now )
+			if ( _cachedFrame == Application.FrameCount )
 				return _hidden;
 
-			_cachedAt = RealTime.Now;
+			_cachedFrame = Application.FrameCount;
 
 			// the player's own HUD preferences, then whatever the scene hides on top
 			_hidden = GamePreferences.HiddenHud;
@@ -60,9 +61,9 @@ public static class Hud
 			if ( !scene.IsValid() )
 				return _hidden;
 
-			var hidden = _hidden;
-			scene.RunEvent<IHudEvents>( x => x.OnHudVisibility( ref hidden ) );
-			_hidden = hidden;
+			_collecting = _hidden;
+			scene.RunEvent<IHudEvents>( static x => x.OnHudVisibility( ref _collecting ) );
+			_hidden = _collecting;
 
 			return _hidden;
 		}

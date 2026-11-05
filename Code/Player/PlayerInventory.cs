@@ -86,7 +86,17 @@ public sealed partial class PlayerInventory : BaseInventoryComponent, Local.IPla
 
 	public T GetWeapon<T>() where T : BaseSandboxWeapon
 	{
-		return Weapons.OfType<T>().FirstOrDefault();
+		// Same pick as the first of Items (lowest slot, then slot order), without sorting them all
+		T best = null;
+		foreach ( var weapon in GetComponentsInChildren<T>( true ) )
+		{
+			if ( weapon.GameObject.IsDestroyed || weapon.Inventory != this ) continue;
+			if ( best is not null && (weapon.Slot, weapon.SlotOrder).CompareTo( (best.Slot, best.SlotOrder) ) >= 0 ) continue;
+
+			best = weapon;
+		}
+
+		return best;
 	}
 
 	public bool Pickup( GameObject prefab, bool notice = true ) => Pickup( prefab, -1, notice );
