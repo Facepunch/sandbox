@@ -97,6 +97,15 @@ public static class ToolPresetSettings
 		return values;
 	}
 
+	/// <summary>
+	/// The settings a freshly made copy of the tool has, read from a draft so nothing live is touched.
+	/// </summary>
+	public static JsonObject Defaults( ToolMode tool )
+	{
+		using var draft = new ToolPresetDraft( tool, new JsonObject() );
+		return Capture( draft.Tool );
+	}
+
 	public static void Apply( ToolMode tool, JsonObject values )
 	{
 		// Resolve all values before changing the target. Unknown/removed settings are ignored.

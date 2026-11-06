@@ -8,6 +8,7 @@
         <UIDropdown Items=@Items Value=@SelectedId ValueChanged=@PickPreset Tokenize=@false Tooltip="#ui.tool_presets.choose" />
         <UIButton Icon="add" Tooltip="#ui.tool_presets.add" @onclick=@AddPreset />
         <UIButton Icon="edit" Tooltip="#ui.tool_presets.edit" @onclick=@EditPresets />
+        <UIButton Icon="restart_alt" Tooltip="#ui.tool_presets.reset" @onclick=@ResetToDefaults />
     </div>
     @if ( !string.IsNullOrEmpty( Error ) )
     {
@@ -115,6 +116,24 @@
         modal.AddClass( "prompt tool-preset-prompt" );
         error = modal.Body.AddChild<Label>( "preset-error" );
         modal.OnSubmit = Save;
+    }
+
+    /// <summary>
+    /// Every setting back to what the tool starts with. That's no preset, so the dropdown goes back to Current.
+    /// </summary>
+    void ResetToDefaults()
+    {
+        if ( !Mode.IsValid() ) return;
+        try
+        {
+            ToolPresetSettings.Apply( Mode, ToolPresetSettings.Defaults( Mode ) );
+            Mode.SaveCookies();
+            SelectedId = Guid.Empty;
+            Modified = false;
+            Error = null;
+        }
+        catch ( Exception e ) { Error = ToolPresetStore.ErrorText( e ); }
+        StateHasChanged();
     }
 
     void EditPresets()
