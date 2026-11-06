@@ -3,8 +3,8 @@ namespace Sandbox;
 /// <summary>Deterministic, bounded recipes shared by the menu, host, clients and saved games.</summary>
 public static class BuilderCatalog
 {
-	public const float Unit = 48f;
-	public const string DefaultMaterial = "materials/dev/gray_grid_8.vmat";
+	public const float Unit = 96f;
+	public const string DefaultMaterial = "materials/construction/tiles/generic_tiles.vmat";
 	public static readonly string[] Categories = ["Cubes", "Plates", "Triangles", "Tubes", "Misc"];
 	public enum Shape { Box, Triangle, Carved, Trapezium, Tube, HalfPipe, Ring, Bend, PlateHole, Cone, MirroredCone, Sphere, Dome, QuarterDome, Stairs, Parallelogram, Pentagon }
 	public sealed record Piece( string Id, string Category, Shape Kind, Vector3 Size, float Angle = 0 );
