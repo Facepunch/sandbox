@@ -24,7 +24,10 @@
         "Elasticity": null,
         "Friction": null,
         "IsTrigger": false,
-        "Model": "entities/camera/model/camera_entity.vmdl",
+        "Model": {
+          "Id": "04919355-e33f-4047-87db-aff083d5dfcf",
+          "Path": "entities/camera/model/camera_entity.vmdl"
+        },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -88,16 +91,16 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "ReturnToOriginal": true,
         "Static": false,
         "ToggleMode": true,
+        "Tracking": false,
+        "TrackingLerpSpeed": 5,
+        "TrackingRange": 2048,
+        "TrackingTarget": "Owner",
         "ViewInput": {
-          "Action": "View"
-        },
-        "Feed": {
-          "_type": "component",
-          "component_id": "01f4f281-f28b-4f44-b645-3c911f309714",
-          "go": "640890e2-8b58-4925-9763-7f5714d4744c",
-          "component_type": "CameraFeed"
+          "Key": null,
+          "Action": ""
         }
       },
       {
@@ -110,7 +113,13 @@
           "component_id": "23a2deb0-f559-4a57-8a33-70518110764a",
           "go": "07a788bf-f4dc-4501-b321-484890c201be",
           "component_type": "CameraComponent"
-        }
+        },
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
       }
     ],
     "Children": [
@@ -135,18 +144,16 @@
             "__guid": "6e68c97f-ebed-445c-b7ee-1e8b47b6f7db",
             "__enabled": true,
             "Flags": 0,
-            "Animation": {
-              "Graph": null,
-              "Parameters": {}
-            },
             "BodyGroups": 18446744073709551615,
             "CreateAttachments": true,
             "LodOverride": null,
-            "LowDetailAnimation": false,
             "MaterialGroup": null,
             "MaterialOverride": null,
             "Materials": null,
-            "Model": "entities/camera/model/camera_entity.vmdl",
+            "Model": {
+              "Id": "04919355-e33f-4047-87db-aff083d5dfcf",
+              "Path": "entities/camera/model/camera_entity.vmdl"
+            },
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -170,7 +177,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "rt_camera",
-        "Position": "9.425,0,5.6875",
+        "Position": "9.42500019,0,5.6875",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -250,7 +257,29 @@
         ],
         "Children": []
       }
-    ]
+    ],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "PhysicsMode": "Physics3D",
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
+      }
+    },
+    "__variables": []
   },
   "ResourceVersion": 2,
   "ShowInMenu": false,
