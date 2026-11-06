@@ -42,6 +42,21 @@ public sealed class BalloonTool : ToolMode
 		_previewTint = Color.Random;
 	}
 
+	/// <summary>
+	/// At the aimed point, turned about the vertical so the balloon's front faces the player.
+	/// </summary>
+	Transform PlacementTransform( SelectionPoint select )
+	{
+		var position = select.WorldTransform().Position;
+		var toPlayer = (Player.EyeTransform.Position - position).WithZ( 0f );
+
+		// looking straight down on it there's no direction to face, keep the old placement
+		if ( toPlayer.LengthSquared < 0.01f ) return new Transform( position );
+
+		// the balloon's front is its forward axis
+		return new Transform( position, Rotation.FromYaw( Rotation.LookAt( toPlayer.Normal ).Yaw() ) );
+	}
+
 	void OnPlaceWithRope()
 	{
 		var select = TraceSelect();
@@ -50,8 +65,7 @@ public sealed class BalloonTool : ToolMode
 		var thrusterDef = ResourceLibrary.Get<BalloonDefinition>( Definition );
 		if ( thrusterDef == null ) return;
 
-		var pos = select.WorldTransform();
-		var placementTx = new Transform( pos.Position );
+		var placementTx = PlacementTransform( select );
 
 		Spawn( select, thrusterDef.Prefab, placementTx, true, _previewTint );
 		ShootEffects( select );
@@ -66,8 +80,7 @@ public sealed class BalloonTool : ToolMode
 		var thrusterDef = ResourceLibrary.Get<BalloonDefinition>( Definition );
 		if ( thrusterDef == null ) return;
 
-		var pos = select.WorldTransform();
-		var placementTx = new Transform( pos.Position );
+		var placementTx = PlacementTransform( select );
 
 		Spawn( select, thrusterDef.Prefab, placementTx, false, _previewTint );
 		ShootEffects( select );
@@ -84,8 +97,7 @@ public sealed class BalloonTool : ToolMode
 		var thrusterDef = ResourceLibrary.Get<BalloonDefinition>( Definition );
 		if ( thrusterDef == null ) return;
 
-		var pos = select.WorldTransform();
-		var placementTx = new Transform( pos.Position );
+		var placementTx = PlacementTransform( select );
 
 		var previewTint = Tint == Color.White ? _previewTint : Tint;
 		DebugOverlay.GameObject( thrusterDef.Prefab.GetScene(), transform: placementTx, castShadows: true, color: previewTint.WithAlpha( 0.9f ) );
