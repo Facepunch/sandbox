@@ -1,10 +1,12 @@
 using Sandbox.Npcs;
 using Sandbox.UI;
+using System.Text.Json.Nodes;
 
 /// <summary>
 /// Enforces configurable limits on spawning and tool usage.
 /// Maintains a per-player tracked object list populated from post-events.
 /// Limit checks iterate only the player's objects, not the entire scene.
+/// Every limit is a row in <see cref="Limits"/>, add new conditions there there.
 /// </summary>
 internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpawnEvents, IToolActionEvents
 {
@@ -89,6 +91,51 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 	public static int MaxRagdolls { get; set; } = -1;
 
 	/// <summary>
+	/// One GameObject as far as the limits care: its own component types (not its children's), its prop's model, and
+	/// whether it's tagged as a constraint. The same whether it's a player's live object, a spawn menu entry or a node
+	/// of a dupe's saved JSON, so each limit only needs saying once.
+	/// </summary>
+	private readonly record struct LimitedObject( HashSet<Type> Types, Model PropModel, bool IsConstraint )
+	{
+		public bool Has<T>() => Types.Any( x => x.IsAssignableTo( typeof( T ) ) );
+		public bool IsRagdoll => (PropModel?.Physics?.Parts?.Count ?? 0) > 1;
+		public bool IsExplosive => PropModel?.Data?.Explosive == true;
+
+		public static LimitedObject Of( GameObject go ) => new(
+			go.Components.GetAll().Select( x => x.GetType() ).ToHashSet(),
+			go.GetComponent<Prop>( true )?.Model,
+			go.Tags.Has( "constraint" ) );
+
+		public static LimitedObject OfProp( Model model ) => new( [typeof( Prop )], model, false );
+	}
+
+	/// <summary>
+	/// A per-player limit: its setting, what the notice calls it, which objects it counts, and which tool actions place
+	/// one (spawns and dupes are checked by what they contain, so they need nothing extra).
+	/// </summary>
+	private sealed record Limit( Func<int> Max, string Category, Func<LimitedObject, bool> Counts, Func<ToolMode, bool> PlacedBy = null );
+
+	private static readonly Limit[] Limits =
+	[
+		new( () => MaxPropsPerPlayer, "#limit.props", x => x.Has<Prop>() ),
+		new( () => MaxExplosivesPerPlayer, "#limit.explosives", x => x.IsExplosive ),
+		new( () => MaxRagdolls, "#limit.ragdolls", x => x.IsRagdoll ),
+		new( () => MaxConstraints, "#limit.constraints", x => x.IsConstraint, tool => tool is BaseConstraintToolMode or KeepUprightTool ),
+		new( () => MaxBalloons, "#limit.balloons", x => x.Has<BalloonEntity>(), tool => tool is BalloonTool ),
+		new( () => MaxThrusters, "#limit.thrusters", x => x.Has<ThrusterEntity>(), tool => tool is ThrusterTool ),
+		new( () => MaxEmitters, "#limit.emitters", x => x.Has<EmitterEntity>(), tool => tool is EmitterTool ),
+		new( () => MaxHoverballs, "#limit.hoverballs", x => x.Has<HoverballEntity>(), tool => tool is HoverballTool ),
+		new( () => MaxWheels, "#limit.wheels", x => x.Has<WheelEntity>(), tool => tool is WheelTool ),
+		new( () => MaxTexts, "#limit.texts", x => x.Has<TextEntity>(), tool => tool is TextTool ),
+		new( () => MaxSpeakers, "#limit.speakers", x => x.Has<SpeakerEntity>(), tool => tool is SpeakerTool ),
+		new( () => MaxCameras, "#limit.cameras", x => x.Has<CameraEntity>(), tool => tool is CameraTool ),
+		new( () => MaxDynamite, "#limit.dynamite", x => x.Has<DynamiteEntity>() ),
+		new( () => MaxLights, "#limit.lights", x => x.Has<PointLightEntity>() || x.Has<SpotLightEntity>(), tool => tool is LightTool { PlacingNew: true } ),
+		new( () => MaxNpcs, "#limit.npcs", x => x.Has<Npc>() ),
+		new( () => MaxVehicles, "#limit.vehicles", x => x.Has<FourWheelVehicle>() ),
+	];
+
+	/// <summary>
 	/// Per-player tracked objects keyed by SteamId.
 	/// </summary>
 	private readonly Dictionary<long, List<GameObject>> _tracked = new();
@@ -102,46 +149,25 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 	{
 	}
 
-	/// <summary>
-	/// Returns true if the given count meets or exceeds the limit.
-	/// A limit of -1 means unlimited (never exceeded). A limit of 0 means none allowed (always exceeded).
-	/// </summary>
-	private static bool IsExceeded( int limit, int count ) => limit >= 0 && count >= limit;
-
-	private List<GameObject> GetOrCreateList( long steamId )
-	{
-		if ( !_tracked.TryGetValue( steamId, out var list ) )
-		{
-			list = new List<GameObject>();
-			_tracked[steamId] = list;
-		}
-
-		return list;
-	}
-
 	private void Track( long steamId, GameObject go )
 	{
 		if ( !go.IsValid() ) return;
 		if ( !_allTracked.Add( go ) ) return;
 
-		GetOrCreateList( steamId ).Add( go );
-	}
+		if ( !_tracked.TryGetValue( steamId, out var list ) )
+			_tracked[steamId] = list = new List<GameObject>();
 
-	private void Track( long steamId, List<GameObject> objects )
-	{
-		foreach ( var go in objects )
-			Track( steamId, go );
+		list.Add( go );
 	}
 
 	/// <summary>
-	/// Count tracked objects for a player, pruning destroyed ones. Applies an optional filter.
+	/// What a player has out, pruning destroyed objects.
 	/// </summary>
-	private int Count( long steamId, Func<GameObject, bool> filter = null )
+	private List<LimitedObject> Owned( long steamId )
 	{
-		if ( !_tracked.TryGetValue( steamId, out var list ) )
-			return 0;
+		var objects = new List<LimitedObject>();
+		if ( !_tracked.TryGetValue( steamId, out var list ) ) return objects;
 
-		var count = 0;
 		for ( int i = list.Count - 1; i >= 0; i-- )
 		{
 			var go = list[i];
@@ -152,137 +178,118 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 				continue;
 			}
 
-			if ( filter is null || filter( go ) )
-				count++;
+			objects.Add( LimitedObject.Of( go ) );
 		}
 
-		return count;
+		return objects;
 	}
+
+	/// <summary>
+	/// Whether adding what <paramref name="adding"/> says to each of <paramref name="limits"/> would take
+	/// <paramref name="player"/> over any of them. Tells them about the first one it would.
+	/// </summary>
+	private bool WouldExceed( Connection player, IEnumerable<Limit> limits, Func<Limit, int> adding )
+	{
+		List<LimitedObject> owned = null;
+
+		foreach ( var limit in limits )
+		{
+			var max = limit.Max();
+			if ( max < 0 ) continue;
+
+			var added = adding( limit );
+			if ( added <= 0 ) continue;
+
+			owned ??= Owned( (long)player.SteamId );
+			if ( owned.Count( limit.Counts ) + added <= max ) continue;
+
+			NotifyLimit( player, limit.Category, max );
+			return true;
+		}
+
+		return false;
+	}
+
+	/// <summary>
+	/// Everything a spawn would create, a whole dupe's worth or a single entry.
+	/// </summary>
+	private static List<LimitedObject> ObjectsIn( ISpawner spawner ) => spawner switch
+	{
+		DuplicatorSpawner dupe => ObjectsInDupe( dupe ),
+		PropSpawner prop => [LimitedObject.OfProp( prop.Model )],
+		MountSpawner mount => [LimitedObject.OfProp( mount.Model )],
+		_ when spawner?.Prefab is { } prefab => prefab.GetAllObjects( true ).Select( LimitedObject.Of ).ToList(),
+		_ => []
+	};
+
+	/// <summary>
+	/// Every GameObject in a dupe, read from its saved JSON before anything is spawned.
+	/// </summary>
+	private static List<LimitedObject> ObjectsInDupe( DuplicatorSpawner spawner )
+	{
+		var objects = new List<LimitedObject>();
+
+		void Read( JsonObject go )
+		{
+			var types = new HashSet<Type>();
+			Model model = null;
+
+			foreach ( var component in (go["Components"] as JsonArray)?.OfType<JsonObject>() ?? [] )
+			{
+				var type = Text( component["__type"] ) is { } name ? TypeLibrary.GetType( name )?.TargetType : null;
+				if ( type is null ) continue;
+
+				types.Add( type );
+				if ( type.IsAssignableTo( typeof( Prop ) ) && ModelPath( component["Model"] ) is { } path )
+					model = Model.Load( path );
+			}
+
+			var constraint = Text( go["Tags"] )?.Split( ',' ).Any( x => x.Trim() == "constraint" ) == true;
+			objects.Add( new LimitedObject( types, model, constraint ) );
+
+			foreach ( var child in (go["Children"] as JsonArray)?.OfType<JsonObject>() ?? [] )
+				Read( child );
+		}
+
+		foreach ( var root in spawner.Dupe?.Objects?.OfType<JsonObject>() ?? [] )
+			Read( root );
+
+		return objects;
+	}
+
+	static string Text( JsonNode node ) => node is JsonValue value && value.TryGetValue<string>( out var text ) ? text : null;
+
+	// a model reference is saved either as its path or as an object holding it
+	static string ModelPath( JsonNode node ) => Text( node ) ?? Text( (node as JsonObject)?["Path"] );
 
 	void Global.ISpawnEvents.OnSpawn( Global.ISpawnEvents.SpawnData e )
 	{
 		if ( e.Player is null ) return;
 
-		var steamId = (long)e.Player.SteamId;
-
-		// Duplicator: batch pre-check — reject entire dupe if it would exceed limits
-		if ( e.Spawner is DuplicatorSpawner dupeSpawner )
-		{
-			var dupeObjectCount = dupeSpawner.Dupe?.Objects?.Count ?? 0;
-
-			if ( MaxPropsPerPlayer >= 0 && dupeObjectCount > 0 )
-			{
-				var current = Count( steamId, go => go.GetComponent<Prop>().IsValid() );
-				if ( current + dupeObjectCount > MaxPropsPerPlayer )
-				{
-					e.Cancelled = true;
-					NotifyLimit( e.Player, "#limit.props", MaxPropsPerPlayer );
-					return;
-				}
-			}
-
-			if ( MaxExplosivesPerPlayer >= 0 )
-			{
-				var explosivesInDupe = CountExplosivesInDupe( dupeSpawner );
-				if ( explosivesInDupe > 0 )
-				{
-					var current = Count( steamId, go =>
-					{
-						var prop = go.GetComponent<Prop>();
-						return prop.IsValid() && prop.Model?.Data?.Explosive == true;
-					} );
-
-					if ( current + explosivesInDupe > MaxExplosivesPerPlayer )
-					{
-						e.Cancelled = true;
-						NotifyLimit( e.Player, "#limit.explosives", MaxExplosivesPerPlayer );
-						return;
-					}
-				}
-			}
-
-			return;
-		}
-
-		if ( MaxPropsPerPlayer >= 0 && e.Spawner is PropSpawner )
-		{
-			var count = Count( steamId, go => go.GetComponent<Prop>().IsValid() );
-			if ( IsExceeded( MaxPropsPerPlayer, count ) )
-			{
-				e.Cancelled = true;
-				NotifyLimit( e.Player, "#limit.props", MaxPropsPerPlayer );
-				return;
-			}
-		}
-
-		if ( MaxExplosivesPerPlayer >= 0 && IsExplosiveSpawn( e.Spawner ) )
-		{
-			var count = Count( steamId, go =>
-			{
-				var prop = go.GetComponent<Prop>();
-				return prop.IsValid() && prop.Model?.Data?.Explosive == true;
-			} );
-
-			if ( IsExceeded( MaxExplosivesPerPlayer, count ) )
-			{
-				e.Cancelled = true;
-				NotifyLimit( e.Player, "#limit.explosives", MaxExplosivesPerPlayer );
-				return;
-			}
-		}
-
-		// Spawn menu entities, by what their prefab is
-		if ( e.Spawner?.Prefab is { } prefab )
-		{
-			if ( CheckSpawnLimit( e, steamId, MaxDynamite, "#limit.dynamite", prefab, IsDynamite ) ) return;
-			if ( CheckSpawnLimit( e, steamId, MaxLights, "#limit.lights", prefab, IsLight ) ) return;
-			if ( CheckSpawnLimit( e, steamId, MaxNpcs, "#limit.npcs", prefab, IsNpc ) ) return;
-			if ( CheckSpawnLimit( e, steamId, MaxVehicles, "#limit.vehicles", prefab, IsVehicle ) ) return;
-		}
-
-		// Props whose model is a ragdoll, from the spawn menu or a mounted game
-		if ( MaxRagdolls >= 0 && IsRagdollModel( SpawnedModel( e.Spawner ) ) )
-		{
-			if ( IsExceeded( MaxRagdolls, Count( steamId, IsRagdoll ) ) )
-			{
-				e.Cancelled = true;
-				NotifyLimit( e.Player, "#limit.ragdolls", MaxRagdolls );
-			}
-		}
-	}
-
-	static bool IsDynamite( GameObject go ) => go.GetComponentInChildren<DynamiteEntity>( true ).IsValid();
-	static bool IsLight( GameObject go ) => go.GetComponentInChildren<PointLightEntity>( true ).IsValid() || go.GetComponentInChildren<SpotLightEntity>( true ).IsValid();
-	static bool IsNpc( GameObject go ) => go.GetComponentInChildren<Npc>( true ).IsValid();
-	static bool IsVehicle( GameObject go ) => go.GetComponentInChildren<FourWheelVehicle>( true ).IsValid();
-	static bool IsRagdollModel( Model model ) => (model?.Physics?.Parts?.Count ?? 0) > 1;
-	static bool IsRagdoll( GameObject go ) => IsRagdollModel( go.GetComponent<Prop>()?.Model );
-
-	static Model SpawnedModel( ISpawner spawner ) => spawner switch
-	{
-		PropSpawner prop => prop.Model,
-		MountSpawner mount => mount.Model,
-		_ => null
-	};
-
-	/// <summary>
-	/// Check a per-player limit on spawn menu entities. Returns true if the spawn was one of these and got cancelled.
-	/// </summary>
-	private bool CheckSpawnLimit( Global.ISpawnEvents.SpawnData e, long steamId, int limit, string category, GameObject prefab, Func<GameObject, bool> isKind )
-	{
-		if ( limit < 0 || !isKind( prefab ) ) return false;
-		if ( !IsExceeded( limit, Count( steamId, isKind ) ) ) return false;
-
-		e.Cancelled = true;
-		NotifyLimit( e.Player, category, limit );
-		return true;
+		// a dupe is refused whole if what's in it would take you over any limit
+		var spawning = ObjectsIn( e.Spawner );
+		if ( WouldExceed( e.Player, Limits, limit => spawning.Count( limit.Counts ) ) )
+			e.Cancelled = true;
 	}
 
 	void Global.ISpawnEvents.OnPostSpawn( Global.ISpawnEvents.PostSpawnData e )
 	{
 		if ( e.Player is null || e.Objects is null ) return;
 
-		Track( (long)e.Player.SteamId, e.Objects );
+		var steamId = (long)e.Player.SteamId;
+
+		foreach ( var root in e.Objects )
+		{
+			if ( !root.IsValid() ) continue;
+			Track( steamId, root );
+
+			// a dupe's constraints are children of the objects they join, track them too so they count towards the limit
+			foreach ( var go in root.GetAllObjects( true ) )
+			{
+				if ( go != root && go.Tags.Has( "constraint" ) )
+					Track( steamId, go );
+			}
+		}
 	}
 
 	void IToolActionEvents.OnToolAction( IToolActionEvents.ActionData e )
@@ -290,85 +297,19 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 		if ( e.Input == ToolInput.Reload ) return;
 		if ( e.Player is null ) return;
 
-		// TODO: this could be better, register something with the tool instead?
-		if ( CheckToolLimit<BalloonTool, BalloonEntity>( e, MaxBalloons ) ) return;
-		if ( CheckToolLimit<ThrusterTool, ThrusterEntity>( e, MaxThrusters ) ) return;
-		if ( CheckToolLimit<EmitterTool, EmitterEntity>( e, MaxEmitters ) ) return;
-		if ( CheckToolLimit<HoverballTool, HoverballEntity>( e, MaxHoverballs ) ) return;
-		if ( CheckToolLimit<WheelTool, WheelEntity>( e, MaxWheels ) ) return;
-		if ( CheckToolLimit<TextTool, TextEntity>( e, MaxTexts ) ) return;
-		if ( CheckToolLimit<SpeakerTool, SpeakerEntity>( e, MaxSpeakers ) ) return;
-		if ( CheckToolLimit<CameraTool, CameraEntity>( e, MaxCameras ) ) return;
-
-		// the light tool also updates the bulb you aim at, that isn't another light
-		if ( e.Tool is LightTool lightTool )
-		{
-			if ( MaxLights >= 0 && lightTool.PlacingNew && IsExceeded( MaxLights, Count( (long)e.Player.SteamId, IsLight ) ) )
-			{
-				e.Cancelled = true;
-				NotifyLimit( e.Player, GetToolName( e.Tool ), MaxLights );
-			}
-
-			return;
-		}
-
-		// TODO: same here :S
-		if ( MaxConstraints >= 0 && (e.Tool is BaseConstraintToolMode || e.Tool is KeepUprightTool) )
-		{
-			var count = Count( (long)e.Player.SteamId, go => go.Tags.Contains( "constraint" ) );
-			if ( IsExceeded( MaxConstraints, count ) )
-			{
-				e.Cancelled = true;
-				NotifyLimit( e.Player, GetToolName( e.Tool ), MaxConstraints );
-			}
-		}
+		// a tool action places one more of whatever each limit it's listed against counts
+		var placing = Limits.Where( x => x.PlacedBy?.Invoke( e.Tool ) == true );
+		if ( WouldExceed( e.Player, placing, _ => 1 ) )
+			e.Cancelled = true;
 	}
 
 	void IToolActionEvents.OnPostToolAction( IToolActionEvents.PostActionData e )
 	{
 		if ( e.Player is null || e.CreatedObjects is not { Count: > 0 } ) return;
 
-		Track( (long)e.Player.SteamId, e.CreatedObjects );
+		foreach ( var go in e.CreatedObjects )
+			Track( (long)e.Player.SteamId, go );
 	}
-
-	/// <summary>
-	/// Check a per-player tool limit. Returns true if the tool type matched. Every action these tools send to the host places one.
-	/// </summary>
-	private bool CheckToolLimit<TTool, TEntity>( IToolActionEvents.ActionData e, int limit )
-		where TTool : ToolMode
-		where TEntity : Component
-	{
-		if ( e.Tool is not TTool ) return false;
-		if ( limit < 0 ) return true;
-
-		var count = Count( (long)e.Player.SteamId, go => go.GetComponent<TEntity>().IsValid() );
-		if ( IsExceeded( limit, count ) )
-		{
-			e.Cancelled = true;
-			NotifyLimit( e.Player, GetToolName( e.Tool ), limit );
-		}
-
-		return true;
-	}
-
-	private static bool IsExplosiveSpawn( ISpawner spawner )
-	{
-		if ( spawner is PropSpawner propSpawner )
-			return propSpawner.Model?.Data?.Explosive == true;
-
-		if ( spawner is DuplicatorSpawner dupeSpawner )
-			return dupeSpawner.Dupe?.PreviewModels?.Any( m => m.Model?.Data?.Explosive == true ) == true;
-
-		return false;
-	}
-
-	private static int CountExplosivesInDupe( DuplicatorSpawner spawner )
-	{
-		if ( spawner.Dupe?.PreviewModels is null ) return 0;
-		return spawner.Dupe.PreviewModels.Count( m => m.Model?.Data?.Explosive == true );
-	}
-
-	private static string GetToolName( ToolMode tool ) => tool?.TypeDescription?.Title ?? tool?.GetType().Name ?? "#limit.unknown";
 
 	private static void NotifyLimit( Connection player, string category, int limit )
 	{
