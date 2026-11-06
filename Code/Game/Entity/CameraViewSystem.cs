@@ -200,6 +200,10 @@ public sealed class CameraViewSystem : Component, Global.ISaveEvents
 	internal void ApplyView( CameraEntity entity, CameraComponent camera, ref CameraView view )
 	{
 		if ( entity != ActiveCamera || !CanView( entity ) ) return;
+
+		if ( CameraEffectSystem.Get( Scene ) is { } effects )
+			effects.Scale = 0f;
+
 		if ( _mainCamera != camera )
 		{
 			RestoreCameraTags();
