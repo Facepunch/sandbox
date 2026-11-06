@@ -235,7 +235,7 @@ public sealed class CameraViewSystem : Component, Global.ISaveEvents
 
 		view.Position = entity.ViewTransform.Position;
 		view.Rotation = entity.ViewTransform.Rotation;
-		view.FieldOfView = entity.ClampedFov;
+		view.FieldOfView = entity.ViewFov;
 		view.ZNear = entity.Feed?.Camera?.ZNear ?? 1f;
 	}
 }

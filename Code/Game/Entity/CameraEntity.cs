@@ -47,9 +47,9 @@ public sealed partial class CameraEntity : Component, ICameraModifier, IPhysgunE
 	{
 		if ( !Feed.IsValid() ) return;
 		if ( Tracking && _trackingInitialized && !Head.IsValid() )
-			Feed.SetWorldView( _trackingView, ClampedFov, CameraComponent.Axis.Horizontal, hideViewer: false );
+			Feed.SetWorldView( _trackingView, ViewFov, CameraComponent.Axis.Horizontal, hideViewer: false );
 		else
-			Feed.UseLensView( ClampedFov );
+			Feed.UseLensView( ViewFov );
 	}
 
 	public void RefreshPhysics()
