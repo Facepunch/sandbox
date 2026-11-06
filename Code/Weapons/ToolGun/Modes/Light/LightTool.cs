@@ -37,6 +37,11 @@ public sealed class LightTool : ToolMode
 	public bool Shadows { get; set; }
 
 	bool _updatingExisting;
+
+	/// <summary>
+	/// On the host while an action is checked: whether it places another light, rather than updating the one aimed at.
+	/// </summary>
+	public bool PlacingNew { get; private set; }
 	public override string Description => "#tool.hint.light.description";
 	public static float ClampLength( float length ) => float.IsFinite( length ) ? length.Clamp( 0f, 512f ) : 64f;
 
@@ -93,9 +98,11 @@ public sealed class LightTool : ToolMode
 	{
 		if ( !point.IsValid() || !Player.IsValid() ) return;
 		var input = withRope ? ToolInput.Primary : ToolInput.Secondary;
-		if ( !FireToolAction( input ) ) return;
 
+		// known before the action is checked, so the light limit doesn't block updating one you already have
 		var existing = withRope && !forceNew ? FindLight( point ) : null;
+		PlacingNew = !existing.IsValid();
+		if ( !FireToolAction( input ) ) return;
 		if ( existing.IsValid() )
 		{
 			if ( existing.IsProxy ) return;

@@ -1,3 +1,4 @@
+using Sandbox.Npcs;
 using Sandbox.UI;
 
 /// <summary>
@@ -8,54 +9,84 @@ using Sandbox.UI;
 internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpawnEvents, IToolActionEvents
 {
 	[Range( -1, 1024 )]
-	[Title( "Max Props Per Player" ), Group( "Limits" ), Order( 0 )]
+	[Title( "Max Props" ), Group( "Limits" ), Order( 0 )]
 	[ConVar( "sandbox.limit.props", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum props per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxPropsPerPlayer { get; set; } = -1;
 
 	[Range( -1, 16 )]
-	[Title( "Max Explosives Per Player" ), Group( "Limits" ), Order( 1 )]
+	[Title( "Max Explosives" ), Group( "Limits" ), Order( 1 )]
 	[ConVar( "sandbox.limit.explosives", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum explosive props per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxExplosivesPerPlayer { get; set; } = -1;
 
 	[Range( -1, 64 )]
-	[Title( "Max Balloons Per Player" ), Group( "Limits" ), Order( 3 )]
+	[Title( "Max Balloons" ), Group( "Limits" ), Order( 3 )]
 	[ConVar( "sandbox.limit.balloons", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum balloons per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxBalloons { get; set; } = -1;
 
 	[Range( -1, 512 )]
-	[Title( "Max Constraints Per Player" ), Group( "Limits" ), Order( 2 )]
+	[Title( "Max Constraints" ), Group( "Limits" ), Order( 2 )]
 	[ConVar( "sandbox.limit.constraints", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum constraints per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxConstraints { get; set; } = -1;
 
 	[Range( -1, 64 )]
-	[Title( "Max Emitters Per Player" ), Group( "Limits" ), Order( 4 )]
+	[Title( "Max Emitters" ), Group( "Limits" ), Order( 4 )]
 	[ConVar( "sandbox.limit.emitters", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum emitters per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxEmitters { get; set; } = -1;
 
 	[Range( -1, 64 )]
-	[Title( "Max Thrusters Per Player" ), Group( "Limits" ), Order( 5 )]
+	[Title( "Max Thrusters" ), Group( "Limits" ), Order( 5 )]
 	[ConVar( "sandbox.limit.thrusters", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum thrusters per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxThrusters { get; set; } = -1;
 
 	[Range( -1, 32 )]
-	[Title( "Max Hoverballs Per Player" ), Group( "Limits" ), Order( 6 )]
+	[Title( "Max Hoverballs" ), Group( "Limits" ), Order( 6 )]
 	[ConVar( "sandbox.limit.hoverballs", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum hoverballs per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxHoverballs { get; set; } = -1;
 
 	[Range( -1, 32 )]
-	[Title( "Max Wheels Per Player" ), Group( "Limits" ), Order( 7 )]
+	[Title( "Max Wheels" ), Group( "Limits" ), Order( 7 )]
 	[ConVar( "sandbox.limit.wheels", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum wheels per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxWheels { get; set; } = -1;
 
 	[Range( -1, 256 )]
-	[Title( "Max Texts Per Player" ), Group( "Limits" ), Order( 8 )]
+	[Title( "Max Texts" ), Group( "Limits" ), Order( 8 )]
 	[ConVar( "sandbox.limit.texts", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum placed texts per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxTexts { get; set; } = -1;
 
 	[Range( -1, 64 )]
-	[Title( "Max Speakers Per Player" ), Group( "Limits" ), Order( 9 )]
+	[Title( "Max Speakers" ), Group( "Limits" ), Order( 9 )]
 	[ConVar( "sandbox.limit.speakers", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum speakers per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxSpeakers { get; set; } = -1;
+
+	[Range( -1, 64 )]
+	[Title( "Max Cameras" ), Group( "Limits" ), Order( 10 )]
+	[ConVar( "sandbox.limit.cameras", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum cameras per player. -1 = unlimited, 0 = none allowed." )]
+	public static int MaxCameras { get; set; } = -1;
+
+	[Range( -1, 64 )]
+	[Title( "Max Dynamite" ), Group( "Limits" ), Order( 11 )]
+	[ConVar( "sandbox.limit.dynamite", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum dynamite per player. -1 = unlimited, 0 = none allowed." )]
+	public static int MaxDynamite { get; set; } = -1;
+
+	[Range( -1, 128 )]
+	[Title( "Max Lights" ), Group( "Limits" ), Order( 12 )]
+	[ConVar( "sandbox.limit.lights", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum lights (bulbs and spot lights) per player. -1 = unlimited, 0 = none allowed." )]
+	public static int MaxLights { get; set; } = -1;
+
+	[Range( -1, 64 )]
+	[Title( "Max NPCs" ), Group( "Limits" ), Order( 13 )]
+	[ConVar( "sandbox.limit.npcs", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum NPCs per player. -1 = unlimited, 0 = none allowed." )]
+	public static int MaxNpcs { get; set; } = -1;
+
+	[Range( -1, 32 )]
+	[Title( "Max Vehicles" ), Group( "Limits" ), Order( 14 )]
+	[ConVar( "sandbox.limit.vehicles", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum vehicles per player. -1 = unlimited, 0 = none allowed." )]
+	public static int MaxVehicles { get; set; } = -1;
+
+	[Range( -1, 64 )]
+	[Title( "Max Ragdolls" ), Group( "Limits" ), Order( 15 )]
+	[ConVar( "sandbox.limit.ragdolls", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum ragdolls per player. -1 = unlimited, 0 = none allowed." )]
+	public static int MaxRagdolls { get; set; } = -1;
 
 	/// <summary>
 	/// Per-player tracked objects keyed by SteamId.
@@ -199,6 +230,52 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 				return;
 			}
 		}
+
+		// Spawn menu entities, by what their prefab is
+		if ( e.Spawner?.Prefab is { } prefab )
+		{
+			if ( CheckSpawnLimit( e, steamId, MaxDynamite, "#limit.dynamite", prefab, IsDynamite ) ) return;
+			if ( CheckSpawnLimit( e, steamId, MaxLights, "#limit.lights", prefab, IsLight ) ) return;
+			if ( CheckSpawnLimit( e, steamId, MaxNpcs, "#limit.npcs", prefab, IsNpc ) ) return;
+			if ( CheckSpawnLimit( e, steamId, MaxVehicles, "#limit.vehicles", prefab, IsVehicle ) ) return;
+		}
+
+		// Props whose model is a ragdoll, from the spawn menu or a mounted game
+		if ( MaxRagdolls >= 0 && IsRagdollModel( SpawnedModel( e.Spawner ) ) )
+		{
+			if ( IsExceeded( MaxRagdolls, Count( steamId, IsRagdoll ) ) )
+			{
+				e.Cancelled = true;
+				NotifyLimit( e.Player, "#limit.ragdolls", MaxRagdolls );
+			}
+		}
+	}
+
+	static bool IsDynamite( GameObject go ) => go.GetComponentInChildren<DynamiteEntity>( true ).IsValid();
+	static bool IsLight( GameObject go ) => go.GetComponentInChildren<PointLightEntity>( true ).IsValid() || go.GetComponentInChildren<SpotLightEntity>( true ).IsValid();
+	static bool IsNpc( GameObject go ) => go.GetComponentInChildren<Npc>( true ).IsValid();
+	static bool IsVehicle( GameObject go ) => go.GetComponentInChildren<FourWheelVehicle>( true ).IsValid();
+	static bool IsRagdollModel( Model model ) => (model?.Physics?.Parts?.Count ?? 0) > 1;
+	static bool IsRagdoll( GameObject go ) => IsRagdollModel( go.GetComponent<Prop>()?.Model );
+
+	static Model SpawnedModel( ISpawner spawner ) => spawner switch
+	{
+		PropSpawner prop => prop.Model,
+		MountSpawner mount => mount.Model,
+		_ => null
+	};
+
+	/// <summary>
+	/// Check a per-player limit on spawn menu entities. Returns true if the spawn was one of these and got cancelled.
+	/// </summary>
+	private bool CheckSpawnLimit( Global.ISpawnEvents.SpawnData e, long steamId, int limit, string category, GameObject prefab, Func<GameObject, bool> isKind )
+	{
+		if ( limit < 0 || !isKind( prefab ) ) return false;
+		if ( !IsExceeded( limit, Count( steamId, isKind ) ) ) return false;
+
+		e.Cancelled = true;
+		NotifyLimit( e.Player, category, limit );
+		return true;
 	}
 
 	void Global.ISpawnEvents.OnPostSpawn( Global.ISpawnEvents.PostSpawnData e )
@@ -221,9 +298,22 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 		if ( CheckToolLimit<WheelTool, WheelEntity>( e, MaxWheels ) ) return;
 		if ( CheckToolLimit<TextTool, TextEntity>( e, MaxTexts ) ) return;
 		if ( CheckToolLimit<SpeakerTool, SpeakerEntity>( e, MaxSpeakers ) ) return;
+		if ( CheckToolLimit<CameraTool, CameraEntity>( e, MaxCameras ) ) return;
+
+		// the light tool also updates the bulb you aim at, that isn't another light
+		if ( e.Tool is LightTool lightTool )
+		{
+			if ( MaxLights >= 0 && lightTool.PlacingNew && IsExceeded( MaxLights, Count( (long)e.Player.SteamId, IsLight ) ) )
+			{
+				e.Cancelled = true;
+				NotifyLimit( e.Player, GetToolName( e.Tool ), MaxLights );
+			}
+
+			return;
+		}
 
 		// TODO: same here :S
-		if ( MaxConstraints >= 0 && ( e.Tool is BaseConstraintToolMode || e.Tool is KeepUprightTool ) )
+		if ( MaxConstraints >= 0 && (e.Tool is BaseConstraintToolMode || e.Tool is KeepUprightTool) )
 		{
 			var count = Count( (long)e.Player.SteamId, go => go.Tags.Contains( "constraint" ) );
 			if ( IsExceeded( MaxConstraints, count ) )
