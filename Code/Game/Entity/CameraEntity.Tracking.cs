@@ -36,11 +36,17 @@ public sealed partial class CameraEntity
 
 	Transform PhysicalView => Feed.IsValid() ? Feed.PhysicalViewTransform : WorldTransform;
 
+	GameObject _head;
+	GameObject Head => _head.IsValid() ? _head : _head = GameObject.Children.FirstOrDefault( x => x.Name == "head" );
+
+	Transform HeadMount( GameObject head ) => new( head.WorldPosition, WorldRotation );
+
 	void ResetTracking()
 	{
 		_trackingInitialized = false;
 		_trackingTarget = null;
 		_sinceTargetSearch = 999f;
+		if ( Head is { } head && head.IsValid() ) head.LocalRotation = Rotation.Identity;
 		if ( Feed.IsValid() ) Feed.UseLensView( ClampedFov );
 	}
 
@@ -52,7 +58,10 @@ public sealed partial class CameraEntity
 			return;
 		}
 
-		var mount = PhysicalView;
+		var head = Head;
+		var hasHead = head.IsValid();
+		var mount = hasHead ? HeadMount( head ) : PhysicalView;
+
 		float range = float.IsFinite( TrackingRange ) ? TrackingRange.Clamp( 0f, 8192f ) : 2048f;
 		float speed = float.IsFinite( TrackingLerpSpeed ) ? TrackingLerpSpeed.Clamp( 0.1f, 20f ) : 5f;
 		float blend = 1f - MathF.Exp( -speed * MathF.Max( Time.Delta, 0f ) );
@@ -97,7 +106,13 @@ public sealed partial class CameraEntity
 			_smoothedTarget = mount.Position + _trackingRotation.Forward * distance;
 		}
 
-		_trackingView = new Transform( mount.Position, _trackingRotation );
+		if ( hasHead )
+		{
+			// a world rotation, so it aims right however the body is lying or tumbling
+			head.WorldRotation = _trackingRotation;
+			_trackingView = PhysicalView;
+		}
+		else _trackingView = new Transform( mount.Position, _trackingRotation );
 	}
 
 	Component FindTrackingTarget( Vector3 origin, float range )

@@ -45,9 +45,10 @@ public sealed partial class CameraEntity : Component, ICameraModifier, IPhysgunE
 	protected override void OnPreRender()
 	{
 		if ( !Feed.IsValid() ) return;
-		if ( Tracking && _trackingInitialized )
+		if ( Tracking && _trackingInitialized && !Head.IsValid() )
 			Feed.SetWorldView( _trackingView, ClampedFov, CameraComponent.Axis.Horizontal, hideViewer: false );
-		else Feed.UseLensView( ClampedFov );
+		else
+			Feed.UseLensView( ClampedFov );
 	}
 
 	public void RefreshPhysics()

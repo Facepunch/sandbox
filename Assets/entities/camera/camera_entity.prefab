@@ -124,6 +124,23 @@
     ],
     "Children": [
       {
+        "__guid": "5f1d2c3e-8a4b-4e6f-9c7d-2b1a0e9f8d61",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "head",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": false,
+        "OwnerTransfer": 1,
+        "Components": [],
+        "Children": [
+      {
         "__guid": "abf5a621-d615-4720-9f66-b10245ee55c6",
         "__version": 2,
         "Flags": 0,
@@ -219,6 +236,8 @@
           }
         ],
         "Children": []
+      }
+        ]
       },
       {
         "__guid": "07f9518c-e905-4392-912f-7928a1415a4c",
