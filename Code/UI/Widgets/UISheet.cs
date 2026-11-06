@@ -311,6 +311,12 @@ public class UISheetRow : Panel
 			return new UIResourceGrid { Property = property };
 		}
 
+		if ( type == typeof( string ) && property.HasAttribute<RopeMaterialsAttribute>() )
+		{
+			wide = true;
+			return new RopeMaterialControl { Property = property };
+		}
+
 		if ( type == typeof( string ) && property.HasAttribute<FontNameAttribute>() )
 			return new UIFontControl { Property = property };
 

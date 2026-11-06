@@ -1,10 +1,26 @@
-﻿
+﻿using Sandbox.UI;
+
 [Icon( "🐍" )]
 [Title( "#tool.name.rope" )]
 [ClassName( "rope" )]
 [Group( "#tool.group.constraints" )]
 public sealed class RopeTool : BaseConstraintToolMode
 {
+	const string RopeMaterial = "materials/default/rope01.vmat";
+	const string CableMaterial = "hydraulics/metal_tile_line.vmat";
+	const string ThickBeamMaterial = "entities/trails/line_thickbeam.vmat";
+	const string LavaBeamMaterial = "entities/trails/line_electricbeam.vmat";
+	const string CrackleBeamMaterial = "weapons/Physgun/physgun_beam.vmat";
+	const string PlasmaBeamMaterial = "weapons/Toolgun/Effects/beam-success.vmat";
+
+	/// <summary>
+	/// Beam textures are drawn as light: added on top, no shading, no shadow.
+	/// </summary>
+	static readonly HashSet<string> GlowMaterials = new( StringComparer.OrdinalIgnoreCase )
+	{
+		ThickBeamMaterial, LavaBeamMaterial, CrackleBeamMaterial, PlasmaBeamMaterial
+	};
+
 	[Range( -500, 500 )]
 	[Property, Sync, Title( "#tool.setting.slack" )]
 	public float Slack { get; set; } = 0.0f;
@@ -15,12 +31,22 @@ public sealed class RopeTool : BaseConstraintToolMode
 
 	[Property, Sync, Title( "#tool.setting.rigid" )]
 	public bool Rigid { get; set; } = false;
+	/// <summary>
+	/// A local material path or a workshop package ident. Sent with each rope rather than synced.
+	/// </summary>
+	[Property, HideLabel, Order( 100 ), Title( "#tool.setting.material" )]
+	[RopeMaterials( RopeMaterial, CableMaterial, ThickBeamMaterial, LavaBeamMaterial, CrackleBeamMaterial, PlasmaBeamMaterial,
+		Titles = ["#tool.name.rope", "#tool.setting.rope_material.cable", "#asset.thickbeam.title", "#asset.electricbeam.title", "#tool.setting.rope_material.crackle", "#tool.setting.rope_material.plasma"],
+		Glow = [ThickBeamMaterial, LavaBeamMaterial, CrackleBeamMaterial, PlasmaBeamMaterial] )]
+	public string MaterialPath { get; set; } = RopeMaterial;
 
 	public override string Description => Stage == 1 ? "#tool.hint.rope.stage1" : "#tool.hint.rope.stage0";
 	public override string PrimaryAction => Stage == 1 ? "#tool.hint.rope.finish" : "#tool.hint.rope.source";
 	public override string ReloadAction => "#tool.hint.rope.remove";
 
 	public override bool CanConstraintToSelf => true;
+
+	protected override string WriteConstraintConfiguration() => MaterialPath;
 
 	protected override IEnumerable<GameObject> FindConstraints( GameObject linked, GameObject target )
 	{
@@ -81,15 +107,28 @@ public sealed class RopeTool : BaseConstraintToolMode
 			splineInterpolation = segmentCount > maxSegmentCount ? 8 : 4;
 		}
 
+		// the owner's pick came with the create RPC
+		var materialPath = string.IsNullOrWhiteSpace( Configuration ) ? RopeMaterial : Configuration;
+		var isPackage = LineMaterial.IsPackageIdent( materialPath );
+		var glow = GlowMaterials.Contains( materialPath );
+		var material = isPackage ? null : Material.Load( materialPath );
+
 		var lineRenderer = go1.AddComponent<LineRenderer>();
 		lineRenderer.Points = [go1, go2];
 		lineRenderer.Width = Radius;
 		lineRenderer.Color = Color.White;
-		lineRenderer.Lighting = true;
-		lineRenderer.CastShadows = true;
+		lineRenderer.Lighting = !glow;
+		lineRenderer.CastShadows = !glow;
+		lineRenderer.Opaque = !glow;
+		lineRenderer.Additive = glow;
 		lineRenderer.SplineInterpolation = splineInterpolation;
-		lineRenderer.Texturing = lineRenderer.Texturing with { Material = Material.Load( "materials/default/rope01.vmat" ), WorldSpace = true, UnitsPerTexture = 32 };
 		lineRenderer.Face = SceneLineObject.FaceMode.Cylinder;
+		// a workshop material starts as plain rope and swaps in once it's downloaded
+		lineRenderer.Texturing = lineRenderer.Texturing with { Material = material ?? Material.Load( RopeMaterial ), WorldSpace = true, UnitsPerTexture = 32 };
+
+		// each client fetches it and makes a line material of its own
+		if ( isPackage )
+			go1.AddComponent<LineMaterial>().Ident = materialPath;
 
 		go2.NetworkSpawn( true, null );
 		go1.NetworkSpawn( true, null );
