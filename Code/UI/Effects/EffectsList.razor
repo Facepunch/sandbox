@@ -232,61 +232,13 @@
 
     const string PresetsKey = "effects/presets";
 
-    record EffectState( string ResourcePath, Dictionary<string, object> Properties );
+    // only the settings changed from each effect's defaults, see EffectSettings. Presets saved before that list every
+    // setting, as plain JSON values, which load the same way
+    record EffectState( string ResourcePath, Dictionary<string, System.Text.Json.JsonElement> Properties );
     record EffectsPreset( string Name, List<EffectState> Effects );
     record EffectsPresetList( List<EffectsPreset> Presets );
 
     EffectsPresetList LoadPresetList() => LocalData.Get<EffectsPresetList>( PresetsKey, new EffectsPresetList( new() ) );
-
-    Dictionary<string, object> CaptureProperties( IReadOnlyList<Component> components )
-    {
-        var result = new Dictionary<string, object>();
-        foreach ( var component in components )
-        {
-            var so = TypeLibrary.GetSerializedObject( component );
-            foreach ( var prop in so.Where( p => !p.IsMethod
-                && p.PropertyType != null
-                && !p.PropertyType.IsAssignableTo( typeof( Delegate ) )
-                && p.HasAttribute<PropertyAttribute>() ) )
-            {
-                try
-                {
-                    var value = prop.GetValue<object>();
-                    if ( value is not null )
-                        result[$"{component.GetType().Name}.{prop.Name}"] = value;
-                }
-                catch { }
-            }
-        }
-        return result;
-    }
-
-    void ApplyProperties( string resourcePath, Dictionary<string, object> properties )
-    {
-        foreach ( var component in _manager.GetComponents( resourcePath ) )
-        {
-            var typeDesc = TypeLibrary.GetType( component.GetType() );
-            foreach ( var (key, value) in properties )
-            {
-                // older presets saved just the property name
-                var split = key.LastIndexOf( '.' );
-                if ( split >= 0 && key[..split] != component.GetType().Name ) continue;
-
-                var propDesc = typeDesc?.GetProperty( key[(split + 1)..] );
-                if ( propDesc is null ) continue;
-
-                try
-                {
-                    var resolved = value is System.Text.Json.JsonElement el
-                        ? Sandbox.Json.Deserialize( el.GetRawText(), propDesc.PropertyType )
-                        : value;
-                    if ( resolved is not null )
-                        propDesc.SetValue( component, resolved );
-                }
-                catch { }
-            }
-        }
-    }
 
     void SaveNewPreset( string name )
     {
@@ -294,7 +246,7 @@
 
         var effects = _groups.SelectMany( g => g )
             .Where( r => _manager.IsEnabled( r.ResourcePath ) )
-            .Select( r => new EffectState( r.ResourcePath, CaptureProperties( _manager.GetComponents( r.ResourcePath ) ) ) )
+            .Select( r => new EffectState( r.ResourcePath, EffectSettings.Capture( r.ResourcePath, _manager.GetComponents( r.ResourcePath ) ) ) )
             .ToList();
 
         var list = LoadPresetList();
@@ -320,7 +272,8 @@
             if ( !_manager.IsEnabled( effectState.ResourcePath ) )
                 _manager.Toggle( effectState.ResourcePath );
 
-            ApplyProperties( effectState.ResourcePath, effectState.Properties );
+            // settings the preset doesn't list go back to their defaults
+            EffectSettings.Apply( effectState.ResourcePath, _manager.GetComponents( effectState.ResourcePath ), effectState.Properties );
         }
 
         StateHasChanged();

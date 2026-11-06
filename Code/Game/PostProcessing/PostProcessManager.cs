@@ -27,11 +27,32 @@ public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
 
 	public bool IsEnabled( string resourcePath ) => _enabled.Contains( resourcePath );
 
+	bool _suppressed;
+
+	/// <summary>
+	/// Hide the player's effects while looking through another camera view or something
+	/// </summary>
+	public bool Suppressed
+	{
+		get => _suppressed;
+		set
+		{
+			if ( _suppressed == value ) return;
+			_suppressed = value;
+
+			foreach ( var (path, go) in _active )
+			{
+				if ( go.IsValid() )
+					go.Enabled = !value && (_enabled.Contains( path ) || path == _previewPath);
+			}
+		}
+	}
+
 	private void SetEnabled( string resourcePath, bool enabled )
 	{
 		if ( !_active.TryGetValue( resourcePath, out var go ) ) return;
 
-		go.Enabled = enabled;
+		go.Enabled = enabled && !_suppressed;
 
 		if ( enabled ) _enabled.Add( resourcePath );
 		else _enabled.Remove( resourcePath );
@@ -51,7 +72,7 @@ public sealed class PostProcessManager : GameObjectSystem<PostProcessManager>
 
 		_active[resourcePath] = go;
 
-		if ( !startEnabled )
+		if ( !startEnabled || _suppressed )
 			go.Enabled = false;
 	}
 

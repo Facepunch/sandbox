@@ -195,7 +195,14 @@ public sealed class CameraViewSystem : Component, Global.ISaveEvents
 			_mainCamera.FovAxis = _originalAxis;
 		}
 		_mainCamera = null;
+
+		// back to the player's own effects
+		_viewEffects.Clear();
+		if ( Scene.GetSystem<PostProcessManager>() is { } effects )
+			effects.Suppressed = false;
 	}
+
+	readonly CameraEffectStack _viewEffects = new();
 
 	internal void ApplyView( CameraEntity entity, CameraComponent camera, ref CameraView view )
 	{
@@ -220,6 +227,12 @@ public sealed class CameraViewSystem : Component, Global.ISaveEvents
 		camera.RenderExcludeTags.Add( "firstperson" );
 		camera.RenderExcludeTags.Remove( "viewer" );
 		camera.FovAxis = CameraComponent.Axis.Horizontal;
+
+		// the camera's own effects, not the player's, so looking through matches its displays
+		if ( Scene.GetSystem<PostProcessManager>() is { } playerEffects )
+			playerEffects.Suppressed = true;
+		_viewEffects.Apply( camera.GameObject, entity );
+
 		view.Position = entity.ViewTransform.Position;
 		view.Rotation = entity.ViewTransform.Rotation;
 		view.FieldOfView = entity.ClampedFov;

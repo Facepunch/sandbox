@@ -40,6 +40,7 @@ public sealed partial class CameraEntity : Component, ICameraModifier, IPhysgunE
 		if ( _appliedStatic != Static || Static && (body.IsValid() && (body.Enabled || body.MotionEnabled)
 			|| collider.IsValid() && !collider.Static) ) RefreshPhysics();
 		UpdateTracking();
+		UpdateEffects();
 	}
 
 	protected override void OnPreRender()
@@ -102,11 +103,13 @@ public sealed partial class CameraEntity : Component, ICameraModifier, IPhysgunE
 	protected override void OnDisabled()
 	{
 		ResetTracking();
+		LensEffects.Clear();
 		if ( Scene == Game.ActiveScene ) CameraViewSystem.Get( Scene )?.Release( this );
 	}
 
 	protected override void OnDestroy()
 	{
+		LensEffects.Clear();
 		if ( Scene == Game.ActiveScene ) CameraViewSystem.Get( Scene )?.Release( this );
 	}
 }
