@@ -1,3 +1,5 @@
+using Sandbox.UI;
+
 [Icon( "🌀" )]
 [Title( "#tool.name.elastic" )]
 [ClassName( "elastic" )]
@@ -12,8 +14,27 @@ public sealed class ElasticTool : BaseConstraintToolMode
 	[Property, Sync, Title( "#tool.setting.damping" )]
 	public float Damping { get; set; } = 0.1f;
 
+	[Range( 0.5f, 5f ), Step( 0.5f )]
+	[Property, Sync, Title( "#tool.setting.radius" )]
+	public float Radius { get; set; } = 0.5f;
+
 	[Property, Sync, Title( "#tool.setting.stretch_only" )]
 	public bool StretchOnly { get; set; } = false;
+
+	/// <summary>
+	/// Multiplies the material's color, white leaves it as it is. Orange by default, the elastic's colour.
+	/// </summary>
+	[Property, Sync, Order( 101 ), Title( "#tool.setting.tint" )]
+	public Color Tint { get; set; } = Color.Orange;
+
+	/// <summary>
+	/// A local material path or a workshop package ident. Sent with each elastic rather than synced.
+	/// </summary>
+	[Property, HideLabel, Order( 100 ), Title( "#tool.setting.material" )]
+	[RopeMaterials( TintProperty = nameof( Tint ) )]
+	public string MaterialPath { get; set; } = RopeLook.CableMaterial;
+
+	protected override string WriteConstraintConfiguration() => MaterialPath;
 
 	public override string Description => Stage == 1 ? "#tool.hint.elastic.stage1" : "#tool.hint.elastic.stage0";
 	public override string PrimaryAction => Stage == 1 ? "#tool.hint.elastic.finish" : "#tool.hint.elastic.source";
@@ -63,13 +84,10 @@ public sealed class ElasticTool : BaseConstraintToolMode
 		var vertletRope = go1.AddComponent<VerletRope>();
 		vertletRope.Attachment = go2;
 		vertletRope.SegmentCount = MathX.CeilToInt( len / 16.0f );
+		vertletRope.Radius = Radius;
 
-		var lineRenderer = go1.AddComponent<LineRenderer>();
-		lineRenderer.Points = [go1, go2];
-		lineRenderer.Width = 0.5f;
-		lineRenderer.Color = Color.Orange;
-		lineRenderer.Lighting = true;
-		lineRenderer.CastShadows = true;
+		// the owner's material came with the create RPC
+		RopeLook.AddLine( go1, go2, Configuration, Radius, Tint, splineInterpolation: 4 );
 
 		go2.NetworkSpawn();
 		go1.NetworkSpawn();
