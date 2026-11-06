@@ -144,9 +144,11 @@ public sealed class BalloonTool : ToolMode
 			{
 				var vertletRope = go.AddComponent<VerletRope>();
 				vertletRope.Attachment = anchor;
+				vertletRope.LengthOverride = MathF.Max( 1f, Length );
 
+				const int minSegmentCount = 4;
 				const int maxSegmentCount = 48;
-				int segmentCount = Math.Min( maxSegmentCount, MathX.CeilToInt( Length / 16.0f ) );
+				int segmentCount = Math.Clamp( MathX.CeilToInt( Length / 16.0f ), minSegmentCount, maxSegmentCount );
 
 				vertletRope.SegmentCount = segmentCount;
 				vertletRope.Radius = ropeWidth;
