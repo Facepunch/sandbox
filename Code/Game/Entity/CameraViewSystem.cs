@@ -1,9 +1,18 @@
-/// <summary>Local viewing state. A camera never switches another player's main view.</summary>
+/// <summary>
+/// Local viewing state. A camera never switches another player's main view.
+/// A loose camera answers only its owner's binding, from anywhere. A camera linked to a
+/// contraption with a seat answers whoever is sitting in one of its seats, and nobody else.
+/// </summary>
 [Hide]
 public sealed class CameraViewSystem : Component, Global.ISaveEvents
 {
 	const string BodyTag = "remote_camera_body";
 	readonly Dictionary<string, bool> _down = new( StringComparer.OrdinalIgnoreCase );
+	// Rebuilt at the start of each input pass; the view pass later in the frame reads it.
+	readonly HashSet<CameraEntity> _viewable = new();
+	readonly Dictionary<GameObject, bool?> _seatAccess = new();
+	readonly LinkedGameObjectBuilder _linked = new();
+	readonly HashSet<BaseChair> _linkedChairs = new();
 	CameraComponent _mainCamera;
 	bool _hadViewmodel, _hadFirstperson, _hadViewer;
 	CameraComponent.Axis _originalAxis;
@@ -24,7 +33,43 @@ public sealed class CameraViewSystem : Component, Global.ISaveEvents
 		}
 	}
 
-	bool CanView( CameraEntity camera ) => camera.IsValid() && camera.Active && camera.Scene == Scene && camera.IsLocallyOwned;
+	bool CanView( CameraEntity camera ) => camera.IsValid() && camera.Active && camera.Scene == Scene && _viewable.Contains( camera );
+
+	void RefreshViewable( Player player )
+	{
+		_viewable.Clear();
+		_seatAccess.Clear();
+		var localSeat = player.GetComponentInParent<BaseChair>( false );
+		foreach ( var camera in Scene.GetAllComponents<CameraEntity>() )
+		{
+			if ( !camera.IsValid() || !camera.Active ) continue;
+			var root = camera.GameObject.Root;
+			if ( !_seatAccess.TryGetValue( root, out var seatAccess ) )
+			{
+				seatAccess = ResolveSeatAccess( camera.GameObject, localSeat );
+				foreach ( var linked in _linked.Objects ) _seatAccess[linked] = seatAccess;
+				_seatAccess[root] = seatAccess;
+				_linked.Clear();
+			}
+			// No seat on the contraption: the owner's global bind. Otherwise: only from its seats.
+			if ( seatAccess ?? camera.IsLocallyOwned ) _viewable.Add( camera );
+		}
+	}
+
+	/// <summary>Null when nothing linked has a seat, otherwise whether the local player sits in one of them.</summary>
+	bool? ResolveSeatAccess( GameObject source, BaseChair localSeat )
+	{
+		_linked.Clear();
+		_linkedChairs.Clear();
+		_linked.AddConnected( source );
+		foreach ( var obj in _linked.Objects )
+			foreach ( var chair in obj.GetComponentsInChildren<BaseChair>() )
+				_linkedChairs.Add( chair );
+		if ( _linkedChairs.Count == 0 ) return null;
+		var seated = localSeat.IsValid() && _linkedChairs.Contains( localSeat );
+		_linkedChairs.Clear();
+		return seated;
+	}
 
 	protected override void OnEnabled() => RegisterInputHook();
 
@@ -47,11 +92,14 @@ public sealed class CameraViewSystem : Component, Global.ISaveEvents
 		// Leave before freecam applies its own render filters later in this frame.
 		if ( !player.IsValid() || player.Health <= 0 || Input.Keyboard.Pressed( "J" ) || Scene.Get<FreeCamGameObjectSystem>().IsActive )
 		{
+			_viewable.Clear();
 			Clear();
 			_down.Clear();
 			return;
 		}
 
+		// Leaving the seat drops a contraption camera here, ending the view below.
+		RefreshViewable( player );
 		if ( ActiveCamera is not null && (!CanView( ActiveCamera ) || !ActiveCamera.ViewInput.IsEnabled) ) Clear();
 
 		var actions = Input.GetActions().Select( a => a.Name ).ToHashSet( StringComparer.OrdinalIgnoreCase );

@@ -32,7 +32,7 @@
     "tool.setting.speaker_hidden": "Hidden",
     "tool.setting.light_input": "Input",
     "tool.setting.camera_key": "View Input",
-    "tool.setting.camera_key.description": "Your input for viewing this camera. Works anywhere, without a seat. When several cameras share a binding, a new view uses the most recently enabled one.",
+    "tool.setting.camera_key.description": "Your input for viewing this camera. On its own it works anywhere for its owner. Attached to something with a seat, it works for whoever is sitting in it, and leaving the seat ends the view. When several cameras share a binding, a new view uses the most recently enabled one.",
     "tool.setting.camera_fov": "Field of View",
     "tool.setting.camera_static": "Static",
     "tool.setting.camera_static.description": "A static camera cannot be picked up with physics tools or unfrozen. Other tool cameras start frozen but can be unfrozen normally.",
