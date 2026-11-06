@@ -185,9 +185,9 @@ public sealed partial class FourWheelVehicle
 		}
 
 		if ( right is { } rightTx )
-			renderer.SetIk( RightHandIk, rightTx );
+			SetIkTarget( renderer, RightHandIk, rightTx );
 		else
-			renderer.ClearIk( RightHandIk );
+			ClearIkTarget( renderer, RightHandIk );
 	}
 
 	private void UpdateSway()
@@ -220,7 +220,7 @@ public sealed partial class FourWheelVehicle
 
 		if ( gas is null && brake is null )
 		{
-			renderer.ClearIk( RightFootIk );
+			ClearIkTarget( renderer, RightFootIk );
 			return;
 		}
 
@@ -229,7 +229,7 @@ public sealed partial class FourWheelVehicle
 		var t = _footOnBrake * _footOnBrake * (3 - 2 * _footOnBrake); // ease in and out
 		var lift = WorldRotation.Up * (MathF.Sin( t * MathF.PI ) * FootLift * VehicleScale);
 
-		renderer.SetIk( RightFootIk, new global::Transform(
+		SetIkTarget( renderer, RightFootIk, new global::Transform(
 			Vector3.Lerp( from.Position, to.Position, t ) + lift,
 			Rotation.Slerp( from.Rotation, to.Rotation, t ) ) );
 	}
@@ -241,11 +241,11 @@ public sealed partial class FourWheelVehicle
 	{
 		if ( !LeftFoot.IsValid() || _clutchPedal < ClutchFootThreshold )
 		{
-			renderer.ClearIk( LeftFootIk );
+			ClearIkTarget( renderer, LeftFootIk );
 			return;
 		}
 
-		renderer.SetIk( LeftFootIk, PedalFoot( LeftFoot, GetRig()?.ClutchPedal ?? -1, _clutchPedal ) );
+		SetIkTarget( renderer, LeftFootIk, PedalFoot( LeftFoot, GetRig()?.ClutchPedal ?? -1, _clutchPedal ) );
 	}
 
 	/// <summary>
@@ -286,9 +286,29 @@ public sealed partial class FourWheelVehicle
 	private static void SetIk( SkinnedModelRenderer renderer, string ik, GameObject target )
 	{
 		if ( target.IsValid() )
-			renderer.SetIk( ik, target.WorldTransform );
+			SetIkTarget( renderer, ik, target.WorldTransform );
 		else
+			ClearIkTarget( renderer, ik );
+	}
+
+	private static void SetIkTarget( SkinnedModelRenderer renderer, string ik, global::Transform world )
+	{
+		if ( renderer.Animation.Graph is null )
+		{
+			renderer.SetIk( ik, world );
+			return;
+		}
+
+		renderer.Animation.Parameters.TrySet( $"ik.{ik}", renderer.WorldTransform.ToLocal( world ) );
+		renderer.Animation.Parameters.TrySet( $"ik.{ik}.enabled", true );
+	}
+
+	private static void ClearIkTarget( SkinnedModelRenderer renderer, string ik )
+	{
+		if ( renderer.Animation.Graph is null )
 			renderer.ClearIk( ik );
+		else
+			renderer.Animation.Parameters.TrySet( $"ik.{ik}.enabled", false );
 	}
 
 	internal void ApplyDriverPose()
@@ -349,9 +369,18 @@ public sealed partial class FourWheelVehicle
 	{
 		if ( !_palmOpen || string.IsNullOrEmpty( HornHoldType ) ) return;
 
-		renderer.Set( "holdtype", HornHoldType );
-		renderer.Set( "holdtype_handedness", 1 );
-		renderer.Set( "holdtype_pose_hand", HornHandPose );
+		if ( renderer.Animation.Graph is null )
+		{
+			renderer.Set( "holdtype", HornHoldType );
+			renderer.Set( "holdtype_handedness", 1 );
+			renderer.Set( "holdtype_pose_hand", HornHandPose );
+		}
+		else
+		{
+			renderer.Animation.Parameters.TrySet( "holdtype", HornHoldType );
+			renderer.Animation.Parameters.TrySet( "holdtype_handedness", 1 );
+			renderer.Animation.Parameters.TrySet( "holdtype_pose_hand", HornHandPose );
+		}
 	}
 
 	/// <summary>
@@ -361,10 +390,10 @@ public sealed partial class FourWheelVehicle
 	{
 		if ( _handsRenderer.IsValid() )
 		{
-			_handsRenderer.ClearIk( LeftHandIk );
-			_handsRenderer.ClearIk( RightHandIk );
-			_handsRenderer.ClearIk( LeftFootIk );
-			_handsRenderer.ClearIk( RightFootIk );
+			ClearIkTarget( _handsRenderer, LeftHandIk );
+			ClearIkTarget( _handsRenderer, RightHandIk );
+			ClearIkTarget( _handsRenderer, LeftFootIk );
+			ClearIkTarget( _handsRenderer, RightFootIk );
 
 			// back upright on the player (the body sits at its origin in the prefab)
 			if ( _driver.IsValid() && _handsRenderer.GameObject != _driver.GameObject )
