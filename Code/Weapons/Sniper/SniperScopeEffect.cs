@@ -16,6 +16,9 @@ public sealed class SniperScopeEffect : BasePostProcess<SniperScopeEffect>
 
 	public override void Render()
 	{
+		// A camera entity's view goes through the same main camera, the scope isn't part of it
+		if ( CameraViewSystem.Get( Scene )?.ActiveCamera.IsValid() == true ) return;
+
 		_opacity = _opacity.LerpTo( 1f, Time.Delta * 20f );
 		_smoothedBlur = _smoothedBlur.LerpTo( BlurInput, Time.Delta * 8f );
 		var blurAmount = (1.0f - _smoothedBlur).Clamp( 0.1f, 1f );

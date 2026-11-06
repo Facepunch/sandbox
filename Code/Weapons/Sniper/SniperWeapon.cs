@@ -14,6 +14,14 @@ public sealed class SniperWeapon : BaseBulletWeapon
 
 	public bool IsScoped => _isScoped;
 
+	/// <summary>
+	/// The scope is something you look through with your own eyes: only in first person, and not while the screen
+	/// shows a camera entity instead (its view goes through the same main camera, so the overlay would cover it).
+	/// </summary>
+	private bool CanLookThroughScope => HasOwner
+		&& Owner.Controller.IsValid() && !Owner.Controller.ThirdPerson
+		&& CameraViewSystem.Get( Scene )?.ActiveCamera.IsValid() != true;
+
 	protected override bool WantsPrimaryAttack()
 	{
 		return Input.Pressed( "attack1" );
@@ -104,12 +112,22 @@ public sealed class SniperWeapon : BaseBulletWeapon
 		}
 
 		// Hide viewmodel once ADS animation has finished, then enable scope overlay
-		if ( _isScoped && !_viewModelHidden && _timeUntilHideViewModel )
+		var canLookThrough = CanLookThroughScope;
+		if ( _isScoped && canLookThrough && !_viewModelHidden && _timeUntilHideViewModel )
 		{
 			HideViewModel();
 
 			_scopeEffect = Scene.Camera.Components.GetOrCreate<SniperScopeEffect>();
 			_scopeEffect.Flags |= ComponentFlags.NotNetworked;
+		}
+		// Switched to third person or a camera view while scoped: drop the overlay and zoom, keep holding scope so
+		// it comes straight back
+		else if ( _viewModelHidden && !canLookThrough )
+		{
+			ShowViewModel();
+
+			_scopeEffect?.Destroy();
+			_scopeEffect = default;
 		}
 
 		if ( _hasFired && Input.Released( "attack1" ) )
