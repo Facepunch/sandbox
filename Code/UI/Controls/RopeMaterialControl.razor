@@ -66,6 +66,21 @@
         // the value can change from outside, like a preset or a copied setting
         if ( Property is not null && Value != _shownValue )
             OnValueChanged();
+
+        if ( _preview.IsValid() )
+            _preview.Tint = ReadTint();
+    }
+
+    /// <summary>
+    /// The sibling color property the attribute points at, white when there isn't one.
+    /// </summary>
+    Color ReadTint()
+    {
+        var name = _attribute?.TintProperty;
+        if ( string.IsNullOrEmpty( name ) || Property?.Parent is not { } parent ) return Color.White;
+        if ( !parent.TryGetProperty( name, out var tint ) ) return Color.White;
+
+        return tint.GetValue<Color>();
     }
 
     void OnValueChanged()

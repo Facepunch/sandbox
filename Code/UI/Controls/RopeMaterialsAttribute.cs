@@ -22,6 +22,11 @@ public sealed class RopeMaterialsAttribute : System.Attribute
 	/// </summary>
 	public string[] Glow { get; set; }
 
+	/// <summary>
+	/// A <see cref="Color"/> property on the same object to tint the previews with, so they match what'll be placed.
+	/// </summary>
+	public string TintProperty { get; set; }
+
 	public RopeMaterialsAttribute( params string[] paths )
 	{
 		Paths = paths ?? [];

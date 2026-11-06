@@ -31,13 +31,21 @@ public sealed class RopeTool : BaseConstraintToolMode
 
 	[Property, Sync, Title( "#tool.setting.rigid" )]
 	public bool Rigid { get; set; } = false;
+
+	/// <summary>
+	/// Multiplies the material's color, white leaves it as it is.
+	/// </summary>
+	[Property, Sync, Order( 101 ), Title( "#tool.setting.tint" )]
+	public Color Tint { get; set; } = Color.White;
+
 	/// <summary>
 	/// A local material path or a workshop package ident. Sent with each rope rather than synced.
 	/// </summary>
 	[Property, HideLabel, Order( 100 ), Title( "#tool.setting.material" )]
 	[RopeMaterials( RopeMaterial, CableMaterial, ThickBeamMaterial, LavaBeamMaterial, CrackleBeamMaterial, PlasmaBeamMaterial,
 		Titles = ["#tool.name.rope", "#tool.setting.rope_material.cable", "#asset.thickbeam.title", "#asset.electricbeam.title", "#tool.setting.rope_material.crackle", "#tool.setting.rope_material.plasma"],
-		Glow = [ThickBeamMaterial, LavaBeamMaterial, CrackleBeamMaterial, PlasmaBeamMaterial] )]
+		Glow = [ThickBeamMaterial, LavaBeamMaterial, CrackleBeamMaterial, PlasmaBeamMaterial],
+		TintProperty = nameof( Tint ) )]
 	public string MaterialPath { get; set; } = RopeMaterial;
 
 	public override string Description => Stage == 1 ? "#tool.hint.rope.stage1" : "#tool.hint.rope.stage0";
@@ -116,7 +124,7 @@ public sealed class RopeTool : BaseConstraintToolMode
 		var lineRenderer = go1.AddComponent<LineRenderer>();
 		lineRenderer.Points = [go1, go2];
 		lineRenderer.Width = Radius;
-		lineRenderer.Color = Color.White;
+		lineRenderer.Color = Tint;
 		lineRenderer.Lighting = !glow;
 		lineRenderer.CastShadows = !glow;
 		lineRenderer.Opaque = !glow;

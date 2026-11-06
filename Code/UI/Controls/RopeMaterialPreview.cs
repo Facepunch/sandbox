@@ -40,6 +40,23 @@ public sealed class RopeMaterialPreview : ScenePanel
 	readonly List<Rope> _ropes = new();
 	CameraComponent _camera;
 	Vector2 _size;
+	Color _tint = Color.White;
+
+	/// <summary>
+	/// Multiplies every rope's color, like the rope tool's tint does on a placed rope.
+	/// </summary>
+	public Color Tint
+	{
+		get => _tint;
+		set
+		{
+			if ( _tint == value ) return;
+			_tint = value;
+
+			foreach ( var rope in _ropes )
+				if ( rope.Line.IsValid() ) rope.Line.Color = value;
+		}
+	}
 
 	public RopeMaterialPreview()
 	{
@@ -116,7 +133,7 @@ public sealed class RopeMaterialPreview : ScenePanel
 		{
 			var line = new GameObject( true, "rope" ).AddComponent<LineRenderer>();
 			line.UseVectorPoints = true;
-			line.Color = Color.White;
+			line.Color = _tint;
 			line.Face = SceneLineObject.FaceMode.Cylinder;
 			line.CastShadows = false;
 			line.Enabled = false;
