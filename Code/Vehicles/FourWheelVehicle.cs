@@ -216,6 +216,9 @@ public sealed partial class FourWheelVehicle : Component, IPlayerControllable, I
 	{
 		if ( !Networking.IsHost ) return;
 
+		// a tuning change from the inspector
+		ApplyTuningChanges();
+
 		// set up late (hotload), or rebuild if the model changed
 		if ( !_carSystemReady || !_body.IsValid() || _wheelsRig != GetRig() || _simulationScale != WorldScale )
 		{
