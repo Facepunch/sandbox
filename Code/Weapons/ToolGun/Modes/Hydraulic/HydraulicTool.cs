@@ -21,8 +21,6 @@ public sealed class HydraulicTool : BaseLengthConstraintTool
 
 	protected override void CreateConstraint( SelectionPoint point1, SelectionPoint point2 )
 	{
-		DebugOverlay.Line( point1.WorldPosition(), point2.WorldPosition(), Color.Red, 5.0f );
-
 		if ( point1.GameObject == point2.GameObject )
 			return;
 
