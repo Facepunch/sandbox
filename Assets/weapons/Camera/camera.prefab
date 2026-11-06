@@ -85,7 +85,7 @@
         "FirstShellReloadTime": 0,
         "Handedness": "Both",
         "HoldBone": "head",
-        "HoldType": "holditem",
+        "HoldType": "camera",
         "IncrementalReloading": false,
         "Npc": {
           "MinRange": 0,
@@ -137,9 +137,9 @@
           "go": "3c948bf4-5353-443a-bb65-8f28584fed1b",
           "component_type": "CameraFeed"
         },
-        "HoldAnimation": {
-          "Id": "e4e645a9-995a-4a78-bf71-19dfeafd972f",
-          "Path": "animations/camera/camera_hold.anim"
+        "HoldGraph": {
+          "Id": "f9b0a6d4-d6fe-4421-9e80-5785bd82a1c4",
+          "Path": "animations/camera/camera_hold.ag"
         }
       },
       {

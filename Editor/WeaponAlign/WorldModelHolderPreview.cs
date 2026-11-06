@@ -49,9 +49,10 @@ internal static class WorldModelHolderPreview
 		holder.HoldType = hold.HoldType;
 		holder.Handedness = hold.Handedness;
 		holder.HoldBone = hold.HoldBone;
+		holder.HoldGraph = hold.HoldGraph;
 	}
 
-	record HoldSettings( string HoldType, int Handedness, string HoldBone );
+	record HoldSettings( string HoldType, int Handedness, string HoldBone, string HoldGraph );
 
 	/// <summary>
 	/// Hold settings from the weapon prefab whose WorldModelPrefab is <paramref name="worldModelPath"/>.
@@ -77,8 +78,10 @@ internal static class WorldModelHolderPreview
 					_ => 0
 				};
 				var holdBone = component["HoldBone"]?.GetValue<string>() ?? "hold_R";
+				var graph = component["HoldGraph"];
+				var graphPath = graph is JsonValue ? graph.GetValue<string>() : graph?["Path"]?.GetValue<string>();
 
-				return new HoldSettings( holdType.ToLowerInvariant(), handedness, holdBone );
+				return new HoldSettings( holdType.ToLowerInvariant(), handedness, holdBone, graphPath );
 			}
 		}
 
@@ -96,6 +99,7 @@ internal sealed class WorldModelHolder : Component, Component.ExecuteInEditor
 	public string HoldType { get; set; }
 	public int Handedness { get; set; }
 	public string HoldBone { get; set; }
+	public string HoldGraph { get; set; }
 
 	SceneModel _model;
 	BoneCollection.Bone _bone;
@@ -117,6 +121,9 @@ internal sealed class WorldModelHolder : Component, Component.ExecuteInEditor
 	protected override void OnUpdate()
 	{
 		if ( !_model.IsValid() ) return;
+		var graph = string.IsNullOrEmpty( HoldGraph ) ? null : global::Sandbox.Animation.Graph.Load( HoldGraph );
+		if ( !string.IsNullOrEmpty( HoldGraph ) && graph?.IsValid != true ) return;
+		if ( _model.Animation.Graph != graph ) _model.Animation.Graph = graph;
 
 		// Resolved here rather than in OnEnabled, which runs before HoldBone is assigned.
 		if ( _resolvedHoldBone != HoldBone )

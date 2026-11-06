@@ -18,12 +18,10 @@ public sealed class CameraWeapon : BaseSandboxWeapon
 	Vector3 focusPoint;
 
 	[RequireComponent, Hide] public CameraFeed Feed { get; set; }
-	[Property, Feature( "WorldModel" )] public Sandbox.Animation.Clip HoldAnimation { get; set; }
+	/// <summary>Upper-body hold graph, connected to the player graph's "hold_pose" slot.</summary>
+	[Property, Feature( "WorldModel" )] public Sandbox.Animation.Graph HoldGraph { get; set; }
 
-	Model _poseModel;
-	Sandbox.Animation.Clip _poseClip;
-	(BoneCollection.Bone Bone, Sandbox.Animation.Skeleton.Bone Track)[] _poseBones;
-	Transform[] _poseTransforms;
+	SkinnedModelRenderer _holdBody;
 
 	public override bool WantsHideHud => true;
 
@@ -31,6 +29,7 @@ public sealed class CameraWeapon : BaseSandboxWeapon
 
 	protected override void OnDisabled()
 	{
+		ReleaseHold();
 		base.OnDisabled();
 
 		DestroyDepthOfField();
@@ -38,6 +37,7 @@ public sealed class CameraWeapon : BaseSandboxWeapon
 
 	protected override void OnDestroy()
 	{
+		ReleaseHold();
 		DestroyDepthOfField();
 	}
 
@@ -156,75 +156,27 @@ public sealed class CameraWeapon : BaseSandboxWeapon
 		// nothing!
 	}
 
-	internal void UpdateHoldAnimation( bool prepare )
+	protected override void OnHolstered()
 	{
-		var controller = Owner?.Controller;
-		if ( !IsActive || !controller.IsValid() || !controller.Renderer.IsValid() || !WorldModel.IsValid() || HoldAnimation?.IsBound != true ) return;
-		var body = controller.Renderer;
-		var model = body.SceneModel;
-		if ( !model.IsValid() ) return;
-		if ( prepare )
-		{
-			// The clip supplies pitch; suppress the base graph's extra aiming bend.
-			if ( body.Animation.Graph is not null ) body.Animation.Parameters.TrySet( "aim_body_weight", 0f );
-#pragma warning disable CS0618
-			else body.Set( "aim_body_weight", 0f );
-#pragma warning restore CS0618
-			return;
-		}
-		if ( _poseModel != body.Model || _poseClip != HoldAnimation || _poseBones is null )
-		{
-			var bones = new List<(BoneCollection.Bone Bone, Sandbox.Animation.Skeleton.Bone Track)>();
-			// Clip bones are parent-first. Including descendants here also establishes
-			// evaluation order, without sorting or walking ancestors each frame.
-			foreach ( var track in HoldAnimation.Skeleton.Bones )
-				if ( track.Name == "spine_0" || bones.Any( b => b.Track.Index == track.ParentIndex ) )
-					if ( body.Model.Bones.GetBone( track.Name ) is { } bone ) bones.Add( (bone, track) );
-			_poseBones = bones.ToArray();
-			_poseTransforms = new Transform[HoldAnimation.Skeleton.BoneCount];
-			_poseModel = body.Model;
-			_poseClip = HoldAnimation;
-		}
-
-		// The baked clip is an aim strip: -85 degrees at the start, neutral in the
-		// middle, +85 at the end. Leave pelvis/legs on the normal locomotion graph.
-		var aim = (body.WorldRotation.Inverse * controller.EyeTransform.Rotation).Angles();
-		var cycle = (aim.pitch.Clamp( -85f, 85f ) + 85f) / 170f;
-		var yaw = Rotation.FromAxis( body.WorldRotation.Up, aim.yaw );
-		foreach ( var (bone, track) in _poseBones )
-		{
-			bool root = track.Name == "spine_0";
-			var parentWorld = root ? model.GetBoneWorldTransform( bone.Parent.Index ) : _poseTransforms[track.ParentIndex];
-			var world = parentWorld.ToWorld( HoldAnimation.GetLocalTransform( cycle, track.Index ) );
-			if ( root ) world.Rotation = yaw * world.Rotation;
-			_poseTransforms[track.Index] = world;
-			model.SetBoneWorldTransform( bone.Index, world );
-			var go = body.GetBoneObject( bone.Index );
-			if ( go.IsValid() ) go.WorldTransform = world;
-		}
-		foreach ( var clothing in body.GameObject.Components.GetAll<SkinnedModelRenderer>( FindMode.InDescendants ) )
-			if ( clothing.BoneMergeTarget.IsValid() && clothing.SceneModel.IsValid() && clothing.BoneMergeTarget.SceneModel.IsValid() )
-				clothing.SceneModel.MergeBones( clothing.BoneMergeTarget.SceneModel );
-	}
-}
-
-public sealed class CameraHoldAnimationSystem : GameObjectSystem<CameraHoldAnimationSystem>
-{
-	public CameraHoldAnimationSystem( Scene scene ) : base( scene )
-	{
-		Listen( Stage.UpdateBones, -500, PreparePoses, nameof( PreparePoses ) );
-		Listen( Stage.UpdateBones, 10, UpdatePoses, nameof( UpdatePoses ) );
+		ReleaseHold();
+		base.OnHolstered();
 	}
 
-	void PreparePoses()
+	protected override void UpdateBodyAnimations( SkinnedModelRenderer body )
 	{
-		if ( Scene.IsEditor ) return;
-		foreach ( var camera in Scene.GetAll<CameraWeapon>() ) camera.UpdateHoldAnimation( prepare: true );
+		base.UpdateBodyAnimations( body );
+
+		// Connect only while the slot is empty, so this doesn't restart the pose every frame.
+		var slots = body.Animation.ExternalGraphs;
+		if ( !IsActive || HoldGraph is null || !slots.Contains( "hold_pose" ) || slots.IsConnected( "hold_pose" ) ) return;
+		slots.Connect( "hold_pose", HoldGraph );
+		_holdBody = body;
 	}
 
-	void UpdatePoses()
+	void ReleaseHold()
 	{
-		if ( Scene.IsEditor ) return;
-		foreach ( var camera in Scene.GetAll<CameraWeapon>() ) camera.UpdateHoldAnimation( prepare: false );
+		if ( _holdBody.IsValid() && _holdBody.Animation.ExternalGraphs.IsConnected( "hold_pose" ) )
+			_holdBody.Animation.ExternalGraphs.Disconnect( "hold_pose" );
+		_holdBody = null;
 	}
 }

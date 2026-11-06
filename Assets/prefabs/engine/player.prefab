@@ -82,6 +82,7 @@
         },
         "FootstepVolume": 2,
         "HideBodyInFirstPerson": true,
+        "HoldToJump": false,
         "JumpSpeed": 300,
         "LookSensitivity": 1,
         "OnComponentDestroy": null,
@@ -164,6 +165,7 @@
           "data": {
             "FilePath": "ui/damage_radial.png",
             "MaxSize": 4096,
+            "Lossless": true,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
             "Rotate": 0,
@@ -194,7 +196,7 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": "textures/generated/imagefile/9f8a5ff24ced21a2.vtex"
+          "compiled": null
         }
       },
       {
@@ -257,11 +259,11 @@
         "AngularDamping": 1,
         "EnableImpactDamage": true,
         "EnhancedCcd": false,
-        "Gravity": true,
+        "Gravity": false,
         "GravityScale": 1,
         "ImpactDamage": 0,
         "InertiaScale": 1,
-        "LinearDamping": 0.1,
+        "LinearDamping": 0,
         "Locking": {
           "X": false,
           "Y": false,
@@ -290,7 +292,16 @@
         "__guid": "5bfc8927-ba8d-4f0c-ad7a-5b56b134df6a",
         "__enabled": true,
         "Flags": 0,
+        "AirAcceleration": 10,
+        "AirSpeedCap": 30,
+        "BunnyHopRecoveryTime": 0.1,
+        "EnableAirStrafing": true,
+        "EnableBunnyHopping": true,
+        "Friction": 4,
+        "GroundAcceleration": 10,
         "GroundAngle": 45,
+        "JumpMomentumRetention": 1,
+        "MaxVelocity": 3500,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -299,7 +310,8 @@
         "OnComponentUpdate": null,
         "Priority": 0,
         "StepDownHeight": 18,
-        "StepUpHeight": 18
+        "StepUpHeight": 18,
+        "StopSpeed": 100
       },
       {
         "__type": "Sandbox.Movement.MoveModeSwim",
@@ -392,6 +404,10 @@
             "__guid": "088ccdf7-7a51-47f6-be5c-88081217e16e",
             "__enabled": true,
             "Flags": 0,
+            "Animation": {
+              "Graph": "animations/sandbox_player.ag",
+              "Parameters": {}
+            },
             "AnimationGraph": null,
             "BodyGroups": 20737,
             "BoneMergeTarget": null,
@@ -399,6 +415,7 @@
             "CreateBoneObjects": true,
             "DeformationMode": "Normal",
             "LodOverride": null,
+            "LowDetailAnimation": false,
             "MaterialGroup": "default",
             "MaterialOverride": null,
             "Materials": null,
@@ -3139,7 +3156,7 @@
             "Children": []
           },
           {
-            "__guid": "b38f691c-7236-4889-a745-924c4b970c0b",
+            "__guid": "3397e3e6-d28f-4963-b324-7c41df041ba4",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - y_front_pants_white",
@@ -3156,9 +3173,13 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "8260c28d-b9c0-470c-8c66-a493ede6674b",
+                "__guid": "c63c522c-e692-4bdd-a20a-1b054403e1ee",
                 "__enabled": true,
                 "Flags": 0,
+                "Animation": {
+                  "Graph": null,
+                  "Parameters": {}
+                },
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
                 "BoneMergeTarget": {
@@ -3171,6 +3192,7 @@
                 "CreateBoneObjects": false,
                 "DeformationMode": "Normal",
                 "LodOverride": null,
+                "LowDetailAnimation": false,
                 "MaterialGroup": null,
                 "MaterialOverride": null,
                 "Materials": null,
@@ -3357,7 +3379,7 @@
             "__enabled": true,
             "Flags": 0,
             "ColliderFlags": 0,
-            "Elasticity": null,
+            "Elasticity": 0,
             "End": "0,0,36",
             "Friction": 0,
             "IsTrigger": false,
@@ -3371,9 +3393,9 @@
             "OnObjectTriggerExit": null,
             "OnTriggerEnter": null,
             "OnTriggerExit": null,
-            "Radius": 11.313708,
+            "Radius": 8,
             "RollingResistance": null,
-            "Start": "0,0,60.6862907",
+            "Start": "0,0,64",
             "Static": false,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
@@ -3385,7 +3407,7 @@
             "Flags": 0,
             "Center": "0,0,18",
             "ColliderFlags": 0,
-            "Elasticity": null,
+            "Elasticity": 0,
             "Friction": 0,
             "IsTrigger": false,
             "OnComponentDestroy": null,
