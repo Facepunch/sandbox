@@ -57,29 +57,36 @@ public sealed class TrailTool : ToolMode
 		ShootEffects( select );
 	}
 
-	[Rpc.Broadcast( NetFlags.OwnerOnly )]
+	/// <summary>
+	/// The trail is a child object of its own rather than a component on the target, so undo (which removes objects)
+	/// can take it away again.
+	/// </summary>
+	const string TrailObjectName = "trail";
+
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void AddTrail( GameObject go, Color color, float startWidth, float endWidth, float lifetime, bool castShadows, LineDefinition lineDef )
 	{
-		if ( !go.IsValid() ) return;
-		if ( go.IsProxy ) return;
+		if ( !go.IsValid() || !Player.IsValid() ) return;
 		if ( !FireToolAction( ToolInput.Primary ) ) return;
 
 		var root = go.Network?.RootGameObject ?? go;
+		RemoveTrails( root );
 
-		var existing = root.GetComponent<TrailRenderer>();
-		if ( existing.IsValid() )
-		{
-			existing.Destroy();
-		}
+		var trailObject = new GameObject( false, TrailObjectName );
+		trailObject.Parent = root;
+		trailObject.LocalTransform = global::Transform.Zero;
 
-		var trail = root.AddComponent<TrailRenderer>();
+		var trail = trailObject.AddComponent<TrailRenderer>();
 		trail.Color = new Gradient( new Gradient.ColorFrame( 0, color ), new Gradient.ColorFrame( 1, color.WithAlpha( 0 ) ) );
 		trail.Width = new Curve( new Curve.Frame( 0, startWidth ), new Curve.Frame( 1, endWidth ) );
 		trail.LifeTime = lifetime;
 		trail.CastShadows = castShadows;
 		trail.Face = SceneLineObject.FaceMode.Camera;
-		trail.Opaque = lineDef.Opaque;
-		trail.BlendMode = lineDef.BlendMode;
+		if ( lineDef.IsValid() )
+		{
+			trail.Opaque = lineDef.Opaque;
+			trail.BlendMode = lineDef.BlendMode;
+		}
 
 		if ( lineDef.IsValid() && lineDef.Material.IsValid() )
 		{
@@ -91,24 +98,36 @@ public sealed class TrailTool : ToolMode
 			};
 		}
 
+		trailObject.NetworkSpawn( true, null );
+		Track( trailObject );
+
+		var undo = Player.Undo.Create();
+		undo.Name = "#tool.name.trail";
+		undo.Add( trailObject );
+
 		FirePostToolAction( ToolInput.Primary );
 	}
 
-	[Rpc.Broadcast( NetFlags.OwnerOnly )]
+	[Rpc.Host( NetFlags.OwnerOnly )]
 	private void RemoveTrail( GameObject go )
 	{
 		if ( !go.IsValid() ) return;
-		if ( go.IsProxy ) return;
 		if ( !FireToolAction( ToolInput.Secondary ) ) return;
 
-		var root = go.Network?.RootGameObject ?? go;
-
-		var trail = root.GetComponent<TrailRenderer>();
-		if ( trail.IsValid() )
-		{
-			trail.Destroy();
-		}
+		RemoveTrails( go.Network?.RootGameObject ?? go );
 
 		FirePostToolAction( ToolInput.Secondary );
+	}
+
+	/// <summary>
+	/// An object has one trail at a time: remove any this tool put on it.
+	/// </summary>
+	static void RemoveTrails( GameObject root )
+	{
+		foreach ( var trail in root.GetComponentsInChildren<TrailRenderer>( true ).ToList() )
+		{
+			if ( trail.GameObject.Name == TrailObjectName && trail.GameObject.Parent == root )
+				trail.GameObject.Destroy();
+		}
 	}
 }
