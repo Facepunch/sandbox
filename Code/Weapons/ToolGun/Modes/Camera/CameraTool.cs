@@ -44,6 +44,13 @@ public sealed class CameraTool : ToolMode
 	{
 		var view = Scene.Camera.IsValid() ? Scene.Camera.View.Transform : Player.EyeTransform;
 		Spawn( view, WriteConfiguration<CameraEntity>() );
+
+		// the usual toolgun shot, without ShootEffects' beam - the camera goes where you're standing, not where you aim
+		if ( Toolgun.IsValid() )
+		{
+			Toolgun.PlayFireAnimation();
+			Sound.Play( "weapons/toolgun/sounds/shoot.sound", Toolgun.GetMuzzleTransform().Position );
+		}
 	}
 
 	[Rpc.Host( NetFlags.OwnerOnly )]
