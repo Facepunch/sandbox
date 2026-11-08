@@ -121,7 +121,7 @@ public sealed class BuilderTool : ToolMode
 		HideGrid();
 		_markers?.Hide();
 
-		Input.MouseWheel = default;
+		Inventory.ConsumeMouseWheel();
 
 		if ( IsOtherMenuOpen )
 		{
@@ -186,7 +186,7 @@ public sealed class BuilderTool : ToolMode
 		if ( !Input.Down( "run" ) || MathF.Abs( wheel ) < 0.001f ) return;
 
 		GridSize = BuilderPlacement.ClampGrid( GridSize + MathF.Sign( wheel ) * BuilderPlacement.GridStep );
-		Input.MouseWheel = default;
+		Inventory.ConsumeMouseWheel();
 	}
 
 	void ScrollDrawing()
@@ -197,7 +197,7 @@ public sealed class BuilderTool : ToolMode
 		var steps = (int)MathF.Round( wheel );
 		_drawingFlow.Scroll( steps != 0 ? steps : MathF.Sign( wheel ) );
 
-		Input.MouseWheel = default;
+		Inventory.ConsumeMouseWheel();
 	}
 
 	void UpdatePlacement()
