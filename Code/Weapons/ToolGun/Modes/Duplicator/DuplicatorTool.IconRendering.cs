@@ -34,6 +34,9 @@ public partial class DuplicatorTool
 				}
 			}
 
+			foreach ( var block in root.GetComponentsInChildren<BuilderProp>( true ) )
+				block.Rebuild();
+
 			SceneUtility.RenderGameObjectToBitmap( root, bitmap );
 			scene.Destroy();
 		}

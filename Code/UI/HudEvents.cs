@@ -77,6 +77,11 @@ public enum HudElement
 	/// </summary>
 	InteractionHints = 1 << 13,
 
+	/// <summary>
+	/// A tool's radial selection menu, like the Builder's shape wheel.
+	/// </summary>
+	ToolMenu = 1 << 14,
+
 	All = ~0,
 }
 

@@ -540,6 +540,37 @@
           "Children": []
         },
         {
+          "__guid": "678e19c0-2371-460b-9816-d6a6c0e31953",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "Builder Radial Menu",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Sandbox.BuilderRadialMenu",
+              "__guid": "a8abd52e-1de9-4c98-8858-0410aa6e46bf",
+              "__enabled": true,
+              "Flags": 0,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          ],
+          "Children": []
+        },
+        {
           "__guid": "0794a1ac-7ea2-44c9-8eb5-57cbbb795a0c",
           "__version": 2,
           "Flags": 0,

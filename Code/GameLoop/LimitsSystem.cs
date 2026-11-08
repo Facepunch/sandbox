@@ -90,6 +90,17 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 	[ConVar( "sandbox.limit.ragdolls", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum ragdolls per player. -1 = unlimited, 0 = none allowed." )]
 	public static int MaxRagdolls { get; set; } = -1;
 
+	[Range( -1, MaxBuilderBlocksCap )]
+	[Title( "Max Building Blocks Per Player" ), Group( "Limits" ), Order( 16 )]
+	[ConVar( "sandbox.limit.builder", ConVarFlags.Replicated | ConVarFlags.Server | ConVarFlags.GameSetting, Help = "Maximum building blocks per player, from the Builder tool, spawn menu, dupes and stacking. -1 = unlimited, 0 = none allowed." )]
+	public static int MaxBuilderBlocks
+	{
+		get => _maxBuilderBlocks;
+		set => _maxBuilderBlocks = Math.Clamp( value, -1, MaxBuilderBlocksCap );
+	}
+	private static int _maxBuilderBlocks = 4096;
+	private const int MaxBuilderBlocksCap = 8196;
+
 	/// <summary>
 	/// One GameObject as far as the limits care: its own component types (not its children's), its prop's model, and
 	/// whether it's tagged as a constraint. The same whether it's a player's live object, a spawn menu entry or a node
@@ -115,8 +126,11 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 	/// </summary>
 	private sealed record Limit( Func<int> Max, string Category, Func<LimitedObject, bool> Counts, Func<ToolMode, bool> PlacedBy = null );
 
+	private static readonly Limit BuilderBlocks = new( () => MaxBuilderBlocks, "#limit.builder", x => x.Has<BuilderProp>(), tool => tool is BuilderTool );
+
 	private static readonly Limit[] Limits =
 	[
+		BuilderBlocks,
 		new( () => MaxPropsPerPlayer, "#limit.props", x => x.Has<Prop>() ),
 		new( () => MaxExplosivesPerPlayer, "#limit.explosives", x => x.IsExplosive ),
 		new( () => MaxRagdolls, "#limit.ragdolls", x => x.IsRagdoll ),
@@ -218,6 +232,7 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 		DuplicatorSpawner dupe => ObjectsInDupe( dupe ),
 		PropSpawner prop => [LimitedObject.OfProp( prop.Model )],
 		MountSpawner mount => [LimitedObject.OfProp( mount.Model )],
+		BuilderSpawner => [new LimitedObject( [typeof( BuilderProp )], null, false )],
 		_ when spawner?.Prefab is { } prefab => prefab.GetAllObjects( true ).Select( LimitedObject.Of ).ToList(),
 		_ => []
 	};
@@ -283,10 +298,11 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 			if ( !root.IsValid() ) continue;
 			Track( steamId, root );
 
-			// a dupe's constraints are children of the objects they join, track them too so they count towards the limit
+			// a dupe's constraints are children of the objects they join, and building blocks can be parented too, track
+			// them so they count towards their limits
 			foreach ( var go in root.GetAllObjects( true ) )
 			{
-				if ( go != root && go.Tags.Has( "constraint" ) )
+				if ( go != root && (go.Tags.Has( "constraint" ) || go.GetComponent<BuilderProp>().IsValid()) )
 					Track( steamId, go );
 			}
 		}
@@ -309,6 +325,40 @@ internal sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpa
 
 		foreach ( var go in e.CreatedObjects )
 			Track( (long)e.Player.SteamId, go );
+	}
+
+	/// <summary>
+	/// True if <paramref name="player"/> can create <paramref name="adding"/> more building blocks, otherwise tells them.
+	/// Host only. For tools that copy blocks without going through the spawn or Builder tool events, like the Stacker.
+	/// </summary>
+	public bool CheckBuilderLimit( Connection player, int adding )
+	{
+		if ( player is null ) return true;
+		return !WouldExceed( player, [BuilderBlocks], _ => adding );
+	}
+
+	/// <summary>
+	/// True if <paramref name="player"/> can spawn the whole dupe within every limit, otherwise tells them which.
+	/// A dupe that waits before spawning checks again once it's ready.
+	/// </summary>
+	public bool CheckDupeLimits( Connection player, DuplicatorSpawner dupe )
+	{
+		if ( player is null ) return true;
+
+		var spawning = ObjectsInDupe( dupe );
+		return !WouldExceed( player, Limits, limit => spawning.Count( limit.Counts ) );
+	}
+
+	/// <summary>
+	/// Count objects towards <paramref name="player"/>'s limits now, rather than at the post-spawn event.
+	/// For spawners that wait before creating, so a second request in the meantime sees the first one's objects.
+	/// </summary>
+	public void TrackNow( Connection player, List<GameObject> objects )
+	{
+		if ( player is null || objects is null ) return;
+
+		foreach ( var go in objects )
+			Track( (long)player.SteamId, go );
 	}
 
 	private static void NotifyLimit( Connection player, string category, int limit )

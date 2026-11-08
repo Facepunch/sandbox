@@ -6,7 +6,27 @@ public static class BuilderCatalog
 	public const float Unit = 48f;
 	public const string DefaultMaterial = "materials/dev/gray_grid_8.vmat";
 	public static readonly string[] Categories = ["Cubes", "Plates", "Triangles", "Tubes", "Misc"];
-	public enum Shape { Box, Triangle, Carved, Trapezium, Tube, HalfPipe, Ring, Bend, PlateHole, Cone, MirroredCone, Sphere, Dome, QuarterDome, Stairs, Parallelogram, Pentagon }
+	public enum Shape
+	{
+		[Title( "#builder.shape.box" )] Box,
+		[Title( "#builder.shape.boxframe" )] BoxFrame,
+		[Title( "#builder.shape.triangle" )] Triangle,
+		[Title( "#builder.shape.carved" )] Carved,
+		[Title( "#builder.shape.trapezium" )] Trapezium,
+		[Title( "#builder.shape.tube" )] Tube,
+		[Title( "#builder.shape.halfpipe" )] HalfPipe,
+		[Title( "#builder.shape.ring" )] Ring,
+		[Title( "#builder.shape.bend" )] Bend,
+		[Title( "#builder.shape.platehole" )] PlateHole,
+		[Title( "#builder.shape.cone" )] Cone,
+		[Title( "#builder.shape.mirroredcone" )] MirroredCone,
+		[Title( "#builder.shape.sphere" )] Sphere,
+		[Title( "#builder.shape.dome" )] Dome,
+		[Title( "#builder.shape.quarterdome" )] QuarterDome,
+		[Title( "#builder.shape.stairs" )] Stairs,
+		[Title( "#builder.shape.parallelogram" )] Parallelogram,
+		[Title( "#builder.shape.pentagon" )] Pentagon
+	}
 	public sealed record Piece( string Id, string Category, Shape Kind, Vector3 Size, float Angle = 0 );
 	public static IReadOnlyList<Piece> All { get; } = Generate();
 	static readonly Dictionary<string, Piece> ById = All.ToDictionary( x => x.Id );
@@ -27,6 +47,8 @@ public static class BuilderCatalog
 		foreach ( var y in sizes.Where( y => y >= x ) )
 		foreach ( var z in new[] { 0.0625f, 0.125f } )
 			Add( $"plate{N(x)}x{N(y)}{(z < 0.1f ? "a" : "b")}", "Plates", Shape.Box, x, y, z );
+		foreach ( var s in sizes.Where( s => s >= 0.5f ) )
+			Add( $"frame{N(s)}x{N(s)}x{N(s)}", "Cubes", Shape.BoxFrame, s, s, s );
 		foreach ( var s in sizes )
 		{
 			Add( $"triangle{N(s)}x{N(s)}", "Triangles", Shape.Triangle, s, s, 0.25f );

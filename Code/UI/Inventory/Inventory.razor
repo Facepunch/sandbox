@@ -31,6 +31,8 @@
 
     bool IsSelecting => selected.IsValid();
 
+    public static bool IsOpen { get; private set; }
+
     protected override int BuildHash() => HashCode.Combine( inventory, Hud.IsVisible( HudElement.Inventory ) );
 
     void Global.IPlayerEvents.OnPlayerPickup( PlayerPickupEvent e )
@@ -48,18 +50,21 @@
         if ( selected is not null && (!selected.IsValid() || selected.Inventory != inventory) )
             selected = null;
 
+        // the menu only shows while picking a weapon
+        IsOpen = IsSelecting && Hud.IsVisible( HudElement.Inventory );
+
         section = HudLayer.FindSection( this, section );
         if ( section is null ) return;
 
-        // the menu only shows while picking a weapon
         section.Inventory = inventory;
         section.Selected = selected;
-        section.Open = IsSelecting && Hud.IsVisible( HudElement.Inventory );
+        section.Open = IsOpen;
     }
 
     protected override void OnDisabled()
     {
         selected = null;
+        IsOpen = false;
         if ( section is not null ) section.Open = false;
     }
 

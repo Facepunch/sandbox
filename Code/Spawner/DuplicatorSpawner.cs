@@ -20,6 +20,13 @@ public sealed class DuplicatorSpawner : ISpawner
 
 	private bool _packagesReady;
 
+	/// <summary>
+	/// The building blocks in this dupe, for limits, permissions and prewarming their models.
+	/// </summary>
+	public BuilderDupe.Contents BuilderBlocks => _builderBlocks ??= BuilderDupe.Read( Dupe?.Objects );
+	private BuilderDupe.Contents _builderBlocks;
+	private (BuilderShapeKey Key, BBox Bounds)?[] _previewBlocks;
+
 	public DuplicatorSpawner( DuplicationData dupe, string json, string name = null, string icon = null )
 	{
 		Dupe = dupe;
@@ -124,10 +131,24 @@ public sealed class DuplicatorSpawner : ISpawner
 	/// </summary>
 	public void DrawPreview( Transform transform, Material overrideMaterial )
 	{
-		if ( Dupe is null ) return;
+		if ( Dupe?.PreviewModels is null ) return;
 
-		foreach ( var model in Dupe.PreviewModels )
+		if ( _previewBlocks?.Length != Dupe.PreviewModels.Count )
 		{
+			_previewBlocks = new (BuilderShapeKey, BBox)?[Dupe.PreviewModels.Count];
+			for ( int i = 0; i < _previewBlocks.Length; i++ )
+				_previewBlocks[i] = GetPreviewBlock( Dupe.PreviewModels[i].Builder );
+		}
+
+		for ( int i = 0; i < Dupe.PreviewModels.Count; i++ )
+		{
+			var model = Dupe.PreviewModels[i];
+			if ( model.Builder is not null )
+			{
+				if ( _previewBlocks[i] is { } block ) DrawBuilderPreview( block.Key, block.Bounds, transform.ToWorld( model.Transform ), overrideMaterial );
+				continue;
+			}
+
 			if ( model.Model is null )
 				continue;
 
@@ -149,8 +170,40 @@ public sealed class DuplicatorSpawner : ISpawner
 		}
 	}
 
-	public Task<List<GameObject>> Spawn( Transform transform, Player player )
+	private static (BuilderShapeKey, BBox)? GetPreviewBlock( BuilderRecipe recipe )
 	{
+		if ( recipe is null || !recipe.TryGetKey( out var key ) ) return null;
+		return (key, BuilderShapes.Get( key.Shape )?.GetBounds( key ) ?? BBox.FromPositionAndSize( Vector3.Zero, key.Size ));
+	}
+
+	private static void DrawBuilderPreview( BuilderShapeKey key, BBox bounds, Transform transform, Material overrideMaterial )
+	{
+		if ( BuilderModelCache.TryGet( key, out var built ) )
+		{
+			Game.ActiveScene.DebugOverlay.Model( built, transform: transform, overlay: false, materialOveride: overrideMaterial );
+			return;
+		}
+
+		BuilderBuildQueue.Current?.Enqueue( key );
+
+		var box = new Transform( transform.PointToWorld( bounds.Center ), transform.Rotation, transform.Scale * (bounds.Size / 50) );
+		var downloadingMaterial = Material.Load( "materials/effects/duplicator_override_downloading.vmat" );
+		Game.ActiveScene.DebugOverlay.Model( Model.Cube, transform: box, overlay: false, materialOveride: downloadingMaterial );
+	}
+
+	public async Task<List<GameObject>> Spawn( Transform transform, Player player )
+	{
+		if ( BuilderBlocks.Keys.Count > 0 && BuilderBuildQueue.Current is { } queue )
+		{
+			var scene = Game.ActiveScene;
+			if ( !await queue.Prewarm( BuilderBlocks.Keys ) ) return new List<GameObject>();
+			if ( !player.IsValid() || !scene.IsValid() || Game.ActiveScene != scene ) return new List<GameObject>();
+
+			var owner = player.Network.Owner;
+			if ( !BuilderPolicy.CanBuild( owner ) ) return new List<GameObject>();
+			if ( LimitsSystem.Get( scene ) is { } limits && !limits.CheckDupeLimits( owner, this ) ) return new List<GameObject>();
+		}
+
 		var jsonObject = Sandbox.Json.ToNode( Dupe ) as JsonObject;
 		SceneUtility.MakeIdGuidsUnique( jsonObject );
 
@@ -180,6 +233,9 @@ public sealed class DuplicatorSpawner : ISpawner
 			}
 		}
 
-		return Task.FromResult( results );
+		if ( BuilderBlocks.Count > 0 )
+			LimitsSystem.Get( Game.ActiveScene )?.TrackNow( player.Network.Owner, results );
+
+		return results;
 	}
 }

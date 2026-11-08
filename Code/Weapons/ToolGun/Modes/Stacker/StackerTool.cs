@@ -344,7 +344,7 @@ public sealed class StackerTool : ToolMode
 
 			foreach ( var tx in transforms )
 			{
-				DebugOverlay.Model( model, color: renderer.Tint, transform: tx.ToWorld( localTx ), castShadows: false, materialOveride: overlayMaterial, localBoneTransforms: bones );
+				DebugOverlay.Model( model, transform: tx.ToWorld( localTx ), castShadows: false, materialOveride: overlayMaterial, localBoneTransforms: bones );
 			}
 		}
 	}
@@ -365,6 +365,17 @@ public sealed class StackerTool : ToolMode
 
 		// Recompute transforms server-side from synced properties
 		var transforms = ComputeStackTransforms( root );
+
+		var blocksPerCopy = 0;
+		foreach ( var _ in root.GetComponentsInChildren<BuilderProp>() )
+			blocksPerCopy++;
+
+		if ( blocksPerCopy > 0 )
+		{
+			var owner = Player.Network.Owner;
+			if ( !BuilderPolicy.CheckCanBuild( owner ) ) return;
+			if ( LimitsSystem.Get( Scene ) is { } limits && !limits.CheckBuilderLimit( owner, blocksPerCopy * transforms.Length ) ) return;
+		}
 
 		// batch these spawns
 		using var x = Scene.BatchGroup();
@@ -398,6 +409,7 @@ public sealed class StackerTool : ToolMode
 			Ownable.Set( clone, Player.Network.Owner );
 			clone.NetworkSpawn( true, null );
 			clones.Add( clone );
+			Track( clone );
 		}
 
 		undo.Add( clones );

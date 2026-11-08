@@ -40,6 +40,10 @@ VS
 		// Keep the standard skinning and instancing path for ragdolls and props.
 		PixelInput o = ProcessVertex( i );
 
+		// Push vertices forward a little to avoid preview model z-fighting in some cases 
+		o.vPositionWs += o.vNormalWs * 0.02;
+		o.vPositionPs = Position3WsToPs( o.vPositionWs );
+
 		// Use one instance reference frame per draw, including skinned meshes.
 		float3x4 objectToWorld = GetTransformMatrix( i.nInstanceTransformID );
 		float3 origin = float3( objectToWorld[0][3], objectToWorld[1][3], objectToWorld[2][3] );
@@ -127,6 +131,10 @@ PS
 
 		float opacity = saturate( g_flBodyOpacity + rim * g_flRimOpacity + grid * g_flGridOpacity );
 		float3 color = lerp( g_vBlueprintColor, g_vOutlineColor, max( rim, grid * 0.6 ) );
+
+		float3 tint = i.vVertexColor.rgb;
+		float tinted = step( min( tint.r, min( tint.g, tint.b ) ), 0.999 );
+		color = lerp( color, dot( color, float3( 0.2126, 0.7152, 0.0722 ) ) * tint * 2.0, tinted );
 
 		return float4( color * g_flBrightness, opacity );
 	}

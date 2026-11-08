@@ -20,9 +20,10 @@ public class DuplicationData
 	public BBox Bounds { get; set; }
 
 	/// <summary>
-	/// Describes where to draw a model for the preview
+	/// Describes where to draw a model for the preview. Building blocks have no model resource to
+	/// save, so they store their <paramref name="Builder"/> recipe and are regenerated to draw.
 	/// </summary>
-	public record struct PreviewModel( Model Model, Transform Transform, Transform[] Bones, BBox Bounds );
+	public record struct PreviewModel( Model Model, Transform Transform, Transform[] Bones, BBox Bounds, BuilderRecipe Builder = null );
 
 	/// <summary>
 	/// A list of preview models to help visualze where the duplication will be placed
@@ -75,6 +76,13 @@ public class DuplicationData
 				}
 
 				var modelTx = center.ToLocal( renderer.WorldTransform );
+
+				if ( renderer.GetComponent<BuilderProp>() is { } block && block.Renderer == renderer )
+				{
+					dupe.PreviewModels.Add( new DuplicationData.PreviewModel( null, modelTx, null, model.Bounds, block.Recipe ) );
+					continue;
+				}
+
 				dupe.PreviewModels.Add( new DuplicationData.PreviewModel( model, modelTx, bones, model.Bounds ) );
 			}
 		}
