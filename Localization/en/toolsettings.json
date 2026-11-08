@@ -71,6 +71,8 @@
     "tool.setting.builder.thickness.description": "Wall thickness of some building blocks",
     "tool.setting.builder.grid": "Grid Size",
     "tool.setting.builder.grid.description": "Grid spacing in units. Shift + scroll changes it, hold Snap to place off grid.",
+    "tool.setting.builder.adjacent": "Snap to Adjacent Lines",
+    "tool.setting.builder.adjacent.description": "Allows snapping to lines coming from the corners and snap points of adjacent building blocks.",
     "tool.setting.builder.surface": "Surface",
     "tool.setting.builder.surface.description": "Physical surface for sounds, impacts and friction. Empty uses the default.",
     "tool.setting.builder.collisions": "Collisions",

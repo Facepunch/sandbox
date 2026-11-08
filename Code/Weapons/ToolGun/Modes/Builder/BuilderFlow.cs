@@ -20,7 +20,7 @@ internal abstract class BuilderFlow
 
 	public virtual bool AbsorbsMouse => false;
 
-	public abstract void Begin( in BuilderPlane plane, Vector2 start, bool startOffGrid, int grid );
+	public abstract void Begin( in BuilderPlane plane, Vector2 start );
 
 	public abstract void Update( Ray eyes, int grid );
 

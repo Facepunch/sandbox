@@ -15,7 +15,6 @@ internal sealed class BuilderBoxFlow : BuilderFlow
 	Stage _stage;
 	BuilderPlane _plane;
 	Vector2 _start;
-	bool _startOffGrid;
 	Vector2 _footprintStart;
 	Vector2 _footprintEnd;
 	float _height;
@@ -38,11 +37,11 @@ internal sealed class BuilderBoxFlow : BuilderFlow
 	public override string GetReloadHint( bool drawing ) => "#tool.hint.builder.rotate";
 	public override string HudHint => _stage == Stage.Footprint ? "#tool.hint.builder.hud_square" : "#tool.hint.builder.hud_cube";
 
-	public override void Begin( in BuilderPlane plane, Vector2 start, bool startOffGrid, int grid )
+	public override void Begin( in BuilderPlane plane, Vector2 start )
 	{
+		Clear();
 		_plane = plane;
 		_start = start;
-		_startOffGrid = startOffGrid;
 		_stage = Stage.Footprint;
 	}
 
@@ -61,11 +60,11 @@ internal sealed class BuilderBoxFlow : BuilderFlow
 				return;
 			}
 
-			var start = _startOffGrid ? _start : _plane.Snap( _start, grid );
+			var start = _start;
 			var proportions = PlaneProportions();
 			var corner = Tool.KeepProportions && proportions.x > 0 && proportions.y > 0
 				? BuilderPlacement.Proportional( start, end, new Vector2( proportions.x, proportions.y ), Tool.OffGrid ? 0 : grid )
-				: Tool.OffGrid ? end : _plane.Snap( end, grid );
+				: Tool.PlacePoint( _plane, end, grid );
 
 			Tool.ShowGrid( _plane, grid, _plane.ToWorld( end ), _plane.ToWorld( corner ) );
 
@@ -81,7 +80,12 @@ internal sealed class BuilderBoxFlow : BuilderFlow
 			_heightFollowsAim = true;
 
 		var aimed = (float)grid;
-		if ( !_heightFollowsAim || BuilderPlacement.TryGetHeight( center, _plane.Normal, eyes, out aimed ) )
+		if ( !Tool.KeepProportions && Tool.TryAlignHeight( center, _plane.Normal, out var aligned ) )
+		{
+			_heightFollowsAim = true;
+			_height = Math.Clamp( aligned, -BuilderShapeKey.MaxSize, BuilderShapeKey.MaxSize );
+		}
+		else if ( !_heightFollowsAim || BuilderPlacement.TryGetHeight( center, _plane.Normal, eyes, out aimed ) )
 		{
 			var height = Tool.OffGrid ? aimed : BuilderPlacement.Snap( aimed, grid );
 
@@ -100,7 +104,7 @@ internal sealed class BuilderBoxFlow : BuilderFlow
 		}
 
 		var placed = _plane.ToWorld( _footprintEnd );
-		Tool.ShowGrid( _plane, grid, placed, placed );
+		Tool.ShowGrid( _plane, grid, placed, placed, center + _plane.Normal * _height );
 		Build( _height );
 	}
 

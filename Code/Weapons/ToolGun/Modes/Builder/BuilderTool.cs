@@ -19,6 +19,9 @@ public sealed class BuilderTool : ToolMode
 	[Property, Group( ShapeGroup ), Order( 2 ), Range( BuilderPlacement.MinGrid, BuilderPlacement.MaxGrid ), Step( BuilderPlacement.GridStep ), Title( "#tool.setting.builder.grid" ), Description( "#tool.setting.builder.grid.description" )]
 	public int GridSize { get; set; } = 16;
 
+	[Property, Group( ShapeGroup ), Order( 3 ), Title( "#tool.setting.builder.adjacent" ), Description( "#tool.setting.builder.adjacent.description" )]
+	public bool SnapToAdjacentLines { get; set; } = true;
+
 	[Property, Group( MaterialGroup ), Order( 10 ), ResourceSelect( Extension = "material", AllowPackages = true, Popup = true ), Title( "#tool.setting.material" )]
 	public string MaterialPath { get; set; } = BuilderCatalog.DefaultMaterial;
 
@@ -57,10 +60,14 @@ public sealed class BuilderTool : ToolMode
 	BuilderPathFlow _pathFlow;
 	BuilderFlow _drawingFlow;
 	BuilderPlane _hoverPlane;
+	(BuilderPlane Plane, Vector2 Point, SelectionPoint Hit)? _hoverStart;
+	bool _placeThisFrame;
+	bool _primaryQueued;
 	BuilderFaceRef? _stickyFace;
 
 	SnapGrid _grid;
 	BuilderSnapMarkers _markers;
+	readonly BuilderAlignment _alignment = new();
 
 	Model _previewModel;
 	Vector3 _previewSize;
@@ -81,6 +88,8 @@ public sealed class BuilderTool : ToolMode
 	internal BuilderShapeDefinition Definition => BuilderShapes.Get( Shape ) ?? BuilderShapes.Get( BuilderCatalog.Shape.Box );
 
 	internal bool OffGrid => Input.Down( "snap" );
+
+	internal bool Aligning => SnapToAdjacentLines;
 
 	internal bool KeepProportions => Input.Down( "run" );
 
@@ -119,6 +128,8 @@ public sealed class BuilderTool : ToolMode
 
 		HideGrid();
 		_markers?.Hide();
+		_hoverStart = null;
+		_primaryQueued = false;
 
 		Inventory.ConsumeMouseWheel();
 
@@ -155,6 +166,9 @@ public sealed class BuilderTool : ToolMode
 
 		ShapeMenu.Close();
 		_drawingFlow = null;
+		_hoverStart = null;
+		_primaryQueued = false;
+		_placeThisFrame = false;
 		_grid?.Destroy();
 		_grid = null;
 		_markers?.Destroy();
@@ -173,9 +187,26 @@ public sealed class BuilderTool : ToolMode
 
 		AdjustGridSize();
 		ScrollDrawing();
+		_placeThisFrame = true;
+	}
+
+	protected override void OnPreRender()
+	{
+		if ( !_placeThisFrame ) return;
+		_placeThisFrame = false;
+
 		_markers ??= new BuilderSnapMarkers();
-		_markers.Begin();
+		_markers.Begin( Scene.SceneWorld );
+		_alignment.BeginFrame( Aligning );
 		UpdatePlacement();
+		if ( _primaryQueued )
+		{
+			_primaryQueued = false;
+			ApplyPrimary();
+		}
+
+		foreach ( var guide in _alignment.Guides )
+			_markers.AddGuide( guide.From, guide.To, guide.Direction, guide.Extend, Player.EyeTransform.Position );
 		_markers.End();
 		DrawPreview();
 	}
@@ -204,6 +235,7 @@ public sealed class BuilderTool : ToolMode
 	{
 		var grid = BuilderPlacement.ClampGrid( GridSize );
 		var eyes = Player.EyeTransform.ForwardRay;
+		_hoverStart = null;
 
 		if ( _drawingFlow is not null )
 		{
@@ -212,29 +244,33 @@ public sealed class BuilderTool : ToolMode
 			return;
 		}
 
-		if ( !TryResolveStart( eyes, out var plane, out var point, out _ ) )
+		if ( !TryResolveStart( eyes, out var plane, out var point, out var hit ) )
 		{
 			IsValidState = false;
 			HideGrid();
 			return;
 		}
 
+		var start = PlacePoint( plane, point, grid );
 		IsValidState = true;
 		_hoverPlane = plane;
+		_hoverStart = (plane, start, hit);
 		DrawSnapPoints( plane );
-		ShowGrid( plane, grid, plane.ToWorld( point ), plane.ToWorld( OffGrid ? point : plane.Snap( point, grid ) ) );
+		ShowGrid( plane, grid, plane.ToWorld( point ), plane.ToWorld( start ) );
 	}
 
-	void OnPrimary()
+	void OnPrimary() => _primaryQueued = true;
+
+	void ApplyPrimary()
 	{
 		if ( _drawingFlow is null )
 		{
-			if ( !TryResolveStart( Player.EyeTransform.ForwardRay, out var plane, out var start, out var hit ) ) return;
+			if ( _hoverStart is not { } hover ) return;
 
 			_drawingFlow = Flow;
 			_previewModel = null;
-			_drawingFlow.Begin( plane, start, OffGrid, BuilderPlacement.ClampGrid( GridSize ) );
-			ShootEffects( hit );
+			_drawingFlow.Begin( hover.Plane, hover.Point );
+			ShootEffects( hover.Hit );
 			return;
 		}
 
@@ -314,14 +350,29 @@ public sealed class BuilderTool : ToolMode
 	{
 		if ( !plane.HasFace || OffGrid ) return;
 
-		_markers?.Add( Scene.SceneWorld, plane, Player.EyeTransform.Position );
+		_markers?.Add( plane, Player.EyeTransform.Position );
 	}
 
-	internal void ShowGrid( in BuilderPlane plane, int grid, Vector3 aim, Vector3 snapped )
+	internal Vector2 PlacePoint( in BuilderPlane plane, Vector2 raw, int grid )
+	{
+		var snapped = OffGrid ? raw : plane.Snap( raw, grid );
+		if ( !Aligning || Scene.Camera is not { } camera ) return snapped;
+
+		return _alignment.AlignPoint( Scene, camera, plane, raw, snapped );
+	}
+
+	internal bool TryAlignHeight( Vector3 center, Vector3 normal, out float height )
+	{
+		height = 0;
+		return Aligning && Scene.Camera is { } camera && _alignment.TryAlignHeight( Scene, camera, center, normal, out height );
+	}
+
+	internal void ShowGrid( in BuilderPlane plane, int grid, Vector3 aim, Vector3 snapped, Vector3? cursor = null )
 	{
 		if ( OffGrid )
 		{
 			HideGrid();
+			_markers?.AddCursor( cursor ?? snapped, plane.Right, plane.Forward, Player.EyeTransform.Position );
 			return;
 		}
 

@@ -82,10 +82,11 @@ internal sealed class BuilderPathFlow : BuilderFlow
 		};
 	}
 
-	public override void Begin( in BuilderPlane plane, Vector2 start, bool startOffGrid, int grid )
+	public override void Begin( in BuilderPlane plane, Vector2 start )
 	{
+		Clear();
 		_startPlane = plane;
-		_start = plane.ToWorld( startOffGrid ? start : plane.Snap( start, grid ) );
+		_start = plane.ToWorld( start );
 		_frame = Rotation.LookAt( plane.Normal, plane.Forward );
 		_stage = Stage.End;
 		_drawRadius = _radius;
@@ -108,7 +109,7 @@ internal sealed class BuilderPathFlow : BuilderFlow
 				return;
 			}
 
-			var snapped = Tool.OffGrid ? point : plane.Snap( point, grid );
+			var snapped = Tool.PlacePoint( plane, point, grid );
 			Tool.ShowGrid( plane, grid, plane.ToWorld( point ), plane.ToWorld( snapped ) );
 			Tool.DrawSnapPoints( plane );
 
