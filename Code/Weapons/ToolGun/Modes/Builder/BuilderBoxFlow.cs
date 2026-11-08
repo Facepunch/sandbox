@@ -52,6 +52,9 @@ internal sealed class BuilderBoxFlow : BuilderFlow
 
 		if ( _stage == Stage.Footprint )
 		{
+			Tool.DrawSnapPoints( _plane );
+			if ( Tool.TryResolveStart( eyes, out var hovered, out _, out _ ) ) Tool.DrawSnapPoints( hovered );
+
 			if ( !BuilderPlacement.TryProject( _plane, eyes, out var end ) )
 			{
 				Tool.HideGrid();
@@ -65,7 +68,6 @@ internal sealed class BuilderBoxFlow : BuilderFlow
 				: Tool.OffGrid ? end : _plane.Snap( end, grid );
 
 			Tool.ShowGrid( _plane, grid, _plane.ToWorld( end ), _plane.ToWorld( corner ) );
-			Tool.DrawSnapPoints( _plane );
 
 			_footprintStart = start;
 			_footprintEnd = corner;

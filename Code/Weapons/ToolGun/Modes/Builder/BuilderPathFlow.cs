@@ -15,6 +15,7 @@ internal sealed class BuilderPathFlow : BuilderFlow
 	Stage _stage;
 	Vector3 _start;
 	Rotation _frame;
+	BuilderPlane _startPlane;
 	BuilderPlane _endPlane;
 	Vector3 _end;
 	Vector3 _endNormal;
@@ -83,6 +84,7 @@ internal sealed class BuilderPathFlow : BuilderFlow
 
 	public override void Begin( in BuilderPlane plane, Vector2 start, bool startOffGrid, int grid )
 	{
+		_startPlane = plane;
 		_start = plane.ToWorld( startOffGrid ? start : plane.Snap( start, grid ) );
 		_frame = Rotation.LookAt( plane.Normal, plane.Forward );
 		_stage = Stage.End;
@@ -97,6 +99,9 @@ internal sealed class BuilderPathFlow : BuilderFlow
 
 		if ( _stage == Stage.End )
 		{
+			// The start's face keeps its markers while the end is aimed, alongside the face being aimed at
+			Tool.DrawSnapPoints( _startPlane );
+
 			if ( !Tool.TryResolveStart( eyes, out var plane, out var point, out _ ) )
 			{
 				Tool.HideGrid();

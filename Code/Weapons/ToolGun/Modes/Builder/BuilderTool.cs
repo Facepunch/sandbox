@@ -61,7 +61,6 @@ public sealed class BuilderTool : ToolMode
 
 	SnapGrid _grid;
 	BuilderSnapMarkers _markers;
-	bool _markersShown;
 
 	Model _previewModel;
 	Vector3 _previewSize;
@@ -174,9 +173,10 @@ public sealed class BuilderTool : ToolMode
 
 		AdjustGridSize();
 		ScrollDrawing();
-		_markersShown = false;
+		_markers ??= new BuilderSnapMarkers();
+		_markers.Begin();
 		UpdatePlacement();
-		if ( !_markersShown ) _markers?.Hide();
+		_markers.End();
 		DrawPreview();
 	}
 
@@ -314,9 +314,7 @@ public sealed class BuilderTool : ToolMode
 	{
 		if ( !plane.HasFace || OffGrid ) return;
 
-		_markers ??= new BuilderSnapMarkers();
-		_markers.Show( Scene.SceneWorld, plane, Player.EyeTransform.Position );
-		_markersShown = true;
+		_markers?.Add( Scene.SceneWorld, plane, Player.EyeTransform.Position );
 	}
 
 	internal void ShowGrid( in BuilderPlane plane, int grid, Vector3 aim, Vector3 snapped )
