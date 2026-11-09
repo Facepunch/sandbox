@@ -11,6 +11,7 @@ public sealed partial class GameManager : IContextMenuEvent
 
 		var isPlayer = target.Tags.Has( "player" );
 		var prop = target.GetComponent<Prop>();
+		var physicsProp = prop.IsValid() || target.GetComponent<BuilderProp>().IsValid();
 
 		var localPlayer = Player.FindLocalPlayer();
 		if ( localPlayer.IsValid() && !localPlayer.IsSeated && Player.CanDrive( target, Connection.Local ) )
@@ -27,7 +28,7 @@ public sealed partial class GameManager : IContextMenuEvent
 			e.AddOption( "local_fire_department", Game.Language.GetPhrase( "spawnmenu.inspect.ignite" ), () => IgniteInspectedObject( target ), 100 );
 		}
 
-		if ( prop.IsValid() )
+		if ( physicsProp )
 		{
 			e.AddSubmenu( "lock", Game.Language.GetPhrase( "spawnmenu.inspect.axis_lock" ), menu => BuildAxisLockMenu( menu, target ), 150 );
 			e.AddSubmenu( "layers", Game.Language.GetPhrase( "spawnmenu.inspect.collisions" ), menu => BuildCollisionsMenu( menu, target ), 160 );
