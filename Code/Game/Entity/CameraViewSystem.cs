@@ -19,7 +19,7 @@ public sealed class CameraViewSystem : Component, Global.ISaveEvents
 	IDisposable _inputHook;
 	public CameraEntity ActiveCamera { get; private set; }
 
-	public static CameraViewSystem Get( Scene scene ) => scene.IsValid() ? scene.GetAllComponents<CameraViewSystem>().FirstOrDefault() : null;
+	public static CameraViewSystem Get( Scene scene ) => scene.IsValid() ? scene.Get<CameraViewSystem>() : null;
 
 	public static CameraViewSystem GetOrCreate( Scene scene )
 	{
