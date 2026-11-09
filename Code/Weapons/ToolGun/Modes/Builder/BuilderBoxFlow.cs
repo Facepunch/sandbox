@@ -35,6 +35,7 @@ internal sealed class BuilderBoxFlow : BuilderFlow
 	public override string PrimaryHint => _stage == Stage.Footprint ? "#tool.hint.builder.corner" : "#tool.hint.builder.place";
 	public override string SecondaryHint => _stage == Stage.Footprint ? "#tool.hint.builder.cancel" : "#tool.hint.builder.back";
 	public override string GetReloadHint( bool drawing ) => "#tool.hint.builder.rotate";
+	public override bool SupportsSymmetry => true;
 	public override string HudHint => _stage == Stage.Footprint ? "#tool.hint.builder.hud_square" : "#tool.hint.builder.hud_cube";
 
 	public override void Begin( in BuilderPlane plane, Vector2 start )
@@ -68,7 +69,7 @@ internal sealed class BuilderBoxFlow : BuilderFlow
 
 			Tool.ShowGrid( _plane, grid, _plane.ToWorld( end ), _plane.ToWorld( corner ) );
 
-			_footprintStart = start;
+			_footprintStart = Tool.Symmetrical ? start * 2 - corner : start;
 			_footprintEnd = corner;
 			Build( grid );
 			return;

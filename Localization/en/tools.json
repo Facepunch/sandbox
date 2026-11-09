@@ -216,6 +216,8 @@
     "tool.hint.builder.hud_cube": "Hold Shift for a proportional height, scroll to tip the shape over",
     "tool.hint.builder.rotate": "Turn Shape",
     "tool.hint.builder.offgrid": "Off Grid",
+    "tool.hint.builder.symmetry_off": "Symmetry: Off",
+    "tool.hint.builder.symmetry_on": "Symmetry: On",
     "tool.hint.builder.hud_grid": "Grid: {size} units",
     "tool.hint.builder.hud_offgrid": "Off grid",
     "tool.hint.builder.pipe_start": "Pipe Start",

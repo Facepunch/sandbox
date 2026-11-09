@@ -22,6 +22,9 @@ public sealed class BuilderTool : ToolMode
 	[Property, Group( ShapeGroup ), Order( 3 ), Title( "#tool.setting.builder.adjacent" ), Description( "#tool.setting.builder.adjacent.description" )]
 	public bool SnapToAdjacentLines { get; set; } = true;
 
+	[Property, Group( ShapeGroup ), Order( 4 ), Title( "#tool.setting.builder.symmetry" ), Description( "#tool.setting.builder.symmetry.description" )]
+	public bool Symmetrical { get; set; }
+
 	[Property, Group( MaterialGroup ), Order( 10 ), ResourceSelect( Extension = "material", AllowPackages = true, Popup = true ), Title( "#tool.setting.material" )]
 	public string MaterialPath { get; set; } = BuilderCatalog.DefaultMaterial;
 
@@ -83,6 +86,9 @@ public sealed class BuilderTool : ToolMode
 
 	public override string Description => "#tool.hint.builder.description";
 	public override string SnapAction => "#tool.hint.builder.offgrid";
+	protected override IEnumerable<ToolHint> ExtraHints => Flow.SupportsSymmetry
+		? [new( Symmetrical ? "#tool.hint.builder.symmetry_on" : "#tool.hint.builder.symmetry_off", ["Symmetry"] )]
+		: [];
 	public override bool AbsorbMouseInput => ShapeMenu.IsOpen || (_drawingFlow?.AbsorbsMouse ?? false);
 
 	internal BuilderShapeDefinition Definition => BuilderShapes.Get( Shape ) ?? BuilderShapes.Get( BuilderCatalog.Shape.Box );
@@ -184,6 +190,8 @@ public sealed class BuilderTool : ToolMode
 		_previewMaterial ??= Material.Load( "materials/effects/duplicator_override.vmat" );
 
 		if ( _drawingFlow is not null && _drawingFlow != Flow ) _drawingFlow = null;
+
+		if ( Input.Pressed( "Symmetry" ) && Flow.SupportsSymmetry ) Symmetrical = !Symmetrical;
 
 		AdjustGridSize();
 		ScrollDrawing();

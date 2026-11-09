@@ -67,8 +67,12 @@
 			if ( !string.IsNullOrEmpty( ReloadSecondaryAction ) ) yield return new( ReloadSecondaryAction, ["reload", "attack2"] );
 			if ( !string.IsNullOrEmpty( SnapAction ) ) yield return new( SnapAction, ["snap"] );
 			if ( !string.IsNullOrEmpty( MenuAction ) ) yield return new( MenuAction, ["ToolMenu"] );
+
+			foreach ( var hint in ExtraHints ) yield return hint;
 		}
 	}
+
+	protected virtual IEnumerable<ToolHint> ExtraHints => [];
 
 	/// <summary>
 	/// Tags that TraceSelect will ignore. Override per-tool to filter out specific objects.
