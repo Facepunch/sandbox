@@ -65,7 +65,7 @@ public class MeleeWeapon : BaseSandboxWeapon
 		SetNextPrimaryFire( tr.GameObject.IsValid() ? SwingDelay : MissSwingDelay );
 
 		// Swing presentation - predicted on the owner, relayed to everyone else by the host.
-		ShootEffects( new ShotEffect( tr.HitPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface ) );
+		SwingEffects( new ShotEffect( tr.HitPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface ) );
 
 		// Our trace decides the hit - the engine claims it to the host, which applies the damage.
 		// Count hitgroups - headshots get the head tag and its multiplier.
@@ -73,6 +73,9 @@ public class MeleeWeapon : BaseSandboxWeapon
 
 		KickView();
 	}
+
+	/// <summary>Allows melee weapons to relay extra presentation data alongside the hit.</summary>
+	protected virtual void SwingEffects( ShotEffect shot ) => ShootEffects( shot );
 
 	protected override void OnShootEffects( ShotEffect shot )
 	{

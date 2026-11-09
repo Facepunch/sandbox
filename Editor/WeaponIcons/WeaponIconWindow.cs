@@ -29,7 +29,7 @@ public class WeaponIconWindow : BaseWindow
 
 	Scene Scene;
 	CameraComponent Camera;
-	ModelRenderer Renderer;
+	SkinnedModelRenderer Renderer;
 	HighlightOutline Outline;
 
 	WeaponIconPreview Preview;
@@ -119,7 +119,9 @@ public class WeaponIconWindow : BaseWindow
 			cameraObject.AddComponent<Highlight>();
 
 			var modelObject = new GameObject( true, "model" );
-			Renderer = modelObject.AddComponent<ModelRenderer>();
+			Renderer = modelObject.AddComponent<SkinnedModelRenderer>();
+			Renderer.UseAnimGraph = false;
+			Renderer.PlaybackRate = 0;
 			Renderer.MaterialOverride = Material.Load( MaterialPath );
 
 			Outline = modelObject.AddComponent<HighlightOutline>();
@@ -144,6 +146,7 @@ public class WeaponIconWindow : BaseWindow
 
 		var model = Settings.Model;
 		Renderer.Model = model;
+		Renderer.Sequence.Name = Settings.AnimationSequence;
 
 		Outline.Color = Settings.OutlineColor;
 		Outline.ObscuredColor = Settings.OutlineColor.WithAlpha( 0 );
@@ -257,11 +260,15 @@ public class WeaponIconWindow : BaseWindow
 
 	WeaponIconSettings CreateDefaultSettings()
 	{
-		var model = Item.IsValid()
-			? Item.GetComponentsInChildren<ModelRenderer>( true ).Select( x => x.Model ).FirstOrDefault( x => x is not null && !x.IsError )
+		var renderer = Item.IsValid()
+			? Item.GetComponentsInChildren<ModelRenderer>( true ).FirstOrDefault( x => x.Model is not null && !x.Model.IsError )
 			: null;
 
-		return new WeaponIconSettings { Model = model };
+		return new WeaponIconSettings
+		{
+			Model = renderer?.Model,
+			AnimationSequence = (renderer as SkinnedModelRenderer)?.Sequence.Name
+		};
 	}
 
 	/// <summary>

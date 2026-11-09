@@ -16,6 +16,9 @@ public class WeaponIconSettings
 
 	[Hide] public string ModelPath { get; set; }
 
+	/// <summary>Optional model sequence used to pose animated items for their icon.</summary>
+	public string AnimationSequence { get; set; }
+
 	public Vector3 PositionOffset { get; set; }
 
 	public Angles Rotation { get; set; } = new Angles( 0, 90, 0 );
