@@ -47,6 +47,16 @@
 	/// </summary>
 	public virtual string ReloadSecondaryAction => null;
 
+	/// <summary>
+	/// Label for the tool menu button (ToolMenu, the middle mouse button), or null if the tool has no menu.
+	/// </summary>
+	public virtual string MenuAction => null;
+
+	/// <summary>
+	/// The tool's live readouts, shown under its hints in the tool panel, or null for none.
+	/// </summary>
+	public virtual ToolStatus? Status => null;
+
 	public IEnumerable<ToolHint> Hints
 	{
 		get
@@ -56,6 +66,7 @@
 			if ( !string.IsNullOrEmpty( ReloadAction ) ) yield return new( ReloadAction, ["reload"] );
 			if ( !string.IsNullOrEmpty( ReloadSecondaryAction ) ) yield return new( ReloadSecondaryAction, ["reload", "attack2"] );
 			if ( !string.IsNullOrEmpty( SnapAction ) ) yield return new( SnapAction, ["snap"] );
+			if ( !string.IsNullOrEmpty( MenuAction ) ) yield return new( MenuAction, ["ToolMenu"] );
 		}
 	}
 

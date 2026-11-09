@@ -42,7 +42,7 @@
     // already-open category doesn't silently restore its previous material.
     static string MaterialPath = BuilderCatalog.DefaultMaterial;
     static Material SelectedMaterial;
-    static string MaterialStatus = "Grey dev grid";
+    static string MaterialStatus = "Generic tiles";
     static Texture MaterialThumbnail = Texture.Load( $"thumb:{BuilderCatalog.DefaultMaterial}" );
     static int materialRequest;
     static int materialRevision;
@@ -54,15 +54,17 @@
         if ( firstTime && SelectedMaterial is null )
         {
             var saved = Game.Cookies.Get( "builder.material", BuilderCatalog.DefaultMaterial );
-            SelectMaterial( saved == "materials/default/white.vmat" ? BuilderCatalog.DefaultMaterial : saved );
+            SelectMaterial( MigrateMaterial( saved ) );
         }
     }
     public override void OnHotloaded()
     {
         base.OnHotloaded();
         Rebuild();
-        SelectMaterial( MaterialPath == "materials/default/white.vmat" ? BuilderCatalog.DefaultMaterial : MaterialPath );
+        SelectMaterial( MigrateMaterial( MaterialPath ) );
     }
+    // Old defaults that were saved to the cookie before generic tiles became the default.
+    static string MigrateMaterial( string path ) => path is "materials/default/white.vmat" or "materials/dev/gray_grid_8.vmat" ? BuilderCatalog.DefaultMaterial : path;
     public override void Tick()
     {
         base.Tick();
@@ -104,7 +106,7 @@
             if ( request != materialRequest ) return;
             MaterialPath = path;
             SelectedMaterial = material;
-            MaterialStatus = path == BuilderCatalog.DefaultMaterial ? "Grey dev grid" : material.ResourceName;
+            MaterialStatus = path == BuilderCatalog.DefaultMaterial ? "Generic tiles" : material.ResourceName;
             MaterialThumbnail = thumbnail;
             Game.Cookies.Set( "builder.material", path );
         }

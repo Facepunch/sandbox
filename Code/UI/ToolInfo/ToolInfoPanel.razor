@@ -48,6 +48,27 @@
    }
   </div>
  }
+
+ @if ( Status is { } status )
+ {
+  <div class="status">
+   <div class="readouts">
+    @if ( status.Primary is not null )
+    {
+     <Label class="readout" Tokenize=@false Text=@status.Primary />
+    }
+    @if ( status.Secondary is not null )
+    {
+     <Label class="readout" Tokenize=@false Text=@status.Secondary />
+    }
+   </div>
+
+   @if ( status.Hint is not null )
+   {
+    <Label class="status-hint" Tokenize=@false Text=@status.Hint />
+   }
+  </div>
+ }
 </root>
 
 @code
@@ -75,6 +96,9 @@
 
 	IToolInfo Info => Driving ? Player.DriveInfo : CurrentToolInfo;
 
+	/// <summary>The tool's live readouts, shown under its hints.</summary>
+	ToolStatus? Status => (Info as ToolMode)?.Status;
+
 	protected override void OnUpdate()
 	{
 		SetClass( "visible", Info is not null );
@@ -89,6 +113,7 @@
 		hash.Add( Info?.Description );
 		hash.Add( Hud.IsVisible( HudElement.ToolInfo ) );
 		hash.Add( Game.Language.SelectedCode );
+		hash.Add( Status );
 
 		foreach ( var hint in Info?.Hints ?? [] )
 		{

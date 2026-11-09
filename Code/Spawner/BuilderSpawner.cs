@@ -30,16 +30,7 @@ public sealed class BuilderSpawner : ISpawner
 		return IsReady;
 	}
 
-	public static async Task<Material> LoadMaterial( string path )
-	{
-		if ( string.IsNullOrWhiteSpace( path ) ) path = BuilderCatalog.DefaultMaterial;
-		try
-		{
-			return path.EndsWith( ".vmat", StringComparison.OrdinalIgnoreCase ) || path.EndsWith( ".vmat_c", StringComparison.OrdinalIgnoreCase )
-				? await ResourceLibrary.LoadAsync<Material>( path ) : await Cloud.Load<Material>( path );
-		}
-		catch ( Exception e ) { Log.Warning( $"Couldn't load Builder material '{path}': {e.Message}" ); return null; }
-	}
+	public static Task<Material> LoadMaterial( string path ) => BuilderMaterials.LoadAsync( path );
 
 	public void DrawPreview( Transform transform, Material overrideMaterial )
 	{
@@ -51,18 +42,8 @@ public sealed class BuilderSpawner : ISpawner
 	{
 		if ( !IsReady ) return Task.FromResult( new List<GameObject>() );
 		transform.Position -= transform.Up * Bounds.Mins.z;
-		var go = new GameObject( false, DisplayName );
-		go.Tags.Add( "removable" );
-		go.WorldTransform = transform;
-		var recipe = go.AddComponent<BuilderProp>();
-		recipe.PieceId = Piece.Id;
-		recipe.Renderer = go.AddComponent<ModelRenderer>();
-		recipe.Renderer.MaterialOverride = Material;
-		recipe.Collider = go.AddComponent<ModelCollider>();
-		recipe.Rebuild();
-		go.AddComponent<Rigidbody>();
-		if ( player.IsValid() ) Ownable.Set( go, player.Network.Owner );
-		go.NetworkSpawn( true, null );
+		var owner = player.IsValid() ? player.Network.Owner : null;
+		var go = BuilderProp.Create( BuilderShapeKey.For( Piece ), Piece.Id, transform, Material, null, collisions: true, frozen: false, owner );
 		return Task.FromResult( new List<GameObject> { go } );
 	}
 }

@@ -1,5 +1,5 @@
 /// <summary>
-/// Shakes nearby cameras when a physics prop strikes static world geometry.
+/// Shakes nearby cameras when a physics prop or building block strikes static world geometry.
 /// Listening at scene level also covers map props, duplicates and restored saves.
 /// </summary>
 public sealed partial class GameManager : ISceneCollisionEvents
@@ -12,8 +12,8 @@ public sealed partial class GameManager : ISceneCollisionEvents
 	private const float ImpactCooldown = 0.1f;
 
 	private readonly record struct Impact( Vector3 Position, float Amplitude );
-	private readonly Dictionary<Prop, Impact> _pending = new();
-	private readonly Dictionary<Prop, float> _nextImpactTime = new();
+	private readonly Dictionary<Component, Impact> _pending = new();
+	private readonly Dictionary<Component, float> _nextImpactTime = new();
 	private PropImpactCameraEffect _propImpactEffect;
 
 	void IScenePhysicsEvents.PostPhysicsStep() => ProcessImpacts();
@@ -35,11 +35,11 @@ public sealed partial class GameManager : ISceneCollisionEvents
 		if ( world.Body.BodyType != PhysicsBodyType.Static ) return;
 		if ( !source.GameObject.IsValid() ) return;
 
-		var prop = source.GameObject.GetComponentInParent<Prop>();
+		var prop = FindProp( source.GameObject );
 		if ( !prop.IsValid() || prop.IsProxy ) return;
 
 		// Frozen/static props are still props, rather than part of the world.
-		if ( world.GameObject.IsValid() && world.GameObject.GetComponentInParent<Prop>().IsValid() ) return;
+		if ( world.GameObject.IsValid() && FindProp( world.GameObject ).IsValid() ) return;
 
 		var speed = MathF.Abs( contact.NormalSpeed );
 		if ( speed < MinimumImpactSpeed ) return;
@@ -54,6 +54,14 @@ public sealed partial class GameManager : ISceneCollisionEvents
 		// Several shapes/substeps can report the same impact; keep only the strongest.
 		if ( _pending.TryGetValue( prop, out var pending ) && pending.Amplitude >= amplitude ) return;
 		_pending[prop] = new Impact( contact.Point, amplitude );
+	}
+
+	private static Component FindProp( GameObject go )
+	{
+		var prop = go.GetComponentInParent<Prop>();
+		if ( prop.IsValid() ) return prop;
+
+		return go.GetComponentInParent<BuilderProp>();
 	}
 
 	private void ProcessImpacts()
