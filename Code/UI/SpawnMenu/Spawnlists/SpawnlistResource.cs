@@ -32,6 +32,13 @@ public class SpawnlistResource : GameResource
 	[Property]
 	public int Order { get; set; }
 
+	/// <summary>
+	/// Keeps the list out of the spawn menu tree, for a list a built-in page shows itself
+	/// (e.g. Building Props > Robotics).
+	/// </summary>
+	[Property]
+	public bool HideInSidebar { get; set; }
+
 	[Property]
 	public List<Entry> Items { get; set; } = new();
 
@@ -124,12 +131,12 @@ public class SpawnlistResource : GameResource
 	}
 
 	/// <summary>
-	/// Every authored spawnlist the player should see, in display order.
+	/// Every authored spawnlist the player should see in the spawn menu tree, in display order.
 	/// </summary>
 	public static IEnumerable<SpawnlistResource> GetVisible()
 	{
 		return ResourceLibrary.GetAll<SpawnlistResource>()
-			.Where( x => x.ShouldShow() )
+			.Where( x => !x.HideInSidebar && x.ShouldShow() )
 			.OrderBy( x => x.Order )
 			.ThenBy( x => x.DisplayName, StringComparer.OrdinalIgnoreCase );
 	}

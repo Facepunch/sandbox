@@ -5,7 +5,7 @@ public sealed class BuilderGeometry
 {
 	static readonly Dictionary<string, Model> Cache = new();
 	// Bump when recipes change so hotload cannot reuse old meshes/collision.
-	public const int GeometryVersion = 3;
+	public const int GeometryVersion = 5;
 	readonly List<Vertex> vertices = new();
 	readonly List<int> indices = new();
 	readonly ModelBuilder builder = Model.Builder;
@@ -33,11 +33,11 @@ public sealed class BuilderGeometry
 		var normal = cross.Normal;
 		// Stable planar axes keep the two triangles of a face on the same UV projection.
 		var tangent = MathF.Abs( normal.z ) > 0.99f ? Vector3.Forward : Vector3.Cross( Vector3.Up, normal ).Normal;
-		var bitangent = Vector3.Cross( normal, tangent );
+		var bitangent = Vector3.Cross( tangent, normal );
 		foreach ( var p in new[] { a, b, c } )
 		{
 			indices.Add( vertices.Count );
-			vertices.Add( new Vertex( p, normal, tangent, new Vector4( Vector3.Dot( p, tangent ) / 48, Vector3.Dot( p, bitangent ) / 48, 0, 0 ) ) );
+			vertices.Add( new Vertex( p, normal, tangent, new Vector4( Vector3.Dot( p, tangent ) / BuilderCatalog.Unit, Vector3.Dot( p, bitangent ) / BuilderCatalog.Unit, 0, 0 ) ) );
 		}
 	}
 	void Quad( Vector3 a, Vector3 b, Vector3 c, Vector3 d ) { Triangle( a, b, c ); Triangle( a, c, d ); }
