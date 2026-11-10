@@ -64,12 +64,15 @@
         "BrakePower": 1.25,
         "CameraCollisionIgnore": "",
         "CameraOffset": "96,0,-4",
+        "CastShadowsInFirstPerson": true,
         "ColliderObject": {
           "_type": "gameobject",
           "go": "3dc9b5dd-44a4-4ac8-a4cb-2a632afbc3f3"
         },
         "CoyoteTime": 0.19,
         "DeaccelerationTime": 0.1,
+        "DuckButton": "duck",
+        "DuckDuration": 0.4,
         "DuckedHeight": 36,
         "DuckedSpeed": 110,
         "EnableFootstepSounds": true,
@@ -81,7 +84,7 @@
           "Id": "2d9828d0-7984-4843-b6b2-22d4336497d5"
         },
         "FootstepVolume": 2,
-        "HideBodyInFirstPerson": true,
+        "HideBodyInFirstPerson": false,
         "HoldToJump": false,
         "JumpSpeed": 300,
         "LookSensitivity": 1,
@@ -104,13 +107,16 @@
         "RotationSpeed": 1,
         "RunByDefault": false,
         "RunSpeed": 475,
+        "ShowArmsInFirstPerson": false,
         "ShowColliderComponents": true,
         "ShowRigidbodyComponent": true,
         "ThirdPerson": false,
         "ToggleCameraModeButton": "view",
+        "UnduckDuration": 0.2,
         "UseAnimatorControls": true,
         "UseButton": "use",
         "UseCameraControls": true,
+        "UseFirstPersonAnimation": true,
         "UseFovFromPreferences": true,
         "UseInputControls": true,
         "UseLookControls": true,
@@ -196,7 +202,7 @@
             "CacheToDisk": true,
             "FormatOverride": "RGBA8888"
           },
-          "compiled": null
+          "compiled": "textures/generated/imagefile/120ddffc773937b3.vtex"
         }
       },
       {
@@ -406,7 +412,12 @@
             "Flags": 0,
             "Animation": {
               "Graph": "animations/sandbox_player.ag",
-              "Parameters": {}
+              "Parameters": {
+                "floats": {
+                  "scale_height": 1,
+                  "scale_heel": 0
+                }
+              }
             },
             "AnimationGraph": null,
             "BodyGroups": 20737,
@@ -3156,7 +3167,7 @@
             "Children": []
           },
           {
-            "__guid": "3397e3e6-d28f-4963-b324-7c41df041ba4",
+            "__guid": "bf80ea7a-f50f-4b90-a2e0-9503f5ccf06d",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - y_front_pants_white",
@@ -3173,7 +3184,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "c63c522c-e692-4bdd-a20a-1b054403e1ee",
+                "__guid": "ba06917c-6416-4f23-88b2-a6464f750313",
                 "__enabled": true,
                 "Flags": 0,
                 "Animation": {
