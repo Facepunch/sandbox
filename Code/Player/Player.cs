@@ -183,6 +183,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		if ( IsLocalPlayer )
 		{
 			UpdateSeatedWeapons();
+			UpdateSeatedBodyVisibility();
 			DrawSeatedWeaponHud();
 			UpdatePhysgunColors();
 			NpcWeapon = GamePreferences.NpcWeapon;

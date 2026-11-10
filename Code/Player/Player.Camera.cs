@@ -20,6 +20,11 @@ public sealed partial class Player : ICameraModifier
 
 	private float roll;
 
+	// The controller's first person body settings from before we sat down, restored when we get up.
+	private bool? _hideBodyBeforeSeat;
+	private bool _showArmsBeforeSeat;
+	private bool _firstPersonAnimBeforeSeat;
+
 	// Static so the event lambdas don't capture
 	private static Angles _cameraMoveAngles;
 	private static CameraComponent _bridgeCamera;
@@ -63,6 +68,7 @@ public sealed partial class Player : ICameraModifier
 
 		ApplyMovementCameraEffects( ref view );
 		ApplySeatedCameraSetup( ref view );
+		ApplySeatedFirstPersonLean( ref view );
 		ApplyDriveCamera( camera, ref view );
 
 		BridgeCameraEvent( camera, ref view, static x => x.OnCameraPostSetup( _bridgeCamera ) );

@@ -499,6 +499,48 @@ public sealed partial class Player
 		SetDriveMode( DrivesWithPhysics );
 	}
 
+	/// <summary>
+	/// Show the player's arms in first person while seated, so hands IK'd to a steering wheel
+	/// or controls are visible. The head stays hidden.
+	/// </summary>
+	private void UpdateSeatedBodyVisibility()
+	{
+		if ( !Controller.IsValid() ) return;
+
+		if ( IsSeated )
+		{
+			if ( _hideBodyBeforeSeat is null )
+			{
+				_hideBodyBeforeSeat = Controller.HideBodyInFirstPerson;
+				_showArmsBeforeSeat = Controller.ShowArmsInFirstPerson;
+				_firstPersonAnimBeforeSeat = Controller.UseFirstPersonAnimation;
+			}
+
+			Controller.HideBodyInFirstPerson = false;
+			Controller.ShowArmsInFirstPerson = true;
+			Controller.UseFirstPersonAnimation = false;
+		}
+		else if ( _hideBodyBeforeSeat is { } hideBody )
+		{
+			Controller.HideBodyInFirstPerson = hideBody;
+			Controller.ShowArmsInFirstPerson = _showArmsBeforeSeat;
+			Controller.UseFirstPersonAnimation = _firstPersonAnimBeforeSeat;
+			_hideBodyBeforeSeat = null;
+		}
+	}
+
+	/// <summary>
+	/// Vehicles lean the driver's body over the wheel. Lean the first person camera with it so it stays in the head.
+	/// </summary>
+	private void ApplySeatedFirstPersonLean( ref CameraView view )
+	{
+		if ( Controller.ThirdPerson || _cachedSeat is not Component seat ) return;
+
+		var vehicle = seat.GetComponentInParent<FourWheelVehicle>();
+		if ( vehicle.IsValid() )
+			view.Position = vehicle.LeanEyePosition( this, view.Position );
+	}
+
 	private void ApplyDriveCamera( CameraComponent camera, ref CameraView view )
 	{
 		if ( _driven.IsValid() )
