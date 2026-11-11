@@ -340,6 +340,13 @@ internal sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEv
 
 		_suppressSystemScene = true; // Make sure we don't load two system scenes.....
 
+		// Make sure the launch map is set to the one saved in the save file, if any (crap)
+		var savedMap = FindLaunchMapName( patchedSceneFile.GameObjects );
+		if ( !string.IsNullOrWhiteSpace( savedMap ) )
+		{
+			LaunchArguments.Map = savedMap;
+		}
+
 		CleanupSystem.PreserveBaselineForSaveLoad();
 
 		var options = new SceneLoadOptions();
@@ -823,6 +830,45 @@ internal sealed class SaveSystem : GameObjectSystem<SaveSystem>, ISceneLoadingEv
 				}
 			}
 		}
+	}
+
+	/// <summary>
+	/// Scan to find the configured launch map from a serialized scene.
+	/// </summary>
+	private static string FindLaunchMapName( IEnumerable<JsonObject> gameObjects )
+	{
+		if ( gameObjects is null ) return null;
+
+		foreach ( var go in gameObjects )
+		{
+			if ( go is null ) continue;
+
+			if ( go["Components"] is JsonArray components )
+			{
+				foreach ( var component in components.OfType<JsonObject>() )
+				{
+					var typeName = component["__type"]?.GetValue<string>();
+					if ( string.IsNullOrEmpty( typeName ) ) continue;
+
+					var type = TypeLibrary.GetType( typeName );
+					if ( type is null || !type.TargetType.IsAssignableTo( typeof( MapInstance ) ) ) continue;
+
+					if ( component["UseMapFromLaunch"]?.GetValue<bool>() != true ) continue;
+
+					var mapName = component["MapName"]?.GetValue<string>();
+					if ( !string.IsNullOrWhiteSpace( mapName ) )
+						return mapName;
+				}
+			}
+
+			if ( go["Children"] is JsonArray children )
+			{
+				var found = FindLaunchMapName( children.OfType<JsonObject>() );
+				if ( found is not null ) return found;
+			}
+		}
+
+		return null;
 	}
 
 	/// <summary>
