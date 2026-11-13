@@ -52,21 +52,6 @@ PS
 	{
 		float2 uv = i.vTextureCoords.xy;
 
-		//
-		// Pass 1: Outer layer - the physical screen surface
-		//
-		Material outer = Material::From( i );
-		outer.Albedo = 0.0f;
-		outer.AmbientOcclusion = g_tAo.Sample( g_sAniso, uv ).r;
-		outer.Roughness = g_tRoughness.Sample( g_sAniso, uv ).r;
-		outer.Normal = TransformNormal( DecodeNormal( g_tNormal.Sample( g_sAniso, uv ).rgb ), i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
-		outer.Emission = 0.0f;
-
-		float4 outerShaded = ShadingModelStandard::Shade( i, outer );
-
-		//
-		// Pass 2: Inner LCD layer - dot matrix with per-dot normals and roughness
-		//
 		// One dot per pixel of the screen texture
 		float2 grid;
 		g_tSelfIllumMask.GetDimensions( grid.x, grid.y );
@@ -85,12 +70,11 @@ PS
 		// Per-dot hemisphere normals in tangent space
 		float2 nxy = cellCentered / dotRadius;
 		float nzSq = saturate( 1.0 - dot( nxy, nxy ) );
-		float3 domeNormalTs = float3( nxy.x, nxy.y, sqrt( nzSq ) );
-		domeNormalTs = normalize( domeNormalTs );
+		float3 domeNormalTs = normalize( float3( -nxy.x, nxy.y, sqrt( nzSq ) ) );
 
-		// Transform dome normal to world space, blend with flat normal outside dots
-		float3 domeNormalWs = TransformNormal( domeNormalTs, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
-		float3 lcdNormal = lerp( i.vNormalWs, domeNormalWs, dotMask );
+		float3 glassNormalTs = DecodeNormal( g_tNormal.Sample( g_sAniso, uv ).rgb );
+		float bump = dotMask * 0.025;
+		float3 normalTs = normalize( float3( glassNormalTs.xy + domeNormalTs.xy * bump, glassNormalTs.z * lerp( 1.0, domeNormalTs.z, bump ) ) );
 
 		// Dome shading falloff
 		float dome = 1.0 - smoothstep( 0.0, dotRadius, dist ) * 0.25;
@@ -107,17 +91,13 @@ PS
 		float rowLine = smoothstep( 0.0, 0.06, abs( cellCentered.y ) );
 		lcdColor *= lerp( 0.85, 1.0, rowLine );
 
-		// LCD dots are glossy, gaps between are rough/invisible
-		Material lcd = Material::From( i );
-		lcd.Albedo = 0.0f;
-		lcd.AmbientOcclusion = 1.0f;
-		lcd.Roughness = lerp( 1.0, 0.25, dotMask );
-		lcd.Normal = lcdNormal;
-		lcd.Emission = lcdColor;
+		Material m = Material::From( i );
+		m.Albedo = 0.0f;
+		m.AmbientOcclusion = g_tAo.Sample( g_sAniso, uv ).r;
+		m.Roughness = min( g_tRoughness.Sample( g_sAniso, uv ).r, lerp( 1.0, 0.25, dotMask ) );
+		m.Normal = TransformNormal( normalTs, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
+		m.Emission = lcdColor;
 
-		float4 lcdShaded = ShadingModelStandard::Shade( i, lcd );
-
-		// Composite: sum both layers
-		return outerShaded + lcdShaded;
+		return ShadingModelStandard::Shade( i, m );
 	}
 }
