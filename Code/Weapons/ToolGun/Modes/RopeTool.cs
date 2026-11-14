@@ -87,6 +87,7 @@ public sealed class RopeTool : BaseConstraintToolMode
 		{
 			var vertletRope = go1.AddComponent<VerletRope>();
 			vertletRope.Attachment = go2;
+			vertletRope.Slack = Slack;
 
 			const int maxSegmentCount = 48;
 			// Maximum segment count, so long ropes don't exceed computation limits
